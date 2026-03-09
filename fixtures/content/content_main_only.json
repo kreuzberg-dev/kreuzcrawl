@@ -1,0 +1,19 @@
+{
+  "id": "content_main_only",
+  "description": "Extracts only main content area, excluding nav, sidebar, footer",
+  "tags": ["content", "extraction"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_file": "html/main_content_page.html"
+  },
+  "config": {
+    "respect_robots_txt": false,
+    "main_content_only": true
+  },
+  "assertions": {
+    "content": {
+      "main_content_only": true
+    }
+  }
+}

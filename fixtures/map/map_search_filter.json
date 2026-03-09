@@ -1,0 +1,21 @@
+{
+  "id": "map_search_filter",
+  "description": "Filters map results by search keyword",
+  "tags": ["map", "filtering"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><body><a href=\"/blog/post1\">Blog Post</a><a href=\"/about\">About</a><a href=\"/blog/post2\">Another Blog</a><a href=\"/contact\">Contact</a></body></html>"
+  },
+  "config": {
+    "max_depth": 0,
+    "respect_robots_txt": false,
+    "map_search": "blog"
+  },
+  "assertions": {
+    "map": {
+      "min_urls": 2,
+      "has_url_containing": "blog"
+    }
+  }
+}

@@ -115,6 +115,10 @@ pub struct CrawlConfigSpec {
     pub auth_header: Option<AuthHeaderSpec>,
     pub retry_count: Option<u32>,
     pub retry_codes: Option<Vec<u16>>,
+    pub remove_tags: Option<Vec<String>>,
+    pub main_content_only: Option<bool>,
+    pub map_search: Option<String>,
+    pub map_limit: Option<u32>,
 }
 
 /// Basic auth credentials.
@@ -169,6 +173,9 @@ pub struct LinkAssertions {
     pub max_count: Option<usize>,
     #[serde(default)]
     pub has_type: Vec<String>,
+    pub contains_url: Option<String>,
+    pub excludes_url: Option<String>,
+    pub has_protocol_relative: Option<bool>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -218,6 +225,9 @@ pub struct FeedAssertions {
 pub struct RobotsAssertions {
     pub is_allowed: Option<bool>,
     pub crawl_delay: Option<u64>,
+    pub noindex_detected: Option<bool>,
+    pub nofollow_detected: Option<bool>,
+    pub x_robots_tag: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -232,12 +242,14 @@ pub struct CrawlAssertions {
     pub min_pages: Option<usize>,
     pub max_pages: Option<usize>,
     pub stayed_on_domain: Option<bool>,
+    pub unique_normalized_urls: Option<usize>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct ErrorAssertions {
     pub is_error: Option<bool>,
     pub error_type: Option<String>,
+    pub is_waf_blocked: Option<bool>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -252,6 +264,8 @@ pub struct ContentAssertions {
     pub was_skipped: Option<bool>,
     pub detected_charset: Option<String>,
     pub body_size_within: Option<u64>,
+    pub is_pdf: Option<bool>,
+    pub main_content_only: Option<bool>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -271,6 +285,7 @@ pub struct MapAssertions {
     pub url_count: Option<usize>,
     pub min_urls: Option<usize>,
     pub has_url_containing: Option<String>,
+    pub max_urls: Option<usize>,
 }
 
 /// Skip directives for conditional test execution.

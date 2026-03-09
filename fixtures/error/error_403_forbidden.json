@@ -1,0 +1,17 @@
+{
+  "id": "error_403_forbidden",
+  "description": "Handles 403 Forbidden response correctly",
+  "tags": ["error"],
+  "mock_response": {
+    "status_code": 403,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><body><h1>403 Forbidden</h1></body></html>"
+  },
+  "assertions": {
+    "status_code": 403,
+    "error": {
+      "is_error": true,
+      "error_type": "forbidden"
+    }
+  }
+}

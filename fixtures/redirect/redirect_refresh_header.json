@@ -1,0 +1,30 @@
+{
+  "id": "redirect_refresh_header",
+  "description": "Handles HTTP Refresh header redirect",
+  "tags": ["redirect"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8", "refresh": "0;url=/refreshed"},
+      "body_inline": "<html><body><p>Redirecting...</p></body></html>"
+    },
+    {
+      "path": "/refreshed",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Refreshed Page</h1></body></html>"
+    }
+  ],
+  "config": {
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "redirect": {
+      "final_url_contains": "/refreshed",
+      "redirect_count": 1
+    }
+  }
+}

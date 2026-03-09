@@ -6,9 +6,9 @@ use itertools::Itertools;
 
 use crate::fixtures::{
     Assertions, AuthAssertions, ContentAssertions, CookieAssertions, CrawlAssertions,
-    DublinCoreAssertions, FeedAssertions, Fixture, ImageAssertions, JsonLdAssertions,
-    LinkAssertions, MapAssertions, MetadataAssertions, OgAssertions, RedirectAssertions,
-    RobotsAssertions, SitemapAssertions, TwitterAssertions,
+    DublinCoreAssertions, ErrorAssertions, FeedAssertions, Fixture, ImageAssertions,
+    JsonLdAssertions, LinkAssertions, MapAssertions, MetadataAssertions, OgAssertions,
+    RedirectAssertions, RobotsAssertions, SitemapAssertions, TwitterAssertions,
 };
 
 /// Generate Rust E2E test files from fixtures, grouped by category.
@@ -434,6 +434,30 @@ fn generate_config(out: &mut String, fixture: &Fixture) -> Result<()> {
                 items.join(", ")
             )?;
         }
+        if let Some(ref tags) = cfg.remove_tags {
+            let items: Vec<String> = tags
+                .iter()
+                .map(|t| format!("\"{}\".to_owned()", escape_rust_string(t)))
+                .collect();
+            writeln!(
+                out,
+                "        remove_tags: Some(vec![{}]),",
+                items.join(", ")
+            )?;
+        }
+        if let Some(main_content) = cfg.main_content_only {
+            writeln!(out, "        main_content_only: {main_content},")?;
+        }
+        if let Some(ref search) = cfg.map_search {
+            writeln!(
+                out,
+                "        map_search: Some(\"{}\".to_owned()),",
+                escape_rust_string(search)
+            )?;
+        }
+        if let Some(limit) = cfg.map_limit {
+            writeln!(out, "        map_limit: Some({limit}),")?;
+        }
     }
 
     writeln!(out, "        ..Default::default()")?;
@@ -529,6 +553,7 @@ fn generate_error_assertions(out: &mut String, fixture: &Fixture) -> Result<()> 
                     escape_rust_string(error_type)
                 )?;
             }
+            generate_waf_assertion(out, err)?;
         } else {
             writeln!(
                 out,
@@ -542,6 +567,16 @@ fn generate_error_assertions(out: &mut String, fixture: &Fixture) -> Result<()> 
         writeln!(out, "    let _result = result;")?;
     }
 
+    Ok(())
+}
+
+fn generate_waf_assertion(out: &mut String, err: &ErrorAssertions) -> Result<()> {
+    if err.is_waf_blocked == Some(true) {
+        writeln!(
+            out,
+            "    assert!(err.to_string().contains(\"waf\") || err.to_string().contains(\"blocked\"));"
+        )?;
+    }
     Ok(())
 }
 
@@ -583,6 +618,33 @@ fn generate_link_assertions(out: &mut String, links: &LinkAssertions) -> Result<
             "    assert!(result.links.iter().any(|l| l.link_type == \"{}\"));",
             escape_rust_string(link_type)
         )?;
+    }
+    if let Some(ref url) = links.contains_url {
+        writeln!(
+            out,
+            "    assert!(result.links.iter().any(|l| l.url.contains(\"{}\")));",
+            escape_rust_string(url)
+        )?;
+    }
+    if let Some(ref url) = links.excludes_url {
+        writeln!(
+            out,
+            "    assert!(result.links.iter().all(|l| !l.url.contains(\"{}\")));",
+            escape_rust_string(url)
+        )?;
+    }
+    if let Some(has_pr) = links.has_protocol_relative {
+        if has_pr {
+            writeln!(
+                out,
+                "    assert!(result.links.iter().any(|l| l.url.starts_with(\"//\")));"
+            )?;
+        } else {
+            writeln!(
+                out,
+                "    assert!(result.links.iter().all(|l| !l.url.starts_with(\"//\")));"
+            )?;
+        }
     }
     Ok(())
 }
@@ -750,6 +812,19 @@ fn generate_robots_assertions(
     if let Some(delay) = robots.crawl_delay {
         writeln!(out, "    assert_eq!(result.crawl_delay, Some({delay}));")?;
     }
+    if let Some(noindex) = robots.noindex_detected {
+        writeln!(out, "    assert_eq!(result.noindex_detected, {noindex});")?;
+    }
+    if let Some(nofollow) = robots.nofollow_detected {
+        writeln!(out, "    assert_eq!(result.nofollow_detected, {nofollow});")?;
+    }
+    if let Some(ref tag) = robots.x_robots_tag {
+        writeln!(
+            out,
+            "    assert_eq!(result.x_robots_tag.as_deref(), Some(\"{}\"));",
+            escape_rust_string(tag)
+        )?;
+    }
     Ok(())
 }
 
@@ -795,6 +870,12 @@ fn generate_crawl_assertions(out: &mut String, crawl: &CrawlAssertions) -> Resul
                 "    assert!(result.pages.iter().any(|p| !p.stayed_on_domain));"
             )?;
         }
+    }
+    if let Some(count) = crawl.unique_normalized_urls {
+        writeln!(
+            out,
+            "    assert_eq!(result.unique_normalized_urls(), {count});"
+        )?;
     }
     Ok(())
 }
@@ -844,6 +925,15 @@ fn generate_content_assertions(out: &mut String, content: &ContentAssertions) ->
     if let Some(max_size) = content.body_size_within {
         writeln!(out, "    assert!(result.body_size <= {max_size});")?;
     }
+    if let Some(is_pdf) = content.is_pdf {
+        writeln!(out, "    assert_eq!(result.is_pdf, {is_pdf});")?;
+    }
+    if let Some(main_only) = content.main_content_only {
+        writeln!(
+            out,
+            "    assert_eq!(result.main_content_only, {main_only});"
+        )?;
+    }
     Ok(())
 }
 
@@ -881,6 +971,9 @@ fn generate_map_assertions(out: &mut String, map: &MapAssertions) -> Result<()> 
     }
     if let Some(min) = map.min_urls {
         writeln!(out, "    assert!(result.urls.len() >= {min});")?;
+    }
+    if let Some(max) = map.max_urls {
+        writeln!(out, "    assert!(result.urls.len() <= {max});")?;
     }
     if let Some(ref contains) = map.has_url_containing {
         writeln!(

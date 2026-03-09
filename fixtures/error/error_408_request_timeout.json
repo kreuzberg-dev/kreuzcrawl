@@ -1,0 +1,17 @@
+{
+  "id": "error_408_request_timeout",
+  "description": "Handles 408 Request Timeout response correctly",
+  "tags": ["error"],
+  "mock_response": {
+    "status_code": 408,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><body><h1>408 Request Timeout</h1></body></html>"
+  },
+  "assertions": {
+    "status_code": 408,
+    "error": {
+      "is_error": true,
+      "error_type": "timeout"
+    }
+  }
+}

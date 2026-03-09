@@ -1,0 +1,23 @@
+{
+  "id": "robots_x_robots_tag",
+  "description": "Respects X-Robots-Tag HTTP header directives",
+  "tags": ["robots", "http-header"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {
+      "content-type": "text/html; charset=utf-8",
+      "x-robots-tag": "noindex, nofollow"
+    },
+    "body_inline": "<html><body><h1>Page with X-Robots-Tag</h1></body></html>"
+  },
+  "config": {
+    "respect_robots_txt": true
+  },
+  "assertions": {
+    "robots": {
+      "x_robots_tag": "noindex, nofollow",
+      "noindex_detected": true,
+      "nofollow_detected": true
+    }
+  }
+}

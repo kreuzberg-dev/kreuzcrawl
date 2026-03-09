@@ -1,0 +1,8 @@
+# This is a robots.txt file with comments
+User-agent: * # matches all bots
+Allow: /public # public pages are ok
+Disallow: /private # private pages blocked
+# The following applies only to specific bots
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 2

@@ -1,0 +1,30 @@
+{
+  "id": "redirect_302_found",
+  "description": "Follows 302 Found redirect correctly",
+  "tags": ["redirect"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 302,
+      "headers": {"location": "/found-target"},
+      "body_inline": ""
+    },
+    {
+      "path": "/found-target",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Found Target</h1></body></html>"
+    }
+  ],
+  "config": {
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "redirect": {
+      "final_url_contains": "/found-target",
+      "redirect_count": 1
+    }
+  }
+}
