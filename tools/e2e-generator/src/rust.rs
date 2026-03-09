@@ -5,12 +5,13 @@ use camino::Utf8Path;
 use itertools::Itertools;
 
 use crate::fixtures::{
-    ArticleAssertions, Assertions, AssetAssertions, AuthAssertions, ComputedAssertions,
-    ContentAssertions, CookieAssertions, CrawlAssertions, DublinCoreAssertions, ErrorAssertions,
-    ExtendedMetadataAssertions, ExtendedOgAssertions, FaviconAssertions, FeedAssertions, Fixture,
-    HeadingAssertions, HreflangAssertions, ImageAssertions, JsonLdAssertions, LinkAssertions,
-    MapAssertions, MetadataAssertions, OgAssertions, RedirectAssertions, ResponseMetaAssertions,
-    RobotsAssertions, SitemapAssertions, StreamAssertions, TwitterAssertions,
+    ArticleAssertions, Assertions, AssetAssertions, AuthAssertions, BatchAssertions,
+    ComputedAssertions, ContentAssertions, CookieAssertions, CrawlAssertions, DublinCoreAssertions,
+    ErrorAssertions, ExtendedMetadataAssertions, ExtendedOgAssertions, FaviconAssertions,
+    FeedAssertions, Fixture, HeadingAssertions, HreflangAssertions, ImageAssertions,
+    JsonLdAssertions, LinkAssertions, MapAssertions, MetadataAssertions, OgAssertions,
+    RedirectAssertions, ResponseMetaAssertions, RobotsAssertions, SitemapAssertions,
+    StreamAssertions, TwitterAssertions,
 };
 
 /// Generate Rust E2E test files from fixtures, grouped by category.
@@ -372,6 +373,30 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
                 "    let events: Vec<CrawlEvent> = stream.collect().await;"
             )?;
         }
+        "batch" => {
+            // Build URLs from batch_urls config
+            if let Some(ref cfg) = fixture.config
+                && let Some(ref batch_urls) = cfg.batch_urls
+            {
+                writeln!(out, "    let urls: Vec<String> = vec![")?;
+                for path in batch_urls {
+                    writeln!(
+                        out,
+                        "        format!(\"{{}}{}\" , mock.uri()),",
+                        escape_rust_string(path)
+                    )?;
+                }
+                writeln!(out, "    ];")?;
+                writeln!(
+                    out,
+                    "    let url_refs: Vec<&str> = urls.iter().map(|s| s.as_str()).collect();"
+                )?;
+                writeln!(
+                    out,
+                    "    let results: Vec<(String, Result<kreuzcrawl::ScrapeResult, kreuzcrawl::CrawlError>)> = kreuzcrawl::batch_scrape(&url_refs, &config).await;"
+                )?;
+            }
+        }
         // Single-page categories: scrape, metadata, links, robots, content, auth, error
         _ => {
             writeln!(
@@ -384,7 +409,7 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
     // For error category, handle Result differently
     if category == "error" {
         generate_error_assertions(out, fixture)?;
-    } else if category == "stream" {
+    } else if category == "stream" || category == "batch" {
         if let Some(ref assertions) = fixture.assertions {
             generate_assertions(out, assertions, category)?;
         }
@@ -675,6 +700,9 @@ fn generate_assertions(out: &mut String, assertions: &Assertions, category: &str
     }
     if let Some(ref stream) = assertions.stream {
         generate_stream_assertions(out, stream)?;
+    }
+    if let Some(ref batch) = assertions.batch {
+        generate_batch_assertions(out, batch)?;
     }
 
     Ok(())
@@ -1446,6 +1474,34 @@ fn generate_stream_assertions(out: &mut String, stream: &StreamAssertions) -> Re
         writeln!(
             out,
             "    assert!(events.iter().any(|e| matches!(e, CrawlEvent::Complete {{ .. }})));"
+        )?;
+    }
+    Ok(())
+}
+
+fn generate_batch_assertions(out: &mut String, batch: &BatchAssertions) -> Result<()> {
+    if let Some(total) = batch.total_count {
+        writeln!(out, "    assert_eq!(results.len(), {total});")?;
+    }
+    if let Some(completed) = batch.completed_count {
+        writeln!(
+            out,
+            "    let completed = results.iter().filter(|(_, r)| r.is_ok()).count();"
+        )?;
+        writeln!(out, "    assert_eq!(completed, {completed});")?;
+    }
+    if let Some(failed) = batch.failed_count {
+        writeln!(
+            out,
+            "    let failed = results.iter().filter(|(_, r)| r.is_err()).count();"
+        )?;
+        writeln!(out, "    assert_eq!(failed, {failed});")?;
+    }
+    if let Some(ref url_part) = batch.has_url_result {
+        writeln!(
+            out,
+            "    assert!(results.iter().any(|(url, _)| url.contains(\"{}\")));",
+            escape_rust_string(url_part)
         )?;
     }
     Ok(())

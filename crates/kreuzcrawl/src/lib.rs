@@ -1,6 +1,7 @@
 //! kreuzcrawl -- A Rust crawling engine for turning websites into structured data.
 
 mod assets;
+mod batch;
 mod crawl;
 mod error;
 mod html;
@@ -13,6 +14,7 @@ mod sitemap;
 mod stream;
 mod types;
 
+pub use batch::batch_scrape;
 pub use crawl::crawl;
 pub use error::CrawlError;
 pub use map::map;
