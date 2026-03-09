@@ -38,14 +38,14 @@ pub(crate) async fn http_fetch(
     }
 
     // Auth
-    if let Some((ref user, ref pass)) = config.auth_basic {
-        req = req.basic_auth(user, Some(pass));
+    if let Some(ref auth) = config.auth_basic {
+        req = req.basic_auth(&auth.username, Some(&auth.password));
     }
     if let Some(ref token) = config.auth_bearer {
         req = req.bearer_auth(token);
     }
-    if let Some((ref key, ref val)) = config.auth_header {
-        req = req.header(key.as_str(), val.as_str());
+    if let Some(ref hdr) = config.auth_header {
+        req = req.header(hdr.name.as_str(), hdr.value.as_str());
     }
 
     // Custom headers

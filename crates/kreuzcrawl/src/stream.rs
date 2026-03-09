@@ -22,7 +22,13 @@ pub fn crawl_stream(url: &str, config: &CrawlConfig) -> ReceiverStream<CrawlEven
                 let pages_crawled = result.pages.len();
                 let _ = tx.send(CrawlEvent::Complete { pages_crawled }).await;
             }
-            Err(_) => {
+            Err(e) => {
+                let _ = tx
+                    .send(CrawlEvent::Error {
+                        url: url.clone(),
+                        error: e.to_string(),
+                    })
+                    .await;
                 let _ = tx.send(CrawlEvent::Complete { pages_crawled: 0 }).await;
             }
         }

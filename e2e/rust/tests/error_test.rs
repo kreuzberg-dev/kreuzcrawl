@@ -14,8 +14,8 @@ async fn test_error_401_unauthorized() {
         "/",
         401,
         &[
-            ("www-authenticate", "Basic realm=\"test\""),
             ("content-type", "text/html; charset=utf-8"),
+            ("www-authenticate", "Basic realm=\"test\""),
         ],
         &body,
     )
@@ -200,7 +200,7 @@ async fn test_error_rate_limited() {
         "GET",
         "/",
         429,
-        &[("content-type", "text/html"), ("retry-after", "60")],
+        &[("retry-after", "60"), ("content-type", "text/html")],
         &body,
     )
     .await;

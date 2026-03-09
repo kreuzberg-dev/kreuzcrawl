@@ -21,8 +21,8 @@ pub use map::map;
 pub use scrape::scrape;
 pub use stream::crawl_stream;
 pub use types::{
-    ArticleMetadata, AssetCategory, CookieInfo, CrawlConfig, CrawlEvent, CrawlPageResult,
-    CrawlResult, DownloadedAsset, FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry,
-    ImageInfo, ImageSource, JsonLdEntry, LinkInfo, LinkType, MapResult, PageMetadata, ResponseMeta,
-    ScrapeResult, SitemapUrl,
+    ArticleMetadata, AssetCategory, AuthHeader, BasicAuth, CookieInfo, CrawlConfig, CrawlEvent,
+    CrawlPageResult, CrawlResult, DownloadedAsset, FaviconInfo, FeedInfo, FeedType, HeadingInfo,
+    HreflangEntry, ImageInfo, ImageSource, JsonLdEntry, LinkInfo, LinkType, MapResult,
+    PageMetadata, ResponseMeta, ScrapeResult, SitemapUrl,
 };

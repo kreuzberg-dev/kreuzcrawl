@@ -513,7 +513,7 @@ fn generate_config(out: &mut String, fixture: &Fixture) -> Result<()> {
         if let Some(ref auth) = cfg.auth_basic {
             writeln!(
                 out,
-                "        auth_basic: Some((\"{}\".to_owned(), \"{}\".to_owned())),",
+                "        auth_basic: Some(kreuzcrawl::BasicAuth {{ username: \"{}\".to_owned(), password: \"{}\".to_owned() }}),",
                 escape_rust_string(&auth.username),
                 escape_rust_string(&auth.password)
             )?;
@@ -528,7 +528,7 @@ fn generate_config(out: &mut String, fixture: &Fixture) -> Result<()> {
         if let Some(ref auth_hdr) = cfg.auth_header {
             writeln!(
                 out,
-                "        auth_header: Some((\"{}\".to_owned(), \"{}\".to_owned())),",
+                "        auth_header: Some(kreuzcrawl::AuthHeader {{ name: \"{}\".to_owned(), value: \"{}\".to_owned() }}),",
                 escape_rust_string(&auth_hdr.name),
                 escape_rust_string(&auth_hdr.value)
             )?;
