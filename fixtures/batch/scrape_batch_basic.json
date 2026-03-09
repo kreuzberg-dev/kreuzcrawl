@@ -1,0 +1,35 @@
+{
+  "id": "scrape_batch_basic",
+  "description": "Batch scrape of multiple URLs all succeeding",
+  "tags": ["batch"],
+  "mock_responses": [
+    {
+      "path": "/page1",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Page 1</h1></body></html>"
+    },
+    {
+      "path": "/page2",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Page 2</h1></body></html>"
+    },
+    {
+      "path": "/page3",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Page 3</h1></body></html>"
+    }
+  ],
+  "config": {
+    "batch_urls": ["/page1", "/page2", "/page3"]
+  },
+  "assertions": {
+    "batch": {
+      "completed_count": 3,
+      "failed_count": 0,
+      "total_count": 3
+    }
+  }
+}

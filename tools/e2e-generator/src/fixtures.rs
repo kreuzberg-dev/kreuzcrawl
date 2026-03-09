@@ -122,6 +122,7 @@ pub struct CrawlConfigSpec {
     pub download_assets: Option<bool>,
     pub asset_types: Option<Vec<String>>,
     pub max_asset_size: Option<u64>,
+    pub batch_urls: Option<Vec<String>>,
 }
 
 /// Basic auth credentials.
@@ -171,6 +172,7 @@ pub struct Assertions {
     pub response_meta: Option<ResponseMetaAssertions>,
     pub assets: Option<AssetAssertions>,
     pub stream: Option<StreamAssertions>,
+    pub batch: Option<BatchAssertions>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -376,6 +378,14 @@ pub struct StreamAssertions {
     pub event_count_min: Option<usize>,
     pub has_page_event: Option<bool>,
     pub has_complete_event: Option<bool>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct BatchAssertions {
+    pub completed_count: Option<usize>,
+    pub failed_count: Option<usize>,
+    pub total_count: Option<usize>,
+    pub has_url_result: Option<String>,
 }
 
 /// Skip directives for conditional test execution.
