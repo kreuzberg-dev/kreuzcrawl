@@ -1,0 +1,15 @@
+{
+  "id": "scrape_empty_page",
+  "description": "Handles an empty HTML document without errors",
+  "tags": ["scrape", "edge-case"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": { "content-type": "text/html; charset=utf-8" },
+    "body_file": "html/empty.html"
+  },
+  "assertions": {
+    "status_code": 200,
+    "links": { "min_count": 0 },
+    "images": { "count": 0 }
+  }
+}

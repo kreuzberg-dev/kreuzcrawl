@@ -1,0 +1,8 @@
+User-agent: *
+Crawl-delay: 5
+Allow: /
+Disallow: /admin/
+
+User-agent: kreuzcrawl
+Crawl-delay: 2
+Allow: /

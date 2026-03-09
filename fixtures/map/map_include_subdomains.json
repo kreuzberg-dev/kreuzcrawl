@@ -1,0 +1,21 @@
+{
+  "id": "map_include_subdomains",
+  "description": "Includes subdomain URLs in URL map discovery",
+  "tags": ["map", "subdomain"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><body><a href=\"/local\">Local</a><a href=\"https://blog.example.com/\">Blog</a></body></html>"
+  },
+  "config": {
+    "max_depth": 0,
+    "allow_subdomains": true,
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "map": {
+      "min_urls": 2,
+      "has_url_containing": "blog.example.com"
+    }
+  }
+}

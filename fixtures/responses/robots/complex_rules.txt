@@ -1,0 +1,22 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /*.json$
+Allow: /api/public/
+
+User-agent: Googlebot
+Allow: /
+Disallow: /search
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Disallow: /search
+Crawl-delay: 3
+
+User-agent: BadBot
+Disallow: /
+
+Sitemap: https://example.com/sitemap.xml
+Sitemap: https://example.com/sitemap-news.xml

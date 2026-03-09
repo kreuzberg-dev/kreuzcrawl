@@ -1,0 +1,17 @@
+{
+  "id": "scrape_complex_links",
+  "description": "Classifies links by type: internal, external, anchor, document, image",
+  "tags": ["scrape", "links"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": { "content-type": "text/html; charset=utf-8" },
+    "body_file": "html/complex_links.html"
+  },
+  "assertions": {
+    "status_code": 200,
+    "links": {
+      "min_count": 10,
+      "has_type": ["internal", "external", "anchor", "document"]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "robots_user_agent_specific",
+  "description": "Matches user-agent specific rules in robots.txt",
+  "tags": ["robots", "user-agent"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/plain"},
+    "body_file": "robots/user_agent_specific.txt"
+  },
+  "config": {
+    "respect_robots_txt": true,
+    "user_agent": "KreuzcrawlBot"
+  },
+  "assertions": {
+    "robots": {
+      "is_allowed": false
+    }
+  }
+}

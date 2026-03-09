@@ -1,0 +1,30 @@
+{
+  "id": "redirect_meta_refresh",
+  "description": "Follows HTML meta-refresh redirect to target page",
+  "tags": ["redirect", "html"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_file": "html/meta_refresh.html"
+    },
+    {
+      "path": "/target",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Meta Refresh Target</h1></body></html>"
+    }
+  ],
+  "config": {
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "redirect": {
+      "final_url_contains": "/target",
+      "redirect_count": 1
+    }
+  }
+}

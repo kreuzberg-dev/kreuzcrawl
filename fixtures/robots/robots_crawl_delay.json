@@ -1,0 +1,19 @@
+{
+  "id": "robots_crawl_delay",
+  "description": "Respects crawl-delay directive from robots.txt",
+  "tags": ["robots", "rate-limit"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": { "content-type": "text/plain" },
+    "body_file": "robots/crawl_delay.txt"
+  },
+  "config": {
+    "respect_robots_txt": true,
+    "user_agent": "kreuzcrawl"
+  },
+  "assertions": {
+    "robots": {
+      "crawl_delay": 2
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "map_exclude_patterns",
+  "description": "Excludes URLs matching patterns from URL map",
+  "tags": ["map", "filter"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><body><a href=\"/public\">Public</a><a href=\"/private/data\">Private</a><a href=\"/api/v1\">API</a></body></html>"
+  },
+  "config": {
+    "max_depth": 0,
+    "exclude_paths": ["/private/.*", "/api/.*"],
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "map": {
+      "url_count": 1
+    }
+  }
+}

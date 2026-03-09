@@ -1,0 +1,29 @@
+{
+  "id": "sitemap_from_robots_txt",
+  "description": "Discovers sitemap via robots.txt Sitemap directive",
+  "tags": ["sitemap", "robots"],
+  "mock_responses": [
+    {
+      "path": "/robots.txt",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/plain"},
+      "body_inline": "User-agent: *\nAllow: /\n\nSitemap: /sitemap.xml"
+    },
+    {
+      "path": "/sitemap.xml",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "application/xml"},
+      "body_file": "xml/sitemap_basic.xml"
+    }
+  ],
+  "config": {
+    "respect_robots_txt": true
+  },
+  "assertions": {
+    "sitemap": {
+      "url_count": 4
+    }
+  }
+}

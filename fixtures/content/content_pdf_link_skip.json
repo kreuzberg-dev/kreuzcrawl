@@ -1,0 +1,38 @@
+{
+  "id": "content_pdf_link_skip",
+  "description": "Encounters PDF link and skips or marks as document type",
+  "tags": ["content", "pdf"],
+  "category": "crawl",
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><a href=\"/doc.pdf\">PDF</a><a href=\"/page\">Page</a></body></html>"
+    },
+    {
+      "path": "/doc.pdf",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "application/pdf"},
+      "body_inline": ""
+    },
+    {
+      "path": "/page",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><h1>Page</h1></body></html>"
+    }
+  ],
+  "config": {
+    "max_depth": 1,
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "content": {
+      "was_skipped": true
+    }
+  }
+}

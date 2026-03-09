@@ -45,3 +45,45 @@ tasks:
     desc: Clean build artifacts
     cmds:
       - cargo clean
+
+  e2e:generate:
+    desc: Generate E2E test suites from fixtures (with format + lint)
+    cmds:
+      - cargo run -p kreuzcrawl-e2e-generator -- generate --fixtures fixtures --output e2e
+      - task: e2e:format
+      - task: e2e:lint
+
+  e2e:format:
+    desc: Format generated E2E test code
+    cmds:
+      - cargo fmt --manifest-path e2e/rust/Cargo.toml
+
+  e2e:lint:
+    desc: Lint generated E2E code with clippy
+    cmds:
+      - cargo clippy --manifest-path e2e/rust/Cargo.toml -- -D warnings
+
+  e2e:test:
+    desc: Run generated E2E tests
+    deps: [e2e:generate]
+    cmds:
+      - cargo test --manifest-path e2e/rust/Cargo.toml
+
+  e2e:list:
+    desc: List all E2E fixtures
+    cmds:
+      - cargo run -p kreuzcrawl-e2e-generator -- list --fixtures fixtures
+
+  e2e:verify:
+    desc: Full E2E pipeline (generate → format → lint)
+    cmds:
+      - task: e2e:generate
+      - git diff --exit-code e2e/
+
+  e2e:verify:ci:
+    desc: CI verification - ensure generated code is formatted, lint-clean, and up-to-date
+    cmds:
+      - cargo run -p kreuzcrawl-e2e-generator -- generate --fixtures fixtures --output e2e
+      - cargo fmt --manifest-path e2e/rust/Cargo.toml --check
+      - cargo clippy --manifest-path e2e/rust/Cargo.toml -- -D warnings
+      - git diff --exit-code e2e/

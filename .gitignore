@@ -8,3 +8,4 @@ target/
 .vscode/
 CLAUDE.md
 AGENTS.md
+e2e/
