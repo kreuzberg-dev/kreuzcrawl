@@ -1,0 +1,47 @@
+version: "3"
+
+vars:
+  BUILD_PROFILE: '{{.BUILD_PROFILE | default "dev"}}'
+
+tasks:
+  setup:
+    desc: Install development dependencies
+    cmds:
+      - cargo fetch
+      - prek install
+      - prek install --hook-type commit-msg
+
+  build:
+    desc: Build workspace
+    cmds:
+      - cargo build --workspace
+
+  build:release:
+    desc: Build workspace in release mode
+    cmds:
+      - cargo build --workspace --release
+
+  test:
+    desc: Run all tests
+    cmds:
+      - cargo test --workspace
+
+  lint:
+    desc: Run prek hooks
+    cmds:
+      - prek run --all-files
+
+  format:
+    desc: Format code
+    cmds:
+      - cargo fmt --all
+
+  check:
+    desc: Check without building
+    cmds:
+      - cargo check --workspace --all-targets
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - cargo clean

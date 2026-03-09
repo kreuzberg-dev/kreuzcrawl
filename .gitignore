@@ -1,0 +1,10 @@
+target/
+*.swp
+*.swo
+.DS_Store
+.env
+.claude/
+.idea/
+.vscode/
+CLAUDE.md
+AGENTS.md
