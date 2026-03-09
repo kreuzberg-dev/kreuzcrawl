@@ -97,6 +97,74 @@ async fn test_content_pdf_link_skip() {
 }
 
 #[tokio::test]
+async fn test_crawl_concurrent_depth() {
+    // Concurrent crawl respects max_depth limit
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><h1>A</h1><a href=\"/a/deep\">Deep A</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/a",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body><h1>B</h1><a href=\"/b/deep\">Deep B</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/b",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+    let body_3 = "<html><body><h1>Deep A</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/a/deep",
+        200,
+        &[("content-type", "text/html")],
+        &body_3,
+    )
+    .await;
+    let body_4 = "<html><body><h1>Deep B</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/b/deep",
+        200,
+        &[("content-type", "text/html")],
+        &body_4,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        respect_robots_txt: false,
+        max_concurrent: Some(3),
+        ..Default::default()
+    };
+
+    let result = kreuzcrawl::crawl(&mock.uri(), &config).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.pages.len(), 3);
+    assert!(result.pages.iter().all(|p| p.stayed_on_domain));
+}
+
+#[tokio::test]
 async fn test_crawl_concurrent_limit() {
     // Respects max concurrent requests limit during crawl
     let mock = helpers::setup_mock_server().await;
@@ -164,6 +232,84 @@ async fn test_crawl_concurrent_limit() {
 }
 
 #[tokio::test]
+async fn test_crawl_concurrent_max_pages() {
+    // Concurrent crawl respects max_pages budget
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/p1\">1</a><a href=\"/p2\">2</a><a href=\"/p3\">3</a><a href=\"/p4\">4</a><a href=\"/p5\">5</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><h1>P1</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p1",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body><h1>P2</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p2",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+    let body_3 = "<html><body><h1>P3</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p3",
+        200,
+        &[("content-type", "text/html")],
+        &body_3,
+    )
+    .await;
+    let body_4 = "<html><body><h1>P4</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p4",
+        200,
+        &[("content-type", "text/html")],
+        &body_4,
+    )
+    .await;
+    let body_5 = "<html><body><h1>P5</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p5",
+        200,
+        &[("content-type", "text/html")],
+        &body_5,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_pages: Some(3),
+        respect_robots_txt: false,
+        max_concurrent: Some(4),
+        ..Default::default()
+    };
+
+    let result = kreuzcrawl::crawl(&mock.uri(), &config).await;
+    let result = result.expect("request should succeed");
+    assert!(result.pages.len() <= 3);
+}
+
+#[tokio::test]
 async fn test_crawl_custom_headers() {
     // Sends custom headers on all crawl requests
     let mock = helpers::setup_mock_server().await;
@@ -193,8 +339,8 @@ async fn test_crawl_custom_headers() {
         respect_robots_txt: false,
         custom_headers: Some(
             vec![
-                ("Accept-Language".to_owned(), "en-US".to_owned()),
                 ("X-Custom-Header".to_owned(), "test-value".to_owned()),
+                ("Accept-Language".to_owned(), "en-US".to_owned()),
             ]
             .into_iter()
             .collect(),

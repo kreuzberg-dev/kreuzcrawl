@@ -10,7 +10,7 @@ use crate::fixtures::{
     ExtendedMetadataAssertions, ExtendedOgAssertions, FaviconAssertions, FeedAssertions, Fixture,
     HeadingAssertions, HreflangAssertions, ImageAssertions, JsonLdAssertions, LinkAssertions,
     MapAssertions, MetadataAssertions, OgAssertions, RedirectAssertions, ResponseMetaAssertions,
-    RobotsAssertions, SitemapAssertions, TwitterAssertions,
+    RobotsAssertions, SitemapAssertions, StreamAssertions, TwitterAssertions,
 };
 
 /// Generate Rust E2E test files from fixtures, grouped by category.
@@ -78,11 +78,13 @@ path = "src/lib.rs"
 kreuzcrawl = { path = "../../crates/kreuzcrawl" }
 wiremock = "0.6"
 tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
 
 [dev-dependencies]
 kreuzcrawl = { path = "../../crates/kreuzcrawl" }
 wiremock = "0.6"
 tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
 "#
     .to_owned()
 }
@@ -181,7 +183,11 @@ fn generate_category_file(_category: &str, fixtures: &[&Fixture]) -> Result<Stri
             .map(|l| !l.has_type.is_empty())
             .unwrap_or(false)
     });
+    let needs_crawl_event = active_fixtures.iter().any(|f| f.category() == "stream");
     let mut imports = Vec::new();
+    if needs_crawl_event {
+        imports.push("CrawlEvent");
+    }
     if needs_feed_type {
         imports.push("FeedType");
     }
@@ -190,6 +196,9 @@ fn generate_category_file(_category: &str, fixtures: &[&Fixture]) -> Result<Stri
     }
     if !imports.is_empty() {
         writeln!(out, "use kreuzcrawl::{{{}}};", imports.join(", "))?;
+    }
+    if needs_crawl_event {
+        writeln!(out, "use tokio_stream::StreamExt;")?;
     }
 
     writeln!(out)?;
@@ -353,6 +362,16 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
                 "    let result = kreuzcrawl::map(&mock.uri(), &config).await;"
             )?;
         }
+        "stream" => {
+            writeln!(
+                out,
+                "    let stream = kreuzcrawl::crawl_stream(&mock.uri(), &config);"
+            )?;
+            writeln!(
+                out,
+                "    let events: Vec<CrawlEvent> = stream.collect().await;"
+            )?;
+        }
         // Single-page categories: scrape, metadata, links, robots, content, auth, error
         _ => {
             writeln!(
@@ -365,6 +384,10 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
     // For error category, handle Result differently
     if category == "error" {
         generate_error_assertions(out, fixture)?;
+    } else if category == "stream" {
+        if let Some(ref assertions) = fixture.assertions {
+            generate_assertions(out, assertions, category)?;
+        }
     } else {
         writeln!(
             out,
@@ -649,6 +672,9 @@ fn generate_assertions(out: &mut String, assertions: &Assertions, category: &str
     }
     if let Some(ref assets) = assertions.assets {
         generate_asset_assertions(out, assets)?;
+    }
+    if let Some(ref stream) = assertions.stream {
+        generate_stream_assertions(out, stream)?;
     }
 
     Ok(())
@@ -1402,6 +1428,25 @@ fn generate_asset_assertions(out: &mut String, assets: &AssetAssertions) -> Resu
             "    let unique_hashes: std::collections::HashSet<&str> = result.assets.iter().map(|a| a.content_hash.as_str()).collect();"
         )?;
         writeln!(out, "    assert_eq!(unique_hashes.len(), {unique});")?;
+    }
+    Ok(())
+}
+
+fn generate_stream_assertions(out: &mut String, stream: &StreamAssertions) -> Result<()> {
+    if let Some(min) = stream.event_count_min {
+        writeln!(out, "    assert!(events.len() >= {min});")?;
+    }
+    if stream.has_page_event == Some(true) {
+        writeln!(
+            out,
+            "    assert!(events.iter().any(|e| matches!(e, CrawlEvent::Page(_))));"
+        )?;
+    }
+    if stream.has_complete_event == Some(true) {
+        writeln!(
+            out,
+            "    assert!(events.iter().any(|e| matches!(e, CrawlEvent::Complete {{ .. }})));"
+        )?;
     }
     Ok(())
 }

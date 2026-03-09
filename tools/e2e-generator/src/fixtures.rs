@@ -170,6 +170,7 @@ pub struct Assertions {
     pub computed: Option<ComputedAssertions>,
     pub response_meta: Option<ResponseMetaAssertions>,
     pub assets: Option<AssetAssertions>,
+    pub stream: Option<StreamAssertions>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -368,6 +369,13 @@ pub struct AssetAssertions {
     pub min_count: Option<usize>,
     pub has_category: Option<String>,
     pub unique_hashes: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct StreamAssertions {
+    pub event_count_min: Option<usize>,
+    pub has_page_event: Option<bool>,
+    pub has_complete_event: Option<bool>,
 }
 
 /// Skip directives for conditional test execution.
