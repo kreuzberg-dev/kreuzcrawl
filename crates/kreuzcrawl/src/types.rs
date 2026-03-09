@@ -510,6 +510,18 @@ pub struct CrawlPageResult {
     pub detected_charset: Option<String>,
 }
 
+/// An event emitted during a streaming crawl operation.
+#[derive(Debug, Clone)]
+pub enum CrawlEvent {
+    /// A single page has been crawled.
+    Page(Box<CrawlPageResult>),
+    /// The crawl has completed.
+    Complete {
+        /// Total number of pages crawled.
+        pages_crawled: usize,
+    },
+}
+
 /// The result of a multi-page crawl operation.
 #[derive(Debug, Clone, Default)]
 pub struct CrawlResult {

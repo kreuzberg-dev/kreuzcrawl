@@ -55,8 +55,8 @@ async fn test_cookies_persistence() {
         "/",
         200,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("set-cookie", "session=abc123; Path=/"),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body_0,
     )
@@ -95,8 +95,8 @@ async fn test_cookies_set_cookie_response() {
         "/",
         200,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("set-cookie", "tracking=xyz789; Path=/; HttpOnly"),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body_0,
     )
