@@ -5,10 +5,12 @@ use camino::Utf8Path;
 use itertools::Itertools;
 
 use crate::fixtures::{
-    Assertions, AuthAssertions, ContentAssertions, CookieAssertions, CrawlAssertions,
-    DublinCoreAssertions, ErrorAssertions, FeedAssertions, Fixture, ImageAssertions,
-    JsonLdAssertions, LinkAssertions, MapAssertions, MetadataAssertions, OgAssertions,
-    RedirectAssertions, RobotsAssertions, SitemapAssertions, TwitterAssertions,
+    ArticleAssertions, Assertions, AuthAssertions, ComputedAssertions, ContentAssertions,
+    CookieAssertions, CrawlAssertions, DublinCoreAssertions, ErrorAssertions,
+    ExtendedMetadataAssertions, ExtendedOgAssertions, FaviconAssertions, FeedAssertions, Fixture,
+    HeadingAssertions, HreflangAssertions, ImageAssertions, JsonLdAssertions, LinkAssertions,
+    MapAssertions, MetadataAssertions, OgAssertions, RedirectAssertions, ResponseMetaAssertions,
+    RobotsAssertions, SitemapAssertions, TwitterAssertions,
 };
 
 /// Generate Rust E2E test files from fixtures, grouped by category.
@@ -554,6 +556,30 @@ fn generate_assertions(out: &mut String, assertions: &Assertions, category: &str
     if let Some(ref map) = assertions.map {
         generate_map_assertions(out, map)?;
     }
+    if let Some(ref ext_meta) = assertions.extended_metadata {
+        generate_extended_metadata_assertions(out, ext_meta)?;
+    }
+    if let Some(ref article) = assertions.article {
+        generate_article_assertions(out, article)?;
+    }
+    if let Some(ref ext_og) = assertions.extended_og {
+        generate_extended_og_assertions(out, ext_og)?;
+    }
+    if let Some(ref hreflang) = assertions.hreflang {
+        generate_hreflang_assertions(out, hreflang)?;
+    }
+    if let Some(ref favicons) = assertions.favicons {
+        generate_favicon_assertions(out, favicons)?;
+    }
+    if let Some(ref headings) = assertions.headings {
+        generate_heading_assertions(out, headings)?;
+    }
+    if let Some(ref computed) = assertions.computed {
+        generate_computed_assertions(out, computed)?;
+    }
+    if let Some(ref resp_meta) = assertions.response_meta {
+        generate_response_meta_assertions(out, resp_meta)?;
+    }
 
     Ok(())
 }
@@ -1023,6 +1049,247 @@ fn escape_rust_string(s: &str) -> String {
         .replace('\n', "\\n")
         .replace('\r', "\\r")
         .replace('\t', "\\t")
+}
+
+fn generate_extended_metadata_assertions(
+    out: &mut String,
+    meta: &ExtendedMetadataAssertions,
+) -> Result<()> {
+    if let Some(has_kw) = meta.has_keywords {
+        if has_kw {
+            writeln!(out, "    assert!(result.metadata.keywords.is_some());")?;
+        } else {
+            writeln!(out, "    assert!(result.metadata.keywords.is_none());")?;
+        }
+    }
+    if let Some(ref contains) = meta.keywords_contains {
+        writeln!(
+            out,
+            "    assert!(result.metadata.keywords.as_ref().map(|k| k.contains(\"{}\")).unwrap_or(false));",
+            escape_rust_string(contains)
+        )?;
+    }
+    if let Some(ref author) = meta.author {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.author.as_deref(), Some(\"{}\"));",
+            escape_rust_string(author)
+        )?;
+    }
+    if let Some(has_vp) = meta.has_viewport
+        && has_vp
+    {
+        writeln!(out, "    assert!(result.metadata.viewport.is_some());")?;
+    }
+    if let Some(ref generator) = meta.generator {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.generator.as_deref(), Some(\"{}\"));",
+            escape_rust_string(generator)
+        )?;
+    }
+    if let Some(ref color) = meta.theme_color {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.theme_color.as_deref(), Some(\"{}\"));",
+            escape_rust_string(color)
+        )?;
+    }
+    if let Some(ref robots) = meta.robots_content {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.robots.as_deref(), Some(\"{}\"));",
+            escape_rust_string(robots)
+        )?;
+    }
+    if let Some(ref lang) = meta.html_lang {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.html_lang.as_deref(), Some(\"{}\"));",
+            escape_rust_string(lang)
+        )?;
+    }
+    if let Some(ref dir) = meta.html_dir {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.html_dir.as_deref(), Some(\"{}\"));",
+            escape_rust_string(dir)
+        )?;
+    }
+    Ok(())
+}
+
+fn generate_article_assertions(out: &mut String, article: &ArticleAssertions) -> Result<()> {
+    if let Some(ref pt) = article.published_time {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.article.as_ref().and_then(|a| a.published_time.as_deref()), Some(\"{}\"));",
+            escape_rust_string(pt)
+        )?;
+    }
+    if let Some(ref mt) = article.modified_time {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.article.as_ref().and_then(|a| a.modified_time.as_deref()), Some(\"{}\"));",
+            escape_rust_string(mt)
+        )?;
+    }
+    if let Some(ref author) = article.author {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.article.as_ref().and_then(|a| a.author.as_deref()), Some(\"{}\"));",
+            escape_rust_string(author)
+        )?;
+    }
+    if let Some(ref section) = article.section {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.article.as_ref().and_then(|a| a.section.as_deref()), Some(\"{}\"));",
+            escape_rust_string(section)
+        )?;
+    }
+    if let Some(count) = article.tag_count {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.article.as_ref().map(|a| a.tags.len()).unwrap_or(0), {count});"
+        )?;
+    }
+    Ok(())
+}
+
+fn generate_extended_og_assertions(out: &mut String, og: &ExtendedOgAssertions) -> Result<()> {
+    if let Some(ref video) = og.og_video {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.og_video.as_deref(), Some(\"{}\"));",
+            escape_rust_string(video)
+        )?;
+    }
+    if let Some(ref audio) = og.og_audio {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.og_audio.as_deref(), Some(\"{}\"));",
+            escape_rust_string(audio)
+        )?;
+    }
+    if let Some(count) = og.og_locale_alternate_count {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.og_locale_alternates.as_ref().map(|v| v.len()).unwrap_or(0), {count});"
+        )?;
+    }
+    Ok(())
+}
+
+fn generate_hreflang_assertions(out: &mut String, hreflang: &HreflangAssertions) -> Result<()> {
+    if let Some(count) = hreflang.count {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.hreflangs.as_ref().map(|v| v.len()).unwrap_or(0), {count});"
+        )?;
+    }
+    if let Some(ref lang) = hreflang.has_lang {
+        writeln!(
+            out,
+            "    assert!(result.metadata.hreflangs.as_ref().map(|v| v.iter().any(|h| h.lang == \"{}\")).unwrap_or(false));",
+            escape_rust_string(lang)
+        )?;
+    }
+    Ok(())
+}
+
+fn generate_favicon_assertions(out: &mut String, favicons: &FaviconAssertions) -> Result<()> {
+    if let Some(count) = favicons.count {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.favicons.as_ref().map(|v| v.len()).unwrap_or(0), {count});"
+        )?;
+    }
+    if let Some(has_apple) = favicons.has_apple_touch
+        && has_apple
+    {
+        writeln!(
+            out,
+            "    assert!(result.metadata.favicons.as_ref().map(|v| v.iter().any(|f| f.rel == \"apple-touch-icon\")).unwrap_or(false));"
+        )?;
+    }
+    Ok(())
+}
+
+fn generate_heading_assertions(out: &mut String, headings: &HeadingAssertions) -> Result<()> {
+    if let Some(count) = headings.h1_count {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.headings.as_ref().map(|v| v.iter().filter(|h| h.level == 1).count()).unwrap_or(0), {count});"
+        )?;
+    }
+    if let Some(ref text) = headings.h1_text {
+        writeln!(
+            out,
+            "    assert!(result.metadata.headings.as_ref().map(|v| v.iter().any(|h| h.level == 1 && h.text == \"{}\")).unwrap_or(false));",
+            escape_rust_string(text)
+        )?;
+    }
+    if let Some(total) = headings.total_count {
+        writeln!(
+            out,
+            "    assert_eq!(result.metadata.headings.as_ref().map(|v| v.len()).unwrap_or(0), {total});"
+        )?;
+    }
+    Ok(())
+}
+
+fn generate_computed_assertions(out: &mut String, computed: &ComputedAssertions) -> Result<()> {
+    if let Some(min) = computed.word_count_min {
+        writeln!(
+            out,
+            "    assert!(result.metadata.word_count.unwrap_or(0) >= {min});"
+        )?;
+    }
+    if let Some(max) = computed.word_count_max {
+        writeln!(
+            out,
+            "    assert!(result.metadata.word_count.unwrap_or(usize::MAX) <= {max});"
+        )?;
+    }
+    Ok(())
+}
+
+fn generate_response_meta_assertions(
+    out: &mut String,
+    meta: &ResponseMetaAssertions,
+) -> Result<()> {
+    if let Some(has_etag) = meta.has_etag
+        && has_etag
+    {
+        writeln!(
+            out,
+            "    assert!(result.response_meta.as_ref().and_then(|m| m.etag.as_ref()).is_some());"
+        )?;
+    }
+    if let Some(has_lm) = meta.has_last_modified
+        && has_lm
+    {
+        writeln!(
+            out,
+            "    assert!(result.response_meta.as_ref().and_then(|m| m.last_modified.as_ref()).is_some());"
+        )?;
+    }
+    if let Some(ref contains) = meta.server_contains {
+        writeln!(
+            out,
+            "    assert!(result.response_meta.as_ref().and_then(|m| m.server.as_ref()).map(|s| s.contains(\"{}\")).unwrap_or(false));",
+            escape_rust_string(contains)
+        )?;
+    }
+    if let Some(ref lang) = meta.content_language {
+        writeln!(
+            out,
+            "    assert_eq!(result.response_meta.as_ref().and_then(|m| m.content_language.as_deref()), Some(\"{}\"));",
+            escape_rust_string(lang)
+        )?;
+    }
+    Ok(())
 }
 
 /// Map a link type string from fixtures to a `LinkType` enum variant name.

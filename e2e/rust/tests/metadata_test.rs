@@ -4,10 +4,10 @@
 use e2e_rust::helpers;
 
 #[tokio::test]
-async fn test_metadata_all_dc_fields() {
-    // Verifies extraction of every Dublin Core field
+async fn test_metadata_article_times() {
+    // Extracts article:published_time, modified_time, author, section, and tags
     let mock = helpers::setup_mock_server().await;
-    let body = helpers::load_response_body("html/dublin_core.html");
+    let body = helpers::load_response_body("html/comprehensive_metadata.html");
     helpers::register_mock(
         &mock,
         "GET",
@@ -24,85 +24,55 @@ async fn test_metadata_all_dc_fields() {
 
     let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
     let result = result.expect("request should succeed");
-    assert!(result.metadata.dc_title.is_some());
+    assert_eq!(result.status_code, 200);
     assert_eq!(
-        result.metadata.dc_title.as_deref(),
-        Some("Effects of Climate Change on Marine Biodiversity")
+        result
+            .metadata
+            .article
+            .as_ref()
+            .and_then(|a| a.published_time.as_deref()),
+        Some("2024-01-15T10:00:00Z")
     );
     assert_eq!(
-        result.metadata.dc_creator.as_deref(),
-        Some("Dr. Jane Smith")
-    );
-}
-
-#[tokio::test]
-async fn test_metadata_all_og_fields() {
-    // Verifies extraction of every Open Graph field
-    let mock = helpers::setup_mock_server().await;
-    let body = helpers::load_response_body("html/og_metadata.html");
-    helpers::register_mock(
-        &mock,
-        "GET",
-        "/",
-        200,
-        &[("content-type", "text/html; charset=utf-8")],
-        &body,
-    )
-    .await;
-
-    let config = kreuzcrawl::CrawlConfig {
-        ..Default::default()
-    };
-
-    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
-    let result = result.expect("request should succeed");
-    assert!(result.metadata.og_title.is_some());
-    assert_eq!(result.metadata.og_title.as_deref(), Some("Article Title"));
-    assert_eq!(result.metadata.og_type.as_deref(), Some("article"));
-    assert_eq!(
-        result.metadata.og_image.as_deref(),
-        Some("https://example.com/images/article-hero.jpg")
-    );
-    assert!(result.metadata.og_description.is_some());
-}
-
-#[tokio::test]
-async fn test_metadata_all_twitter_fields() {
-    // Verifies extraction of every Twitter Card field
-    let mock = helpers::setup_mock_server().await;
-    let body = helpers::load_response_body("html/twitter_card.html");
-    helpers::register_mock(
-        &mock,
-        "GET",
-        "/",
-        200,
-        &[("content-type", "text/html; charset=utf-8")],
-        &body,
-    )
-    .await;
-
-    let config = kreuzcrawl::CrawlConfig {
-        ..Default::default()
-    };
-
-    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
-    let result = result.expect("request should succeed");
-    assert!(result.metadata.twitter_card.is_some());
-    assert_eq!(
-        result.metadata.twitter_card.as_deref(),
-        Some("summary_large_image")
+        result
+            .metadata
+            .article
+            .as_ref()
+            .and_then(|a| a.modified_time.as_deref()),
+        Some("2024-06-20T14:30:00Z")
     );
     assert_eq!(
-        result.metadata.twitter_title.as_deref(),
-        Some("New Product Launch")
+        result
+            .metadata
+            .article
+            .as_ref()
+            .and_then(|a| a.author.as_deref()),
+        Some("Jane Developer")
+    );
+    assert_eq!(
+        result
+            .metadata
+            .article
+            .as_ref()
+            .and_then(|a| a.section.as_deref()),
+        Some("Technology")
+    );
+    assert_eq!(
+        result
+            .metadata
+            .article
+            .as_ref()
+            .map(|a| a.tags.len())
+            .unwrap_or(0),
+        3
     );
 }
 
 #[tokio::test]
-async fn test_metadata_article_tags() {
-    // Extracts article:published_time, section, and tags
+async fn test_metadata_favicons() {
+    // Extracts favicon link tags including apple-touch-icon
     let mock = helpers::setup_mock_server().await;
-    let body = helpers::load_response_body("html/og_metadata.html");
+    let body = helpers::load_response_body("html/favicon_variants.html");
     helpers::register_mock(
         &mock,
         "GET",
@@ -119,38 +89,287 @@ async fn test_metadata_article_tags() {
 
     let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
     let result = result.expect("request should succeed");
-    assert!(result.metadata.og_title.is_some());
-    assert_eq!(result.metadata.og_type.as_deref(), Some("article"));
-}
-
-#[tokio::test]
-async fn test_metadata_custom_meta() {
-    // Extracts arbitrary meta tags into custom_meta map
-    let mock = helpers::setup_mock_server().await;
-    let body = helpers::load_response_body("html/basic_page.html");
-    helpers::register_mock(
-        &mock,
-        "GET",
-        "/",
-        200,
-        &[("content-type", "text/html; charset=utf-8")],
-        &body,
-    )
-    .await;
-
-    let config = kreuzcrawl::CrawlConfig {
-        ..Default::default()
-    };
-
-    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
-    let result = result.expect("request should succeed");
-    assert_eq!(result.metadata.title.as_deref(), Some("Example Domain"));
+    assert_eq!(result.status_code, 200);
+    assert_eq!(
+        result
+            .metadata
+            .favicons
+            .as_ref()
+            .map(|v| v.len())
+            .unwrap_or(0),
+        5
+    );
     assert!(
         result
             .metadata
-            .description
+            .favicons
             .as_ref()
-            .map(|d| d.contains("illustrative examples"))
+            .map(|v| v.iter().any(|f| f.rel == "apple-touch-icon"))
             .unwrap_or(false)
     );
+}
+
+#[tokio::test]
+async fn test_metadata_headings() {
+    // Extracts heading hierarchy (h1-h6) from HTML page
+    let mock = helpers::setup_mock_server().await;
+    let body = helpers::load_response_body("html/headings_hierarchy.html");
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert_eq!(
+        result
+            .metadata
+            .headings
+            .as_ref()
+            .map(|v| v.iter().filter(|h| h.level == 1).count())
+            .unwrap_or(0),
+        1
+    );
+    assert!(
+        result
+            .metadata
+            .headings
+            .as_ref()
+            .map(|v| v
+                .iter()
+                .any(|h| h.level == 1 && h.text == "Primary Heading"))
+            .unwrap_or(false)
+    );
+    assert_eq!(
+        result
+            .metadata
+            .headings
+            .as_ref()
+            .map(|v| v.len())
+            .unwrap_or(0),
+        8
+    );
+}
+
+#[tokio::test]
+async fn test_metadata_hreflang() {
+    // Extracts hreflang alternate link tags
+    let mock = helpers::setup_mock_server().await;
+    let body = helpers::load_response_body("html/comprehensive_metadata.html");
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert_eq!(
+        result
+            .metadata
+            .hreflangs
+            .as_ref()
+            .map(|v| v.len())
+            .unwrap_or(0),
+        4
+    );
+    assert!(
+        result
+            .metadata
+            .hreflangs
+            .as_ref()
+            .map(|v| v.iter().any(|h| h.lang == "en"))
+            .unwrap_or(false)
+    );
+}
+
+#[tokio::test]
+async fn test_metadata_keywords_author() {
+    // Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata
+    let mock = helpers::setup_mock_server().await;
+    let body = helpers::load_response_body("html/comprehensive_metadata.html");
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert_eq!(
+        result.metadata.title.as_deref(),
+        Some("Comprehensive Metadata Test Page")
+    );
+    assert!(result.metadata.canonical_url.is_some());
+    assert!(result.metadata.keywords.is_some());
+    assert!(
+        result
+            .metadata
+            .keywords
+            .as_ref()
+            .map(|k| k.contains("rust"))
+            .unwrap_or(false)
+    );
+    assert_eq!(result.metadata.author.as_deref(), Some("Jane Developer"));
+    assert!(result.metadata.viewport.is_some());
+    assert_eq!(result.metadata.generator.as_deref(), Some("kreuzcrawl/1.0"));
+    assert_eq!(result.metadata.theme_color.as_deref(), Some("#ff6600"));
+    assert_eq!(result.metadata.robots.as_deref(), Some("index, follow"));
+    assert_eq!(result.metadata.html_lang.as_deref(), Some("en"));
+    assert_eq!(result.metadata.html_dir.as_deref(), Some("ltr"));
+}
+
+#[tokio::test]
+async fn test_metadata_og_video_audio() {
+    // Extracts og:video, og:audio, and og:locale:alternate metadata
+    let mock = helpers::setup_mock_server().await;
+    let body = helpers::load_response_body("html/comprehensive_metadata.html");
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert_eq!(
+        result.metadata.og_video.as_deref(),
+        Some("https://example.com/video.mp4")
+    );
+    assert_eq!(
+        result.metadata.og_audio.as_deref(),
+        Some("https://example.com/audio.mp3")
+    );
+    assert_eq!(
+        result
+            .metadata
+            .og_locale_alternates
+            .as_ref()
+            .map(|v| v.len())
+            .unwrap_or(0),
+        2
+    );
+}
+
+#[tokio::test]
+async fn test_metadata_response_headers() {
+    // Extracts response metadata from HTTP headers (etag, server, content-language)
+    let mock = helpers::setup_mock_server().await;
+    let body = helpers::load_response_body("html/comprehensive_metadata.html");
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[
+            ("content-language", "en-US"),
+            ("last-modified", "Wed, 01 Jan 2025 00:00:00 GMT"),
+            ("x-powered-by", "kreuzcrawl"),
+            ("content-type", "text/html; charset=utf-8"),
+            ("etag", "\"abc123\""),
+            ("server", "nginx/1.24"),
+        ],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert!(
+        result
+            .response_meta
+            .as_ref()
+            .and_then(|m| m.etag.as_ref())
+            .is_some()
+    );
+    assert!(
+        result
+            .response_meta
+            .as_ref()
+            .and_then(|m| m.last_modified.as_ref())
+            .is_some()
+    );
+    assert!(
+        result
+            .response_meta
+            .as_ref()
+            .and_then(|m| m.server.as_ref())
+            .map(|s| s.contains("nginx"))
+            .unwrap_or(false)
+    );
+    assert_eq!(
+        result
+            .response_meta
+            .as_ref()
+            .and_then(|m| m.content_language.as_deref()),
+        Some("en-US")
+    );
+}
+
+#[tokio::test]
+async fn test_metadata_word_count() {
+    // Computes word count from visible page text
+    let mock = helpers::setup_mock_server().await;
+    let body = helpers::load_response_body("html/comprehensive_metadata.html");
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert!(result.metadata.word_count.unwrap_or(0) >= 100);
+    assert!(result.metadata.word_count.unwrap_or(usize::MAX) <= 300);
 }

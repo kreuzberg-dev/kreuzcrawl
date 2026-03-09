@@ -16,7 +16,7 @@ pub use error::CrawlError;
 pub use map::map;
 pub use scrape::scrape;
 pub use types::{
-    CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, FeedInfo, FeedType, ImageInfo,
-    ImageSource, JsonLdEntry, LinkInfo, LinkType, MapResult, PageMetadata, ScrapeResult,
-    SitemapUrl,
+    ArticleMetadata, CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, FaviconInfo, FeedInfo,
+    FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource, JsonLdEntry, LinkInfo, LinkType,
+    MapResult, PageMetadata, ResponseMeta, ScrapeResult, SitemapUrl,
 };

@@ -7,7 +7,8 @@ use scraper::{Html, Selector};
 use url::Url;
 
 use crate::types::{
-    FeedInfo, FeedType, ImageInfo, ImageSource, JsonLdEntry, LinkInfo, LinkType, PageMetadata,
+    ArticleMetadata, FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo,
+    ImageSource, JsonLdEntry, LinkInfo, LinkType, PageMetadata,
 };
 
 /// Document file extensions used for link classification.
@@ -63,6 +64,15 @@ static SEL_JSON_LD: LazyLock<Selector> =
     LazyLock::new(|| Selector::parse("script[type='application/ld+json']").unwrap());
 static SEL_MAIN_CONTENT: LazyLock<Selector> =
     LazyLock::new(|| Selector::parse("main, article, [role='main']").unwrap());
+static SEL_HTML: LazyLock<Selector> = LazyLock::new(|| Selector::parse("html").unwrap());
+static SEL_HREFLANG: LazyLock<Selector> =
+    LazyLock::new(|| Selector::parse("link[rel='alternate'][hreflang]").unwrap());
+static SEL_FAVICON: LazyLock<Selector> = LazyLock::new(|| {
+    Selector::parse("link[rel='icon'], link[rel='shortcut icon'], link[rel='apple-touch-icon']")
+        .unwrap()
+});
+static SEL_HEADINGS: LazyLock<Selector> =
+    LazyLock::new(|| Selector::parse("h1, h2, h3, h4, h5, h6").unwrap());
 
 /// Extract metadata name-value pairs from raw HTML using regex (fallback for malformed HTML).
 pub(crate) fn extract_metadata_from_raw(body: &str) -> Vec<(String, String)> {
@@ -93,6 +103,16 @@ pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
         ..Default::default()
     };
 
+    // Extract html lang and dir attributes
+    if let Some(html_el) = doc.select(&SEL_HTML).next() {
+        md.html_lang = html_el.value().attr("lang").map(String::from);
+        md.html_dir = html_el.value().attr("dir").map(String::from);
+    }
+
+    let mut article = ArticleMetadata::default();
+    let mut has_article = false;
+    let mut og_locale_alternates: Vec<String> = Vec::new();
+
     for meta in doc.select(&SEL_META) {
         let el = meta.value();
         let name = el
@@ -107,6 +127,12 @@ pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
         let name_lower = name.to_lowercase();
         match name_lower.as_str() {
             "description" => md.description = Some(content),
+            "keywords" => md.keywords = Some(content),
+            "author" => md.author = Some(content),
+            "viewport" => md.viewport = Some(content),
+            "theme-color" => md.theme_color = Some(content),
+            "generator" => md.generator = Some(content),
+            "robots" => md.robots = Some(content),
             "og:title" => md.og_title = Some(content),
             "og:type" => md.og_type = Some(content),
             "og:image" => md.og_image = Some(content),
@@ -114,6 +140,29 @@ pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
             "og:url" => md.og_url = Some(content),
             "og:site_name" => md.og_site_name = Some(content),
             "og:locale" => md.og_locale = Some(content),
+            "og:video" => md.og_video = Some(content),
+            "og:audio" => md.og_audio = Some(content),
+            "og:locale:alternate" => og_locale_alternates.push(content),
+            "article:published_time" => {
+                article.published_time = Some(content);
+                has_article = true;
+            }
+            "article:modified_time" => {
+                article.modified_time = Some(content);
+                has_article = true;
+            }
+            "article:author" => {
+                article.author = Some(content);
+                has_article = true;
+            }
+            "article:section" => {
+                article.section = Some(content);
+                has_article = true;
+            }
+            "article:tag" => {
+                article.tags.push(content);
+                has_article = true;
+            }
             "twitter:card" => md.twitter_card = Some(content),
             "twitter:title" => md.twitter_title = Some(content),
             "twitter:description" => md.twitter_description = Some(content),
@@ -133,6 +182,13 @@ pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
             "dc.rights" => md.dc_rights = Some(content),
             _ => {}
         }
+    }
+
+    if has_article {
+        md.article = Some(article);
+    }
+    if !og_locale_alternates.is_empty() {
+        md.og_locale_alternates = Some(og_locale_alternates);
     }
 
     // Regex-based fallback for malformed HTML where DOM parsing misses meta tags
@@ -505,6 +561,71 @@ pub(crate) fn apply_remove_tags(html: &str, tags: &[String]) -> String {
         }
     }
     output
+}
+
+/// Extract hreflang alternate links from a parsed HTML document.
+pub(crate) fn extract_hreflangs(doc: &Html) -> Vec<HreflangEntry> {
+    let mut entries = Vec::new();
+    for el in doc.select(&SEL_HREFLANG) {
+        let lang = el.value().attr("hreflang").unwrap_or("").to_owned();
+        let url = el.value().attr("href").unwrap_or("").to_owned();
+        if !lang.is_empty() && !url.is_empty() {
+            entries.push(HreflangEntry { lang, url });
+        }
+    }
+    entries
+}
+
+/// Extract favicon and icon links from a parsed HTML document.
+pub(crate) fn extract_favicons(doc: &Html) -> Vec<FaviconInfo> {
+    let mut favicons = Vec::new();
+    for el in doc.select(&SEL_FAVICON) {
+        let url = el.value().attr("href").unwrap_or("").to_owned();
+        if url.is_empty() {
+            continue;
+        }
+        let rel = el.value().attr("rel").unwrap_or("").to_owned();
+        let sizes = el.value().attr("sizes").map(String::from);
+        let mime_type = el.value().attr("type").map(String::from);
+        favicons.push(FaviconInfo {
+            url,
+            rel,
+            sizes,
+            mime_type,
+        });
+    }
+    favicons
+}
+
+/// Extract heading elements (h1-h6) from a parsed HTML document.
+pub(crate) fn extract_headings(doc: &Html) -> Vec<HeadingInfo> {
+    let mut headings = Vec::new();
+    for el in doc.select(&SEL_HEADINGS) {
+        let tag_name = el.value().name();
+        let level = match tag_name {
+            "h1" => 1,
+            "h2" => 2,
+            "h3" => 3,
+            "h4" => 4,
+            "h5" => 5,
+            "h6" => 6,
+            _ => continue,
+        };
+        let text = el.text().collect::<String>().trim().to_owned();
+        headings.push(HeadingInfo { level, text });
+    }
+    headings
+}
+
+/// Compute the word count of visible text in the HTML body.
+pub(crate) fn compute_word_count(doc: &Html) -> usize {
+    static SEL_BODY: LazyLock<Selector> = LazyLock::new(|| Selector::parse("body").unwrap());
+    let body_text = doc
+        .select(&SEL_BODY)
+        .next()
+        .map(|el| el.text().collect::<String>())
+        .unwrap_or_default();
+    body_text.split_whitespace().count()
 }
 
 /// Extract the main content from an HTML page (looks for `<main>`, `<article>`, or `[role='main']`).
