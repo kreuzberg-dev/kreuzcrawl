@@ -158,6 +158,14 @@ pub struct Assertions {
     pub cookies: Option<CookieAssertions>,
     pub auth: Option<AuthAssertions>,
     pub map: Option<MapAssertions>,
+    pub extended_metadata: Option<ExtendedMetadataAssertions>,
+    pub article: Option<ArticleAssertions>,
+    pub extended_og: Option<ExtendedOgAssertions>,
+    pub hreflang: Option<HreflangAssertions>,
+    pub favicons: Option<FaviconAssertions>,
+    pub headings: Option<HeadingAssertions>,
+    pub computed: Option<ComputedAssertions>,
+    pub response_meta: Option<ResponseMetaAssertions>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -286,6 +294,68 @@ pub struct MapAssertions {
     pub min_urls: Option<usize>,
     pub has_url_containing: Option<String>,
     pub max_urls: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ExtendedMetadataAssertions {
+    pub has_keywords: Option<bool>,
+    pub keywords_contains: Option<String>,
+    pub author: Option<String>,
+    pub has_viewport: Option<bool>,
+    pub generator: Option<String>,
+    pub theme_color: Option<String>,
+    pub robots_content: Option<String>,
+    pub html_lang: Option<String>,
+    pub html_dir: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ArticleAssertions {
+    pub published_time: Option<String>,
+    pub modified_time: Option<String>,
+    pub author: Option<String>,
+    pub section: Option<String>,
+    pub tag_count: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ExtendedOgAssertions {
+    pub og_video: Option<String>,
+    pub og_audio: Option<String>,
+    pub og_locale_alternate_count: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct HreflangAssertions {
+    pub count: Option<usize>,
+    pub has_lang: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct FaviconAssertions {
+    pub count: Option<usize>,
+    pub has_apple_touch: Option<bool>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct HeadingAssertions {
+    pub h1_count: Option<usize>,
+    pub h1_text: Option<String>,
+    pub total_count: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ComputedAssertions {
+    pub word_count_min: Option<usize>,
+    pub word_count_max: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ResponseMetaAssertions {
+    pub has_etag: Option<bool>,
+    pub has_last_modified: Option<bool>,
+    pub server_contains: Option<String>,
+    pub content_language: Option<String>,
 }
 
 /// Skip directives for conditional test execution.

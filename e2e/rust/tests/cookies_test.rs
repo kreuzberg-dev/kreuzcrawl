@@ -14,8 +14,8 @@ async fn test_cookies_per_domain() {
         "/",
         200,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("set-cookie", "domain_cookie=value1; Path=/"),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body_0,
     )
@@ -95,8 +95,8 @@ async fn test_cookies_set_cookie_response() {
         "/",
         200,
         &[
-            ("set-cookie", "tracking=xyz789; Path=/; HttpOnly"),
             ("content-type", "text/html; charset=utf-8"),
+            ("set-cookie", "tracking=xyz789; Path=/; HttpOnly"),
         ],
         &body_0,
     )

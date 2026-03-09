@@ -5,11 +5,12 @@ use url::Url;
 
 use crate::error::CrawlError;
 use crate::html::{
-    apply_remove_tags, detect_charset, detect_nofollow, detect_noindex, extract_feeds,
-    extract_images, extract_json_ld, extract_links, extract_main_content, extract_metadata,
-    is_binary_content_type, is_binary_url, is_html_content, is_pdf_content,
+    apply_remove_tags, compute_word_count, detect_charset, detect_nofollow, detect_noindex,
+    extract_favicons, extract_feeds, extract_headings, extract_hreflangs, extract_images,
+    extract_json_ld, extract_links, extract_main_content, extract_metadata, is_binary_content_type,
+    is_binary_url, is_html_content, is_pdf_content,
 };
-use crate::http::{build_client, fetch_with_retry, http_fetch};
+use crate::http::{build_client, extract_response_meta, fetch_with_retry, http_fetch};
 use crate::normalize::robots_url;
 use crate::robots::{is_path_allowed, parse_robots_txt};
 use crate::types::{CrawlConfig, PageMetadata, ScrapeResult};
@@ -65,6 +66,7 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
                 detected_charset: None,
                 main_content_only: config.main_content_only,
                 auth_header_sent,
+                response_meta: None,
             });
         }
         Err(e) => return Err(e),
@@ -130,11 +132,29 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
         nofollow_detected = detect_nofollow(&doc);
     }
 
-    let metadata = if is_html {
+    let response_meta = extract_response_meta(&headers);
+
+    let mut metadata = if is_html {
         extract_metadata(&doc, &body)
     } else {
         PageMetadata::default()
     };
+
+    if is_html {
+        let hreflangs = extract_hreflangs(&doc);
+        if !hreflangs.is_empty() {
+            metadata.hreflangs = Some(hreflangs);
+        }
+        let favicons = extract_favicons(&doc);
+        if !favicons.is_empty() {
+            metadata.favicons = Some(favicons);
+        }
+        let headings = extract_headings(&doc);
+        if !headings.is_empty() {
+            metadata.headings = Some(headings);
+        }
+        metadata.word_count = Some(compute_word_count(&doc));
+    }
 
     let links = if is_html {
         extract_links(&doc, &parsed_url)
@@ -177,5 +197,6 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
         detected_charset,
         main_content_only: main_content_active,
         auth_header_sent,
+        response_meta: Some(response_meta),
     })
 }

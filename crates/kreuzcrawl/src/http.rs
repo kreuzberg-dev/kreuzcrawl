@@ -5,7 +5,7 @@ use std::time::Duration;
 use reqwest::header::{CONTENT_TYPE, HeaderMap, USER_AGENT};
 
 use crate::error::{CrawlError, classify_reqwest_error, error_chain_string};
-use crate::types::{CookieInfo, CrawlConfig};
+use crate::types::{CookieInfo, CrawlConfig, ResponseMeta};
 
 /// An HTTP response with status, headers, and body content.
 pub(crate) struct HttpResponse {
@@ -231,4 +231,23 @@ pub(crate) fn extract_cookies(headers: &HeaderMap) -> Vec<CookieInfo> {
         }
     }
     cookies
+}
+
+/// Extract response metadata from HTTP headers.
+pub(crate) fn extract_response_meta(headers: &HeaderMap) -> ResponseMeta {
+    let get = |name: &str| -> Option<String> {
+        headers
+            .get(name)
+            .and_then(|v| v.to_str().ok())
+            .map(String::from)
+    };
+    ResponseMeta {
+        etag: get("etag"),
+        last_modified: get("last-modified"),
+        cache_control: get("cache-control"),
+        server: get("server"),
+        x_powered_by: get("x-powered-by"),
+        content_language: get("content-language"),
+        content_encoding: get("content-encoding"),
+    }
 }
