@@ -1,0 +1,30 @@
+{
+  "id": "redirect_308_permanent",
+  "description": "Follows 308 Permanent Redirect (preserves method)",
+  "tags": ["redirect"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 308,
+      "headers": {"location": "/perm-target"},
+      "body_inline": ""
+    },
+    {
+      "path": "/perm-target",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Permanent Target</h1></body></html>"
+    }
+  ],
+  "config": {
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "redirect": {
+      "final_url_contains": "/perm-target",
+      "redirect_count": 1
+    }
+  }
+}

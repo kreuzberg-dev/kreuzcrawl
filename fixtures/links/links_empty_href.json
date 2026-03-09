@@ -1,0 +1,16 @@
+{
+  "id": "links_empty_href",
+  "description": "Handles empty href attributes without errors",
+  "tags": ["links", "edge-case"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_file": "html/empty_href_links.html"
+  },
+  "assertions": {
+    "links": {
+      "min_count": 1,
+      "contains_url": "/valid"
+    }
+  }
+}

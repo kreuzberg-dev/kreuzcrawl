@@ -1,0 +1,19 @@
+{
+  "id": "content_utf8_bom",
+  "description": "Handles UTF-8 content with BOM marker correctly",
+  "tags": ["content", "charset"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_file": "html/utf8_bom.html"
+  },
+  "config": {
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "content": {
+      "detected_charset": "utf-8"
+    },
+    "html_not_empty": true
+  }
+}

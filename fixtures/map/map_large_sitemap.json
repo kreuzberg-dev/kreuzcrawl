@@ -1,0 +1,18 @@
+{
+  "id": "map_large_sitemap",
+  "description": "Handles large sitemap with 100+ URLs",
+  "tags": ["map", "sitemap", "large"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "application/xml"},
+    "body_file": "xml/sitemap_large.xml"
+  },
+  "config": {
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "map": {
+      "min_urls": 100
+    }
+  }
+}

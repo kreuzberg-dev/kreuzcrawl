@@ -1,0 +1,16 @@
+{
+  "id": "error_empty_response",
+  "description": "Handles 200 with completely empty body gracefully",
+  "tags": ["error", "edge-case"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {},
+    "body_inline": ""
+  },
+  "assertions": {
+    "error": {
+      "is_error": false
+    },
+    "html_not_empty": false
+  }
+}

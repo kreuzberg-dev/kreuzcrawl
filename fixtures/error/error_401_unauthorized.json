@@ -1,0 +1,17 @@
+{
+  "id": "error_401_unauthorized",
+  "description": "Handles 401 Unauthorized response correctly",
+  "tags": ["error"],
+  "mock_response": {
+    "status_code": 401,
+    "headers": {"content-type": "text/html; charset=utf-8", "www-authenticate": "Basic realm=\"test\""},
+    "body_inline": "<html><body><h1>401 Unauthorized</h1></body></html>"
+  },
+  "assertions": {
+    "status_code": 401,
+    "error": {
+      "is_error": true,
+      "error_type": "unauthorized"
+    }
+  }
+}

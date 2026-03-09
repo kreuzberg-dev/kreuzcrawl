@@ -1,0 +1,16 @@
+{
+  "id": "encoding_double_encoded",
+  "description": "Handles double-encoded URL characters (%25C3%25B6)",
+  "tags": ["encoding", "edge-case"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><body><a href=\"/path%25C3%25B6name\">Double Encoded</a><p>Content</p></body></html>"
+  },
+  "assertions": {
+    "html_not_empty": true,
+    "links": {
+      "min_count": 1
+    }
+  }
+}

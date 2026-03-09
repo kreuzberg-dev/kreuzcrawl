@@ -1,0 +1,20 @@
+{
+  "id": "robots_request_rate",
+  "description": "Parses request-rate directive from robots.txt",
+  "tags": ["robots", "rate-limit"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/plain"},
+    "body_file": "robots/request_rate.txt"
+  },
+  "config": {
+    "respect_robots_txt": true,
+    "user_agent": "kreuzcrawl"
+  },
+  "assertions": {
+    "robots": {
+      "crawl_delay": 5,
+      "is_allowed": true
+    }
+  }
+}
