@@ -1,0 +1,246 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "kreuzcrawl E2E Fixture",
+  "description": "Defines a single end-to-end crawl/scrape scenario with mock HTTP responses.",
+  "type": "object",
+  "required": ["id", "description"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique identifier used as test function name."
+    },
+    "description": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "category": {
+      "type": "string",
+      "description": "Test category inferred from directory if not set."
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "url": { "type": "string" },
+        "method": { "type": "string", "default": "GET" },
+        "headers": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "mock_response": {
+      "type": "object",
+      "required": ["status_code"],
+      "properties": {
+        "status_code": { "type": "integer" },
+        "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+        "body_file": { "type": "string", "description": "Path relative to fixtures/responses/" },
+        "body_inline": { "type": "string", "description": "Inline response body (alternative to body_file)" }
+      }
+    },
+    "mock_responses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "status_code"],
+        "properties": {
+          "path": { "type": "string" },
+          "method": { "type": "string", "default": "GET" },
+          "status_code": { "type": "integer" },
+          "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+          "body_file": { "type": "string" },
+          "body_inline": { "type": "string" }
+        }
+      },
+      "description": "Multiple mock routes for crawl/map scenarios."
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "max_depth": { "type": "integer", "minimum": 0 },
+        "max_pages": { "type": "integer", "minimum": 1 },
+        "respect_robots_txt": { "type": "boolean" },
+        "request_timeout_ms": { "type": "integer", "minimum": 0 },
+        "user_agent": { "type": "string" },
+        "stay_on_domain": { "type": "boolean" },
+        "include_paths": { "type": "array", "items": { "type": "string" }, "description": "Regex patterns for URLs to include" },
+        "exclude_paths": { "type": "array", "items": { "type": "string" }, "description": "Regex patterns for URLs to exclude" },
+        "allow_subdomains": { "type": "boolean" },
+        "max_redirects": { "type": "integer", "minimum": 0 },
+        "max_body_size": { "type": "integer", "minimum": 0, "description": "Max body size in bytes" },
+        "max_concurrent": { "type": "integer", "minimum": 1 },
+        "custom_headers": { "type": "object", "additionalProperties": { "type": "string" } },
+        "cookies_enabled": { "type": "boolean" },
+        "auth_basic": {
+          "type": "object",
+          "required": ["username", "password"],
+          "properties": {
+            "username": { "type": "string" },
+            "password": { "type": "string" }
+          }
+        },
+        "auth_bearer": { "type": "string" },
+        "auth_header": {
+          "type": "object",
+          "required": ["name", "value"],
+          "properties": {
+            "name": { "type": "string" },
+            "value": { "type": "string" }
+          }
+        },
+        "retry_count": { "type": "integer", "minimum": 0 },
+        "retry_codes": { "type": "array", "items": { "type": "integer" } }
+      }
+    },
+    "assertions": {
+      "type": "object",
+      "properties": {
+        "status_code": { "type": "integer" },
+        "content_type": { "type": "string" },
+        "html_not_empty": { "type": "boolean" },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "description_contains": { "type": "string" },
+            "has_canonical_url": { "type": "boolean" }
+          }
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "min_count": { "type": "integer" },
+            "max_count": { "type": "integer" },
+            "has_type": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "images": {
+          "type": "object",
+          "properties": {
+            "count": { "type": "integer" },
+            "min_count": { "type": "integer" }
+          }
+        },
+        "og": {
+          "type": "object",
+          "properties": {
+            "has_og_title": { "type": "boolean" },
+            "og_title": { "type": "string" },
+            "og_type": { "type": "string" },
+            "og_image": { "type": "string" },
+            "has_og_description": { "type": "boolean" }
+          }
+        },
+        "twitter": {
+          "type": "object",
+          "properties": {
+            "has_twitter_card": { "type": "boolean" },
+            "twitter_card_type": { "type": "string" },
+            "twitter_title": { "type": "string" }
+          }
+        },
+        "dublin_core": {
+          "type": "object",
+          "properties": {
+            "has_dc_title": { "type": "boolean" },
+            "dc_title": { "type": "string" },
+            "dc_creator": { "type": "string" }
+          }
+        },
+        "json_ld": {
+          "type": "object",
+          "properties": {
+            "has_json_ld": { "type": "boolean" },
+            "json_ld_type": { "type": "string" },
+            "json_ld_name": { "type": "string" }
+          }
+        },
+        "feeds": {
+          "type": "object",
+          "properties": {
+            "rss_count": { "type": "integer" },
+            "atom_count": { "type": "integer" },
+            "json_feed_count": { "type": "integer" }
+          }
+        },
+        "robots": {
+          "type": "object",
+          "properties": {
+            "is_allowed": { "type": "boolean" },
+            "crawl_delay": { "type": "integer" }
+          }
+        },
+        "sitemap": {
+          "type": "object",
+          "properties": {
+            "url_count": { "type": "integer" },
+            "has_lastmod": { "type": "boolean" }
+          }
+        },
+        "crawl": {
+          "type": "object",
+          "properties": {
+            "pages_crawled": { "type": "integer" },
+            "min_pages": { "type": "integer" },
+            "max_pages": { "type": "integer" },
+            "stayed_on_domain": { "type": "boolean" }
+          }
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "is_error": { "type": "boolean" },
+            "error_type": { "type": "string" }
+          }
+        },
+        "redirect": {
+          "type": "object",
+          "properties": {
+            "final_url_contains": { "type": "string" },
+            "redirect_count": { "type": "integer" },
+            "is_error": { "type": "boolean" }
+          }
+        },
+        "content": {
+          "type": "object",
+          "properties": {
+            "was_skipped": { "type": "boolean" },
+            "detected_charset": { "type": "string" },
+            "body_size_within": { "type": "integer" }
+          }
+        },
+        "cookies": {
+          "type": "object",
+          "properties": {
+            "cookie_count": { "type": "integer" },
+            "has_cookie": { "type": "string" }
+          }
+        },
+        "auth": {
+          "type": "object",
+          "properties": {
+            "auth_header_sent": { "type": "boolean" },
+            "status_code": { "type": "integer" }
+          }
+        },
+        "map": {
+          "type": "object",
+          "properties": {
+            "url_count": { "type": "integer" },
+            "min_urls": { "type": "integer" },
+            "has_url_containing": { "type": "string" }
+          }
+        }
+      }
+    },
+    "skip": {
+      "type": "object",
+      "properties": {
+        "requires_network": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

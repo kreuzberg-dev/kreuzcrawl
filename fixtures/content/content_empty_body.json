@@ -1,0 +1,16 @@
+{
+  "id": "content_empty_body",
+  "description": "Handles 200 response with empty body gracefully",
+  "tags": ["content", "edge-case"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": ""
+  },
+  "config": {
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "status_code": 200
+  }
+}

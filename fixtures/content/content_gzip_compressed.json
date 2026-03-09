@@ -1,0 +1,19 @@
+{
+  "id": "content_gzip_compressed",
+  "description": "Handles response with Accept-Encoding gzip negotiation",
+  "tags": ["content", "compression"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {
+      "content-type": "text/html; charset=utf-8"
+    },
+    "body_inline": "<html><body><h1>Content that could be compressed</h1><p>The crawler should send Accept-Encoding: gzip and handle compressed responses.</p></body></html>"
+  },
+  "config": {
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "html_not_empty": true,
+    "status_code": 200
+  }
+}

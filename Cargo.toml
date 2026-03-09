@@ -1,5 +1,6 @@
 [workspace]
-members = ["crates/*"]
+members = ["crates/*", "tools/*"]
+exclude = ["e2e/rust"]
 resolver = "2"
 
 [workspace.package]
@@ -8,3 +9,12 @@ edition = "2024"
 license = "MIT"
 repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 rust-version = "1.91"
+
+[workspace.dependencies]
+anyhow = "1"
+camino = "1.2"
+clap = { version = "4", features = ["derive"] }
+itertools = "0.14"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+walkdir = "2.5"

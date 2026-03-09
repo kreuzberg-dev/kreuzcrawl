@@ -1,0 +1,52 @@
+{
+  "id": "crawl_concurrent_limit",
+  "description": "Respects max concurrent requests limit during crawl",
+  "tags": ["crawl", "concurrency"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><a href=\"/p1\">1</a><a href=\"/p2\">2</a><a href=\"/p3\">3</a><a href=\"/p4\">4</a></body></html>"
+    },
+    {
+      "path": "/p1",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><h1>P1</h1></body></html>"
+    },
+    {
+      "path": "/p2",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><h1>P2</h1></body></html>"
+    },
+    {
+      "path": "/p3",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><h1>P3</h1></body></html>"
+    },
+    {
+      "path": "/p4",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><h1>P4</h1></body></html>"
+    }
+  ],
+  "config": {
+    "max_depth": 1,
+    "max_concurrent": 2,
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "crawl": {
+      "pages_crawled": 5
+    }
+  }
+}

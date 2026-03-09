@@ -1,0 +1,44 @@
+{
+  "id": "crawl_depth_priority",
+  "description": "Crawls in breadth-first order, processing depth-0 pages before depth-1",
+  "tags": ["crawl", "ordering"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>"
+    },
+    {
+      "path": "/a",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><a href=\"/a/deep\">Deep</a></body></html>"
+    },
+    {
+      "path": "/b",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>B</h1></body></html>"
+    },
+    {
+      "path": "/a/deep",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Deep A</h1></body></html>"
+    }
+  ],
+  "config": {
+    "max_depth": 2,
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "crawl": {
+      "pages_crawled": 4
+    }
+  }
+}

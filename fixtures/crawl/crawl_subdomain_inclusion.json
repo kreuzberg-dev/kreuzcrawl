@@ -1,0 +1,31 @@
+{
+  "id": "crawl_subdomain_inclusion",
+  "description": "Crawls subdomains when allow_subdomains is enabled",
+  "tags": ["crawl", "subdomain"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><a href=\"/page1\">Page 1</a></body></html>"
+    },
+    {
+      "path": "/page1",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Page 1</h1></body></html>"
+    }
+  ],
+  "config": {
+    "max_depth": 1,
+    "allow_subdomains": true,
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "crawl": {
+      "min_pages": 2
+    }
+  }
+}

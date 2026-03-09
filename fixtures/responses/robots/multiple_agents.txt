@@ -1,0 +1,10 @@
+User-agent: Googlebot
+Disallow: /no-google/
+
+User-agent: SpecificBot
+Allow: /
+Disallow: /secret/
+
+User-agent: *
+Disallow: /admin/
+Disallow: /private/

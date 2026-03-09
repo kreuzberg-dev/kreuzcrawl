@@ -1,0 +1,19 @@
+{
+  "id": "map_discover_urls",
+  "description": "Discovers all URLs on a site without fetching full content",
+  "tags": ["map", "discovery"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><body><a href=\"/about\">About</a><a href=\"/blog\">Blog</a><a href=\"/contact\">Contact</a></body></html>"
+  },
+  "config": {
+    "max_depth": 0,
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "map": {
+      "min_urls": 3
+    }
+  }
+}

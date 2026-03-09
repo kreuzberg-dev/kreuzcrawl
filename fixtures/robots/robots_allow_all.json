@@ -1,0 +1,18 @@
+{
+  "id": "robots_allow_all",
+  "description": "Permissive robots.txt allows all paths",
+  "tags": ["robots"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": { "content-type": "text/plain" },
+    "body_file": "robots/allow_all.txt"
+  },
+  "config": {
+    "respect_robots_txt": true
+  },
+  "assertions": {
+    "robots": {
+      "is_allowed": true
+    }
+  }
+}

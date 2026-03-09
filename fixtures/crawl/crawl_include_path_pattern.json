@@ -1,0 +1,38 @@
+{
+  "id": "crawl_include_path_pattern",
+  "description": "Only follows URLs matching the include path pattern",
+  "tags": ["crawl", "filter"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><a href=\"/blog/post1\">Blog Post</a><a href=\"/about\">About</a></body></html>"
+    },
+    {
+      "path": "/blog/post1",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>Blog Post 1</h1></body></html>"
+    },
+    {
+      "path": "/about",
+      "method": "GET",
+      "status_code": 200,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body_inline": "<html><body><h1>About</h1></body></html>"
+    }
+  ],
+  "config": {
+    "max_depth": 1,
+    "include_paths": ["/blog/.*"],
+    "respect_robots_txt": false
+  },
+  "assertions": {
+    "crawl": {
+      "pages_crawled": 2
+    }
+  }
+}
