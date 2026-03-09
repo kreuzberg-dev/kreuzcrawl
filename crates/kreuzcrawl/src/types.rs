@@ -5,6 +5,24 @@ use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 
+/// HTTP Basic authentication credentials.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct BasicAuth {
+    /// The username.
+    pub username: String,
+    /// The password.
+    pub password: String,
+}
+
+/// A custom authentication header.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct AuthHeader {
+    /// The header name.
+    pub name: String,
+    /// The header value.
+    pub value: String,
+}
+
 /// Configuration for crawl, scrape, and map operations.
 #[derive(Debug, Clone)]
 pub struct CrawlConfig {
@@ -38,12 +56,12 @@ pub struct CrawlConfig {
     pub retry_codes: Option<Vec<u16>>,
     /// Whether to enable cookie handling.
     pub cookies_enabled: bool,
-    /// HTTP Basic authentication credentials (username, password).
-    pub auth_basic: Option<(String, String)>,
+    /// HTTP Basic authentication credentials.
+    pub auth_basic: Option<BasicAuth>,
     /// Bearer token for authentication.
     pub auth_bearer: Option<String>,
-    /// Custom authentication header (name, value).
-    pub auth_header: Option<(String, String)>,
+    /// Custom authentication header.
+    pub auth_header: Option<AuthHeader>,
     /// Maximum response body size in bytes.
     pub max_body_size: Option<usize>,
     /// Whether to extract only the main content from HTML pages.
@@ -427,7 +445,7 @@ pub struct CookieInfo {
 }
 
 /// The result of a single-page scrape operation.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
     pub status_code: u16,
@@ -474,7 +492,7 @@ pub struct ScrapeResult {
 }
 
 /// The result of crawling a single page during a crawl operation.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CrawlPageResult {
     /// The original URL of the page.
     pub url: String,
@@ -511,10 +529,17 @@ pub struct CrawlPageResult {
 }
 
 /// An event emitted during a streaming crawl operation.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum CrawlEvent {
     /// A single page has been crawled.
     Page(Box<CrawlPageResult>),
+    /// An error occurred while crawling a URL.
+    Error {
+        /// The URL that failed.
+        url: String,
+        /// The error message.
+        error: String,
+    },
     /// The crawl has completed.
     Complete {
         /// Total number of pages crawled.
@@ -523,7 +548,7 @@ pub enum CrawlEvent {
 }
 
 /// The result of a multi-page crawl operation.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CrawlResult {
     /// The list of crawled pages.
     pub pages: Vec<CrawlPageResult>,
@@ -574,7 +599,7 @@ impl CrawlResult {
 }
 
 /// A URL entry from a sitemap.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SitemapUrl {
     /// The URL.
     pub url: String,
@@ -594,7 +619,7 @@ impl std::ops::Deref for SitemapUrl {
 }
 
 /// The result of a map operation, containing discovered URLs.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct MapResult {
     /// The list of discovered URLs.
     pub urls: Vec<SitemapUrl>,

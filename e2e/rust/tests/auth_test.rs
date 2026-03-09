@@ -20,7 +20,10 @@ async fn test_auth_basic_http() {
 
     let config = kreuzcrawl::CrawlConfig {
         respect_robots_txt: false,
-        auth_basic: Some(("testuser".to_owned(), "testpass".to_owned())),
+        auth_basic: Some(kreuzcrawl::BasicAuth {
+            username: "testuser".to_owned(),
+            password: "testpass".to_owned(),
+        }),
         ..Default::default()
     };
 
@@ -74,7 +77,10 @@ async fn test_auth_custom_header() {
 
     let config = kreuzcrawl::CrawlConfig {
         respect_robots_txt: false,
-        auth_header: Some(("X-API-Key".to_owned(), "sk-test-key-12345".to_owned())),
+        auth_header: Some(kreuzcrawl::AuthHeader {
+            name: "X-API-Key".to_owned(),
+            value: "sk-test-key-12345".to_owned(),
+        }),
         ..Default::default()
     };
 
