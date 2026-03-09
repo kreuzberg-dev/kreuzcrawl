@@ -14,5 +14,8 @@
     "sitemap": {
       "url_count": 3
     }
+  },
+  "skip": {
+    "notes": "Binary gzip body requires load_response_body_bytes helper; not yet supported by generator"
   }
 }

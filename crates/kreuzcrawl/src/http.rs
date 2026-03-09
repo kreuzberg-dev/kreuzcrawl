@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use reqwest::header::{CONTENT_TYPE, HeaderMap, USER_AGENT};
 
-use crate::error::{CrawlError, classify_reqwest_error};
+use crate::error::{CrawlError, classify_reqwest_error, error_chain_string};
 use crate::types::{CookieInfo, CrawlConfig};
 
 /// An HTTP response with status, headers, and body content.
@@ -23,15 +23,18 @@ pub(crate) struct HttpResponse {
 pub(crate) async fn http_fetch(
     url: &str,
     config: &CrawlConfig,
+    client: &reqwest::Client,
 ) -> Result<HttpResponse, CrawlError> {
-    let client = build_client(config)?;
     let mut req = client.get(url);
 
     // Set user-agent
     if let Some(ref ua) = config.user_agent {
         req = req.header(USER_AGENT, ua.as_str());
     } else {
-        req = req.header(USER_AGENT, "kreuzcrawl/0.1");
+        req = req.header(
+            USER_AGENT,
+            concat!("kreuzcrawl/", env!("CARGO_PKG_VERSION")),
+        );
     }
 
     // Auth
@@ -109,15 +112,7 @@ pub(crate) async fn http_fetch(
     let body_bytes = resp.bytes().await.map_err(|e| {
         // Walk the error source chain to detect body/data-loss errors that
         // reqwest wraps in generic errors.
-        let chain = {
-            let mut parts = vec![e.to_string()];
-            let mut current: &dyn std::error::Error = &e;
-            while let Some(src) = current.source() {
-                parts.push(src.to_string());
-                current = src;
-            }
-            parts.join(" | ").to_lowercase()
-        };
+        let chain = error_chain_string(&e);
         if chain.contains("content-length")
             || chain.contains("truncat")
             || chain.contains("incomplete")
@@ -142,19 +137,20 @@ pub(crate) async fn http_fetch(
         )));
     }
 
-    let body = String::from_utf8_lossy(&body_bytes).into_owned();
+    let body_bytes_vec = body_bytes.to_vec();
+    let body = String::from_utf8_lossy(&body_bytes_vec).into_owned();
 
     Ok(HttpResponse {
         status,
         content_type,
         body,
-        body_bytes: body_bytes.to_vec(),
+        body_bytes: body_bytes_vec,
         headers,
     })
 }
 
 /// Build a `reqwest::Client` with the given configuration (redirect policy, timeout, cookies).
-fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, CrawlError> {
+pub(crate) fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, CrawlError> {
     let mut builder = reqwest::Client::builder()
         .redirect(reqwest::redirect::Policy::none())
         .timeout(config.request_timeout);
@@ -175,13 +171,14 @@ fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, CrawlError> {
 pub(crate) async fn fetch_with_retry(
     url: &str,
     config: &CrawlConfig,
+    client: &reqwest::Client,
 ) -> Result<HttpResponse, CrawlError> {
     let retries = config.retry_count.unwrap_or(0);
     let retry_codes = config.retry_codes.clone().unwrap_or_default();
 
     let mut last_err = None;
     for attempt in 0..=retries {
-        match http_fetch(url, config).await {
+        match http_fetch(url, config, client).await {
             Ok(resp) => return Ok(resp),
             Err(e) => {
                 // Check if we should retry this error

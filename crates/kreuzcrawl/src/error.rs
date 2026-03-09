@@ -56,7 +56,7 @@ pub enum CrawlError {
 }
 
 /// Collect the full error source chain into a single lowercase string for keyword matching.
-fn error_chain_string(e: &reqwest::Error) -> String {
+pub(crate) fn error_chain_string(e: &reqwest::Error) -> String {
     let mut parts = vec![e.to_string()];
     let mut current: &dyn std::error::Error = e;
     while let Some(src) = current.source() {

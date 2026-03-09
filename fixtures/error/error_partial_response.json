@@ -18,5 +18,8 @@
       "is_error": true,
       "error_type": "data_loss"
     }
+  },
+  "skip": {
+    "notes": "Wiremock overrides content-length header; needs raw TCP or custom mock"
   }
 }

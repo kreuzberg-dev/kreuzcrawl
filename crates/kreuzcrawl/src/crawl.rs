@@ -12,9 +12,9 @@ use crate::html::{
     extract_links, extract_metadata, is_binary_content_type, is_binary_url, is_html_content,
     is_pdf_content, is_pdf_url,
 };
-use crate::http::{extract_cookies, http_fetch};
-use crate::normalize::{normalize_url, normalize_url_for_dedup, resolve_redirect};
-use crate::types::{CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, PageMetadata};
+use crate::http::{build_client, extract_cookies, http_fetch};
+use crate::normalize::{normalize_url, normalize_url_for_dedup, resolve_redirect, strip_fragment};
+use crate::types::{CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, LinkType, PageMetadata};
 
 /// Crawl a website starting from the given URL using breadth-first traversal.
 ///
@@ -23,6 +23,7 @@ use crate::types::{CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, PageMe
 /// with their metadata, links, images, feeds, and JSON-LD data.
 pub async fn crawl(url: &str, config: &CrawlConfig) -> Result<CrawlResult, CrawlError> {
     let parsed_url = Url::parse(url).map_err(|e| CrawlError::Other(format!("invalid URL: {e}")))?;
+    let client = build_client(config)?;
     let base_host = parsed_url.host_str().unwrap_or("").to_owned();
 
     let max_depth = config.max_depth.unwrap_or(0);
@@ -44,7 +45,7 @@ pub async fn crawl(url: &str, config: &CrawlConfig) -> Result<CrawlResult, Crawl
     seen_redirects.insert(current_url.clone());
 
     loop {
-        let resp = match http_fetch(&current_url, config).await {
+        let resp = match http_fetch(&current_url, config, &client).await {
             Ok(r) => r,
             Err(e) => {
                 // Treat fetch errors as success-with-error for crawl
@@ -130,6 +131,22 @@ pub async fn crawl(url: &str, config: &CrawlConfig) -> Result<CrawlResult, Crawl
         ));
     }
 
+    // Pre-compile include/exclude regexes once before the BFS loop
+    let exclude_regexes: Vec<Regex> = config
+        .exclude_paths
+        .as_deref()
+        .unwrap_or(&[])
+        .iter()
+        .filter_map(|pat| Regex::new(pat).ok())
+        .collect();
+    let include_regexes: Vec<Regex> = config
+        .include_paths
+        .as_deref()
+        .unwrap_or(&[])
+        .iter()
+        .filter_map(|pat| Regex::new(pat).ok())
+        .collect();
+
     // Start BFS from final_url
     queue.push_back((final_url.clone(), 0));
     let dedup_key = normalize_url_for_dedup(&final_url);
@@ -140,31 +157,21 @@ pub async fn crawl(url: &str, config: &CrawlConfig) -> Result<CrawlResult, Crawl
             break;
         }
 
-        // Check include/exclude paths
+        // Check include/exclude paths using pre-compiled regexes
         if let Ok(pu) = Url::parse(&page_url) {
             let path = pu.path();
-            if let Some(ref excludes) = config.exclude_paths {
-                let should_exclude = excludes
-                    .iter()
-                    .any(|pat| Regex::new(pat).map(|re| re.is_match(path)).unwrap_or(false));
-                if should_exclude {
-                    continue;
-                }
+            if !exclude_regexes.is_empty() && exclude_regexes.iter().any(|re| re.is_match(path)) {
+                continue;
             }
-            if let Some(ref includes) = config.include_paths {
-                // Root page (depth 0) is always included
-                if depth > 0 {
-                    let should_include = includes
-                        .iter()
-                        .any(|pat| Regex::new(pat).map(|re| re.is_match(path)).unwrap_or(false));
-                    if !should_include {
-                        continue;
-                    }
-                }
+            if !include_regexes.is_empty()
+                && depth > 0
+                && !include_regexes.iter().any(|re| re.is_match(path))
+            {
+                continue;
             }
         }
 
-        let resp = match http_fetch(&page_url, config).await {
+        let resp = match http_fetch(&page_url, config, &client).await {
             Ok(r) => r,
             Err(_) => continue,
         };
@@ -173,9 +180,9 @@ pub async fn crawl(url: &str, config: &CrawlConfig) -> Result<CrawlResult, Crawl
             all_cookies.extend(extract_cookies(&resp.headers));
         }
 
-        let content_type = resp.content_type.clone();
         let status_code = resp.status;
-        let body = resp.body.clone();
+        let content_type = resp.content_type;
+        let body = resp.body;
         let body_size = body.len();
 
         let is_binary = is_binary_content_type(&content_type) || is_binary_url(&page_url);
@@ -231,14 +238,8 @@ pub async fn crawl(url: &str, config: &CrawlConfig) -> Result<CrawlResult, Crawl
         let mut child_urls: Vec<(String, usize)> = Vec::new();
         if depth < max_depth && !page_was_skipped {
             for link in &links {
-                if link.link_type == "internal" || link.link_type == "document" {
-                    // Strip fragment from URL before queueing
-                    let link_url = if let Ok(mut u) = Url::parse(&link.url) {
-                        u.set_fragment(None);
-                        u.to_string()
-                    } else {
-                        link.url.clone()
-                    };
+                if link.link_type == LinkType::Internal || link.link_type == LinkType::Document {
+                    let link_url = strip_fragment(&link.url);
 
                     // Check stay_on_domain
                     if config.stay_on_domain
@@ -265,7 +266,7 @@ pub async fn crawl(url: &str, config: &CrawlConfig) -> Result<CrawlResult, Crawl
             url: page_url.clone(),
             normalized_url: norm_url,
             status_code,
-            content_type: content_type.clone(),
+            content_type,
             html: body,
             body_size,
             metadata,

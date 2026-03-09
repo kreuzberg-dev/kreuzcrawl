@@ -11,5 +11,8 @@
       "is_error": true,
       "error_type": "connection"
     }
+  },
+  "skip": {
+    "notes": "Requires connection to actually be refused (port with no listener)"
   }
 }

@@ -51,9 +51,12 @@ pub fn generate(fixtures: &[Fixture], output_root: &Utf8Path) -> Result<()> {
     std::fs::write(src_dir.join("helpers.rs"), helpers_content)
         .with_context(|| "writing e2e/rust/src/helpers.rs")?;
 
-    let count = fixtures.len();
+    let skipped = fixtures.iter().filter(|f| f.skip.is_some()).count();
+    let generated = fixtures.len() - skipped;
     let categories = grouped.len();
-    println!("Generated {count} tests across {categories} categories in {rust_dir}");
+    println!(
+        "Generated {generated} tests across {categories} categories in {rust_dir} ({skipped} skipped)"
+    );
 
     Ok(())
 }
@@ -116,7 +119,9 @@ pub async fn register_mock(
     headers: &[(&str, &str)],
     body: &str,
 ) {
-    let mut response = ResponseTemplate::new(status).set_body_string(body.to_owned());
+    // Use set_body_bytes to avoid wiremock's default text/plain content-type
+    // that set_body_string adds (which can't be overridden by append_header).
+    let mut response = ResponseTemplate::new(status).set_body_bytes(body.as_bytes());
     for &(key, value) in headers {
         response = response.append_header(key, value);
     }
@@ -131,6 +136,9 @@ pub async fn register_mock(
 }
 
 fn generate_category_file(_category: &str, fixtures: &[&Fixture]) -> Result<String> {
+    // Filter out fixtures with skip directives — these need custom test implementations
+    let active_fixtures: Vec<&&Fixture> = fixtures.iter().filter(|f| f.skip.is_none()).collect();
+
     let mut out = String::with_capacity(4096);
 
     writeln!(
@@ -141,20 +149,34 @@ fn generate_category_file(_category: &str, fixtures: &[&Fixture]) -> Result<Stri
     writeln!(out)?;
     writeln!(out, "use e2e_rust::helpers;")?;
 
-    // Add FeedType import if any fixture uses feed assertions
-    let needs_feed_type = fixtures.iter().any(|f| {
+    // Add type imports based on which assertions are used
+    let needs_feed_type = active_fixtures.iter().any(|f| {
         f.assertions
             .as_ref()
             .and_then(|a| a.feeds.as_ref())
             .is_some()
     });
+    let needs_link_type = active_fixtures.iter().any(|f| {
+        f.assertions
+            .as_ref()
+            .and_then(|a| a.links.as_ref())
+            .map(|l| !l.has_type.is_empty())
+            .unwrap_or(false)
+    });
+    let mut imports = Vec::new();
     if needs_feed_type {
-        writeln!(out, "use kreuzcrawl::FeedType;")?;
+        imports.push("FeedType");
+    }
+    if needs_link_type {
+        imports.push("LinkType");
+    }
+    if !imports.is_empty() {
+        writeln!(out, "use kreuzcrawl::{{{}}};", imports.join(", "))?;
     }
 
     writeln!(out)?;
 
-    for fixture in fixtures {
+    for fixture in &active_fixtures {
         generate_test_fn(&mut out, fixture)?;
         writeln!(out)?;
     }
@@ -613,10 +635,10 @@ fn generate_link_assertions(out: &mut String, links: &LinkAssertions) -> Result<
         writeln!(out, "    assert!(result.links.len() <= {max});")?;
     }
     for link_type in &links.has_type {
+        let variant = link_type_variant(link_type);
         writeln!(
             out,
-            "    assert!(result.links.iter().any(|l| l.link_type == \"{}\"));",
-            escape_rust_string(link_type)
+            "    assert!(result.links.iter().any(|l| l.link_type == LinkType::{variant}));"
         )?;
     }
     if let Some(ref url) = links.contains_url {
@@ -1001,6 +1023,17 @@ fn escape_rust_string(s: &str) -> String {
         .replace('\n', "\\n")
         .replace('\r', "\\r")
         .replace('\t', "\\t")
+}
+
+/// Map a link type string from fixtures to a `LinkType` enum variant name.
+fn link_type_variant(s: &str) -> &str {
+    match s {
+        "internal" => "Internal",
+        "external" => "External",
+        "anchor" => "Anchor",
+        "document" => "Document",
+        other => panic!("unknown link type in fixture: {other}"),
+    }
 }
 
 /// Extract the path portion from a URL string (defaults to "/").

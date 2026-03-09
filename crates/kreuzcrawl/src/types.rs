@@ -145,23 +145,77 @@ pub struct PageMetadata {
     pub dc_rights: Option<String>,
 }
 
+/// The classification of a link.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum LinkType {
+    /// A link to the same domain.
+    #[default]
+    Internal,
+    /// A link to a different domain.
+    External,
+    /// A fragment-only link (e.g., `#section`).
+    Anchor,
+    /// A link to a downloadable document (PDF, DOC, etc.).
+    Document,
+}
+
+impl std::fmt::Display for LinkType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Internal => write!(f, "internal"),
+            Self::External => write!(f, "external"),
+            Self::Anchor => write!(f, "anchor"),
+            Self::Document => write!(f, "document"),
+        }
+    }
+}
+
 /// Information about a link found on a page.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct LinkInfo {
     /// The resolved URL of the link.
     pub url: String,
     /// The visible text of the link.
     pub text: String,
-    /// The classification of the link: "internal", "external", "anchor", or "document".
-    pub link_type: String,
+    /// The classification of the link.
+    pub link_type: LinkType,
     /// The `rel` attribute value, if present.
     pub rel: Option<String>,
     /// Whether the link has `rel="nofollow"`.
     pub nofollow: bool,
 }
 
+/// The source of an image reference.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ImageSource {
+    /// An `<img>` tag.
+    #[default]
+    Img,
+    /// A `<source>` tag inside `<picture>`.
+    PictureSource,
+    /// An `og:image` meta tag.
+    #[serde(rename = "og:image")]
+    OgImage,
+    /// A `twitter:image` meta tag.
+    #[serde(rename = "twitter:image")]
+    TwitterImage,
+}
+
+impl std::fmt::Display for ImageSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Img => write!(f, "img"),
+            Self::PictureSource => write!(f, "picture_source"),
+            Self::OgImage => write!(f, "og:image"),
+            Self::TwitterImage => write!(f, "twitter:image"),
+        }
+    }
+}
+
 /// Information about an image found on a page.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ImageInfo {
     /// The image URL.
     pub url: String,
@@ -171,14 +225,15 @@ pub struct ImageInfo {
     pub width: Option<u32>,
     /// The height attribute, if present and parseable.
     pub height: Option<u32>,
-    /// The source of the image reference: "img", "picture_source", "og:image", or "twitter:image".
-    pub source: String,
+    /// The source of the image reference.
+    pub source: ImageSource,
 }
 
 /// The type of a feed (RSS, Atom, or JSON Feed).
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub enum FeedType {
     /// RSS feed.
+    #[default]
     Rss,
     /// Atom feed.
     Atom,
@@ -187,7 +242,7 @@ pub enum FeedType {
 }
 
 /// Information about a feed link found on a page.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct FeedInfo {
     /// The feed URL.
     pub url: String,
@@ -198,7 +253,7 @@ pub struct FeedInfo {
 }
 
 /// A JSON-LD structured data entry found on a page.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct JsonLdEntry {
     /// The `@type` value from the JSON-LD object.
     pub schema_type: String,
@@ -209,7 +264,7 @@ pub struct JsonLdEntry {
 }
 
 /// Information about an HTTP cookie received from a response.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CookieInfo {
     /// The cookie name.
     pub name: String,
@@ -222,7 +277,7 @@ pub struct CookieInfo {
 }
 
 /// The result of a single-page scrape operation.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
     pub status_code: u16,
@@ -265,7 +320,7 @@ pub struct ScrapeResult {
 }
 
 /// The result of crawling a single page during a crawl operation.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct CrawlPageResult {
     /// The original URL of the page.
     pub url: String,
@@ -302,7 +357,7 @@ pub struct CrawlPageResult {
 }
 
 /// The result of a multi-page crawl operation.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct CrawlResult {
     /// The list of crawled pages.
     pub pages: Vec<CrawlPageResult>,
@@ -353,7 +408,7 @@ impl CrawlResult {
 }
 
 /// A URL entry from a sitemap.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct SitemapUrl {
     /// The URL.
     pub url: String,
@@ -373,7 +428,7 @@ impl std::ops::Deref for SitemapUrl {
 }
 
 /// The result of a map operation, containing discovered URLs.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct MapResult {
     /// The list of discovered URLs.
     pub urls: Vec<SitemapUrl>,

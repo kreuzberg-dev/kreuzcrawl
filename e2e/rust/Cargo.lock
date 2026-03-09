@@ -375,7 +375,6 @@ name = "e2e-rust"
 version = "0.0.0"
 dependencies = [
  "kreuzcrawl",
- "reqwest",
  "tokio",
  "wiremock",
 ]

@@ -29,31 +29,6 @@ async fn test_sitemap_basic() {
 }
 
 #[tokio::test]
-async fn test_sitemap_compressed_gzip() {
-    // Parses a gzip-compressed sitemap file
-    let mock = helpers::setup_mock_server().await;
-    let body = helpers::load_response_body("xml/sitemap_gzip.xml.gz");
-    helpers::register_mock(
-        &mock,
-        "GET",
-        "/",
-        200,
-        &[("content-type", "application/x-gzip")],
-        &body,
-    )
-    .await;
-
-    let config = kreuzcrawl::CrawlConfig {
-        respect_robots_txt: false,
-        ..Default::default()
-    };
-
-    let result = kreuzcrawl::map(&mock.uri(), &config).await;
-    let result = result.expect("request should succeed");
-    assert_eq!(result.urls.len(), 3);
-}
-
-#[tokio::test]
 async fn test_sitemap_empty() {
     // Handles empty sitemap gracefully
     let mock = helpers::setup_mock_server().await;
