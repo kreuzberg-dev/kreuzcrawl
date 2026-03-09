@@ -2,7 +2,7 @@
 #![allow(clippy::too_many_lines)]
 
 use e2e_rust::helpers;
-use kreuzcrawl::FeedType;
+use kreuzcrawl::{FeedType, LinkType};
 
 #[tokio::test]
 async fn test_scrape_basic_html_page() {
@@ -41,7 +41,12 @@ async fn test_scrape_basic_html_page() {
     );
     assert!(result.metadata.canonical_url.is_some());
     assert!(result.links.len() >= 1);
-    assert!(result.links.iter().any(|l| l.link_type == "external"));
+    assert!(
+        result
+            .links
+            .iter()
+            .any(|l| l.link_type == LinkType::External)
+    );
     assert_eq!(result.images.len(), 0);
     assert!(result.metadata.og_title.is_none());
 }
@@ -69,10 +74,25 @@ async fn test_scrape_complex_links() {
     let result = result.expect("request should succeed");
     assert_eq!(result.status_code, 200);
     assert!(result.links.len() >= 10);
-    assert!(result.links.iter().any(|l| l.link_type == "internal"));
-    assert!(result.links.iter().any(|l| l.link_type == "external"));
-    assert!(result.links.iter().any(|l| l.link_type == "anchor"));
-    assert!(result.links.iter().any(|l| l.link_type == "document"));
+    assert!(
+        result
+            .links
+            .iter()
+            .any(|l| l.link_type == LinkType::Internal)
+    );
+    assert!(
+        result
+            .links
+            .iter()
+            .any(|l| l.link_type == LinkType::External)
+    );
+    assert!(result.links.iter().any(|l| l.link_type == LinkType::Anchor));
+    assert!(
+        result
+            .links
+            .iter()
+            .any(|l| l.link_type == LinkType::Document)
+    );
 }
 
 #[tokio::test]

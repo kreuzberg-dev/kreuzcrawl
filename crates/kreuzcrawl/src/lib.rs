@@ -17,5 +17,6 @@ pub use map::map;
 pub use scrape::scrape;
 pub use types::{
     CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, FeedInfo, FeedType, ImageInfo,
-    JsonLdEntry, LinkInfo, MapResult, PageMetadata, ScrapeResult, SitemapUrl,
+    ImageSource, JsonLdEntry, LinkInfo, LinkType, MapResult, PageMetadata, ScrapeResult,
+    SitemapUrl,
 };

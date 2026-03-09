@@ -2,6 +2,7 @@
 #![allow(clippy::too_many_lines)]
 
 use e2e_rust::helpers;
+use kreuzcrawl::LinkType;
 
 #[tokio::test]
 async fn test_links_anchor_fragment() {
@@ -24,7 +25,7 @@ async fn test_links_anchor_fragment() {
 
     let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
     let result = result.expect("request should succeed");
-    assert!(result.links.iter().any(|l| l.link_type == "anchor"));
+    assert!(result.links.iter().any(|l| l.link_type == LinkType::Anchor));
 }
 
 #[tokio::test]
@@ -73,7 +74,12 @@ async fn test_links_document_types() {
 
     let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
     let result = result.expect("request should succeed");
-    assert!(result.links.iter().any(|l| l.link_type == "document"));
+    assert!(
+        result
+            .links
+            .iter()
+            .any(|l| l.link_type == LinkType::Document)
+    );
 }
 
 #[tokio::test]
@@ -123,8 +129,18 @@ async fn test_links_internal_external_classification() {
     let result = kreuzcrawl::scrape(&mock.uri(), &config).await;
     let result = result.expect("request should succeed");
     assert!(result.links.len() >= 5);
-    assert!(result.links.iter().any(|l| l.link_type == "internal"));
-    assert!(result.links.iter().any(|l| l.link_type == "external"));
+    assert!(
+        result
+            .links
+            .iter()
+            .any(|l| l.link_type == LinkType::Internal)
+    );
+    assert!(
+        result
+            .links
+            .iter()
+            .any(|l| l.link_type == LinkType::External)
+    );
 }
 
 #[tokio::test]

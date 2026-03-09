@@ -9,7 +9,8 @@ use crate::html::{
     extract_images, extract_json_ld, extract_links, extract_main_content, extract_metadata,
     is_binary_content_type, is_binary_url, is_html_content, is_pdf_content,
 };
-use crate::http::{fetch_with_retry, http_fetch};
+use crate::http::{build_client, fetch_with_retry, http_fetch};
+use crate::normalize::robots_url;
 use crate::robots::{is_path_allowed, parse_robots_txt};
 use crate::types::{CrawlConfig, PageMetadata, ScrapeResult};
 
@@ -20,6 +21,7 @@ use crate::types::{CrawlConfig, PageMetadata, ScrapeResult};
 /// and charset detection.
 pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, CrawlError> {
     let parsed_url = Url::parse(url).map_err(|e| CrawlError::Other(format!("invalid URL: {e}")))?;
+    let client = build_client(config)?;
 
     let auth_header_sent =
         config.auth_basic.is_some() || config.auth_bearer.is_some() || config.auth_header.is_some();
@@ -28,12 +30,8 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
     let mut is_allowed = true;
     let mut crawl_delay = None;
     if config.respect_robots_txt {
-        let robots_url = format!(
-            "{}://{}/robots.txt",
-            parsed_url.scheme(),
-            parsed_url.authority()
-        );
-        if let Ok(robots_resp) = http_fetch(&robots_url, config).await {
+        let robots = robots_url(&parsed_url);
+        if let Ok(robots_resp) = http_fetch(&robots, config, &client).await {
             let ua = config.user_agent.as_deref().unwrap_or("*");
             let rules = parse_robots_txt(&robots_resp.body, ua);
             is_allowed = is_path_allowed(parsed_url.path(), &rules);
@@ -44,7 +42,7 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
     // Fetch page (even if not allowed, we still fetch to report status).
     // When respect_robots_txt is enabled, a 404 is not an error -- the page
     // simply doesn't exist, but the robots check result is still meaningful.
-    let resp = match fetch_with_retry(url, config).await {
+    let resp = match fetch_with_retry(url, config, &client).await {
         Ok(r) => r,
         Err(CrawlError::NotFound(_)) if config.respect_robots_txt => {
             return Ok(ScrapeResult {
@@ -72,9 +70,10 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
         Err(e) => return Err(e),
     };
 
-    let content_type = resp.content_type.clone();
     let status_code = resp.status;
-    let mut body = resp.body.clone();
+    let content_type = resp.content_type;
+    let headers = resp.headers;
+    let mut body = resp.body;
 
     let detected_charset = detect_charset(&content_type, &body);
     let is_pdf = is_pdf_content(&content_type, &body);
@@ -89,8 +88,7 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
     }
 
     // Check for X-Robots-Tag
-    let x_robots_tag = resp
-        .headers
+    let x_robots_tag = headers
         .get("x-robots-tag")
         .and_then(|v| v.to_str().ok())
         .map(String::from);

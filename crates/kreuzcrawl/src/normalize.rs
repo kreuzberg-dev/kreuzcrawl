@@ -56,6 +56,21 @@ pub(crate) fn normalize_url_for_dedup(raw: &str) -> String {
     }
 }
 
+/// Build the robots.txt URL for a given parsed URL.
+pub(crate) fn robots_url(parsed: &Url) -> String {
+    format!("{}://{}/robots.txt", parsed.scheme(), parsed.authority())
+}
+
+/// Strip the fragment from a URL string, returning the cleaned URL.
+pub(crate) fn strip_fragment(url: &str) -> String {
+    if let Ok(mut u) = Url::parse(url) {
+        u.set_fragment(None);
+        u.to_string()
+    } else {
+        url.to_owned()
+    }
+}
+
 /// Resolve a redirect target against a base URL.
 ///
 /// If the target is already absolute, returns it as-is. Otherwise, resolves

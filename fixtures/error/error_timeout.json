@@ -17,6 +17,6 @@
     }
   },
   "skip": {
-    "notes": "Timeout behavior depends on wiremock delay configuration"
+    "notes": "Requires wiremock delay to reliably trigger timeout"
   }
 }

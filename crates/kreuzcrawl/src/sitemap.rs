@@ -26,44 +26,38 @@ pub(crate) fn parse_sitemap_xml(body: &str) -> Vec<SitemapUrl> {
 
     loop {
         match reader.read_event_into(&mut buf) {
-            Ok(Event::Start(ref e)) | Ok(Event::Empty(ref e)) => {
-                let name = String::from_utf8_lossy(e.name().as_ref()).to_lowercase();
-                match name.as_str() {
-                    "url" => {
-                        in_url = true;
-                        current_loc.clear();
-                        current_lastmod = None;
-                        current_changefreq = None;
-                        current_priority = None;
-                    }
-                    "loc" if in_url => in_loc = true,
-                    "lastmod" if in_url => in_lastmod = true,
-                    "changefreq" if in_url => in_changefreq = true,
-                    "priority" if in_url => in_priority = true,
-                    _ => {}
+            Ok(Event::Start(ref e)) | Ok(Event::Empty(ref e)) => match e.name().as_ref() {
+                b"url" => {
+                    in_url = true;
+                    current_loc.clear();
+                    current_lastmod = None;
+                    current_changefreq = None;
+                    current_priority = None;
                 }
-            }
-            Ok(Event::End(ref e)) => {
-                let name = String::from_utf8_lossy(e.name().as_ref()).to_lowercase();
-                match name.as_str() {
-                    "url" => {
-                        if in_url && !current_loc.is_empty() {
-                            urls.push(SitemapUrl {
-                                url: current_loc.clone(),
-                                lastmod: current_lastmod.clone(),
-                                changefreq: current_changefreq.clone(),
-                                priority: current_priority.clone(),
-                            });
-                        }
-                        in_url = false;
+                b"loc" if in_url => in_loc = true,
+                b"lastmod" if in_url => in_lastmod = true,
+                b"changefreq" if in_url => in_changefreq = true,
+                b"priority" if in_url => in_priority = true,
+                _ => {}
+            },
+            Ok(Event::End(ref e)) => match e.name().as_ref() {
+                b"url" => {
+                    if in_url && !current_loc.is_empty() {
+                        urls.push(SitemapUrl {
+                            url: current_loc.clone(),
+                            lastmod: current_lastmod.clone(),
+                            changefreq: current_changefreq.clone(),
+                            priority: current_priority.clone(),
+                        });
                     }
-                    "loc" => in_loc = false,
-                    "lastmod" => in_lastmod = false,
-                    "changefreq" => in_changefreq = false,
-                    "priority" => in_priority = false,
-                    _ => {}
+                    in_url = false;
                 }
-            }
+                b"loc" => in_loc = false,
+                b"lastmod" => in_lastmod = false,
+                b"changefreq" => in_changefreq = false,
+                b"priority" => in_priority = false,
+                _ => {}
+            },
             Ok(Event::Text(ref e)) => {
                 if let Ok(text) = e.xml_content() {
                     let text = text.trim().to_owned();
@@ -99,30 +93,24 @@ pub(crate) fn parse_sitemap_index(body: &str) -> Vec<String> {
 
     loop {
         match reader.read_event_into(&mut buf) {
-            Ok(Event::Start(ref e)) => {
-                let name = String::from_utf8_lossy(e.name().as_ref()).to_lowercase();
-                match name.as_str() {
-                    "sitemap" => {
-                        in_sitemap = true;
-                        current_loc.clear();
-                    }
-                    "loc" if in_sitemap => in_loc = true,
-                    _ => {}
+            Ok(Event::Start(ref e)) => match e.name().as_ref() {
+                b"sitemap" => {
+                    in_sitemap = true;
+                    current_loc.clear();
                 }
-            }
-            Ok(Event::End(ref e)) => {
-                let name = String::from_utf8_lossy(e.name().as_ref()).to_lowercase();
-                match name.as_str() {
-                    "sitemap" => {
-                        if in_sitemap && !current_loc.is_empty() {
-                            child_urls.push(current_loc.clone());
-                        }
-                        in_sitemap = false;
+                b"loc" if in_sitemap => in_loc = true,
+                _ => {}
+            },
+            Ok(Event::End(ref e)) => match e.name().as_ref() {
+                b"sitemap" => {
+                    if in_sitemap && !current_loc.is_empty() {
+                        child_urls.push(current_loc.clone());
                     }
-                    "loc" => in_loc = false,
-                    _ => {}
+                    in_sitemap = false;
                 }
-            }
+                b"loc" => in_loc = false,
+                _ => {}
+            },
             Ok(Event::Text(ref e)) => {
                 if in_loc && let Ok(text) = e.xml_content() {
                     current_loc = text.trim().to_owned();
@@ -147,8 +135,12 @@ pub(crate) fn is_sitemap_index(body: &str) -> bool {
 ///
 /// If the URL points to a sitemap index, fetches each child sitemap and
 /// collects all URL entries. Handles gzip-compressed sitemaps.
-pub(crate) async fn fetch_sitemap_tree(sitemap_url: &str, config: &CrawlConfig) -> Vec<SitemapUrl> {
-    let resp = match http_fetch(sitemap_url, config).await {
+pub(crate) async fn fetch_sitemap_tree(
+    sitemap_url: &str,
+    config: &CrawlConfig,
+    client: &reqwest::Client,
+) -> Vec<SitemapUrl> {
+    let resp = match http_fetch(sitemap_url, config, client).await {
         Ok(r) => r,
         Err(_) => return Vec::new(),
     };
@@ -192,7 +184,7 @@ pub(crate) async fn fetch_sitemap_tree(sitemap_url: &str, config: &CrawlConfig) 
             } else {
                 child_url.clone()
             };
-            let child_resp = match http_fetch(&resolved, config).await {
+            let child_resp = match http_fetch(&resolved, config, client).await {
                 Ok(r) => r,
                 Err(_) => continue,
             };

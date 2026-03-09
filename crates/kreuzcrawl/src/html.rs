@@ -6,7 +6,9 @@ use regex::Regex;
 use scraper::{Html, Selector};
 use url::Url;
 
-use crate::types::{FeedInfo, FeedType, ImageInfo, JsonLdEntry, LinkInfo, PageMetadata};
+use crate::types::{
+    FeedInfo, FeedType, ImageInfo, ImageSource, JsonLdEntry, LinkInfo, LinkType, PageMetadata,
+};
 
 /// Document file extensions used for link classification.
 static DOCUMENT_EXTENSIONS: &[&str] = &[
@@ -200,35 +202,35 @@ pub(crate) fn is_html_content(content_type: &str, body: &str) -> bool {
     content_type.contains("html") || body.trim_start().starts_with('<')
 }
 
-/// Classify a link as "internal", "external", "anchor", or "document".
-pub(crate) fn classify_link(href: &str, base_url: &Url) -> String {
+/// Classify a link as internal, external, anchor, or document.
+pub(crate) fn classify_link(href: &str, base_url: &Url) -> LinkType {
     if href.starts_with('#') {
-        return "anchor".to_owned();
+        return LinkType::Anchor;
     }
 
     // Check for document extensions
     let lower = href.to_lowercase();
     for ext in DOCUMENT_EXTENSIONS {
         if lower.ends_with(ext) {
-            return "document".to_owned();
+            return LinkType::Document;
         }
     }
 
     // Try resolving
     if let Ok(resolved) = base_url.join(href) {
         if resolved.host_str() != base_url.host_str() {
-            return "external".to_owned();
+            return LinkType::External;
         }
-        "internal".to_owned()
+        LinkType::Internal
     } else if href.starts_with("http://") || href.starts_with("https://") {
         if let Ok(u) = Url::parse(href)
             && u.host_str() != base_url.host_str()
         {
-            return "external".to_owned();
+            return LinkType::External;
         }
-        "internal".to_owned()
+        LinkType::Internal
     } else {
-        "internal".to_owned()
+        LinkType::Internal
     }
 }
 
@@ -260,7 +262,7 @@ pub(crate) fn extract_links(doc: &Html, base_url: &Url) -> Vec<LinkInfo> {
 
         // Protocol-relative URLs: keep as-is
         let link_type = if href.starts_with("//") {
-            "external".to_owned()
+            LinkType::External
         } else {
             classify_link(href, &effective_base)
         };
@@ -311,7 +313,7 @@ pub(crate) fn extract_images(doc: &Html, _base_url: &Url) -> Vec<ImageInfo> {
             alt,
             width,
             height,
-            source: "img".to_owned(),
+            source: ImageSource::Img,
         });
     }
 
@@ -327,7 +329,7 @@ pub(crate) fn extract_images(doc: &Html, _base_url: &Url) -> Vec<ImageInfo> {
                     alt: None,
                     width: None,
                     height: None,
-                    source: "picture_source".to_owned(),
+                    source: ImageSource::PictureSource,
                 });
             }
         }
@@ -343,7 +345,7 @@ pub(crate) fn extract_images(doc: &Html, _base_url: &Url) -> Vec<ImageInfo> {
                 alt: None,
                 width: None,
                 height: None,
-                source: "og:image".to_owned(),
+                source: ImageSource::OgImage,
             });
         }
     }
@@ -358,7 +360,7 @@ pub(crate) fn extract_images(doc: &Html, _base_url: &Url) -> Vec<ImageInfo> {
                 alt: None,
                 width: None,
                 height: None,
-                source: "twitter:image".to_owned(),
+                source: ImageSource::TwitterImage,
             });
         }
     }
@@ -498,7 +500,7 @@ pub(crate) fn apply_remove_tags(html: &str, tags: &[String]) -> String {
         if let Ok(sel) = Selector::parse(tag) {
             for el in doc.select(&sel) {
                 let outer = el.html();
-                output = output.replace(&outer, "");
+                output = output.replacen(&outer, "", 1);
             }
         }
     }
