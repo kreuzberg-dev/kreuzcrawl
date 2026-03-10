@@ -8,16 +8,13 @@ use url::Url;
 
 use crate::error::CrawlError;
 use crate::html::{
-    detect_charset, detect_meta_refresh, extract_feeds, extract_images, extract_json_ld,
-    extract_links, extract_metadata, is_binary_content_type, is_binary_url, is_html_content,
-    is_pdf_content, is_pdf_url,
+    detect_charset, detect_meta_refresh, extract_page_data, is_binary_content_type, is_binary_url,
+    is_html_content, is_pdf_content, is_pdf_url,
 };
 use crate::http::{build_client, extract_cookies, http_fetch};
 use crate::normalize::{normalize_url, normalize_url_for_dedup, resolve_redirect, strip_fragment};
 use crate::robots::{RobotsRules, is_path_allowed, parse_robots_txt};
-use crate::types::{
-    CookieInfo, CrawlConfig, CrawlEvent, CrawlPageResult, CrawlResult, LinkType, PageMetadata,
-};
+use crate::types::{CookieInfo, CrawlConfig, CrawlEvent, CrawlPageResult, CrawlResult, LinkType};
 
 /// Crawl a website starting from the given URL using breadth-first traversal.
 ///
@@ -233,34 +230,15 @@ pub(crate) async fn crawl_with_sender(
         let page_parsed = Url::parse(&page_url).unwrap_or_else(|_| parsed_url.clone());
 
         // Scope the non-Send `Html` document so it is dropped before any `.await`
-        let (metadata, links, images, feeds, json_ld) = {
+        let extraction = {
             let doc = Html::parse_document(&body);
-            let metadata = if is_html && !page_was_skipped {
-                extract_metadata(&doc, &body)
-            } else {
-                PageMetadata::default()
-            };
-            let links = if is_html && !page_was_skipped {
-                extract_links(&doc, &page_parsed)
-            } else {
-                Vec::new()
-            };
-            let images = if is_html && !page_was_skipped {
-                extract_images(&doc, &page_parsed)
-            } else {
-                Vec::new()
-            };
-            let feeds = if is_html && !page_was_skipped {
-                extract_feeds(&doc)
-            } else {
-                Vec::new()
-            };
-            let json_ld = if is_html && !page_was_skipped {
-                extract_json_ld(&doc)
-            } else {
-                Vec::new()
-            };
-            (metadata, links, images, feeds, json_ld)
+            extract_page_data(
+                &doc,
+                &body,
+                &page_parsed,
+                is_html && !page_was_skipped,
+                false,
+            )
         };
 
         let norm_url = normalize_url(&page_url);
@@ -274,7 +252,7 @@ pub(crate) async fn crawl_with_sender(
         // Collect child URLs to enqueue before moving links into the page result
         let mut child_urls: Vec<(String, usize)> = Vec::new();
         if depth < max_depth && !page_was_skipped {
-            for link in &links {
+            for link in &extraction.links {
                 if link.link_type == LinkType::Internal || link.link_type == LinkType::Document {
                     let link_url = strip_fragment(&link.url);
 
@@ -307,11 +285,11 @@ pub(crate) async fn crawl_with_sender(
             content_type,
             html: body,
             body_size,
-            metadata,
-            links,
-            images,
-            feeds,
-            json_ld,
+            metadata: extraction.metadata,
+            links: extraction.links,
+            images: extraction.images,
+            feeds: extraction.feeds,
+            json_ld: extraction.json_ld,
             depth,
             stayed_on_domain,
             was_skipped: page_was_skipped,

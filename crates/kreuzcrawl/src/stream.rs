@@ -14,7 +14,8 @@ pub fn crawl_stream(url: &str, config: &CrawlConfig) -> ReceiverStream<CrawlEven
     let url = url.to_owned();
     let config = config.clone();
 
-    let (tx, rx) = tokio::sync::mpsc::channel(64);
+    let channel_size = config.max_concurrent.unwrap_or(4) * 16;
+    let (tx, rx) = tokio::sync::mpsc::channel(channel_size);
 
     tokio::spawn(async move {
         match crawl::crawl_with_sender(&url, &config, Some(tx.clone())).await {
