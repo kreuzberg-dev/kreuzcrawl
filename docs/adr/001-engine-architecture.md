@@ -1,75 +1,82 @@
-# ADR-001: Engine Architecture — HTTP Fetching with TLS Fingerprint Spoofing
+# ADR-001: Engine Architecture — HTTP Fetching Strategy
 
-**Status**: Accepted
+**Status**: Accepted (updated 2026-03-10)
 
 **Date**: 2026-03-09
 
 ## Context
 
-Modern websites employ increasingly sophisticated anti-bot protection systems: Cloudflare Bot Management, AWS WAF, Akamai Bot Manager, DataDome, and PerimeterX. These systems detect automated traffic primarily through TLS fingerprinting (JA3/JA4 hashes), HTTP/2 connection characteristics, and header ordering patterns.
-
-Standard HTTP clients like reqwest produce distinctive TLS fingerprints that don't match any real browser, making them trivially detectable. Headless browsers (Chrome via CDP, Playwright) solve this but are heavyweight — each page costs 50-200MB of memory and 2-5 seconds of startup time. For a crawling engine that needs to process thousands of pages efficiently, this tradeoff is unacceptable for the common case.
+kreuzcrawl needs a reliable HTTP fetching layer that handles the realities of web crawling: connection failures, server overload (503), rate limiting, authentication, cookie management, and content negotiation. The fetching strategy must be embeddable in a Rust library without external process dependencies.
 
 We need a fetching strategy that:
-1. Bypasses TLS fingerprinting on the majority of protected sites
-2. Maintains high throughput (hundreds of requests per second)
-3. Uses minimal resources per request
-4. Falls back gracefully when the fast path fails
+1. Handles transient failures with configurable retry
+2. Supports authentication (Basic, Bearer, custom headers)
+3. Manages cookies across crawl sessions
+4. Negotiates content encoding (gzip, brotli)
+5. Respects configurable timeouts and body size limits
 
 ## Decision
 
-### Waterfall Fetch Strategy
+### reqwest with Retry Logic
 
-Implement a two-tier engine waterfall:
+Use **reqwest** as the sole HTTP client, with a custom retry layer built on top:
 
-1. **Primary: reqwest-impersonate** — HTTP client that spoofs browser TLS fingerprints (Chrome, Firefox, Safari, Edge). Uses BoringSSL with patched ClientHello to produce authentic JA3 hashes. Handles HTTP/2 with browser-like SETTINGS frames and header ordering.
+- **reqwest** with rustls for TLS, cookie jar support, gzip/brotli decompression
+- **Retry logic** in `fetch_with_retry()`: configurable retry count and retryable status codes (default: 429, 500, 502, 503, 504)
+- **Custom headers** applied per-request from `CrawlConfig`
+- **Authentication** via `BasicAuth`, `AuthHeader`, or bearer token structs
 
-2. **Fallback: reqwest standard** — Plain reqwest with rustls. Used when impersonation is unnecessary (APIs, internal services, sites without bot detection) or explicitly requested.
-
-### Why reqwest-impersonate over alternatives
+### Why reqwest
 
 | Alternative | Rejection Reason |
 |-------------|-----------------|
-| Headless Chrome (chromiumoxide) | 50-200MB per tab, 2-5s startup. Will be added as feature-gated option in later phase for JS-heavy sites |
-| curl-cffi / libcurl | C dependency, harder to integrate with async Rust, license concerns |
-| Raw BoringSSL + hyper | Massive engineering effort to replicate browser fingerprints correctly |
-| Playwright/Puppeteer | External process, not embeddable in Rust library |
+| Headless Chrome (chromiumoxide) | 50-200MB per tab, not embeddable as library |
+| reqwest-impersonate | BoringSSL build complexity, maintenance risk — can be added later as feature flag |
+| curl-cffi / libcurl | C dependency, harder async Rust integration |
+| hyper directly | Too low-level, would reimplement what reqwest provides |
 
-### Why not headless Chrome for v0.1
-
-Chrome/CDP integration (via chromiumoxide crate) is planned for a later phase behind a `chrome` feature flag. v0.1 focuses on the fast path that handles ~80% of websites. The engine trait is designed so Chrome can be added as a third tier without architectural changes.
-
-### Engine Trait Design
+### HTTP Client Configuration
 
 ```rust
-#[async_trait]
-pub trait FetchEngine: Send + Sync {
-    async fn fetch(&self, request: &FetchRequest) -> Result<FetchResponse>;
-    fn name(&self) -> &str;
-}
+fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, CrawlError>
 ```
 
-The waterfall executor tries engines in order, falling through on specific failure types (TLS errors, 403 with bot-detection signatures, connection resets).
+The client is built once per crawl/scrape operation with:
+- Configurable user-agent (default: `kreuzcrawl/{version}`)
+- Optional cookie store (enabled via `cookies_enabled`)
+- Configurable request timeout
+- gzip + brotli decompression
+- Redirect policy set to none (redirects handled manually for chain tracking)
+
+### Fetch Functions
+
+- `http_fetch()` — Single fetch with headers, auth, timeout
+- `fetch_with_retry()` — Wraps `http_fetch` with retry on configurable status codes
+- `extract_cookies()` — Parses Set-Cookie headers into structured `CookieInfo`
+- `extract_response_meta()` — Captures ETag, Last-Modified, Server, etc.
+
+### Future: TLS Fingerprint Spoofing
+
+reqwest-impersonate (TLS fingerprint spoofing for anti-bot bypass) is a planned addition behind a feature flag. The current architecture supports this cleanly — `build_client` would conditionally use reqwest-impersonate when the feature is enabled.
 
 ## Consequences
 
 ### Positive
 
-- **High throughput**: reqwest-impersonate adds ~0ms overhead vs standard reqwest for TLS negotiation
-- **Low resource usage**: No browser process, no DOM, no JavaScript engine — pure HTTP
-- **Broad bypass coverage**: JA3 spoofing defeats the majority of passive fingerprinting systems
-- **Clean abstraction**: Engine trait allows adding Chrome, custom clients, or proxy-based engines later
-- **No external dependencies**: Pure Rust (BoringSSL is vendored by reqwest-impersonate)
+- **Simple dependency tree**: reqwest is well-maintained, widely used, pure Rust TLS via rustls
+- **Built-in features**: Cookie jar, gzip/brotli, connection pooling, HTTP/2
+- **Configurable retry**: Handles transient failures without external middleware
+- **No build complexity**: No cmake, C++ compiler, or BoringSSL required
+- **Embeddable**: Pure library, no external processes
 
 ### Negative
 
-- **reqwest-impersonate maintenance risk**: Depends on upstream keeping browser fingerprints current as browsers update their TLS stacks
-- **BoringSSL build complexity**: reqwest-impersonate bundles BoringSSL which requires cmake and a C++ compiler at build time
-- **No JavaScript execution**: Sites requiring JS rendering (SPAs, dynamically loaded content) won't work until Chrome engine is added
-- **Active fingerprinting not addressed**: Browser behavior fingerprinting (mouse movements, canvas, WebGL) is out of scope for HTTP-level spoofing
+- **No TLS fingerprint spoofing**: Standard reqwest TLS fingerprint is detectable by anti-bot systems — deferred to feature-gated reqwest-impersonate
+- **No JavaScript execution**: Sites requiring JS rendering won't work — Chrome/CDP integration deferred
+- **Sequential retry**: Retry is per-request, not per-domain with backoff queuing
 
 ## Notes
 
 Implementation:
-- `crates/kreuzcrawl/src/engine/mod.rs` — FetchEngine trait + waterfall executor
-- `crates/kreuzcrawl/src/engine/http.rs` — reqwest-impersonate and reqwest implementations
+- `crates/kreuzcrawl/src/http.rs` — Client builder, fetch functions, retry logic, cookie/header extraction
+- `crates/kreuzcrawl/src/types.rs` — `CrawlConfig`, `BasicAuth`, `AuthHeader`, `CookieInfo`, `ResponseMeta`
