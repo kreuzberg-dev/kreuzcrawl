@@ -1,6 +1,6 @@
 # ADR-002: Workspace Structure — Crates + Tools Layout
 
-**Status**: Accepted (updated 2026-03-09)
+**Status**: Accepted (updated 2026-03-10)
 
 **Date**: 2026-03-09
 
@@ -23,8 +23,7 @@ We considered three approaches:
 kreuzcrawl/
 ├── Cargo.toml              # Workspace root
 ├── crates/
-│   ├── kreuzcrawl/         # Library crate (the engine)
-│   └── kreuzcrawl-cli/     # Binary crate (CLI wrapper, planned)
+│   └── kreuzcrawl/         # Library crate (the engine)
 ├── tools/
 │   └── e2e-generator/      # Test generation tool (publish = false)
 ├── fixtures/               # E2E test fixtures (JSON + response bodies)
@@ -37,7 +36,7 @@ kreuzcrawl/
 ```toml
 [workspace]
 members = ["crates/*", "tools/*"]
-exclude = ["e2e/rust"]
+exclude = ["e2e/rust", ".claude"]
 resolver = "2"
 
 [workspace.package]
