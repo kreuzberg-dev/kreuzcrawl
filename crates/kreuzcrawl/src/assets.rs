@@ -97,7 +97,7 @@ pub(crate) async fn download_assets(
         })
         .collect();
 
-    let semaphore = Arc::new(Semaphore::new(8));
+    let semaphore = Arc::new(Semaphore::new(config.max_concurrent.unwrap_or(8)));
     let client = client.clone();
     let max_asset_size = config.max_asset_size;
 

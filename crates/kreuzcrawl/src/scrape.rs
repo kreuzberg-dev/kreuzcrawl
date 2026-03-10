@@ -6,10 +6,8 @@ use url::Url;
 use crate::assets;
 use crate::error::CrawlError;
 use crate::html::{
-    apply_remove_tags, compute_word_count, detect_charset, detect_nofollow, detect_noindex,
-    extract_favicons, extract_feeds, extract_headings, extract_hreflangs, extract_images,
-    extract_json_ld, extract_links, extract_main_content, extract_metadata, is_binary_content_type,
-    is_binary_url, is_html_content, is_pdf_content,
+    apply_remove_tags, detect_charset, detect_nofollow, detect_noindex, extract_main_content,
+    extract_page_data, is_binary_content_type, is_binary_url, is_html_content, is_pdf_content,
 };
 use crate::http::{build_client, extract_response_meta, fetch_with_retry, http_fetch};
 use crate::normalize::robots_url;
@@ -128,7 +126,7 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
     let is_html = is_html_content(&content_type, &body);
     let response_meta = extract_response_meta(&headers);
 
-    let (metadata, links, images, feeds, json_ld, asset_refs) = {
+    let (extraction, asset_refs) = {
         let doc = Html::parse_document(&body);
 
         if !noindex_detected {
@@ -138,48 +136,7 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
             nofollow_detected = detect_nofollow(&doc);
         }
 
-        let mut metadata = if is_html {
-            extract_metadata(&doc, &body)
-        } else {
-            PageMetadata::default()
-        };
-
-        if is_html {
-            let hreflangs = extract_hreflangs(&doc);
-            if !hreflangs.is_empty() {
-                metadata.hreflangs = Some(hreflangs);
-            }
-            let favicons = extract_favicons(&doc);
-            if !favicons.is_empty() {
-                metadata.favicons = Some(favicons);
-            }
-            let headings = extract_headings(&doc);
-            if !headings.is_empty() {
-                metadata.headings = Some(headings);
-            }
-            metadata.word_count = Some(compute_word_count(&doc));
-        }
-
-        let links = if is_html {
-            extract_links(&doc, &parsed_url)
-        } else {
-            Vec::new()
-        };
-        let images = if is_html {
-            extract_images(&doc, &parsed_url)
-        } else {
-            Vec::new()
-        };
-        let feeds = if is_html {
-            extract_feeds(&doc)
-        } else {
-            Vec::new()
-        };
-        let json_ld = if is_html {
-            extract_json_ld(&doc)
-        } else {
-            Vec::new()
-        };
+        let extraction = extract_page_data(&doc, &body, &parsed_url, is_html, true);
 
         let asset_refs = if config.download_assets && is_html {
             assets::discover_assets(&doc, &parsed_url)
@@ -187,7 +144,7 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
             Vec::new()
         };
 
-        (metadata, links, images, feeds, json_ld, asset_refs)
+        (extraction, asset_refs)
     };
     // doc is now dropped — future is Send from here
 
@@ -203,11 +160,11 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
         content_type,
         html: body,
         body_size,
-        metadata,
-        links,
-        images,
-        feeds,
-        json_ld,
+        metadata: extraction.metadata,
+        links: extraction.links,
+        images: extraction.images,
+        feeds: extraction.feeds,
+        json_ld: extraction.json_ld,
         is_allowed,
         crawl_delay,
         noindex_detected,
