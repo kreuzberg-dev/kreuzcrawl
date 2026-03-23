@@ -1,0 +1,18 @@
+{
+  "id": "browser_detect_next_rendered",
+  "description": "Does NOT flag Next.js page with full SSR content as needing JS rendering",
+  "tags": ["browser", "detection"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_file": "html/spa_next_rendered.html"
+  },
+  "assertions": {
+    "status_code": 200,
+    "html_not_empty": true,
+    "browser": {
+      "js_render_hint": false,
+      "browser_used": false
+    }
+  }
+}

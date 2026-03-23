@@ -94,7 +94,13 @@
         "remove_tags": { "type": "array", "items": { "type": "string" }, "description": "CSS selectors for elements to remove" },
         "main_content_only": { "type": "boolean", "description": "Extract only main content area" },
         "map_search": { "type": "string", "description": "Search keyword filter for map results" },
-        "map_limit": { "type": "integer", "minimum": 1, "description": "Limit number of map results" }
+        "map_limit": { "type": "integer", "minimum": 1, "description": "Limit number of map results" },
+        "browser_mode": { "type": "string", "enum": ["auto", "always", "never"], "description": "When to use browser fallback" },
+        "browser_endpoint": { "type": "string", "description": "CDP WebSocket endpoint URL for external browser" },
+        "browser_timeout_ms": { "type": "integer", "minimum": 0, "description": "Browser page load timeout in ms" },
+        "browser_wait": { "type": "string", "enum": ["network_idle", "selector", "fixed"], "description": "Wait strategy after navigation" },
+        "browser_wait_selector": { "type": "string", "description": "CSS selector to wait for when browser_wait is selector" },
+        "browser_extra_wait_ms": { "type": "integer", "minimum": 0, "description": "Extra wait time after wait condition in ms" }
       }
     },
     "assertions": {
@@ -342,6 +348,13 @@
             "total_count": { "type": "integer" },
             "has_url_result": { "type": "string" }
           }
+        },
+        "browser": {
+          "type": "object",
+          "properties": {
+            "js_render_hint": { "type": "boolean", "description": "Whether the page appears to need JS rendering" },
+            "browser_used": { "type": "boolean", "description": "Whether the browser fallback was used" }
+          }
         }
       }
     },
@@ -349,6 +362,7 @@
       "type": "object",
       "properties": {
         "requires_network": { "type": "boolean" },
+        "requires_browser": { "type": "boolean", "description": "Test requires a running Chrome/Chromium instance" },
         "notes": { "type": "string" }
       }
     }

@@ -26,6 +26,11 @@ tasks:
     cmds:
       - cargo test --workspace
 
+  test:browser:
+    desc: Run all tests with browser feature (requires Chrome/Chromium)
+    cmds:
+      - cargo test --workspace --features browser
+
   lint:
     desc: Run prek hooks
     cmds:
@@ -40,6 +45,23 @@ tasks:
     desc: Check without building
     cmds:
       - cargo check --workspace --all-targets
+
+  check:browser:
+    desc: Check with browser feature
+    cmds:
+      - cargo check --workspace --all-targets --features browser
+
+  browser:install:
+    desc: Install Chromium for browser feature testing
+    cmds:
+      - |
+        if command -v chromium &>/dev/null || command -v chromium-browser &>/dev/null || command -v google-chrome &>/dev/null; then
+          echo "Chrome/Chromium already installed"
+        elif [ "$(uname)" = "Darwin" ]; then
+          brew install --cask chromium
+        else
+          sudo apt-get update && sudo apt-get install -y chromium-browser
+        fi
 
   clean:
     desc: Clean build artifacts

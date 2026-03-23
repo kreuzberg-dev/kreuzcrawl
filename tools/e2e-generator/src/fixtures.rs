@@ -128,6 +128,12 @@ pub struct CrawlConfigSpec {
     pub asset_types: Option<Vec<String>>,
     pub max_asset_size: Option<u64>,
     pub batch_urls: Option<Vec<String>>,
+    pub browser_mode: Option<String>,
+    pub browser_endpoint: Option<String>,
+    pub browser_timeout_ms: Option<u64>,
+    pub browser_wait: Option<String>,
+    pub browser_wait_selector: Option<String>,
+    pub browser_extra_wait_ms: Option<u64>,
 }
 
 /// Basic auth credentials.
@@ -178,6 +184,7 @@ pub struct Assertions {
     pub assets: Option<AssetAssertions>,
     pub stream: Option<StreamAssertions>,
     pub batch: Option<BatchAssertions>,
+    pub browser: Option<BrowserAssertions>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -393,12 +400,21 @@ pub struct BatchAssertions {
     pub has_url_result: Option<String>,
 }
 
+/// Browser-related assertions.
+#[derive(Debug, Deserialize)]
+pub struct BrowserAssertions {
+    pub js_render_hint: Option<bool>,
+    pub browser_used: Option<bool>,
+}
+
 /// Skip directives for conditional test execution.
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 pub struct SkipDirective {
     #[serde(default)]
     pub requires_network: bool,
+    #[serde(default)]
+    pub requires_browser: bool,
     pub notes: Option<String>,
 }
 
