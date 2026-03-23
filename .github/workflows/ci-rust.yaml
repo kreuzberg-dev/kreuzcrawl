@@ -54,3 +54,6 @@ jobs:
 
       - name: Run tests
         run: cargo test --workspace
+
+      - name: Check browser feature compiles
+        run: cargo check --workspace --features browser

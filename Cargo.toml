@@ -13,6 +13,7 @@ rust-version = "1.91"
 [workspace.dependencies]
 anyhow = "1"
 camino = "1.2"
+chromiumoxide = { version = "0.9", default-features = false }
 clap = { version = "4", features = ["derive"] }
 flate2 = "1"
 itertools = "0.14"

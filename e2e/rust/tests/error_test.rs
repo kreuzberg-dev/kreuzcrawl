@@ -251,7 +251,7 @@ async fn test_error_retry_backoff() {
         "GET",
         "/",
         429,
-        &[("content-type", "text/html"), ("retry-after", "1")],
+        &[("retry-after", "1"), ("content-type", "text/html")],
         &body,
     )
     .await;
@@ -279,8 +279,8 @@ async fn test_error_waf_false_403() {
         "/",
         403,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("server", "cloudflare"),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body,
     )

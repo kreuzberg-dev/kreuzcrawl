@@ -23,6 +23,32 @@ pub struct AuthHeader {
     pub value: String,
 }
 
+/// When to use the headless browser fallback.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum BrowserMode {
+    /// Automatically detect when JS rendering is needed and fall back to browser.
+    #[default]
+    Auto,
+    /// Always use the browser for every request.
+    Always,
+    /// Never use the browser fallback.
+    Never,
+}
+
+/// Wait strategy for browser page rendering.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum BrowserWait {
+    /// Wait until network activity is idle.
+    #[default]
+    NetworkIdle,
+    /// Wait for a specific CSS selector to appear in the DOM.
+    Selector,
+    /// Wait for a fixed duration after navigation.
+    Fixed,
+}
+
 /// Configuration for crawl, scrape, and map operations.
 #[derive(Debug, Clone)]
 pub struct CrawlConfig {
@@ -78,6 +104,21 @@ pub struct CrawlConfig {
     pub asset_types: Option<Vec<AssetCategory>>,
     /// Maximum size in bytes for individual asset downloads.
     pub max_asset_size: Option<usize>,
+    /// When to use the headless browser fallback.
+    pub browser_mode: BrowserMode,
+    /// CDP WebSocket endpoint for connecting to an external browser instance.
+    pub browser_endpoint: Option<String>,
+    /// Timeout for browser page load and rendering.
+    pub browser_timeout: Duration,
+    /// Wait strategy after browser navigation.
+    pub browser_wait: BrowserWait,
+    /// CSS selector to wait for when `browser_wait` is `Selector`.
+    pub browser_wait_selector: Option<String>,
+    /// Extra time to wait after the wait condition is met.
+    pub browser_extra_wait: Option<Duration>,
+    /// Shared browser pool for reusing Chrome across requests.
+    #[cfg(feature = "browser")]
+    pub browser_pool: Option<std::sync::Arc<crate::browser_pool::BrowserPool>>,
 }
 
 impl Default for CrawlConfig {
@@ -109,6 +150,14 @@ impl Default for CrawlConfig {
             download_assets: false,
             asset_types: None,
             max_asset_size: None,
+            browser_mode: BrowserMode::Auto,
+            browser_endpoint: None,
+            browser_timeout: Duration::from_secs(30),
+            browser_wait: BrowserWait::default(),
+            browser_wait_selector: None,
+            browser_extra_wait: None,
+            #[cfg(feature = "browser")]
+            browser_pool: None,
         }
     }
 }
@@ -489,6 +538,10 @@ pub struct ScrapeResult {
     pub response_meta: Option<ResponseMeta>,
     /// Downloaded assets from the page.
     pub assets: Vec<DownloadedAsset>,
+    /// Whether the page content suggests JavaScript rendering is needed.
+    pub js_render_hint: bool,
+    /// Whether the browser fallback was used to fetch this page.
+    pub browser_used: bool,
 }
 
 /// The result of crawling a single page during a crawl operation.

@@ -6,11 +6,11 @@ use itertools::Itertools;
 
 use crate::fixtures::{
     ArticleAssertions, Assertions, AssetAssertions, AuthAssertions, BatchAssertions,
-    ComputedAssertions, ContentAssertions, CookieAssertions, CrawlAssertions, DublinCoreAssertions,
-    ErrorAssertions, ExtendedMetadataAssertions, ExtendedOgAssertions, FaviconAssertions,
-    FeedAssertions, Fixture, HeadingAssertions, HreflangAssertions, ImageAssertions,
-    JsonLdAssertions, LinkAssertions, MapAssertions, MetadataAssertions, OgAssertions,
-    RedirectAssertions, ResponseMetaAssertions, RobotsAssertions, SitemapAssertions,
+    BrowserAssertions, ComputedAssertions, ContentAssertions, CookieAssertions, CrawlAssertions,
+    DublinCoreAssertions, ErrorAssertions, ExtendedMetadataAssertions, ExtendedOgAssertions,
+    FaviconAssertions, FeedAssertions, Fixture, HeadingAssertions, HreflangAssertions,
+    ImageAssertions, JsonLdAssertions, LinkAssertions, MapAssertions, MetadataAssertions,
+    OgAssertions, RedirectAssertions, ResponseMetaAssertions, RobotsAssertions, SitemapAssertions,
     StreamAssertions, TwitterAssertions,
 };
 
@@ -588,6 +588,56 @@ fn generate_config(out: &mut String, fixture: &Fixture) -> Result<()> {
         if let Some(max_size) = cfg.max_asset_size {
             writeln!(out, "        max_asset_size: Some({max_size}),")?;
         }
+        if let Some(ref mode) = cfg.browser_mode {
+            let variant = match mode.as_str() {
+                "auto" => "Auto",
+                "always" => "Always",
+                "never" => "Never",
+                other => bail!("unknown browser_mode in fixture: \"{other}\""),
+            };
+            writeln!(
+                out,
+                "        browser_mode: kreuzcrawl::BrowserMode::{variant},"
+            )?;
+        }
+        if let Some(ref endpoint) = cfg.browser_endpoint {
+            writeln!(
+                out,
+                "        browser_endpoint: Some(\"{}\".to_owned()),",
+                escape_rust_string(endpoint)
+            )?;
+        }
+        if let Some(timeout_ms) = cfg.browser_timeout_ms {
+            writeln!(
+                out,
+                "        browser_timeout: std::time::Duration::from_millis({timeout_ms}),"
+            )?;
+        }
+        if let Some(ref wait) = cfg.browser_wait {
+            let variant = match wait.as_str() {
+                "network_idle" => "NetworkIdle",
+                "selector" => "Selector",
+                "fixed" => "Fixed",
+                other => bail!("unknown browser_wait in fixture: \"{other}\""),
+            };
+            writeln!(
+                out,
+                "        browser_wait: kreuzcrawl::BrowserWait::{variant},"
+            )?;
+        }
+        if let Some(ref selector) = cfg.browser_wait_selector {
+            writeln!(
+                out,
+                "        browser_wait_selector: Some(\"{}\".to_owned()),",
+                escape_rust_string(selector)
+            )?;
+        }
+        if let Some(extra_ms) = cfg.browser_extra_wait_ms {
+            writeln!(
+                out,
+                "        browser_extra_wait: Some(std::time::Duration::from_millis({extra_ms})),"
+            )?;
+        }
     }
 
     writeln!(out, "        ..Default::default()")?;
@@ -694,6 +744,9 @@ fn generate_assertions(out: &mut String, assertions: &Assertions, category: &str
     }
     if let Some(ref batch) = assertions.batch {
         generate_batch_assertions(out, batch)?;
+    }
+    if let Some(ref browser) = assertions.browser {
+        generate_browser_assertions(out, browser)?;
     }
 
     Ok(())
@@ -1471,6 +1524,24 @@ fn generate_stream_assertions(out: &mut String, stream: &StreamAssertions) -> Re
             out,
             "    assert!(events.iter().any(|e| matches!(e, CrawlEvent::Complete {{ .. }})));"
         )?;
+    }
+    Ok(())
+}
+
+fn generate_browser_assertions(out: &mut String, browser: &BrowserAssertions) -> Result<()> {
+    if let Some(hint) = browser.js_render_hint {
+        if hint {
+            writeln!(out, "    assert!(result.js_render_hint);")?;
+        } else {
+            writeln!(out, "    assert!(!result.js_render_hint);")?;
+        }
+    }
+    if let Some(used) = browser.browser_used {
+        if used {
+            writeln!(out, "    assert!(result.browser_used);")?;
+        } else {
+            writeln!(out, "    assert!(!result.browser_used);")?;
+        }
     }
     Ok(())
 }

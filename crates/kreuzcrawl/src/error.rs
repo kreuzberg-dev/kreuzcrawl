@@ -44,6 +44,12 @@ pub enum CrawlError {
     /// Data was lost or truncated during transfer.
     #[error("data_loss: {0}")]
     DataLoss(String),
+    /// The browser failed to launch, connect, or navigate.
+    #[error("browser: {0}")]
+    BrowserError(String),
+    /// The browser page load or rendering timed out.
+    #[error("browser_timeout: {0}")]
+    BrowserTimeout(String),
     /// An unclassified error occurred.
     #[error("other: {0}")]
     Other(String),

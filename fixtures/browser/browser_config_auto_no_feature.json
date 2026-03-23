@@ -1,0 +1,20 @@
+{
+  "id": "browser_config_auto_no_feature",
+  "description": "Browser mode 'auto' without browser feature enabled does not use browser",
+  "tags": ["browser", "config"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_file": "html/spa_react_shell.html"
+  },
+  "config": {
+    "browser_mode": "auto"
+  },
+  "assertions": {
+    "status_code": 200,
+    "browser": {
+      "js_render_hint": true,
+      "browser_used": false
+    }
+  }
+}

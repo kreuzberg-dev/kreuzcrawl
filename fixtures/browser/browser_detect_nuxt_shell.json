@@ -1,0 +1,17 @@
+{
+  "id": "browser_detect_nuxt_shell",
+  "description": "Detects Nuxt SPA shell with empty #__nuxt div as needing JS rendering",
+  "tags": ["browser", "detection"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_file": "html/spa_nuxt_shell.html"
+  },
+  "assertions": {
+    "status_code": 200,
+    "browser": {
+      "js_render_hint": true,
+      "browser_used": false
+    }
+  }
+}

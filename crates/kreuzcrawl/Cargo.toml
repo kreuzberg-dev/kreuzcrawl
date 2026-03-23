@@ -7,7 +7,12 @@ repository.workspace = true
 rust-version.workspace = true
 description = "A Rust crawling engine for turning websites into structured data"
 
+[features]
+default = []
+browser = ["dep:chromiumoxide"]
+
 [dependencies]
+chromiumoxide = { workspace = true, optional = true }
 flate2 = { workspace = true }
 quick-xml = { workspace = true }
 regex = { workspace = true }

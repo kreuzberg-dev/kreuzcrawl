@@ -19,8 +19,8 @@ const DEFAULT_CONCURRENCY: usize = 10;
 /// other URLs from being processed.
 ///
 /// Concurrency is bounded by `config.max_concurrent` (default: 10).
-/// Each URL is processed in a separate blocking task so that a panic
-/// in one scrape does not crash the entire batch.
+/// Each URL is processed in a separate async task. If a task panics,
+/// it is caught and reported as an error without crashing the batch.
 pub async fn batch_scrape(
     urls: &[&str],
     config: &CrawlConfig,
@@ -28,7 +28,6 @@ pub async fn batch_scrape(
     let concurrency = config.max_concurrent.unwrap_or(DEFAULT_CONCURRENCY);
     let sem = Arc::new(Semaphore::new(concurrency));
     let config = config.clone();
-    let handle = tokio::runtime::Handle::current();
 
     type UrlResult = (String, Result<ScrapeResult, CrawlError>);
     let mut handles: Vec<(String, tokio::task::JoinHandle<UrlResult>)> =
@@ -39,14 +38,13 @@ pub async fn batch_scrape(
         let url_owned = url.to_owned();
         let sem = Arc::clone(&sem);
         let config = config.clone();
-        let handle = handle.clone();
 
-        let task = tokio::task::spawn_blocking(move || {
-            let _permit = match handle.block_on(sem.acquire()) {
+        let task = tokio::spawn(async move {
+            let _permit = match sem.acquire().await {
                 Ok(p) => p,
                 Err(_) => return (url_owned, Err(CrawlError::Other("semaphore closed".into()))),
             };
-            let result = handle.block_on(scrape::scrape(&url_owned, &config));
+            let result = scrape::scrape(&url_owned, &config).await;
             (url_owned, result)
         });
 
