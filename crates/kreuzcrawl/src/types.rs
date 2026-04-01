@@ -9,6 +9,7 @@ use crate::citations::CitationResult;
 
 /// Metadata about an LLM extraction pass.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ExtractionMeta {
     /// Estimated cost of the LLM call in USD.
     pub cost: Option<f64>,
@@ -17,7 +18,7 @@ pub struct ExtractionMeta {
     /// Number of completion (output) tokens generated.
     pub completion_tokens: Option<u64>,
     /// The model identifier used for extraction.
-    pub model: String,
+    pub model: Option<String>,
     /// Number of content chunks sent to the LLM.
     pub chunks_processed: usize,
 }
@@ -634,6 +635,7 @@ pub struct CookieInfo {
 
 /// Rich markdown conversion result from HTML processing.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MarkdownResult {
     /// Converted markdown text.
     pub content: String,

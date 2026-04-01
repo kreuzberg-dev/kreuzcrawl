@@ -19,12 +19,30 @@ use crate::robots::{is_path_allowed, parse_robots_txt};
 use crate::types::BrowserMode;
 use crate::types::{CrawlConfig, PageMetadata, ScrapeResult};
 
+/// Scrape a single URL with extra headers (from middleware) and return structured data about the page.
+pub async fn scrape_with_headers(
+    url: &str,
+    config: &CrawlConfig,
+    extra_headers: &std::collections::HashMap<String, String>,
+) -> Result<ScrapeResult, CrawlError> {
+    scrape_inner(url, config, extra_headers).await
+}
+
 /// Scrape a single URL and return structured data about the page.
 ///
 /// Fetches the URL, optionally checks robots.txt, extracts metadata, links,
 /// images, feeds, and JSON-LD data. Handles authentication, content filtering,
 /// and charset detection.
 pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, CrawlError> {
+    scrape_inner(url, config, &std::collections::HashMap::new()).await
+}
+
+/// Internal scrape implementation that accepts extra headers.
+async fn scrape_inner(
+    url: &str,
+    config: &CrawlConfig,
+    extra_headers: &std::collections::HashMap<String, String>,
+) -> Result<ScrapeResult, CrawlError> {
     let parsed_url = Url::parse(url).map_err(|e| CrawlError::Other(format!("invalid URL: {e}")))?;
     let client = build_client(config)?;
 
@@ -35,7 +53,9 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
     let mut crawl_delay = None;
     if config.respect_robots_txt {
         let robots = robots_url(&parsed_url);
-        if let Ok(robots_resp) = http_fetch(&robots, config, &client).await {
+        if let Ok(robots_resp) =
+            http_fetch(&robots, config, &std::collections::HashMap::new(), &client).await
+        {
             let ua = config.user_agent.as_deref().unwrap_or("*");
             let rules = parse_robots_txt(&robots_resp.body, ua);
             is_allowed = is_path_allowed(parsed_url.path(), &rules);
@@ -61,7 +81,7 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
             Err(e) => return Err(e),
         }
     } else {
-        match fetch_with_retry(url, config, &client).await {
+        match fetch_with_retry(url, config, extra_headers, &client).await {
             Ok(r) => r,
             // WAF-blocked: try browser fallback in Auto mode.
             Err(CrawlError::WafBlocked(_)) if matches!(config.browser.mode, BrowserMode::Auto) => {
@@ -116,7 +136,7 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
     };
 
     #[cfg(not(feature = "browser"))]
-    let resp = match fetch_with_retry(url, config, &client).await {
+    let resp = match fetch_with_retry(url, config, extra_headers, &client).await {
         Ok(r) => r,
         Err(CrawlError::NotFound(_)) if config.respect_robots_txt => {
             return Ok(ScrapeResult {

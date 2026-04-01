@@ -36,6 +36,7 @@ impl RateLimiter for NoopRateLimiter {
 struct DomainState {
     last_request: Instant,
     crawl_delay: Option<Duration>,
+    consecutive_success: u32,
 }
 
 /// A per-domain token bucket rate limiter.
@@ -68,6 +69,7 @@ impl RateLimiter for PerDomainThrottle {
             let domain_state = state.entry(domain.to_owned()).or_insert(DomainState {
                 last_request: now - self.default_delay,
                 crawl_delay: None,
+                consecutive_success: 0,
             });
 
             let effective_delay = domain_state.crawl_delay.unwrap_or(self.default_delay);
@@ -94,12 +96,29 @@ impl RateLimiter for PerDomainThrottle {
     }
 
     async fn record_response(&self, domain: &str, status: u16) -> Result<(), CrawlError> {
-        if status == 429 {
-            let mut state = self.state.lock().unwrap();
-            if let Some(domain_state) = state.get_mut(domain) {
+        let mut state = self.state.lock().unwrap();
+        if let Some(domain_state) = state.get_mut(domain) {
+            if status == 429 {
+                // Reset consecutive success on rate limit
+                domain_state.consecutive_success = 0;
                 let current = domain_state.crawl_delay.unwrap_or(self.default_delay);
                 let new_delay = (current * 2).min(MAX_BACKOFF);
                 domain_state.crawl_delay = Some(new_delay);
+            } else if status < 400 {
+                // Decay backoff on successful responses
+                domain_state.consecutive_success += 1;
+                if domain_state.consecutive_success >= 5 && domain_state.crawl_delay.is_some() {
+                    // Halve the backoff, but don't go below the default
+                    if let Some(ref mut delay) = domain_state.crawl_delay {
+                        let halved = *delay / 2;
+                        if halved < self.default_delay {
+                            domain_state.crawl_delay = None; // Reset to default
+                        } else {
+                            *delay = halved;
+                        }
+                    }
+                    domain_state.consecutive_success = 0;
+                }
             }
         }
         Ok(())
@@ -110,6 +129,7 @@ impl RateLimiter for PerDomainThrottle {
         let domain_state = state.entry(domain.to_owned()).or_insert(DomainState {
             last_request: Instant::now() - self.default_delay,
             crawl_delay: None,
+            consecutive_success: 0,
         });
         domain_state.crawl_delay = Some(delay);
         Ok(())

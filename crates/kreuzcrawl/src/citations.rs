@@ -9,6 +9,7 @@ use std::sync::LazyLock;
 
 /// Result of citation conversion.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct CitationResult {
     /// Markdown with links replaced by numbered citations.
     pub content: String,
@@ -17,23 +18,33 @@ pub struct CitationResult {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct CitationReference {
     pub index: usize,
     pub url: String,
     pub text: String,
 }
 
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\[([^\]]*)\]\(([^)]+)\)").unwrap());
+// Matches both images ![alt](url) and links [text](url)
+// We distinguish them by checking the character before the match
+static LINK_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"!?\[([^\]]*)\]\(([^)]+)\)").unwrap());
 
 /// Convert markdown links to numbered citations.
 ///
 /// `[Example](https://example.com)` becomes `Example[1]`
 /// with `[1]: https://example.com` in the reference list.
+/// Images `![alt](url)` are preserved unchanged.
 pub fn generate_citations(markdown: &str) -> CitationResult {
     let mut references = Vec::new();
     let mut seen_urls = std::collections::HashMap::new();
 
     let content = LINK_RE.replace_all(markdown, |caps: &regex::Captures| {
+        let full_match = caps.get(0).unwrap().as_str();
+        // Skip images (start with !)
+        if full_match.starts_with('!') {
+            return full_match.to_owned();
+        }
         let text = &caps[1];
         let url = &caps[2];
 
@@ -97,5 +108,19 @@ mod tests {
         assert!(result.content.contains("[1]"));
         assert!(result.content.contains("[2]"));
         assert!(result.content.contains("[3]"));
+    }
+
+    #[test]
+    fn test_images_not_cited() {
+        let md = "![logo](https://example.com/logo.png) and [link](https://example.com)";
+        let result = generate_citations(md);
+        assert!(
+            result
+                .content
+                .contains("![logo](https://example.com/logo.png)"),
+            "images should be preserved"
+        );
+        assert!(result.content.contains("link[1]"), "links should be cited");
+        assert_eq!(result.references.len(), 1);
     }
 }

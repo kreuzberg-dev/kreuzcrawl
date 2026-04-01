@@ -23,6 +23,7 @@ pub(crate) struct HttpResponse {
 pub(crate) async fn http_fetch(
     url: &str,
     config: &CrawlConfig,
+    extra_headers: &std::collections::HashMap<String, String>,
     client: &reqwest::Client,
 ) -> Result<HttpResponse, CrawlError> {
     let mut req = client.get(url);
@@ -62,6 +63,11 @@ pub(crate) async fn http_fetch(
         req = req.header(k.as_str(), v.as_str());
     }
 
+    // Apply middleware-provided headers (override config headers)
+    for (k, v) in extra_headers {
+        req = req.header(k.as_str(), v.as_str());
+    }
+
     let resp = req.send().await.map_err(|e| classify_reqwest_error(&e))?;
 
     let status = resp.status().as_u16();
@@ -92,15 +98,13 @@ pub(crate) async fn http_fetch(
             let body_lower = body.to_lowercase();
 
             let is_waf =
-                // Cloudflare
+                // Cloudflare - require specific patterns
                 server_lower.contains("cloudflare")
                 || body_lower.contains("cf-browser-verification")
                 || body_lower.contains("challenge-form")
                 || body_lower.contains("cf-chl-")
-                // Akamai
+                // Akamai - require specific pattern
                 || server_lower.contains("akamaighost")
-                || body_lower.contains("akamai")
-                || body_lower.contains("reference #")
                 // AWS WAF
                 || body_lower.contains("awselb")
                 || body_lower.contains("x-amzn-waf")
@@ -112,21 +116,15 @@ pub(crate) async fn http_fetch(
                 // DataDome
                 || body_lower.contains("datadome")
                 || body_lower.contains("dd.js")
-                // PerimeterX
+                // PerimeterX - only specific patterns
                 || body_lower.contains("perimeterx")
                 || body_lower.contains("px-captcha")
-                || body_lower.contains("_px")
                 // Sucuri
                 || body_lower.contains("sucuri")
                 || body_lower.contains("x-sucuri-id")
                 // F5 BIG-IP
                 || server_lower.contains("big-ip")
-                || body_lower.contains("bigipserver")
-                // Generic bot detection
-                || body_lower.contains("bot detection")
-                || body_lower.contains("are you a robot")
-                || body_lower.contains("captcha")
-                || body_lower.contains("security check");
+                || body_lower.contains("bigipserver");
 
             let has_waf_headers = headers.contains_key("x-sucuri-id")
                 || headers.contains_key("x-datadome")
@@ -233,6 +231,7 @@ pub(crate) fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, Craw
 pub(crate) async fn fetch_with_retry(
     url: &str,
     config: &CrawlConfig,
+    extra_headers: &std::collections::HashMap<String, String>,
     client: &reqwest::Client,
 ) -> Result<HttpResponse, CrawlError> {
     let retries = config.retry_count;
@@ -240,7 +239,7 @@ pub(crate) async fn fetch_with_retry(
 
     let mut last_err = None;
     for attempt in 0..=retries {
-        match http_fetch(url, config, client).await {
+        match http_fetch(url, config, extra_headers, client).await {
             Ok(resp) => return Ok(resp),
             Err(e) => {
                 // Check if we should retry this error
@@ -297,10 +296,14 @@ pub(crate) fn extract_cookies(headers: &HeaderMap) -> Vec<CookieInfo> {
 
 /// Identify the WAF vendor from server and body content.
 fn detect_waf_vendor(server: &str, body: &str) -> &'static str {
-    if server.contains("cloudflare") || body.contains("cf-") {
+    if server.contains("cloudflare")
+        || body.contains("cf-browser-verification")
+        || body.contains("challenge-form")
+        || body.contains("cf-chl-")
+    {
         return "cloudflare";
     }
-    if server.contains("akamaighost") || body.contains("akamai") {
+    if server.contains("akamaighost") {
         return "akamai";
     }
     if body.contains("incapsula") || body.contains("_incap_ses_") {

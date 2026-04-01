@@ -113,7 +113,7 @@ mod inner {
                 cost,
                 prompt_tokens: usage.map(|u| u.prompt_tokens),
                 completion_tokens: usage.map(|u| u.completion_tokens),
-                model: self.model.clone(),
+                model: Some(self.model.clone()),
                 chunks_processed: 1,
             });
 

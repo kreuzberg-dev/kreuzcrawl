@@ -55,7 +55,14 @@ pub(crate) async fn fetch_robots_rules(
         .user_agent
         .as_deref()
         .unwrap_or(concat!("kreuzcrawl/", env!("CARGO_PKG_VERSION")));
-    let resp = http_fetch(&robots_url, config, client).await.ok()?;
+    let resp = http_fetch(
+        &robots_url,
+        config,
+        &std::collections::HashMap::new(),
+        client,
+    )
+    .await
+    .ok()?;
     if resp.status >= 400 {
         return None;
     }

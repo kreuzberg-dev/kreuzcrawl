@@ -32,7 +32,9 @@ pub async fn map(url: &str, config: &CrawlConfig) -> Result<MapResult, CrawlErro
     // Try robots.txt for sitemap directives
     if config.respect_robots_txt {
         let robots = robots_url(&parsed_url);
-        if let Ok(robots_resp) = http_fetch(&robots, config, &client).await {
+        if let Ok(robots_resp) =
+            http_fetch(&robots, config, &std::collections::HashMap::new(), &client).await
+        {
             let ua = config.user_agent.as_deref().unwrap_or("*");
             let rules = parse_robots_txt(&robots_resp.body, ua);
             if !rules.sitemaps.is_empty() {
@@ -67,7 +69,13 @@ pub async fn map(url: &str, config: &CrawlConfig) -> Result<MapResult, CrawlErro
         parsed_url.scheme(),
         parsed_url.authority()
     );
-    if let Ok(sitemap_resp) = http_fetch(&sitemap_url, config, &client).await
+    if let Ok(sitemap_resp) = http_fetch(
+        &sitemap_url,
+        config,
+        &std::collections::HashMap::new(),
+        &client,
+    )
+    .await
         && (sitemap_resp.body.contains("<urlset") || sitemap_resp.body.contains("<sitemapindex"))
     {
         // Use the already-fetched response to avoid a redundant second fetch
@@ -86,7 +94,7 @@ pub async fn map(url: &str, config: &CrawlConfig) -> Result<MapResult, CrawlErro
     }
 
     // Fetch the page directly and try to parse as sitemap or extract links
-    let resp = fetch_with_retry(url, config, &client).await?;
+    let resp = fetch_with_retry(url, config, &std::collections::HashMap::new(), &client).await?;
 
     let is_xml = resp.content_type.contains("xml") || resp.body.trim_start().starts_with("<?xml");
 
