@@ -195,7 +195,26 @@ impl CrawlEngine {
         }
 
         // Perform the scrape
-        let result = crate::scrape::scrape(&req_ctx.url, &self.config).await?;
+        let mut result =
+            crate::scrape::scrape_with_headers(&req_ctx.url, &self.config, &req_ctx.headers)
+                .await?;
+
+        // Populate ResponseContext.headers from actual response metadata
+        let mut resp_headers = std::collections::HashMap::new();
+        if let Some(ref meta) = result.response_meta {
+            if let Some(ref etag) = meta.etag {
+                resp_headers.insert("etag".to_owned(), etag.clone());
+            }
+            if let Some(ref lm) = meta.last_modified {
+                resp_headers.insert("last-modified".to_owned(), lm.clone());
+            }
+            if let Some(ref server) = meta.server {
+                resp_headers.insert("server".to_owned(), server.clone());
+            }
+            if let Some(ref cl) = meta.content_language {
+                resp_headers.insert("content-language".to_owned(), cl.clone());
+            }
+        }
 
         // Run after_response middleware
         let mut resp_ctx = ResponseContext {
@@ -203,11 +222,15 @@ impl CrawlEngine {
             status: result.status_code,
             content_type: result.content_type.clone(),
             body: result.html.clone(),
-            headers: std::collections::HashMap::new(),
+            headers: resp_headers,
         };
         for mw in &self.middlewares {
             mw.after_response(&mut resp_ctx).await?;
         }
+
+        // Apply middleware mutations back to result
+        result.html = resp_ctx.body;
+        result.body_size = result.html.len();
 
         Ok(result)
     }
@@ -390,7 +413,14 @@ impl CrawlEngine {
         seen_redirects.insert(current_url.clone());
 
         loop {
-            let resp = match http_fetch(&current_url, &self.config, &client).await {
+            let resp = match http_fetch(
+                &current_url,
+                &self.config,
+                &std::collections::HashMap::new(),
+                &client,
+            )
+            .await
+            {
                 Ok(r) => r,
                 Err(e) => {
                     error = Some(format!("{e}"));
@@ -592,10 +622,47 @@ impl CrawlEngine {
                 join_set.spawn(async move {
                     let _permit = permit;
 
-                    // Check persistent cache before making any HTTP request
-                    if let Ok(Some(cached)) = cache.get(&entry.url).await {
+                    // Rate limiting
+                    let parsed = Url::parse(&entry.url).ok();
+                    let domain = parsed.as_ref().and_then(|u| u.host_str()).unwrap_or("");
+                    if !domain.is_empty() {
+                        rate_limiter
+                            .acquire(domain)
+                            .await
+                            .map_err(|e| (entry.clone(), e))?;
+                    }
+
+                    // Run before_request middleware FIRST so it can modify URL/headers
+                    let mut req_ctx = RequestContext {
+                        url: entry.url.clone(),
+                        headers: std::collections::HashMap::new(),
+                    };
+                    for mw in &middlewares {
+                        mw.before_request(&mut req_ctx)
+                            .await
+                            .map_err(|e| (entry.clone(), e))?;
+                    }
+
+                    // Check persistent cache AFTER middleware (uses middleware-modified URL)
+                    if let Ok(Some(cached)) = cache.get(&req_ctx.url).await {
+                        // Run after_response middleware on cached data
+                        let mut resp_ctx = ResponseContext {
+                            url: req_ctx.url.clone(),
+                            status: cached.status_code,
+                            content_type: cached.content_type.clone(),
+                            body: cached.body.clone(),
+                            headers: std::collections::HashMap::new(),
+                        };
+                        for mw in &middlewares {
+                            mw.after_response(&mut resp_ctx)
+                                .await
+                                .map_err(|e| (entry.clone(), e))?;
+                        }
+
+                        let body = resp_ctx.body;
+
                         // Build a FetchResult from cached data
-                        let body_clone = cached.body.clone();
+                        let body_clone = body.clone();
                         let url_for_extract = entry.url.clone();
                         let content_type_clone = cached.content_type.clone();
 
@@ -628,7 +695,7 @@ impl CrawlEngine {
                             entry,
                             status_code: cached.status_code,
                             content_type: cached.content_type,
-                            body: cached.body,
+                            body,
                             headers: reqwest::header::HeaderMap::new(),
                             extraction,
                             is_binary,
@@ -637,29 +704,8 @@ impl CrawlEngine {
                         });
                     }
 
-                    // Rate limiting
-                    let parsed = Url::parse(&entry.url).ok();
-                    let domain = parsed.as_ref().and_then(|u| u.host_str()).unwrap_or("");
-                    if !domain.is_empty() {
-                        rate_limiter
-                            .acquire(domain)
-                            .await
-                            .map_err(|e| (entry.clone(), e))?;
-                    }
-
-                    // Run before_request middleware
-                    let mut req_ctx = RequestContext {
-                        url: entry.url.clone(),
-                        headers: std::collections::HashMap::new(),
-                    };
-                    for mw in &middlewares {
-                        mw.before_request(&mut req_ctx)
-                            .await
-                            .map_err(|e| (entry.clone(), e))?;
-                    }
-
-                    // HTTP fetch
-                    let resp = http_fetch(&req_ctx.url, &config, &client)
+                    // HTTP fetch with middleware-provided headers
+                    let resp = http_fetch(&req_ctx.url, &config, &req_ctx.headers, &client)
                         .await
                         .map_err(|e| (entry.clone(), e))?;
 

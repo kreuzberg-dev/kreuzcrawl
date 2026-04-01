@@ -122,8 +122,14 @@ impl CrawlCache for DiskCache {
             }
             let data = std::fs::read_to_string(&path)
                 .map_err(|e| CrawlError::Other(format!("cache read error: {e}")))?;
-            let page: CachedPage = serde_json::from_str(&data)
-                .map_err(|e| CrawlError::Other(format!("cache parse error: {e}")))?;
+            let page: CachedPage = match serde_json::from_str(&data) {
+                Ok(p) => p,
+                Err(_) => {
+                    // Corrupt cache entry — treat as miss, delete the file
+                    let _ = std::fs::remove_file(&path);
+                    return Ok(None);
+                }
+            };
 
             // Check TTL
             if ttl_secs > 0 {
@@ -153,8 +159,11 @@ impl CrawlCache for DiskCache {
         self.evict_if_needed()?;
 
         tokio::task::spawn_blocking(move || {
-            std::fs::write(&path, data)
-                .map_err(|e| CrawlError::Other(format!("cache write error: {e}")))
+            let tmp_path = path.with_extension("tmp");
+            std::fs::write(&tmp_path, data)
+                .map_err(|e| CrawlError::Other(format!("cache write error: {e}")))?;
+            std::fs::rename(&tmp_path, &path)
+                .map_err(|e| CrawlError::Other(format!("cache rename error: {e}")))
         })
         .await
         .unwrap_or(Ok(()))

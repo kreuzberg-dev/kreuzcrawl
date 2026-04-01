@@ -151,14 +151,14 @@ impl CrawlStrategy for AdaptiveStrategy {
             return true;
         }
 
-        let total_terms = state.all_terms.len() as f64;
-        if total_terms == 0.0 {
-            return false;
-        }
-
         let avg_new_terms: f64 =
             state.window.iter().sum::<usize>() as f64 / state.window.len() as f64;
-        let saturation_ratio = avg_new_terms / total_terms;
+        let avg_total_per_page = state.all_terms.len() as f64 / stats.pages_crawled.max(1) as f64;
+        let saturation_ratio = if avg_total_per_page > 0.0 {
+            avg_new_terms / avg_total_per_page
+        } else {
+            1.0 // No data yet, continue
+        };
 
         saturation_ratio > self.saturation_threshold
     }

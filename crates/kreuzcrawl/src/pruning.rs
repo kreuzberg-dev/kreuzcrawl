@@ -9,11 +9,26 @@
 /// - Remove lines that are mostly links (navigation)
 /// - Remove very short lines (breadcrumbs, copyright)
 /// - Keep paragraphs with substantial text content
+/// - Preserve code blocks even if lines are short
 pub fn generate_fit_markdown(markdown: &str) -> String {
     let mut fit_lines = Vec::new();
+    let mut in_code_block = false;
 
     for line in markdown.lines() {
         let trimmed = line.trim();
+
+        // Track code block boundaries
+        if trimmed.starts_with("```") {
+            in_code_block = !in_code_block;
+            fit_lines.push(trimmed);
+            continue;
+        }
+
+        // Inside code blocks, keep everything
+        if in_code_block {
+            fit_lines.push(trimmed);
+            continue;
+        }
 
         // Skip empty lines (keep one between paragraphs)
         if trimmed.is_empty() {
@@ -34,7 +49,8 @@ pub fn generate_fit_markdown(markdown: &str) -> String {
         }
 
         // Skip very short non-heading lines (breadcrumbs, copyright notices)
-        if trimmed.len() < 15 && !trimmed.starts_with('#') {
+        // Reduced threshold from 15 to 5 characters
+        if trimmed.len() < 5 && !trimmed.starts_with('#') {
             continue;
         }
 
@@ -78,7 +94,8 @@ fn is_boilerplate(lower: &str) -> bool {
         "privacy policy",
         "terms of service",
         "all rights reserved",
-        "copyright \u{00a9}",
+        "copyright",
+        "\u{00a9}",
         "subscribe to",
         "sign up for",
         "follow us",
@@ -123,5 +140,21 @@ mod tests {
         let md = "Good content.\n\nSubscribe to our newsletter\n\nMore content.";
         let result = generate_fit_markdown(md);
         assert!(!result.contains("Subscribe"));
+    }
+
+    #[test]
+    fn test_preserves_code_blocks() {
+        let md =
+            "# Title\n\nGood content here.\n\n```rust\nfn main() {\n    x\n}\n```\n\nMore content.";
+        let result = generate_fit_markdown(md);
+        assert!(result.contains("fn main()"), "code should be preserved");
+        assert!(result.contains("x"), "short code lines should be kept");
+    }
+
+    #[test]
+    fn test_keeps_short_list_items() {
+        let md = "# FAQ\n\n- Yes\n- No\n- Maybe";
+        let result = generate_fit_markdown(md);
+        assert!(result.contains("Yes"), "short list items should be kept");
     }
 }
