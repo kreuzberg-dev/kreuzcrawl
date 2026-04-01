@@ -10,7 +10,7 @@ use crate::fixtures::{
     DublinCoreAssertions, ErrorAssertions, ExtendedMetadataAssertions, ExtendedOgAssertions,
     FaviconAssertions, FeedAssertions, FilterAssertions, Fixture, HeadingAssertions,
     HreflangAssertions, ImageAssertions, JsonLdAssertions, LinkAssertions, MapAssertions,
-    MetadataAssertions, OgAssertions, RateLimitAssertions, RedirectAssertions,
+    MarkdownAssertions, MetadataAssertions, OgAssertions, RateLimitAssertions, RedirectAssertions,
     ResponseMetaAssertions, RobotsAssertions, SitemapAssertions, StrategyAssertions,
     StreamAssertions, TwitterAssertions, ValidationAssertions,
 };
@@ -437,6 +437,11 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
                 )?;
             }
         }
+    } else if category == "stealth" || category == "proxy" {
+        writeln!(
+            out,
+            "    let engine = kreuzcrawl::CrawlEngine::builder().config(config.clone()).build().unwrap();"
+        )?;
     } else {
         writeln!(
             out,
@@ -518,8 +523,14 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
                 writeln!(out, "    let result = engine.scrape(&mock.uri()).await;")?;
             }
         }
-        "engine" => {
-            // Engine category determines sub-API from assertions
+        "stealth" => {
+            writeln!(out, "    let result = engine.scrape(&mock.uri()).await;")?;
+        }
+        "proxy" => {
+            writeln!(out, "    let result = engine.scrape(&mock.uri()).await;")?;
+        }
+        "engine" | "markdown" => {
+            // Engine/markdown category determines sub-API from assertions
             let assertions = fixture.assertions.as_ref();
             let has_crawl = assertions.and_then(|a| a.crawl.as_ref()).is_some();
             let has_map = assertions.and_then(|a| a.map.as_ref()).is_some();
@@ -620,8 +631,24 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
         if let Some(ref assertions) = fixture.assertions {
             generate_assertions(out, assertions, category)?;
         }
-    } else if category == "engine" {
-        // Engine category: determine sub-type from assertions
+    } else if category == "stealth" {
+        writeln!(
+            out,
+            "    let result = result.expect(\"request should succeed\");"
+        )?;
+        if let Some(ref assertions) = fixture.assertions {
+            generate_assertions(out, assertions, category)?;
+        }
+    } else if category == "proxy" {
+        writeln!(
+            out,
+            "    let result = result.expect(\"request should succeed\");"
+        )?;
+        if let Some(ref assertions) = fixture.assertions {
+            generate_assertions(out, assertions, category)?;
+        }
+    } else if category == "engine" || category == "markdown" {
+        // Engine/markdown category: determine sub-type from assertions
         let assertions_ref = fixture.assertions.as_ref();
         let has_stream = assertions_ref.and_then(|a| a.stream.as_ref()).is_some();
         let has_batch = assertions_ref.and_then(|a| a.batch.as_ref()).is_some();
@@ -1004,6 +1031,9 @@ fn generate_assertions(out: &mut String, assertions: &Assertions, category: &str
     }
     if let Some(ref validation) = assertions.validation {
         generate_validation_assertions(out, validation)?;
+    }
+    if let Some(ref markdown) = assertions.markdown {
+        generate_markdown_assertions(out, markdown)?;
     }
 
     Ok(())
@@ -1465,6 +1495,30 @@ fn sanitize_identifier(s: &str) -> String {
         .collect::<String>()
         .trim_matches('_')
         .to_lowercase()
+}
+
+fn generate_markdown_assertions(out: &mut String, md: &MarkdownAssertions) -> Result<()> {
+    if let Some(true) = md.is_some {
+        writeln!(
+            out,
+            "    assert!(result.markdown.is_some(), \"markdown should be Some\");"
+        )?;
+    }
+    if let Some(true) = md.not_empty {
+        writeln!(
+            out,
+            "    assert!(result.markdown.as_ref().map(|m| !m.is_empty()).unwrap_or(false), \"markdown should not be empty\");"
+        )?;
+    }
+    if let Some(ref contains) = md.contains {
+        writeln!(
+            out,
+            "    assert!(result.markdown.as_ref().map(|m| m.contains(\"{}\")).unwrap_or(false), \"markdown should contain '{}'\");",
+            escape_rust_string(contains),
+            escape_rust_string(contains)
+        )?;
+    }
+    Ok(())
 }
 
 /// Escape special characters for embedding in a Rust string literal.

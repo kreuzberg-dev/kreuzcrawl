@@ -695,7 +695,7 @@ impl CrawlEngine {
                         }
                     }
 
-                    // Convert HTML to Markdown when the `markdown` feature is enabled.
+                    // Convert HTML to Markdown.
                     let markdown = crate::markdown::convert_to_markdown(&body).await;
 
                     let page = CrawlPageResult {

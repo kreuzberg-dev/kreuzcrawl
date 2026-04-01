@@ -662,7 +662,7 @@ pub struct ScrapeResult {
     pub js_render_hint: bool,
     /// Whether the browser fallback was used to fetch this page.
     pub browser_used: bool,
-    /// Markdown conversion of the page content. Populated when the `markdown` feature is enabled.
+    /// Markdown conversion of the page content.
     pub markdown: Option<String>,
     /// Structured data extracted by LLM. Populated when using LlmExtractor.
     pub extracted_data: Option<serde_json::Value>,
@@ -704,7 +704,7 @@ pub struct CrawlPageResult {
     pub is_pdf: bool,
     /// The detected character set encoding.
     pub detected_charset: Option<String>,
-    /// Markdown conversion of the page content. Populated when the `markdown` feature is enabled.
+    /// Markdown conversion of the page content.
     pub markdown: Option<String>,
     /// Structured data extracted by LLM. Populated when using LlmExtractor.
     pub extracted_data: Option<serde_json::Value>,

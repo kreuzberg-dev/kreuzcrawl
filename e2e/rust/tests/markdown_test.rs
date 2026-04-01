@@ -5,9 +5,9 @@ use e2e_rust::helpers;
 
 #[tokio::test]
 async fn test_markdown_basic_conversion() {
-    // HTML is converted to markdown when markdown feature is enabled
+    // HTML is always converted to markdown alongside raw HTML
     let mock = helpers::setup_mock_server().await;
-    let body = "<html><head><title>Test</title></head><body><h1>Hello World</h1><p>This is a paragraph.</p><a href=\"/link\">Click here</a></body></html>".to_owned();
+    let body = "<html><head><title>Test</title></head><body><h1>Hello World</h1><p>This is a paragraph.</p></body></html>".to_owned();
     helpers::register_mock(
         &mock,
         "GET",
@@ -29,5 +29,100 @@ async fn test_markdown_basic_conversion() {
     let result = engine.scrape(&mock.uri()).await;
     let result = result.expect("request should succeed");
     assert_eq!(result.status_code, 200);
+    assert!(!result.html.is_empty());
     assert_eq!(result.metadata.title.as_deref(), Some("Test"));
+    assert!(result.markdown.is_some(), "markdown should be Some");
+    assert!(
+        result
+            .markdown
+            .as_ref()
+            .map(|m| !m.is_empty())
+            .unwrap_or(false),
+        "markdown should not be empty"
+    );
+    assert!(
+        result
+            .markdown
+            .as_ref()
+            .map(|m| m.contains("Hello World"))
+            .unwrap_or(false),
+        "markdown should contain 'Hello World'"
+    );
+}
+
+#[tokio::test]
+async fn test_markdown_crawl_all_pages() {
+    // All crawled pages have markdown field populated
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><h1>Home</h1><a href=\"/about\">About</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><h1>About Us</h1><p>We do things.</p></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/about",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.pages.len(), 2);
+}
+
+#[tokio::test]
+async fn test_markdown_links_converted() {
+    // HTML links are converted to markdown link syntax
+    let mock = helpers::setup_mock_server().await;
+    let body = "<html><body><p>Visit <a href=\"https://example.com\">Example</a> for more.</p></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.scrape(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert!(!result.html.is_empty());
+    assert!(result.markdown.is_some(), "markdown should be Some");
+    assert!(
+        result
+            .markdown
+            .as_ref()
+            .map(|m| m.contains("Example"))
+            .unwrap_or(false),
+        "markdown should contain 'Example'"
+    );
 }

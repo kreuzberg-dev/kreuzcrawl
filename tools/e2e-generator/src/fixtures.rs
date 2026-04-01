@@ -213,6 +213,7 @@ pub struct Assertions {
     pub rate_limit: Option<RateLimitAssertions>,
     pub filter: Option<FilterAssertions>,
     pub validation: Option<ValidationAssertions>,
+    pub markdown: Option<MarkdownAssertions>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -467,6 +468,14 @@ pub struct StrategyAssertions {
 pub struct BrowserAssertions {
     pub js_render_hint: Option<bool>,
     pub browser_used: Option<bool>,
+}
+
+/// Markdown conversion assertions.
+#[derive(Debug, Deserialize)]
+pub struct MarkdownAssertions {
+    pub is_some: Option<bool>,
+    pub contains: Option<String>,
+    pub not_empty: Option<bool>,
 }
 
 /// Skip directives for conditional test execution.
