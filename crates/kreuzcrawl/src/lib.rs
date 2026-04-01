@@ -14,6 +14,7 @@ mod helpers;
 mod html;
 mod http;
 mod map;
+mod markdown;
 mod normalize;
 mod robots;
 mod scrape;
@@ -23,9 +24,12 @@ mod types;
 
 #[cfg(feature = "browser")]
 pub use browser_pool::{BrowserPool, BrowserPoolConfig, PooledPage};
+#[cfg(feature = "ai")]
+pub use defaults::LlmExtractor;
 pub use defaults::{
     BestFirstStrategy, BfsStrategy, Bm25Filter, DfsStrategy, InMemoryFrontier, NoopEmitter,
     NoopFilter, NoopMiddleware, NoopRateLimiter, NoopStore, PerDomainThrottle, SystemResolver,
+    UaRotationMiddleware,
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
@@ -38,6 +42,6 @@ pub use types::{
     ArticleMetadata, AssetCategory, AuthConfig, BrowserConfig, BrowserMode, BrowserWait,
     CookieInfo, CrawlConfig, CrawlEvent, CrawlPageResult, CrawlResult, DownloadedAsset,
     FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource,
-    JsonLdEntry, LinkInfo, LinkType, MapResult, PageMetadata, ResponseMeta, ScrapeResult,
-    SitemapUrl,
+    JsonLdEntry, LinkInfo, LinkType, MapResult, PageMetadata, ProxyConfig, ResponseMeta,
+    ScrapeResult, SitemapUrl,
 };

@@ -156,7 +156,7 @@ pub(crate) async fn http_fetch(
     })
 }
 
-/// Build a `reqwest::Client` with the given configuration (redirect policy, timeout, cookies).
+/// Build a `reqwest::Client` with the given configuration (redirect policy, timeout, cookies, proxy).
 pub(crate) fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, CrawlError> {
     let mut builder = reqwest::Client::builder()
         .redirect(reqwest::redirect::Policy::none())
@@ -164,6 +164,16 @@ pub(crate) fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, Craw
 
     if config.cookies_enabled {
         builder = builder.cookie_store(true);
+    }
+
+    // Proxy support
+    if let Some(ref proxy_config) = config.proxy {
+        let mut proxy = reqwest::Proxy::all(&proxy_config.url)
+            .map_err(|e| CrawlError::InvalidConfig(format!("invalid proxy URL: {e}")))?;
+        if let (Some(user), Some(pass)) = (&proxy_config.username, &proxy_config.password) {
+            proxy = proxy.basic_auth(user, pass);
+        }
+        builder = builder.proxy(proxy);
     }
 
     builder

@@ -105,6 +105,8 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
                     assets: Vec::new(),
                     js_render_hint: false,
                     browser_used: false,
+                    markdown: None,
+                    extracted_data: None,
                 });
             }
             Err(e) => return Err(e),
@@ -139,6 +141,8 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
                 assets: Vec::new(),
                 js_render_hint: false,
                 browser_used: false,
+                markdown: None,
+                extracted_data: None,
             });
         }
         Err(e) => return Err(e),
@@ -285,6 +289,9 @@ async fn scrape_from_response(
         Vec::new()
     };
 
+    // Convert HTML to Markdown when the `markdown` feature is enabled.
+    let markdown = crate::markdown::convert_to_markdown(&body).await;
+
     Ok(ScrapeResult {
         status_code,
         content_type,
@@ -309,5 +316,7 @@ async fn scrape_from_response(
         assets: downloaded_assets,
         js_render_hint,
         browser_used: false,
+        markdown,
+        extracted_data: None,
     })
 }

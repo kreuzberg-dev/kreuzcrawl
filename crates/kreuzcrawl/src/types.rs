@@ -59,6 +59,18 @@ mod option_duration_ms {
     }
 }
 
+/// Proxy configuration for HTTP requests.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProxyConfig {
+    /// Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").
+    pub url: String,
+    /// Optional username for proxy authentication.
+    pub username: Option<String>,
+    /// Optional password for proxy authentication.
+    pub password: Option<String>,
+}
+
 /// Authentication configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields, tag = "type")]
@@ -169,6 +181,11 @@ pub struct CrawlConfig {
     /// Browser configuration.
     #[serde(default)]
     pub browser: BrowserConfig,
+    /// Proxy configuration for HTTP requests.
+    pub proxy: Option<ProxyConfig>,
+    /// List of user-agent strings for rotation. If non-empty, overrides `user_agent`.
+    #[serde(default)]
+    pub user_agents: Vec<String>,
     /// Shared browser pool for reusing Chrome across requests (not serializable).
     #[cfg(feature = "browser")]
     #[serde(skip)]
@@ -203,6 +220,8 @@ impl Default for CrawlConfig {
             asset_types: Vec::new(),
             max_asset_size: None,
             browser: BrowserConfig::default(),
+            proxy: None,
+            user_agents: Vec::new(),
             #[cfg(feature = "browser")]
             browser_pool: None,
         }
@@ -643,6 +662,10 @@ pub struct ScrapeResult {
     pub js_render_hint: bool,
     /// Whether the browser fallback was used to fetch this page.
     pub browser_used: bool,
+    /// Markdown conversion of the page content. Populated when the `markdown` feature is enabled.
+    pub markdown: Option<String>,
+    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    pub extracted_data: Option<serde_json::Value>,
 }
 
 /// The result of crawling a single page during a crawl operation.
@@ -681,6 +704,10 @@ pub struct CrawlPageResult {
     pub is_pdf: bool,
     /// The detected character set encoding.
     pub detected_charset: Option<String>,
+    /// Markdown conversion of the page content. Populated when the `markdown` feature is enabled.
+    pub markdown: Option<String>,
+    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    pub extracted_data: Option<serde_json::Value>,
 }
 
 /// An event emitted during a streaming crawl operation.
