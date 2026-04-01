@@ -73,7 +73,9 @@ async fn test_store_receives_crawl_pages() {
         .await;
 
     let state = SharedState::default();
-    let store = RecordingStore { state: state.clone() };
+    let store = RecordingStore {
+        state: state.clone(),
+    };
     let config = CrawlConfig {
         max_depth: Some(1),
         ..Default::default()

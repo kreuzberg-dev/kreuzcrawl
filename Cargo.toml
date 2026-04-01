@@ -25,8 +25,16 @@ reqwest = { version = "0.13", features = ["cookies", "gzip", "brotli"] }
 scraper = "0.26"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-sha2 = "0.10"
+sha2 = "0.11"
 thiserror = "2"
+tower = { version = "0.5", features = [
+  "timeout",
+  "retry",
+  "limit",
+  "util",
+  "make",
+] }
+tracing = "0.1"
 tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1"
 html-to-markdown-rs = { path = "../html-to-markdown/crates/html-to-markdown" }

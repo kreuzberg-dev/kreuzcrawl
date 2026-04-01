@@ -255,7 +255,9 @@ impl CrawlConfig {
         use crate::error::CrawlError;
 
         if let Some(0) = self.max_concurrent {
-            return Err(CrawlError::InvalidConfig("max_concurrent must be > 0".into()));
+            return Err(CrawlError::InvalidConfig(
+                "max_concurrent must be > 0".into(),
+            ));
         }
         if self.browser.wait == BrowserWait::Selector && self.browser.wait_selector.is_none() {
             return Err(CrawlError::InvalidConfig(

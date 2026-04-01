@@ -27,23 +27,6 @@ pub struct CrawlStats {
     pub elapsed: Duration,
 }
 
-/// Context passed to middleware before a request.
-#[derive(Debug, Clone)]
-pub struct RequestContext {
-    pub url: String,
-    pub headers: std::collections::HashMap<String, String>,
-}
-
-/// Context passed to middleware after a response.
-#[derive(Debug)]
-pub struct ResponseContext {
-    pub url: String,
-    pub status: u16,
-    pub content_type: String,
-    pub body: String,
-    pub headers: std::collections::HashMap<String, String>,
-}
-
 /// Events emitted during crawl lifecycle.
 #[derive(Debug, Clone)]
 pub struct PageEvent {
@@ -134,16 +117,6 @@ pub trait CrawlStore: Send + Sync {
 
     /// Called once when the crawl completes.
     async fn on_complete(&self, stats: &CrawlStats) -> Result<(), CrawlError>;
-}
-
-/// Request/response interceptors.
-#[async_trait]
-pub trait CrawlMiddleware: Send + Sync {
-    /// Called before a request is sent. May mutate headers, URL, etc.
-    async fn before_request(&self, ctx: &mut RequestContext) -> Result<(), CrawlError>;
-
-    /// Called after a response is received. May mutate body, headers, etc.
-    async fn after_response(&self, ctx: &mut ResponseContext) -> Result<(), CrawlError>;
 }
 
 /// Crawl lifecycle event emitter.

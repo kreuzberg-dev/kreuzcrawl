@@ -127,7 +127,11 @@ pub(crate) async fn download_assets(
 
             let mut hasher = Sha256::new();
             hasher.update(&bytes);
-            let hash = format!("{:x}", hasher.finalize());
+            let hash_bytes = hasher.finalize();
+            let hash = hash_bytes
+                .iter()
+                .map(|b| format!("{b:02x}"))
+                .collect::<String>();
 
             Some(DownloadedAsset {
                 url: asset_ref.url,

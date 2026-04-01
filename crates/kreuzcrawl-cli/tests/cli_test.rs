@@ -41,6 +41,9 @@ fn test_cli_crawl_help() {
 
 #[test]
 fn test_cli_map_help() {
-    let output = cargo_bin().args(["map", "--help"]).output().expect("failed");
+    let output = cargo_bin()
+        .args(["map", "--help"])
+        .output()
+        .expect("failed");
     assert!(output.status.success());
 }

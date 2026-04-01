@@ -79,9 +79,27 @@ mod tests {
     #[tokio::test]
     async fn test_push_pop_fifo_order() {
         let f = InMemoryFrontier::new();
-        f.push(FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 }).await.unwrap();
-        f.push(FrontierEntry { url: "b".into(), depth: 0, priority: 1.0 }).await.unwrap();
-        f.push(FrontierEntry { url: "c".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        f.push(FrontierEntry {
+            url: "a".into(),
+            depth: 0,
+            priority: 1.0,
+        })
+        .await
+        .unwrap();
+        f.push(FrontierEntry {
+            url: "b".into(),
+            depth: 0,
+            priority: 1.0,
+        })
+        .await
+        .unwrap();
+        f.push(FrontierEntry {
+            url: "c".into(),
+            depth: 0,
+            priority: 1.0,
+        })
+        .await
+        .unwrap();
 
         assert_eq!(f.pop().await.unwrap().unwrap().url, "a");
         assert_eq!(f.pop().await.unwrap().unwrap().url, "b");
@@ -107,9 +125,21 @@ mod tests {
     async fn test_len() {
         let f = InMemoryFrontier::new();
         assert_eq!(f.len().await.unwrap(), 0);
-        f.push(FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        f.push(FrontierEntry {
+            url: "a".into(),
+            depth: 0,
+            priority: 1.0,
+        })
+        .await
+        .unwrap();
         assert_eq!(f.len().await.unwrap(), 1);
-        f.push(FrontierEntry { url: "b".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        f.push(FrontierEntry {
+            url: "b".into(),
+            depth: 0,
+            priority: 1.0,
+        })
+        .await
+        .unwrap();
         assert_eq!(f.len().await.unwrap(), 2);
         f.pop().await.unwrap();
         assert_eq!(f.len().await.unwrap(), 1);
@@ -119,7 +149,13 @@ mod tests {
     async fn test_pop_batch() {
         let f = InMemoryFrontier::new();
         for i in 0..5 {
-            f.push(FrontierEntry { url: format!("url{i}"), depth: 0, priority: 1.0 }).await.unwrap();
+            f.push(FrontierEntry {
+                url: format!("url{i}"),
+                depth: 0,
+                priority: 1.0,
+            })
+            .await
+            .unwrap();
         }
         let batch = f.pop_batch(3).await.unwrap();
         assert_eq!(batch.len(), 3);
@@ -132,7 +168,13 @@ mod tests {
     async fn test_is_empty() {
         let f = InMemoryFrontier::new();
         assert!(f.is_empty().await.unwrap());
-        f.push(FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        f.push(FrontierEntry {
+            url: "a".into(),
+            depth: 0,
+            priority: 1.0,
+        })
+        .await
+        .unwrap();
         assert!(!f.is_empty().await.unwrap());
     }
 }

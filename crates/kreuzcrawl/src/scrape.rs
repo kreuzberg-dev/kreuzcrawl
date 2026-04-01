@@ -10,42 +10,22 @@ use crate::html::{
     apply_remove_tags, detect_charset, detect_nofollow, detect_noindex, extract_main_content,
     extract_page_data, is_binary_content_type, is_binary_url, is_html_content, is_pdf_content,
 };
-use crate::http::{
-    HttpResponse, build_client, extract_response_meta, fetch_with_retry, http_fetch,
-};
+use crate::http::{build_client, http_fetch};
 use crate::normalize::robots_url;
 use crate::robots::{is_path_allowed, parse_robots_txt};
-#[cfg(feature = "browser")]
-use crate::types::BrowserMode;
-use crate::types::{CrawlConfig, PageMetadata, ScrapeResult};
+use crate::types::{CrawlConfig, ScrapeResult};
 
-/// Scrape a single URL with extra headers (from middleware) and return structured data about the page.
-pub async fn scrape_with_headers(
-    url: &str,
-    config: &CrawlConfig,
-    extra_headers: &std::collections::HashMap<String, String>,
-) -> Result<ScrapeResult, CrawlError> {
-    scrape_inner(url, config, extra_headers).await
-}
-
-/// Scrape a single URL and return structured data about the page.
+/// Build a `ScrapeResult` from a Tower [`CrawlResponse`](crate::tower::CrawlResponse).
 ///
-/// Fetches the URL, optionally checks robots.txt, extracts metadata, links,
-/// images, feeds, and JSON-LD data. Handles authentication, content filtering,
-/// and charset detection.
-pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, CrawlError> {
-    scrape_inner(url, config, &std::collections::HashMap::new()).await
-}
-
-/// Internal scrape implementation that accepts extra headers.
-async fn scrape_inner(
+/// Runs the extraction pipeline (metadata, links, images, feeds, JSON-LD, assets)
+/// on the response body returned by the Tower service stack.
+pub(crate) async fn scrape_from_crawl_response(
     url: &str,
+    resp: &crate::tower::CrawlResponse,
     config: &CrawlConfig,
-    extra_headers: &std::collections::HashMap<String, String>,
 ) -> Result<ScrapeResult, CrawlError> {
     let parsed_url = Url::parse(url).map_err(|e| CrawlError::Other(format!("invalid URL: {e}")))?;
     let client = build_client(config)?;
-
     let auth_header_sent = config.auth.is_some();
 
     // Check robots.txt
@@ -63,180 +43,11 @@ async fn scrape_inner(
         }
     }
 
-    // Fetch page (even if not allowed, we still fetch to report status).
-    // When respect_robots_txt is enabled, a 404 is not an error -- the page
-    // simply doesn't exist, but the robots check result is still meaningful.
-    #[allow(unused_mut)]
-    let mut browser_used = false;
+    let response_meta = crate::http::extract_response_meta_from_hashmap(&resp.headers);
 
-    // In Always mode with browser feature, skip HTTP and go straight to browser.
-    #[cfg(feature = "browser")]
-    let resp = if matches!(config.browser.mode, BrowserMode::Always) {
-        match crate::browser::browser_fetch(url, config, None, config.browser_pool.as_deref()).await
-        {
-            Ok(r) => {
-                browser_used = true;
-                r
-            }
-            Err(e) => return Err(e),
-        }
-    } else {
-        match fetch_with_retry(url, config, extra_headers, &client).await {
-            Ok(r) => r,
-            // WAF-blocked: try browser fallback in Auto mode.
-            Err(CrawlError::WafBlocked(_)) if matches!(config.browser.mode, BrowserMode::Auto) => {
-                match crate::browser::browser_fetch(
-                    url,
-                    config,
-                    None,
-                    config.browser_pool.as_deref(),
-                )
-                .await
-                {
-                    Ok(r) => {
-                        browser_used = true;
-                        r
-                    }
-                    Err(e) => return Err(e),
-                }
-            }
-            Err(CrawlError::NotFound(_)) if config.respect_robots_txt => {
-                return Ok(ScrapeResult {
-                    status_code: 404,
-                    content_type: String::new(),
-                    html: String::new(),
-                    body_size: 0,
-                    metadata: PageMetadata::default(),
-                    links: Vec::new(),
-                    images: Vec::new(),
-                    feeds: Vec::new(),
-                    json_ld: Vec::new(),
-                    is_allowed,
-                    crawl_delay,
-                    noindex_detected: false,
-                    nofollow_detected: false,
-                    x_robots_tag: None,
-                    is_pdf: false,
-                    was_skipped: false,
-                    detected_charset: None,
-                    main_content_only: config.main_content_only,
-                    auth_header_sent,
-                    response_meta: None,
-                    assets: Vec::new(),
-                    js_render_hint: false,
-                    browser_used: false,
-                    markdown: None,
-                    extracted_data: None,
-                    extraction_meta: None,
-                    screenshot: None,
-                });
-            }
-            Err(e) => return Err(e),
-        }
-    };
-
-    #[cfg(not(feature = "browser"))]
-    let resp = match fetch_with_retry(url, config, extra_headers, &client).await {
-        Ok(r) => r,
-        Err(CrawlError::NotFound(_)) if config.respect_robots_txt => {
-            return Ok(ScrapeResult {
-                status_code: 404,
-                content_type: String::new(),
-                html: String::new(),
-                body_size: 0,
-                metadata: PageMetadata::default(),
-                links: Vec::new(),
-                images: Vec::new(),
-                feeds: Vec::new(),
-                json_ld: Vec::new(),
-                is_allowed,
-                crawl_delay,
-                noindex_detected: false,
-                nofollow_detected: false,
-                x_robots_tag: None,
-                is_pdf: false,
-                was_skipped: false,
-                detected_charset: None,
-                main_content_only: config.main_content_only,
-                auth_header_sent,
-                response_meta: None,
-                assets: Vec::new(),
-                js_render_hint: false,
-                browser_used: false,
-                markdown: None,
-                extracted_data: None,
-                extraction_meta: None,
-                screenshot: None,
-            });
-        }
-        Err(e) => return Err(e),
-    };
-
-    let mut result = scrape_from_response(
-        &parsed_url,
-        resp,
-        config,
-        is_allowed,
-        crawl_delay,
-        auth_header_sent,
-        &client,
-    )
-    .await?;
-    result.browser_used = browser_used;
-
-    // Screenshot capture stub — actual implementation requires access to the Chrome page object.
-    #[cfg(feature = "browser")]
-    if config.capture_screenshot && browser_used {
-        // TODO: capture screenshot from the browser page.
-        // The chromiumoxide Page object is consumed during browser_fetch,
-        // so screenshot capture needs to be integrated into browser_fetch itself.
-    }
-
-    // Auto re-fetch with browser when JS rendering is detected and browser feature is enabled.
-    #[cfg(feature = "browser")]
-    if result.js_render_hint && !browser_used && matches!(config.browser.mode, BrowserMode::Auto) {
-        // Note: prior HTTP cookies are not forwarded to the browser.
-        // Cookie state from the HTTP response is lost on browser re-fetch.
-        if let Ok(browser_resp) =
-            crate::browser::browser_fetch(url, config, None, config.browser_pool.as_deref()).await
-        {
-            // Re-run extraction on browser-rendered HTML. This replaces the original result.
-            let mut browser_result = scrape_from_response(
-                &parsed_url,
-                browser_resp,
-                config,
-                is_allowed,
-                crawl_delay,
-                auth_header_sent,
-                &client,
-            )
-            .await?;
-            browser_result.browser_used = true;
-            browser_result.js_render_hint = true;
-            return Ok(browser_result);
-        }
-    }
-
-    Ok(result)
-}
-
-/// Build a `ScrapeResult` from an `HttpResponse` — shared logic between HTTP and browser paths.
-///
-/// This extracts metadata, links, images, feeds, JSON-LD, and assets from the response,
-/// applying the same processing pipeline regardless of how the HTML was fetched.
-async fn scrape_from_response(
-    parsed_url: &Url,
-    resp: HttpResponse,
-    config: &CrawlConfig,
-    is_allowed: bool,
-    crawl_delay: Option<u64>,
-    auth_header_sent: bool,
-    client: &reqwest::Client,
-) -> Result<ScrapeResult, CrawlError> {
     let status_code = resp.status;
-    let content_type = resp.content_type;
-    let headers = resp.headers;
-    let mut body = resp.body;
+    let content_type = resp.content_type.clone();
+    let mut body = resp.body.clone();
 
     let detected_charset = detect_charset(&content_type, &body);
     let is_pdf = is_pdf_content(&content_type, &body);
@@ -251,10 +62,7 @@ async fn scrape_from_response(
     }
 
     // Check for X-Robots-Tag
-    let x_robots_tag = headers
-        .get("x-robots-tag")
-        .and_then(|v| v.to_str().ok())
-        .map(String::from);
+    let x_robots_tag = resp.headers.get("x-robots-tag").cloned();
 
     let mut noindex_detected = false;
     let mut nofollow_detected = false;
@@ -283,10 +91,7 @@ async fn scrape_from_response(
         body = extract_main_content(&body);
     }
 
-    // Parse HTML and extract all data synchronously (Html is not Send,
-    // so all doc usage must complete before any .await point).
     let is_html = is_html_content(&content_type, &body);
-    let response_meta = extract_response_meta(&headers);
 
     let (extraction, asset_refs) = {
         let doc = Html::parse_document(&body);
@@ -298,30 +103,26 @@ async fn scrape_from_response(
             nofollow_detected = detect_nofollow(&doc);
         }
 
-        let extraction = extract_page_data(&doc, &body, parsed_url, is_html, true);
+        let extraction = extract_page_data(&doc, &body, &parsed_url, is_html, true);
 
         let asset_refs = if config.download_assets && is_html {
-            assets::discover_assets(&doc, parsed_url)
+            assets::discover_assets(&doc, &parsed_url)
         } else {
             Vec::new()
         };
 
         (extraction, asset_refs)
     };
-    // doc is now dropped — future is Send from here
 
-    // Detect if page content suggests JavaScript rendering is needed.
     let word_count = extraction.metadata.word_count.unwrap_or(0);
     let js_render_hint = is_html && browser_detect::detect_js_render_needed(&body, word_count);
 
-    // Download discovered assets
     let downloaded_assets = if !asset_refs.is_empty() {
-        assets::download_assets(asset_refs, config, client).await
+        assets::download_assets(asset_refs, config, &client).await
     } else {
         Vec::new()
     };
 
-    // Convert HTML to Markdown.
     let markdown = crate::markdown::convert_to_markdown(&body).await;
 
     Ok(ScrapeResult {

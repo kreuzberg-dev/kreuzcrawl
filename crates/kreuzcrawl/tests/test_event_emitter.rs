@@ -63,7 +63,9 @@ async fn test_emitter_receives_events() {
         .await;
 
     let state = SharedState::default();
-    let emitter = RecordingEmitter { state: state.clone() };
+    let emitter = RecordingEmitter {
+        state: state.clone(),
+    };
     let config = CrawlConfig {
         max_depth: Some(1),
         ..Default::default()
@@ -85,8 +87,5 @@ async fn test_emitter_receives_events() {
     );
     let discovered = state.discovered.lock().unwrap();
     assert!(!discovered.is_empty(), "should emit discovered events");
-    assert!(
-        *state.completed.lock().unwrap(),
-        "on_complete should fire"
-    );
+    assert!(*state.completed.lock().unwrap(), "on_complete should fire");
 }

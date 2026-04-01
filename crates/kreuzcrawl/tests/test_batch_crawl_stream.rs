@@ -30,7 +30,7 @@ async fn test_batch_crawl_stream_produces_events() {
         .build()
         .unwrap();
 
-    let urls = vec![format!("{}/a", mock.uri()), format!("{}/b", mock.uri())];
+    let urls = [format!("{}/a", mock.uri()), format!("{}/b", mock.uri())];
     let url_refs: Vec<&str> = urls.iter().map(|s| s.as_str()).collect();
 
     let stream = engine.batch_crawl_stream(&url_refs);

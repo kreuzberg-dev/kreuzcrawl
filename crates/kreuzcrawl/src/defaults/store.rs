@@ -41,9 +41,24 @@ mod tests {
     #[tokio::test]
     async fn test_noop_store_all_methods_ok() {
         let store = NoopStore;
-        assert!(store.store_page("url", &ScrapeResult::default()).await.is_ok());
-        assert!(store.store_crawl_page("url", &CrawlPageResult::default()).await.is_ok());
-        assert!(store.store_error("url", &CrawlError::Other("test".into())).await.is_ok());
+        assert!(
+            store
+                .store_page("url", &ScrapeResult::default())
+                .await
+                .is_ok()
+        );
+        assert!(
+            store
+                .store_crawl_page("url", &CrawlPageResult::default())
+                .await
+                .is_ok()
+        );
+        assert!(
+            store
+                .store_error("url", &CrawlError::Other("test".into()))
+                .await
+                .is_ok()
+        );
         assert!(store.on_complete(&CrawlStats::default()).await.is_ok());
     }
 }
