@@ -14,8 +14,8 @@ async fn test_error_401_unauthorized() {
         "/",
         401,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("www-authenticate", "Basic realm=\"test\""),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body,
     )
@@ -258,7 +258,7 @@ async fn test_error_rate_limited() {
         "GET",
         "/",
         429,
-        &[("retry-after", "60"), ("content-type", "text/html")],
+        &[("content-type", "text/html"), ("retry-after", "60")],
         &body,
     )
     .await;
@@ -377,8 +377,8 @@ async fn test_error_waf_false_403() {
         "/",
         403,
         &[
-            ("server", "cloudflare"),
             ("content-type", "text/html; charset=utf-8"),
+            ("server", "cloudflare"),
         ],
         &body,
     )
