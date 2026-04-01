@@ -90,6 +90,50 @@ async fn test_markdown_crawl_all_pages() {
 }
 
 #[tokio::test]
+async fn test_markdown_headings_and_paragraphs() {
+    // Markdown conversion preserves heading hierarchy and paragraph text
+    let mock = helpers::setup_mock_server().await;
+    let body = "<html><body><h1>Main Title</h1><p>First paragraph.</p><h2>Subsection</h2><p>Second paragraph with details.</p></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.scrape(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert!(result.markdown.is_some(), "markdown should be Some");
+    assert!(
+        result
+            .markdown
+            .as_ref()
+            .map(|m| !m.content.is_empty())
+            .unwrap_or(false),
+        "markdown should not be empty"
+    );
+    assert!(
+        result
+            .markdown
+            .as_ref()
+            .map(|m| m.content.contains("Main Title"))
+            .unwrap_or(false),
+        "markdown should contain 'Main Title'"
+    );
+}
+
+#[tokio::test]
 async fn test_markdown_links_converted() {
     // HTML links are converted to markdown link syntax
     let mock = helpers::setup_mock_server().await;

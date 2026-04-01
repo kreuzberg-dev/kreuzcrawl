@@ -4,6 +4,65 @@
 use e2e_rust::helpers;
 
 #[tokio::test]
+async fn test_filter_bm25_crawl_integration() {
+    // BM25 filter works during multi-page crawl, keeping relevant pages
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><p>Welcome to our rust programming guide</p><a href=\"/rust\">Rust</a><a href=\"/cooking\">Cooking</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><p>Rust is a systems programming language. Rust provides memory safety.</p></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/rust",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 =
+        "<html><body><p>Today we make pasta with tomato sauce and garlic.</p></body></html>"
+            .to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/cooking",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .content_filter(kreuzcrawl::Bm25Filter::new("rust programming", 0.1))
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert!(
+        result
+            .pages
+            .iter()
+            .all(|p| p.html.to_lowercase().contains("rust")),
+        "all remaining pages should contain keyword 'rust'"
+    );
+}
+
+#[tokio::test]
 async fn test_filter_bm25_empty_query() {
     // BM25 filter with empty query passes all pages through
     let mock = helpers::setup_mock_server().await;
@@ -183,6 +242,57 @@ async fn test_filter_bm25_threshold_zero() {
     let result = engine.crawl(&mock.uri()).await;
     let result = result.expect("request should succeed");
     assert_eq!(result.pages.len(), 2);
+}
+
+#[tokio::test]
+async fn test_filter_noop_crawl_all_kept() {
+    // NoopFilter keeps all pages during a multi-page crawl
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/alpha\">Alpha</a><a href=\"/beta\">Beta</a></body></html>"
+        .to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><p>Alpha page content</p></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/alpha",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body><p>Beta page content</p></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/beta",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.pages.len(), 3, "expected 3 pages after filtering");
 }
 
 #[tokio::test]

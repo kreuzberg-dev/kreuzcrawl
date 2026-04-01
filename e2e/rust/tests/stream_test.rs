@@ -62,3 +62,116 @@ async fn test_crawl_stream_events() {
             .any(|e| matches!(e, CrawlEvent::Complete { .. }))
     );
 }
+
+#[tokio::test]
+async fn test_stream_depth_crawl() {
+    // Stream produces events for multi-depth crawl with link following
+    let mock = helpers::setup_mock_server().await;
+    let body_0 =
+        "<html><body><a href=\"/child1\">C1</a><a href=\"/child2\">C2</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><a href=\"/grandchild\">GC</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/child1",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body><h1>Child 2</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/child2",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+    let body_3 = "<html><body><h1>Grandchild</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/grandchild",
+        200,
+        &[("content-type", "text/html")],
+        &body_3,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(2),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let stream = engine.crawl_stream(&mock.uri());
+    let events: Vec<CrawlEvent> = stream.collect().await;
+    assert!(events.len() >= 5);
+    assert!(events.iter().any(|e| matches!(e, CrawlEvent::Page(_))));
+    assert!(
+        events
+            .iter()
+            .any(|e| matches!(e, CrawlEvent::Complete { .. }))
+    );
+}
+
+#[tokio::test]
+async fn test_stream_with_error_event() {
+    // Stream emits page and complete events even when some pages fail
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/fail\">Fail</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "Error".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/fail",
+        500,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let stream = engine.crawl_stream(&mock.uri());
+    let events: Vec<CrawlEvent> = stream.collect().await;
+    assert!(events.len() >= 2);
+    assert!(events.iter().any(|e| matches!(e, CrawlEvent::Page(_))));
+    assert!(
+        events
+            .iter()
+            .any(|e| matches!(e, CrawlEvent::Complete { .. }))
+    );
+}

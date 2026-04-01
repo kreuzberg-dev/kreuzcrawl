@@ -85,6 +85,237 @@ async fn test_concurrent_basic() {
 }
 
 #[tokio::test]
+async fn test_concurrent_depth_two_fan_out() {
+    // Concurrent depth=2 crawl correctly fans out and deduplicates across levels
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><a href=\"/c\">C</a><a href=\"/b\">B</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/a",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body><a href=\"/c\">C</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/b",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+    let body_3 = "<html><body><h1>Leaf</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/c",
+        200,
+        &[("content-type", "text/html")],
+        &body_3,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(2),
+        max_concurrent: Some(3),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.pages.len(), 4);
+}
+
+#[tokio::test]
+async fn test_concurrent_max_pages_exact() {
+    // Concurrent crawling does not exceed max_pages limit even with high concurrency
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/p1\">1</a><a href=\"/p2\">2</a><a href=\"/p3\">3</a><a href=\"/p4\">4</a><a href=\"/p5\">5</a><a href=\"/p6\">6</a><a href=\"/p7\">7</a><a href=\"/p8\">8</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body>P1</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p1",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body>P2</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p2",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+    let body_3 = "<html><body>P3</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p3",
+        200,
+        &[("content-type", "text/html")],
+        &body_3,
+    )
+    .await;
+    let body_4 = "<html><body>P4</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p4",
+        200,
+        &[("content-type", "text/html")],
+        &body_4,
+    )
+    .await;
+    let body_5 = "<html><body>P5</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p5",
+        200,
+        &[("content-type", "text/html")],
+        &body_5,
+    )
+    .await;
+    let body_6 = "<html><body>P6</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p6",
+        200,
+        &[("content-type", "text/html")],
+        &body_6,
+    )
+    .await;
+    let body_7 = "<html><body>P7</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p7",
+        200,
+        &[("content-type", "text/html")],
+        &body_7,
+    )
+    .await;
+    let body_8 = "<html><body>P8</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/p8",
+        200,
+        &[("content-type", "text/html")],
+        &body_8,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_pages: Some(3),
+        max_concurrent: Some(5),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert!(result.pages.len() <= 3);
+}
+
+#[tokio::test]
+async fn test_concurrent_partial_errors() {
+    // Concurrent crawl handles partial failures gracefully
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/ok1\">OK1</a><a href=\"/fail\">Fail</a><a href=\"/ok2\">OK2</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body>OK1</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/ok1",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "Server Error".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/fail",
+        500,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+    let body_3 = "<html><body>OK2</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/ok2",
+        200,
+        &[("content-type", "text/html")],
+        &body_3,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_concurrent: Some(3),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert!(result.pages.len() >= 2);
+}
+
+#[tokio::test]
 async fn test_concurrent_respects_max_pages() {
     // Concurrent crawling respects max_pages limit
     let mock = helpers::setup_mock_server().await;

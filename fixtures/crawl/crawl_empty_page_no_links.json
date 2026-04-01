@@ -1,0 +1,27 @@
+{
+  "id": "crawl_empty_page_no_links",
+  "description": "Crawl completes when child page has no outgoing links",
+  "tags": ["crawl", "edge-case"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><a href=\"/leaf\">Leaf</a></body></html>"
+    },
+    {
+      "path": "/leaf",
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><p>No links here at all.</p></body></html>"
+    }
+  ],
+  "config": {
+    "engine_mode": true,
+    "max_depth": 2,
+    "max_concurrent": 1
+  },
+  "assertions": {
+    "crawl": {
+      "pages_crawled": 2
+    }
+  }
+}

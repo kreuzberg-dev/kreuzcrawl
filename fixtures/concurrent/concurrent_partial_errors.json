@@ -1,0 +1,25 @@
+{
+  "id": "concurrent_partial_errors",
+  "description": "Concurrent crawl handles partial failures gracefully",
+  "tags": ["concurrent", "error"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><a href=\"/ok1\">OK1</a><a href=\"/fail\">Fail</a><a href=\"/ok2\">OK2</a></body></html>"
+    },
+    {"path": "/ok1", "headers": {"content-type": "text/html"}, "body_inline": "<html><body>OK1</body></html>"},
+    {"path": "/fail", "status_code": 500, "headers": {"content-type": "text/html"}, "body_inline": "Server Error"},
+    {"path": "/ok2", "headers": {"content-type": "text/html"}, "body_inline": "<html><body>OK2</body></html>"}
+  ],
+  "config": {
+    "engine_mode": true,
+    "max_depth": 1,
+    "max_concurrent": 3
+  },
+  "assertions": {
+    "crawl": {
+      "min_pages": 2
+    }
+  }
+}

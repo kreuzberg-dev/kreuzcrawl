@@ -358,8 +358,8 @@ async fn test_crawl_custom_headers() {
         max_depth: Some(1),
         respect_robots_txt: false,
         custom_headers: vec![
-            ("X-Custom-Header".to_owned(), "test-value".to_owned()),
             ("Accept-Language".to_owned(), "en-US".to_owned()),
+            ("X-Custom-Header".to_owned(), "test-value".to_owned()),
         ]
         .into_iter()
         .collect(),
@@ -540,6 +540,56 @@ async fn test_crawl_depth_two() {
 }
 
 #[tokio::test]
+async fn test_crawl_depth_two_chain() {
+    // Depth=2 crawl follows a chain of links across three levels
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/level1\">Level 1</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><a href=\"/level2\">Level 2</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/level1",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body><h1>Deepest Page</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/level2",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(2),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.pages.len(), 3);
+}
+
+#[tokio::test]
 async fn test_crawl_double_slash_normalization() {
     // Normalizes double slashes in URL paths (//page to /page)
     let mock = helpers::setup_mock_server().await;
@@ -579,6 +629,46 @@ async fn test_crawl_double_slash_normalization() {
     let result = engine.crawl(&mock.uri()).await;
     let result = result.expect("request should succeed");
     assert_eq!(result.unique_normalized_urls(), 2);
+}
+
+#[tokio::test]
+async fn test_crawl_empty_page_no_links() {
+    // Crawl completes when child page has no outgoing links
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/leaf\">Leaf</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><p>No links here at all.</p></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/leaf",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(2),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.pages.len(), 2);
 }
 
 #[tokio::test]
@@ -630,6 +720,48 @@ async fn test_crawl_exclude_path_pattern() {
     let result = engine.crawl(&mock.uri()).await;
     let result = result.expect("request should succeed");
     assert_eq!(result.pages.len(), 2);
+}
+
+#[tokio::test]
+async fn test_crawl_external_links_ignored() {
+    // External links are discovered but not followed when stay_on_domain is true
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/local\">Local</a><a href=\"https://external.example.com/page\">External</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><h1>Local Page</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/local",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        stay_on_domain: true,
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.pages.len(), 2);
+    assert!(result.pages.iter().all(|p| p.stayed_on_domain));
 }
 
 #[tokio::test]
@@ -844,6 +976,129 @@ async fn test_crawl_max_pages() {
 }
 
 #[tokio::test]
+async fn test_crawl_mixed_content_types() {
+    // Crawl handles links to non-HTML content types gracefully
+    let mock = helpers::setup_mock_server().await;
+    let body_0 =
+        "<html><body><a href=\"/page\">Page</a><a href=\"/image.png\">Image</a></body></html>"
+            .to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><h1>Normal Page</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/page",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "fake-png-data".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/image.png",
+        200,
+        &[("content-type", "image/png")],
+        &body_2,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert!(result.pages.len() >= 2);
+}
+
+#[tokio::test]
+async fn test_crawl_multiple_redirects_in_traversal() {
+    // Multiple linked pages with redirects are handled during crawl traversal
+    let mock = helpers::setup_mock_server().await;
+    let body_0 =
+        "<html><body><a href=\"/old-a\">A</a><a href=\"/old-b\">B</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/old-a",
+        302,
+        &[("content-type", "text/html"), ("location", "/new-a")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body><h1>New A</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/new-a",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+    let body_3 = "".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/old-b",
+        301,
+        &[("content-type", "text/html"), ("location", "/new-b")],
+        &body_3,
+    )
+    .await;
+    let body_4 = "<html><body><h1>New B</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/new-b",
+        200,
+        &[("content-type", "text/html")],
+        &body_4,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert!(result.pages.len() >= 1);
+}
+
+#[tokio::test]
 async fn test_crawl_query_param_dedup() {
     // Deduplicates URLs with same query params in different order
     let mock = helpers::setup_mock_server().await;
@@ -881,6 +1136,97 @@ async fn test_crawl_query_param_dedup() {
     let result = engine.crawl(&mock.uri()).await;
     let result = result.expect("request should succeed");
     assert_eq!(result.unique_normalized_urls(), 2);
+}
+
+#[tokio::test]
+async fn test_crawl_redirect_in_traversal() {
+    // Links that redirect are followed during crawl traversal
+    let mock = helpers::setup_mock_server().await;
+    let body_0 = "<html><body><a href=\"/old\">Link</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/old",
+        301,
+        &[("location", "/new"), ("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+    let body_2 = "<html><body><h1>New Page</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/new",
+        200,
+        &[("content-type", "text/html")],
+        &body_2,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert!(result.pages.len() >= 1);
+}
+
+#[tokio::test]
+async fn test_crawl_self_link_no_loop() {
+    // Page linking to itself does not cause infinite crawl loop
+    let mock = helpers::setup_mock_server().await;
+    let body_0 =
+        "<html><body><a href=\"/\">Self</a><a href=\"/other\">Other</a></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html")],
+        &body_0,
+    )
+    .await;
+    let body_1 = "<html><body><h1>Other</h1></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/other",
+        200,
+        &[("content-type", "text/html")],
+        &body_1,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        max_depth: Some(1),
+        max_concurrent: Some(1),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.crawl(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.pages.len(), 2);
 }
 
 #[tokio::test]
