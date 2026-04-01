@@ -6,6 +6,8 @@ use std::time::{Duration, Instant};
 
 use regex::Regex;
 use scraper::Html;
+use tokio::sync::Semaphore;
+use tokio::task::JoinSet;
 use tokio_stream::wrappers::ReceiverStream;
 use url::Url;
 
@@ -13,14 +15,27 @@ use crate::defaults;
 use crate::error::CrawlError;
 use crate::helpers::{compile_regexes, fetch_robots_rules, find_ascii_case_insensitive};
 use crate::html::{
-    detect_charset, detect_meta_refresh, extract_page_data, is_binary_content_type, is_binary_url,
-    is_html_content, is_pdf_content, is_pdf_url,
+    HtmlExtraction, detect_charset, detect_meta_refresh, extract_page_data, is_binary_content_type,
+    is_binary_url, is_html_content, is_pdf_content, is_pdf_url,
 };
 use crate::http::{build_client, extract_cookies, http_fetch};
 use crate::normalize::{normalize_url, normalize_url_for_dedup, resolve_redirect, strip_fragment};
 use crate::robots::{RobotsRules, is_path_allowed};
 use crate::traits::*;
 use crate::types::*;
+
+/// Result of a concurrent fetch task, holding everything needed to process a completed fetch.
+struct FetchResult {
+    entry: FrontierEntry,
+    status_code: u16,
+    content_type: String,
+    body: String,
+    headers: reqwest::header::HeaderMap,
+    extraction: HtmlExtraction,
+    is_binary: bool,
+    is_pdf: bool,
+    detected_charset: Option<String>,
+}
 
 /// The main crawl engine, composed of pluggable trait implementations.
 #[derive(Clone)]
@@ -417,13 +432,341 @@ impl CrawlEngine {
             priority: 1.0,
         });
 
-        // ── Phase 4: main crawl loop using CrawlStrategy ───────────────
-        while !working_set.is_empty() {
-            if pages.len() >= max_pages {
+        // ── Phase 4: main crawl loop using CrawlStrategy + concurrent fetching ──
+        let max_concurrent = self.config.max_concurrent.unwrap_or(10);
+        let semaphore = Arc::new(Semaphore::new(max_concurrent));
+        let mut join_set: JoinSet<Result<FetchResult, (FrontierEntry, CrawlError)>> =
+            JoinSet::new();
+
+        while !working_set.is_empty() || !join_set.is_empty() {
+            // 1. Fill JoinSet from working_set, up to max_concurrent
+            while join_set.len() < max_concurrent && !working_set.is_empty() {
+                if pages.len() + join_set.len() >= max_pages {
+                    break;
+                }
+
+                // Check strategy stopping condition
+                let stats = CrawlStats {
+                    pages_crawled: pages.len(),
+                    pages_failed,
+                    urls_discovered,
+                    urls_filtered,
+                    elapsed: start_time.elapsed(),
+                };
+                if !self.strategy.should_continue(&stats) {
+                    break;
+                }
+
+                // Let the strategy pick the next entry
+                let Some(idx) = self.strategy.select_next(&working_set) else {
+                    break;
+                };
+                let entry = working_set.swap_remove(idx);
+                let depth = entry.depth;
+
+                // Parse URL for filtering
+                let page_parsed = match Url::parse(&entry.url) {
+                    Ok(u) => u,
+                    Err(_) => continue,
+                };
+                let path = page_parsed.path();
+
+                // Check include/exclude paths BEFORE spawning to avoid wasted fetches
+                if !exclude_regexes.is_empty() && exclude_regexes.iter().any(|re| re.is_match(path))
+                {
+                    urls_filtered += 1;
+                    continue;
+                }
+                if !include_regexes.is_empty()
+                    && depth > 0
+                    && !include_regexes.iter().any(|re| re.is_match(path))
+                {
+                    urls_filtered += 1;
+                    continue;
+                }
+
+                // Check robots.txt rules
+                if let Some(ref rules) = robots_rules
+                    && !is_path_allowed(path, rules)
+                {
+                    urls_filtered += 1;
+                    continue;
+                }
+
+                // Acquire semaphore permit before spawning
+                let permit = semaphore
+                    .clone()
+                    .acquire_owned()
+                    .await
+                    .map_err(|_| CrawlError::Other("semaphore closed".into()))?;
+
+                let config = self.config.clone();
+                let client = client.clone();
+                let rate_limiter = self.rate_limiter.clone();
+                let middlewares = self.middlewares.clone();
+
+                join_set.spawn(async move {
+                    let _permit = permit;
+
+                    // Rate limiting
+                    let parsed = Url::parse(&entry.url).ok();
+                    let domain = parsed.as_ref().and_then(|u| u.host_str()).unwrap_or("");
+                    if !domain.is_empty() {
+                        rate_limiter
+                            .acquire(domain)
+                            .await
+                            .map_err(|e| (entry.clone(), e))?;
+                    }
+
+                    // Run before_request middleware
+                    let mut req_ctx = RequestContext {
+                        url: entry.url.clone(),
+                        headers: std::collections::HashMap::new(),
+                    };
+                    for mw in &middlewares {
+                        mw.before_request(&mut req_ctx)
+                            .await
+                            .map_err(|e| (entry.clone(), e))?;
+                    }
+
+                    // HTTP fetch
+                    let resp = http_fetch(&req_ctx.url, &config, &client)
+                        .await
+                        .map_err(|e| (entry.clone(), e))?;
+
+                    let status_code = resp.status;
+                    let content_type_for_mw = resp.content_type.clone();
+                    let body_for_mw = resp.body.clone();
+                    let headers = resp.headers.clone();
+                    let content_type = resp.content_type;
+
+                    // Populate ResponseContext.headers from HTTP response
+                    let mut resp_headers = std::collections::HashMap::new();
+                    for (name, value) in resp.headers.iter() {
+                        if let Ok(v) = value.to_str() {
+                            resp_headers.insert(name.to_string(), v.to_string());
+                        }
+                    }
+
+                    // Run after_response middleware
+                    let mut resp_ctx = ResponseContext {
+                        url: req_ctx.url,
+                        status: status_code,
+                        content_type: content_type_for_mw,
+                        body: body_for_mw,
+                        headers: resp_headers,
+                    };
+                    for mw in &middlewares {
+                        mw.after_response(&mut resp_ctx)
+                            .await
+                            .map_err(|e| (entry.clone(), e))?;
+                    }
+
+                    let body = resp_ctx.body;
+
+                    // Record response for adaptive back-off
+                    let domain_owned = domain.to_owned();
+                    if !domain_owned.is_empty() {
+                        rate_limiter
+                            .record_response(&domain_owned, status_code)
+                            .await
+                            .map_err(|e| (entry.clone(), e))?;
+                    }
+
+                    // Extract in spawn_blocking (Html is !Send)
+                    let body_clone = body.clone();
+                    let url_for_extract = entry.url.clone();
+                    let content_type_clone = content_type.clone();
+
+                    let (extraction, is_binary, is_pdf, detected_charset) =
+                        tokio::task::spawn_blocking(move || {
+                            let parsed_url = Url::parse(&url_for_extract)
+                                .unwrap_or_else(|_| Url::parse("http://invalid").unwrap());
+                            let is_binary = is_binary_content_type(&content_type_clone)
+                                || is_binary_url(&url_for_extract);
+                            let is_pdf = is_pdf_content(&content_type_clone, &body_clone)
+                                || is_pdf_url(&url_for_extract);
+                            let is_html = is_html_content(&content_type_clone, &body_clone);
+
+                            let doc = Html::parse_document(&body_clone);
+                            let extraction = extract_page_data(
+                                &doc,
+                                &body_clone,
+                                &parsed_url,
+                                is_html && !is_binary && !is_pdf,
+                                false,
+                            );
+                            let detected_charset = detect_charset(&content_type_clone, &body_clone);
+                            (extraction, is_binary, is_pdf, detected_charset)
+                        })
+                        .await
+                        .unwrap();
+
+                    Ok(FetchResult {
+                        entry,
+                        status_code,
+                        content_type,
+                        body,
+                        headers,
+                        extraction,
+                        is_binary,
+                        is_pdf,
+                        detected_charset,
+                    })
+                });
+            }
+
+            // 2. Collect one completed result (or break if nothing in-flight)
+            if join_set.is_empty() {
                 break;
             }
 
-            // Check strategy stopping condition
+            let result = join_set.join_next().await;
+            let Some(result) = result else {
+                break;
+            };
+
+            match result {
+                Ok(Ok(fetch)) => {
+                    let page_url = fetch.entry.url.clone();
+                    let depth = fetch.entry.depth;
+
+                    if self.config.cookies_enabled {
+                        all_cookies.extend(extract_cookies(&fetch.headers));
+                    }
+
+                    let mut body = fetch.body;
+
+                    // Body truncation
+                    if let Some(max_size) = self.config.max_body_size
+                        && body.len() > max_size
+                    {
+                        body.truncate(max_size);
+                    }
+                    let body_size = body.len();
+
+                    let page_was_skipped = fetch.is_binary || fetch.is_pdf;
+                    if page_was_skipped {
+                        was_skipped = true;
+                    }
+
+                    let page_parsed = Url::parse(&page_url)
+                        .unwrap_or_else(|_| Url::parse("http://invalid").unwrap());
+                    let domain = page_parsed.host_str().unwrap_or("");
+                    let norm_url = normalize_url(&page_url);
+                    let stayed_on_domain = domain == base_host;
+
+                    normalized_urls.push(norm_url.clone());
+
+                    // ── Link discovery: add children to working set via Frontier dedup ──
+                    if depth < max_depth && !page_was_skipped {
+                        for link in &fetch.extraction.links {
+                            if link.link_type == LinkType::Internal
+                                || link.link_type == LinkType::Document
+                            {
+                                let link_url = strip_fragment(&link.url);
+
+                                // Check stay_on_domain
+                                if self.config.stay_on_domain
+                                    && let Ok(lu) = Url::parse(&link_url)
+                                {
+                                    let link_host = lu.host_str().unwrap_or("");
+                                    if link_host != base_host
+                                        && (!self.config.allow_subdomains
+                                            || !link_host.ends_with(&base_host_suffix))
+                                    {
+                                        continue;
+                                    }
+                                }
+
+                                let dedup_key = normalize_url_for_dedup(&link_url);
+                                if !self.frontier.is_seen(&dedup_key).await? {
+                                    self.frontier.mark_seen(&dedup_key).await?;
+                                    let priority = self.strategy.score_url(&link_url, depth + 1);
+                                    working_set.push(FrontierEntry {
+                                        url: link_url.clone(),
+                                        depth: depth + 1,
+                                        priority,
+                                    });
+                                    urls_discovered += 1;
+                                    self.event_emitter.on_discovered(&link_url, depth + 1).await;
+                                }
+                            }
+                        }
+                    }
+
+                    let page = CrawlPageResult {
+                        url: page_url.clone(),
+                        normalized_url: norm_url,
+                        status_code: fetch.status_code,
+                        content_type: fetch.content_type,
+                        html: body,
+                        body_size,
+                        metadata: fetch.extraction.metadata,
+                        links: fetch.extraction.links,
+                        images: fetch.extraction.images,
+                        feeds: fetch.extraction.feeds,
+                        json_ld: fetch.extraction.json_ld,
+                        depth,
+                        stayed_on_domain,
+                        was_skipped: page_was_skipped,
+                        is_pdf: fetch.is_pdf,
+                        detected_charset: fetch.detected_charset,
+                    };
+
+                    // Apply content filter -- links are already discovered above,
+                    // so filtered-out pages still contribute to link discovery.
+                    let page = match self.content_filter.filter(page).await? {
+                        Some(filtered_page) => filtered_page,
+                        None => {
+                            urls_filtered += 1;
+                            continue;
+                        }
+                    };
+
+                    // Store the crawl page result
+                    let _ = self.store.store_crawl_page(&page.url, &page).await;
+
+                    // Emit page event
+                    self.event_emitter
+                        .on_page(&PageEvent {
+                            url: page.url.clone(),
+                            status_code: page.status_code,
+                            depth: page.depth,
+                        })
+                        .await;
+
+                    // Send page event through the channel if streaming
+                    if let Some(ref sender) = tx
+                        && sender
+                            .send(CrawlEvent::Page(Box::new(page.clone())))
+                            .await
+                            .is_err()
+                    {
+                        // Receiver dropped; stop crawling
+                        break;
+                    }
+
+                    pages.push(page);
+                }
+                Ok(Err((entry, error))) => {
+                    // Fetch error
+                    pages_failed += 1;
+                    self.event_emitter
+                        .on_error(&ErrorEvent {
+                            url: entry.url.clone(),
+                            error: error.to_string(),
+                        })
+                        .await;
+                    let _ = self.store.store_error(&entry.url, &error).await;
+                }
+                Err(_join_error) => {
+                    // Task panicked -- log and continue
+                    pages_failed += 1;
+                }
+            }
+
+            // 3. Check stopping condition
             let stats = CrawlStats {
                 pages_crawled: pages.len(),
                 pages_failed,
@@ -434,236 +777,6 @@ impl CrawlEngine {
             if !self.strategy.should_continue(&stats) {
                 break;
             }
-
-            // Let the strategy pick the next entry
-            let Some(idx) = self.strategy.select_next(&working_set) else {
-                break;
-            };
-            let entry = working_set.swap_remove(idx);
-            let page_url = entry.url.clone();
-            let depth = entry.depth;
-
-            // Parse URL once for the entire iteration
-            let page_parsed = match Url::parse(&page_url) {
-                Ok(u) => u,
-                Err(_) => continue,
-            };
-            let domain = page_parsed.host_str().unwrap_or("");
-            let path = page_parsed.path();
-
-            // Check include/exclude paths
-            if !exclude_regexes.is_empty() && exclude_regexes.iter().any(|re| re.is_match(path)) {
-                urls_filtered += 1;
-                continue;
-            }
-            if !include_regexes.is_empty()
-                && depth > 0
-                && !include_regexes.iter().any(|re| re.is_match(path))
-            {
-                urls_filtered += 1;
-                continue;
-            }
-
-            // Check robots.txt rules
-            if let Some(ref rules) = robots_rules
-                && !is_path_allowed(path, rules)
-            {
-                urls_filtered += 1;
-                continue;
-            }
-
-            // Rate limiting
-            if !domain.is_empty() {
-                self.rate_limiter.acquire(domain).await?;
-            }
-
-            // Run before_request middleware
-            let mut req_ctx = RequestContext {
-                url: page_url.clone(),
-                headers: std::collections::HashMap::new(),
-            };
-            for mw in &self.middlewares {
-                mw.before_request(&mut req_ctx).await?;
-            }
-
-            let resp = match http_fetch(&req_ctx.url, &self.config, &client).await {
-                Ok(r) => r,
-                Err(e) => {
-                    pages_failed += 1;
-                    self.event_emitter
-                        .on_error(&ErrorEvent {
-                            url: entry.url.clone(),
-                            error: e.to_string(),
-                        })
-                        .await;
-                    let _ = self.store.store_error(&entry.url, &e).await;
-                    continue;
-                }
-            };
-
-            if self.config.cookies_enabled {
-                all_cookies.extend(extract_cookies(&resp.headers));
-            }
-
-            let status_code = resp.status;
-            let content_type_for_mw = resp.content_type.clone();
-            let body_for_mw = resp.body.clone();
-
-            // Populate ResponseContext.headers from HTTP response
-            let mut resp_headers = std::collections::HashMap::new();
-            for (name, value) in resp.headers.iter() {
-                if let Ok(v) = value.to_str() {
-                    resp_headers.insert(name.to_string(), v.to_string());
-                }
-            }
-
-            // Run after_response middleware
-            let mut resp_ctx = ResponseContext {
-                url: req_ctx.url,
-                status: status_code,
-                content_type: content_type_for_mw,
-                body: body_for_mw,
-                headers: resp_headers,
-            };
-            for mw in &self.middlewares {
-                mw.after_response(&mut resp_ctx).await?;
-            }
-
-            // Apply middleware mutations back
-            let mut body = resp_ctx.body;
-
-            // Record response for adaptive back-off
-            if !domain.is_empty() {
-                self.rate_limiter
-                    .record_response(domain, status_code)
-                    .await?;
-            }
-            let content_type = resp.content_type;
-            if let Some(max_size) = self.config.max_body_size
-                && body.len() > max_size
-            {
-                body.truncate(max_size);
-            }
-            let body_size = body.len();
-
-            let is_binary = is_binary_content_type(&content_type) || is_binary_url(&page_url);
-            let is_pdf = is_pdf_content(&content_type, &body) || is_pdf_url(&page_url);
-            let page_was_skipped = is_binary || is_pdf;
-
-            if page_was_skipped {
-                was_skipped = true;
-            }
-
-            let detected_charset = detect_charset(&content_type, &body);
-
-            let is_html = is_html_content(&content_type, &body);
-
-            // Scope the non-Send `Html` document so it is dropped before any `.await`
-            let extraction = {
-                let doc = Html::parse_document(&body);
-                extract_page_data(
-                    &doc,
-                    &body,
-                    &page_parsed,
-                    is_html && !page_was_skipped,
-                    false,
-                )
-            };
-
-            let norm_url = normalize_url(&page_url);
-            let stayed_on_domain = domain == base_host;
-
-            normalized_urls.push(norm_url.clone());
-
-            // ── Link discovery: add children to working set via Frontier dedup ──
-            if depth < max_depth && !page_was_skipped {
-                for link in &extraction.links {
-                    if link.link_type == LinkType::Internal || link.link_type == LinkType::Document
-                    {
-                        let link_url = strip_fragment(&link.url);
-
-                        // Check stay_on_domain
-                        if self.config.stay_on_domain
-                            && let Ok(lu) = Url::parse(&link_url)
-                        {
-                            let link_host = lu.host_str().unwrap_or("");
-                            if link_host != base_host
-                                && (!self.config.allow_subdomains
-                                    || !link_host.ends_with(&base_host_suffix))
-                            {
-                                continue;
-                            }
-                        }
-
-                        let dedup_key = normalize_url_for_dedup(&link_url);
-                        if !self.frontier.is_seen(&dedup_key).await? {
-                            self.frontier.mark_seen(&dedup_key).await?;
-                            let priority = self.strategy.score_url(&link_url, depth + 1);
-                            working_set.push(FrontierEntry {
-                                url: link_url.clone(),
-                                depth: depth + 1,
-                                priority,
-                            });
-                            urls_discovered += 1;
-                            self.event_emitter.on_discovered(&link_url, depth + 1).await;
-                        }
-                    }
-                }
-            }
-
-            let page = CrawlPageResult {
-                url: page_url.clone(),
-                normalized_url: norm_url,
-                status_code,
-                content_type,
-                html: body,
-                body_size,
-                metadata: extraction.metadata,
-                links: extraction.links,
-                images: extraction.images,
-                feeds: extraction.feeds,
-                json_ld: extraction.json_ld,
-                depth,
-                stayed_on_domain,
-                was_skipped: page_was_skipped,
-                is_pdf,
-                detected_charset,
-            };
-
-            // Apply content filter -- links are already discovered above,
-            // so filtered-out pages still contribute to link discovery.
-            let page = match self.content_filter.filter(page).await? {
-                Some(filtered_page) => filtered_page,
-                None => {
-                    urls_filtered += 1;
-                    continue;
-                }
-            };
-
-            // Store the crawl page result
-            let _ = self.store.store_crawl_page(&page.url, &page).await;
-
-            // Emit page event
-            self.event_emitter
-                .on_page(&PageEvent {
-                    url: page.url.clone(),
-                    status_code: page.status_code,
-                    depth: page.depth,
-                })
-                .await;
-
-            // Send page event through the channel if streaming
-            if let Some(ref sender) = tx
-                && sender
-                    .send(CrawlEvent::Page(Box::new(page.clone())))
-                    .await
-                    .is_err()
-            {
-                // Receiver dropped; stop crawling
-                break;
-            }
-
-            pages.push(page);
         }
 
         // Build final stats and notify store/emitter
