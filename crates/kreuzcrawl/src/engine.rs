@@ -46,8 +46,6 @@ pub struct CrawlEngine {
     pub(crate) store: Arc<dyn CrawlStore>,
     pub(crate) middlewares: Vec<Arc<dyn CrawlMiddleware>>,
     pub(crate) event_emitter: Arc<dyn EventEmitter>,
-    #[allow(dead_code)] // wired in builder, reqwest integration pending
-    pub(crate) dns_resolver: Arc<dyn DnsResolver>,
     pub(crate) strategy: Arc<dyn CrawlStrategy>,
     pub(crate) content_filter: Arc<dyn ContentFilter>,
 }
@@ -63,7 +61,6 @@ pub struct CrawlEngineBuilder {
     store: Option<Arc<dyn CrawlStore>>,
     middlewares: Vec<Arc<dyn CrawlMiddleware>>,
     event_emitter: Option<Arc<dyn EventEmitter>>,
-    dns_resolver: Option<Arc<dyn DnsResolver>>,
     strategy: Option<Arc<dyn CrawlStrategy>>,
     content_filter: Option<Arc<dyn ContentFilter>>,
 }
@@ -78,7 +75,6 @@ impl CrawlEngineBuilder {
             store: None,
             middlewares: Vec::new(),
             event_emitter: None,
-            dns_resolver: None,
             strategy: None,
             content_filter: None,
         }
@@ -120,12 +116,6 @@ impl CrawlEngineBuilder {
         self
     }
 
-    /// Set the DNS resolver implementation.
-    pub fn dns_resolver(mut self, dns_resolver: impl DnsResolver + 'static) -> Self {
-        self.dns_resolver = Some(Arc::new(dns_resolver));
-        self
-    }
-
     /// Set the crawl strategy implementation.
     pub fn strategy(mut self, strategy: impl CrawlStrategy + 'static) -> Self {
         self.strategy = Some(Arc::new(strategy));
@@ -149,17 +139,16 @@ impl CrawlEngineBuilder {
             frontier: self
                 .frontier
                 .unwrap_or_else(|| Arc::new(defaults::InMemoryFrontier::new())),
-            rate_limiter: self
-                .rate_limiter
-                .unwrap_or_else(|| Arc::new(defaults::NoopRateLimiter)),
+            rate_limiter: self.rate_limiter.unwrap_or_else(|| {
+                Arc::new(defaults::PerDomainThrottle::new(
+                    std::time::Duration::from_millis(200),
+                ))
+            }),
             store: self.store.unwrap_or_else(|| Arc::new(defaults::NoopStore)),
             middlewares: self.middlewares,
             event_emitter: self
                 .event_emitter
                 .unwrap_or_else(|| Arc::new(defaults::NoopEmitter)),
-            dns_resolver: self
-                .dns_resolver
-                .unwrap_or_else(|| Arc::new(defaults::SystemResolver)),
             strategy: self
                 .strategy
                 .unwrap_or_else(|| Arc::new(defaults::BfsStrategy)),
@@ -266,6 +255,90 @@ impl CrawlEngine {
     /// Discover all pages on a website by following links and sitemaps.
     pub async fn map(&self, url: &str) -> Result<MapResult, CrawlError> {
         crate::map::map(url, &self.config).await
+    }
+
+    /// Crawl multiple seed URLs, each following links to configured depth.
+    /// Returns results paired with seed URLs as they complete.
+    pub async fn batch_crawl(
+        &self,
+        urls: &[&str],
+    ) -> Vec<(String, Result<CrawlResult, CrawlError>)> {
+        let max_concurrent = self.config.max_concurrent.unwrap_or(10);
+        let semaphore = Arc::new(Semaphore::new(max_concurrent));
+
+        let mut handles = Vec::with_capacity(urls.len());
+
+        for url in urls {
+            let url_owned = url.to_string();
+            let engine = self.clone();
+            let permit = semaphore.clone().acquire_owned().await.unwrap();
+
+            handles.push(tokio::spawn(async move {
+                let _permit = permit;
+                let result = engine.crawl(&url_owned).await;
+                (url_owned, result)
+            }));
+        }
+
+        let mut results = Vec::with_capacity(handles.len());
+        for handle in handles {
+            match handle.await {
+                Ok(result) => results.push(result),
+                Err(e) => {
+                    // Task panicked
+                    results.push((
+                        String::new(),
+                        Err(CrawlError::Other(format!("task panicked: {e}"))),
+                    ));
+                }
+            }
+        }
+        results
+    }
+
+    /// Crawl multiple seed URLs and stream events from all crawls.
+    pub fn batch_crawl_stream(&self, urls: &[&str]) -> ReceiverStream<CrawlEvent> {
+        let urls: Vec<String> = urls.iter().map(|u| u.to_string()).collect();
+        let engine = self.clone();
+        let channel_size = self.config.max_concurrent.unwrap_or(10) * 16;
+        let (tx, rx) = tokio::sync::mpsc::channel(channel_size);
+
+        tokio::spawn(async move {
+            let max_concurrent = engine.config.max_concurrent.unwrap_or(10);
+            let semaphore = Arc::new(Semaphore::new(max_concurrent));
+            let mut join_set = JoinSet::new();
+
+            for url in urls {
+                let engine = engine.clone();
+                let tx = tx.clone();
+                let permit = semaphore.clone().acquire_owned().await.unwrap();
+
+                join_set.spawn(async move {
+                    let _permit = permit;
+                    match engine.crawl_with_sender(&url, Some(tx.clone())).await {
+                        Ok(result) => {
+                            let _ = tx
+                                .send(CrawlEvent::Complete {
+                                    pages_crawled: result.pages.len(),
+                                })
+                                .await;
+                        }
+                        Err(e) => {
+                            let _ = tx
+                                .send(CrawlEvent::Error {
+                                    url: url.clone(),
+                                    error: e.to_string(),
+                                })
+                                .await;
+                        }
+                    }
+                });
+            }
+
+            while let Some(_) = join_set.join_next().await {}
+        });
+
+        ReceiverStream::new(rx)
     }
 
     /// Internal crawl implementation that uses the engine's trait objects.
@@ -729,6 +802,9 @@ impl CrawlEngine {
                         }
                     };
 
+                    // Notify strategy (e.g. for adaptive saturation tracking)
+                    self.strategy.on_page_processed(&page);
+
                     // Store the crawl page result
                     let _ = self.store.store_crawl_page(&page.url, &page).await;
 
@@ -753,6 +829,12 @@ impl CrawlEngine {
                     }
 
                     pages.push(page);
+
+                    if pages.len() >= max_pages {
+                        // Abort remaining in-flight tasks and break
+                        join_set.abort_all();
+                        break;
+                    }
                 }
                 Ok(Err((entry, error))) => {
                     // Fetch error
@@ -782,6 +864,11 @@ impl CrawlEngine {
             if !self.strategy.should_continue(&stats) {
                 break;
             }
+        }
+
+        // Safety: ensure we never return more than max_pages
+        if pages.len() > max_pages {
+            pages.truncate(max_pages);
         }
 
         // Build final stats and notify store/emitter

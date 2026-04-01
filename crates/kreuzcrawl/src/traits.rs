@@ -1,6 +1,5 @@
 //! Trait-based extension points for the crawl engine.
 
-use std::net::IpAddr;
 use std::time::Duration;
 
 use async_trait::async_trait;
@@ -155,13 +154,6 @@ pub trait EventEmitter: Send + Sync {
     async fn on_discovered(&self, url: &str, depth: usize);
 }
 
-/// DNS resolution.
-#[async_trait]
-pub trait DnsResolver: Send + Sync {
-    /// Resolve a hostname to one or more IP addresses.
-    async fn resolve(&self, host: &str) -> Result<Vec<IpAddr>, CrawlError>;
-}
-
 /// Crawl strategy for URL selection and scoring.
 ///
 /// This is a synchronous trait -- implementations must be `Send + Sync`.
@@ -181,6 +173,9 @@ pub trait CrawlStrategy: Send + Sync {
         let _ = stats;
         true
     }
+
+    /// Called after each page is processed. Used by adaptive strategies to track content.
+    fn on_page_processed(&self, _page: &CrawlPageResult) {}
 }
 
 /// Post-extraction content filter.

@@ -36,7 +36,7 @@ async fn test_markdown_basic_conversion() {
         result
             .markdown
             .as_ref()
-            .map(|m| !m.is_empty())
+            .map(|m| !m.content.is_empty())
             .unwrap_or(false),
         "markdown should not be empty"
     );
@@ -44,7 +44,7 @@ async fn test_markdown_basic_conversion() {
         result
             .markdown
             .as_ref()
-            .map(|m| m.contains("Hello World"))
+            .map(|m| m.content.contains("Hello World"))
             .unwrap_or(false),
         "markdown should contain 'Hello World'"
     );
@@ -121,7 +121,7 @@ async fn test_markdown_links_converted() {
         result
             .markdown
             .as_ref()
-            .map(|m| m.contains("Example"))
+            .map(|m| m.content.contains("Example"))
             .unwrap_or(false),
         "markdown should contain 'Example'"
     );

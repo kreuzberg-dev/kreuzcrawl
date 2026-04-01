@@ -1257,6 +1257,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "kreuzcrawl-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "kreuzcrawl",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "kreuzcrawl-e2e-generator"
 version = "0.1.0"
 dependencies = [

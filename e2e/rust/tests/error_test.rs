@@ -14,8 +14,8 @@ async fn test_error_401_unauthorized() {
         "/",
         401,
         &[
-            ("www-authenticate", "Basic realm=\"test\""),
             ("content-type", "text/html; charset=utf-8"),
+            ("www-authenticate", "Basic realm=\"test\""),
         ],
         &body,
     )
