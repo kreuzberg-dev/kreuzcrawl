@@ -289,7 +289,7 @@ async fn scrape_from_response(
         Vec::new()
     };
 
-    // Convert HTML to Markdown when the `markdown` feature is enabled.
+    // Convert HTML to Markdown.
     let markdown = crate::markdown::convert_to_markdown(&body).await;
 
     Ok(ScrapeResult {

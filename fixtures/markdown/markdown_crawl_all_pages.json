@@ -1,0 +1,26 @@
+{
+  "id": "markdown_crawl_all_pages",
+  "description": "All crawled pages have markdown field populated",
+  "tags": ["markdown", "crawl"],
+  "mock_responses": [
+    {
+      "path": "/",
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><h1>Home</h1><a href=\"/about\">About</a></body></html>"
+    },
+    {
+      "path": "/about",
+      "headers": {"content-type": "text/html"},
+      "body_inline": "<html><body><h1>About Us</h1><p>We do things.</p></body></html>"
+    }
+  ],
+  "config": {
+    "engine_mode": true,
+    "max_depth": 1
+  },
+  "assertions": {
+    "crawl": {
+      "pages_crawled": 2
+    }
+  }
+}

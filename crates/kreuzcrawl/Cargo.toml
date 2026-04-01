@@ -10,7 +10,6 @@ description = "A Rust crawling engine for turning websites into structured data"
 [features]
 default = []
 browser = ["dep:chromiumoxide"]
-markdown = ["dep:html-to-markdown-rs"]
 ai = ["dep:liter-llm"]
 
 [dependencies]
@@ -18,7 +17,7 @@ ahash = { workspace = true }
 async-trait = { workspace = true }
 chromiumoxide = { workspace = true, optional = true }
 flate2 = { workspace = true }
-html-to-markdown-rs = { workspace = true, optional = true }
+html-to-markdown-rs = { workspace = true }
 liter-llm = { workspace = true, optional = true }
 quick-xml = { workspace = true }
 regex = { workspace = true }
