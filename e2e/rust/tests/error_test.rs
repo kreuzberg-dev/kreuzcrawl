@@ -14,8 +14,8 @@ async fn test_error_401_unauthorized() {
         "/",
         401,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("www-authenticate", "Basic realm=\"test\""),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body,
     )
@@ -223,6 +223,32 @@ async fn test_error_empty_response() {
 }
 
 #[tokio::test]
+async fn test_error_invalid_proxy() {
+    // Proxy pointing to unreachable address causes connection error during scrape
+    let mock = helpers::setup_mock_server().await;
+    let body = "<html></html>".to_owned();
+    helpers::register_mock(&mock, "GET", "/", 200, &[], &body).await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        request_timeout: std::time::Duration::from_millis(2000),
+        proxy: Some(kreuzcrawl::ProxyConfig {
+            url: "http://127.0.0.1:1".to_owned(),
+            username: None,
+            password: None,
+        }),
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.scrape(&mock.uri()).await;
+    let err = result.expect_err("request should fail");
+    assert!(err.to_string().contains("connection"));
+}
+
+#[tokio::test]
 async fn test_error_rate_limited() {
     // Handles 429 rate limiting with Retry-After
     let mock = helpers::setup_mock_server().await;
@@ -323,8 +349,8 @@ async fn test_error_waf_false_403() {
         "/",
         403,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("server", "cloudflare"),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body,
     )

@@ -849,6 +849,40 @@ fn generate_config(out: &mut String, fixture: &Fixture) -> Result<()> {
             writeln!(out, "            ..Default::default()")?;
             writeln!(out, "        }},")?;
         }
+        if let Some(ref proxy) = cfg.proxy {
+            writeln!(out, "        proxy: Some(kreuzcrawl::ProxyConfig {{")?;
+            writeln!(
+                out,
+                "            url: \"{}\".to_owned(),",
+                escape_rust_string(&proxy.url)
+            )?;
+            if let Some(ref user) = proxy.username {
+                writeln!(
+                    out,
+                    "            username: Some(\"{}\".to_owned()),",
+                    escape_rust_string(user)
+                )?;
+            } else {
+                writeln!(out, "            username: None,")?;
+            }
+            if let Some(ref pass) = proxy.password {
+                writeln!(
+                    out,
+                    "            password: Some(\"{}\".to_owned()),",
+                    escape_rust_string(pass)
+                )?;
+            } else {
+                writeln!(out, "            password: None,")?;
+            }
+            writeln!(out, "        }}),")?;
+        }
+        if let Some(ref uas) = cfg.user_agents {
+            let items: Vec<String> = uas
+                .iter()
+                .map(|u| format!("\"{}\".to_owned()", escape_rust_string(u)))
+                .collect();
+            writeln!(out, "        user_agents: vec![{}],", items.join(", "))?;
+        }
     }
 
     writeln!(out, "        ..Default::default()")?;

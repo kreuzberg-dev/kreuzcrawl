@@ -146,6 +146,18 @@ pub struct CrawlConfigSpec {
     pub bm25_query: Option<String>,
     /// Minimum BM25 score threshold (0.0-1.0). Pages below this are filtered out.
     pub bm25_threshold: Option<f64>,
+    /// Proxy configuration for HTTP requests.
+    pub proxy: Option<ProxyConfigSpec>,
+    /// List of user-agent strings for rotation.
+    pub user_agents: Option<Vec<String>>,
+}
+
+/// Proxy configuration specification for fixtures.
+#[derive(Debug, Deserialize)]
+pub struct ProxyConfigSpec {
+    pub url: String,
+    pub username: Option<String>,
+    pub password: Option<String>,
 }
 
 /// Basic auth credentials.

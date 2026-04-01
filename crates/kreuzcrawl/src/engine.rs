@@ -695,6 +695,9 @@ impl CrawlEngine {
                         }
                     }
 
+                    // Convert HTML to Markdown when the `markdown` feature is enabled.
+                    let markdown = crate::markdown::convert_to_markdown(&body).await;
+
                     let page = CrawlPageResult {
                         url: page_url.clone(),
                         normalized_url: norm_url,
@@ -712,6 +715,8 @@ impl CrawlEngine {
                         was_skipped: page_was_skipped,
                         is_pdf: fetch.is_pdf,
                         detected_charset: fetch.detected_charset,
+                        markdown,
+                        extracted_data: None,
                     };
 
                     // Apply content filter -- links are already discovered above,

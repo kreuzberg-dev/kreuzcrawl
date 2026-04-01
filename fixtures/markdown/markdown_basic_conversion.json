@@ -1,0 +1,19 @@
+{
+  "id": "markdown_basic_conversion",
+  "description": "HTML is converted to markdown when markdown feature is enabled",
+  "tags": ["markdown"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><head><title>Test</title></head><body><h1>Hello World</h1><p>This is a paragraph.</p><a href=\"/link\">Click here</a></body></html>"
+  },
+  "config": {
+    "engine_mode": true
+  },
+  "assertions": {
+    "status_code": 200,
+    "metadata": {
+      "title": "Test"
+    }
+  }
+}
