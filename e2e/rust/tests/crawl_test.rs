@@ -1048,7 +1048,7 @@ async fn test_crawl_multiple_redirects_in_traversal() {
         "GET",
         "/old-a",
         302,
-        &[("location", "/new-a"), ("content-type", "text/html")],
+        &[("content-type", "text/html"), ("location", "/new-a")],
         &body_1,
     )
     .await;
@@ -1068,7 +1068,7 @@ async fn test_crawl_multiple_redirects_in_traversal() {
         "GET",
         "/old-b",
         301,
-        &[("location", "/new-b"), ("content-type", "text/html")],
+        &[("content-type", "text/html"), ("location", "/new-b")],
         &body_3,
     )
     .await;
@@ -1158,7 +1158,7 @@ async fn test_crawl_redirect_in_traversal() {
         "GET",
         "/old",
         301,
-        &[("content-type", "text/html"), ("location", "/new")],
+        &[("location", "/new"), ("content-type", "text/html")],
         &body_1,
     )
     .await;

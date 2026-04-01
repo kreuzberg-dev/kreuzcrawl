@@ -70,3 +70,69 @@ impl Frontier for InMemoryFrontier {
         Ok(self.queue.lock().unwrap().len())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::traits::FrontierEntry;
+
+    #[tokio::test]
+    async fn test_push_pop_fifo_order() {
+        let f = InMemoryFrontier::new();
+        f.push(FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        f.push(FrontierEntry { url: "b".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        f.push(FrontierEntry { url: "c".into(), depth: 0, priority: 1.0 }).await.unwrap();
+
+        assert_eq!(f.pop().await.unwrap().unwrap().url, "a");
+        assert_eq!(f.pop().await.unwrap().unwrap().url, "b");
+        assert_eq!(f.pop().await.unwrap().unwrap().url, "c");
+    }
+
+    #[tokio::test]
+    async fn test_pop_empty_returns_none() {
+        let f = InMemoryFrontier::new();
+        assert!(f.pop().await.unwrap().is_none());
+    }
+
+    #[tokio::test]
+    async fn test_is_seen_mark_seen() {
+        let f = InMemoryFrontier::new();
+        assert!(!f.is_seen("url1").await.unwrap());
+        f.mark_seen("url1").await.unwrap();
+        assert!(f.is_seen("url1").await.unwrap());
+        assert!(!f.is_seen("url2").await.unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_len() {
+        let f = InMemoryFrontier::new();
+        assert_eq!(f.len().await.unwrap(), 0);
+        f.push(FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        assert_eq!(f.len().await.unwrap(), 1);
+        f.push(FrontierEntry { url: "b".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        assert_eq!(f.len().await.unwrap(), 2);
+        f.pop().await.unwrap();
+        assert_eq!(f.len().await.unwrap(), 1);
+    }
+
+    #[tokio::test]
+    async fn test_pop_batch() {
+        let f = InMemoryFrontier::new();
+        for i in 0..5 {
+            f.push(FrontierEntry { url: format!("url{i}"), depth: 0, priority: 1.0 }).await.unwrap();
+        }
+        let batch = f.pop_batch(3).await.unwrap();
+        assert_eq!(batch.len(), 3);
+        assert_eq!(batch[0].url, "url0");
+        assert_eq!(batch[2].url, "url2");
+        assert_eq!(f.len().await.unwrap(), 2);
+    }
+
+    #[tokio::test]
+    async fn test_is_empty() {
+        let f = InMemoryFrontier::new();
+        assert!(f.is_empty().await.unwrap());
+        f.push(FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 }).await.unwrap();
+        assert!(!f.is_empty().await.unwrap());
+    }
+}
