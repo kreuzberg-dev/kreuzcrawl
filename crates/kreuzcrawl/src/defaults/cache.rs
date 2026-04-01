@@ -75,6 +75,8 @@ impl DiskCache {
     /// Evict oldest entries when max_entries is exceeded.
     ///
     /// Uses file modification time as a proxy for LRU ordering.
+    /// Note: This method is now inlined into set() to avoid blocking the async runtime.
+    #[allow(dead_code)]
     fn evict_if_needed(&self) -> Result<(), CrawlError> {
         if self.max_entries == 0 {
             return Ok(());
@@ -155,10 +157,40 @@ impl CrawlCache for DiskCache {
         let data = serde_json::to_string(page)
             .map_err(|e| CrawlError::Other(format!("cache serialize error: {e}")))?;
 
-        // Evict before writing (runs on current thread since it's fast for small dirs)
-        self.evict_if_needed()?;
+        let max_entries = self.max_entries;
+        let cache_dir = self.cache_dir.clone();
 
         tokio::task::spawn_blocking(move || {
+            // Evict inside spawn_blocking to avoid blocking the async runtime
+            if max_entries > 0 {
+                let entries: Vec<_> = match std::fs::read_dir(&cache_dir) {
+                    Ok(dir) => dir
+                        .filter_map(|e| e.ok())
+                        .filter(|e| e.path().extension().is_some_and(|ext| ext == "json"))
+                        .collect(),
+                    Err(_) => return Ok(()),
+                };
+
+                if entries.len() >= max_entries {
+                    // Sort by modification time (oldest first)
+                    let mut with_times: Vec<_> = entries
+                        .into_iter()
+                        .filter_map(|e| {
+                            let modified = e.metadata().ok()?.modified().ok()?;
+                            Some((e.path(), modified))
+                        })
+                        .collect();
+                    with_times.sort_by_key(|(_, t)| *t);
+
+                    // Remove oldest entries until we're under the limit
+                    let to_remove = with_times.len().saturating_sub(max_entries - 1);
+                    for (path, _) in with_times.into_iter().take(to_remove) {
+                        let _ = std::fs::remove_file(path);
+                    }
+                }
+            }
+
+            // Atomic write with temp file
             let tmp_path = path.with_extension("tmp");
             std::fs::write(&tmp_path, data)
                 .map_err(|e| CrawlError::Other(format!("cache write error: {e}")))?;

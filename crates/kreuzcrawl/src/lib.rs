@@ -33,7 +33,7 @@ pub use defaults::LlmExtractor;
 pub use defaults::{
     AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, CachingMiddleware, DfsStrategy,
     DiskCache, InMemoryFrontier, NoopCache, NoopEmitter, NoopFilter, NoopMiddleware,
-    NoopRateLimiter, NoopStore, PerDomainThrottle, ProxyRotationMiddleware, UaRotationMiddleware,
+    NoopRateLimiter, NoopStore, PerDomainThrottle, UaRotationMiddleware,
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;

@@ -71,11 +71,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 - **Always-on HTML→Markdown** — Automatic conversion with document structure preservation
 - **Markdown result** — MarkdownResult with content, tables, code blocks
 - **Link-to-citations** — Numbered reference conversion
-- **Fit markdown** — Content pruning and LLM-optimized output via BM25 relevance scoring
+- **Fit markdown** — Content pruning and LLM-optimized output via heuristic content pruning
 
 ### AI & LLM (feature-gated: `ai`)
 
-- **LlmExtractor** — Via litellm (142+ provider support)
+- **LlmExtractor** — Via liter-llm (multi-provider support)
 - **JSON schema extraction** — Structured extraction with custom schemas
 - **Cost tracking** — Estimated costs and token usage counters
 - **ExtractionMeta** — Full metadata on LLM results
@@ -151,7 +151,7 @@ kreuzcrawl map https://example.com --respect-robots-txt
 | **Markdown (always-on)** | ✅ + structure, tables | ✅ Basic | ✅ Primary output | ✅ Basic |
 | **Link-to-citations** | ✅ Numbered refs | — | — | ✅ |
 | **Fit markdown (pruned for LLM)** | ✅ BM25 + adaptive | — | — | ✅ BM25/LLM-based |
-| **LLM extraction** | ✅ 142 providers (litellm) | ✅ OpenAI, Gemini | ✅ OpenAI | ✅ litellm |
+| **LLM extraction** | ✅ Multi-provider support via liter-llm | ✅ OpenAI, Gemini | ✅ OpenAI | ✅ litellm |
 | **Cost tracking** | ✅ Estimated + tokens | — | ✅ | ✅ |
 | **Metadata fields** | ✅ 40+ (OG, Twitter, DC, JSON-LD) | ✅ Basic | ✅ Basic | ✅ Basic |
 | **WAF detection** | ✅ 8 vendors | ✅ 20+ vendors | Cloud only | ✅ 3-tier |
@@ -265,20 +265,18 @@ kreuzcrawl scrape <URL>
 kreuzcrawl crawl <URL> \
   --depth <N> \
   --max-pages <N> \
-  --format <markdown|json|html> \
+  --format <markdown|json> \
   --respect-robots-txt
 
 # Discover URLs (sitemap + crawl)
 kreuzcrawl map <URL> \
-  --respect-robots-txt \
-  --output <file>
+  --respect-robots-txt
 ```
 
 ### Output Formats
 
 - **markdown** — MarkdownResult with citations and fit markdown
 - **json** — Full CrawlResult with all metadata
-- **html** — Original HTML + extracted links
 
 ## License
 

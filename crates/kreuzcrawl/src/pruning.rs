@@ -18,7 +18,7 @@ pub fn generate_fit_markdown(markdown: &str) -> String {
         let trimmed = line.trim();
 
         // Track code block boundaries
-        if trimmed.starts_with("```") {
+        if trimmed.starts_with("```") || trimmed.starts_with("~~~") {
             in_code_block = !in_code_block;
             fit_lines.push(trimmed);
             continue;
@@ -90,7 +90,10 @@ fn count_link_chars(text: &str) -> usize {
 
 fn is_boilerplate(lower: &str) -> bool {
     let patterns = [
-        "cookie",
+        "cookie policy",
+        "cookie consent",
+        "use cookies",
+        "uses cookies",
         "privacy policy",
         "terms of service",
         "all rights reserved",

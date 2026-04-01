@@ -16,9 +16,7 @@ pub use filter::{Bm25Filter, NoopFilter};
 pub use frontier::InMemoryFrontier;
 #[cfg(feature = "ai")]
 pub use llm_extractor::LlmExtractor;
-pub use middleware::{
-    CachingMiddleware, NoopMiddleware, ProxyRotationMiddleware, UaRotationMiddleware,
-};
+pub use middleware::{CachingMiddleware, NoopMiddleware, UaRotationMiddleware};
 pub use rate_limiter::{NoopRateLimiter, PerDomainThrottle};
 pub use store::NoopStore;
 pub use strategy::{AdaptiveStrategy, BestFirstStrategy, BfsStrategy, DfsStrategy};
