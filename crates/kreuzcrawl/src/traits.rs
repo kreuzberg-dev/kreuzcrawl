@@ -64,6 +64,13 @@ pub struct CompleteEvent {
 }
 
 /// URL queue and deduplication.
+///
+/// The engine uses `is_seen`/`mark_seen` for URL deduplication during crawling.
+/// The `push`/`pop` methods are available for custom frontier implementations
+/// (e.g., distributed queues, persistent URL storage) but the default engine
+/// manages its own in-memory working set for strategy-based URL selection.
+/// This design keeps the hot path lock-free and allows the strategy to have
+/// random access to all candidates for intelligent selection.
 #[async_trait]
 pub trait Frontier: Send + Sync {
     /// Push a new entry onto the frontier.
