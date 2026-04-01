@@ -1,223 +1,270 @@
 # kreuzcrawl
 
-A Rust crawling engine for turning websites into structured data.
+A high-performance Rust web crawling engine for extracting structured data from websites.
+
+## Quick Start
+
+Add to `Cargo.toml`:
+
+```toml
+[dependencies]
+kreuzcrawl = { version = "0.1", features = ["ai", "browser"] }
+tokio = { version = "1", features = ["full"] }
+```
+
+Basic usage:
+
+```rust
+use kreuzcrawl::{CrawlConfig, CrawlEngine};
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let config = CrawlConfig {
+        max_depth: Some(2),
+        max_pages: Some(100),
+        ..Default::default()
+    };
+
+    let engine = CrawlEngine::builder()
+        .config(config)
+        .build()?;
+
+    let result = engine.crawl("https://example.com").await?;
+
+    for page in &result.pages {
+        println!("{}: {}", page.url, page.metadata.title.as_deref().unwrap_or(""));
+        if let Some(ref md) = page.markdown {
+            println!("  Markdown: {} chars", md.content.len());
+            if let Some(ref citations) = md.citations {
+                println!("  Citations: {} references", citations.references.len());
+            }
+        }
+    }
+
+    Ok(())
+}
+```
 
 ## Features
 
-- **Scrape** — Fetch a single URL with exhaustive metadata extraction
-- **Crawl** — Follow links with BFS traversal, robots.txt compliance, depth/page limits
-- **Map** — Discover all URLs on a site via sitemap + link crawling
-- **Stream** — Crawl with real-time event streaming via `crawl_stream()`
-- **Batch** — Scrape multiple URLs concurrently via `batch_scrape()`
-- **Asset downloading** — Optionally download CSS, JS, and image assets with deduplication
-- Exhaustive metadata: Open Graph, Twitter Card, Dublin Core, JSON-LD, feeds, images, hreflang, favicons
-- robots.txt compliance with RFC 9309 user-agent prefix matching
-- Redirect chain following (HTTP 3xx, Refresh header, meta refresh)
-- Cookie tracking and deduplication
-- Authentication: Basic, Bearer, custom header
-- Charset detection, body size limits, binary/PDF content skipping
-- Retry with configurable status codes and count
+### Core Crawling
+
+- **CrawlEngine** — Builder pattern with validated configuration
+- **Concurrent fetching** — JoinSet + Semaphore for parallel requests
+- **Multiple strategies** — BFS, DFS, BestFirst, Adaptive traversal
+- **Batch crawling** — Multi-seed `batch_crawl()` + `batch_crawl_stream()`
+- **Streaming** — Real-time event streaming via `crawl_stream()`
+- **URL discovery** — Sitemap parsing + link extraction
+
+### Metadata Extraction
+
+- **40+ metadata fields** — Open Graph, Twitter Card, Dublin Core, Article, JSON-LD
+- **Link extraction** — 4 types: Internal, External, Anchor, Document
+- **Images** — All sources (img tags, picture, og:image, srcset)
+- **Feed discovery** — RSS, Atom, JSON Feed detection
+- **Favicons** — Extraction and canonicalization
+- **hreflang** — Language/region variant links
+- **Headings** — H1-H6 extraction with hierarchy
+
+### Markdown Conversion
+
+- **Always-on HTML→Markdown** — Automatic conversion with document structure preservation
+- **Markdown result** — MarkdownResult with content, tables, code blocks
+- **Link-to-citations** — Numbered reference conversion
+- **Fit markdown** — Content pruning and LLM-optimized output via BM25 relevance scoring
+
+### AI & LLM (feature-gated: `ai`)
+
+- **LlmExtractor** — Via litellm (142+ provider support)
+- **JSON schema extraction** — Structured extraction with custom schemas
+- **Cost tracking** — Estimated costs and token usage counters
+- **ExtractionMeta** — Full metadata on LLM results
+
+### Anti-Bot & Browser Automation
+
+- **WAF detection** — 8 vendors: Cloudflare, Akamai, AWS WAF, Imperva, DataDome, PerimeterX, Sucuri, F5
+- **Browser fallback** — Headless Chrome via chromiumoxide (feature-gated: `browser`)
+- **BrowserPool** — Multi-browser management with health checks and crash recovery
+- **JavaScript rendering** — Heuristic-based detection
+
+### Network & Caching
+
+- **Per-domain rate limiting** — PerDomainThrottle with configurable delays
+- **Proxy support** — HTTP, HTTPS, SOCKS5
+- **Proxy rotation** — Middleware-based rotation
+- **User-Agent rotation** — Pluggable UA strategies
+- **HTTP caching** — ETag/Last-Modified conditional requests (CachingMiddleware)
+- **Disk cache** — blake3-hashed storage with TTL and automatic eviction
+
+### Content Filtering & Relevance
+
+- **BM25 scoring** — Adaptive relevance evaluation
+- **Adaptive crawling** — Term saturation detection for early termination
+- **Content pruning** — Intelligent truncation for LLM consumption
+
+### Compliance & Standards
+
+- **robots.txt** — RFC 9309 user-agent prefix matching
+- **Sitemap parsing** — XML, gzip, and index files
+- **Config validation** — serde with `deny_unknown_fields`
+- **Redirect handling** — HTTP 3xx, Refresh header, meta refresh
+- **Cookie tracking** — Deduplication and persistence
+- **Authentication** — Basic, Bearer, custom headers
+- **Charset detection** — Automatic encoding detection
+- **Binary/PDF skipping** — Content-type aware filtering
+
+### Extensibility
+
+**8 pluggable traits** for deep customization:
+
+- `Frontier` — Custom URL queue implementations
+- `RateLimiter` — Custom rate limiting strategies
+- `CrawlStore` — Custom storage backends
+- `CrawlMiddleware` — Request/response interceptors
+- `EventEmitter` — Custom event handling
+- `CrawlStrategy` — Custom traversal algorithms
+- `ContentFilter` — Custom content evaluation
+- `CrawlCache` — Custom caching backends
+
+### CLI
+
+Command-line tools for common operations:
+
+```bash
+# Scrape single page with metadata
+kreuzcrawl scrape https://example.com
+
+# Crawl with depth limiting and markdown output
+kreuzcrawl crawl https://example.com --depth 2 --max-pages 50 --format markdown
+
+# Discover all URLs via sitemap + crawling
+kreuzcrawl map https://example.com --respect-robots-txt
+```
+
+## Feature Comparison
+
+| Feature | kreuzcrawl | spider-rs | firecrawl | crawl4ai |
+|---------|-----------|-----------|-----------|----------|
+| **Language** | Rust | Rust | TypeScript | Python |
+| **Concurrent fetching** | ✅ JoinSet | ✅ JoinSet | ✅ Promise.race | ✅ asyncio |
+| **Traversal strategies** | ✅ BFS, DFS, BestFirst, Adaptive | ✅ BFS only | ✅ BFS only | ✅ BFS, DFS, BestFirst |
+| **Markdown (always-on)** | ✅ + structure, tables | ✅ Basic | ✅ Primary output | ✅ Basic |
+| **Link-to-citations** | ✅ Numbered refs | — | — | ✅ |
+| **Fit markdown (pruned for LLM)** | ✅ BM25 + adaptive | — | — | ✅ BM25/LLM-based |
+| **LLM extraction** | ✅ 142 providers (litellm) | ✅ OpenAI, Gemini | ✅ OpenAI | ✅ litellm |
+| **Cost tracking** | ✅ Estimated + tokens | — | ✅ | ✅ |
+| **Metadata fields** | ✅ 40+ (OG, Twitter, DC, JSON-LD) | ✅ Basic | ✅ Basic | ✅ Basic |
+| **WAF detection** | ✅ 8 vendors | ✅ 20+ vendors | Cloud only | ✅ 3-tier |
+| **Proxy support** | ✅ HTTP/HTTPS/SOCKS5 | ✅ | ✅ | ✅ |
+| **Proxy rotation** | ✅ Middleware | ✅ ClientRotator | Cloud only | ✅ |
+| **User-Agent rotation** | ✅ Middleware | ✅ | — | ✅ |
+| **Browser fallback** | ✅ chromiumoxide | ✅ chromey | ✅ Engines | ✅ Playwright |
+| **Disk cache** | ✅ blake3 + TTL | ✅ SQLite | — | ✅ SQLite |
+| **Rate limiting** | ✅ Per-domain | ✅ | Backend managed | ✅ |
+| **robots.txt** | ✅ RFC 9309 | ✅ Partial | ✅ Partial | ✅ Basic |
+| **Config validation** | ✅ serde strict | — | — | — |
+| **Pluggable traits** | ✅ 8 traits | — | — | ✅ Partial |
+| **CLI tools** | ✅ scrape/crawl/map | ✅ | — | ✅ |
+| **Batch crawling** | ✅ `batch_crawl()` | — | ✅ API | — |
+| **Streaming events** | ✅ Real-time | ✅ | ✅ Polling | ✅ |
+| **Asset download + dedup** | ✅ SHA-256 | — | — | — |
+| **Feed discovery** | ✅ RSS, Atom, JSON | — | — | — |
+| **JSON-LD extraction** | ✅ Full | — | — | — |
+| **Screenshot capture** | Stub | ✅ | ✅ | ✅ |
+| **Page interaction** | — | — | ✅ | ✅ |
+| **REST API** | — | — | ✅ | — |
+| **Language SDKs** | — | — | ✅ 4 languages | ✅ Python |
 
 ## Architecture
 
-```mermaid
-graph TB
-    subgraph "Public API"
-        scrape["scrape(url, config)"]
-        crawl["crawl(url, config)"]
-        map["map(url, config)"]
-        stream["crawl_stream(url, config)"]
-        batch["batch_scrape(urls, config)"]
-    end
+kreuzcrawl uses a **trait-based engine** with pluggable components:
 
-    subgraph "HTTP Layer"
-        http["http.rs<br/>(reqwest + retry)"]
-    end
+### Core Traits
 
-    subgraph "Orchestration"
-        bfs["BFS Queue<br/>(VecDeque + HashSet)"]
-        robots["robots.rs<br/>(robots.txt parser)"]
-        sitemap["sitemap.rs<br/>(quick-xml)"]
-        normalize["normalize.rs<br/>(URL canonicalization)"]
-    end
+1. **Frontier** — URL queue management (default: VecDeque + HashSet)
+2. **RateLimiter** — Request throttling (default: per-domain with backoff)
+3. **CrawlStore** — Result storage (default: in-memory Vec)
+4. **CrawlMiddleware** — Request/response interceptors (proxy rotation, UA rotation, caching)
+5. **EventEmitter** — Event callbacks (default: no-op)
+6. **CrawlStrategy** — Traversal algorithm (BFS, DFS, BestFirst, Adaptive)
+7. **ContentFilter** — Relevance evaluation (BM25 scoring, adaptive saturation)
+8. **CrawlCache** — Response caching (CachingMiddleware, DiskCache)
 
-    subgraph "Extraction (html/)"
-        metadata["metadata.rs<br/>(OG, Twitter, DC)"]
-        links["links.rs<br/>(internal/external/anchor/document)"]
-        images["images.rs<br/>(img, picture, og:image)"]
-        feeds["feeds.rs<br/>(RSS, Atom, JSON Feed, favicons, hreflangs)"]
-        json_ld["json_ld.rs<br/>(structured data)"]
-        extract["extract.rs<br/>(shared extraction pipeline)"]
-    end
-
-    scrape --> http
-    crawl --> bfs
-    map --> sitemap
-    stream --> bfs
-    batch --> scrape
-
-    bfs --> robots
-    bfs --> http
-    sitemap --> http
-
-    http --> extract
-    extract --> metadata
-    extract --> links
-    extract --> images
-    extract --> feeds
-    extract --> json_ld
-```
-
-## Repository Structure
+### Data Flow
 
 ```
-kreuzcrawl/
-├── crates/
-│   └── kreuzcrawl/              # Core library crate (3484 lines)
-│       └── src/
-│           ├── lib.rs            # Public API exports
-│           ├── scrape.rs         # Single-page scrape
-│           ├── crawl.rs          # Multi-page BFS crawl
-│           ├── map.rs            # URL discovery via sitemap + crawl
-│           ├── stream.rs         # Streaming crawl events
-│           ├── batch.rs          # Concurrent batch scraping
-│           ├── assets.rs         # Asset discovery and downloading
-│           ├── http.rs           # HTTP client, retry, cookie extraction
-│           ├── robots.rs         # robots.txt parsing (RFC 9309)
-│           ├── sitemap.rs        # Sitemap XML/index/gzip parsing
-│           ├── normalize.rs      # URL normalization and deduplication
-│           ├── error.rs          # Error types
-│           ├── types.rs          # All public types (601 lines)
-│           └── html/             # HTML extraction submodules
-│               ├── mod.rs        # Re-exports
-│               ├── extract.rs    # Shared extraction pipeline
-│               ├── metadata.rs   # Meta tags, OG, Twitter, DC, article
-│               ├── links.rs      # Link extraction and classification
-│               ├── images.rs     # Image extraction from multiple sources
-│               ├── feeds.rs      # Feeds, favicons, hreflangs, headings
-│               ├── json_ld.rs    # JSON-LD structured data
-│               ├── content.rs    # Main content extraction, tag removal
-│               ├── charset.rs    # Charset detection
-│               ├── detection.rs  # Content type detection (HTML, PDF, binary)
-│               └── selectors.rs  # Lazy CSS selectors and regex patterns
-├── tools/
-│   └── e2e-generator/           # Fixture-driven test generator
-│       └── src/
-│           ├── main.rs           # CLI (generate, list)
-│           ├── fixtures.rs       # Fixture schema + loader
-│           └── rust.rs           # Rust test code generator
-├── fixtures/                    # 132 E2E test fixtures
-│   ├── schema.json              # JSON Schema (draft-07)
-│   ├── scrape/     (15)         # Single-page scraping
-│   ├── metadata/   (8)          # Metadata extraction
-│   ├── links/      (9)          # Link classification
-│   ├── crawl/      (18)         # Multi-page BFS crawling
-│   ├── robots/     (14)         # robots.txt compliance
-│   ├── sitemap/    (8)          # Sitemap parsing
-│   ├── error/      (17)         # Error handling + retry
-│   ├── redirect/   (12)         # HTTP redirect handling
-│   ├── content/    (11)         # Content type handling
-│   ├── cookies/    (3)          # Cookie management
-│   ├── auth/       (3)          # Authentication
-│   ├── map/        (6)          # URL discovery
-│   ├── batch/      (3)          # Batch scraping
-│   ├── stream/     (1)          # Streaming events
-│   ├── encoding/   (4)          # Character encoding
-│   └── responses/               # Mock response bodies (56 files)
-│       ├── html/   (33 files)
-│       ├── robots/ (11 files)
-│       ├── xml/    (6 files)
-│       ├── assets/ (3 files)
-│       ├── error/  (2 files)
-│       └── pdf/    (1 file)
-├── e2e/                         # Generated test suites (gitignored)
-│   └── rust/
-│       ├── Cargo.toml
-│       ├── src/helpers.rs       # Mock server helpers
-│       └── tests/ (17 test files)
-├── docs/adr/                    # Architecture Decision Records
-├── .github/workflows/
-│   ├── ci-rust.yaml             # Build + test (Linux, macOS)
-│   └── ci-validate.yaml         # Lint + format + hooks
-├── Cargo.toml                   # Workspace root
-├── Taskfile.yml                 # Task automation
-└── deny.toml                    # Cargo security audit
+CrawlEngine::crawl()
+    ↓
+CrawlStrategy (BFS/DFS/BestFirst/Adaptive)
+    ↓
+Frontier (URL queue)
+    ↓
+RateLimiter (throttle per domain)
+    ↓
+CrawlMiddleware (proxy, UA, cache)
+    ↓
+HTTP fetch (reqwest + retry)
+    ↓
+HTML extraction (40+ fields, links, markdown)
+    ↓
+ContentFilter (BM25 relevance)
+    ↓
+CrawlStore (accumulate results)
+    ↓
+EventEmitter (stream events)
 ```
 
-## E2E Testing Pipeline
+## Configuration
 
-Tests are generated from JSON fixtures using wiremock-based mock HTTP servers. No real network calls.
+`CrawlConfig` provides fine-grained control:
 
-```mermaid
-flowchart LR
-    fixtures["fixtures/*.json"] --> generator["e2e-generator"]
-    responses["fixtures/responses/"] --> generator
-    generator --> tests["e2e/rust/tests/"]
-    tests --> fmt["cargo fmt"]
-    fmt --> clippy["cargo clippy"]
-    clippy --> run["cargo test"]
+```rust
+pub struct CrawlConfig {
+    pub max_depth: Option<usize>,              // Max traversal depth
+    pub max_pages: Option<usize>,              // Max pages to fetch
+    pub timeout: Duration,                     // Per-request timeout
+    pub follow_redirects: bool,                // HTTP 3xx handling
+    pub respect_robots_txt: bool,              // RFC 9309 enforcement
+    pub allowed_domains: Option<Vec<String>>,  // Domain whitelist
+    pub exclude_patterns: Option<Vec<String>>, // URL regex filters
+    pub headers: Option<HashMap<String, String>>, // Custom headers
+    pub cookies: Option<HashMap<String, String>>, // Persistent cookies
+    pub proxy: Option<String>,                 // HTTP proxy URL
+    pub auth: Option<Auth>,                    // Basic/Bearer auth
+    pub user_agent: Option<String>,            // Custom UA
+    pub cache_dir: Option<PathBuf>,            // Disk cache location
+    pub cache_ttl: Duration,                   // Cache expiration
+}
 ```
 
-### Fixture Categories
+**All validation** is performed in `CrawlEngine::builder().build()` — invalid configs fail fast.
 
-| Category | Count | API | Tests |
-|----------|-------|-----|-------|
-| scrape | 15 | `scrape()` | HTML parsing, metadata, feeds, assets, malformed HTML |
-| metadata | 8 | `scrape()` | OG, Twitter Card, Dublin Core, article, hreflang, favicons, headings, word count |
-| links | 9 | `scrape()` | Internal/external classification, document types, nofollow |
-| crawl | 18 | `crawl()` | BFS depth, page limits, subdomains, URL filtering, deduplication |
-| robots | 14 | `scrape()` | Allow/disallow, wildcards, user-agent prefix matching (RFC 9309) |
-| sitemap | 8 | `map()` | XML parsing, index files, gzip, lastmod |
-| error | 17 | `scrape()` | HTTP errors, timeouts, retry, SSL, DNS, WAF detection |
-| redirect | 12 | `crawl()` | 301/302 chains, loops, meta-refresh, Refresh header |
-| content | 11 | `scrape()` | Charset, body size, binary skip, PDF detection, main content |
-| cookies | 3 | `crawl()` | Persistence, Set-Cookie, deduplication by (name, domain, path) |
-| auth | 3 | `scrape()` | Basic, bearer, custom header |
-| map | 6 | `map()` | URL discovery, subdomain inclusion, search filtering |
-| batch | 3 | `batch_scrape()` | Concurrent scraping, partial failures |
-| stream | 1 | `crawl_stream()` | Event streaming (Page, Error, Complete) |
-| encoding | 4 | `scrape()` | UTF-8, ISO-8859-1, charset detection |
+## CLI
 
 ### Commands
 
 ```bash
-task e2e:generate    # Generate tests + format + lint
-task e2e:test        # Generate + run tests
-task e2e:list        # List all 132 fixtures
-task e2e:verify      # Full pipeline + git diff check
-task e2e:verify:ci   # CI: generate + fmt --check + clippy + diff
+# Scrape a single page
+kreuzcrawl scrape <URL>
+
+# Crawl with traversal
+kreuzcrawl crawl <URL> \
+  --depth <N> \
+  --max-pages <N> \
+  --format <markdown|json|html> \
+  --respect-robots-txt
+
+# Discover URLs (sitemap + crawl)
+kreuzcrawl map <URL> \
+  --respect-robots-txt \
+  --output <file>
 ```
 
-## Development
+### Output Formats
 
-```bash
-# Setup
-task setup
-
-# Build
-task build
-
-# Test
-task test
-
-# Lint (pre-commit hooks)
-task lint
-
-# Format
-task format
-```
-
-## Architecture Decision Records
-
-| ADR | Decision |
-|-----|----------|
-| [001](docs/adr/001-engine-architecture.md) | HTTP fetching with reqwest, retry logic, cookie support |
-| [002](docs/adr/002-workspace-structure.md) | crates/ + tools/ workspace layout with separate E2E generator |
-| [003](docs/adr/003-crawl-orchestration.md) | Async BFS with VecDeque + HashSet, robots.txt, URL normalization |
-| [004](docs/adr/004-metadata-extraction.md) | Exhaustive HTML metadata model via scraper (html5ever) |
-| [005](docs/adr/005-future-integration-points.md) | Feature-gated integrations: html-to-markdown, kreuzberg, tree-sitter |
-| [006](docs/adr/006-e2e-testing-strategy.md) | Fixture-driven E2E with wiremock, 30 assertion types across 15 categories |
-| [007](docs/adr/007-behavioral-fixture-derivation.md) | 132 fixtures derived from firecrawl, spider.rs, scrapy, colly |
+- **markdown** — MarkdownResult with citations and fit markdown
+- **json** — Full CrawlResult with all metadata
+- **html** — Original HTML + extracted links
 
 ## License
 
