@@ -161,6 +161,58 @@ impl CrawlMiddleware for CachingMiddleware {
     }
 }
 
+/// Middleware that rotates through a list of proxy configurations.
+///
+/// On each request, the next proxy in the list is selected (round-robin).
+/// The proxy URL is injected into the request context headers as `x-proxy-url`
+/// which the HTTP client can use to configure the proxy.
+#[derive(Debug)]
+pub struct ProxyRotationMiddleware {
+    proxies: Vec<crate::types::ProxyConfig>,
+    index: AtomicUsize,
+}
+
+impl ProxyRotationMiddleware {
+    /// Create a new proxy rotation middleware with the given proxy list.
+    pub fn new(proxies: Vec<crate::types::ProxyConfig>) -> Self {
+        Self {
+            proxies,
+            index: AtomicUsize::new(0),
+        }
+    }
+
+    fn next_proxy(&self) -> Option<&crate::types::ProxyConfig> {
+        if self.proxies.is_empty() {
+            return None;
+        }
+        let idx = self.index.fetch_add(1, Ordering::Relaxed) % self.proxies.len();
+        Some(&self.proxies[idx])
+    }
+}
+
+#[async_trait]
+impl CrawlMiddleware for ProxyRotationMiddleware {
+    async fn before_request(&self, ctx: &mut RequestContext) -> Result<(), CrawlError> {
+        if let Some(proxy) = self.next_proxy() {
+            ctx.headers
+                .insert("x-proxy-url".to_owned(), proxy.url.clone());
+            if let Some(ref user) = proxy.username {
+                ctx.headers
+                    .insert("x-proxy-username".to_owned(), user.clone());
+            }
+            if let Some(ref pass) = proxy.password {
+                ctx.headers
+                    .insert("x-proxy-password".to_owned(), pass.clone());
+            }
+        }
+        Ok(())
+    }
+
+    async fn after_response(&self, _ctx: &mut ResponseContext) -> Result<(), CrawlError> {
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -421,5 +473,84 @@ mod tests {
         };
         mw.before_request(&mut req_ctx).await.unwrap();
         assert!(req_ctx.headers.get("if-none-match").is_none());
+    }
+
+    #[tokio::test]
+    async fn test_proxy_rotation_cycles() {
+        let mw = ProxyRotationMiddleware::new(vec![
+            crate::types::ProxyConfig {
+                url: "http://proxy1:8080".into(),
+                username: None,
+                password: None,
+            },
+            crate::types::ProxyConfig {
+                url: "http://proxy2:8080".into(),
+                username: None,
+                password: None,
+            },
+        ]);
+
+        let mut ctx1 = RequestContext {
+            url: "http://a.com".into(),
+            headers: Default::default(),
+        };
+        mw.before_request(&mut ctx1).await.unwrap();
+        assert_eq!(
+            ctx1.headers.get("x-proxy-url").unwrap(),
+            "http://proxy1:8080"
+        );
+
+        let mut ctx2 = RequestContext {
+            url: "http://b.com".into(),
+            headers: Default::default(),
+        };
+        mw.before_request(&mut ctx2).await.unwrap();
+        assert_eq!(
+            ctx2.headers.get("x-proxy-url").unwrap(),
+            "http://proxy2:8080"
+        );
+
+        // Wraps around
+        let mut ctx3 = RequestContext {
+            url: "http://c.com".into(),
+            headers: Default::default(),
+        };
+        mw.before_request(&mut ctx3).await.unwrap();
+        assert_eq!(
+            ctx3.headers.get("x-proxy-url").unwrap(),
+            "http://proxy1:8080"
+        );
+    }
+
+    #[tokio::test]
+    async fn test_proxy_rotation_empty() {
+        let mw = ProxyRotationMiddleware::new(vec![]);
+        let mut ctx = RequestContext {
+            url: "http://a.com".into(),
+            headers: Default::default(),
+        };
+        mw.before_request(&mut ctx).await.unwrap();
+        assert!(ctx.headers.get("x-proxy-url").is_none());
+    }
+
+    #[tokio::test]
+    async fn test_proxy_rotation_with_credentials() {
+        let mw = ProxyRotationMiddleware::new(vec![crate::types::ProxyConfig {
+            url: "http://proxy1:8080".into(),
+            username: Some("user".into()),
+            password: Some("pass".into()),
+        }]);
+
+        let mut ctx = RequestContext {
+            url: "http://a.com".into(),
+            headers: Default::default(),
+        };
+        mw.before_request(&mut ctx).await.unwrap();
+        assert_eq!(
+            ctx.headers.get("x-proxy-url").unwrap(),
+            "http://proxy1:8080"
+        );
+        assert_eq!(ctx.headers.get("x-proxy-username").unwrap(), "user");
+        assert_eq!(ctx.headers.get("x-proxy-password").unwrap(), "pass");
     }
 }

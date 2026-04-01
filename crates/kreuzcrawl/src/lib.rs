@@ -7,6 +7,8 @@ mod browser;
 mod browser_detect;
 #[cfg(feature = "browser")]
 mod browser_pool;
+mod citations;
+
 pub mod defaults;
 pub mod engine;
 mod error;
@@ -16,6 +18,7 @@ mod http;
 mod map;
 mod markdown;
 mod normalize;
+mod pruning;
 mod robots;
 mod scrape;
 mod sitemap;
@@ -24,19 +27,20 @@ mod types;
 
 #[cfg(feature = "browser")]
 pub use browser_pool::{BrowserPool, BrowserPoolConfig, PooledPage};
+pub use citations::{CitationReference, CitationResult};
 #[cfg(feature = "ai")]
 pub use defaults::LlmExtractor;
 pub use defaults::{
     AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, CachingMiddleware, DfsStrategy,
-    InMemoryFrontier, NoopEmitter, NoopFilter, NoopMiddleware, NoopRateLimiter, NoopStore,
-    PerDomainThrottle, UaRotationMiddleware,
+    DiskCache, InMemoryFrontier, NoopCache, NoopEmitter, NoopFilter, NoopMiddleware,
+    NoopRateLimiter, NoopStore, PerDomainThrottle, ProxyRotationMiddleware, UaRotationMiddleware,
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
 pub use traits::{
-    CompleteEvent, ContentFilter, CrawlMiddleware, CrawlStats, CrawlStore, CrawlStrategy,
-    ErrorEvent, EventEmitter, Frontier, FrontierEntry, PageEvent, RateLimiter, RequestContext,
-    ResponseContext,
+    CachedPage, CompleteEvent, ContentFilter, CrawlCache, CrawlMiddleware, CrawlStats, CrawlStore,
+    CrawlStrategy, ErrorEvent, EventEmitter, Frontier, FrontierEntry, PageEvent, RateLimiter,
+    RequestContext, ResponseContext,
 };
 pub use types::{
     ArticleMetadata, AssetCategory, AuthConfig, BrowserConfig, BrowserMode, BrowserWait,

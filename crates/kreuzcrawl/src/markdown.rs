@@ -23,11 +23,16 @@ pub(crate) async fn convert_to_markdown(html: &str) -> Option<MarkdownResult> {
                     .collect();
                 let warnings = result.warnings.iter().map(|w| format!("{:?}", w)).collect();
 
+                let citations = Some(crate::citations::generate_citations(&content));
+                let fit_content = Some(crate::pruning::generate_fit_markdown(&content));
+
                 Some(MarkdownResult {
                     content,
                     document_structure,
                     tables,
                     warnings,
+                    citations,
+                    fit_content,
                 })
             }
             Err(_) => None,
