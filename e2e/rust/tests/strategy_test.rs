@@ -42,6 +42,7 @@ async fn test_strategy_best_first_seed() {
 
     let config = kreuzcrawl::CrawlConfig {
         max_depth: Some(1),
+        max_concurrent: Some(1),
         ..Default::default()
     };
 
@@ -113,6 +114,7 @@ async fn test_strategy_bfs_default_order() {
 
     let config = kreuzcrawl::CrawlConfig {
         max_depth: Some(2),
+        max_concurrent: Some(1),
         ..Default::default()
     };
 
@@ -207,6 +209,7 @@ async fn test_strategy_dfs_depth_first() {
 
     let config = kreuzcrawl::CrawlConfig {
         max_depth: Some(2),
+        max_concurrent: Some(1),
         ..Default::default()
     };
 
