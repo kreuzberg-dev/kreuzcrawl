@@ -27,8 +27,10 @@ pub struct CitationReference {
 
 // Matches both images ![alt](url) and links [text](url)
 // We distinguish them by checking the character before the match
+// Allows one level of balanced parentheses in URLs (e.g. Wikipedia-style URLs)
+// Pattern: match chars that aren't ), allowing one balanced pair (...) inside
 static LINK_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"!?\[([^\]]*)\]\(([^)]+)\)").unwrap());
+    LazyLock::new(|| Regex::new(r"!?\[([^\]]*)\]\(([^)]*\([^)]*\)[^)]*|[^)]*)\)").unwrap());
 
 /// Convert markdown links to numbered citations.
 ///
@@ -122,5 +124,17 @@ mod tests {
         );
         assert!(result.content.contains("link[1]"), "links should be cited");
         assert_eq!(result.references.len(), 1);
+    }
+
+    #[test]
+    fn test_wikipedia_urls_preserved() {
+        let md = "[Rust](https://en.wikipedia.org/wiki/Rust_(programming_language))";
+        let result = generate_citations(md);
+        assert_eq!(result.references.len(), 1);
+        assert_eq!(
+            result.references[0].url,
+            "https://en.wikipedia.org/wiki/Rust_(programming_language)"
+        );
+        assert_eq!(result.content, "Rust[1]");
     }
 }

@@ -594,6 +594,13 @@ impl CrawlEngine {
         }
 
         // ── Phase 3: seed the working set and mark as seen via Frontier ─
+        // We maintain a local working_set (Vec) rather than popping from frontier because:
+        // 1. The CrawlStrategy needs random access to all candidates via select_next(&[...])
+        // 2. The frontier is shared across potential concurrent batch_crawl operations
+        // 3. This design keeps the hot path lock-free (no frontier mutex per iteration)
+        // The frontier's push/pop are available for custom implementations that need
+        // persistent or distributed URL queues. The is_seen/mark_seen methods provide
+        // deduplication regardless of whether push/pop are used.
         let mut working_set: Vec<FrontierEntry> = Vec::new();
 
         let dedup_key = normalize_url_for_dedup(&final_url);
