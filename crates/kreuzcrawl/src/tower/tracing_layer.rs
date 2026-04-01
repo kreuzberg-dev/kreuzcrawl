@@ -5,6 +5,7 @@ use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use tower::{Layer, Service};
+use tracing::Instrument;
 
 use super::types::{CrawlRequest, CrawlResponse};
 use crate::error::CrawlError;
@@ -68,12 +69,17 @@ where
         let mut inner = self.inner.clone();
         std::mem::swap(&mut self.inner, &mut inner);
 
-        Box::pin(async move {
-            let _enter = span.enter();
-            let resp = inner.call(req).await?;
-            span.record("http.response.status_code", resp.status);
-            span.record("http.response.body.size", resp.body.len() as u64);
-            Ok(resp)
-        })
+        Box::pin(
+            async move {
+                let resp = inner.call(req).await?;
+                tracing::info!(
+                    status = resp.status,
+                    body_size = resp.body.len(),
+                    "fetch complete"
+                );
+                Ok(resp)
+            }
+            .instrument(span),
+        )
     }
 }

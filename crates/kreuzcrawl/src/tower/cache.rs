@@ -64,12 +64,20 @@ where
         Box::pin(async move {
             // Check cache
             if let Ok(Some(cached)) = cache.get(&url).await {
+                let mut headers = HashMap::new();
+                if let Some(ref etag) = cached.etag {
+                    headers.insert("etag".to_owned(), vec![etag.clone()]);
+                }
+                if let Some(ref lm) = cached.last_modified {
+                    headers.insert("last-modified".to_owned(), vec![lm.clone()]);
+                }
+                let body_bytes = cached.body.as_bytes().to_vec();
                 return Ok(CrawlResponse {
                     status: cached.status_code,
                     content_type: cached.content_type,
                     body: cached.body,
-                    body_bytes: Vec::new(),
-                    headers: HashMap::new(),
+                    body_bytes,
+                    headers,
                 });
             }
 
@@ -86,8 +94,11 @@ where
                             status_code: resp.status,
                             content_type: resp.content_type.clone(),
                             body: resp.body.clone(),
-                            etag: resp.headers.get("etag").cloned(),
-                            last_modified: resp.headers.get("last-modified").cloned(),
+                            etag: resp.headers.get("etag").and_then(|v| v.first().cloned()),
+                            last_modified: resp
+                                .headers
+                                .get("last-modified")
+                                .and_then(|v| v.first().cloned()),
                             cached_at: SystemTime::now()
                                 .duration_since(UNIX_EPOCH)
                                 .unwrap_or_default()

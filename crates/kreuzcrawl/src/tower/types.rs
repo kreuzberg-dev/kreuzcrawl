@@ -32,5 +32,5 @@ pub struct CrawlResponse {
     pub content_type: String,
     pub body: String,
     pub body_bytes: Vec<u8>,
-    pub headers: HashMap<String, String>,
+    pub headers: HashMap<String, Vec<String>>,
 }

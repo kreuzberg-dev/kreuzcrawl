@@ -62,7 +62,10 @@ pub(crate) async fn scrape_from_crawl_response(
     }
 
     // Check for X-Robots-Tag
-    let x_robots_tag = resp.headers.get("x-robots-tag").cloned();
+    let x_robots_tag = resp
+        .headers
+        .get("x-robots-tag")
+        .and_then(|v| v.first().cloned());
 
     let mut noindex_detected = false;
     let mut nofollow_detected = false;
