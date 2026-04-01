@@ -13,6 +13,7 @@ pub(crate) struct HttpResponse {
     pub(crate) content_type: String,
     pub(crate) body: String,
     pub(crate) body_bytes: Vec<u8>,
+    #[allow(dead_code)]
     pub(crate) headers: HeaderMap,
 }
 
@@ -264,38 +265,96 @@ pub(crate) async fn fetch_with_retry(
     Err(last_err.unwrap_or_else(|| CrawlError::Other("retry exhausted".into())))
 }
 
-/// Extract cookies from `Set-Cookie` response headers.
-pub(crate) fn extract_cookies(headers: &HeaderMap) -> Vec<CookieInfo> {
+/// Extract cookies from a `HashMap<String, String>` of response headers.
+///
+/// Looks for the `"set-cookie"` key. Because `HashMap` stores only one value
+/// per key, this handles the common single-cookie case; multi-cookie responses
+/// are handled by the `HeaderMap` variant above in production code.
+pub(crate) fn extract_cookies_from_hashmap(
+    headers: &std::collections::HashMap<String, String>,
+) -> Vec<CookieInfo> {
     let mut cookies = Vec::new();
-    for val in headers.get_all("set-cookie") {
-        if let Ok(s) = val.to_str() {
-            let parts: Vec<&str> = s.split(';').collect();
-            if let Some(nv) = parts.first()
-                && let Some((name, value)) = nv.split_once('=')
-            {
-                let mut cookie = CookieInfo {
-                    name: name.trim().to_owned(),
-                    value: value.trim().to_owned(),
-                    domain: None,
-                    path: None,
-                };
-                for attr in &parts[1..] {
-                    let attr = attr.trim().to_lowercase();
-                    if let Some(d) = attr.strip_prefix("domain=") {
-                        cookie.domain = Some(d.to_owned());
-                    } else if let Some(p) = attr.strip_prefix("path=") {
-                        cookie.path = Some(p.to_owned());
-                    }
+    if let Some(raw) = headers.get("set-cookie") {
+        let parts: Vec<&str> = raw.split(';').collect();
+        if let Some(nv) = parts.first()
+            && let Some((name, value)) = nv.split_once('=')
+        {
+            let mut cookie = CookieInfo {
+                name: name.trim().to_owned(),
+                value: value.trim().to_owned(),
+                domain: None,
+                path: None,
+            };
+            for attr in &parts[1..] {
+                let attr = attr.trim().to_lowercase();
+                if let Some(d) = attr.strip_prefix("domain=") {
+                    cookie.domain = Some(d.to_owned());
+                } else if let Some(p) = attr.strip_prefix("path=") {
+                    cookie.path = Some(p.to_owned());
                 }
-                cookies.push(cookie);
             }
+            cookies.push(cookie);
         }
     }
     cookies
 }
 
+/// Extract response metadata from a `HashMap<String, String>` of headers.
+pub(crate) fn extract_response_meta_from_hashmap(
+    headers: &std::collections::HashMap<String, String>,
+) -> ResponseMeta {
+    ResponseMeta {
+        etag: headers.get("etag").cloned(),
+        last_modified: headers.get("last-modified").cloned(),
+        cache_control: headers.get("cache-control").cloned(),
+        server: headers.get("server").cloned(),
+        x_powered_by: headers.get("x-powered-by").cloned(),
+        content_language: headers.get("content-language").cloned(),
+        content_encoding: headers.get("content-encoding").cloned(),
+    }
+}
+
+/// Check whether a 403 response indicates WAF/bot blocking.
+///
+/// `server` and `body` should be lowercased. `headers` is the raw header map.
+pub(crate) fn is_waf_blocked(
+    server: &str,
+    body: &str,
+    headers: &std::collections::HashMap<String, String>,
+) -> bool {
+    let body_lower = body.to_lowercase();
+    let server_lower = server.to_lowercase();
+
+    let pattern_match = server_lower.contains("cloudflare")
+        || body_lower.contains("cf-browser-verification")
+        || body_lower.contains("challenge-form")
+        || body_lower.contains("cf-chl-")
+        || server_lower.contains("akamaighost")
+        || body_lower.contains("awselb")
+        || body_lower.contains("x-amzn-waf")
+        || body_lower.contains("request blocked")
+        || server_lower.contains("incapsula")
+        || body_lower.contains("incapsula")
+        || body_lower.contains("_incap_ses_")
+        || body_lower.contains("datadome")
+        || body_lower.contains("dd.js")
+        || body_lower.contains("perimeterx")
+        || body_lower.contains("px-captcha")
+        || body_lower.contains("sucuri")
+        || body_lower.contains("x-sucuri-id")
+        || server_lower.contains("big-ip")
+        || body_lower.contains("bigipserver");
+
+    let has_waf_headers = headers.contains_key("x-sucuri-id")
+        || headers.contains_key("x-datadome")
+        || headers.contains_key("x-amzn-waf-action")
+        || headers.keys().any(|k| k.starts_with("x-px-"));
+
+    pattern_match || has_waf_headers
+}
+
 /// Identify the WAF vendor from server and body content.
-fn detect_waf_vendor(server: &str, body: &str) -> &'static str {
+pub(crate) fn detect_waf_vendor(server: &str, body: &str) -> &'static str {
     if server.contains("cloudflare")
         || body.contains("cf-browser-verification")
         || body.contains("challenge-form")
@@ -325,23 +384,4 @@ fn detect_waf_vendor(server: &str, body: &str) -> &'static str {
         return "aws-waf";
     }
     "unknown"
-}
-
-/// Extract response metadata from HTTP headers.
-pub(crate) fn extract_response_meta(headers: &HeaderMap) -> ResponseMeta {
-    let get = |name: &str| -> Option<String> {
-        headers
-            .get(name)
-            .and_then(|v| v.to_str().ok())
-            .map(String::from)
-    };
-    ResponseMeta {
-        etag: get("etag"),
-        last_modified: get("last-modified"),
-        cache_control: get("cache-control"),
-        server: get("server"),
-        x_powered_by: get("x-powered-by"),
-        content_language: get("content-language"),
-        content_encoding: get("content-encoding"),
-    }
 }

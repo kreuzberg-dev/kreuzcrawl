@@ -1,7 +1,6 @@
 //! kreuzcrawl -- A Rust crawling engine for turning websites into structured data.
 
 mod assets;
-mod batch;
 #[cfg(feature = "browser")]
 mod browser;
 mod browser_detect;
@@ -22,6 +21,7 @@ mod pruning;
 mod robots;
 mod scrape;
 mod sitemap;
+pub mod tower;
 pub mod traits;
 mod types;
 
@@ -31,16 +31,15 @@ pub use citations::{CitationReference, CitationResult};
 #[cfg(feature = "ai")]
 pub use defaults::LlmExtractor;
 pub use defaults::{
-    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, CachingMiddleware, DfsStrategy,
-    DiskCache, InMemoryFrontier, NoopCache, NoopEmitter, NoopFilter, NoopMiddleware,
-    NoopRateLimiter, NoopStore, PerDomainThrottle, UaRotationMiddleware,
+    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, DfsStrategy, DiskCache,
+    InMemoryFrontier, NoopCache, NoopEmitter, NoopFilter, NoopRateLimiter, NoopStore,
+    PerDomainThrottle,
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
 pub use traits::{
-    CachedPage, CompleteEvent, ContentFilter, CrawlCache, CrawlMiddleware, CrawlStats, CrawlStore,
-    CrawlStrategy, ErrorEvent, EventEmitter, Frontier, FrontierEntry, PageEvent, RateLimiter,
-    RequestContext, ResponseContext,
+    CachedPage, CompleteEvent, ContentFilter, CrawlCache, CrawlStats, CrawlStore, CrawlStrategy,
+    ErrorEvent, EventEmitter, Frontier, FrontierEntry, PageEvent, RateLimiter,
 };
 pub use types::{
     ArticleMetadata, AssetCategory, AuthConfig, BrowserConfig, BrowserMode, BrowserWait,

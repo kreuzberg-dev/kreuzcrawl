@@ -178,8 +178,16 @@ mod adaptive_tests {
     fn test_adaptive_select_next_returns_first() {
         let s = AdaptiveStrategy::default();
         let candidates = vec![
-            FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 },
-            FrontierEntry { url: "b".into(), depth: 0, priority: 0.5 },
+            FrontierEntry {
+                url: "a".into(),
+                depth: 0,
+                priority: 1.0,
+            },
+            FrontierEntry {
+                url: "b".into(),
+                depth: 0,
+                priority: 0.5,
+            },
         ];
         assert_eq!(s.select_next(&candidates), Some(0));
     }
@@ -202,8 +210,14 @@ mod adaptive_tests {
     #[test]
     fn test_adaptive_continues_initially() {
         let s = AdaptiveStrategy::new(5, 0.05);
-        let stats = CrawlStats { pages_crawled: 2, ..Default::default() };
-        assert!(s.should_continue(&stats), "should continue when not enough data");
+        let stats = CrawlStats {
+            pages_crawled: 2,
+            ..Default::default()
+        };
+        assert!(
+            s.should_continue(&stats),
+            "should continue when not enough data"
+        );
     }
 
     #[test]
@@ -219,7 +233,10 @@ mod adaptive_tests {
             ..Default::default()
         };
         // After many pages of identical content, should_continue should return false
-        assert!(!s.should_continue(&stats), "should stop on saturated content");
+        assert!(
+            !s.should_continue(&stats),
+            "should stop on saturated content"
+        );
     }
 
     #[test]
@@ -234,15 +251,26 @@ mod adaptive_tests {
             elapsed: Duration::from_secs(1),
             ..Default::default()
         };
-        assert!(s.should_continue(&stats), "should continue with diverse content");
+        assert!(
+            s.should_continue(&stats),
+            "should continue with diverse content"
+        );
     }
 
     #[test]
     fn test_bfs_strategy_select_next() {
         let s = BfsStrategy;
         let candidates = vec![
-            FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 },
-            FrontierEntry { url: "b".into(), depth: 1, priority: 0.5 },
+            FrontierEntry {
+                url: "a".into(),
+                depth: 0,
+                priority: 1.0,
+            },
+            FrontierEntry {
+                url: "b".into(),
+                depth: 1,
+                priority: 0.5,
+            },
         ];
         assert_eq!(s.select_next(&candidates), Some(0));
     }
@@ -257,9 +285,21 @@ mod adaptive_tests {
     fn test_dfs_strategy_select_next() {
         let s = DfsStrategy;
         let candidates = vec![
-            FrontierEntry { url: "a".into(), depth: 0, priority: 1.0 },
-            FrontierEntry { url: "b".into(), depth: 1, priority: 0.5 },
-            FrontierEntry { url: "c".into(), depth: 2, priority: 0.3 },
+            FrontierEntry {
+                url: "a".into(),
+                depth: 0,
+                priority: 1.0,
+            },
+            FrontierEntry {
+                url: "b".into(),
+                depth: 1,
+                priority: 0.5,
+            },
+            FrontierEntry {
+                url: "c".into(),
+                depth: 2,
+                priority: 0.3,
+            },
         ];
         assert_eq!(s.select_next(&candidates), Some(2));
     }
@@ -274,9 +314,21 @@ mod adaptive_tests {
     fn test_best_first_strategy_picks_highest_priority() {
         let s = BestFirstStrategy;
         let candidates = vec![
-            FrontierEntry { url: "a".into(), depth: 0, priority: 0.3 },
-            FrontierEntry { url: "b".into(), depth: 1, priority: 0.9 },
-            FrontierEntry { url: "c".into(), depth: 2, priority: 0.5 },
+            FrontierEntry {
+                url: "a".into(),
+                depth: 0,
+                priority: 0.3,
+            },
+            FrontierEntry {
+                url: "b".into(),
+                depth: 1,
+                priority: 0.9,
+            },
+            FrontierEntry {
+                url: "c".into(),
+                depth: 2,
+                priority: 0.5,
+            },
         ];
         assert_eq!(s.select_next(&candidates), Some(1));
     }
@@ -298,7 +350,10 @@ mod adaptive_tests {
     #[test]
     fn test_best_first_should_continue_always_true() {
         let s = BestFirstStrategy;
-        let stats = CrawlStats { pages_crawled: 1000, ..Default::default() };
+        let stats = CrawlStats {
+            pages_crawled: 1000,
+            ..Default::default()
+        };
         assert!(s.should_continue(&stats));
     }
 }

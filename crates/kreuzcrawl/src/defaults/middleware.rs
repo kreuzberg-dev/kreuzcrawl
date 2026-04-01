@@ -427,5 +427,4 @@ mod tests {
         mw.before_request(&mut req_ctx).await.unwrap();
         assert!(req_ctx.headers.get("if-none-match").is_none());
     }
-
 }

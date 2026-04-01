@@ -19,13 +19,22 @@ impl EventEmitter for NoopEmitter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::traits::{PageEvent, ErrorEvent, CompleteEvent};
+    use crate::traits::{CompleteEvent, ErrorEvent, PageEvent};
 
     #[tokio::test]
     async fn test_noop_emitter_doesnt_panic() {
         let e = NoopEmitter;
-        e.on_page(&PageEvent { url: "test".into(), status_code: 200, depth: 0 }).await;
-        e.on_error(&ErrorEvent { url: "test".into(), error: "err".into() }).await;
+        e.on_page(&PageEvent {
+            url: "test".into(),
+            status_code: 200,
+            depth: 0,
+        })
+        .await;
+        e.on_error(&ErrorEvent {
+            url: "test".into(),
+            error: "err".into(),
+        })
+        .await;
         e.on_complete(&CompleteEvent { pages_crawled: 5 }).await;
         e.on_discovered("http://test.com", 1).await;
     }

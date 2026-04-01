@@ -2,7 +2,7 @@
 
 use std::collections::HashSet;
 use std::sync::Arc;
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+use std::time::{Duration, Instant};
 
 use regex::Regex;
 use scraper::Html;
@@ -11,6 +11,10 @@ use tokio::task::JoinSet;
 use tokio_stream::wrappers::ReceiverStream;
 use url::Url;
 
+use std::collections::HashMap;
+
+use tower::Service;
+
 use crate::defaults;
 use crate::error::CrawlError;
 use crate::helpers::{compile_regexes, fetch_robots_rules, find_ascii_case_insensitive};
@@ -18,9 +22,10 @@ use crate::html::{
     HtmlExtraction, detect_charset, detect_meta_refresh, extract_page_data, is_binary_content_type,
     is_binary_url, is_html_content, is_pdf_content, is_pdf_url,
 };
-use crate::http::{build_client, extract_cookies, http_fetch};
+use crate::http::{build_client, extract_cookies_from_hashmap};
 use crate::normalize::{normalize_url, normalize_url_for_dedup, resolve_redirect, strip_fragment};
 use crate::robots::{RobotsRules, is_path_allowed};
+use crate::tower::CrawlRequest;
 use crate::traits::*;
 use crate::types::*;
 
@@ -30,7 +35,7 @@ struct FetchResult {
     status_code: u16,
     content_type: String,
     body: String,
-    headers: reqwest::header::HeaderMap,
+    headers: HashMap<String, String>,
     extraction: HtmlExtraction,
     is_binary: bool,
     is_pdf: bool,
@@ -44,11 +49,12 @@ pub struct CrawlEngine {
     pub(crate) frontier: Arc<dyn Frontier>,
     pub(crate) rate_limiter: Arc<dyn RateLimiter>,
     pub(crate) store: Arc<dyn CrawlStore>,
-    pub(crate) middlewares: Vec<Arc<dyn CrawlMiddleware>>,
     pub(crate) event_emitter: Arc<dyn EventEmitter>,
     pub(crate) strategy: Arc<dyn CrawlStrategy>,
     pub(crate) content_filter: Arc<dyn ContentFilter>,
     pub(crate) cache: Arc<dyn CrawlCache>,
+    /// Shared UA rotation layer — preserves rotation counter across service builds.
+    ua_rotation: crate::tower::UaRotationLayer,
 }
 
 /// Builder for [`CrawlEngine`].
@@ -60,7 +66,6 @@ pub struct CrawlEngineBuilder {
     frontier: Option<Arc<dyn Frontier>>,
     rate_limiter: Option<Arc<dyn RateLimiter>>,
     store: Option<Arc<dyn CrawlStore>>,
-    middlewares: Vec<Arc<dyn CrawlMiddleware>>,
     event_emitter: Option<Arc<dyn EventEmitter>>,
     strategy: Option<Arc<dyn CrawlStrategy>>,
     content_filter: Option<Arc<dyn ContentFilter>>,
@@ -75,7 +80,6 @@ impl CrawlEngineBuilder {
             frontier: None,
             rate_limiter: None,
             store: None,
-            middlewares: Vec::new(),
             event_emitter: None,
             strategy: None,
             content_filter: None,
@@ -104,12 +108,6 @@ impl CrawlEngineBuilder {
     /// Set the store implementation.
     pub fn store(mut self, store: impl CrawlStore + 'static) -> Self {
         self.store = Some(Arc::new(store));
-        self
-    }
-
-    /// Add a middleware to the pipeline.
-    pub fn middleware(mut self, middleware: impl CrawlMiddleware + 'static) -> Self {
-        self.middlewares.push(Arc::new(middleware));
         self
     }
 
@@ -143,6 +141,7 @@ impl CrawlEngineBuilder {
     pub fn build(self) -> Result<CrawlEngine, CrawlError> {
         let config = self.config.unwrap_or_default();
         config.validate()?;
+        let ua_rotation = crate::tower::UaRotationLayer::new(config.user_agents.clone());
         Ok(CrawlEngine {
             config,
             frontier: self
@@ -154,7 +153,6 @@ impl CrawlEngineBuilder {
                 ))
             }),
             store: self.store.unwrap_or_else(|| Arc::new(defaults::NoopStore)),
-            middlewares: self.middlewares,
             event_emitter: self
                 .event_emitter
                 .unwrap_or_else(|| Arc::new(defaults::NoopEmitter)),
@@ -165,6 +163,7 @@ impl CrawlEngineBuilder {
                 .content_filter
                 .unwrap_or_else(|| Arc::new(defaults::NoopFilter)),
             cache: self.cache.unwrap_or_else(|| Arc::new(defaults::NoopCache)),
+            ua_rotation,
         })
     }
 }
@@ -181,73 +180,81 @@ impl CrawlEngine {
         CrawlEngineBuilder::new()
     }
 
+    /// Build the Tower service stack for HTTP fetching.
+    ///
+    /// Layers (outermost to innermost):
+    /// 1. Per-domain rate limiting
+    /// 2. HTTP response caching
+    /// 3. User-agent rotation
+    /// 4. Base HTTP fetch
+    fn build_service(
+        &self,
+        client: &reqwest::Client,
+    ) -> tower::util::BoxCloneService<CrawlRequest, crate::tower::CrawlResponse, CrawlError> {
+        use tower::ServiceBuilder;
+
+        let service = ServiceBuilder::new()
+            .layer(crate::tower::PerDomainRateLimitLayer::new(
+                self.rate_limiter.clone(),
+            ))
+            .layer(crate::tower::CrawlCacheLayer::new(self.cache.clone()))
+            .layer(self.ua_rotation.clone())
+            .service(crate::tower::HttpFetchService::new(
+                client.clone(),
+                self.config.clone(),
+            ));
+
+        tower::util::BoxCloneService::new(service)
+    }
+
     /// Scrape a single URL, returning the extracted data.
     ///
-    /// Runs the middleware chain before and after the scrape call.
+    /// Routes the request through the Tower service stack (rate limiting,
+    /// UA rotation) then runs the extraction pipeline on the response.
     pub async fn scrape(&self, url: &str) -> Result<ScrapeResult, CrawlError> {
-        // Note: scrape() bypasses the persistent cache intentionally. The cache stores raw HTTP
-        // responses (status, headers, body), while scrape() needs full extraction (markdown,
-        // links, metadata). Rebuilding ScrapeResult from cached body requires re-running the
-        // extraction pipeline anyway. For cache-aware scraping, use crawl() which handles cache
-        // as an optimization in the crawl loop. This design avoids cache inconsistency issues.
+        let client = build_client(&self.config)?;
+        let mut service = self.build_service(&client);
 
-        // Run before_request middleware
-        let mut req_ctx = RequestContext {
-            url: url.to_owned(),
-            headers: std::collections::HashMap::new(),
+        let response = match service.call(CrawlRequest::new(url)).await {
+            Ok(resp) => resp,
+            // When robots.txt checking is enabled, a 404 is not a hard error --
+            // the page simply doesn't exist, but the robots check result is still
+            // meaningful. Return a minimal successful ScrapeResult.
+            Err(CrawlError::NotFound(_)) if self.config.respect_robots_txt => {
+                return Ok(ScrapeResult {
+                    status_code: 404,
+                    content_type: String::new(),
+                    html: String::new(),
+                    body_size: 0,
+                    metadata: PageMetadata::default(),
+                    links: Vec::new(),
+                    images: Vec::new(),
+                    feeds: Vec::new(),
+                    json_ld: Vec::new(),
+                    is_allowed: true, // 404 robots.txt means "allow all"
+                    crawl_delay: None,
+                    noindex_detected: false,
+                    nofollow_detected: false,
+                    x_robots_tag: None,
+                    is_pdf: false,
+                    was_skipped: false,
+                    detected_charset: None,
+                    main_content_only: self.config.main_content_only,
+                    auth_header_sent: self.config.auth.is_some(),
+                    response_meta: None,
+                    assets: Vec::new(),
+                    js_render_hint: false,
+                    browser_used: false,
+                    markdown: None,
+                    extracted_data: None,
+                    extraction_meta: None,
+                    screenshot: None,
+                });
+            }
+            Err(e) => return Err(e),
         };
-        for mw in &self.middlewares {
-            mw.before_request(&mut req_ctx).await?;
-        }
 
-        // Perform the scrape
-        let mut result =
-            crate::scrape::scrape_with_headers(&req_ctx.url, &self.config, &req_ctx.headers)
-                .await?;
-
-        // Populate ResponseContext.headers from actual response metadata
-        let mut resp_headers = std::collections::HashMap::new();
-        if let Some(ref meta) = result.response_meta {
-            if let Some(ref etag) = meta.etag {
-                resp_headers.insert("etag".to_owned(), etag.clone());
-            }
-            if let Some(ref lm) = meta.last_modified {
-                resp_headers.insert("last-modified".to_owned(), lm.clone());
-            }
-            if let Some(ref cc) = meta.cache_control {
-                resp_headers.insert("cache-control".to_owned(), cc.clone());
-            }
-            if let Some(ref server) = meta.server {
-                resp_headers.insert("server".to_owned(), server.clone());
-            }
-            if let Some(ref xpb) = meta.x_powered_by {
-                resp_headers.insert("x-powered-by".to_owned(), xpb.clone());
-            }
-            if let Some(ref cl) = meta.content_language {
-                resp_headers.insert("content-language".to_owned(), cl.clone());
-            }
-            if let Some(ref ce) = meta.content_encoding {
-                resp_headers.insert("content-encoding".to_owned(), ce.clone());
-            }
-        }
-
-        // Run after_response middleware
-        let mut resp_ctx = ResponseContext {
-            url: req_ctx.url,
-            status: result.status_code,
-            content_type: result.content_type.clone(),
-            body: result.html.clone(),
-            headers: resp_headers,
-        };
-        for mw in &self.middlewares {
-            mw.after_response(&mut resp_ctx).await?;
-        }
-
-        // Apply middleware mutations back to result
-        result.html = resp_ctx.body;
-        result.body_size = result.html.len();
-
-        Ok(result)
+        crate::scrape::scrape_from_crawl_response(url, &response, &self.config).await
     }
 
     /// Crawl a website starting from `url`, following links up to the configured depth.
@@ -456,30 +463,16 @@ impl CrawlEngine {
         let start_time = Instant::now();
 
         // ── Phase 1: resolve initial redirects ──────────────────────────
-        // Run middleware for the seed URL so headers (e.g. user-agent rotation,
-        // conditional cache headers) are applied to redirect-resolution fetches.
-        let mut seed_req_ctx = RequestContext {
-            url: url.to_owned(),
-            headers: std::collections::HashMap::new(),
-        };
-        for mw in &self.middlewares {
-            mw.before_request(&mut seed_req_ctx).await?;
-        }
-        let seed_headers = seed_req_ctx.headers;
+        // Uses the Tower service stack so headers (e.g. user-agent rotation)
+        // are applied to redirect-resolution fetches.
+        let mut service = self.build_service(&client);
 
         let mut current_url = url.to_owned();
         let mut seen_redirects: HashSet<String> = HashSet::with_capacity(max_redirects + 1);
         seen_redirects.insert(current_url.clone());
 
         loop {
-            let resp = match http_fetch(
-                &current_url,
-                &self.config,
-                &seed_headers,
-                &client,
-            )
-            .await
-            {
+            let resp = match service.call(CrawlRequest::new(&current_url)).await {
                 Ok(r) => r,
                 Err(e) => {
                     error = Some(format!("{e}"));
@@ -488,7 +481,7 @@ impl CrawlEngine {
             };
 
             if self.config.cookies_enabled {
-                all_cookies.extend(extract_cookies(&resp.headers));
+                all_cookies.extend(extract_cookies_from_hashmap(&resp.headers));
             }
 
             let status = resp.status;
@@ -499,7 +492,7 @@ impl CrawlEngine {
                     error = Some("too many redirects".to_owned());
                     break;
                 }
-                if let Some(location) = resp.headers.get("location").and_then(|v| v.to_str().ok()) {
+                if let Some(location) = resp.headers.get("location") {
                     let target = resolve_redirect(&current_url, location);
                     if seen_redirects.contains(&target) {
                         error = Some("redirect loop detected".to_owned());
@@ -513,7 +506,7 @@ impl CrawlEngine {
             }
 
             // Check for Refresh header redirect
-            if let Some(refresh) = resp.headers.get("refresh").and_then(|v| v.to_str().ok())
+            if let Some(refresh) = resp.headers.get("refresh")
                 && let Some(pos) = find_ascii_case_insensitive(refresh, "url=")
             {
                 if redirect_count >= max_redirects {
@@ -679,157 +672,21 @@ impl CrawlEngine {
                     .await
                     .map_err(|_| CrawlError::Other("semaphore closed".into()))?;
 
-                let config = self.config.clone();
-                let client = client.clone();
-                let rate_limiter = self.rate_limiter.clone();
-                let middlewares = self.middlewares.clone();
-                let cache = self.cache.clone();
+                let mut svc = service.clone();
 
                 join_set.spawn(async move {
                     let _permit = permit;
 
-                    // Rate limiting
-                    let parsed = Url::parse(&entry.url).ok();
-                    let domain = parsed.as_ref().and_then(|u| u.host_str()).unwrap_or("");
-                    if !domain.is_empty() {
-                        rate_limiter
-                            .acquire(domain)
-                            .await
-                            .map_err(|e| (entry.clone(), e))?;
-                    }
-
-                    // Run before_request middleware FIRST so it can modify URL/headers
-                    let mut req_ctx = RequestContext {
-                        url: entry.url.clone(),
-                        headers: std::collections::HashMap::new(),
-                    };
-                    for mw in &middlewares {
-                        mw.before_request(&mut req_ctx)
-                            .await
-                            .map_err(|e| (entry.clone(), e))?;
-                    }
-
-                    // Check persistent cache AFTER middleware (uses middleware-modified URL)
-                    if let Ok(Some(cached)) = cache.get(&req_ctx.url).await {
-                        // Run after_response middleware on cached data
-                        let mut resp_ctx = ResponseContext {
-                            url: req_ctx.url.clone(),
-                            status: cached.status_code,
-                            content_type: cached.content_type.clone(),
-                            body: cached.body.clone(),
-                            headers: std::collections::HashMap::new(),
-                        };
-                        for mw in &middlewares {
-                            mw.after_response(&mut resp_ctx)
-                                .await
-                                .map_err(|e| (entry.clone(), e))?;
-                        }
-
-                        let body = resp_ctx.body;
-
-                        // Build a FetchResult from cached data
-                        let body_clone = body.clone();
-                        let url_for_extract = entry.url.clone();
-                        let content_type_clone = cached.content_type.clone();
-
-                        let (extraction, is_binary, is_pdf, detected_charset) =
-                            tokio::task::spawn_blocking(move || {
-                                let parsed_url = Url::parse(&url_for_extract)
-                                    .unwrap_or_else(|_| Url::parse("http://invalid").unwrap());
-                                let is_binary = is_binary_content_type(&content_type_clone)
-                                    || is_binary_url(&url_for_extract);
-                                let is_pdf = is_pdf_content(&content_type_clone, &body_clone)
-                                    || is_pdf_url(&url_for_extract);
-                                let is_html = is_html_content(&content_type_clone, &body_clone);
-
-                                let doc = Html::parse_document(&body_clone);
-                                let extraction = extract_page_data(
-                                    &doc,
-                                    &body_clone,
-                                    &parsed_url,
-                                    is_html && !is_binary && !is_pdf,
-                                    false,
-                                );
-                                let detected_charset =
-                                    detect_charset(&content_type_clone, &body_clone);
-                                (extraction, is_binary, is_pdf, detected_charset)
-                            })
-                            .await
-                            .unwrap();
-
-                        return Ok(FetchResult {
-                            entry,
-                            status_code: cached.status_code,
-                            content_type: cached.content_type,
-                            body,
-                            headers: reqwest::header::HeaderMap::new(),
-                            extraction,
-                            is_binary,
-                            is_pdf,
-                            detected_charset,
-                        });
-                    }
-
-                    // HTTP fetch with middleware-provided headers
-                    let resp = http_fetch(&req_ctx.url, &config, &req_ctx.headers, &client)
+                    // ONE call — Tower handles rate limit + cache + UA rotation + fetch
+                    let resp = svc
+                        .call(CrawlRequest::new(&entry.url))
                         .await
                         .map_err(|e| (entry.clone(), e))?;
 
                     let status_code = resp.status;
-                    let content_type_for_mw = resp.content_type.clone();
-                    let body_for_mw = resp.body.clone();
+                    let content_type = resp.content_type.clone();
                     let headers = resp.headers.clone();
-                    let content_type = resp.content_type;
-
-                    // Populate ResponseContext.headers from HTTP response
-                    let mut resp_headers = std::collections::HashMap::new();
-                    for (name, value) in resp.headers.iter() {
-                        if let Ok(v) = value.to_str() {
-                            resp_headers.insert(name.to_string(), v.to_string());
-                        }
-                    }
-
-                    // Run after_response middleware
-                    let mut resp_ctx = ResponseContext {
-                        url: req_ctx.url,
-                        status: status_code,
-                        content_type: content_type_for_mw,
-                        body: body_for_mw,
-                        headers: resp_headers,
-                    };
-                    for mw in &middlewares {
-                        mw.after_response(&mut resp_ctx)
-                            .await
-                            .map_err(|e| (entry.clone(), e))?;
-                    }
-
-                    let body = resp_ctx.body;
-
-                    // Store in persistent cache after successful fetch
-                    if (200..300).contains(&status_code) {
-                        let cached_page = CachedPage {
-                            url: entry.url.clone(),
-                            status_code,
-                            content_type: content_type.clone(),
-                            body: body.clone(),
-                            etag: resp_ctx.headers.get("etag").cloned(),
-                            last_modified: resp_ctx.headers.get("last-modified").cloned(),
-                            cached_at: SystemTime::now()
-                                .duration_since(UNIX_EPOCH)
-                                .unwrap_or_default()
-                                .as_secs(),
-                        };
-                        cache.set(&entry.url, &cached_page).await.ok();
-                    }
-
-                    // Record response for adaptive back-off
-                    let domain_owned = domain.to_owned();
-                    if !domain_owned.is_empty() {
-                        rate_limiter
-                            .record_response(&domain_owned, status_code)
-                            .await
-                            .map_err(|e| (entry.clone(), e))?;
-                    }
+                    let body = resp.body.clone();
 
                     // Extract in spawn_blocking (Html is !Send)
                     let body_clone = body.clone();
@@ -890,7 +747,7 @@ impl CrawlEngine {
                     let depth = fetch.entry.depth;
 
                     if self.config.cookies_enabled {
-                        all_cookies.extend(extract_cookies(&fetch.headers));
+                        all_cookies.extend(extract_cookies_from_hashmap(&fetch.headers));
                     }
 
                     let mut body = fetch.body;
