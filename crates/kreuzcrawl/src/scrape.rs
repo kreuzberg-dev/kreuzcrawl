@@ -107,6 +107,8 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
                     browser_used: false,
                     markdown: None,
                     extracted_data: None,
+                    extraction_meta: None,
+                    screenshot: None,
                 });
             }
             Err(e) => return Err(e),
@@ -143,6 +145,8 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
                 browser_used: false,
                 markdown: None,
                 extracted_data: None,
+                extraction_meta: None,
+                screenshot: None,
             });
         }
         Err(e) => return Err(e),
@@ -159,6 +163,14 @@ pub async fn scrape(url: &str, config: &CrawlConfig) -> Result<ScrapeResult, Cra
     )
     .await?;
     result.browser_used = browser_used;
+
+    // Screenshot capture stub — actual implementation requires access to the Chrome page object.
+    #[cfg(feature = "browser")]
+    if config.capture_screenshot && browser_used {
+        // TODO: capture screenshot from the browser page.
+        // The chromiumoxide Page object is consumed during browser_fetch,
+        // so screenshot capture needs to be integrated into browser_fetch itself.
+    }
 
     // Auto re-fetch with browser when JS rendering is detected and browser feature is enabled.
     #[cfg(feature = "browser")]
@@ -318,5 +330,7 @@ async fn scrape_from_response(
         browser_used: false,
         markdown,
         extracted_data: None,
+        extraction_meta: None,
+        screenshot: None,
     })
 }

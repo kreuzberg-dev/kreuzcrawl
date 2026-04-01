@@ -9,7 +9,7 @@ mod inner {
 
     use crate::error::CrawlError;
     use crate::traits::ContentFilter;
-    use crate::types::CrawlPageResult;
+    use crate::types::{CrawlPageResult, ExtractionMeta};
 
     /// Extracts structured data from crawled pages using an LLM.
     pub struct LlmExtractor {
@@ -104,6 +104,18 @@ mod inner {
                 .chat(request)
                 .await
                 .map_err(|e| CrawlError::Other(format!("LLM extraction failed: {e}")))?;
+
+            // Extract cost and token usage.
+            let cost = response.estimated_cost();
+            let usage = response.usage.as_ref();
+
+            page.extraction_meta = Some(ExtractionMeta {
+                cost,
+                prompt_tokens: usage.map(|u| u.prompt_tokens),
+                completion_tokens: usage.map(|u| u.completion_tokens),
+                model: self.model.clone(),
+                chunks_processed: 1,
+            });
 
             // Parse response.
             if let Some(choice) = response.choices.first()

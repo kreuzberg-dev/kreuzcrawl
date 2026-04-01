@@ -45,7 +45,7 @@ pub use traits::{
 pub use types::{
     ArticleMetadata, AssetCategory, AuthConfig, BrowserConfig, BrowserMode, BrowserWait,
     CookieInfo, CrawlConfig, CrawlEvent, CrawlPageResult, CrawlResult, DownloadedAsset,
-    FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource,
-    JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig,
-    ResponseMeta, ScrapeResult, SitemapUrl,
+    ExtractionMeta, FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo,
+    ImageSource, JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult, PageMetadata,
+    ProxyConfig, ResponseMeta, ScrapeResult, SitemapUrl,
 };

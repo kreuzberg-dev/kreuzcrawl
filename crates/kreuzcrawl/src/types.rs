@@ -7,6 +7,21 @@ use serde::{Deserialize, Serialize};
 
 use crate::citations::CitationResult;
 
+/// Metadata about an LLM extraction pass.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ExtractionMeta {
+    /// Estimated cost of the LLM call in USD.
+    pub cost: Option<f64>,
+    /// Number of prompt (input) tokens consumed.
+    pub prompt_tokens: Option<u64>,
+    /// Number of completion (output) tokens generated.
+    pub completion_tokens: Option<u64>,
+    /// The model identifier used for extraction.
+    pub model: String,
+    /// Number of content chunks sent to the LLM.
+    pub chunks_processed: usize,
+}
+
 /// When to use the headless browser fallback.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -188,6 +203,8 @@ pub struct CrawlConfig {
     /// List of user-agent strings for rotation. If non-empty, overrides `user_agent`.
     #[serde(default)]
     pub user_agents: Vec<String>,
+    /// Whether to capture a screenshot when using the browser.
+    pub capture_screenshot: bool,
     /// Shared browser pool for reusing Chrome across requests (not serializable).
     #[cfg(feature = "browser")]
     #[serde(skip)]
@@ -224,6 +241,7 @@ impl Default for CrawlConfig {
             browser: BrowserConfig::default(),
             proxy: None,
             user_agents: Vec::new(),
+            capture_screenshot: false,
             #[cfg(feature = "browser")]
             browser_pool: None,
         }
@@ -685,6 +703,11 @@ pub struct ScrapeResult {
     pub markdown: Option<MarkdownResult>,
     /// Structured data extracted by LLM. Populated when using LlmExtractor.
     pub extracted_data: Option<serde_json::Value>,
+    /// Metadata about the LLM extraction pass (cost, tokens, model).
+    pub extraction_meta: Option<ExtractionMeta>,
+    /// Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.
+    #[serde(skip)]
+    pub screenshot: Option<Vec<u8>>,
 }
 
 /// The result of crawling a single page during a crawl operation.
@@ -727,6 +750,8 @@ pub struct CrawlPageResult {
     pub markdown: Option<MarkdownResult>,
     /// Structured data extracted by LLM. Populated when using LlmExtractor.
     pub extracted_data: Option<serde_json::Value>,
+    /// Metadata about the LLM extraction pass (cost, tokens, model).
+    pub extraction_meta: Option<ExtractionMeta>,
 }
 
 /// An event emitted during a streaming crawl operation.

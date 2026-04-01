@@ -14,8 +14,8 @@ async fn test_error_401_unauthorized() {
         "/",
         401,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("www-authenticate", "Basic realm=\"test\""),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body,
     )
@@ -258,7 +258,7 @@ async fn test_error_rate_limited() {
         "GET",
         "/",
         429,
-        &[("retry-after", "60"), ("content-type", "text/html")],
+        &[("content-type", "text/html"), ("retry-after", "60")],
         &body,
     )
     .await;
@@ -317,7 +317,7 @@ async fn test_error_retry_backoff() {
         "GET",
         "/",
         429,
-        &[("retry-after", "1"), ("content-type", "text/html")],
+        &[("content-type", "text/html"), ("retry-after", "1")],
         &body,
     )
     .await;
@@ -339,6 +339,34 @@ async fn test_error_retry_backoff() {
 }
 
 #[tokio::test]
+async fn test_error_waf_akamai() {
+    // Akamai WAF detection returns WafBlocked error
+    let mock = helpers::setup_mock_server().await;
+    let body = "<html><body>Access Denied. Reference #18.abc123</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        403,
+        &[("content-type", "text/html"), ("server", "AkamaiGHost")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.scrape(&mock.uri()).await;
+    let err = result.expect_err("request should fail");
+    assert!(err.to_string().contains("waf") || err.to_string().contains("blocked"));
+}
+
+#[tokio::test]
 async fn test_error_waf_false_403() {
     // Detects WAF/bot protection false 403 (Cloudflare challenge page)
     let mock = helpers::setup_mock_server().await;
@@ -349,8 +377,8 @@ async fn test_error_waf_false_403() {
         "/",
         403,
         &[
-            ("content-type", "text/html; charset=utf-8"),
             ("server", "cloudflare"),
+            ("content-type", "text/html; charset=utf-8"),
         ],
         &body,
     )
@@ -367,5 +395,34 @@ async fn test_error_waf_false_403() {
     let result = engine.scrape(&mock.uri()).await;
     let err = result.expect_err("request should fail");
     assert!(err.to_string().contains("forbidden"));
+    assert!(err.to_string().contains("waf") || err.to_string().contains("blocked"));
+}
+
+#[tokio::test]
+async fn test_error_waf_imperva() {
+    // Imperva/Incapsula WAF detection
+    let mock = helpers::setup_mock_server().await;
+    let body =
+        "<html><body>Powered by Incapsula. _incap_ses_ cookie required.</body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        403,
+        &[("content-type", "text/html")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.scrape(&mock.uri()).await;
+    let err = result.expect_err("request should fail");
     assert!(err.to_string().contains("waf") || err.to_string().contains("blocked"));
 }

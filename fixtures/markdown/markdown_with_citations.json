@@ -1,0 +1,15 @@
+{
+  "id": "markdown_with_citations",
+  "description": "Markdown includes citation conversion with numbered references",
+  "tags": ["markdown", "citations"],
+  "mock_response": {
+    "status_code": 200,
+    "headers": {"content-type": "text/html; charset=utf-8"},
+    "body_inline": "<html><body><p>Visit <a href=\"https://example.com\">Example</a> and <a href=\"https://test.com\">Test</a>.</p></body></html>"
+  },
+  "config": {"engine_mode": true},
+  "assertions": {
+    "status_code": 200,
+    "markdown": {"is_some": true, "not_empty": true}
+  }
+}
