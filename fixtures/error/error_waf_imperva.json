@@ -1,0 +1,13 @@
+{
+  "id": "error_waf_imperva",
+  "description": "Imperva/Incapsula WAF detection",
+  "tags": ["error", "waf"],
+  "mock_response": {
+    "status_code": 403,
+    "headers": {"content-type": "text/html"},
+    "body_inline": "<html><body>Powered by Incapsula. _incap_ses_ cookie required.</body></html>"
+  },
+  "assertions": {
+    "error": {"is_error": true, "is_waf_blocked": true}
+  }
+}

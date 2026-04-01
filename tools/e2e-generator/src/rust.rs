@@ -437,7 +437,7 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
                 )?;
             }
         }
-    } else if category == "stealth" || category == "proxy" {
+    } else if category == "stealth" || category == "proxy" || category == "cache" {
         writeln!(
             out,
             "    let engine = kreuzcrawl::CrawlEngine::builder().config(config.clone()).build().unwrap();"
@@ -527,6 +527,9 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
             writeln!(out, "    let result = engine.scrape(&mock.uri()).await;")?;
         }
         "proxy" => {
+            writeln!(out, "    let result = engine.scrape(&mock.uri()).await;")?;
+        }
+        "cache" => {
             writeln!(out, "    let result = engine.scrape(&mock.uri()).await;")?;
         }
         "engine" | "markdown" => {
@@ -640,6 +643,14 @@ fn generate_test_fn(out: &mut String, fixture: &Fixture) -> Result<()> {
             generate_assertions(out, assertions, category)?;
         }
     } else if category == "proxy" {
+        writeln!(
+            out,
+            "    let result = result.expect(\"request should succeed\");"
+        )?;
+        if let Some(ref assertions) = fixture.assertions {
+            generate_assertions(out, assertions, category)?;
+        }
+    } else if category == "cache" {
         writeln!(
             out,
             "    let result = result.expect(\"request should succeed\");"

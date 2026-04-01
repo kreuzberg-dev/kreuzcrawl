@@ -863,6 +863,7 @@ impl CrawlEngine {
                         detected_charset: fetch.detected_charset,
                         markdown,
                         extracted_data: None,
+                        extraction_meta: None,
                     };
 
                     // Apply content filter -- links are already discovered above,

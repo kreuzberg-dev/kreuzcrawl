@@ -90,6 +90,43 @@ async fn test_markdown_crawl_all_pages() {
 }
 
 #[tokio::test]
+async fn test_markdown_fit_content() {
+    // Fit markdown removes navigation and boilerplate content
+    let mock = helpers::setup_mock_server().await;
+    let body = "<html><body><nav><a href=\"/\">Home</a> | <a href=\"/about\">About</a> | <a href=\"/contact\">Contact</a></nav><article><h1>Main Content</h1><p>This is the substantial main content of the page with enough text to be meaningful.</p></article><footer>Copyright © 2024 All Rights Reserved. Privacy Policy.</footer></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.scrape(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert!(result.markdown.is_some(), "markdown should be Some");
+    assert!(
+        result
+            .markdown
+            .as_ref()
+            .map(|m| !m.content.is_empty())
+            .unwrap_or(false),
+        "markdown should not be empty"
+    );
+}
+
+#[tokio::test]
 async fn test_markdown_headings_and_paragraphs() {
     // Markdown conversion preserves heading hierarchy and paragraph text
     let mock = helpers::setup_mock_server().await;
@@ -168,5 +205,42 @@ async fn test_markdown_links_converted() {
             .map(|m| m.content.contains("Example"))
             .unwrap_or(false),
         "markdown should contain 'Example'"
+    );
+}
+
+#[tokio::test]
+async fn test_markdown_with_citations() {
+    // Markdown includes citation conversion with numbered references
+    let mock = helpers::setup_mock_server().await;
+    let body = "<html><body><p>Visit <a href=\"https://example.com\">Example</a> and <a href=\"https://test.com\">Test</a>.</p></body></html>".to_owned();
+    helpers::register_mock(
+        &mock,
+        "GET",
+        "/",
+        200,
+        &[("content-type", "text/html; charset=utf-8")],
+        &body,
+    )
+    .await;
+
+    let config = kreuzcrawl::CrawlConfig {
+        ..Default::default()
+    };
+
+    let engine = kreuzcrawl::CrawlEngine::builder()
+        .config(config.clone())
+        .build()
+        .unwrap();
+    let result = engine.scrape(&mock.uri()).await;
+    let result = result.expect("request should succeed");
+    assert_eq!(result.status_code, 200);
+    assert!(result.markdown.is_some(), "markdown should be Some");
+    assert!(
+        result
+            .markdown
+            .as_ref()
+            .map(|m| !m.content.is_empty())
+            .unwrap_or(false),
+        "markdown should not be empty"
     );
 }
