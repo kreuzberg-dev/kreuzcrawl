@@ -254,6 +254,14 @@ impl CrawlConfig {
     pub fn validate(&self) -> Result<(), crate::error::CrawlError> {
         use crate::error::CrawlError;
 
+        if let Some(0) = self.max_concurrent {
+            return Err(CrawlError::InvalidConfig("max_concurrent must be > 0".into()));
+        }
+        if self.browser.wait == BrowserWait::Selector && self.browser.wait_selector.is_none() {
+            return Err(CrawlError::InvalidConfig(
+                "browser.wait_selector required when browser.wait is Selector".into(),
+            ));
+        }
         if let Some(max_pages) = self.max_pages
             && max_pages == 0
         {
@@ -585,6 +593,7 @@ pub struct ImageInfo {
 
 /// The type of a feed (RSS, Atom, or JSON Feed).
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
 pub enum FeedType {
     /// RSS feed.
     #[default]

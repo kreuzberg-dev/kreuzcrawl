@@ -36,6 +36,7 @@ impl RateLimiter for NoopRateLimiter {
 struct DomainState {
     last_request: Instant,
     crawl_delay: Option<Duration>,
+    robots_delay: Option<Duration>, // floor from robots.txt
     consecutive_success: u32,
 }
 
@@ -69,14 +70,21 @@ impl RateLimiter for PerDomainThrottle {
             let domain_state = state.entry(domain.to_owned()).or_insert(DomainState {
                 last_request: now - self.default_delay,
                 crawl_delay: None,
+                robots_delay: None,
                 consecutive_success: 0,
             });
 
-            let effective_delay = domain_state.crawl_delay.unwrap_or(self.default_delay);
+            let effective = match (&domain_state.crawl_delay, &domain_state.robots_delay) {
+                (Some(cd), Some(rd)) => std::cmp::max(*cd, *rd),
+                (Some(cd), None) => *cd,
+                (None, Some(rd)) => *rd,
+                (None, None) => self.default_delay,
+            };
+
             let elapsed = now.duration_since(domain_state.last_request);
 
-            if elapsed < effective_delay {
-                let duration = effective_delay - elapsed;
+            if elapsed < effective {
+                let duration = effective - elapsed;
                 // Set last_request optimistically BEFORE sleeping.
                 // This prevents other tasks from seeing stale state.
                 domain_state.last_request = now + duration;
@@ -107,14 +115,14 @@ impl RateLimiter for PerDomainThrottle {
             } else if status < 400 {
                 // Decay backoff on successful responses
                 domain_state.consecutive_success += 1;
-                if domain_state.consecutive_success >= 5 && domain_state.crawl_delay.is_some() {
-                    // Halve the backoff, but don't go below the default
-                    if let Some(ref mut delay) = domain_state.crawl_delay {
-                        let halved = *delay / 2;
-                        if halved < self.default_delay {
-                            domain_state.crawl_delay = None; // Reset to default
+                if domain_state.consecutive_success >= 5 {
+                    if let Some(ref mut cd) = domain_state.crawl_delay {
+                        let floor = domain_state.robots_delay.unwrap_or(self.default_delay);
+                        let halved = *cd / 2;
+                        if halved <= floor {
+                            domain_state.crawl_delay = None; // Reset to default/robots
                         } else {
-                            *delay = halved;
+                            *cd = halved;
                         }
                     }
                     domain_state.consecutive_success = 0;
@@ -129,8 +137,10 @@ impl RateLimiter for PerDomainThrottle {
         let domain_state = state.entry(domain.to_owned()).or_insert(DomainState {
             last_request: Instant::now() - self.default_delay,
             crawl_delay: None,
+            robots_delay: None,
             consecutive_success: 0,
         });
+        domain_state.robots_delay = Some(delay);
         domain_state.crawl_delay = Some(delay);
         Ok(())
     }
