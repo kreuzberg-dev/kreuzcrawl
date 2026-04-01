@@ -35,7 +35,7 @@ struct FetchResult {
     status_code: u16,
     content_type: String,
     body: String,
-    headers: HashMap<String, String>,
+    headers: HashMap<String, Vec<String>>,
     extraction: HtmlExtraction,
     is_binary: bool,
     is_pdf: bool,
@@ -203,6 +203,11 @@ impl CrawlEngine {
                 client.clone(),
                 self.config.clone(),
             ));
+
+        #[cfg(feature = "tracing")]
+        let service = tower::ServiceBuilder::new()
+            .layer(crate::tower::CrawlTracingLayer::new())
+            .service(service);
 
         tower::util::BoxCloneService::new(service)
     }
@@ -492,7 +497,7 @@ impl CrawlEngine {
                     error = Some("too many redirects".to_owned());
                     break;
                 }
-                if let Some(location) = resp.headers.get("location") {
+                if let Some(location) = resp.headers.get("location").and_then(|v| v.first()) {
                     let target = resolve_redirect(&current_url, location);
                     if seen_redirects.contains(&target) {
                         error = Some("redirect loop detected".to_owned());
@@ -506,7 +511,7 @@ impl CrawlEngine {
             }
 
             // Check for Refresh header redirect
-            if let Some(refresh) = resp.headers.get("refresh")
+            if let Some(refresh) = resp.headers.get("refresh").and_then(|v| v.first())
                 && let Some(pos) = find_ascii_case_insensitive(refresh, "url=")
             {
                 if redirect_count >= max_redirects {

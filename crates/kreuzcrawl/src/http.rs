@@ -265,52 +265,61 @@ pub(crate) async fn fetch_with_retry(
     Err(last_err.unwrap_or_else(|| CrawlError::Other("retry exhausted".into())))
 }
 
-/// Extract cookies from a `HashMap<String, String>` of response headers.
+/// Extract cookies from a `HashMap<String, Vec<String>>` of response headers.
 ///
-/// Looks for the `"set-cookie"` key. Because `HashMap` stores only one value
-/// per key, this handles the common single-cookie case; multi-cookie responses
-/// are handled by the `HeaderMap` variant above in production code.
+/// Looks for the `"set-cookie"` key and parses each value as an individual
+/// Set-Cookie header, preserving all cookies from the response.
 pub(crate) fn extract_cookies_from_hashmap(
-    headers: &std::collections::HashMap<String, String>,
+    headers: &std::collections::HashMap<String, Vec<String>>,
 ) -> Vec<CookieInfo> {
     let mut cookies = Vec::new();
-    if let Some(raw) = headers.get("set-cookie") {
-        let parts: Vec<&str> = raw.split(';').collect();
-        if let Some(nv) = parts.first()
-            && let Some((name, value)) = nv.split_once('=')
-        {
-            let mut cookie = CookieInfo {
-                name: name.trim().to_owned(),
-                value: value.trim().to_owned(),
-                domain: None,
-                path: None,
-            };
-            for attr in &parts[1..] {
-                let attr = attr.trim().to_lowercase();
-                if let Some(d) = attr.strip_prefix("domain=") {
-                    cookie.domain = Some(d.to_owned());
-                } else if let Some(p) = attr.strip_prefix("path=") {
-                    cookie.path = Some(p.to_owned());
+    if let Some(values) = headers.get("set-cookie") {
+        for raw in values {
+            let parts: Vec<&str> = raw.split(';').collect();
+            if let Some(nv) = parts.first()
+                && let Some((name, value)) = nv.split_once('=')
+            {
+                let mut cookie = CookieInfo {
+                    name: name.trim().to_owned(),
+                    value: value.trim().to_owned(),
+                    domain: None,
+                    path: None,
+                };
+                for attr in &parts[1..] {
+                    let attr = attr.trim().to_lowercase();
+                    if let Some(d) = attr.strip_prefix("domain=") {
+                        cookie.domain = Some(d.to_owned());
+                    } else if let Some(p) = attr.strip_prefix("path=") {
+                        cookie.path = Some(p.to_owned());
+                    }
                 }
+                cookies.push(cookie);
             }
-            cookies.push(cookie);
         }
     }
     cookies
 }
 
-/// Extract response metadata from a `HashMap<String, String>` of headers.
+/// Extract response metadata from a `HashMap<String, Vec<String>>` of headers.
 pub(crate) fn extract_response_meta_from_hashmap(
-    headers: &std::collections::HashMap<String, String>,
+    headers: &std::collections::HashMap<String, Vec<String>>,
 ) -> ResponseMeta {
     ResponseMeta {
-        etag: headers.get("etag").cloned(),
-        last_modified: headers.get("last-modified").cloned(),
-        cache_control: headers.get("cache-control").cloned(),
-        server: headers.get("server").cloned(),
-        x_powered_by: headers.get("x-powered-by").cloned(),
-        content_language: headers.get("content-language").cloned(),
-        content_encoding: headers.get("content-encoding").cloned(),
+        etag: headers.get("etag").and_then(|v| v.first().cloned()),
+        last_modified: headers
+            .get("last-modified")
+            .and_then(|v| v.first().cloned()),
+        cache_control: headers
+            .get("cache-control")
+            .and_then(|v| v.first().cloned()),
+        server: headers.get("server").and_then(|v| v.first().cloned()),
+        x_powered_by: headers.get("x-powered-by").and_then(|v| v.first().cloned()),
+        content_language: headers
+            .get("content-language")
+            .and_then(|v| v.first().cloned()),
+        content_encoding: headers
+            .get("content-encoding")
+            .and_then(|v| v.first().cloned()),
     }
 }
 
@@ -320,7 +329,7 @@ pub(crate) fn extract_response_meta_from_hashmap(
 pub(crate) fn is_waf_blocked(
     server: &str,
     body: &str,
-    headers: &std::collections::HashMap<String, String>,
+    headers: &std::collections::HashMap<String, Vec<String>>,
 ) -> bool {
     let body_lower = body.to_lowercase();
     let server_lower = server.to_lowercase();
