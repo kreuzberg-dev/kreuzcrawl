@@ -53,7 +53,11 @@ mod inner {
             use liter_llm::LlmClient;
 
             // Use markdown if available, fall back to HTML.
-            let content = page.markdown.as_deref().unwrap_or(&page.html);
+            let content = page
+                .markdown
+                .as_ref()
+                .map(|m| m.content.as_str())
+                .unwrap_or(&page.html);
 
             // Build prompt.
             let mut prompt = String::new();

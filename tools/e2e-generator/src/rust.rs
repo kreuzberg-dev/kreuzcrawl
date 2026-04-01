@@ -1507,13 +1507,13 @@ fn generate_markdown_assertions(out: &mut String, md: &MarkdownAssertions) -> Re
     if let Some(true) = md.not_empty {
         writeln!(
             out,
-            "    assert!(result.markdown.as_ref().map(|m| !m.is_empty()).unwrap_or(false), \"markdown should not be empty\");"
+            "    assert!(result.markdown.as_ref().map(|m| !m.content.is_empty()).unwrap_or(false), \"markdown should not be empty\");"
         )?;
     }
     if let Some(ref contains) = md.contains {
         writeln!(
             out,
-            "    assert!(result.markdown.as_ref().map(|m| m.contains(\"{}\")).unwrap_or(false), \"markdown should contain '{}'\");",
+            "    assert!(result.markdown.as_ref().map(|m| m.content.contains(\"{}\")).unwrap_or(false), \"markdown should contain '{}'\");",
             escape_rust_string(contains),
             escape_rust_string(contains)
         )?;

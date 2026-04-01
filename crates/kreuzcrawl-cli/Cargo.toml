@@ -1,0 +1,18 @@
+[package]
+name = "kreuzcrawl-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "Command-line web crawler and scraper"
+
+[[bin]]
+name = "kreuzcrawl"
+path = "src/main.rs"
+
+[dependencies]
+kreuzcrawl = { path = "../kreuzcrawl" }
+clap = { workspace = true }
+tokio = { workspace = true }
+serde_json = { workspace = true }

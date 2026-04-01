@@ -612,6 +612,20 @@ pub struct CookieInfo {
     pub path: Option<String>,
 }
 
+/// Rich markdown conversion result from HTML processing.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MarkdownResult {
+    /// Converted markdown text.
+    pub content: String,
+    /// Structured document tree with semantic nodes.
+    pub document_structure: Option<serde_json::Value>,
+    /// Extracted tables with structured cell data.
+    pub tables: Vec<serde_json::Value>,
+    /// Non-fatal processing warnings.
+    pub warnings: Vec<String>,
+}
+
 /// The result of a single-page scrape operation.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -663,7 +677,7 @@ pub struct ScrapeResult {
     /// Whether the browser fallback was used to fetch this page.
     pub browser_used: bool,
     /// Markdown conversion of the page content.
-    pub markdown: Option<String>,
+    pub markdown: Option<MarkdownResult>,
     /// Structured data extracted by LLM. Populated when using LlmExtractor.
     pub extracted_data: Option<serde_json::Value>,
 }
@@ -705,7 +719,7 @@ pub struct CrawlPageResult {
     /// The detected character set encoding.
     pub detected_charset: Option<String>,
     /// Markdown conversion of the page content.
-    pub markdown: Option<String>,
+    pub markdown: Option<MarkdownResult>,
     /// Structured data extracted by LLM. Populated when using LlmExtractor.
     pub extracted_data: Option<serde_json::Value>,
 }
