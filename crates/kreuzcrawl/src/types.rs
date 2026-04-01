@@ -5,6 +5,8 @@ use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 
+use crate::citations::CitationResult;
+
 /// When to use the headless browser fallback.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -614,7 +616,6 @@ pub struct CookieInfo {
 
 /// Rich markdown conversion result from HTML processing.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
 pub struct MarkdownResult {
     /// Converted markdown text.
     pub content: String,
@@ -624,6 +625,10 @@ pub struct MarkdownResult {
     pub tables: Vec<serde_json::Value>,
     /// Non-fatal processing warnings.
     pub warnings: Vec<String>,
+    /// Content with links replaced by numbered citations.
+    pub citations: Option<CitationResult>,
+    /// Content-filtered markdown optimized for LLM consumption.
+    pub fit_content: Option<String>,
 }
 
 /// The result of a single-page scrape operation.

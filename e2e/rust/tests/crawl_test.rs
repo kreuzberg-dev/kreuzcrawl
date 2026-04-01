@@ -358,8 +358,8 @@ async fn test_crawl_custom_headers() {
         max_depth: Some(1),
         respect_robots_txt: false,
         custom_headers: vec![
-            ("Accept-Language".to_owned(), "en-US".to_owned()),
             ("X-Custom-Header".to_owned(), "test-value".to_owned()),
+            ("Accept-Language".to_owned(), "en-US".to_owned()),
         ]
         .into_iter()
         .collect(),
@@ -1048,7 +1048,7 @@ async fn test_crawl_multiple_redirects_in_traversal() {
         "GET",
         "/old-a",
         302,
-        &[("content-type", "text/html"), ("location", "/new-a")],
+        &[("location", "/new-a"), ("content-type", "text/html")],
         &body_1,
     )
     .await;
@@ -1068,7 +1068,7 @@ async fn test_crawl_multiple_redirects_in_traversal() {
         "GET",
         "/old-b",
         301,
-        &[("content-type", "text/html"), ("location", "/new-b")],
+        &[("location", "/new-b"), ("content-type", "text/html")],
         &body_3,
     )
     .await;
@@ -1158,7 +1158,7 @@ async fn test_crawl_redirect_in_traversal() {
         "GET",
         "/old",
         301,
-        &[("location", "/new"), ("content-type", "text/html")],
+        &[("content-type", "text/html"), ("location", "/new")],
         &body_1,
     )
     .await;

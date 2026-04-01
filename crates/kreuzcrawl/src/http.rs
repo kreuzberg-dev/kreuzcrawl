@@ -83,16 +83,61 @@ pub(crate) async fn http_fetch(
         401 => return Err(CrawlError::Unauthorized("unauthorized".into())),
         403 => {
             // Check for WAF
-            let server = headers
+            let server_lower = headers
                 .get("server")
                 .and_then(|v| v.to_str().ok())
-                .unwrap_or("");
+                .unwrap_or("")
+                .to_lowercase();
             let body = resp.text().await.unwrap_or_default();
-            if server.to_lowercase().contains("cloudflare")
-                || body.contains("cf-browser-verification")
-                || body.contains("challenge-form")
-            {
-                return Err(CrawlError::WafBlocked("waf/blocked detected".into()));
+            let body_lower = body.to_lowercase();
+
+            let is_waf =
+                // Cloudflare
+                server_lower.contains("cloudflare")
+                || body_lower.contains("cf-browser-verification")
+                || body_lower.contains("challenge-form")
+                || body_lower.contains("cf-chl-")
+                // Akamai
+                || server_lower.contains("akamaighost")
+                || body_lower.contains("akamai")
+                || body_lower.contains("reference #")
+                // AWS WAF
+                || body_lower.contains("awselb")
+                || body_lower.contains("x-amzn-waf")
+                || body_lower.contains("request blocked")
+                // Imperva / Incapsula
+                || server_lower.contains("incapsula")
+                || body_lower.contains("incapsula")
+                || body_lower.contains("_incap_ses_")
+                // DataDome
+                || body_lower.contains("datadome")
+                || body_lower.contains("dd.js")
+                // PerimeterX
+                || body_lower.contains("perimeterx")
+                || body_lower.contains("px-captcha")
+                || body_lower.contains("_px")
+                // Sucuri
+                || body_lower.contains("sucuri")
+                || body_lower.contains("x-sucuri-id")
+                // F5 BIG-IP
+                || server_lower.contains("big-ip")
+                || body_lower.contains("bigipserver")
+                // Generic bot detection
+                || body_lower.contains("bot detection")
+                || body_lower.contains("are you a robot")
+                || body_lower.contains("captcha")
+                || body_lower.contains("security check");
+
+            let has_waf_headers = headers.contains_key("x-sucuri-id")
+                || headers.contains_key("x-datadome")
+                || headers.contains_key("x-amzn-waf-action")
+                || headers.keys().any(|k| k.as_str().starts_with("x-px-"));
+
+            if is_waf || has_waf_headers {
+                return Err(CrawlError::WafBlocked(format!(
+                    "waf/blocked detected: {}",
+                    detect_waf_vendor(&server_lower, &body_lower)
+                )));
             }
             return Err(CrawlError::Forbidden("forbidden".into()));
         }
@@ -248,6 +293,35 @@ pub(crate) fn extract_cookies(headers: &HeaderMap) -> Vec<CookieInfo> {
         }
     }
     cookies
+}
+
+/// Identify the WAF vendor from server and body content.
+fn detect_waf_vendor(server: &str, body: &str) -> &'static str {
+    if server.contains("cloudflare") || body.contains("cf-") {
+        return "cloudflare";
+    }
+    if server.contains("akamaighost") || body.contains("akamai") {
+        return "akamai";
+    }
+    if body.contains("incapsula") || body.contains("_incap_ses_") {
+        return "imperva";
+    }
+    if body.contains("datadome") {
+        return "datadome";
+    }
+    if body.contains("perimeterx") || body.contains("px-captcha") {
+        return "perimeterx";
+    }
+    if body.contains("sucuri") {
+        return "sucuri";
+    }
+    if server.contains("big-ip") {
+        return "f5";
+    }
+    if body.contains("awselb") || body.contains("x-amzn-waf") {
+        return "aws-waf";
+    }
+    "unknown"
 }
 
 /// Extract response metadata from HTTP headers.

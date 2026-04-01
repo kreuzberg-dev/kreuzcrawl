@@ -2,7 +2,7 @@
 
 use std::collections::HashSet;
 use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use regex::Regex;
 use scraper::Html;
@@ -48,6 +48,7 @@ pub struct CrawlEngine {
     pub(crate) event_emitter: Arc<dyn EventEmitter>,
     pub(crate) strategy: Arc<dyn CrawlStrategy>,
     pub(crate) content_filter: Arc<dyn ContentFilter>,
+    pub(crate) cache: Arc<dyn CrawlCache>,
 }
 
 /// Builder for [`CrawlEngine`].
@@ -63,6 +64,7 @@ pub struct CrawlEngineBuilder {
     event_emitter: Option<Arc<dyn EventEmitter>>,
     strategy: Option<Arc<dyn CrawlStrategy>>,
     content_filter: Option<Arc<dyn ContentFilter>>,
+    cache: Option<Arc<dyn CrawlCache>>,
 }
 
 impl CrawlEngineBuilder {
@@ -77,6 +79,7 @@ impl CrawlEngineBuilder {
             event_emitter: None,
             strategy: None,
             content_filter: None,
+            cache: None,
         }
     }
 
@@ -128,6 +131,12 @@ impl CrawlEngineBuilder {
         self
     }
 
+    /// Set the persistent cache implementation.
+    pub fn cache(mut self, cache: impl CrawlCache + 'static) -> Self {
+        self.cache = Some(Arc::new(cache));
+        self
+    }
+
     /// Build the [`CrawlEngine`], validating the config and filling in defaults.
     ///
     /// Returns an error if the configuration is invalid.
@@ -155,6 +164,7 @@ impl CrawlEngineBuilder {
             content_filter: self
                 .content_filter
                 .unwrap_or_else(|| Arc::new(defaults::NoopFilter)),
+            cache: self.cache.unwrap_or_else(|| Arc::new(defaults::NoopCache)),
         })
     }
 }
@@ -577,9 +587,55 @@ impl CrawlEngine {
                 let client = client.clone();
                 let rate_limiter = self.rate_limiter.clone();
                 let middlewares = self.middlewares.clone();
+                let cache = self.cache.clone();
 
                 join_set.spawn(async move {
                     let _permit = permit;
+
+                    // Check persistent cache before making any HTTP request
+                    if let Ok(Some(cached)) = cache.get(&entry.url).await {
+                        // Build a FetchResult from cached data
+                        let body_clone = cached.body.clone();
+                        let url_for_extract = entry.url.clone();
+                        let content_type_clone = cached.content_type.clone();
+
+                        let (extraction, is_binary, is_pdf, detected_charset) =
+                            tokio::task::spawn_blocking(move || {
+                                let parsed_url = Url::parse(&url_for_extract)
+                                    .unwrap_or_else(|_| Url::parse("http://invalid").unwrap());
+                                let is_binary = is_binary_content_type(&content_type_clone)
+                                    || is_binary_url(&url_for_extract);
+                                let is_pdf = is_pdf_content(&content_type_clone, &body_clone)
+                                    || is_pdf_url(&url_for_extract);
+                                let is_html = is_html_content(&content_type_clone, &body_clone);
+
+                                let doc = Html::parse_document(&body_clone);
+                                let extraction = extract_page_data(
+                                    &doc,
+                                    &body_clone,
+                                    &parsed_url,
+                                    is_html && !is_binary && !is_pdf,
+                                    false,
+                                );
+                                let detected_charset =
+                                    detect_charset(&content_type_clone, &body_clone);
+                                (extraction, is_binary, is_pdf, detected_charset)
+                            })
+                            .await
+                            .unwrap();
+
+                        return Ok(FetchResult {
+                            entry,
+                            status_code: cached.status_code,
+                            content_type: cached.content_type,
+                            body: cached.body,
+                            headers: reqwest::header::HeaderMap::new(),
+                            extraction,
+                            is_binary,
+                            is_pdf,
+                            detected_charset,
+                        });
+                    }
 
                     // Rate limiting
                     let parsed = Url::parse(&entry.url).ok();
@@ -636,6 +692,23 @@ impl CrawlEngine {
                     }
 
                     let body = resp_ctx.body;
+
+                    // Store in persistent cache after successful fetch
+                    if (200..300).contains(&status_code) {
+                        let cached_page = CachedPage {
+                            url: entry.url.clone(),
+                            status_code,
+                            content_type: content_type.clone(),
+                            body: body.clone(),
+                            etag: resp_ctx.headers.get("etag").cloned(),
+                            last_modified: resp_ctx.headers.get("last-modified").cloned(),
+                            cached_at: SystemTime::now()
+                                .duration_since(UNIX_EPOCH)
+                                .unwrap_or_default()
+                                .as_secs(),
+                        };
+                        cache.set(&entry.url, &cached_page).await.ok();
+                    }
 
                     // Record response for adaptive back-off
                     let domain_owned = domain.to_owned();
