@@ -41,7 +41,7 @@ The crawler tracks visited URLs using a `HashSet<String>` of dedup-normalized UR
 
 ### BFS Crawl Loop
 
-```
+```text
 1. Resolve redirects for seed URL (HTTP 3xx, Refresh header, meta refresh)
 2. Pre-compile include/exclude regex patterns
 3. Fetch robots.txt if configured
@@ -64,6 +64,7 @@ The crawler tracks visited URLs using a `HashSet<String>` of dedup-normalized UR
 ### Redirect Handling
 
 The initial URL goes through a redirect resolution loop that handles three redirect types:
+
 - **HTTP 3xx redirects**: Location header following
 - **Refresh header**: Case-insensitive `url=` parsing
 - **Meta refresh**: `<meta http-equiv="refresh" content="...;url=...">` detection
@@ -79,6 +80,7 @@ All three types share redirect count tracking and loop detection via a seen-URLs
 ### Streaming
 
 `crawl_stream()` wraps the BFS crawl in a tokio task and returns a `ReceiverStream<CrawlEvent>`. Events:
+
 - `CrawlEvent::Page(Box<CrawlPageResult>)` — emitted as each page is processed
 - `CrawlEvent::Error { url, error }` — emitted on crawl failure
 - `CrawlEvent::Complete { pages_crawled }` — emitted when crawl finishes
@@ -105,6 +107,7 @@ Channel size is derived from `max_concurrent * 16`.
 ## Notes
 
 Implementation:
+
 - `crates/kreuzcrawl/src/crawl.rs` — BFS crawl loop, redirect handling, regex compilation
 - `crates/kreuzcrawl/src/robots.rs` — robots.txt parser with RFC 9309 prefix matching
 - `crates/kreuzcrawl/src/sitemap.rs` — Sitemap XML/index/gzip parsing

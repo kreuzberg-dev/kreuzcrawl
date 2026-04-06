@@ -11,6 +11,7 @@ kreuzcrawl needs to be consumable both as a Rust library (embedded in kreuzberg-
 Additionally, the project requires internal tooling (E2E test generators, benchmarks) that should not be published or included in downstream dependency trees.
 
 We considered three approaches:
+
 1. **Single crate** with CLI behind a feature flag
 2. **Two-crate workspace**: library + CLI binary
 3. **Multi-crate workspace**: core types, web engine, CLI, tools (4+ crates)
@@ -19,7 +20,7 @@ We considered three approaches:
 
 ### Cargo workspace with crates/ and tools/ directories
 
-```
+```text
 kreuzcrawl/
 ├── Cargo.toml              # Workspace root
 ├── crates/
@@ -57,6 +58,7 @@ All dependencies declared in `[workspace.dependencies]` — members reference vi
 ### Why not a single crate with feature-gated CLI
 
 Feature-gated binaries in Cargo are awkward:
+
 - `cargo install kreuzcrawl --features cli` is poor UX
 - Conditional `[[bin]]` sections don't exist in Cargo
 - Library consumers would still download clap sources even if not compiled
@@ -64,6 +66,7 @@ Feature-gated binaries in Cargo are awkward:
 ### Relationship to kreuzberg-dev repos
 
 Follows the same patterns established in kreuzberg-cloud:
+
 - `crates/` directory for Rust code
 - Workspace-level dependency management
 - Workspace-level version inheritance
@@ -87,6 +90,7 @@ Follows the same patterns established in kreuzberg-cloud:
 ## Notes
 
 Implementation:
+
 - `/Cargo.toml` — Workspace definition
 - `crates/kreuzcrawl/Cargo.toml` — Library crate
 - `tools/e2e-generator/Cargo.toml` — E2E test generator (internal tool)

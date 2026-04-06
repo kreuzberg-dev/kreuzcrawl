@@ -193,7 +193,7 @@ kreuzcrawl uses a **trait-based engine** with pluggable components:
 
 The crawl request/response flow uses the **Tower** service abstraction with composable layers:
 
-```
+```text
 CrawlEngine::crawl()
     ↓
 CrawlStrategy (BFS/DFS/BestFirst/Adaptive)
@@ -220,6 +220,7 @@ EventEmitter (stream events)
 ```
 
 **Tower Layers** (from outermost to innermost):
+
 - `CrawlTracingLayer` — OpenTelemetry span/event recording (optional)
 - `UaRotationLayer` — Rotates User-Agent headers across requests
 - `CrawlCacheLayer` — Cache hits return stored responses; misses forward to inner service

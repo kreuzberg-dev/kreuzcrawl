@@ -8,3 +8,8 @@ target/
 .vscode/
 CLAUDE.md
 AGENTS.md
+
+# AI Rules generated files
+.codex/
+GEMINI.md
+.gemini/

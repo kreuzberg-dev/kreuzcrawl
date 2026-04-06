@@ -9,6 +9,7 @@
 kreuzcrawl needs a reliable HTTP fetching layer that handles the realities of web crawling: connection failures, server overload (503), rate limiting, authentication, cookie management, and content negotiation. The fetching strategy must be embeddable in a Rust library without external process dependencies.
 
 We need a fetching strategy that:
+
 1. Handles transient failures with configurable retry
 2. Supports authentication (Basic, Bearer, custom headers)
 3. Manages cookies across crawl sessions
@@ -42,6 +43,7 @@ fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, CrawlError>
 ```
 
 The client is built once per crawl/scrape operation with:
+
 - Configurable user-agent (default: `kreuzcrawl/{version}`)
 - Optional cookie store (enabled via `cookies_enabled`)
 - Configurable request timeout
@@ -78,5 +80,6 @@ reqwest-impersonate (TLS fingerprint spoofing for anti-bot bypass) is a planned 
 ## Notes
 
 Implementation:
+
 - `crates/kreuzcrawl/src/http.rs` — Client builder, fetch functions, retry logic, cookie/header extraction
 - `crates/kreuzcrawl/src/types.rs` — `CrawlConfig`, `BasicAuth`, `AuthHeader`, `CookieInfo`, `ResponseMeta`

@@ -1,6 +1,6 @@
 [workspace]
 members = ["crates/*", "tools/*"]
-exclude = ["e2e/rust", ".claude"]
+exclude = [".claude", "e2e/rust"]
 resolver = "2"
 
 [workspace.package]
@@ -14,11 +14,17 @@ rust-version = "1.91"
 ahash = "0.8"
 anyhow = "1"
 async-trait = "0.1"
+blake3 = "1"
 camino = "1.2"
 chromiumoxide = { version = "0.9", default-features = false }
 clap = { version = "4", features = ["derive"] }
 flate2 = "1"
+html-to-markdown-rs = { path = "../html-to-markdown/crates/html-to-markdown" }
 itertools = "0.14"
+liter-llm = { path = "../liter-llm/crates/liter-llm", features = [
+    "native-http",
+] }
+minijinja = "2"
 quick-xml = "0.39"
 regex = "1"
 reqwest = { version = "0.13", features = ["cookies", "gzip", "brotli"] }
@@ -26,23 +32,17 @@ scraper = "0.26"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.11"
+tempfile = "3"
 thiserror = "2"
-tower = { version = "0.5", features = [
-  "timeout",
-  "retry",
-  "limit",
-  "util",
-  "make",
-] }
-tracing = "0.1"
 tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1"
-html-to-markdown-rs = { path = "../html-to-markdown/crates/html-to-markdown" }
-liter-llm = { path = "../liter-llm/crates/liter-llm", features = [
-  "native-http",
+tower = { version = "0.5", features = [
+    "timeout",
+    "retry",
+    "limit",
+    "util",
+    "make",
 ] }
-blake3 = "1"
-minijinja = "2"
-tempfile = "3"
+tracing = "0.1"
 url = "2"
 walkdir = "2.5"
