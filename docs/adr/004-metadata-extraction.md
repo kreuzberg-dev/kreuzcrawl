@@ -95,6 +95,7 @@ When `download_assets` is enabled, the scraper discovers CSS, JS, and image asse
 ## Notes
 
 Implementation (html/ submodule structure):
+
 - `crates/kreuzcrawl/src/html/extract.rs` — Shared `extract_page_data` pipeline
 - `crates/kreuzcrawl/src/html/metadata.rs` — Meta tag extraction, noindex/nofollow detection, meta refresh
 - `crates/kreuzcrawl/src/html/links.rs` — Link extraction and classification

@@ -86,7 +86,7 @@ The full schema is defined in `fixtures/schema.json` (JSON Schema draft-07).
 
 ### Taskfile Integration
 
-```
+```text
 task e2e:generate    # Generate + format + lint
 task e2e:format      # cargo fmt on generated code
 task e2e:lint        # cargo clippy on generated code

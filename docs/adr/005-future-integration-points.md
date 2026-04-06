@@ -81,6 +81,7 @@ This creates a bridge between kreuzcrawl and kreuzberg: crawl repos → parse co
 ## Notes
 
 Implementation (future — not part of v0.1):
+
 - Feature flags defined in `crates/kreuzcrawl/Cargo.toml`
 - Conditional compilation in relevant modules via `#[cfg(feature = "...")]`
 - Integration tests per feature in `tests/` directory

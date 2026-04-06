@@ -81,6 +81,7 @@ pub trait CrawlMiddleware: Send + Sync {
 ```
 
 **Default implementations** (all shipped with the crate):
+
 - `NoopMiddleware` — passes everything through unchanged.
 - `CachingMiddleware` — in-memory HTTP response cache using ETag/Last-Modified for conditional requests. LRU-bounded.
 - `UaRotationMiddleware` — rotates user-agent strings from a configured list.
@@ -111,6 +112,7 @@ pub trait CrawlStrategy: Send + Sync {
 ```
 
 **Default implementations** (all shipped with the crate):
+
 - `BfsStrategy` — breadth-first (FIFO). The default.
 - `DfsStrategy` — depth-first (LIFO).
 - `BestFirstStrategy` — priority queue ordered by `score_url`. Enables focused crawling.
@@ -126,6 +128,7 @@ pub trait ContentFilter: Send + Sync {
 ```
 
 **Default implementations** (all shipped with the crate):
+
 - `NoopFilter` — pass everything through.
 - `Bm25Filter` — keyword relevance scoring against a query string. Pure Rust, no external dependencies.
 - `LlmExtractor` (feature-gated `ai`) — extracts structured data from crawled pages using an LLM via liter-llm. Supports JSON schema validation and custom extraction instructions.
@@ -239,7 +242,7 @@ Markdown conversion is always available (not feature-gated). It produces a `Mark
 
 ### Source Layout
 
-```
+```text
 crates/kreuzcrawl/src/
   traits.rs                      # All 7 trait definitions + supporting types
   engine.rs                      # CrawlEngine struct + builder (build() returns Result)
@@ -260,6 +263,7 @@ crates/kreuzcrawl-cli/           # CLI tool for quick prototyping
 ### Trait Stability
 
 Traits are **unstable until kreuzcrawl 1.0**. After 1.0:
+
 - New methods with default implementations -> minor version
 - Changed method signatures -> major version
 - New traits -> minor version
