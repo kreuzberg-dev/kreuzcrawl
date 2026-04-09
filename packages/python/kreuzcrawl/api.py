@@ -7,34 +7,25 @@ from typing import TYPE_CHECKING
 import kreuzcrawl._kreuzcrawl as _rust
 
 if TYPE_CHECKING:
-    from .options import (
-        BatchCrawlResult,
-        BatchScrapeResult,
-        BrowserConfig,
-        CrawlConfig,
-        CrawlEngineHandle,
-        CrawlResult,
-        MapResult,
-        ProxyConfig,
-        ScrapeResult,
-    )
+    from .options import BatchCrawlResult, BatchScrapeResult, BrowserConfig, CrawlConfig, CrawlResult, MapResult, ProxyConfig, ScrapeResult
+    from ._kreuzcrawl import CrawlEngineHandle
 
 
-def _to_rust_browser_config(value: BrowserConfig | None) -> Any:
+def _to_rust_browser_config(value: BrowserConfig | None) -> object:
     """Convert Python BrowserConfig to Rust binding type."""
     if value is None:
         return None
     return _rust.BrowserConfig(
-        mode=value.mode,
+        mode=_rust.BrowserMode(value.mode),
         endpoint=value.endpoint,
         timeout=value.timeout,
-        wait=value.wait,
+        wait=_rust.BrowserWait(value.wait),
         wait_selector=value.wait_selector,
         extra_wait=value.extra_wait,
     )
 
 
-def _to_rust_proxy_config(value: ProxyConfig | None) -> Any:
+def _to_rust_proxy_config(value: ProxyConfig | None) -> object:
     """Convert Python ProxyConfig to Rust binding type."""
     if value is None:
         return None
@@ -45,7 +36,7 @@ def _to_rust_proxy_config(value: ProxyConfig | None) -> Any:
     )
 
 
-def _to_rust_crawl_config(value: CrawlConfig | None) -> Any:
+def _to_rust_crawl_config(value: CrawlConfig | None) -> object:
     """Convert Python CrawlConfig to Rust binding type."""
     if value is None:
         return None
@@ -65,14 +56,14 @@ def _to_rust_crawl_config(value: CrawlConfig | None) -> Any:
         retry_count=value.retry_count,
         retry_codes=value.retry_codes,
         cookies_enabled=value.cookies_enabled,
-        auth=value.auth,
+        auth=_rust.AuthConfig(value.auth),
         max_body_size=value.max_body_size,
         main_content_only=value.main_content_only,
         remove_tags=value.remove_tags,
         map_limit=value.map_limit,
         map_search=value.map_search,
         download_assets=value.download_assets,
-        asset_types=value.asset_types,
+        asset_types=[_rust.AssetCategory(v) for v in value.asset_types],
         max_asset_size=value.max_asset_size,
         browser=_to_rust_browser_config(value.browser),
         proxy=_to_rust_proxy_config(value.proxy),
@@ -116,3 +107,5 @@ def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchScrape
 def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchCrawlResult]:
     """Crawl multiple seed URLs concurrently, each following links to configured depth."""
     return _rust.batch_crawl(engine, urls)
+
+

@@ -45,7 +45,6 @@ use utoipa::OpenApi;
             crate::api::types::MapRequest,
             crate::api::types::BatchScrapeRequest,
             crate::api::types::DownloadRequest,
-            crate::api::types::ApiResponse<serde_json::Value>,
             crate::api::types::JobCreatedResponse,
             crate::api::types::JobStatusResponse,
             crate::api::types::HealthResponse,

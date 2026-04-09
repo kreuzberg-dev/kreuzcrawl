@@ -24,7 +24,8 @@ COPY crates/kreuzcrawl/ crates/kreuzcrawl/
 COPY crates/kreuzcrawl-cli/ crates/kreuzcrawl-cli/
 
 # Replace glob workspace members with only the crates we need
-RUN sed -i 's|members = \["crates/\*", "tools/\*", "packages/elixir/native/kreuzcrawl_nif"\]|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-cli"]|' Cargo.toml
+RUN sed -i 's|^members = .*|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-cli"]|' Cargo.toml && \
+    sed -i '/^exclude/,/^\]/d' Cargo.toml
 
 # Build release binary with all features
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
