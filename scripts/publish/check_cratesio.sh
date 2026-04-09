@@ -21,9 +21,6 @@ import urllib.request
 version = os.environ["VERSION"]
 
 crates = [
-    ("kreuzcrawl-pdfium-render", "pdfium_exists"),
-    ("kreuzcrawl-tesseract", "tesseract_exists"),
-    ("kreuzcrawl-paddle-ocr", "paddle_exists"),
     ("kreuzcrawl", "kreuzcrawl_exists"),
     ("kreuzcrawl-cli", "cli_exists"),
 ]

@@ -385,7 +385,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       kreuzcrawl_exists: ${{ steps.check.outputs.exists }}
-      tesseract_exists: ${{ steps.check.outputs.tesseract_exists }}
       cli_exists: ${{ steps.check.outputs.cli_exists }}
       exists: ${{ steps.derive.outputs.all_exist }}
     steps:
@@ -397,14 +396,12 @@ jobs:
           package: kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
           extra-packages: |
-            tesseract_exists=kreuzcrawl-tesseract
             cli_exists=kreuzcrawl-cli
 
       - name: Derive all_exist
         id: derive
         run: |
           if [[ "${{ steps.check.outputs.exists }}" == "true" && \
-                "${{ steps.check.outputs.tesseract_exists }}" == "true" && \
                 "${{ steps.check.outputs.cli_exists }}" == "true" ]]; then
             echo "all_exist=true" >> "$GITHUB_OUTPUT"
           else
