@@ -32,3 +32,4 @@ bin/
 obj/
 *.nupkg
 pkg/
+site/
