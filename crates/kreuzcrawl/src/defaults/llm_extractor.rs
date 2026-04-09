@@ -78,28 +78,18 @@ Content:
 
     #[async_trait]
     impl ContentFilter for LlmExtractor {
-        async fn filter(
-            &self,
-            mut page: CrawlPageResult,
-        ) -> Result<Option<CrawlPageResult>, CrawlError> {
+        async fn filter(&self, mut page: CrawlPageResult) -> Result<Option<CrawlPageResult>, CrawlError> {
             use liter_llm::LlmClient;
 
             // Use markdown if available, fall back to HTML.
-            let content = page
-                .markdown
-                .as_ref()
-                .map(|m| m.content.as_str())
-                .unwrap_or(&page.html);
+            let content = page.markdown.as_ref().map(|m| m.content.as_str()).unwrap_or(&page.html);
 
             // Truncate content to avoid exceeding LLM context windows.
             let content = truncate_to_char_boundary(content, MAX_CONTENT_CHARS);
 
             // Build prompt via template.
             let mut env = minijinja::Environment::new();
-            let template_str = self
-                .prompt_template
-                .as_deref()
-                .unwrap_or(DEFAULT_EXTRACTION_TEMPLATE);
+            let template_str = self.prompt_template.as_deref().unwrap_or(DEFAULT_EXTRACTION_TEMPLATE);
             env.add_template("prompt", template_str)
                 .map_err(|e| CrawlError::Other(format!("template error: {e}")))?;
             let tmpl = env.get_template("prompt").unwrap();
@@ -127,17 +117,14 @@ Content:
                     name: None,
                 }),
             ];
-            request.response_format =
-                self.schema
-                    .as_ref()
-                    .map(|s| liter_llm::ResponseFormat::JsonSchema {
-                        json_schema: liter_llm::JsonSchemaFormat {
-                            name: "extraction".to_owned(),
-                            description: None,
-                            schema: s.clone(),
-                            strict: Some(true),
-                        },
-                    });
+            request.response_format = self.schema.as_ref().map(|s| liter_llm::ResponseFormat::JsonSchema {
+                json_schema: liter_llm::JsonSchemaFormat {
+                    name: "extraction".to_owned(),
+                    description: None,
+                    schema: s.clone(),
+                    strict: Some(true),
+                },
+            });
 
             // Call LLM.
             let response = self
@@ -162,8 +149,7 @@ Content:
             if let Some(choice) = response.choices.first()
                 && let Some(ref text) = choice.message.content
             {
-                let extracted: Value =
-                    serde_json::from_str(text).unwrap_or_else(|_| Value::String(text.clone()));
+                let extracted: Value = serde_json::from_str(text).unwrap_or_else(|_| Value::String(text.clone()));
                 page.extracted_data = Some(extracted);
             }
 

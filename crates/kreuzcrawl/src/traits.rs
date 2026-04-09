@@ -107,8 +107,7 @@ pub trait CrawlStore: Send + Sync {
     async fn store_page(&self, url: &str, result: &ScrapeResult) -> Result<(), CrawlError>;
 
     /// Store a crawl page result.
-    async fn store_crawl_page(&self, url: &str, result: &CrawlPageResult)
-    -> Result<(), CrawlError>;
+    async fn store_crawl_page(&self, url: &str, result: &CrawlPageResult) -> Result<(), CrawlError>;
 
     /// Store an error encountered while crawling a URL.
     async fn store_error(&self, url: &str, error: &CrawlError) -> Result<(), CrawlError>;

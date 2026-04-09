@@ -12,9 +12,7 @@ async fn setup_tree_site() -> MockServer {
         .and(path("/"))
         .respond_with(
             ResponseTemplate::new(200)
-                .set_body_string(
-                    "<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>",
-                )
+                .set_body_string("<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>")
                 .append_header("content-type", "text/html"),
         )
         .mount(&mock)
@@ -163,10 +161,7 @@ async fn test_bfs_and_dfs_produce_different_orders() {
     bfs_sorted.sort();
     let mut dfs_sorted = dfs_paths.clone();
     dfs_sorted.sort();
-    assert_eq!(
-        bfs_sorted, dfs_sorted,
-        "Both should visit the same set of pages"
-    );
+    assert_eq!(bfs_sorted, dfs_sorted, "Both should visit the same set of pages");
 
     assert_ne!(
         bfs_paths, dfs_paths,

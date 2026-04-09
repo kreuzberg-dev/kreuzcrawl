@@ -20,6 +20,7 @@
 mod error;
 mod handlers;
 mod jobs;
+pub mod openapi;
 mod router;
 mod startup;
 mod state;

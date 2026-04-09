@@ -45,11 +45,7 @@ async fn test_llm_extractor_builds_successfully() {
         Some("Extract the page title.".to_owned()),
         None,
     );
-    assert!(
-        extractor.is_ok(),
-        "LlmExtractor should build: {:?}",
-        extractor.err()
-    );
+    assert!(extractor.is_ok(), "LlmExtractor should build: {:?}", extractor.err());
 }
 
 #[tokio::test]
@@ -87,17 +83,11 @@ async fn test_llm_extractor_with_engine() {
     let result = engine.scrape("https://example.com").await;
     match result {
         Ok(r) => {
-            assert!(
-                r.extracted_data.is_some(),
-                "extracted_data should be populated"
-            );
+            assert!(r.extracted_data.is_some(), "extracted_data should be populated");
             let data = r.extracted_data.unwrap();
             assert!(data.get("title").is_some(), "should have title field");
             assert!(data.get("summary").is_some(), "should have summary field");
-            println!(
-                "Extracted: {}",
-                serde_json::to_string_pretty(&data).unwrap()
-            );
+            println!("Extracted: {}", serde_json::to_string_pretty(&data).unwrap());
         }
         Err(e) => {
             eprintln!("Scrape failed (may be network issue): {e}");

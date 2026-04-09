@@ -5,8 +5,7 @@ use ahash::AHashSet;
 use serde::{Deserialize, Serialize};
 
 use super::{
-    CookieInfo, DownloadedAsset, ExtractionMeta, FeedInfo, ImageInfo, JsonLdEntry, LinkInfo,
-    PageMetadata, ResponseMeta,
+    CookieInfo, DownloadedAsset, ExtractionMeta, FeedInfo, ImageInfo, JsonLdEntry, LinkInfo, PageMetadata, ResponseMeta,
 };
 
 /// A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).

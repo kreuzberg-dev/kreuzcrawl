@@ -105,10 +105,7 @@ impl AdaptiveStrategy {
         let mut state = self.term_history.lock().expect("lock poisoned");
         let mut new_terms = 0usize;
 
-        for token in html
-            .split(|c: char| !c.is_alphanumeric())
-            .filter(|s| s.len() > 2)
-        {
+        for token in html.split(|c: char| !c.is_alphanumeric()).filter(|s| s.len() > 2) {
             let lower = token.to_lowercase();
             if state.all_terms.insert(lower) {
                 new_terms += 1;
@@ -151,8 +148,7 @@ impl CrawlStrategy for AdaptiveStrategy {
             return true;
         }
 
-        let avg_new_terms: f64 =
-            state.window.iter().sum::<usize>() as f64 / state.window.len() as f64;
+        let avg_new_terms: f64 = state.window.iter().sum::<usize>() as f64 / state.window.len() as f64;
         let avg_total_per_page = state.all_terms.len() as f64 / stats.pages_crawled.max(1) as f64;
         let saturation_ratio = if avg_total_per_page > 0.0 {
             avg_new_terms / avg_total_per_page
@@ -214,10 +210,7 @@ mod adaptive_tests {
             pages_crawled: 2,
             ..Default::default()
         };
-        assert!(
-            s.should_continue(&stats),
-            "should continue when not enough data"
-        );
+        assert!(s.should_continue(&stats), "should continue when not enough data");
     }
 
     #[test]
@@ -233,10 +226,7 @@ mod adaptive_tests {
             ..Default::default()
         };
         // After many pages of identical content, should_continue should return false
-        assert!(
-            !s.should_continue(&stats),
-            "should stop on saturated content"
-        );
+        assert!(!s.should_continue(&stats), "should stop on saturated content");
     }
 
     #[test]
@@ -251,10 +241,7 @@ mod adaptive_tests {
             elapsed: Duration::from_secs(1),
             ..Default::default()
         };
-        assert!(
-            s.should_continue(&stats),
-            "should continue with diverse content"
-        );
+        assert!(s.should_continue(&stats), "should continue with diverse content");
     }
 
     #[test]

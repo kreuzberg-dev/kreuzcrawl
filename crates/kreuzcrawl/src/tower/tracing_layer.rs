@@ -72,11 +72,7 @@ where
         Box::pin(
             async move {
                 let resp = inner.call(req).await?;
-                tracing::info!(
-                    status = resp.status,
-                    body_size = resp.body.len(),
-                    "fetch complete"
-                );
+                tracing::info!(status = resp.status, body_size = resp.body.len(), "fetch complete");
                 Ok(resp)
             }
             .instrument(span),

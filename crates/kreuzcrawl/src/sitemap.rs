@@ -140,14 +140,7 @@ pub(crate) async fn fetch_sitemap_tree(
     config: &CrawlConfig,
     client: &reqwest::Client,
 ) -> Vec<SitemapUrl> {
-    let resp = match http_fetch(
-        sitemap_url,
-        config,
-        &std::collections::HashMap::new(),
-        client,
-    )
-    .await
-    {
+    let resp = match http_fetch(sitemap_url, config, &std::collections::HashMap::new(), client).await {
         Ok(r) => r,
         Err(_) => return Vec::new(),
     };
@@ -203,14 +196,7 @@ pub(crate) async fn process_sitemap_response(
             } else {
                 child_url.clone()
             };
-            let child_resp = match http_fetch(
-                &resolved,
-                config,
-                &std::collections::HashMap::new(),
-                client,
-            )
-            .await
-            {
+            let child_resp = match http_fetch(&resolved, config, &std::collections::HashMap::new(), client).await {
                 Ok(r) => r,
                 Err(_) => continue,
             };

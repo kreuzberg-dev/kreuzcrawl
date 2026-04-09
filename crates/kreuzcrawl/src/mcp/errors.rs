@@ -16,61 +16,37 @@ use rmcp::ErrorData as McpError;
 #[doc(hidden)]
 pub fn map_crawl_error(error: CrawlError) -> McpError {
     match error {
-        CrawlError::InvalidConfig(msg) => {
-            McpError::invalid_params(format!("Invalid configuration: {msg}"), None)
-        }
+        CrawlError::InvalidConfig(msg) => McpError::invalid_params(format!("Invalid configuration: {msg}"), None),
 
         CrawlError::NotFound(msg) => McpError::internal_error(format!("Not found: {msg}"), None),
 
-        CrawlError::Unauthorized(msg) => {
-            McpError::internal_error(format!("Unauthorized: {msg}"), None)
-        }
+        CrawlError::Unauthorized(msg) => McpError::internal_error(format!("Unauthorized: {msg}"), None),
 
         CrawlError::Forbidden(msg) => McpError::internal_error(format!("Forbidden: {msg}"), None),
 
-        CrawlError::WafBlocked(msg) => {
-            McpError::internal_error(format!("Blocked by WAF/bot protection: {msg}"), None)
-        }
+        CrawlError::WafBlocked(msg) => McpError::internal_error(format!("Blocked by WAF/bot protection: {msg}"), None),
 
-        CrawlError::Timeout(msg) => {
-            McpError::internal_error(format!("Request timed out: {msg}"), None)
-        }
+        CrawlError::Timeout(msg) => McpError::internal_error(format!("Request timed out: {msg}"), None),
 
-        CrawlError::RateLimited(msg) => {
-            McpError::internal_error(format!("Rate limited: {msg}"), None)
-        }
+        CrawlError::RateLimited(msg) => McpError::internal_error(format!("Rate limited: {msg}"), None),
 
-        CrawlError::ServerError(msg) => {
-            McpError::internal_error(format!("Server error: {msg}"), None)
-        }
+        CrawlError::ServerError(msg) => McpError::internal_error(format!("Server error: {msg}"), None),
 
-        CrawlError::BadGateway(msg) => {
-            McpError::internal_error(format!("Bad gateway: {msg}"), None)
-        }
+        CrawlError::BadGateway(msg) => McpError::internal_error(format!("Bad gateway: {msg}"), None),
 
         CrawlError::Gone(msg) => McpError::internal_error(format!("Resource gone: {msg}"), None),
 
-        CrawlError::Connection(msg) => {
-            McpError::internal_error(format!("Connection error: {msg}"), None)
-        }
+        CrawlError::Connection(msg) => McpError::internal_error(format!("Connection error: {msg}"), None),
 
-        CrawlError::Dns(msg) => {
-            McpError::internal_error(format!("DNS resolution failed: {msg}"), None)
-        }
+        CrawlError::Dns(msg) => McpError::internal_error(format!("DNS resolution failed: {msg}"), None),
 
         CrawlError::Ssl(msg) => McpError::internal_error(format!("SSL/TLS error: {msg}"), None),
 
-        CrawlError::DataLoss(msg) => {
-            McpError::internal_error(format!("Data loss during transfer: {msg}"), None)
-        }
+        CrawlError::DataLoss(msg) => McpError::internal_error(format!("Data loss during transfer: {msg}"), None),
 
-        CrawlError::BrowserError(msg) => {
-            McpError::internal_error(format!("Browser error: {msg}"), None)
-        }
+        CrawlError::BrowserError(msg) => McpError::internal_error(format!("Browser error: {msg}"), None),
 
-        CrawlError::BrowserTimeout(msg) => {
-            McpError::internal_error(format!("Browser timeout: {msg}"), None)
-        }
+        CrawlError::BrowserTimeout(msg) => McpError::internal_error(format!("Browser timeout: {msg}"), None),
 
         CrawlError::Other(msg) => McpError::internal_error(msg, None),
     }

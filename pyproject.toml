@@ -1,0 +1,31 @@
+[build-system]
+build-backend = "maturin"
+requires = [ "maturin>=1,<2" ]
+
+[dependency-groups]
+dev = [
+    "prek",
+    "pyproject-fmt",
+    "ruff",
+    "validate-pyproject",
+]
+
+[tool.uv]
+workspace.members = [ "packages/python" ]
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "Cargo.toml" },
+    { file = "Cargo.lock" },
+    { file = "crates/**/*.rs" },
+    { file = "crates/**/Cargo.toml" },
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+lint.select = [ "ALL" ]
+lint.ignore = [ "ANN", "COM812", "D", "ISC001" ]
+
+[tool.pyproject-fmt]
+column_limit = 120
+indent = 4

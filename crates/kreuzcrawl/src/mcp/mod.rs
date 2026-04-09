@@ -39,8 +39,8 @@ mod server;
 pub use server::{KreuzcrawlMcp, start_mcp_server, start_mcp_server_with_config};
 
 pub use params::{
-    BatchScrapeParams, CrawlParams, CrawlStatusParams, DownloadParams, InteractParams, MapParams,
-    ResearchParams, ScrapeParams, ScreenshotParams,
+    BatchScrapeParams, CrawlParams, CrawlStatusParams, DownloadParams, InteractParams, MapParams, ResearchParams,
+    ScrapeParams, ScreenshotParams,
 };
 
 #[doc(hidden)]

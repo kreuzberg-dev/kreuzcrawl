@@ -1,0 +1,155 @@
+languages = ["python", "node", "ruby", "php", "ffi", "go", "java", "csharp", "elixir", "wasm"]
+
+[crate]
+name = "kreuzcrawl"
+core_import = "kreuzcrawl"
+sources = [
+    "crates/kreuzcrawl/src/types/config.rs",
+    "crates/kreuzcrawl/src/types/results.rs",
+    "crates/kreuzcrawl/src/types/discovery.rs",
+    "crates/kreuzcrawl/src/types/metadata.rs",
+    "crates/kreuzcrawl/src/error.rs",
+    "crates/kreuzcrawl/src/citations.rs",
+    "crates/kreuzcrawl/src/bindings.rs",
+]
+version_from = "Cargo.toml"
+workspace_root = "."
+
+[include]
+types = [
+    # Config
+    "CrawlConfig",
+    "BrowserConfig",
+    "BrowserMode",
+    "BrowserWait",
+    "ProxyConfig",
+    "AuthConfig",
+    "ExtractionMeta",
+    # Results
+    "ScrapeResult",
+    "CrawlResult",
+    "CrawlPageResult",
+    "MapResult",
+    "MarkdownResult",
+    "SitemapUrl",
+    "CachedPage",
+    "DownloadedDocument",
+    "InteractionResult",
+    "ActionResult",
+    # Discovery
+    "LinkInfo",
+    "LinkType",
+    "ImageInfo",
+    "ImageSource",
+    "FeedInfo",
+    "FeedType",
+    "JsonLdEntry",
+    "CookieInfo",
+    "DownloadedAsset",
+    "AssetCategory",
+    "CrawlEvent",
+    # Metadata
+    "PageMetadata",
+    "ArticleMetadata",
+    "ResponseMeta",
+    "FaviconInfo",
+    "HeadingInfo",
+    "HreflangEntry",
+    # Citations
+    "CitationResult",
+    "CitationReference",
+    # Error
+    "CrawlError",
+    # Adapter
+    "CrawlEngineHandle",
+    "BatchScrapeResult",
+    "BatchCrawlResult",
+]
+functions = ["create_engine", "scrape", "crawl", "map_urls", "batch_scrape", "batch_crawl"]
+
+[exclude]
+functions = []
+types = []
+methods = ["CrawlConfig.validate", "CrawlResult.unique_normalized_urls", "CrawlResult.new"]
+
+[output]
+python = "crates/kreuzcrawl-py/src/"
+node = "crates/kreuzcrawl-node/src/"
+ruby = "packages/ruby/ext/kreuzcrawl_rb/src/"
+php = "crates/kreuzcrawl-php/src/"
+ffi = "crates/kreuzcrawl-ffi/src/"
+go = "packages/go/"
+elixir = "packages/elixir/native/kreuzcrawl_nif/src/"
+wasm = "crates/kreuzcrawl-wasm/src/"
+
+[python]
+module_name = "_kreuzcrawl"
+
+[python.stubs]
+output = "packages/python/kreuzcrawl/"
+
+[node]
+package_name = "@kreuzberg/kreuzcrawl"
+
+[ffi]
+prefix = "kcrawl"
+header_name = "kreuzcrawl.h"
+lib_name = "kreuzcrawl_ffi"
+visitor_callbacks = false
+
+[go]
+module = "github.com/kreuzberg-dev/kreuzcrawl"
+package_name = "kreuzcrawl"
+
+[java]
+package = "dev.kreuzberg.kreuzcrawl"
+
+[csharp]
+namespace = "Kreuzcrawl"
+
+[elixir]
+app_name = "kreuzcrawl"
+
+[scaffold]
+description = "High-performance web crawling engine"
+license = "Elastic-2.0"
+repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
+authors = ["Kreuzberg Team"]
+keywords = ["crawl", "scrape", "web", "spider"]
+
+[test.python]
+command = "task python:test"
+e2e = "cd e2e/python && python3 -m pytest tests/ -q"
+
+[test.node]
+command = "task node:test"
+e2e = "cd e2e/typescript && npx vitest run"
+
+[test.go]
+command = "task go:test"
+e2e = "cd e2e/go && go test ./... -count=1"
+
+[test.ruby]
+command = "task ruby:test"
+
+[test.php]
+command = "task php:test"
+
+[test.java]
+command = "task java:test"
+
+[test.csharp]
+command = "task csharp:test"
+
+[test.elixir]
+command = "task elixir:test"
+e2e = "cd e2e/elixir && mix test"
+
+[test.wasm]
+e2e = "cd e2e/wasm && npm test"
+
+[test.rust]
+e2e = "cd e2e/rust && cargo test"
+
+[test.c]
+e2e = "cd e2e/c && make clean && make && DYLD_LIBRARY_PATH=../../target/release ./test_runner"

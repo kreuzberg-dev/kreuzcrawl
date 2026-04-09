@@ -17,8 +17,8 @@ use super::{
     jobs::JobState,
     state::ApiState,
     types::{
-        ApiResponse, BatchScrapeRequest, CrawlRequest, DownloadRequest, HealthResponse,
-        JobCreatedResponse, JobStatusResponse, MapRequest, ScrapeRequest, VersionResponse,
+        ApiResponse, BatchScrapeRequest, CrawlRequest, DownloadRequest, HealthResponse, JobCreatedResponse,
+        JobStatusResponse, MapRequest, ScrapeRequest, VersionResponse,
     },
 };
 
@@ -27,6 +27,14 @@ use super::{
 // ---------------------------------------------------------------------------
 
 /// `GET /health`
+#[utoipa::path(
+    get,
+    path = "/health",
+    tag = "system",
+    responses(
+        (status = 200, description = "Service is healthy", body = HealthResponse),
+    )
+)]
 pub async fn health_handler() -> Json<HealthResponse> {
     Json(HealthResponse {
         status: "ok",
@@ -35,6 +43,14 @@ pub async fn health_handler() -> Json<HealthResponse> {
 }
 
 /// `GET /version`
+#[utoipa::path(
+    get,
+    path = "/version",
+    tag = "system",
+    responses(
+        (status = 200, description = "Version information", body = VersionResponse),
+    )
+)]
 pub async fn version_handler() -> Json<VersionResponse> {
     Json(VersionResponse {
         version: env!("CARGO_PKG_VERSION"),
@@ -51,14 +67,10 @@ fn validate_url(url: &str) -> Result<(), ApiError> {
         return Err(ApiError::bad_request("url is required"));
     }
     if !url.starts_with("http://") && !url.starts_with("https://") {
-        return Err(ApiError::bad_request(
-            "url must start with http:// or https://",
-        ));
+        return Err(ApiError::bad_request("url must start with http:// or https://"));
     }
     if url.len() > 8192 {
-        return Err(ApiError::bad_request(
-            "url exceeds maximum length of 8192 characters",
-        ));
+        return Err(ApiError::bad_request("url exceeds maximum length of 8192 characters"));
     }
     Ok(())
 }
@@ -68,6 +80,17 @@ fn validate_url(url: &str) -> Result<(), ApiError> {
 // ---------------------------------------------------------------------------
 
 /// `POST /v1/scrape`
+#[utoipa::path(
+    post,
+    path = "/v1/scrape",
+    tag = "scrape",
+    request_body = ScrapeRequest,
+    responses(
+        (status = 200, description = "Successfully scraped URL", body = ApiResponse<serde_json::Value>),
+        (status = 400, description = "Invalid request", body = ApiResponse<()>),
+        (status = 500, description = "Internal server error", body = ApiResponse<()>),
+    )
+)]
 pub async fn scrape_handler(
     State(state): State<Arc<ApiState>>,
     Json(req): Json<ScrapeRequest>,
@@ -75,8 +98,7 @@ pub async fn scrape_handler(
     validate_url(&req.url)?;
 
     let result = state.engine.scrape(&req.url).await?;
-    let value = serde_json::to_value(&result)
-        .map_err(|e| ApiError::internal(format!("serialization error: {e}")))?;
+    let value = serde_json::to_value(&result).map_err(|e| ApiError::internal(format!("serialization error: {e}")))?;
 
     Ok(Json(ApiResponse::ok(value)))
 }
@@ -86,6 +108,16 @@ pub async fn scrape_handler(
 // ---------------------------------------------------------------------------
 
 /// `POST /v1/crawl`
+#[utoipa::path(
+    post,
+    path = "/v1/crawl",
+    tag = "crawl",
+    request_body = CrawlRequest,
+    responses(
+        (status = 202, description = "Crawl job accepted", body = JobCreatedResponse),
+        (status = 400, description = "Invalid request", body = ApiResponse<()>),
+    )
+)]
 pub async fn crawl_handler(
     State(state): State<Arc<ApiState>>,
     Json(req): Json<CrawlRequest>,
@@ -160,6 +192,19 @@ pub async fn crawl_handler(
 }
 
 /// `GET /v1/crawl/{id}`
+#[utoipa::path(
+    get,
+    path = "/v1/crawl/{id}",
+    tag = "crawl",
+    params(
+        ("id" = String, Path, description = "Job identifier"),
+    ),
+    responses(
+        (status = 200, description = "Crawl job status", body = JobStatusResponse),
+        (status = 400, description = "Invalid job ID", body = ApiResponse<()>),
+        (status = 404, description = "Job not found", body = ApiResponse<()>),
+    )
+)]
 pub async fn crawl_status_handler(
     State(state): State<Arc<ApiState>>,
     Path(id): Path<String>,
@@ -175,6 +220,19 @@ pub async fn crawl_status_handler(
 }
 
 /// `DELETE /v1/crawl/{id}`
+#[utoipa::path(
+    delete,
+    path = "/v1/crawl/{id}",
+    tag = "crawl",
+    params(
+        ("id" = String, Path, description = "Job identifier"),
+    ),
+    responses(
+        (status = 200, description = "Crawl cancelled", body = ApiResponse<String>),
+        (status = 400, description = "Invalid job ID", body = ApiResponse<()>),
+        (status = 404, description = "Job not found or not cancellable", body = ApiResponse<()>),
+    )
+)]
 pub async fn crawl_cancel_handler(
     State(state): State<Arc<ApiState>>,
     Path(id): Path<String>,
@@ -195,6 +253,17 @@ pub async fn crawl_cancel_handler(
 // ---------------------------------------------------------------------------
 
 /// `POST /v1/map`
+#[utoipa::path(
+    post,
+    path = "/v1/map",
+    tag = "crawl",
+    request_body = MapRequest,
+    responses(
+        (status = 200, description = "Successfully mapped URLs", body = ApiResponse<serde_json::Value>),
+        (status = 400, description = "Invalid request", body = ApiResponse<()>),
+        (status = 500, description = "Internal server error", body = ApiResponse<()>),
+    )
+)]
 pub async fn map_handler(
     State(state): State<Arc<ApiState>>,
     Json(req): Json<MapRequest>,
@@ -214,8 +283,7 @@ pub async fn map_handler(
         result.urls.truncate(limit);
     }
 
-    let value = serde_json::to_value(&result)
-        .map_err(|e| ApiError::internal(format!("serialization error: {e}")))?;
+    let value = serde_json::to_value(&result).map_err(|e| ApiError::internal(format!("serialization error: {e}")))?;
 
     Ok(Json(ApiResponse::ok(value)))
 }
@@ -225,6 +293,16 @@ pub async fn map_handler(
 // ---------------------------------------------------------------------------
 
 /// `POST /v1/batch/scrape`
+#[utoipa::path(
+    post,
+    path = "/v1/batch/scrape",
+    tag = "scrape",
+    request_body = BatchScrapeRequest,
+    responses(
+        (status = 202, description = "Batch scrape job accepted", body = JobCreatedResponse),
+        (status = 400, description = "Invalid request", body = ApiResponse<()>),
+    )
+)]
 pub async fn batch_scrape_handler(
     State(state): State<Arc<ApiState>>,
     Json(req): Json<BatchScrapeRequest>,
@@ -275,6 +353,19 @@ pub async fn batch_scrape_handler(
 }
 
 /// `GET /v1/batch/scrape/{id}`
+#[utoipa::path(
+    get,
+    path = "/v1/batch/scrape/{id}",
+    tag = "scrape",
+    params(
+        ("id" = String, Path, description = "Batch job identifier"),
+    ),
+    responses(
+        (status = 200, description = "Batch scrape job status", body = JobStatusResponse),
+        (status = 400, description = "Invalid job ID", body = ApiResponse<()>),
+        (status = 404, description = "Job not found", body = ApiResponse<()>),
+    )
+)]
 pub async fn batch_status_handler(
     State(state): State<Arc<ApiState>>,
     Path(id): Path<String>,
@@ -294,6 +385,17 @@ pub async fn batch_status_handler(
 // ---------------------------------------------------------------------------
 
 /// `POST /v1/download`
+#[utoipa::path(
+    post,
+    path = "/v1/download",
+    tag = "download",
+    request_body = DownloadRequest,
+    responses(
+        (status = 200, description = "Successfully downloaded content", body = ApiResponse<serde_json::Value>),
+        (status = 400, description = "Invalid request", body = ApiResponse<()>),
+        (status = 500, description = "Internal server error", body = ApiResponse<()>),
+    )
+)]
 pub async fn download_handler(
     State(state): State<Arc<ApiState>>,
     Json(req): Json<DownloadRequest>,
@@ -303,8 +405,7 @@ pub async fn download_handler(
     // Use the scrape pipeline which already handles document downloads.
     let result = state.engine.scrape(&req.url).await?;
 
-    let value = serde_json::to_value(&result)
-        .map_err(|e| ApiError::internal(format!("serialization error: {e}")))?;
+    let value = serde_json::to_value(&result).map_err(|e| ApiError::internal(format!("serialization error: {e}")))?;
 
     Ok(Json(ApiResponse::ok(value)))
 }
@@ -323,9 +424,7 @@ fn job_state_to_response(state: &JobState) -> JobStatusResponse {
             data: None,
             error: None,
         },
-        JobState::InProgress {
-            pages_completed, ..
-        } => JobStatusResponse {
+        JobState::InProgress { pages_completed, .. } => JobStatusResponse {
             status: "in_progress".to_string(),
             total: 0,
             completed: *pages_completed,

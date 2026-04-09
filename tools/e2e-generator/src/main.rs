@@ -7,11 +7,7 @@ use clap::{Parser, Subcommand};
 use fixtures::load_fixtures;
 
 #[derive(Parser)]
-#[command(
-    author,
-    version,
-    about = "Generate E2E test suites from crawl fixtures"
-)]
+#[command(author, version, about = "Generate E2E test suites from crawl fixtures")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -47,12 +43,7 @@ fn main() -> Result<()> {
         Commands::List { fixtures } => {
             let fixtures = load_fixtures(fixtures.as_path())?;
             for fixture in &fixtures {
-                println!(
-                    "{:<40} {:<12} {}",
-                    fixture.id,
-                    fixture.category(),
-                    fixture.description
-                );
+                println!("{:<40} {:<12} {}", fixture.id, fixture.category(), fixture.description);
             }
         }
     }

@@ -3,9 +3,7 @@
 //! Type-level and unit tests for the research agent module.
 //! No network access required.
 
-use kreuzcrawl::research::{
-    Finding, ResearchConfig, ResearchResult, ResearchStep, SourceInfo, StepAction,
-};
+use kreuzcrawl::research::{Finding, ResearchConfig, ResearchResult, ResearchStep, SourceInfo, StepAction};
 
 #[test]
 fn test_research_config_defaults() {
@@ -78,7 +76,8 @@ fn test_research_result_serialization() {
 
 #[test]
 fn test_finding_ordering_by_relevance() {
-    let mut findings = [Finding {
+    let mut findings = [
+        Finding {
             content: "low".into(),
             source_url: "a".into(),
             relevance_score: 0.2,
@@ -92,7 +91,8 @@ fn test_finding_ordering_by_relevance() {
             content: "mid".into(),
             source_url: "c".into(),
             relevance_score: 0.5,
-        }];
+        },
+    ];
 
     findings.sort_by(|a, b| {
         b.relevance_score
@@ -170,7 +170,8 @@ async fn test_synthesizer_produces_markdown_report() {
     // We test the synthesizer indirectly through the public types.
     // The synthesizer is pub(crate), so we verify via ResearchAgent output format.
     // For a unit-level check, we replicate the synthesis logic here.
-    let findings = [Finding {
+    let findings = [
+        Finding {
             content: "Rust is a systems language".into(),
             source_url: "https://rust-lang.org".into(),
             relevance_score: 0.9,
@@ -179,7 +180,8 @@ async fn test_synthesizer_produces_markdown_report() {
             content: "Tokio is an async runtime".into(),
             source_url: "https://tokio.rs".into(),
             relevance_score: 0.8,
-        }];
+        },
+    ];
 
     let sources = [SourceInfo {
         url: "https://rust-lang.org".into(),
@@ -225,8 +227,7 @@ async fn test_synthesizer_produces_markdown_report() {
 #[tokio::test]
 async fn test_planner_returns_crawl_for_seed_urls() {
     // The planner is pub(crate), so we verify the logic directly.
-    let seed_urls = ["https://example.com".to_string(),
-        "https://docs.rs".to_string()];
+    let seed_urls = ["https://example.com".to_string(), "https://docs.rs".to_string()];
 
     // Step 0 with seed URLs should produce a Crawl action
     // Replicate planner logic: step_number < seed_urls.len() && step_number < max_steps
@@ -353,11 +354,7 @@ fn test_research_step_error_skipped_when_none() {
 #[tokio::test]
 async fn test_planner_uses_all_seed_urls() {
     // Replicate planner logic: step_number < seed_urls.len() && step_number < max_steps
-    let seeds: Vec<String> = vec![
-        "https://a.com".into(),
-        "https://b.com".into(),
-        "https://c.com".into(),
-    ];
+    let seeds: Vec<String> = vec!["https://a.com".into(), "https://b.com".into(), "https://c.com".into()];
     let max_steps = 10_usize;
 
     let plan = |step: usize| -> StepAction {

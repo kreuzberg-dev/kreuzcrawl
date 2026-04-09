@@ -3,6 +3,7 @@
 #[cfg(feature = "api")]
 pub mod api;
 mod assets;
+pub mod bindings;
 #[cfg(feature = "browser")]
 mod browser;
 mod browser_detect;
@@ -37,27 +38,29 @@ mod types;
 #[cfg(feature = "warc")]
 pub mod warc;
 
+pub use bindings::{
+    BatchCrawlResult, BatchScrapeResult, CrawlEngineHandle, batch_crawl, batch_scrape, crawl, create_engine, map_urls,
+    scrape,
+};
 #[cfg(feature = "browser")]
 pub use browser_pool::{BrowserPool, BrowserPoolConfig, PooledPage};
 pub use citations::{CitationReference, CitationResult};
 #[cfg(feature = "ai")]
 pub use defaults::LlmExtractor;
 pub use defaults::{
-    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, DfsStrategy, DiskCache,
-    InMemoryFrontier, NoopCache, NoopEmitter, NoopFilter, NoopRateLimiter, NoopStore,
-    PerDomainThrottle,
+    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, DfsStrategy, DiskCache, InMemoryFrontier, NoopCache,
+    NoopEmitter, NoopFilter, NoopRateLimiter, NoopStore, PerDomainThrottle,
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
 pub use traits::{
-    CompleteEvent, ContentFilter, CrawlCache, CrawlStats, CrawlStore, CrawlStrategy, ErrorEvent,
-    EventEmitter, Frontier, FrontierEntry, PageEvent, RateLimiter,
+    CompleteEvent, ContentFilter, CrawlCache, CrawlStats, CrawlStore, CrawlStrategy, ErrorEvent, EventEmitter,
+    Frontier, FrontierEntry, PageEvent, RateLimiter,
 };
 pub use types::{
-    ActionResult, ArticleMetadata, AssetCategory, AuthConfig, BrowserConfig, BrowserMode,
-    BrowserWait, CachedPage, CookieInfo, CrawlConfig, CrawlEvent, CrawlPageResult, CrawlResult,
-    DownloadedAsset, DownloadedDocument, ExtractionMeta, FaviconInfo, FeedInfo, FeedType,
-    HeadingInfo, HreflangEntry, ImageInfo, ImageSource, InteractionResult, JsonLdEntry, LinkInfo,
-    LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta, ScrapeResult,
-    SitemapUrl,
+    ActionResult, ArticleMetadata, AssetCategory, AuthConfig, BrowserConfig, BrowserMode, BrowserWait, CachedPage,
+    CookieInfo, CrawlConfig, CrawlEvent, CrawlPageResult, CrawlResult, DownloadedAsset, DownloadedDocument,
+    ExtractionMeta, FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource,
+    InteractionResult, JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig,
+    ResponseMeta, ScrapeResult, SitemapUrl,
 };

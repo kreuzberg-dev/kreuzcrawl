@@ -31,10 +31,7 @@ pub(crate) async fn http_fetch(
     if let Some(ref ua) = config.user_agent {
         req = req.header(USER_AGENT, ua.as_str());
     } else {
-        req = req.header(
-            USER_AGENT,
-            concat!("kreuzcrawl/", env!("CARGO_PKG_VERSION")),
-        );
+        req = req.header(USER_AGENT, concat!("kreuzcrawl/", env!("CARGO_PKG_VERSION")));
     }
 
     // Auth
@@ -48,10 +45,7 @@ pub(crate) async fn http_fetch(
         Some(AuthConfig::Bearer { ref token }) => {
             req = req.bearer_auth(token);
         }
-        Some(AuthConfig::Header {
-            ref name,
-            ref value,
-        }) => {
+        Some(AuthConfig::Header { ref name, ref value }) => {
             req = req.header(name.as_str(), value.as_str());
         }
         None => {}
@@ -109,9 +103,7 @@ pub(crate) async fn http_fetch(
         500 => return Err(CrawlError::ServerError("server_error".into())),
         502 => return Err(CrawlError::BadGateway("bad_gateway".into())),
         503 => {
-            return Err(CrawlError::ServerError(
-                "server_error: service unavailable".into(),
-            ));
+            return Err(CrawlError::ServerError("server_error: service unavailable".into()));
         }
         _ => {}
     }
@@ -206,9 +198,7 @@ pub(crate) async fn fetch_with_retry(
             Err(e) => {
                 // Check if we should retry this error
                 let should_retry = match &e {
-                    CrawlError::ServerError(_) => {
-                        retry_codes.contains(&503) || retry_codes.contains(&500)
-                    }
+                    CrawlError::ServerError(_) => retry_codes.contains(&503) || retry_codes.contains(&500),
                     CrawlError::RateLimited(_) => retry_codes.contains(&429),
                     _ => false,
                 };
@@ -267,20 +257,12 @@ pub(crate) fn extract_response_meta_from_hashmap(
 ) -> ResponseMeta {
     ResponseMeta {
         etag: headers.get("etag").and_then(|v| v.first().cloned()),
-        last_modified: headers
-            .get("last-modified")
-            .and_then(|v| v.first().cloned()),
-        cache_control: headers
-            .get("cache-control")
-            .and_then(|v| v.first().cloned()),
+        last_modified: headers.get("last-modified").and_then(|v| v.first().cloned()),
+        cache_control: headers.get("cache-control").and_then(|v| v.first().cloned()),
         server: headers.get("server").and_then(|v| v.first().cloned()),
         x_powered_by: headers.get("x-powered-by").and_then(|v| v.first().cloned()),
-        content_language: headers
-            .get("content-language")
-            .and_then(|v| v.first().cloned()),
-        content_encoding: headers
-            .get("content-encoding")
-            .and_then(|v| v.first().cloned()),
+        content_language: headers.get("content-language").and_then(|v| v.first().cloned()),
+        content_encoding: headers.get("content-encoding").and_then(|v| v.first().cloned()),
     }
 }
 

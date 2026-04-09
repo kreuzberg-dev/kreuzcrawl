@@ -98,10 +98,7 @@ pub(super) fn format_crawl_as_json(result: &CrawlResult) -> String {
 pub(super) fn format_map_result(result: &MapResult) -> String {
     let mut out = String::new();
 
-    out.push_str(&format!(
-        "# Site Map\n\n**URLs discovered:** {}\n\n",
-        result.urls.len()
-    ));
+    out.push_str(&format!("# Site Map\n\n**URLs discovered:** {}\n\n", result.urls.len()));
 
     for entry in &result.urls {
         out.push_str(&format!("- {}", entry.url));
@@ -171,8 +168,7 @@ mod tests {
         };
 
         let formatted = format_as_json(&result);
-        let parsed: serde_json::Value =
-            serde_json::from_str(&formatted).expect("Should be valid JSON");
+        let parsed: serde_json::Value = serde_json::from_str(&formatted).expect("Should be valid JSON");
         assert_eq!(parsed["status_code"], 200);
     }
 

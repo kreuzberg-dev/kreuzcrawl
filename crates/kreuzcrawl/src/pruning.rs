@@ -32,11 +32,7 @@ pub fn generate_fit_markdown(markdown: &str) -> String {
 
         // Skip empty lines (keep one between paragraphs)
         if trimmed.is_empty() {
-            if fit_lines
-                .last()
-                .map(|l: &&str| !l.is_empty())
-                .unwrap_or(true)
-            {
+            if fit_lines.last().map(|l: &&str| !l.is_empty()).unwrap_or(true) {
                 fit_lines.push("");
             }
             continue;
@@ -147,8 +143,7 @@ mod tests {
 
     #[test]
     fn test_preserves_code_blocks() {
-        let md =
-            "# Title\n\nGood content here.\n\n```rust\nfn main() {\n    x\n}\n```\n\nMore content.";
+        let md = "# Title\n\nGood content here.\n\n```rust\nfn main() {\n    x\n}\n```\n\nMore content.";
         let result = generate_fit_markdown(md);
         assert!(result.contains("fn main()"), "code should be preserved");
         assert!(result.contains("x"), "short code lines should be kept");

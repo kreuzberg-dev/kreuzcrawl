@@ -2,9 +2,8 @@
 
 /// Binary file extensions used to detect non-HTML content.
 static BINARY_EXTENSIONS: &[&str] = &[
-    ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico", ".tiff", ".mp4", ".avi",
-    ".mov", ".wmv", ".flv", ".mkv", ".webm", ".mp3", ".wav", ".ogg", ".flac", ".aac", ".wma",
-    ".exe", ".dll", ".so", ".bin",
+    ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico", ".tiff", ".mp4", ".avi", ".mov", ".wmv", ".flv",
+    ".mkv", ".webm", ".mp3", ".wav", ".ogg", ".flac", ".aac", ".wma", ".exe", ".dll", ".so", ".bin",
 ];
 
 /// Check whether content appears to be HTML based on Content-Type header or body content.

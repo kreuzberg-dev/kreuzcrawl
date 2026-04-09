@@ -80,16 +80,11 @@ impl KreuzcrawlMcp {
     // consider caching engines by config hash in future iterations.
 
     /// Build a CrawlEngine from the stored config with parameter overrides applied.
-    fn build_engine(
-        &self,
-        config: CrawlConfig,
-    ) -> Result<crate::engine::CrawlEngine, rmcp::ErrorData> {
+    fn build_engine(&self, config: CrawlConfig) -> Result<crate::engine::CrawlEngine, rmcp::ErrorData> {
         CrawlEngineBuilder::new()
             .config(config)
             .build()
-            .map_err(|e| {
-                rmcp::ErrorData::internal_error(format!("Failed to build engine: {e}"), None)
-            })
+            .map_err(|e| rmcp::ErrorData::internal_error(format!("Failed to build engine: {e}"), None))
     }
 
     /// Scrape a single URL and extract content as markdown or JSON.
@@ -153,18 +148,12 @@ impl KreuzcrawlMcp {
         if let Some(depth) = params.max_depth
             && depth > 100
         {
-            return Err(rmcp::ErrorData::invalid_params(
-                "max_depth must be <= 100",
-                None,
-            ));
+            return Err(rmcp::ErrorData::invalid_params("max_depth must be <= 100", None));
         }
         if let Some(pages) = params.max_pages
             && (pages == 0 || pages > 100_000)
         {
-            return Err(rmcp::ErrorData::invalid_params(
-                "max_pages must be 1..=100000",
-                None,
-            ));
+            return Err(rmcp::ErrorData::invalid_params("max_pages must be 1..=100000", None));
         }
 
         let mut config = self.config.clone();
@@ -239,10 +228,7 @@ impl KreuzcrawlMcp {
         use super::format::{format_as_json, format_as_markdown};
 
         if params.urls.is_empty() {
-            return Err(rmcp::ErrorData::invalid_params(
-                "urls array must not be empty",
-                None,
-            ));
+            return Err(rmcp::ErrorData::invalid_params("urls array must not be empty", None));
         }
 
         for url in &params.urls {
@@ -468,9 +454,7 @@ pub async fn start_mcp_server() -> Result<(), Box<dyn std::error::Error + Send +
 ///
 /// This variant allows specifying a custom crawl configuration
 /// instead of using defaults.
-pub async fn start_mcp_server_with_config(
-    config: CrawlConfig,
-) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+pub async fn start_mcp_server_with_config(config: CrawlConfig) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let service = KreuzcrawlMcp::with_config(config).serve(stdio()).await?;
     service.waiting().await?;
     Ok(())

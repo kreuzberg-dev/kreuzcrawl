@@ -6,8 +6,8 @@
 //! and formatting helpers without requiring network access.
 
 use kreuzcrawl::mcp::{
-    BatchScrapeParams, CrawlParams, CrawlStatusParams, DownloadParams, InteractParams, MapParams,
-    ResearchParams, ScrapeParams, ScreenshotParams,
+    BatchScrapeParams, CrawlParams, CrawlStatusParams, DownloadParams, InteractParams, MapParams, ResearchParams,
+    ScrapeParams, ScreenshotParams,
 };
 
 #[test]

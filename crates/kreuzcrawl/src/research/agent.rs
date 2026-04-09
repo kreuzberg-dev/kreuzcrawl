@@ -92,17 +92,13 @@ impl ResearchAgent {
                                 sources.push(SourceInfo {
                                     url: page.url.clone(),
                                     title: page.metadata.title.clone(),
-                                    snippet: page
-                                        .markdown
-                                        .as_ref()
-                                        .map(|m| m.content.chars().take(200).collect()),
+                                    snippet: page.markdown.as_ref().map(|m| m.content.chars().take(200).collect()),
                                 });
 
                                 if let Some(ref md) = page.markdown
                                     && !md.content.is_empty()
                                 {
-                                    let score =
-                                        simple_relevance_score(&self.config.query, &md.content);
+                                    let score = simple_relevance_score(&self.config.query, &md.content);
                                     findings.push(Finding {
                                         content: md.content.chars().take(500).collect(),
                                         source_url: page.url.clone(),
@@ -145,9 +141,7 @@ impl ResearchAgent {
             }
         }
 
-        let synthesis = synthesizer
-            .synthesize(&self.config.query, &findings, &sources)
-            .await?;
+        let synthesis = synthesizer.synthesize(&self.config.query, &findings, &sources).await?;
 
         Ok(ResearchResult {
             query: self.config.query.clone(),
@@ -173,21 +167,14 @@ mod tests {
 
     #[test]
     fn test_simple_relevance_score_no_match() {
-        let score =
-            simple_relevance_score("quantum physics", "Rust is a great programming language");
-        assert!(
-            (score - 0.0).abs() < f64::EPSILON,
-            "expected 0.0, got {score}"
-        );
+        let score = simple_relevance_score("quantum physics", "Rust is a great programming language");
+        assert!((score - 0.0).abs() < f64::EPSILON, "expected 0.0, got {score}");
     }
 
     #[test]
     fn test_simple_relevance_score_empty_query() {
         let score = simple_relevance_score("", "some content");
-        assert!(
-            (score - 0.0).abs() < f64::EPSILON,
-            "expected 0.0, got {score}"
-        );
+        assert!((score - 0.0).abs() < f64::EPSILON, "expected 0.0, got {score}");
     }
 
     #[test]

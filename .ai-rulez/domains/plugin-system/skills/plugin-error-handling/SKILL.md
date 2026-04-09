@@ -6,9 +6,9 @@ name: plugin-error-handling
 Handle plugin errors and implement recovery
 
 1. Classify plugin errors:
-    - InitializationError
-    - ExecutionError
-    - ConfigurationError
+   - InitializationError
+   - ExecutionError
+   - ConfigurationError
 2. Catch plugin exceptions
 3. Wrap in KreuzbergError with context
 4. Preserve original error information

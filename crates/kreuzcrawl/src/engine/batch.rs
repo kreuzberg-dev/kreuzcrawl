@@ -65,10 +65,7 @@ impl CrawlEngine {
     ///
     /// Unlike the standalone `batch::batch_scrape`, this method routes each URL
     /// through the engine's middleware chain, rate limiter, and cache.
-    pub async fn batch_scrape(
-        &self,
-        urls: &[&str],
-    ) -> Vec<(String, Result<ScrapeResult, CrawlError>)> {
+    pub async fn batch_scrape(&self, urls: &[&str]) -> Vec<(String, Result<ScrapeResult, CrawlError>)> {
         let max_concurrent = self.config.max_concurrent.unwrap_or(DEFAULT_MAX_CONCURRENT);
         let semaphore = Arc::new(Semaphore::new(max_concurrent));
         let mut join_set = JoinSet::new();
@@ -95,10 +92,7 @@ impl CrawlEngine {
         while let Some(result) = join_set.join_next().await {
             match result {
                 Ok(result) => results.push(result),
-                Err(e) => results.push((
-                    String::new(),
-                    Err(CrawlError::Other(format!("task panicked: {e}"))),
-                )),
+                Err(e) => results.push((String::new(), Err(CrawlError::Other(format!("task panicked: {e}"))))),
             }
         }
         results
@@ -106,10 +100,7 @@ impl CrawlEngine {
 
     /// Crawl multiple seed URLs, each following links to configured depth.
     /// Returns results paired with seed URLs as they complete.
-    pub async fn batch_crawl(
-        &self,
-        urls: &[&str],
-    ) -> Vec<(String, Result<CrawlResult, CrawlError>)> {
+    pub async fn batch_crawl(&self, urls: &[&str]) -> Vec<(String, Result<CrawlResult, CrawlError>)> {
         let max_concurrent = self.config.max_concurrent.unwrap_or(DEFAULT_MAX_CONCURRENT);
         let semaphore = Arc::new(Semaphore::new(max_concurrent));
         let mut join_set = JoinSet::new();
@@ -134,10 +125,7 @@ impl CrawlEngine {
             match result {
                 Ok(result) => results.push(result),
                 Err(e) => {
-                    results.push((
-                        String::new(),
-                        Err(CrawlError::Other(format!("task panicked: {e}"))),
-                    ));
+                    results.push((String::new(), Err(CrawlError::Other(format!("task panicked: {e}")))));
                 }
             }
         }
@@ -148,15 +136,11 @@ impl CrawlEngine {
     pub fn batch_crawl_stream(&self, urls: &[&str]) -> ReceiverStream<CrawlEvent> {
         let urls: Vec<String> = urls.iter().map(|u| u.to_string()).collect();
         let engine = self.clone();
-        let channel_size =
-            self.config.max_concurrent.unwrap_or(DEFAULT_MAX_CONCURRENT) * STREAM_BUFFER_MULTIPLIER;
+        let channel_size = self.config.max_concurrent.unwrap_or(DEFAULT_MAX_CONCURRENT) * STREAM_BUFFER_MULTIPLIER;
         let (tx, rx) = tokio::sync::mpsc::channel(channel_size);
 
         tokio::spawn(async move {
-            let max_concurrent = engine
-                .config
-                .max_concurrent
-                .unwrap_or(DEFAULT_MAX_CONCURRENT);
+            let max_concurrent = engine.config.max_concurrent.unwrap_or(DEFAULT_MAX_CONCURRENT);
             let semaphore = Arc::new(Semaphore::new(max_concurrent));
             let mut join_set = JoinSet::new();
 

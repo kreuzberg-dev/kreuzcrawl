@@ -9,13 +9,10 @@ use url::Url;
 use crate::error::CrawlError;
 use crate::html::{extract_links, is_html_content};
 use crate::http::{build_client, fetch_with_retry, http_fetch};
-use crate::normalize::{
-    normalize_url, resolve_redirect, rewrite_url_host, robots_url, strip_fragment,
-};
+use crate::normalize::{normalize_url, resolve_redirect, rewrite_url_host, robots_url, strip_fragment};
 use crate::robots::parse_robots_txt;
 use crate::sitemap::{
-    decompress_gzip, fetch_sitemap_tree, is_sitemap_index, parse_sitemap_xml,
-    process_sitemap_response,
+    decompress_gzip, fetch_sitemap_tree, is_sitemap_index, parse_sitemap_xml, process_sitemap_response,
 };
 use crate::types::{CrawlConfig, LinkType, MapResult, SitemapUrl};
 
@@ -34,9 +31,7 @@ pub async fn map(url: &str, config: &CrawlConfig) -> Result<MapResult, CrawlErro
     // Try robots.txt for sitemap directives
     if config.respect_robots_txt {
         let robots = robots_url(&parsed_url);
-        if let Ok(robots_resp) =
-            http_fetch(&robots, config, &std::collections::HashMap::new(), &client).await
-        {
+        if let Ok(robots_resp) = http_fetch(&robots, config, &std::collections::HashMap::new(), &client).await {
             let ua = config.user_agent.as_deref().unwrap_or("*");
             let rules = parse_robots_txt(&robots_resp.body, ua);
             if !rules.sitemaps.is_empty() {
@@ -54,18 +49,8 @@ pub async fn map(url: &str, config: &CrawlConfig) -> Result<MapResult, CrawlErro
     }
 
     // Try /sitemap.xml as fallback
-    let sitemap_url = format!(
-        "{}://{}/sitemap.xml",
-        parsed_url.scheme(),
-        parsed_url.authority()
-    );
-    if let Ok(sitemap_resp) = http_fetch(
-        &sitemap_url,
-        config,
-        &std::collections::HashMap::new(),
-        &client,
-    )
-    .await
+    let sitemap_url = format!("{}://{}/sitemap.xml", parsed_url.scheme(), parsed_url.authority());
+    if let Ok(sitemap_resp) = http_fetch(&sitemap_url, config, &std::collections::HashMap::new(), &client).await
         && (sitemap_resp.body.contains("<urlset") || sitemap_resp.body.contains("<sitemapindex"))
     {
         // Use the already-fetched response to avoid a redundant second fetch
@@ -152,17 +137,13 @@ pub async fn map(url: &str, config: &CrawlConfig) -> Result<MapResult, CrawlErro
 /// Apply exclude paths, search filter, and limit to the map result.
 ///
 /// Returns an error if any `exclude_paths` pattern is not a valid regex.
-pub(crate) fn filter_map_result(
-    mut urls: Vec<SitemapUrl>,
-    config: &CrawlConfig,
-) -> Result<MapResult, CrawlError> {
+pub(crate) fn filter_map_result(mut urls: Vec<SitemapUrl>, config: &CrawlConfig) -> Result<MapResult, CrawlError> {
     // Apply exclude paths with pre-compiled regexes
     if !config.exclude_paths.is_empty() {
         let mut regexes = Vec::with_capacity(config.exclude_paths.len());
         for pat in &config.exclude_paths {
-            let re = Regex::new(pat).map_err(|e| {
-                CrawlError::Other(format!("invalid exclude_paths regex pattern '{pat}': {e}"))
-            })?;
+            let re = Regex::new(pat)
+                .map_err(|e| CrawlError::Other(format!("invalid exclude_paths regex pattern '{pat}': {e}")))?;
             regexes.push(re);
         }
         urls.retain(|su| {

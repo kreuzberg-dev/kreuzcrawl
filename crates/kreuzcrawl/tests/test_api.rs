@@ -94,10 +94,7 @@ async fn test_crawl_returns_202_with_job_id() {
     assert!(json["id"].is_string());
     // Verify it looks like a UUID.
     let id = json["id"].as_str().unwrap();
-    assert!(
-        uuid::Uuid::parse_str(id).is_ok(),
-        "id should be a valid UUID"
-    );
+    assert!(uuid::Uuid::parse_str(id).is_ok(), "id should be a valid UUID");
 }
 
 #[tokio::test]
@@ -202,10 +199,7 @@ async fn test_scrape_invalid_url_scheme() {
     let json: serde_json::Value = serde_json::from_slice(&body).expect("parse json");
     assert_eq!(json["success"], false);
     assert!(
-        json["error"]["message"]
-            .as_str()
-            .unwrap_or("")
-            .contains("http"),
+        json["error"]["message"].as_str().unwrap_or("").contains("http"),
         "error should mention http scheme requirement"
     );
 }
@@ -219,10 +213,7 @@ async fn test_scrape_empty_url() {
     let json: serde_json::Value = serde_json::from_slice(&body).expect("parse json");
     assert_eq!(json["success"], false);
     assert!(
-        json["error"]["message"]
-            .as_str()
-            .unwrap_or("")
-            .contains("required"),
+        json["error"]["message"].as_str().unwrap_or("").contains("required"),
         "error should mention url is required"
     );
 }
@@ -257,10 +248,7 @@ async fn test_crawl_job_lifecycle() {
     let poll_json: serde_json::Value = serde_json::from_slice(&body).expect("parse json");
     let job_status = poll_json["status"].as_str().unwrap_or("");
     assert!(
-        job_status == "pending"
-            || job_status == "in_progress"
-            || job_status == "completed"
-            || job_status == "failed",
+        job_status == "pending" || job_status == "in_progress" || job_status == "completed" || job_status == "failed",
         "job status should be a valid state, got {job_status}"
     );
 }

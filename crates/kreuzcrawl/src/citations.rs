@@ -117,9 +117,7 @@ mod tests {
         let md = "![logo](https://example.com/logo.png) and [link](https://example.com)";
         let result = generate_citations(md);
         assert!(
-            result
-                .content
-                .contains("![logo](https://example.com/logo.png)"),
+            result.content.contains("![logo](https://example.com/logo.png)"),
             "images should be preserved"
         );
         assert!(result.content.contains("link[1]"), "links should be cited");

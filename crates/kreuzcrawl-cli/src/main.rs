@@ -1,13 +1,11 @@
+use std::sync::Arc;
 use std::time::Duration;
 
 use clap::{Parser, Subcommand};
 use kreuzcrawl::{CrawlConfig, CrawlEngine, PerDomainThrottle, ProxyConfig};
 
 #[derive(Parser)]
-#[command(
-    name = "kreuzcrawl",
-    about = "High-performance web crawler and scraper"
-)]
+#[command(name = "kreuzcrawl", about = "High-performance web crawler and scraper")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -85,6 +83,19 @@ enum Commands {
         #[arg(long)]
         respect_robots_txt: bool,
     },
+    /// Start the REST API server
+    #[cfg(feature = "api")]
+    Serve {
+        /// Host address to bind to
+        #[arg(long, default_value = "0.0.0.0")]
+        host: String,
+        /// Port to listen on
+        #[arg(long, default_value = "3000")]
+        port: u16,
+    },
+    /// Start the MCP server (stdio transport)
+    #[cfg(feature = "mcp")]
+    Mcp {},
 }
 
 #[tokio::main]
@@ -191,10 +202,7 @@ async fn main() {
                             Ok(r) => {
                                 for page in &r.pages {
                                     if let Some(ref md) = page.markdown {
-                                        println!(
-                                            "---\nSeed: {seed_url}\nURL: {}\n---\n{}\n",
-                                            page.url, md.content
-                                        );
+                                        println!("---\nSeed: {seed_url}\nURL: {}\n---\n{}\n", page.url, md.content);
                                     }
                                 }
                             }
@@ -246,6 +254,23 @@ async fn main() {
                     eprintln!("Error: {e}");
                     std::process::exit(1);
                 }
+            }
+        }
+        #[cfg(feature = "api")]
+        Commands::Serve { host, port } => {
+            let engine = CrawlEngine::builder().build().unwrap();
+            eprintln!("Starting REST API server on {host}:{port}");
+            if let Err(e) = kreuzcrawl::api::serve(&host, port, Arc::new(engine)).await {
+                eprintln!("Server error: {e}");
+                std::process::exit(1);
+            }
+        }
+        #[cfg(feature = "mcp")]
+        Commands::Mcp {} => {
+            eprintln!("Starting MCP server (stdio transport)");
+            if let Err(e) = kreuzcrawl::mcp::start_mcp_server().await {
+                eprintln!("MCP server error: {e}");
+                std::process::exit(1);
             }
         }
     }

@@ -540,10 +540,9 @@ pub fn load_fixtures(dir: &Utf8Path) -> Result<Vec<Fixture>> {
             continue;
         }
 
-        let content = std::fs::read_to_string(path)
-            .with_context(|| format!("reading fixture {}", path.display()))?;
-        let mut fixture: Fixture = serde_json::from_str(&content)
-            .with_context(|| format!("parsing fixture {}", path.display()))?;
+        let content = std::fs::read_to_string(path).with_context(|| format!("reading fixture {}", path.display()))?;
+        let mut fixture: Fixture =
+            serde_json::from_str(&content).with_context(|| format!("parsing fixture {}", path.display()))?;
 
         // Infer category from parent directory name if not set
         if fixture.category.is_none() {

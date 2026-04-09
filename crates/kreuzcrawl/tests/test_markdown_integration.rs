@@ -53,10 +53,7 @@ async fn test_markdown_output_is_populated() {
         "citations should be populated for pages with links"
     );
     let citations = md.citations.unwrap();
-    assert!(
-        !citations.references.is_empty(),
-        "should have citation references"
-    );
+    assert!(!citations.references.is_empty(), "should have citation references");
 
     // Fit markdown should exist.
     assert!(md.fit_content.is_some(), "fit content should be populated");
@@ -98,8 +95,5 @@ async fn test_markdown_heading_extraction() {
         "should contain h1 content in markdown: {}",
         md.content
     );
-    assert!(
-        md.content.contains("Section One"),
-        "should contain h2 content"
-    );
+    assert!(md.content.contains("Section One"), "should contain h2 content");
 }

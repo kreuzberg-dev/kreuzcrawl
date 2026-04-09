@@ -20,8 +20,8 @@ use tower::Service;
 use crate::error::CrawlError;
 use crate::helpers::{compile_regexes, fetch_robots_rules, find_ascii_case_insensitive};
 use crate::html::{
-    HtmlExtraction, detect_charset, detect_meta_refresh, extract_page_data, is_binary_content_type,
-    is_binary_url, is_html_content, is_pdf_content, is_pdf_url,
+    HtmlExtraction, detect_charset, detect_meta_refresh, extract_page_data, is_binary_content_type, is_binary_url,
+    is_html_content, is_pdf_content, is_pdf_url,
 };
 use crate::http::{build_client, extract_cookies_from_hashmap};
 use crate::normalize::{normalize_url, normalize_url_for_dedup, resolve_redirect, strip_fragment};
@@ -112,13 +112,7 @@ fn blocking_extract_page(url: &str, content_type: &str, body: &str) -> PageExtra
     let is_html = is_html_content(content_type, body);
 
     let doc = Html::parse_document(body);
-    let extraction = extract_page_data(
-        &doc,
-        body,
-        &parsed_url,
-        is_html && !is_binary && !is_pdf,
-        false,
-    );
+    let extraction = extract_page_data(&doc, body, &parsed_url, is_html && !is_binary && !is_pdf, false);
     let detected_charset = detect_charset(content_type, body);
 
     PageExtraction {
@@ -139,8 +133,7 @@ impl CrawlEngine {
         url: &str,
         tx: Option<tokio::sync::mpsc::Sender<CrawlEvent>>,
     ) -> Result<CrawlResult, CrawlError> {
-        let parsed_url =
-            Url::parse(url).map_err(|e| CrawlError::Other(format!("invalid URL: {e}")))?;
+        let parsed_url = Url::parse(url).map_err(|e| CrawlError::Other(format!("invalid URL: {e}")))?;
         let client = build_client(&self.config)?;
         let base_host = parsed_url.host_str().unwrap_or("").to_owned();
         let base_host_suffix = format!(".{base_host}");
@@ -250,11 +243,7 @@ impl CrawlEngine {
         &self,
         url: &str,
         max_redirects: usize,
-        service: &mut tower::util::BoxCloneService<
-            CrawlRequest,
-            crate::tower::CrawlResponse,
-            CrawlError,
-        >,
+        service: &mut tower::util::BoxCloneService<CrawlRequest, crate::tower::CrawlResponse, CrawlError>,
         state: &mut CrawlState,
     ) -> String {
         let mut current_url = url.to_owned();
@@ -271,9 +260,7 @@ impl CrawlEngine {
             };
 
             if self.config.cookies_enabled {
-                state
-                    .all_cookies
-                    .extend(extract_cookies_from_hashmap(&resp.headers));
+                state.all_cookies.extend(extract_cookies_from_hashmap(&resp.headers));
             }
 
             let status = resp.status;
@@ -302,9 +289,7 @@ impl CrawlEngine {
             {
                 let target_path = refresh[pos + 4..].trim();
                 let target = resolve_redirect(&current_url, target_path);
-                if let Some(t) =
-                    self.try_follow_redirect(&target, &seen_redirects, max_redirects, state)
-                {
+                if let Some(t) = self.try_follow_redirect(&target, &seen_redirects, max_redirects, state) {
                     seen_redirects.insert(t.clone());
                     state.redirect_count += 1;
                     current_url = t;
@@ -320,9 +305,7 @@ impl CrawlEngine {
                 let doc = Html::parse_document(&resp.body);
                 if let Some(refresh_target) = detect_meta_refresh(&doc) {
                     let target = resolve_redirect(&current_url, &refresh_target);
-                    if let Some(t) =
-                        self.try_follow_redirect(&target, &seen_redirects, max_redirects, state)
-                    {
+                    if let Some(t) = self.try_follow_redirect(&target, &seen_redirects, max_redirects, state) {
                         seen_redirects.insert(t.clone());
                         state.redirect_count += 1;
                         current_url = t;
@@ -404,11 +387,7 @@ impl CrawlEngine {
         &self,
         state: &mut CrawlState,
         working_set: &mut Vec<FrontierEntry>,
-        service: &mut tower::util::BoxCloneService<
-            CrawlRequest,
-            crate::tower::CrawlResponse,
-            CrawlError,
-        >,
+        service: &mut tower::util::BoxCloneService<CrawlRequest, crate::tower::CrawlResponse, CrawlError>,
         exclude_regexes: &[Regex],
         include_regexes: &[Regex],
         robots_rules: &Option<RobotsRules>,
@@ -421,8 +400,7 @@ impl CrawlEngine {
     ) -> Result<(), CrawlError> {
         let max_concurrent = self.config.max_concurrent.unwrap_or(DEFAULT_MAX_CONCURRENT);
         let semaphore = Arc::new(Semaphore::new(max_concurrent));
-        let mut join_set: JoinSet<Result<FetchResult, (FrontierEntry, CrawlError)>> =
-            JoinSet::new();
+        let mut join_set: JoinSet<Result<FetchResult, (FrontierEntry, CrawlError)>> = JoinSet::new();
         let mut cancelled = false;
 
         while !cancelled && (!working_set.is_empty() || !join_set.is_empty()) {
@@ -487,12 +465,7 @@ impl CrawlEngine {
                         blocking_extract_page(&url_for_extract, &content_type_clone, &body_clone)
                     })
                     .await
-                    .map_err(|e| {
-                        (
-                            entry.clone(),
-                            CrawlError::Other(format!("extraction task failed: {e}")),
-                        )
-                    })?;
+                    .map_err(|e| (entry.clone(), CrawlError::Other(format!("extraction task failed: {e}"))))?;
 
                     Ok(FetchResult {
                         entry,
@@ -587,10 +560,7 @@ impl CrawlEngine {
             return false;
         }
         // Depth-0 seed URL is always included regardless of include_paths filter
-        if !include_regexes.is_empty()
-            && entry.depth > 0
-            && !include_regexes.iter().any(|re| re.is_match(path))
-        {
+        if !include_regexes.is_empty() && entry.depth > 0 && !include_regexes.iter().any(|re| re.is_match(path)) {
             *urls_filtered += 1;
             return false;
         }
@@ -624,9 +594,7 @@ impl CrawlEngine {
         let depth = fetch.entry.depth;
 
         if self.config.cookies_enabled {
-            state
-                .all_cookies
-                .extend(extract_cookies_from_hashmap(&fetch.headers));
+            state.all_cookies.extend(extract_cookies_from_hashmap(&fetch.headers));
         }
 
         let mut body = fetch.body;
@@ -711,10 +679,7 @@ impl CrawlEngine {
 
         // Send page event through the channel if streaming
         if let Some(sender) = tx
-            && sender
-                .send(CrawlEvent::Page(Box::new(page.clone())))
-                .await
-                .is_err()
+            && sender.send(CrawlEvent::Page(Box::new(page.clone()))).await.is_err()
         {
             // Receiver dropped; signal cancellation
             return Ok(true);
@@ -754,9 +719,7 @@ impl CrawlEngine {
                 && let Ok(lu) = Url::parse(&link_url)
             {
                 let link_host = lu.host_str().unwrap_or("");
-                if link_host != base_host
-                    && (!self.config.allow_subdomains || !link_host.ends_with(base_host_suffix))
-                {
+                if link_host != base_host && (!self.config.allow_subdomains || !link_host.ends_with(base_host_suffix)) {
                     continue;
                 }
             }

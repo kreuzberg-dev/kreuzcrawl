@@ -1,0 +1,37 @@
+[package]
+name = "kreuzcrawl-py"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "Python bindings (PyO3) for kreuzcrawl"
+keywords = ["crawl", "scrape", "python", "pyo3", "bindings"]
+categories = ["api-bindings"]
+
+[lib]
+name = "_kreuzcrawl"
+crate-type = ["cdylib", "rlib"]
+doctest = false
+
+[features]
+default = []
+extension-module = ["pyo3/extension-module"]
+
+[dependencies]
+kreuzcrawl = { path = "../kreuzcrawl" }
+kreuzcrawl-bindings-common = { path = "../kreuzcrawl-bindings-common" }
+pyo3 = { workspace = true }
+pyo3-async-runtimes = { workspace = true }
+
+[lints.rust]
+unsafe_code = "allow"
+missing_docs = "warn"
+unused_must_use = "deny"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+multiple_crate_versions = { level = "allow", priority = 1 }

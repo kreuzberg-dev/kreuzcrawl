@@ -17,8 +17,8 @@ Discover and load plugins dynamically
    e. Instantiate with PyO3
    f. Register with registry
 3. Validate before registration:
-    - Check required methods exist
-    - Verify method signatures
-    - Test initialization
+   - Check required methods exist
+   - Verify method signatures
+   - Test initialization
 4. Handle discovery errors gracefully
 5. Report unregistered plugins

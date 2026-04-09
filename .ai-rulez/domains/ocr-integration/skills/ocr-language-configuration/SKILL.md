@@ -14,6 +14,6 @@ Configure OCR for multiple languages
    c. Detect language switches
 5. Select appropriate language set for OCR
 6. Handle missing language packs:
-    - Suggest installation
-    - Fall back to available languages
-    - Use language detection if available
+   - Suggest installation
+   - Fall back to available languages
+   - Use language detection if available

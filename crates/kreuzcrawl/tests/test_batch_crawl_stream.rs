@@ -36,10 +36,7 @@ async fn test_batch_crawl_stream_produces_events() {
     let stream = engine.batch_crawl_stream(&url_refs);
     let events: Vec<CrawlEvent> = stream.collect().await;
 
-    let page_events = events
-        .iter()
-        .filter(|e| matches!(e, CrawlEvent::Page(_)))
-        .count();
+    let page_events = events.iter().filter(|e| matches!(e, CrawlEvent::Page(_))).count();
     let complete_events = events
         .iter()
         .filter(|e| matches!(e, CrawlEvent::Complete { .. }))
