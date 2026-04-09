@@ -64,7 +64,6 @@ env:
   CARGO_PROFILE_DEV_DEBUG: 0
   RUST_BACKTRACE: short
   RUST_MIN_STACK: 16777216
-  MACOSX_DEPLOYMENT_TARGET: "14.0"
   BUILD_PROFILE: "ci"
 
 permissions:
@@ -75,7 +74,7 @@ permissions:
 jobs:
   validate:
     name: "Validate"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
     steps:
@@ -87,13 +86,13 @@ jobs:
           sudo apt-get install -y --no-install-recommends cppcheck clang-format
 
       - name: Setup Python
-        uses: kreuzcrawl-dev/actions/setup-python-env@v1
+        uses: kreuzberg-dev/actions/setup-python-env@v1
         with:
           python-version: "3.13"
           cache-prefix: validate-py
 
       - name: Setup Node
-        uses: kreuzcrawl-dev/actions/setup-node-workspace@v1
+        uses: kreuzberg-dev/actions/setup-node-workspace@v1
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -145,7 +144,7 @@ jobs:
         shell: bash
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Run universal prek hooks
         uses: j178/prek-action@v2
@@ -173,29 +172,29 @@ jobs:
 
   validate-rust:
     name: "Validate: Rust"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
 
       - name: Free disk space before setup
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "false"
           show-final: "true"
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: validate-rust
           use-sccache: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Run Rust lint checks
         run: task rust:lint:check
@@ -238,6 +237,9 @@ jobs:
           filters: |
             core:
               - 'crates/kreuzcrawl/**'
+              - 'crates/kreuzcrawl-tesseract/**'
+              - 'crates/kreuzcrawl-paddle-ocr/**'
+              - 'crates/kreuzcrawl-pdfium-render/**'
               - 'Cargo.toml'
               - 'Cargo.lock'
               - 'rust-toolchain.toml'
@@ -247,6 +249,9 @@ jobs:
             rust:
               - 'crates/kreuzcrawl/**'
               - 'crates/kreuzcrawl-cli/**'
+              - 'crates/kreuzcrawl-tesseract/**'
+              - 'crates/kreuzcrawl-paddle-ocr/**'
+              - 'crates/kreuzcrawl-pdfium-render/**'
               - 'e2e/rust/**'
               - 'Cargo.toml'
               - 'Cargo.lock'
@@ -309,7 +314,7 @@ jobs:
     needs: [validate, validate-rust, changes]
     name: "Build: FFI (${{ matrix.os }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.ffi == 'true')
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
@@ -333,16 +338,16 @@ jobs:
 
       - name: Free disk space before setup
         if: startsWith(matrix.os, 'ubuntu')
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "true"
           show-final: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: ffi-${{ matrix.os }}
           target: ${{ matrix.target }}
@@ -355,7 +360,7 @@ jobs:
         run: scripts/ci/rust/configure-bindgen-windows.ps1
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Pre-build diagnostics
         shell: bash
@@ -386,13 +391,13 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   rust-tests:
     needs: [validate, validate-rust, changes]
     name: "Test: Rust (${{ matrix.os }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.rust == 'true')
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
@@ -416,16 +421,16 @@ jobs:
 
       - name: Free disk space before setup
         if: startsWith(matrix.os, 'ubuntu')
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "true"
           show-final: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: rust-tests-${{ matrix.os }}
           target: ${{ matrix.target }}
@@ -442,7 +447,7 @@ jobs:
         run: scripts/ci/rust/pre-build-diagnostics.sh
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Run unit tests
         run: task rust:test:ci
@@ -465,13 +470,13 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   docker-build:
     needs: [validate, validate-rust, changes]
     name: "Build: Docker (${{ matrix.variant }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.docker == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 180
@@ -494,41 +499,55 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Build Docker image
+      - name: Build Docker image (core/full)
+        if: matrix.variant == 'default'
         uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile${{ matrix.variant == 'cli' && '.cli' || '' }}
           push: false
           load: true
-          tags: kreuzcrawl:${{ matrix.variant == 'default' && 'latest' || matrix.variant }}
+          tags: kreuzcrawl:${{ matrix.variant }}
           cache-from: type=gha,scope=ci-docker-${{ matrix.variant }}
           cache-to: type=gha,mode=max,scope=ci-docker-${{ matrix.variant }}
 
-      - name: Save Docker image as artifact
+      - name: Build Docker image (cli)
+        if: matrix.variant == 'cli'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/Dockerfile.cli
+          push: false
+          load: true
+          tags: kreuzcrawl:cli
+          cache-from: type=gha,scope=ci-docker-cli
+          cache-to: type=gha,mode=max,scope=ci-docker-cli
+
+      - name: Save Docker image as artifact (core/full)
+        if: matrix.variant == 'default'
+        shell: bash
+        run: scripts/ci/docker/save-image.sh "${{ matrix.variant }}" /tmp
+
+      - name: Save Docker image as artifact (cli)
+        if: matrix.variant == 'cli'
         shell: bash
         run: |
           mkdir -p /tmp
-          if [ "${{ matrix.variant }}" = "cli" ]; then
-            docker save kreuzcrawl:cli | gzip > /tmp/kreuzcrawl-cli.tar.gz
-            ls -lh /tmp/kreuzcrawl-cli.tar.gz
-          else
-            docker save kreuzcrawl:latest | gzip > /tmp/kreuzcrawl-default.tar.gz
-            ls -lh /tmp/kreuzcrawl-default.tar.gz
-          fi
+          docker save kreuzcrawl:cli | gzip > /tmp/kreuzcrawl-cli.tar.gz
+          ls -lh /tmp/kreuzcrawl-cli.tar.gz
 
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v7
         with:
           name: docker-image-${{ matrix.variant }}
-          path: /tmp/kreuzcrawl-${{ matrix.variant == 'default' && 'default' || matrix.variant }}.tar.gz
+          path: /tmp/kreuzcrawl-${{ matrix.variant }}.tar.gz
           retention-days: 7
           compression-level: 0
 
   docker-test:
     needs: [docker-build]
     name: "Test: Docker (${{ matrix.variant }})"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 180
     permissions:
@@ -558,31 +577,33 @@ jobs:
 
       - name: Load Docker image
         shell: bash
-        run: docker load < /tmp/kreuzcrawl-${{ matrix.variant == 'default' && 'default' || matrix.variant }}.tar.gz
+        run: docker load < /tmp/kreuzcrawl-${{ matrix.variant }}.tar.gz
 
-      - name: Test Docker image size
+      - name: Test Docker image size (core/full)
+        if: matrix.variant == 'default'
+        shell: bash
+        run: scripts/ci/docker/check-image-size.sh "${{ matrix.variant }}"
+
+      - name: Test Docker image size (cli)
+        if: matrix.variant == 'cli'
         shell: bash
         run: |
-          if [ "${{ matrix.variant }}" = "cli" ]; then
-            size_mb=$(docker inspect kreuzcrawl:cli --format='{{.Size}}' | awk '{print int($1/1024/1024)}')
-            echo "CLI image size: ${size_mb}MB"
-            if [ "$size_mb" -gt 200 ]; then
-              echo "::warning::CLI image is larger than 200MB (${size_mb}MB). Expected a minimal static binary image."
-            fi
-          else
-            scripts/ci/docker/check-image-size.sh "${{ matrix.variant }}"
+          size_mb=$(docker inspect kreuzcrawl:cli --format='{{.Size}}' | awk '{print int($1/1024/1024)}')
+          echo "CLI image size: ${size_mb}MB"
+          if [ "$size_mb" -gt 200 ]; then
+            echo "::warning::CLI image is larger than 200MB (${size_mb}MB). Expected a minimal static binary image."
           fi
 
-      - name: Run comprehensive feature tests
-        if: matrix.variant != 'cli'
+      - name: Run comprehensive feature tests (core/full)
+        if: matrix.variant == 'default'
         run: scripts/ci/docker/run-feature-tests.sh "${{ matrix.variant }}"
 
-      - name: Run configuration tests
-        if: matrix.variant != 'cli'
+      - name: Run configuration tests (core/full)
+        if: matrix.variant == 'default'
         run: scripts/ci/docker/run-config-tests.sh "${{ matrix.variant }}"
 
-      - name: Run API contract tests with schemathesis
-        if: matrix.variant != 'cli'
+      - name: Run API contract tests with schemathesis (core/full)
+        if: matrix.variant == 'default'
         run: |
           pip3 install schemathesis
           container_id=$(docker run -d -p 3000:3000 kreuzcrawl:${{ matrix.variant }})
@@ -600,7 +621,7 @@ jobs:
         run: scripts/ci/docker/run-cli-tests.sh
 
       - name: Upload test results
-        if: always() && matrix.variant != 'cli' && hashFiles('/tmp/kreuzcrawl-docker-test-results.json') != ''
+        if: always() && matrix.variant == 'default' && hashFiles('/tmp/kreuzcrawl-docker-test-results.json') != ''
         uses: actions/upload-artifact@v7
         with:
           name: docker-test-results-${{ matrix.variant }}
@@ -628,31 +649,33 @@ jobs:
           path: /tmp/docker-logs/
           retention-days: 7
 
-      - name: Clean up Docker resources
-        if: always()
+      - name: Clean up Docker resources (core/full)
+        if: always() && matrix.variant == 'default'
+        shell: bash
+        run: scripts/ci/docker/cleanup.sh "${{ matrix.variant }}"
+
+      - name: Clean up Docker resources (cli)
+        if: always() && matrix.variant == 'cli'
         shell: bash
         run: |
-          if [ "${{ matrix.variant }}" = "cli" ]; then
-            docker ps -aq --filter "name=kreuzcrawl-cli-test" | xargs -r docker rm -f || true
-            docker rmi kreuzcrawl:cli || true
-          else
-            scripts/ci/docker/cleanup.sh "${{ matrix.variant }}"
-          fi
+          docker ps -aq --filter "name=kreuzcrawl-cli-test" | xargs -r docker rm -f || true
+          docker rmi kreuzcrawl:cli || true
           docker system prune -af --volumes || true
 
-      - name: Summary
-        if: success()
+      - name: Summary (core/full)
+        if: success() && matrix.variant == 'default'
+        shell: bash
+        run: scripts/ci/docker/summary.sh "${{ matrix.variant }}" /tmp/kreuzcrawl-docker-test-results.json
+
+      - name: Summary (cli)
+        if: success() && matrix.variant == 'cli'
         shell: bash
         run: |
-          if [ "${{ matrix.variant }}" = "cli" ]; then
-            echo "Docker CLI image built and tested successfully!"
-            echo "Image: kreuzcrawl:cli"
-            if [ -f /tmp/kreuzcrawl-docker-cli-test-results.json ]; then
-              echo "Test Results:"
-              jq . < /tmp/kreuzcrawl-docker-cli-test-results.json || cat /tmp/kreuzcrawl-docker-cli-test-results.json
-            fi
-          else
-            scripts/ci/docker/summary.sh "${{ matrix.variant }}" /tmp/kreuzcrawl-docker-test-results.json
+          echo "Docker CLI image built and tested successfully!"
+          echo "Image: kreuzcrawl:cli"
+          if [ -f /tmp/kreuzcrawl-docker-cli-test-results.json ]; then
+            echo "Test Results:"
+            jq . < /tmp/kreuzcrawl-docker-cli-test-results.json || cat /tmp/kreuzcrawl-docker-cli-test-results.json
           fi
 
   # --- Stage 3: Build Bindings ---
@@ -661,7 +684,7 @@ jobs:
     needs: [rust-tests, changes, validate, validate-rust]
     name: "Build: Python (${{ matrix.target }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.python == 'true')
     timeout-minutes: 180
     strategy:
@@ -687,16 +710,16 @@ jobs:
 
       - name: Free disk space before setup
         if: startsWith(matrix.os, 'ubuntu')
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "true"
           show-final: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: python-${{ matrix.platform }}
           target: ${{ matrix.target }}
@@ -710,7 +733,7 @@ jobs:
         run: cargo clippy -p kreuzcrawl-py -- -D warnings
 
       - name: Setup Python
-        uses: kreuzcrawl-dev/actions/setup-python-env@v1
+        uses: kreuzberg-dev/actions/setup-python-env@v1
         with:
           python-version: "3.13"
           cache-prefix: wheels-${{ matrix.platform }}
@@ -720,7 +743,7 @@ jobs:
         run: scripts/ci/python/clean-artifacts.sh
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build CLI with features
         shell: bash
@@ -751,24 +774,6 @@ jobs:
           echo "Building Python wheels from source (no caching)"
           task python:build:ci
 
-      - name: Report cache statistics
-        if: always()
-        shell: bash
-        run: |
-          echo "=== Python Build Cache Statistics ==="
-          echo "Platform: ${{ matrix.platform }}"
-          echo "Target: ${{ matrix.target }}"
-          if [ -d "target/wheels" ]; then
-            echo "Wheels artifacts:"
-            du -sh target/wheels || echo "target/wheels: empty"
-            find target/wheels -maxdepth 1 -name "*.whl" -exec ls -lh {} \; 2>/dev/null | awk '{print $9, $5}' || echo "No wheel files found"
-          fi
-          if [ -d "packages/python/dist" ]; then
-            echo "Python dist artifacts:"
-            du -sh packages/python/dist || echo "packages/python/dist: empty"
-            find packages/python/dist -maxdepth 1 -name "*.whl" -exec ls -lh {} \; 2>/dev/null | awk '{print $9, $5}' || echo "No dist wheel files found"
-          fi
-
       - name: Upload wheels
         uses: actions/upload-artifact@v7
         with:
@@ -778,13 +783,13 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   build-python-sdist:
     needs: [rust-tests, build-ffi, changes, validate, validate-rust]
     name: "Build: Python Sdist"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.python == 'true')
     timeout-minutes: 180
     runs-on: ubuntu-latest
@@ -792,7 +797,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: python-sdist
           use-sccache: "true"
@@ -800,13 +805,13 @@ jobs:
           shared-core-cache: "true"
 
       - name: Setup Python
-        uses: kreuzcrawl-dev/actions/setup-python-env@v1
+        uses: kreuzberg-dev/actions/setup-python-env@v1
         with:
           python-version: "3.13"
           cache-prefix: sdist
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build sdist
         shell: bash
@@ -823,7 +828,7 @@ jobs:
     needs: [rust-tests, build-ffi, changes, validate, validate-rust]
     name: "Build: Node (${{ matrix.target }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.typescript == 'true')
     timeout-minutes: ${{ matrix.os == 'windows-latest' && 360 || (matrix.os == 'ubuntu-24.04-arm' && 240 || 180) }}
     # Serialize matrix jobs to prevent concurrent cache API writes that trigger rate limits
@@ -875,16 +880,16 @@ jobs:
 
       - name: Free disk space before setup
         if: startsWith(matrix.os, 'ubuntu')
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "true"
           show-final: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: node-${{ matrix.platform }}
           target: ${{ matrix.target }}
@@ -898,14 +903,14 @@ jobs:
         run: cargo clippy -p kreuzcrawl-node -- -D warnings
 
       - name: Setup Node
-        uses: kreuzcrawl-dev/actions/setup-node-workspace@v1
+        uses: kreuzberg-dev/actions/setup-node-workspace@v1
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build or restore Node bindings from cache
         id: node
-        uses: kreuzcrawl-dev/actions/build-and-cache-binding@v1
+        uses: kreuzberg-dev/actions/build-and-cache-binding@v1
         with:
           binding-name: node
           platform: ${{ matrix.platform }}
@@ -921,15 +926,6 @@ jobs:
             Cargo.lock
             crates/kreuzcrawl-node/package.json
             crates/kreuzcrawl-node/pnpm-lock.yaml
-
-      - name: Report Node binding artifacts size
-        shell: bash
-        run: |
-          echo "=== Node Binding Artifacts ==="
-          if [ -d "crates/kreuzcrawl-node" ]; then
-            du -sh crates/kreuzcrawl-node
-            find crates/kreuzcrawl-node -maxdepth 1 \( -name "*.node" -o -name "*.tgz" -o -name "index.js" \) -exec ls -lh {} \;
-          fi
 
       - name: Pack Node package
         shell: bash
@@ -964,13 +960,13 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   build-ruby:
     needs: [rust-tests, build-ffi, changes, validate, validate-rust]
     name: "Build: Ruby Gem (${{ matrix.os }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.ruby == 'true')
     timeout-minutes: 180
     strategy:
@@ -989,13 +985,13 @@ jobs:
 
       - name: Free disk space before setup
         if: startsWith(matrix.os, 'ubuntu')
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "true"
           show-final: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Verify OpenSSL setup
         shell: bash
@@ -1012,10 +1008,10 @@ jobs:
           fi
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: ruby-${{ matrix.os }}
           toolchain: ${{ runner.os == 'Windows' && 'stable-x86_64-pc-windows-msvc' || '' }}
@@ -1214,13 +1210,13 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   build-php:
     needs: [rust-tests, build-ffi, changes, validate, validate-rust]
     name: "Build: PHP (${{ matrix.os }}, PHP ${{ matrix.php-version }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.php == 'true')
     timeout-minutes: 240
     strategy:
@@ -1236,17 +1232,17 @@ jobs:
 
       - name: Free disk space before setup
         if: startsWith(matrix.os, 'ubuntu')
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "true"
           show-final: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
         id: rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: php-${{ matrix.os }}
           use-sccache: "true"
@@ -1275,17 +1271,6 @@ jobs:
           extensions: ffi
           tools: composer
 
-      - name: Export PHP build config
-        if: matrix.os != 'windows-latest'
-        shell: bash
-        run: |
-          PHP_CONFIG_BIN="$(command -v php-config || true)"
-          if [ -z "$PHP_CONFIG_BIN" ]; then
-            echo "php-config not found in PATH" >&2
-            exit 1
-          fi
-          echo "PHP_CONFIG=$PHP_CONFIG_BIN" >> "$GITHUB_ENV"
-
       - name: Print PHP environment
         shell: bash
         run: |
@@ -1304,19 +1289,8 @@ jobs:
         working-directory: packages/php
         run: composer install --no-progress --prefer-dist
 
-      - name: Export macOS PHP linker flags
-        if: matrix.os == 'macos-latest'
-        shell: bash
-        run: |
-          EXTRA_FLAGS="-C link-arg=-Wl,-undefined,dynamic_lookup"
-          if [ -n "${RUSTFLAGS:-}" ]; then
-            echo "RUSTFLAGS=${RUSTFLAGS} ${EXTRA_FLAGS}" >> "$GITHUB_ENV"
-          else
-            echo "RUSTFLAGS=${EXTRA_FLAGS}" >> "$GITHUB_ENV"
-          fi
-
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build FFI library
         id: ffi
@@ -1336,13 +1310,13 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   build-wasm:
     needs: [rust-tests, build-ffi, changes, validate, validate-rust]
     name: "Build: WASM (${{ matrix.os }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.wasm == 'true')
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
@@ -1367,7 +1341,7 @@ jobs:
         id: checkout
 
       - name: Install WASI SDK
-        uses: kreuzcrawl-dev/actions/install-wasi-sdk@v1
+        uses: kreuzberg-dev/actions/install-wasi-sdk@v1
 
       - name: Configure WASM C compiler
         shell: bash
@@ -1376,7 +1350,7 @@ jobs:
           echo "AR_wasm32_unknown_unknown=${WASI_SDK_PATH}/bin/ar" >> "$GITHUB_ENV"
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: wasm-build-${{ matrix.target }}
           use-sccache: "true"
@@ -1385,18 +1359,18 @@ jobs:
           shared-core-cache: "true"
 
       - name: Setup Node
-        uses: kreuzcrawl-dev/actions/setup-node-workspace@v1
+        uses: kreuzberg-dev/actions/setup-node-workspace@v1
 
       - name: Install wasm-pack
         shell: bash
         run: scripts/ci/wasm/install-wasm-pack.sh
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build or restore WASM bindings from cache
         id: wasm
-        uses: kreuzcrawl-dev/actions/build-and-cache-binding@v1
+        uses: kreuzberg-dev/actions/build-and-cache-binding@v1
         with:
           binding-name: wasm
           platform: ${{ matrix.os }}
@@ -1424,13 +1398,13 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   build-java:
     needs: [rust-tests, build-ffi, changes, validate, validate-rust]
     name: "Build: Java (${{ matrix.os }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.java == 'true' || needs.changes.outputs.ffi == 'true')
     timeout-minutes: 240
     strategy:
@@ -1444,16 +1418,16 @@ jobs:
 
       - name: Free disk space before setup
         if: runner.os == 'Linux'
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "true"
           show-final: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: java-${{ matrix.os }}
           use-sccache: "true"
@@ -1468,10 +1442,10 @@ jobs:
           java-version: "25"
 
       - name: Setup Maven 3.9.11
-        uses: kreuzcrawl-dev/actions/setup-maven@v1
+        uses: kreuzberg-dev/actions/setup-maven@v1
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Download FFI artifacts
         uses: actions/download-artifact@v8
@@ -1528,13 +1502,13 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   build-csharp:
     needs: [rust-tests, build-ffi, changes, validate, validate-rust]
     name: "Build: C# (${{ matrix.os }})"
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.csharp == 'true' || needs.changes.outputs.ffi == 'true')
     timeout-minutes: 240
     strategy:
@@ -1554,10 +1528,10 @@ jobs:
           git reset --hard HEAD
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: csharp-${{ matrix.os }}
           use-sccache: "true"
@@ -1588,7 +1562,7 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Download FFI artifacts
         uses: actions/download-artifact@v8
@@ -1622,7 +1596,7 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   # --- Stage 4: Test ---
 
@@ -1630,7 +1604,7 @@ jobs:
     name: "Validate: TypeScript Types"
     needs: [build-node, build-wasm, changes]
     if: |
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.typescript == 'true' || needs.changes.outputs.wasm == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -1638,22 +1612,22 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: ts-typecheck
 
       - name: Setup Node
-        uses: kreuzcrawl-dev/actions/setup-node-workspace@v1
+        uses: kreuzberg-dev/actions/setup-node-workspace@v1
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Install wasm-pack
         run: scripts/ci/wasm/install-wasm-pack.sh
         shell: bash
 
       - name: Install WASI SDK
-        uses: kreuzcrawl-dev/actions/install-wasi-sdk@v1
+        uses: kreuzberg-dev/actions/install-wasi-sdk@v1
 
       - name: Cache TypeScript build artifacts
         uses: actions/cache@v5
@@ -1673,7 +1647,7 @@ jobs:
 
   test-python:
     name: "Test: Python (${{ matrix.os }})"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     needs: [build-python]
     timeout-minutes: 180
     strategy:
@@ -1690,6 +1664,8 @@ jobs:
             coverage: false
     runs-on: ${{ matrix.os }}
     env:
+      HF_HOME: ~/.cache/huggingface
+      TRANSFORMERS_CACHE: ~/.cache/huggingface
       RUSTC_WRAPPER: ""
     steps:
       - uses: actions/checkout@v6
@@ -1701,7 +1677,7 @@ jobs:
         run: scripts/ci/python/free-disk-space.sh
 
       - name: Setup Python
-        uses: kreuzcrawl-dev/actions/setup-python-env@v1
+        uses: kreuzberg-dev/actions/setup-python-env@v1
         with:
           python-version: "3.13"
           cache-prefix: test-py-3.13
@@ -1721,11 +1697,7 @@ jobs:
         run: scripts/ci/python/install-spacy-model.sh
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
-
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Run Python tests
         shell: bash
@@ -1742,7 +1714,7 @@ jobs:
 
   test-node:
     name: "Test: TypeScript (${{ matrix.os }})"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     needs: [build-node]
     timeout-minutes: 180
     strategy:
@@ -1767,10 +1739,10 @@ jobs:
         id: checkout
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Node
-        uses: kreuzcrawl-dev/actions/setup-node-workspace@v1
+        uses: kreuzberg-dev/actions/setup-node-workspace@v1
 
       - name: Download Node bindings
         uses: actions/download-artifact@v8
@@ -1786,7 +1758,7 @@ jobs:
           set +x
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Run TypeScript tests (Node.js)
         shell: bash
@@ -1813,7 +1785,7 @@ jobs:
 
   test-ruby:
     name: "Test: Ruby (${{ matrix.os }})"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     needs: [build-ruby]
     timeout-minutes: 180
     strategy:
@@ -1828,10 +1800,10 @@ jobs:
         id: checkout
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: ruby-test-${{ matrix.os }}
           use-sccache: "true"
@@ -1903,6 +1875,7 @@ jobs:
         shell: bash
         run: |
           source scripts/lib/library-paths.sh
+          setup_onnx_paths
           {
             echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}"
             echo "DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH:-}"
@@ -1919,7 +1892,7 @@ jobs:
 
   test-php:
     name: "Test: PHP (${{ matrix.os }}, PHP 8.4)"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     needs: [build-php]
     timeout-minutes: 240
     strategy:
@@ -1935,7 +1908,7 @@ jobs:
 
       - name: Setup Rust
         id: rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: php-test-${{ matrix.os }}
           use-sccache: "true"
@@ -1962,18 +1935,7 @@ jobs:
         run: composer install --no-progress --prefer-dist
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
-
-      - name: Export macOS PHP linker flags
-        if: matrix.os == 'macos-latest'
-        shell: bash
-        run: |
-          EXTRA_FLAGS="-C link-arg=-Wl,-undefined,dynamic_lookup"
-          if [ -n "${RUSTFLAGS:-}" ]; then
-            echo "RUSTFLAGS=${RUSTFLAGS} ${EXTRA_FLAGS}" >> "$GITHUB_ENV"
-          else
-            echo "RUSTFLAGS=${EXTRA_FLAGS}" >> "$GITHUB_ENV"
-          fi
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build kreuzcrawl-php
         id: ffi
@@ -2007,7 +1969,7 @@ jobs:
     if: |
       always() && !cancelled() &&
       needs.build-ffi.result == 'success' &&
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.core == 'true' || needs.changes.outputs.ffi == 'true')
     needs: [build-ffi, changes]
     timeout-minutes: 240
@@ -2026,7 +1988,7 @@ jobs:
         run: scripts/ci/go/debug-build-environment.sh
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -2053,7 +2015,7 @@ jobs:
         run: scripts/ci/go/make-ffi-executable-unix.sh
 
       - name: Setup Go CGO environment
-        uses: kreuzcrawl-dev/actions/setup-go-cgo-env@v1
+        uses: kreuzberg-dev/actions/setup-go-cgo-env@v1
         with:
           ffi-lib-dir: "target/release"
           enable-rpath: "true"
@@ -2067,7 +2029,7 @@ jobs:
         run: scripts/ci/go/verify-cgo-config.sh
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Run Go tests
         shell: bash
@@ -2091,6 +2053,7 @@ jobs:
               echo "::endgroup::"
               exit 1
             elif grep -qE "^ok[[:space:]]|^--- PASS:" "$TEST_OUTPUT_FILE"; then
+              echo "::warning::Exit code $GO_TEST_EXIT detected but all individual tests passed - known PDFium cleanup issue"
               rm -f "$TEST_OUTPUT_FILE"
               echo "::endgroup::"
               exit 0
@@ -2156,6 +2119,7 @@ jobs:
               echo "::endgroup::"
               exit 1
             elif grep -qE "^ok[[:space:]]|^--- PASS:" "$TEST_OUTPUT_FILE"; then
+              echo "::warning::Exit code $E2E_TEST_EXIT detected but all E2E tests passed - known PDFium cleanup issue"
               rm -f "$TEST_OUTPUT_FILE"
               echo "::endgroup::"
               exit 0
@@ -2180,7 +2144,7 @@ jobs:
 
   test-java:
     name: "Test: Java (${{ matrix.os }})"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     needs: [build-java]
     timeout-minutes: 240
     strategy:
@@ -2195,7 +2159,7 @@ jobs:
         id: checkout
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -2205,10 +2169,10 @@ jobs:
           java-version: "25"
 
       - name: Setup Maven 3.9.11
-        uses: kreuzcrawl-dev/actions/setup-maven@v1
+        uses: kreuzberg-dev/actions/setup-maven@v1
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Download JAR
         uses: actions/download-artifact@v8
@@ -2267,15 +2231,6 @@ jobs:
           KREUZBERG_KEYWORDS_YAKE_AVAILABLE: "1"
         run: task -vv java:e2e:test
 
-      - name: Upload Java unit test reports
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: java-unit-reports-${{ matrix.os }}
-          path: packages/java/target/surefire-reports
-          if-no-files-found: ignore
-          retention-days: 7
-
       - name: Upload JVM crash logs
         if: always()
         uses: actions/upload-artifact@v7
@@ -2285,18 +2240,9 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Upload Java E2E test reports
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: java-e2e-reports-${{ matrix.os }}
-          path: e2e/java/target/surefire-reports
-          if-no-files-found: ignore
-          retention-days: 7
-
   test-csharp:
     name: "Test: C# (${{ matrix.os }})"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     needs: [build-csharp]
     timeout-minutes: 240
     strategy:
@@ -2349,7 +2295,7 @@ jobs:
         run: mkdir -p packages/csharp/target/crash-dumps
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Run C# tests
         env:
@@ -2390,7 +2336,7 @@ jobs:
     if: |
       always() && !cancelled() &&
       needs.build-ffi.result == 'success' &&
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.elixir == 'true' || needs.changes.outputs.core == 'true' || needs.changes.outputs.ffi == 'true')
     needs: [build-ffi, changes]
     timeout-minutes: 240
@@ -2405,23 +2351,19 @@ jobs:
       - uses: actions/checkout@v6
         id: checkout
 
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-
       - name: Free disk space before setup
         if: startsWith(matrix.os, 'ubuntu')
-        uses: kreuzcrawl-dev/actions/free-disk-space-linux@v1
+        uses: kreuzberg-dev/actions/free-disk-space-linux@v1
         with:
           show-initial: "true"
           show-final: "true"
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
         id: rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: elixir-test-${{ matrix.os }}
           use-sccache: "false"
@@ -2459,7 +2401,7 @@ jobs:
           path: .
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Restore Elixir dependencies cache
         uses: actions/cache@v5
@@ -2495,6 +2437,7 @@ jobs:
         shell: bash
         run: |
           source scripts/lib/library-paths.sh
+          setup_onnx_paths
           {
             echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}"
             echo "DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH:-}"
@@ -2516,7 +2459,7 @@ jobs:
     if: |
       always() && !cancelled() &&
       needs.build-ffi.result == 'success' &&
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.ffi == 'true')
     needs: [build-ffi, changes]
     timeout-minutes: 60
@@ -2532,11 +2475,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         id: checkout
-
-      - name: Install system dependencies
-        if: runner.os != 'Windows'
-        with:
-          dest-dir: target/release
 
       - name: Download FFI library
         uses: actions/download-artifact@v8
@@ -2617,7 +2555,7 @@ jobs:
 
   test-wasm:
     name: "Test: WASM (${{ matrix.os }})"
-    if: github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     needs: [build-wasm]
     timeout-minutes: 180
     strategy:
@@ -2636,7 +2574,7 @@ jobs:
         id: checkout
 
       - name: Install WASI SDK
-        uses: kreuzcrawl-dev/actions/install-wasi-sdk@v1
+        uses: kreuzberg-dev/actions/install-wasi-sdk@v1
 
       - name: Configure WASM C compiler
         shell: bash
@@ -2645,7 +2583,7 @@ jobs:
           echo "AR_wasm32_unknown_unknown=${WASI_SDK_PATH}/bin/ar" >> "$GITHUB_ENV"
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: wasm-test-${{ matrix.os }}
           use-sccache: "true"
@@ -2653,7 +2591,7 @@ jobs:
           target: wasm32-unknown-unknown
 
       - name: Setup Node
-        uses: kreuzcrawl-dev/actions/setup-node-workspace@v1
+        uses: kreuzberg-dev/actions/setup-node-workspace@v1
 
       - name: Download WASM artifacts
         uses: actions/download-artifact@v8
@@ -2666,7 +2604,7 @@ jobs:
         run: scripts/ci/wasm/install-wasm-pack.sh
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Run WASM tests
         shell: bash
@@ -2677,14 +2615,14 @@ jobs:
 
       - name: Cleanup Rust cache
         if: always() && steps.checkout.outcome == 'success'
-        uses: kreuzcrawl-dev/actions/cleanup-rust-cache@v1
+        uses: kreuzberg-dev/actions/cleanup-rust-cache@v1
 
   test-cli:
     name: "Test: CLI (${{ matrix.os }})"
     if: |
       always() && !cancelled() &&
       needs.build-ffi.result == 'success' &&
-      github.repository == 'kreuzcrawl-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
+      github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.ffi == 'true' || needs.changes.outputs.rust == 'true')
     needs: [build-ffi, changes]
     timeout-minutes: 60
