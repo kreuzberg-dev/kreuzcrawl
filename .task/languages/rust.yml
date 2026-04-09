@@ -10,7 +10,6 @@ includes:
 
 vars:
   RUST_LOG: info
-  PDFIUM_VERSION: "7578"
   # On Windows, prepend MSVC bin path to avoid Git Bash link.exe conflict
   CARGO_PATH_PREFIX: '{{if eq OS "windows"}}{{._cfg.MSVC_BIN_PATH}}{{if ._cfg.MSVC_BIN_PATH}}:{{end}}{{end}}'
   # CMake path for Windows (needed for build scripts)
@@ -76,13 +75,10 @@ tasks:
     env:
       PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
       CMAKE: '{{.CMAKE_PATH}}'
-      PDFIUM_VERSION: '{{.PDFIUM_VERSION}}'
     cmds:
-      # Note: exclude benchmark-harness on Windows as jemalloc doesn't build with MSVC
-      # Note: exclude kreuzcrawl-pdfium-render because --all-features enables mutually exclusive static/dynamic linking
-      - cmd: cargo build --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm --exclude kreuzcrawl-pdfium-render
+      - cmd: cargo build --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [linux, darwin]
-      - cmd: cargo build --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm --exclude benchmark-harness --exclude kreuzcrawl-pdfium-render
+      - cmd: cargo build --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [windows]
 
   build:release:
@@ -90,11 +86,10 @@ tasks:
     env:
       PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
       CMAKE: '{{.CMAKE_PATH}}'
-      PDFIUM_VERSION: '{{.PDFIUM_VERSION}}'
     cmds:
-      - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm --exclude kreuzcrawl-pdfium-render
+      - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [linux, darwin]
-      - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm --exclude benchmark-harness --exclude kreuzcrawl-pdfium-render
+      - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [windows]
 
   build:ci:
@@ -102,12 +97,11 @@ tasks:
     env:
       PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
       CMAKE: '{{.CMAKE_PATH}}'
-      PDFIUM_VERSION: '{{.PDFIUM_VERSION}}'
       RUSTFLAGS: '-C debuginfo=2'
     cmds:
-      - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm --exclude kreuzcrawl-pdfium-render
+      - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [linux, darwin]
-      - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm --exclude benchmark-harness --exclude kreuzcrawl-pdfium-render
+      - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [windows]
 
   build:profiling:
@@ -119,7 +113,6 @@ tasks:
       RUSTFLAGS: '-g'
     cmds:
       - cargo build --workspace --release --features full,profiling,api,mcp,otel --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
-      - cargo build --manifest-path tools/benchmark-harness/Cargo.toml --release --features profiling
 
   cli:build:
     desc: Build CLI binary
@@ -251,8 +244,7 @@ tasks:
   cache:cleanup:
     desc: Clean up large build artifacts to reduce cache size (for CI)
     cmds:
-      - echo "Cleaning up large build artifacts to reduce cache size..."
-      - cmd: rm -rf target/*/build/kreuzcrawl-*/out/pdfium 2>/dev/null || true
+      - cmd: echo "Cleaning up large build artifacts to reduce cache size..."
         ignore_error: true
       - cmd: find target -type f -name "*.rlib" -size +10M -exec rm -f {} \; 2>/dev/null || true
         ignore_error: true
