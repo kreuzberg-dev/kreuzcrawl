@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
 use kreuzcrawl::{CrawlConfig, CrawlEngine, PerDomainThrottle, ProxyConfig};
 
 #[derive(Parser)]
-#[command(name = "kreuzcrawl", about = "High-performance web crawler and scraper")]
+#[command(name = "kreuzcrawl", about = "High-performance web crawler and scraper", version)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,

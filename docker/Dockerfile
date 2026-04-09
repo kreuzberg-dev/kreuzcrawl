@@ -32,7 +32,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/build/target \
     cargo build --release --package kreuzcrawl-cli \
-        --features "kreuzcrawl/api,kreuzcrawl/mcp,kreuzcrawl/warc,kreuzcrawl/ai,kreuzcrawl/tracing,kreuzcrawl/browser,kreuzcrawl/interact" && \
+        --features "kreuzcrawl-cli/api,kreuzcrawl-cli/mcp,kreuzcrawl/api,kreuzcrawl/mcp,kreuzcrawl/warc,kreuzcrawl/ai,kreuzcrawl/tracing,kreuzcrawl/browser,kreuzcrawl/interact" && \
     cp target/release/kreuzcrawl /build/kreuzcrawl && \
     strip /build/kreuzcrawl
 
