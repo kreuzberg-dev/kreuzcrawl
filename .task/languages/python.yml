@@ -69,7 +69,6 @@ tasks:
     desc: Run Python tests
     dir: packages/python
     env:
-      ORT_DYLIB_PATH: /opt/homebrew/lib/libonnxruntime.dylib
     cmds:
       - uv run pytest
 
@@ -78,7 +77,6 @@ tasks:
     dir: packages/python
     env:
       RUST_BACKTRACE: '1'
-      ORT_DYLIB_PATH: /opt/homebrew/lib/libonnxruntime.dylib
     cmds:
       - uv run pytest --cov --cov-report=html -vv -s --tb=long --log-cli-level=DEBUG
 
@@ -86,7 +84,6 @@ tasks:
     desc: Run Python tests with coverage report
     dir: packages/python
     env:
-      ORT_DYLIB_PATH: /opt/homebrew/lib/libonnxruntime.dylib
     cmds:
       - uv run pytest --cov --cov-report=html
 
