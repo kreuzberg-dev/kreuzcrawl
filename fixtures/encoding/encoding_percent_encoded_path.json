@@ -1,16 +1,16 @@
 {
-  "id": "encoding_percent_encoded_path",
-  "description": "Handles percent-encoded spaces and characters in URL paths",
-  "tags": ["encoding"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_inline": "<html><body><a href=\"/my%20page\">Spaced Page</a><a href=\"/caf%C3%A9\">Cafe</a><p>Content</p></body></html>"
-  },
-  "assertions": {
-    "html_not_empty": true,
-    "links": {
-      "min_count": 2
-    }
-  }
+	"id": "encoding_percent_encoded_path",
+	"description": "Handles percent-encoded spaces and characters in URL paths",
+	"tags": ["encoding"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_inline": "<html><body><a href=\"/my%20page\">Spaced Page</a><a href=\"/caf%C3%A9\">Cafe</a><p>Content</p></body></html>"
+	},
+	"assertions": {
+		"html_not_empty": true,
+		"links": {
+			"min_count": 2
+		}
+	}
 }

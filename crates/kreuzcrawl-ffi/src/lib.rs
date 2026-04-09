@@ -2202,6 +2202,26 @@ pub unsafe extern "C" fn kcrawl_crawl_result_cookies(ptr: *const kreuzcrawl::Cra
     }
 }
 
+/// Get the `normalized_urls` field from a `CrawlResult`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_crawl_result_normalized_urls(
+    ptr: *const kreuzcrawl::CrawlResult,
+) -> *mut std::ffi::c_char {
+    if ptr.is_null() {
+        return std::ptr::null_mut();
+    }
+    let obj = unsafe { &*ptr };
+    match serde_json::to_string(&obj.normalized_urls) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(_) => std::ptr::null_mut(),
+        },
+        Err(_) => std::ptr::null_mut(),
+    }
+}
+
 /// Create a `SitemapUrl` from a JSON string. Returns null on failure.
 /// # Safety
 /// JSON string must be valid UTF-8 and null-terminated.

@@ -1,38 +1,38 @@
 {
-  "id": "stream_depth_crawl",
-  "description": "Stream produces events for multi-depth crawl with link following",
-  "tags": ["stream", "depth"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body><a href=\"/child1\">C1</a><a href=\"/child2\">C2</a></body></html>"
-    },
-    {
-      "path": "/child1",
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body><a href=\"/grandchild\">GC</a></body></html>"
-    },
-    {
-      "path": "/child2",
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body><h1>Child 2</h1></body></html>"
-    },
-    {
-      "path": "/grandchild",
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body><h1>Grandchild</h1></body></html>"
-    }
-  ],
-  "config": {
-    "max_depth": 2,
-    "max_concurrent": 1
-  },
-  "assertions": {
-    "stream": {
-      "event_count_min": 5,
-      "has_page_event": true,
-      "has_complete_event": true
-    }
-  }
+	"id": "stream_depth_crawl",
+	"description": "Stream produces events for multi-depth crawl with link following",
+	"tags": ["stream", "depth"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body><a href=\"/child1\">C1</a><a href=\"/child2\">C2</a></body></html>"
+		},
+		{
+			"path": "/child1",
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body><a href=\"/grandchild\">GC</a></body></html>"
+		},
+		{
+			"path": "/child2",
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body><h1>Child 2</h1></body></html>"
+		},
+		{
+			"path": "/grandchild",
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body><h1>Grandchild</h1></body></html>"
+		}
+	],
+	"config": {
+		"max_depth": 2,
+		"max_concurrent": 1
+	},
+	"assertions": {
+		"stream": {
+			"event_count_min": 5,
+			"has_page_event": true,
+			"has_complete_event": true
+		}
+	}
 }

@@ -1,19 +1,19 @@
 {
-  "id": "robots_multiple_user_agents",
-  "description": "Picks the most specific user-agent block from robots.txt",
-  "tags": ["robots", "user-agent"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/plain"},
-    "body_file": "robots/multiple_agents.txt"
-  },
-  "config": {
-    "respect_robots_txt": true,
-    "user_agent": "SpecificBot"
-  },
-  "assertions": {
-    "robots": {
-      "is_allowed": true
-    }
-  }
+	"id": "robots_multiple_user_agents",
+	"description": "Picks the most specific user-agent block from robots.txt",
+	"tags": ["robots", "user-agent"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/plain" },
+		"body_file": "robots/multiple_agents.txt"
+	},
+	"config": {
+		"respect_robots_txt": true,
+		"user_agent": "SpecificBot"
+	},
+	"assertions": {
+		"robots": {
+			"is_allowed": true
+		}
+	}
 }

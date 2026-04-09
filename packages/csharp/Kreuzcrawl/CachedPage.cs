@@ -11,16 +11,16 @@ namespace Kreuzcrawl;
 public sealed class CachedPage
 {
     [JsonPropertyName("url")]
-    public required string Url { get; set; }
+    public string Url { get; set; } = "";
 
     [JsonPropertyName("statusCode")]
-    public required ushort StatusCode { get; set; }
+    public ushort StatusCode { get; set; } = 0;
 
     [JsonPropertyName("contentType")]
-    public required string ContentType { get; set; }
+    public string ContentType { get; set; } = "";
 
     [JsonPropertyName("body")]
-    public required string Body { get; set; }
+    public string Body { get; set; } = "";
 
     [JsonPropertyName("etag")]
     public string? Etag { get; set; } = null;
@@ -29,6 +29,6 @@ public sealed class CachedPage
     public string? LastModified { get; set; } = null;
 
     [JsonPropertyName("cachedAt")]
-    public required ulong CachedAt { get; set; }
+    public ulong CachedAt { get; set; } = 0;
 
 }

@@ -1,181 +1,260 @@
 version: "3"
 
+includes:
+  _cfg:
+    taskfile: .task/config/vars.yml
+    internal: true
+
+  rust:
+    taskfile: .task/languages/rust.yml
+  python:
+    taskfile: .task/languages/python.yml
+  node:
+    taskfile: .task/languages/node.yml
+  wasm:
+    taskfile: .task/languages/wasm.yml
+  ruby:
+    taskfile: .task/languages/ruby.yml
+  go:
+    taskfile: .task/languages/go.yml
+  java:
+    taskfile: .task/languages/java.yml
+  csharp:
+    taskfile: .task/languages/csharp.yml
+  php:
+    taskfile: .task/languages/php.yml
+  elixir:
+    taskfile: .task/languages/elixir.yml
+  c:
+    taskfile: .task/languages/c.yml
+
+  _build_wf:
+    taskfile: .task/workflows/build.yml
+    internal: true
+  _test_wf:
+    taskfile: .task/workflows/test.yml
+    internal: true
+  _lint_wf:
+    taskfile: .task/workflows/lint.yml
+    internal: true
+  _e2e_wf:
+    taskfile: .task/workflows/e2e.yml
+    internal: true
+
+  version:
+    taskfile: .task/tools/version-sync.yml
+  docker:
+    taskfile: .task/tools/docker.yml
+  _tools:
+    taskfile: .task/tools/general.yml
+    flatten: true
+
 vars:
-  BUILD_PROFILE: '{{.BUILD_PROFILE | default "dev"}}'
+  RUST_LOG: info
 
 tasks:
   setup:
-    desc: Install development dependencies
+    desc: "Install all dependencies and initialize project. Idempotent - safe to re-run anytime."
     cmds:
-      - cargo fetch
-      - prek install
-      - prek install --hook-type commit-msg
+      - cmd: >-
+          bash -c '
+          echo "Setting up sdkman...";
+          if [ ! -d "$HOME/.sdkman" ]; then
+            echo "Installing sdkman...";
+            curl -s "https://get.sdkman.io" | bash;
+          else
+            echo "sdkman is already installed";
+          fi;
+          echo "Loading sdkman and installing tools from .sdkmanrc...";
+          source "$HOME/.sdkman/bin/sdkman-init.sh";
+          sdk env install;
+          '
+        platforms: [linux, darwin]
+      - cmd: echo "Setting up sdkman (skipped on Windows - use scoop or manual installation)..."
+        platforms: [windows]
+      - echo "Installing language tools..."
+      - task: rust:install
+      - task: python:install
+      - task: node:install
+      - task: ruby:install
+      - task: java:install
+      - task: go:install
+      - task: elixir:install
+      - task: csharp:install
+      - task: php:install
+      - task: c:install
+      - echo "Setup complete - safe to re-run anytime"
 
   build:
-    desc: Build workspace
+    desc: Build core libraries and language bindings
     cmds:
-      - cargo build --workspace
-
-  build:release:
-    desc: Build workspace in release mode
-    cmds:
-      - cargo build --workspace --release
+      - task: rust:build
+      - task: python:build
+      - task: ruby:build
+      - task: node:build
+      - task: java:build
+      - task: csharp:build
+      - task: php:build
+      - task: elixir:build
+      - task: c:build
 
   test:
-    desc: Run all tests
-    cmds:
-      - cargo test --workspace
+    desc: Run test suites for all languages (in parallel)
+    deps:
+      - task: rust:test
+      - task: python:test
+      - task: ruby:test
+      - task: node:test
+      - task: java:test
+      - task: go:test
+      - task: csharp:test
+      - task: php:test
+      - task: elixir:test
+      - task: wasm:test
+      - task: c:test
 
-  test:browser:
-    desc: Run all tests with browser feature (requires Chrome/Chromium)
+  update:
+    desc: Update all dependencies to latest versions
     cmds:
-      - cargo test --workspace --features browser
+      - echo "Updating Rust dependencies..."
+      - task: rust:update
+      - echo "Updating Python dependencies..."
+      - task: python:update
+      - echo "Updating TypeScript dependencies..."
+      - task: node:update
+      - echo "Updating WASM dependencies..."
+      - task: wasm:update
+      - echo "Updating Ruby dependencies..."
+      - task: ruby:update
+      - echo "Updating Java dependencies..."
+      - task: java:update
+      - echo "Updating Go dependencies..."
+      - task: go:update
+      - echo "Updating C# dependencies..."
+      - task: csharp:update
+      - echo "Updating PHP dependencies..."
+      - task: php:update
+      - echo "Updating Elixir dependencies..."
+      - task: elixir:update
+      - echo "Updating C dependencies..."
+      - task: c:update
+      - echo "Updating prek dependencies..."
+      - prek autoupdate
+      - echo "All dependencies updated"
+
+  clean:
+    desc: Clean all build artifacts
+    cmds:
+      - task: rust:clean
+      - task: python:clean
+      - task: ruby:clean
+      - task: node:clean
+      - task: java:clean
+      - task: go:clean
+      - task: csharp:clean
+      - task: php:clean
+      - task: elixir:clean
+      - task: wasm:clean
+      - task: c:clean
+
+  build:all:
+    desc: Build all bindings across all languages
+    cmds:
+      - task: rust:build
+      - task: rust:ffi:build
+      - task: python:build
+      - task: node:build
+      - task: go:build
+      - task: java:build
+      - task: csharp:build
+      - task: wasm:build
+      - task: ruby:build
+      - task: php:build
+      - task: elixir:build
+      - task: c:build
+
+  build:all:dev:
+    desc: Build all bindings in debug mode
+    cmds:
+      - task: _build_wf:all:dev
+
+  build:all:release:
+    desc: Build all bindings in release mode (optimized)
+    cmds:
+      - task: _build_wf:all:release
+
+  build:all:ci:
+    desc: Build all bindings in CI mode
+    cmds:
+      - task: _build_wf:all:ci
+
+  test:all:
+    desc: Run all tests across all languages
+    cmds:
+      - task: _test_wf:all
+
+  test:all:parallel:
+    desc: Run all tests in parallel (using deps)
+    cmds:
+      - task: _test_wf:all:parallel
+
+  test:all:ci:
+    desc: Run all tests in CI mode (with extra diagnostics)
+    cmds:
+      - task: _test_wf:all:ci
 
   lint:
-    desc: Run prek hooks
+    desc: Run all linters and formatters via prek (pre-commit framework)
     cmds:
       - prek run --all-files
 
-  format:
-    desc: Format code
-    cmds:
-      - cargo fmt --all
-
   check:
-    desc: Check without building
+    desc: Run all linting and formatting checks via prek
     cmds:
-      - cargo check --workspace --all-targets
+      - task: lint
 
-  check:browser:
-    desc: Check with browser feature
+  e2e:generate:all:
+    desc: Generate all E2E tests from fixtures across all supported languages
     cmds:
-      - cargo check --workspace --all-targets --features browser
+      - task: rust:e2e:generate
+      - task: python:e2e:generate
+      - task: node:e2e:generate
+      - task: go:e2e:generate
+      - task: java:e2e:generate
+      - task: csharp:e2e:generate
+      - task: wasm:e2e:deno:generate
+      - task: wasm:e2e:workers:generate
+      - task: ruby:e2e:generate
+      - task: php:e2e:generate
+      - task: elixir:e2e:generate
+      - task: c:e2e:generate
 
-  browser:install:
-    desc: Install Chromium for browser feature testing
+  e2e:test:all:
+    desc: Run all E2E tests across all supported languages
     cmds:
-      - |
-        if command -v chromium &>/dev/null || command -v chromium-browser &>/dev/null || command -v google-chrome &>/dev/null; then
-          echo "Chrome/Chromium already installed"
-        elif [ "$(uname)" = "Darwin" ]; then
-          brew install --cask chromium
-        else
-          sudo apt-get update && sudo apt-get install -y chromium-browser
-        fi
+      - task: rust:e2e:test
+      - task: python:e2e:test
+      - task: node:e2e:test
+      - task: go:e2e:test
+      - task: java:e2e:test
+      - task: csharp:e2e:test
+      - task: wasm:e2e:deno:test
+      - task: wasm:e2e:workers:test
+      - task: ruby:e2e:test
+      - task: php:e2e:test
+      - task: c:e2e:test
 
-  clean:
-    desc: Clean build artifacts
+  e2e:lint:all:
+    desc: Lint all generated E2E test code
     cmds:
-      - cargo clean
-
-  e2e:generate:
-    desc: Generate E2E test suites from fixtures (with format + lint)
-    cmds:
-      - cargo run -p kreuzcrawl-e2e-generator -- generate --fixtures fixtures --output e2e
-      - task: e2e:format
-      - task: e2e:lint
-
-  e2e:format:
-    desc: Format generated E2E test code
-    cmds:
-      - cargo fmt --manifest-path e2e/rust/Cargo.toml
-
-  e2e:lint:
-    desc: Lint generated E2E code with clippy
-    cmds:
-      - cargo clippy --manifest-path e2e/rust/Cargo.toml -- -D warnings
-
-  e2e:test:
-    desc: Run generated E2E tests
-    deps: [e2e:generate]
-    cmds:
-      - cargo test --manifest-path e2e/rust/Cargo.toml
-
-  e2e:list:
-    desc: List all E2E fixtures
-    cmds:
-      - cargo run -p kreuzcrawl-e2e-generator -- list --fixtures fixtures
-
-  e2e:verify:
-    desc: Full E2E pipeline (generate → format → lint)
-    cmds:
-      - task: e2e:generate
-      - git diff --exit-code e2e/
-
-  e2e:verify:ci:
-    desc: CI verification - ensure generated code is formatted, lint-clean, and up-to-date
-    cmds:
-      - cargo run -p kreuzcrawl-e2e-generator -- generate --fixtures fixtures --output e2e
-      - cargo fmt --manifest-path e2e/rust/Cargo.toml --check
-      - cargo clippy --manifest-path e2e/rust/Cargo.toml -- -D warnings
-      - git diff --exit-code e2e/
-
-  # --- Docker tasks ---
-
-  docker:build:
-    desc: Build Docker image (API server)
-    cmds:
-      - docker build -f docker/Dockerfile -t kreuzcrawl:dev .
-
-  docker:build:cli:
-    desc: Build Docker image (CLI only)
-    cmds:
-      - docker build -f docker/Dockerfile.cli -t kreuzcrawl:cli .
-
-  docker:run:
-    desc: Run API server in Docker
-    deps: [docker:build]
-    cmds:
-      - docker run -p 3000:3000 kreuzcrawl:dev
-
-  # --- Schemathesis API contract tests ---
-
-  schemathesis:
-    desc: Run schemathesis API contract tests (requires running server on :3000)
-    cmds:
-      - pip3 install schemathesis
-      - >-
-        schemathesis run http://localhost:3000/openapi.json
-        --max-examples=10
-        --request-timeout=30000
-        --checks not_a_server_error,status_code_conformance,content_type_conformance,response_schema_conformance,negative_data_rejection
-
-  # --- Feature-gated test tasks ---
-
-  test:api:
-    desc: Run API tests
-    cmds:
-      - cargo test --workspace --features api
-
-  test:mcp:
-    desc: Run MCP tests
-    cmds:
-      - cargo test --workspace --features mcp
-
-  test:all-features:
-    desc: Run all tests with all features
-    cmds:
-      - cargo test --workspace --features "warc,interact,mcp,api,ai"
-
-  # --- Python tasks ---
-
-  python:install:
-    desc: Install Python dev dependencies via uv
-    cmds:
-      - uv sync --no-install-workspace --no-install-project
-
-  python:lint:
-    desc: Run Python linters
-    cmds:
-      - uv run ruff check --fix
-      - uv run ruff format
-
-  python:pyproject:format:
-    desc: Format pyproject.toml
-    cmds:
-      - uv run pyproject-fmt pyproject.toml
-
-  python:pyproject:validate:
-    desc: Validate pyproject.toml
-    cmds:
-      - uv run validate-pyproject pyproject.toml
+      - task: rust:e2e:lint
+      - task: python:e2e:lint
+      - task: node:e2e:lint
+      - task: go:e2e:lint
+      - task: java:e2e:lint
+      - task: csharp:e2e:lint
+      - task: wasm:e2e:deno:lint
+      - task: wasm:e2e:workers:lint
+      - task: ruby:e2e:lint
+      - task: php:e2e:lint
+      - task: c:e2e:lint

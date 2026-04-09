@@ -1,30 +1,30 @@
 {
-  "id": "crawl_query_param_dedup",
-  "description": "Deduplicates URLs with same query params in different order",
-  "tags": ["crawl", "normalization"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><a href=\"/search?q=test&lang=en\">Search 1</a><a href=\"/search?lang=en&q=test\">Search 2</a></body></html>"
-    },
-    {
-      "path": "/search",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Search Results</h1></body></html>"
-    }
-  ],
-  "config": {
-    "max_depth": 1,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "crawl": {
-      "unique_normalized_urls": 2
-    }
-  }
+	"id": "crawl_query_param_dedup",
+	"description": "Deduplicates URLs with same query params in different order",
+	"tags": ["crawl", "normalization"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><a href=\"/search?q=test&lang=en\">Search 1</a><a href=\"/search?lang=en&q=test\">Search 2</a></body></html>"
+		},
+		{
+			"path": "/search",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Search Results</h1></body></html>"
+		}
+	],
+	"config": {
+		"max_depth": 1,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"crawl": {
+			"unique_normalized_urls": 2
+		}
+	}
 }

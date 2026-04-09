@@ -1,17 +1,17 @@
 {
-  "id": "metadata_favicons",
-  "description": "Extracts favicon link tags including apple-touch-icon",
-  "tags": ["metadata"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/html; charset=utf-8" },
-    "body_file": "html/favicon_variants.html"
-  },
-  "assertions": {
-    "status_code": 200,
-    "favicons": {
-      "count": 5,
-      "has_apple_touch": true
-    }
-  }
+	"id": "metadata_favicons",
+	"description": "Extracts favicon link tags including apple-touch-icon",
+	"tags": ["metadata"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/favicon_variants.html"
+	},
+	"assertions": {
+		"status_code": 200,
+		"favicons": {
+			"count": 5,
+			"has_apple_touch": true
+		}
+	}
 }

@@ -1,15 +1,15 @@
 {
-  "id": "links_rel_attributes",
-  "description": "Preserves rel=nofollow and rel=canonical attributes",
-  "tags": ["links"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/html; charset=utf-8" },
-    "body_file": "html/complex_links.html"
-  },
-  "assertions": {
-    "links": {
-      "min_count": 1
-    }
-  }
+	"id": "links_rel_attributes",
+	"description": "Preserves rel=nofollow and rel=canonical attributes",
+	"tags": ["links"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/complex_links.html"
+	},
+	"assertions": {
+		"links": {
+			"min_count": 1
+		}
+	}
 }

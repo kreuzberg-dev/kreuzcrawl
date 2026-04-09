@@ -1,19 +1,19 @@
 {
-  "id": "error_dns_resolution",
-  "description": "Handles DNS resolution failure gracefully",
-  "tags": ["error", "network"],
-  "config": {
-    "respect_robots_txt": false,
-    "request_timeout_ms": 5000
-  },
-  "assertions": {
-    "error": {
-      "is_error": true,
-      "error_type": "dns"
-    }
-  },
-  "skip": {
-    "requires_network": true,
-    "notes": "Requires real DNS resolution to fail"
-  }
+	"id": "error_dns_resolution",
+	"description": "Handles DNS resolution failure gracefully",
+	"tags": ["error", "network"],
+	"config": {
+		"respect_robots_txt": false,
+		"request_timeout_ms": 5000
+	},
+	"assertions": {
+		"error": {
+			"is_error": true,
+			"error_type": "dns"
+		}
+	},
+	"skip": {
+		"requires_network": true,
+		"notes": "Requires real DNS resolution to fail"
+	}
 }

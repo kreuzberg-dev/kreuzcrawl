@@ -10,4 +10,7 @@ public record ActionResult(
     Optional<String> data,
     Optional<String> error
 ) {
+    public static ActionResultBuilder builder() {
+        return new ActionResultBuilder();
+    }
 }

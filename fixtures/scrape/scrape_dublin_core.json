@@ -1,18 +1,18 @@
 {
-  "id": "scrape_dublin_core",
-  "description": "Extracts Dublin Core metadata from a page",
-  "tags": ["scrape", "metadata", "dublin-core"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/html; charset=utf-8" },
-    "body_file": "html/dublin_core.html"
-  },
-  "assertions": {
-    "status_code": 200,
-    "dublin_core": {
-      "has_dc_title": true,
-      "dc_title": "Effects of Climate Change on Marine Biodiversity",
-      "dc_creator": "Dr. Jane Smith"
-    }
-  }
+	"id": "scrape_dublin_core",
+	"description": "Extracts Dublin Core metadata from a page",
+	"tags": ["scrape", "metadata", "dublin-core"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/dublin_core.html"
+	},
+	"assertions": {
+		"status_code": 200,
+		"dublin_core": {
+			"has_dc_title": true,
+			"dc_title": "Effects of Climate Change on Marine Biodiversity",
+			"dc_creator": "Dr. Jane Smith"
+		}
+	}
 }

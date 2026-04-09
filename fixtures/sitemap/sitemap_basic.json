@@ -1,16 +1,16 @@
 {
-  "id": "sitemap_basic",
-  "description": "Parses a standard urlset sitemap",
-  "tags": ["sitemap"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "application/xml" },
-    "body_file": "xml/sitemap_basic.xml"
-  },
-  "assertions": {
-    "sitemap": {
-      "url_count": 4,
-      "has_lastmod": true
-    }
-  }
+	"id": "sitemap_basic",
+	"description": "Parses a standard urlset sitemap",
+	"tags": ["sitemap"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "application/xml" },
+		"body_file": "xml/sitemap_basic.xml"
+	},
+	"assertions": {
+		"sitemap": {
+			"url_count": 4,
+			"has_lastmod": true
+		}
+	}
 }

@@ -1,18 +1,18 @@
 {
-  "id": "content_pdf_no_extension",
-  "description": "Detects PDF content by Content-Type header when URL has no .pdf extension",
-  "tags": ["content", "pdf"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "application/pdf"},
-    "body_inline": "%PDF-1.4 fake pdf content"
-  },
-  "config": {
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "content": {
-      "is_pdf": true
-    }
-  }
+	"id": "content_pdf_no_extension",
+	"description": "Detects PDF content by Content-Type header when URL has no .pdf extension",
+	"tags": ["content", "pdf"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "application/pdf" },
+		"body_inline": "%PDF-1.4 fake pdf content"
+	},
+	"config": {
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"content": {
+			"is_pdf": true
+		}
+	}
 }

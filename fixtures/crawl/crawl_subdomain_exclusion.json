@@ -1,33 +1,33 @@
 {
-  "id": "crawl_subdomain_exclusion",
-  "description": "Stays on exact domain and skips subdomain links",
-  "tags": ["crawl", "subdomain"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><a href=\"/local\">Local</a><a href=\"https://sub.example.com/page\">Subdomain</a></body></html>"
-    },
-    {
-      "path": "/local",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Local Page</h1></body></html>"
-    }
-  ],
-  "config": {
-    "max_depth": 1,
-    "allow_subdomains": false,
-    "stay_on_domain": true,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "crawl": {
-      "pages_crawled": 2,
-      "stayed_on_domain": true
-    }
-  }
+	"id": "crawl_subdomain_exclusion",
+	"description": "Stays on exact domain and skips subdomain links",
+	"tags": ["crawl", "subdomain"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><a href=\"/local\">Local</a><a href=\"https://sub.example.com/page\">Subdomain</a></body></html>"
+		},
+		{
+			"path": "/local",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Local Page</h1></body></html>"
+		}
+	],
+	"config": {
+		"max_depth": 1,
+		"allow_subdomains": false,
+		"stay_on_domain": true,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"crawl": {
+			"pages_crawled": 2,
+			"stayed_on_domain": true
+		}
+	}
 }

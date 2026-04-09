@@ -1,34 +1,34 @@
 {
-  "id": "cookies_set_cookie_response",
-  "description": "Respects Set-Cookie header from server responses",
-  "tags": ["cookies"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {
-        "content-type": "text/html; charset=utf-8",
-        "set-cookie": "tracking=xyz789; Path=/; HttpOnly"
-      },
-      "body_inline": "<html><body><a href=\"/next\">Next</a></body></html>"
-    },
-    {
-      "path": "/next",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Next Page</h1></body></html>"
-    }
-  ],
-  "config": {
-    "max_depth": 1,
-    "cookies_enabled": true,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "cookies": {
-      "has_cookie": "tracking"
-    }
-  }
+	"id": "cookies_set_cookie_response",
+	"description": "Respects Set-Cookie header from server responses",
+	"tags": ["cookies"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"method": "GET",
+			"status_code": 200,
+			"headers": {
+				"content-type": "text/html; charset=utf-8",
+				"set-cookie": "tracking=xyz789; Path=/; HttpOnly"
+			},
+			"body_inline": "<html><body><a href=\"/next\">Next</a></body></html>"
+		},
+		{
+			"path": "/next",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Next Page</h1></body></html>"
+		}
+	],
+	"config": {
+		"max_depth": 1,
+		"cookies_enabled": true,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"cookies": {
+			"has_cookie": "tracking"
+		}
+	}
 }

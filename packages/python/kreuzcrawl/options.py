@@ -72,10 +72,6 @@ class AssetCategory(str, Enum):
     OTHER = "other"
 
 
-class ProxyConfig:
-    """Placeholder for ProxyConfig type."""
-
-
 @dataclass
 class ExtractionMeta:
     """Metadata about an LLM extraction pass."""
@@ -94,6 +90,20 @@ class ExtractionMeta:
 
     chunks_processed: int = 0
     """Number of content chunks sent to the LLM."""
+
+
+@dataclass
+class ProxyConfig:
+    """Proxy configuration for HTTP requests."""
+
+    url: str = ""
+    """Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080")."""
+
+    username: str | None = ""
+    """Optional username for proxy authentication."""
+
+    password: str | None = ""
+    """Optional password for proxy authentication."""
 
 
 @dataclass
@@ -267,6 +277,26 @@ class InteractionResult:
 
     screenshot: bytes | None = b""
     """Screenshot taken after all actions, if requested."""
+
+
+@dataclass
+class ActionResult:
+    """Result from a single page action execution."""
+
+    action_index: int = 0
+    """Zero-based index of the action in the sequence."""
+
+    action_type: str = ""
+    """The type of action that was executed."""
+
+    success: bool = False
+    """Whether the action completed successfully."""
+
+    data: str | None = ""
+    """Action-specific return data (screenshot bytes, JS return value, scraped HTML)."""
+
+    error: str | None = ""
+    """Error message if the action failed."""
 
 
 @dataclass
@@ -445,6 +475,9 @@ class CrawlResult:
     cookies: list[Any] = field(default_factory=list)
     """Cookies collected during the crawl."""
 
+    normalized_urls: list[str] = field(default_factory=list)
+    """Normalized URLs encountered during crawling (for deduplication counting)."""
+
 
 @dataclass
 class SitemapUrl:
@@ -493,6 +526,18 @@ class MarkdownResult:
     fit_content: str | None = ""
     """Content-filtered markdown optimized for LLM consumption."""
 
+
+@dataclass
+class CachedPage:
+    """Cached page data for HTTP response caching."""
+
+    url: str = ""
+    status_code: int = 0
+    content_type: str = ""
+    body: str = ""
+    etag: str | None = ""
+    last_modified: str | None = ""
+    cached_at: int = 0
 
 @dataclass
 class LinkInfo:
@@ -830,3 +875,39 @@ class CitationResult:
 
     references: list[Any] = field(default_factory=list)
     """Numbered reference list: (index, url, text)."""
+
+
+@dataclass
+class CitationReference:
+    index: int = 0
+    url: str = ""
+    text: str = ""
+
+@dataclass
+class BatchScrapeResult:
+    """Result from a single URL in a batch scrape operation."""
+
+    url: str = ""
+    """The URL that was scraped."""
+
+    result: Any | None = None
+    """The scrape result, if successful."""
+
+    error: str | None = ""
+    """The error message, if the scrape failed."""
+
+
+@dataclass
+class BatchCrawlResult:
+    """Result from a single URL in a batch crawl operation."""
+
+    url: str = ""
+    """The seed URL that was crawled."""
+
+    result: Any | None = None
+    """The crawl result, if successful."""
+
+    error: str | None = ""
+    """The error message, if the crawl failed."""
+
+

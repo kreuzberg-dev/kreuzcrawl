@@ -46,4 +46,10 @@ public sealed class CrawlResult
     [JsonPropertyName("cookies")]
     public List<CookieInfo> Cookies { get; set; } = [];
 
+    /// <summary>
+    /// Normalized URLs encountered during crawling (for deduplication counting).
+    /// </summary>
+    [JsonPropertyName("normalizedUrls")]
+    public List<string> NormalizedUrls { get; set; } = [];
+
 }

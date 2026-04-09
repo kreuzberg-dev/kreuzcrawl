@@ -1,35 +1,35 @@
 {
-  "id": "scrape_batch_partial_failure",
-  "description": "Batch scrape with one URL failing returns partial results",
-  "tags": ["batch"],
-  "mock_responses": [
-    {
-      "path": "/good1",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Good 1</h1></body></html>"
-    },
-    {
-      "path": "/bad",
-      "status_code": 500,
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body>Error</body></html>"
-    },
-    {
-      "path": "/good2",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Good 2</h1></body></html>"
-    }
-  ],
-  "config": {
-    "batch_urls": ["/good1", "/bad", "/good2"]
-  },
-  "assertions": {
-    "batch": {
-      "completed_count": 2,
-      "failed_count": 1,
-      "total_count": 3
-    }
-  }
+	"id": "scrape_batch_partial_failure",
+	"description": "Batch scrape with one URL failing returns partial results",
+	"tags": ["batch"],
+	"mock_responses": [
+		{
+			"path": "/good1",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Good 1</h1></body></html>"
+		},
+		{
+			"path": "/bad",
+			"status_code": 500,
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body>Error</body></html>"
+		},
+		{
+			"path": "/good2",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Good 2</h1></body></html>"
+		}
+	],
+	"config": {
+		"batch_urls": ["/good1", "/bad", "/good2"]
+	},
+	"assertions": {
+		"batch": {
+			"completed_count": 2,
+			"failed_count": 1,
+			"total_count": 3
+		}
+	}
 }

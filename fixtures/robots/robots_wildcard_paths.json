@@ -1,18 +1,18 @@
 {
-  "id": "robots_wildcard_paths",
-  "description": "Handles wildcard Disallow patterns in robots.txt",
-  "tags": ["robots", "wildcard"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/plain"},
-    "body_file": "robots/wildcard_paths.txt"
-  },
-  "config": {
-    "respect_robots_txt": true
-  },
-  "assertions": {
-    "robots": {
-      "is_allowed": false
-    }
-  }
+	"id": "robots_wildcard_paths",
+	"description": "Handles wildcard Disallow patterns in robots.txt",
+	"tags": ["robots", "wildcard"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/plain" },
+		"body_file": "robots/wildcard_paths.txt"
+	},
+	"config": {
+		"respect_robots_txt": true
+	},
+	"assertions": {
+		"robots": {
+			"is_allowed": false
+		}
+	}
 }

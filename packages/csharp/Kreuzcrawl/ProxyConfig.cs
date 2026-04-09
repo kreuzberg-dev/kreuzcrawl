@@ -14,7 +14,7 @@ public sealed class ProxyConfig
     /// Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").
     /// </summary>
     [JsonPropertyName("url")]
-    public required string Url { get; set; }
+    public string Url { get; set; } = "";
 
     /// <summary>
     /// Optional username for proxy authentication.

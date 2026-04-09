@@ -1,37 +1,37 @@
 {
-  "id": "crawl_trailing_slash_dedup",
-  "description": "Deduplicates /page and /page/ as the same URL",
-  "tags": ["crawl", "normalization"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><a href=\"/page\">Page</a><a href=\"/page/\">Page Slash</a></body></html>"
-    },
-    {
-      "path": "/page",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Page</h1></body></html>"
-    },
-    {
-      "path": "/page/",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Page</h1></body></html>"
-    }
-  ],
-  "config": {
-    "max_depth": 1,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "crawl": {
-      "unique_normalized_urls": 2
-    }
-  }
+	"id": "crawl_trailing_slash_dedup",
+	"description": "Deduplicates /page and /page/ as the same URL",
+	"tags": ["crawl", "normalization"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><a href=\"/page\">Page</a><a href=\"/page/\">Page Slash</a></body></html>"
+		},
+		{
+			"path": "/page",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Page</h1></body></html>"
+		},
+		{
+			"path": "/page/",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Page</h1></body></html>"
+		}
+	],
+	"config": {
+		"max_depth": 1,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"crawl": {
+			"unique_normalized_urls": 2
+		}
+	}
 }

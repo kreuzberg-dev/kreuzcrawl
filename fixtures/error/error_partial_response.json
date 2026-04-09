@@ -1,25 +1,25 @@
 {
-  "id": "error_partial_response",
-  "description": "Handles incomplete or truncated HTTP response",
-  "tags": ["error", "network"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {
-      "content-type": "text/html; charset=utf-8",
-      "content-length": "99999"
-    },
-    "body_inline": "<html><body><h1>Truncated"
-  },
-  "config": {
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "error": {
-      "is_error": true,
-      "error_type": "data_loss"
-    }
-  },
-  "skip": {
-    "notes": "Wiremock overrides content-length header; needs raw TCP or custom mock"
-  }
+	"id": "error_partial_response",
+	"description": "Handles incomplete or truncated HTTP response",
+	"tags": ["error", "network"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": {
+			"content-type": "text/html; charset=utf-8",
+			"content-length": "99999"
+		},
+		"body_inline": "<html><body><h1>Truncated"
+	},
+	"config": {
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"error": {
+			"is_error": true,
+			"error_type": "data_loss"
+		}
+	},
+	"skip": {
+		"notes": "Wiremock overrides content-length header; needs raw TCP or custom mock"
+	}
 }

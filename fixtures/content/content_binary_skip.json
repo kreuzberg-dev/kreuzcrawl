@@ -1,38 +1,38 @@
 {
-  "id": "content_binary_skip",
-  "description": "Skips image and video content types gracefully",
-  "tags": ["content", "binary"],
-  "category": "crawl",
-  "mock_responses": [
-    {
-      "path": "/",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><a href=\"/image.jpg\">Image</a><a href=\"/video.mp4\">Video</a></body></html>"
-    },
-    {
-      "path": "/image.jpg",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "image/jpeg"},
-      "body_inline": ""
-    },
-    {
-      "path": "/video.mp4",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "video/mp4"},
-      "body_inline": ""
-    }
-  ],
-  "config": {
-    "max_depth": 1,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "content": {
-      "was_skipped": true
-    }
-  }
+	"id": "content_binary_skip",
+	"description": "Skips image and video content types gracefully",
+	"tags": ["content", "binary"],
+	"category": "crawl",
+	"mock_responses": [
+		{
+			"path": "/",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><a href=\"/image.jpg\">Image</a><a href=\"/video.mp4\">Video</a></body></html>"
+		},
+		{
+			"path": "/image.jpg",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "image/jpeg" },
+			"body_inline": ""
+		},
+		{
+			"path": "/video.mp4",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "video/mp4" },
+			"body_inline": ""
+		}
+	],
+	"config": {
+		"max_depth": 1,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"content": {
+			"was_skipped": true
+		}
+	}
 }

@@ -1,33 +1,33 @@
 {
-  "id": "crawl_redirect_in_traversal",
-  "description": "Links that redirect are followed during crawl traversal",
-  "tags": ["crawl", "redirect"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body><a href=\"/old\">Link</a></body></html>"
-    },
-    {
-      "path": "/old",
-      "status_code": 301,
-      "headers": {"location": "/new", "content-type": "text/html"},
-      "body_inline": ""
-    },
-    {
-      "path": "/new",
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body><h1>New Page</h1></body></html>"
-    }
-  ],
-  "config": {
-    "engine_mode": true,
-    "max_depth": 1,
-    "max_concurrent": 1
-  },
-  "assertions": {
-    "crawl": {
-      "min_pages": 1
-    }
-  }
+	"id": "crawl_redirect_in_traversal",
+	"description": "Links that redirect are followed during crawl traversal",
+	"tags": ["crawl", "redirect"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body><a href=\"/old\">Link</a></body></html>"
+		},
+		{
+			"path": "/old",
+			"status_code": 301,
+			"headers": { "location": "/new", "content-type": "text/html" },
+			"body_inline": ""
+		},
+		{
+			"path": "/new",
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body><h1>New Page</h1></body></html>"
+		}
+	],
+	"config": {
+		"engine_mode": true,
+		"max_depth": 1,
+		"max_concurrent": 1
+	},
+	"assertions": {
+		"crawl": {
+			"min_pages": 1
+		}
+	}
 }

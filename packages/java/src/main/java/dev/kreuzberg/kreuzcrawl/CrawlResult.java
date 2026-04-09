@@ -10,7 +10,8 @@ public record CrawlResult(
     long redirectCount,
     boolean wasSkipped,
     Optional<String> error,
-    List<CookieInfo> cookies
+    List<CookieInfo> cookies,
+    List<String> normalizedUrls
 ) {
     public static CrawlResultBuilder builder() {
         return new CrawlResultBuilder();

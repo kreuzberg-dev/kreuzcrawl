@@ -1,26 +1,26 @@
 {
-  "id": "metadata_response_headers",
-  "description": "Extracts response metadata from HTTP headers (etag, server, content-language)",
-  "tags": ["metadata"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {
-      "content-type": "text/html; charset=utf-8",
-      "etag": "\"abc123\"",
-      "last-modified": "Wed, 01 Jan 2025 00:00:00 GMT",
-      "server": "nginx/1.24",
-      "content-language": "en-US",
-      "x-powered-by": "kreuzcrawl"
-    },
-    "body_file": "html/comprehensive_metadata.html"
-  },
-  "assertions": {
-    "status_code": 200,
-    "response_meta": {
-      "has_etag": true,
-      "has_last_modified": true,
-      "server_contains": "nginx",
-      "content_language": "en-US"
-    }
-  }
+	"id": "metadata_response_headers",
+	"description": "Extracts response metadata from HTTP headers (etag, server, content-language)",
+	"tags": ["metadata"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": {
+			"content-type": "text/html; charset=utf-8",
+			"etag": "\"abc123\"",
+			"last-modified": "Wed, 01 Jan 2025 00:00:00 GMT",
+			"server": "nginx/1.24",
+			"content-language": "en-US",
+			"x-powered-by": "kreuzcrawl"
+		},
+		"body_file": "html/comprehensive_metadata.html"
+	},
+	"assertions": {
+		"status_code": 200,
+		"response_meta": {
+			"has_etag": true,
+			"has_last_modified": true,
+			"server_contains": "nginx",
+			"content_language": "en-US"
+		}
+	}
 }

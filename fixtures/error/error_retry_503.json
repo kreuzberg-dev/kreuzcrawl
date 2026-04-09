@@ -1,21 +1,21 @@
 {
-  "id": "error_retry_503",
-  "description": "Retries request on 503 Service Unavailable response",
-  "tags": ["error", "retry"],
-  "mock_response": {
-    "status_code": 503,
-    "headers": {"content-type": "text/html"},
-    "body_inline": "<html><body>Service Unavailable</body></html>"
-  },
-  "config": {
-    "respect_robots_txt": false,
-    "retry_count": 2,
-    "retry_codes": [503]
-  },
-  "assertions": {
-    "error": {
-      "is_error": true,
-      "error_type": "server_error"
-    }
-  }
+	"id": "error_retry_503",
+	"description": "Retries request on 503 Service Unavailable response",
+	"tags": ["error", "retry"],
+	"mock_response": {
+		"status_code": 503,
+		"headers": { "content-type": "text/html" },
+		"body_inline": "<html><body>Service Unavailable</body></html>"
+	},
+	"config": {
+		"respect_robots_txt": false,
+		"retry_count": 2,
+		"retry_codes": [503]
+	},
+	"assertions": {
+		"error": {
+			"is_error": true,
+			"error_type": "server_error"
+		}
+	}
 }

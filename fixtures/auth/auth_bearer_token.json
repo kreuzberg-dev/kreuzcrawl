@@ -1,20 +1,20 @@
 {
-  "id": "auth_bearer_token",
-  "description": "Sends Bearer token in Authorization header",
-  "tags": ["auth", "bearer"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_inline": "<html><body><h1>Bearer Auth Page</h1></body></html>"
-  },
-  "config": {
-    "auth_bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test",
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "auth": {
-      "auth_header_sent": true,
-      "status_code": 200
-    }
-  }
+	"id": "auth_bearer_token",
+	"description": "Sends Bearer token in Authorization header",
+	"tags": ["auth", "bearer"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_inline": "<html><body><h1>Bearer Auth Page</h1></body></html>"
+	},
+	"config": {
+		"auth_bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test",
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"auth": {
+			"auth_header_sent": true,
+			"status_code": 200
+		}
+	}
 }

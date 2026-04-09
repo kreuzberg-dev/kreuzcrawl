@@ -8,12 +8,12 @@ namespace Kreuzcrawl;
 public sealed class CitationReference
 {
     [JsonPropertyName("index")]
-    public required nuint Index { get; set; }
+    public nuint Index { get; set; } = 0;
 
     [JsonPropertyName("url")]
-    public required string Url { get; set; }
+    public string Url { get; set; } = "";
 
     [JsonPropertyName("text")]
-    public required string Text { get; set; }
+    public string Text { get; set; } = "";
 
 }

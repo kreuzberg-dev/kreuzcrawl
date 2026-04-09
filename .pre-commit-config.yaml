@@ -26,7 +26,7 @@ repos:
       - id: end-of-file-fixer
       - id: check-merge-conflict
       - id: check-added-large-files
-        exclude: uv.lock|docs/benchmarks/app/|crates/kreuzberg-pdfium-render/
+        exclude: uv.lock|docs/benchmarks/app/|crates/kreuzcrawl-pdfium-render/
       - id: detect-private-key
       - id: check-json
       - id: check-yaml
@@ -126,7 +126,7 @@ repos:
     hooks:
       - id: clang-format
         args: [--style=file]
-        files: (^crates/kreuzberg-ffi/tests/c/|^tools/benchmark-harness/scripts/.*\.c$)
+        files: (^crates/kreuzcrawl-ffi/tests/c/|^tools/benchmark-harness/scripts/.*\.c$)
       - id: cppcheck
         args:
           [
@@ -136,7 +136,7 @@ repos:
             "--suppress=unusedStructMember",
             "--suppress=normalCheckLevelMaxBranches",
           ]
-        files: (^crates/kreuzberg-ffi/tests/c/|^tools/benchmark-harness/scripts/.*\.c$)
+        files: (^crates/kreuzcrawl-ffi/tests/c/|^tools/benchmark-harness/scripts/.*\.c$)
 
   - repo: https://github.com/checkmake/checkmake
     rev: v0.3.2
@@ -202,7 +202,7 @@ repos:
     rev: v0.6.37
     hooks:
       - id: cpd
-        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzberg-wasm/e2e/)
+        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzcrawl-wasm/e2e/)
       - id: checkstyle
         args:
           [
@@ -211,7 +211,7 @@ repos:
             "-p",
             "packages/java/checkstyle.properties",
           ]
-        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzberg-wasm/e2e/)
+        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzcrawl-wasm/e2e/)
 
   # Version sync: keep vendored headers and package versions in sync
   - repo: local
@@ -220,7 +220,7 @@ repos:
         name: Sync versions and vendored C headers
         entry: uv run --no-project python scripts/sync_versions.py
         language: system
-        files: (Cargo\.toml|crates/kreuzberg-ffi/kreuzberg\.h)
+        files: (Cargo\.toml|crates/kreuzcrawl-ffi/kreuzcrawl\.h)
         pass_filenames: false
 
   # Local hooks for unsupported languages (Ruby, Java, C#, PHP, Elixir, R) and custom configurations

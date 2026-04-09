@@ -1,29 +1,29 @@
 {
-  "id": "crawl_external_links_ignored",
-  "description": "External links are discovered but not followed when stay_on_domain is true",
-  "tags": ["crawl", "domain"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body><a href=\"/local\">Local</a><a href=\"https://external.example.com/page\">External</a></body></html>"
-    },
-    {
-      "path": "/local",
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body><h1>Local Page</h1></body></html>"
-    }
-  ],
-  "config": {
-    "engine_mode": true,
-    "max_depth": 1,
-    "max_concurrent": 1,
-    "stay_on_domain": true
-  },
-  "assertions": {
-    "crawl": {
-      "pages_crawled": 2,
-      "stayed_on_domain": true
-    }
-  }
+	"id": "crawl_external_links_ignored",
+	"description": "External links are discovered but not followed when stay_on_domain is true",
+	"tags": ["crawl", "domain"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body><a href=\"/local\">Local</a><a href=\"https://external.example.com/page\">External</a></body></html>"
+		},
+		{
+			"path": "/local",
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body><h1>Local Page</h1></body></html>"
+		}
+	],
+	"config": {
+		"engine_mode": true,
+		"max_depth": 1,
+		"max_concurrent": 1,
+		"stay_on_domain": true
+	},
+	"assertions": {
+		"crawl": {
+			"pages_crawled": 2,
+			"stayed_on_domain": true
+		}
+	}
 }
