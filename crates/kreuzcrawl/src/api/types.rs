@@ -125,10 +125,9 @@ pub struct ErrorBody {
 }
 
 /// Generic API response wrapper.
-#[derive(Debug, Clone, Serialize, ToSchema)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ApiResponse<T: Serialize> {
     /// Whether the request was successful.
-    #[schema(example = true)]
     pub success: bool,
     /// Response data on success.
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -86,9 +86,9 @@ fn validate_url(url: &str) -> Result<(), ApiError> {
     tag = "scrape",
     request_body = ScrapeRequest,
     responses(
-        (status = 200, description = "Successfully scraped URL", body = ApiResponse<serde_json::Value>),
-        (status = 400, description = "Invalid request", body = ApiResponse<()>),
-        (status = 500, description = "Internal server error", body = ApiResponse<()>),
+        (status = 200, description = "Scrape result", body = serde_json::Value),
+        (status = 400, description = "Bad request"),
+        (status = 500, description = "Internal server error"),
     )
 )]
 pub async fn scrape_handler(
@@ -114,8 +114,8 @@ pub async fn scrape_handler(
     tag = "crawl",
     request_body = CrawlRequest,
     responses(
-        (status = 202, description = "Crawl job accepted", body = JobCreatedResponse),
-        (status = 400, description = "Invalid request", body = ApiResponse<()>),
+        (status = 202, description = "Crawl job created", body = JobCreatedResponse),
+        (status = 400, description = "Bad request"),
     )
 )]
 pub async fn crawl_handler(
@@ -200,9 +200,9 @@ pub async fn crawl_handler(
         ("id" = String, Path, description = "Job identifier"),
     ),
     responses(
-        (status = 200, description = "Crawl job status", body = JobStatusResponse),
-        (status = 400, description = "Invalid job ID", body = ApiResponse<()>),
-        (status = 404, description = "Job not found", body = ApiResponse<()>),
+        (status = 200, description = "Job status", body = JobStatusResponse),
+        (status = 400, description = "Invalid job id"),
+        (status = 404, description = "Job not found"),
     )
 )]
 pub async fn crawl_status_handler(
@@ -228,9 +228,8 @@ pub async fn crawl_status_handler(
         ("id" = String, Path, description = "Job identifier"),
     ),
     responses(
-        (status = 200, description = "Crawl cancelled", body = ApiResponse<String>),
-        (status = 400, description = "Invalid job ID", body = ApiResponse<()>),
-        (status = 404, description = "Job not found or not cancellable", body = ApiResponse<()>),
+        (status = 200, description = "Job cancelled", body = serde_json::Value),
+        (status = 404, description = "Job not found or not cancellable"),
     )
 )]
 pub async fn crawl_cancel_handler(
@@ -259,9 +258,9 @@ pub async fn crawl_cancel_handler(
     tag = "crawl",
     request_body = MapRequest,
     responses(
-        (status = 200, description = "Successfully mapped URLs", body = ApiResponse<serde_json::Value>),
-        (status = 400, description = "Invalid request", body = ApiResponse<()>),
-        (status = 500, description = "Internal server error", body = ApiResponse<()>),
+        (status = 200, description = "Map result", body = serde_json::Value),
+        (status = 400, description = "Bad request"),
+        (status = 500, description = "Internal server error"),
     )
 )]
 pub async fn map_handler(
@@ -299,8 +298,8 @@ pub async fn map_handler(
     tag = "scrape",
     request_body = BatchScrapeRequest,
     responses(
-        (status = 202, description = "Batch scrape job accepted", body = JobCreatedResponse),
-        (status = 400, description = "Invalid request", body = ApiResponse<()>),
+        (status = 202, description = "Batch scrape job created", body = JobCreatedResponse),
+        (status = 400, description = "Bad request"),
     )
 )]
 pub async fn batch_scrape_handler(
@@ -358,12 +357,12 @@ pub async fn batch_scrape_handler(
     path = "/v1/batch/scrape/{id}",
     tag = "scrape",
     params(
-        ("id" = String, Path, description = "Batch job identifier"),
+        ("id" = String, Path, description = "Job identifier"),
     ),
     responses(
-        (status = 200, description = "Batch scrape job status", body = JobStatusResponse),
-        (status = 400, description = "Invalid job ID", body = ApiResponse<()>),
-        (status = 404, description = "Job not found", body = ApiResponse<()>),
+        (status = 200, description = "Batch job status", body = JobStatusResponse),
+        (status = 400, description = "Invalid job id"),
+        (status = 404, description = "Job not found"),
     )
 )]
 pub async fn batch_status_handler(
@@ -391,9 +390,9 @@ pub async fn batch_status_handler(
     tag = "download",
     request_body = DownloadRequest,
     responses(
-        (status = 200, description = "Successfully downloaded content", body = ApiResponse<serde_json::Value>),
-        (status = 400, description = "Invalid request", body = ApiResponse<()>),
-        (status = 500, description = "Internal server error", body = ApiResponse<()>),
+        (status = 200, description = "Download result", body = serde_json::Value),
+        (status = 400, description = "Bad request"),
+        (status = 500, description = "Internal server error"),
     )
 )]
 pub async fn download_handler(
