@@ -137,10 +137,13 @@ tasks:
       - cd packages/php && composer outdated --direct --format=json | jq -r '.installed[]? | .name' | grep -v '^$' | xargs -r -I {} composer require {} --dev --no-update --no-interaction || true
       - cd packages/php && composer update --with-all-dependencies
       - cd packages/php && echo "Checking remaining outdated dependencies..." && composer outdated --direct || true
-      - echo "Updating e2e/php dependencies to latest versions..."
-      - cd e2e/php && composer outdated --direct --format=json | jq -r '.installed[]? | .name' | grep -v '^$' | xargs -r -I {} composer require {} --dev --no-update --no-interaction || true
-      - cd e2e/php && composer update --with-all-dependencies
-      - cd e2e/php && echo "Checking remaining outdated dependencies..." && composer outdated --direct || true
+      - cmd: echo "Updating e2e/php dependencies to latest versions..."
+      - cmd: cd e2e/php && composer outdated --direct --format=json | jq -r '.installed[]? | .name' | grep -v '^$' | xargs -r -I {} composer require {} --dev --no-update --no-interaction || true
+        ignore_error: true
+      - cmd: cd e2e/php && composer update --with-all-dependencies
+        ignore_error: true
+      - cmd: cd e2e/php && echo "Checking remaining outdated dependencies..." && composer outdated --direct || true
+        ignore_error: true
 
   update:check:
     desc: Check for outdated PHP dependencies

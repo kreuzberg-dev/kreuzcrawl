@@ -268,9 +268,11 @@ tasks:
       - echo "Updating Rust dependencies (main workspace)..."
       - cargo upgrade --incompatible
       - cargo update
-      - echo "Updating Rust dependencies (Ruby native crate)..."
-      - cargo upgrade --incompatible --manifest-path packages/ruby/ext/kreuzcrawl_rb/native/Cargo.toml
-      - cargo update --manifest-path packages/ruby/ext/kreuzcrawl_rb/native/Cargo.toml
+      - cmd: echo "Updating Rust dependencies (Ruby native crate)..."
+      - cmd: cargo upgrade --incompatible --manifest-path packages/ruby/ext/kreuzcrawl_rb/native/Cargo.toml
+        ignore_error: true
+      - cmd: cargo update --manifest-path packages/ruby/ext/kreuzcrawl_rb/native/Cargo.toml
+        ignore_error: true
 
   e2e:generate:
     desc: Generate and format Rust E2E tests from fixtures

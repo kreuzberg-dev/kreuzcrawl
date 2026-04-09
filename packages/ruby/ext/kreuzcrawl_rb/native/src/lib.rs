@@ -1,0 +1,1 @@
+// Ruby native extension placeholder

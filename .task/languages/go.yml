@@ -143,10 +143,12 @@ tasks:
     desc: Update Go dependencies and linters
     cmds:
       - echo "Updating Go dependencies and linters..."
-      - cmd: bash scripts/go/update.sh {{.GOLANGCI_LINT_VERSION}}
+      - cmd: cd packages/go && go get -u ./... && go mod tidy
         platforms: [linux, darwin]
-      - cmd: pwsh -Command "cd packages/go/v4; go get -u ./...; go mod tidy"
+        ignore_error: true
+      - cmd: pwsh -Command "cd packages/go; go get -u ./...; go mod tidy"
         platforms: [windows]
+        ignore_error: true
 
   e2e:generate:
     desc: Generate and format Go E2E tests from fixtures

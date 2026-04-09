@@ -1,0 +1,12 @@
+[package]
+name = "kreuzcrawl-rb-native"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+name = "kreuzcrawl_rb"
+crate-type = ["cdylib"]
+
+[dependencies]
+kreuzcrawl = { path = "../../../../crates/kreuzcrawl" }
