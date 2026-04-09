@@ -60,14 +60,7 @@ nav = [
         { "Types" = "reference/types.md" },
         { "Errors" = "reference/errors.md" },
     ] },
-    { "Comparisons" = [
-        { "vs Firecrawl" = "comparisons/vs-firecrawl.md" },
-        { "vs Spider" = "comparisons/vs-spider.md" },
-        { "vs Crawl4AI" = "comparisons/vs-crawl4ai.md" },
-        { "vs Webclaw" = "comparisons/vs-webclaw.md" },
-        { "vs CRW" = "comparisons/vs-crw.md" },
-        { "vs ScrapeGraphAI" = "comparisons/vs-scrapegraphai.md" },
-    ] },
+    { "Comparisons" = "comparisons/index.md" },
     { "Changelog" = "CHANGELOG.md" },
     { "Contributing" = "contributing.md" },
 ]
