@@ -28,11 +28,13 @@
 			"adverb": false,
 			"so": false,
 			"illusion": false,
+			"thereIs": false,
 			"severity": "warning"
 		},
 		"common-misspellings": true,
 		"stop-words": {
 			"severity": "warning",
+			"defaultWords": false,
 			"exclude": [
 				"deep dive",
 				"redaction",
@@ -58,8 +60,6 @@
 				"Specifically"
 			]
 		},
-		"en-capitalization": {
-			"severity": "warning"
-		}
+		"en-capitalization": false
 	}
 }

@@ -17,7 +17,7 @@ on:
         required: false
         type: string
       targets:
-        description: "Comma-separated list of release targets (all, python, node, ruby, cli, crates, docker, homebrew, java, csharp, r, elixir, c-ffi)"
+        description: "Comma-separated list of release targets (all, python, node, ruby, cli, crates, docker, homebrew, java, csharp, elixir, c-ffi)"
         required: false
         type: string
       force_republish:
@@ -41,7 +41,6 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
-  MACOSX_DEPLOYMENT_TARGET: "14.0"
 
 permissions:
   contents: read
@@ -168,7 +167,7 @@ jobs:
     steps:
       - name: Check PyPI for existing version
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: pypi
           package: kreuzcrawl
@@ -184,7 +183,7 @@ jobs:
     steps:
       - name: Check npm for existing version
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: npm
           package: "@kreuzcrawl/node"
@@ -200,7 +199,7 @@ jobs:
     steps:
       - name: Check npm for existing WASM package
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: npm
           package: "@kreuzcrawl/wasm"
@@ -216,7 +215,7 @@ jobs:
     steps:
       - name: Check RubyGems for existing version
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: rubygems
           package: kreuzcrawl
@@ -232,7 +231,7 @@ jobs:
     steps:
       - name: Check Maven Central for existing version
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: maven
           package: "dev.kreuzcrawl:kreuzcrawl"
@@ -248,7 +247,7 @@ jobs:
     steps:
       - name: Check NuGet for existing version
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: nuget
           package: Kreuzcrawl
@@ -264,7 +263,7 @@ jobs:
     steps:
       - name: Check Packagist for existing version
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: packagist
           package: kreuzcrawl/kreuzcrawl
@@ -371,7 +370,7 @@ jobs:
     steps:
       - name: Check release for existing Elixir artifacts
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: github-release
           package: kreuzcrawl
@@ -386,23 +385,26 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       kreuzcrawl_exists: ${{ steps.check.outputs.exists }}
+      tesseract_exists: ${{ steps.check.outputs.tesseract_exists }}
       cli_exists: ${{ steps.check.outputs.cli_exists }}
       exists: ${{ steps.derive.outputs.all_exist }}
     steps:
       - name: Check crates.io for existing versions
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: cratesio
           package: kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
           extra-packages: |
+            tesseract_exists=kreuzcrawl-tesseract
             cli_exists=kreuzcrawl-cli
 
       - name: Derive all_exist
         id: derive
         run: |
           if [[ "${{ steps.check.outputs.exists }}" == "true" && \
+                "${{ steps.check.outputs.tesseract_exists }}" == "true" && \
                 "${{ steps.check.outputs.cli_exists }}" == "true" ]]; then
             echo "all_exist=true" >> "$GITHUB_OUTPUT"
           else
@@ -419,7 +421,7 @@ jobs:
     steps:
       - name: Check Hex.pm for existing version
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: hex
           package: kreuzcrawl
@@ -436,12 +438,12 @@ jobs:
     steps:
       - name: Check Homebrew tap for formula
         id: check
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: homebrew
           package: kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
-          tap-repo: kreuzcrawl-dev/homebrew-tap
+          tap-repo: kreuzberg-dev/homebrew-tap
 
   python-wheels:
     name: Build Python wheels (${{ matrix.label }})
@@ -519,12 +521,6 @@ jobs:
         with:
           platforms: all
 
-        if: matrix.os == 'ubuntu-latest' && matrix.needs_qemu
-        with:
-
-        if: matrix.os == 'ubuntu-latest' && matrix.needs_qemu
-        with:
-
       - name: Free up disk space for wheel build
         if: matrix.os == 'ubuntu-latest'
         run: scripts/publish/ubuntu/free-disk-space.sh
@@ -533,14 +529,9 @@ jobs:
         shell: bash
         run: mkdir -p target/wheels
 
-        with:
-          label: ${{ matrix.label }}
-          enable-cache: "true"
-          rust-target: ${{ matrix.rust_target }}
-
       - name: Setup Rust toolchain (native)
         if: runner.os != 'Linux'
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: python-wheels-${{ matrix.label }}
           target: ${{ matrix.rust_target }}
@@ -591,14 +582,6 @@ jobs:
                 export OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu
               fi
               export OPENSSL_INCLUDE_DIR=/usr/include
-            fi
-            # Download ORT shared libraries inside the manylinux container so
-            # ort-sys links dynamically against them instead of statically
-            # embedding the glibc 2.38+ binaries it would otherwise download.
-            echo "=== Downloading ORT shared libraries ==="
-            ARCH=$(uname -m)
-            if [ "$ARCH" = "aarch64" ]; then
-            else
             fi
             # Build CLI binary inside container
             # Note: before-script-linux CWD is the working-directory (packages/python),
@@ -686,18 +669,18 @@ jobs:
         run: scripts/publish/ubuntu/free-disk-space.sh
 
       - name: Setup Python environment
-        uses: kreuzcrawl-dev/actions/setup-python-env@v1
+        uses: kreuzberg-dev/actions/setup-python-env@v1
         with:
           python-version: "3.13"
           cache-prefix: python-sdist
 
       - name: Setup Rust toolchain
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-python-sdist
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build sdist
         env:
@@ -769,7 +752,7 @@ jobs:
           package_json_file: package.json
 
       - name: Setup Rust toolchain
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-node-${{ matrix.settings.target }}
           use-sccache: 'false'
@@ -904,7 +887,7 @@ jobs:
         run: scripts/publish/ubuntu/free-disk-space.sh
 
       - name: Setup Rust toolchain
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           target: ${{ matrix.target }}
           cache-key-prefix: publish-cli-${{ matrix.target }}
@@ -1000,8 +983,8 @@ jobs:
           readelf -d dist/kreuzcrawl 2>/dev/null | grep -E "NEEDED|RPATH|RUNPATH" || echo "No dependencies"
           echo "=== Bundled libraries ==="
           ls -la dist/lib/ 2>/dev/null || echo "No bundled libraries"
-          # Binary is dynamically linked against musl libc for dlopen support
-          # so runtime libraries are found relative to the binary.
+          # Binary is dynamically linked against musl libc for dlopen support.
+          # RPATH is set to $ORIGIN/lib so runtime libraries are found relative to the binary.
           echo "Binary built successfully"
 
       - name: Package CLI artifact
@@ -1052,7 +1035,7 @@ jobs:
         run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
 
       - name: Setup Rust toolchain
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-homebrew-${{ matrix.bottle_tag }}
 
@@ -1191,14 +1174,10 @@ jobs:
         run: scripts/publish/ubuntu/free-disk-space.sh
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
-
-        with:
-          label: ${{ matrix.label }}
-          enable-cache: "true"
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-ruby-${{ matrix.label }}
           use-sccache: true
@@ -1218,7 +1197,7 @@ jobs:
         run: scripts/ci/ruby/install-ruby-deps.sh packages/ruby
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build kreuzcrawl-ffi
         run: task rust:ffi:build
@@ -1372,7 +1351,7 @@ jobs:
         run: scripts/publish/go/configure-windows-gnu-toolchain.sh
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: ${{ matrix.settings.os == 'windows-latest' && 'publish-go-windows-gnu' || format('publish-go-{0}', matrix.settings.os) }}
           use-sccache: ${{ matrix.settings.os != 'windows-latest' }}
@@ -1383,16 +1362,6 @@ jobs:
         if: matrix.settings.os == 'windows-latest'
         shell: pwsh
         run: rustup default stable-x86_64-pc-windows-gnu
-
-        with:
-
-        with:
-
-        with:
-          destination: target/release
-
-        with:
-          strategy: bundled
 
       - name: Setup MSYS2 (Windows)
         if: matrix.settings.os == 'windows-latest'
@@ -1414,7 +1383,7 @@ jobs:
         run: scripts/ci/go/setup-msys2-windows.ps1
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build FFI library (Windows)
         if: matrix.settings.os == 'windows-latest'
@@ -1496,31 +1465,16 @@ jobs:
         run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
-
-        with:
-          label: ${{ matrix.settings.label }}
-          enable-cache: "true"
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-java-natives-${{ matrix.settings.label }}
           use-sccache: ${{ runner.os != 'Windows' }}
 
-        with:
-
-        with:
-
-        with:
-          destination: target/release
-
-        with:
-          dest-dir: target/release
-          strategy: bundled
-
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build FFI library
         shell: bash
@@ -1604,7 +1558,6 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
-    env:
     steps:
       - name: Show initial disk space
         run: echo "=== Initial disk space ===" && df -h /
@@ -1624,10 +1577,10 @@ jobs:
         run: scripts/publish/ubuntu/free-disk-space.sh
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-java
 
@@ -1640,20 +1593,10 @@ jobs:
           cache: 'maven'
 
       - name: Setup Maven 3.9.11
-        uses: kreuzcrawl-dev/actions/setup-maven@v1
-
-        with:
-
-        with:
-
-        with:
-          destination: target/release
-
-        with:
-          strategy: bundled
+        uses: kreuzberg-dev/actions/setup-maven@v1
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Download Java native artifacts
         uses: actions/download-artifact@v8
@@ -1730,14 +1673,10 @@ jobs:
         run: scripts/publish/ubuntu/free-disk-space.sh
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
-
-        with:
-          label: ${{ matrix.settings.label }}
-          enable-cache: "true"
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-php-${{ matrix.settings.label }}
           use-sccache: ${{ runner.os != 'Windows' }}
@@ -1752,19 +1691,8 @@ jobs:
           cargo clean --release -p kreuzcrawl-php 2>/dev/null || true
           cargo clean --release -p kreuzcrawl 2>/dev/null || true
 
-        with:
-
-        with:
-
-        with:
-          destination: target/release
-
-        with:
-          dest-dir: target/release
-          strategy: bundled
-
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -1817,10 +1745,10 @@ jobs:
         run: scripts/publish/ubuntu/free-disk-space.sh
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-csharp
 
@@ -1833,7 +1761,7 @@ jobs:
         run: scripts/publish/csharp/ensure-dotnet.sh
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Download native assets
         uses: actions/download-artifact@v8
@@ -1913,27 +1841,19 @@ jobs:
         run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
 
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-csharp-native-${{ matrix.rid }}
-
-        with:
-
-        with:
-
-
-        with:
-          destination: target/csharp-native/${{ matrix.rid }}
 
       - name: Add Rust target
         shell: bash
         run: rustup target add "${{ matrix.rust_target }}"
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build FFI library
         shell: bash
@@ -2140,7 +2060,7 @@ jobs:
         run: scripts/publish/go/configure-windows-gnu-toolchain.sh
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: ${{ matrix.settings.os == 'windows-latest' && 'publish-c-ffi-windows-gnu' || format('publish-c-ffi-{0}', matrix.settings.os) }}
           use-sccache: ${{ matrix.settings.os != 'windows-latest' }}
@@ -2151,16 +2071,6 @@ jobs:
         if: matrix.settings.os == 'windows-latest'
         shell: pwsh
         run: rustup default stable-x86_64-pc-windows-gnu
-
-        with:
-
-        with:
-
-        with:
-          destination: target/release
-
-        with:
-          strategy: bundled
 
       - name: Setup MSYS2 (Windows)
         if: matrix.settings.os == 'windows-latest'
@@ -2253,7 +2163,7 @@ jobs:
           ref: ${{ needs.prepare.outputs.ref }}
 
       - name: Setup Rust toolchain
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-crates
 
@@ -2340,7 +2250,7 @@ jobs:
         run: scripts/publish/go/configure-windows-gnu-toolchain.sh
 
       - name: Setup Rust
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           target: ${{ matrix.settings.target }}
           cache-key-prefix: ${{ matrix.settings.os == 'windows-latest' && 'publish-elixir-windows-gnu' || format('publish-elixir-{0}', matrix.settings.os) }}
@@ -2371,25 +2281,11 @@ jobs:
         shell: pwsh
         run: scripts/ci/go/setup-msys2-windows.ps1
 
-        with:
-
-        with:
-
-        with:
-          destination: target/release
-
-        with:
-          strategy: bundled
-
       - name: Setup OpenSSL
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
-
-        with:
-          label: ${{ matrix.settings.label }}
-          enable-cache: "true"
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Restore Cargo cache
-        uses: kreuzcrawl-dev/actions/restore-cargo-cache@v1
+        uses: kreuzberg-dev/actions/restore-cargo-cache@v1
         with:
           shared-key: ${{ matrix.settings.os == 'windows-latest' && 'publish-elixir-windows-gnu' || format('publish-elixir-{0}', matrix.settings.os) }}
           prefix: elixir
@@ -2700,7 +2596,7 @@ jobs:
 
       - name: Re-check Hex.pm before publish
         id: recheck
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: hex
           package: kreuzcrawl
@@ -2708,7 +2604,7 @@ jobs:
 
       - name: Publish to Hex.pm
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-hex@v1
+        uses: kreuzberg-dev/actions/publish-hex@v1
         with:
           package-dir: packages/elixir
           dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -2761,7 +2657,7 @@ jobs:
 
       - name: Re-check PyPI before publish
         id: recheck
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: pypi
           package: kreuzcrawl
@@ -2857,7 +2753,7 @@ jobs:
 
       - name: Re-check RubyGems before publish
         id: recheck
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: rubygems
           package: kreuzcrawl
@@ -2869,7 +2765,7 @@ jobs:
 
       - name: Publish gems to RubyGems
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-rubygems@v1
+        uses: kreuzberg-dev/actions/publish-rubygems@v1
         with:
           gems-dir: dist
           dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -2946,7 +2842,7 @@ jobs:
 
       - name: Re-check npm before publish
         id: recheck
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: npm
           package: "@kreuzcrawl/node"
@@ -2954,7 +2850,7 @@ jobs:
 
       - name: Publish native binary packages
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-npm@v1
+        uses: kreuzberg-dev/actions/publish-npm@v1
         with:
           packages-dir: crates/kreuzcrawl-node/npm
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
@@ -2964,7 +2860,7 @@ jobs:
 
       - name: Wait for npm indexing (x64)
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/wait-for-package@v1
+        uses: kreuzberg-dev/actions/wait-for-package@v1
         with:
           registry: npm
           package: "@kreuzcrawl/node-linux-x64-gnu"
@@ -2973,7 +2869,7 @@ jobs:
 
       - name: Wait for npm indexing (ARM64)
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/wait-for-package@v1
+        uses: kreuzberg-dev/actions/wait-for-package@v1
         with:
           registry: npm
           package: "@kreuzcrawl/node-linux-arm64-gnu"
@@ -2986,7 +2882,7 @@ jobs:
 
       - name: Publish main Node package
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-npm@v1
+        uses: kreuzberg-dev/actions/publish-npm@v1
         with:
           package-dir: crates/kreuzcrawl-node
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
@@ -3033,7 +2929,7 @@ jobs:
           run_install: false
 
       - name: Install WASI SDK
-        uses: kreuzcrawl-dev/actions/install-wasi-sdk@v1
+        uses: kreuzberg-dev/actions/install-wasi-sdk@v1
 
       - name: Configure WASM C compiler
         shell: bash
@@ -3042,7 +2938,7 @@ jobs:
           echo "AR_wasm32_unknown_unknown=${WASI_SDK_PATH}/bin/ar" >> "$GITHUB_ENV"
 
       - name: Setup Rust toolchain
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-wasm
           target: wasm32-unknown-unknown
@@ -3054,7 +2950,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Task
-        uses: kreuzcrawl-dev/actions/install-task@v1
+        uses: kreuzberg-dev/actions/install-task@v1
 
       - name: Build all WASM targets and TypeScript wrapper
         run: task wasm:build:all
@@ -3071,7 +2967,7 @@ jobs:
 
       - name: Publish to npm
         if: ${{ steps.npm_check.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-npm@v1
+        uses: kreuzberg-dev/actions/publish-npm@v1
         with:
           package-dir: crates/kreuzcrawl-wasm
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
@@ -3081,7 +2977,7 @@ jobs:
 
       - name: Wait for npm indexing
         if: ${{ steps.npm_check.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/wait-for-package@v1
+        uses: kreuzberg-dev/actions/wait-for-package@v1
         with:
           registry: npm
           package: "@kreuzcrawl/wasm"
@@ -3107,7 +3003,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -3117,21 +3012,19 @@ jobs:
       - name: Check Maven Central for existing release
         id: maven_check
         if: ${{ needs.prepare.outputs.dry_run != 'true' }}
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: maven
           package: "dev.kreuzcrawl:kreuzcrawl"
           version: ${{ needs.prepare.outputs.version }}
 
-      - name: Install system dependencies
-        if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
       - name: Setup OpenSSL
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/setup-openssl@v1
+        uses: kreuzberg-dev/actions/setup-openssl@v1
 
       - name: Setup Rust
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/setup-rust@v1
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-maven
 
@@ -3159,17 +3052,7 @@ jobs:
 
       - name: Setup Maven 3.9.11
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/setup-maven@v1
-
-        if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        with:
-
-        if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        with:
-
-        if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        with:
-          destination: target/release
+        uses: kreuzberg-dev/actions/setup-maven@v1
 
       - name: Download Java native artifacts
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
@@ -3202,7 +3085,7 @@ jobs:
 
       - name: Release Maven package
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-maven@v1
+        uses: kreuzberg-dev/actions/publish-maven@v1
         with:
           pom-file: packages/java/pom.xml
           maven-profile: publish
@@ -3243,7 +3126,7 @@ jobs:
 
       - name: Re-check NuGet before publish
         id: recheck
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: nuget
           package: Kreuzcrawl
@@ -3251,7 +3134,7 @@ jobs:
 
       - name: Publish to NuGet
         if: ${{ steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-nuget@v1
+        uses: kreuzberg-dev/actions/publish-nuget@v1
         with:
           packages-dir: dist
           dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -3291,7 +3174,7 @@ jobs:
 
       - name: Re-check Packagist before publish
         id: recheck
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: packagist
           package: kreuzcrawl/kreuzcrawl
@@ -3299,12 +3182,12 @@ jobs:
 
       - name: Trigger Packagist update
         if: ${{ steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-packagist@v1
+        uses: kreuzberg-dev/actions/publish-packagist@v1
         with:
           packagist-username: Goldziher
           package-name: kreuzcrawl/kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
-          repository-url: https://github.com/kreuzcrawl-dev/kreuzcrawl
+          repository-url: https://github.com/kreuzberg-dev/kreuzcrawl
           dry-run: ${{ needs.prepare.outputs.dry_run }}
         env:
           PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
@@ -3379,12 +3262,12 @@ jobs:
 
       - name: Re-check Homebrew tap before publish
         id: recheck
-        uses: kreuzcrawl-dev/actions/check-registry@v1
+        uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: homebrew
           package: kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
-          tap-repo: kreuzcrawl-dev/homebrew-tap
+          tap-repo: kreuzberg-dev/homebrew-tap
 
       - name: Setup Git credentials
         if: ${{ steps.recheck.outputs.exists != 'true' }}
@@ -3398,14 +3281,14 @@ jobs:
 
       - name: Update Homebrew formula with bottles
         if: ${{ steps.recheck.outputs.exists != 'true' }}
-        uses: kreuzcrawl-dev/actions/publish-homebrew@v1
+        uses: kreuzberg-dev/actions/publish-homebrew@v1
         with:
           bottles-dir: dist/homebrew
           formula-name: kreuzcrawl
-          tap-repo: kreuzcrawl-dev/homebrew-tap
+          tap-repo: kreuzberg-dev/homebrew-tap
           tag: ${{ needs.prepare.outputs.tag }}
           version: ${{ needs.prepare.outputs.version }}
-          github-repo: kreuzcrawl-dev/kreuzcrawl
+          github-repo: kreuzberg-dev/kreuzcrawl
           dry-run: ${{ needs.prepare.outputs.dry_run }}
 
       - name: Verify formula sha256 matches current tarball
@@ -3414,12 +3297,12 @@ jobs:
           GH_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
         run: |
           TAG="${{ needs.prepare.outputs.tag }}"
-          TARBALL_URL="https://github.com/kreuzcrawl-dev/kreuzcrawl/archive/${TAG}.tar.gz"
+          TARBALL_URL="https://github.com/kreuzberg-dev/kreuzcrawl/archive/${TAG}.tar.gz"
           ACTUAL_SHA=$(curl -sL "$TARBALL_URL" | sha256sum | awk '{print $1}')
 
           # Clone the tap and check the formula
           TAP_DIR=$(mktemp -d)
-          git clone "https://x-access-token:${GH_TOKEN}@github.com/kreuzcrawl-dev/homebrew-tap.git" "$TAP_DIR"
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/kreuzberg-dev/homebrew-tap.git" "$TAP_DIR"
           FORMULA_SHA=$(grep 'sha256 "' "$TAP_DIR/Formula/kreuzcrawl.rb" | head -1 | sed 's/.*sha256 "\([^"]*\)".*/\1/')
 
           echo "Tarball SHA256: $ACTUAL_SHA"
