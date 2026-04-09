@@ -34,8 +34,7 @@ fn test_type_action_deserialization() {
 #[test]
 fn test_scroll_action_deserialization() {
     let json = r#"{"type":"scroll","direction":"down"}"#;
-    let action: PageAction =
-        serde_json::from_str(json).expect("deserialize scroll without selector");
+    let action: PageAction = serde_json::from_str(json).expect("deserialize scroll without selector");
     assert_eq!(
         action,
         PageAction::Scroll {
@@ -45,10 +44,8 @@ fn test_scroll_action_deserialization() {
         }
     );
 
-    let json_with_selector =
-        r#"{"type":"scroll","direction":"up","selector":".container","amount":500}"#;
-    let action2: PageAction =
-        serde_json::from_str(json_with_selector).expect("deserialize scroll with selector");
+    let json_with_selector = r#"{"type":"scroll","direction":"up","selector":".container","amount":500}"#;
+    let action2: PageAction = serde_json::from_str(json_with_selector).expect("deserialize scroll with selector");
     assert_eq!(
         action2,
         PageAction::Scroll {
@@ -88,12 +85,7 @@ fn test_execute_js_deserialization() {
 fn test_screenshot_action_deserialization() {
     let json = r#"{"type":"screenshot","fullPage":true}"#;
     let action: PageAction = serde_json::from_str(json).expect("deserialize screenshot");
-    assert_eq!(
-        action,
-        PageAction::Screenshot {
-            full_page: Some(true)
-        }
-    );
+    assert_eq!(action, PageAction::Screenshot { full_page: Some(true) });
 }
 
 #[test]
@@ -134,9 +126,7 @@ fn test_action_roundtrip_serialization() {
             milliseconds: Some(1000),
             selector: None,
         },
-        PageAction::Screenshot {
-            full_page: Some(false),
-        },
+        PageAction::Screenshot { full_page: Some(false) },
         PageAction::ExecuteJs {
             script: "document.title".to_owned(),
         },
@@ -177,10 +167,7 @@ fn test_validation_max_wait_exceeded() {
     ];
     let err = validate_actions(&actions).unwrap_err();
     let msg = err.to_string();
-    assert!(
-        msg.contains("total wait time"),
-        "expected 'total wait time' in: {msg}"
-    );
+    assert!(msg.contains("total wait time"), "expected 'total wait time' in: {msg}");
 }
 
 #[test]
@@ -198,9 +185,7 @@ fn test_validation_empty_selector_rejected() {
 
 #[test]
 fn test_validation_empty_script_rejected() {
-    let actions = vec![PageAction::ExecuteJs {
-        script: String::new(),
-    }];
+    let actions = vec![PageAction::ExecuteJs { script: String::new() }];
     let err = validate_actions(&actions).unwrap_err();
     let msg = err.to_string();
     assert!(
@@ -242,9 +227,7 @@ fn test_validation_valid_actions_pass() {
             milliseconds: Some(500),
             selector: None,
         },
-        PageAction::Screenshot {
-            full_page: Some(true),
-        },
+        PageAction::Screenshot { full_page: Some(true) },
         PageAction::ExecuteJs {
             script: "return 1;".to_owned(),
         },

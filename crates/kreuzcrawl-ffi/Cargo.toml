@@ -1,0 +1,38 @@
+[package]
+name = "kreuzcrawl-ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "C FFI bindings for kreuzcrawl"
+keywords = ["crawl", "scrape", "ffi", "c-bindings"]
+categories = ["api-bindings"]
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[features]
+default = []
+
+[dependencies]
+kreuzcrawl = { path = "../kreuzcrawl" }
+kreuzcrawl-bindings-common = { path = "../kreuzcrawl-bindings-common" }
+libc = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+
+[build-dependencies]
+cbindgen = "0.29"
+
+[lints.rust]
+unsafe_code = "allow"
+missing_docs = "warn"
+unused_must_use = "deny"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+multiple_crate_versions = { level = "allow", priority = 1 }

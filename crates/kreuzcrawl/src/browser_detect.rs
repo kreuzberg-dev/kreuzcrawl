@@ -27,8 +27,7 @@ static NOSCRIPT_SELECTOR: LazyLock<Selector> =
 
 /// Pattern matching common noscript warning text.
 static NOSCRIPT_WARNING: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)(enable|need|require)\s+(javascript|js)")
-        .expect("noscript warning regex should compile")
+    Regex::new(r"(?i)(enable|need|require)\s+(javascript|js)").expect("noscript warning regex should compile")
 });
 
 /// Detect whether a page's HTML content suggests it needs JavaScript rendering

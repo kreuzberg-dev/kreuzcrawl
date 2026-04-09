@@ -66,10 +66,7 @@ fn score_page(html: &str, query_terms: &[String], k1: f64, _b: f64) -> f64 {
     let mut tf: AHashMap<&str, usize> = AHashMap::new();
     let mut doc_len: usize = 0;
 
-    for token in lower
-        .split(|c: char| !c.is_alphanumeric())
-        .filter(|s| !s.is_empty())
-    {
+    for token in lower.split(|c: char| !c.is_alphanumeric()).filter(|s| !s.is_empty()) {
         doc_len += 1;
         // Only track frequency for query terms (avoid tracking all terms)
         for qt in query_terms {

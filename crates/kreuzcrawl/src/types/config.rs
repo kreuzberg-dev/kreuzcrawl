@@ -273,9 +273,7 @@ impl CrawlConfig {
         use crate::error::CrawlError;
 
         if let Some(0) = self.max_concurrent {
-            return Err(CrawlError::InvalidConfig(
-                "max_concurrent must be > 0".into(),
-            ));
+            return Err(CrawlError::InvalidConfig("max_concurrent must be > 0".into()));
         }
         if self.browser.wait == BrowserWait::Selector && self.browser.wait_selector.is_none() {
             return Err(CrawlError::InvalidConfig(
@@ -288,31 +286,23 @@ impl CrawlConfig {
             return Err(CrawlError::InvalidConfig("max_pages must be > 0".into()));
         }
         if self.max_redirects > 100 {
-            return Err(CrawlError::InvalidConfig(
-                "max_redirects must be <= 100".into(),
-            ));
+            return Err(CrawlError::InvalidConfig("max_redirects must be <= 100".into()));
         }
         for pattern in &self.include_paths {
-            regex::Regex::new(pattern).map_err(|e| {
-                CrawlError::InvalidConfig(format!("invalid include_path regex '{pattern}': {e}"))
-            })?;
+            regex::Regex::new(pattern)
+                .map_err(|e| CrawlError::InvalidConfig(format!("invalid include_path regex '{pattern}': {e}")))?;
         }
         for pattern in &self.exclude_paths {
-            regex::Regex::new(pattern).map_err(|e| {
-                CrawlError::InvalidConfig(format!("invalid exclude_path regex '{pattern}': {e}"))
-            })?;
+            regex::Regex::new(pattern)
+                .map_err(|e| CrawlError::InvalidConfig(format!("invalid exclude_path regex '{pattern}': {e}")))?;
         }
         for &code in &self.retry_codes {
             if !(100..=599).contains(&code) {
-                return Err(CrawlError::InvalidConfig(format!(
-                    "invalid retry code: {code}"
-                )));
+                return Err(CrawlError::InvalidConfig(format!("invalid retry code: {code}")));
             }
         }
         if self.request_timeout.is_zero() {
-            return Err(CrawlError::InvalidConfig(
-                "request_timeout must be > 0".into(),
-            ));
+            return Err(CrawlError::InvalidConfig("request_timeout must be > 0".into()));
         }
         Ok(())
     }

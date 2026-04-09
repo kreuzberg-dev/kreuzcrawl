@@ -20,10 +20,7 @@ pub(crate) fn extract_images(doc: &Html, base_url: &Url) -> Vec<ImageInfo> {
         let resolved = resolve_url(src, base_url);
         let alt = el.value().attr("alt").map(String::from);
         let width = el.value().attr("width").and_then(|w| w.parse::<u32>().ok());
-        let height = el
-            .value()
-            .attr("height")
-            .and_then(|h| h.parse::<u32>().ok());
+        let height = el.value().attr("height").and_then(|h| h.parse::<u32>().ok());
         images.push(ImageInfo {
             url: resolved,
             alt,

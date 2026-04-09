@@ -52,9 +52,8 @@ impl BrowserProfile {
         {
             use std::os::unix::fs::PermissionsExt;
             let perms = std::fs::Permissions::from_mode(0o700);
-            std::fs::set_permissions(&self.user_data_dir, perms).map_err(|e| {
-                CrawlError::Other(format!("failed to set profile permissions: {e}"))
-            })?;
+            std::fs::set_permissions(&self.user_data_dir, perms)
+                .map_err(|e| CrawlError::Other(format!("failed to set profile permissions: {e}")))?;
         }
         Ok(())
     }
@@ -102,8 +101,7 @@ impl BrowserProfile {
 ///
 /// Returns `CrawlError::Other` if the system data directory cannot be determined.
 fn profiles_base_dir() -> Result<PathBuf, CrawlError> {
-    let base = dirs::data_dir()
-        .ok_or_else(|| CrawlError::Other("unable to determine data directory".into()))?;
+    let base = dirs::data_dir().ok_or_else(|| CrawlError::Other("unable to determine data directory".into()))?;
     Ok(base.join("kreuzcrawl").join("profiles"))
 }
 
@@ -119,13 +117,12 @@ pub fn list_profiles_in(base: &std::path::Path) -> Result<Vec<Box<str>>, CrawlEr
         return Ok(Vec::new());
     }
 
-    let entries = std::fs::read_dir(base)
-        .map_err(|e| CrawlError::Other(format!("failed to read profiles directory: {e}")))?;
+    let entries =
+        std::fs::read_dir(base).map_err(|e| CrawlError::Other(format!("failed to read profiles directory: {e}")))?;
 
     let mut names: Vec<Box<str>> = Vec::new();
     for entry in entries {
-        let entry =
-            entry.map_err(|e| CrawlError::Other(format!("failed to read profile entry: {e}")))?;
+        let entry = entry.map_err(|e| CrawlError::Other(format!("failed to read profile entry: {e}")))?;
         if entry.path().is_dir()
             && let Some(name) = entry.file_name().to_str()
         {
@@ -145,9 +142,7 @@ pub fn list_profiles_in(base: &std::path::Path) -> Result<Vec<Box<str>>, CrawlEr
 /// - Must contain only ASCII alphanumeric characters, hyphens, underscores, and dots
 fn validate_profile_name(name: &str) -> Result<(), CrawlError> {
     if name.is_empty() {
-        return Err(CrawlError::InvalidConfig(
-            "profile name must not be empty".into(),
-        ));
+        return Err(CrawlError::InvalidConfig("profile name must not be empty".into()));
     }
     if name.len() > 255 {
         return Err(CrawlError::InvalidConfig(

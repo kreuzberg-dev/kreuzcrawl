@@ -5,8 +5,8 @@ use scraper::Html;
 use crate::types::{ArticleMetadata, PageMetadata};
 
 use super::selectors::{
-    META_RE_CONTENT_NAME, META_RE_NAME_CONTENT, SEL_CANONICAL, SEL_HTML, SEL_META,
-    SEL_META_REFRESH, SEL_ROBOTS_META, SEL_TITLE,
+    META_RE_CONTENT_NAME, META_RE_NAME_CONTENT, SEL_CANONICAL, SEL_HTML, SEL_META, SEL_META_REFRESH, SEL_ROBOTS_META,
+    SEL_TITLE,
 };
 
 /// Extract metadata name-value pairs from raw HTML using regex (fallback for malformed HTML).
@@ -23,10 +23,7 @@ fn extract_metadata_from_raw(body: &str) -> Vec<(String, String)> {
 
 /// Extract metadata from a parsed HTML document, with regex fallback for malformed content.
 pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
-    let title = doc
-        .select(&SEL_TITLE)
-        .next()
-        .map(|el| el.text().collect::<String>());
+    let title = doc.select(&SEL_TITLE).next().map(|el| el.text().collect::<String>());
     let canonical_url = doc
         .select(&SEL_CANONICAL)
         .next()
@@ -50,10 +47,7 @@ pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
 
     for meta in doc.select(&SEL_META) {
         let el = meta.value();
-        let name = el
-            .attr("name")
-            .or_else(|| el.attr("property"))
-            .unwrap_or("");
+        let name = el.attr("name").or_else(|| el.attr("property")).unwrap_or("");
         let content = el.attr("content").unwrap_or("").to_owned();
         if content.is_empty() {
             continue;
@@ -180,11 +174,9 @@ pub(crate) fn detect_meta_refresh(doc: &Html) -> Option<String> {
             // Case-insensitive search on original bytes to preserve correct offset
             let bytes = content.as_bytes();
             let needle = b"url=";
-            let pos = bytes.windows(needle.len()).position(|w| {
-                w.iter()
-                    .zip(needle)
-                    .all(|(a, b)| a.to_ascii_lowercase() == *b)
-            });
+            let pos = bytes
+                .windows(needle.len())
+                .position(|w| w.iter().zip(needle).all(|(a, b)| a.to_ascii_lowercase() == *b));
             if let Some(pos) = pos {
                 let target = content[pos + 4..].trim().to_owned();
                 if !target.is_empty() {

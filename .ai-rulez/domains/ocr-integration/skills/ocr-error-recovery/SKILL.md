@@ -12,8 +12,8 @@ Handle OCR failures gracefully
    c. Store original image
 3. Try fallback backend if available
 4. Return best available result:
-    - Full result if successful
-    - Partial result if some data extracted
-    - Error if complete failure
+   - Full result if successful
+   - Partial result if some data extracted
+   - Error if complete failure
 5. Document failure for monitoring
 6. Provide recovery suggestions

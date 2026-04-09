@@ -31,11 +31,7 @@ impl DiskCache {
     /// - `cache_dir`: Directory to store cached files. Created if not exists.
     /// - `ttl_secs`: Time-to-live for cached entries (0 = no expiry).
     /// - `max_entries`: Maximum number of cached entries (0 = unlimited).
-    pub fn new(
-        cache_dir: impl AsRef<Path>,
-        ttl_secs: u64,
-        max_entries: usize,
-    ) -> Result<Self, CrawlError> {
+    pub fn new(cache_dir: impl AsRef<Path>, ttl_secs: u64, max_entries: usize) -> Result<Self, CrawlError> {
         let cache_dir = cache_dir.as_ref().to_path_buf();
         std::fs::create_dir_all(&cache_dir)
             .map_err(|e| CrawlError::Other(format!("failed to create cache directory: {e}")))?;
@@ -84,8 +80,8 @@ impl CrawlCache for DiskCache {
             if !path.exists() {
                 return Ok(None);
             }
-            let data = std::fs::read_to_string(&path)
-                .map_err(|e| CrawlError::Other(format!("cache read error: {e}")))?;
+            let data =
+                std::fs::read_to_string(&path).map_err(|e| CrawlError::Other(format!("cache read error: {e}")))?;
             let page: CachedPage = match serde_json::from_str(&data) {
                 Ok(p) => p,
                 Err(_) => {
@@ -116,8 +112,7 @@ impl CrawlCache for DiskCache {
 
     async fn set(&self, key: &str, page: &CachedPage) -> Result<(), CrawlError> {
         let path = self.cache_path(key);
-        let data = serde_json::to_string(page)
-            .map_err(|e| CrawlError::Other(format!("cache serialize error: {e}")))?;
+        let data = serde_json::to_string(page).map_err(|e| CrawlError::Other(format!("cache serialize error: {e}")))?;
 
         let max_entries = self.max_entries;
         let cache_dir = self.cache_dir.clone();
@@ -154,10 +149,8 @@ impl CrawlCache for DiskCache {
 
             // Atomic write with temp file
             let tmp_path = path.with_extension("tmp");
-            std::fs::write(&tmp_path, data)
-                .map_err(|e| CrawlError::Other(format!("cache write error: {e}")))?;
-            std::fs::rename(&tmp_path, &path)
-                .map_err(|e| CrawlError::Other(format!("cache rename error: {e}")))
+            std::fs::write(&tmp_path, data).map_err(|e| CrawlError::Other(format!("cache write error: {e}")))?;
+            std::fs::rename(&tmp_path, &path).map_err(|e| CrawlError::Other(format!("cache rename error: {e}")))
         })
         .await
         .unwrap_or(Ok(()))
@@ -261,10 +254,7 @@ mod tests {
         let mut page = make_page("http://example.com/forever");
         page.cached_at = 0; // Epoch -- very old
 
-        cache
-            .set("http://example.com/forever", &page)
-            .await
-            .unwrap();
+        cache.set("http://example.com/forever", &page).await.unwrap();
 
         let result = cache.get("http://example.com/forever").await.unwrap();
         assert!(result.is_some(), "ttl=0 should never expire");

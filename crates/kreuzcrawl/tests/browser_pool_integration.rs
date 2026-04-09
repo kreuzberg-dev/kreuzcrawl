@@ -122,15 +122,13 @@ async fn test_pool_respects_max_pages() {
 
     // Third acquire should block. Use a timeout to verify.
     let pool_clone = Arc::clone(&pool);
-    let result = tokio::time::timeout(Duration::from_millis(500), async move {
-        pool_clone.acquire_page().await
-    })
+    let result = tokio::time::timeout(
+        Duration::from_millis(500),
+        async move { pool_clone.acquire_page().await },
+    )
     .await;
 
-    assert!(
-        result.is_err(),
-        "third acquire should timeout (blocked by semaphore)"
-    );
+    assert!(result.is_err(), "third acquire should timeout (blocked by semaphore)");
 
     // Release one page — now third should succeed.
     p1.close().await;
@@ -183,10 +181,7 @@ async fn test_pool_with_scrape_sequential_reuse() {
     let r2 = engine.scrape(TEST_PAGE).await.expect("scrape 2");
     assert!(r2.browser_used);
 
-    assert!(
-        pool.is_healthy(),
-        "pool should still be healthy after 2 scrapes"
-    );
+    assert!(pool.is_healthy(), "pool should still be healthy after 2 scrapes");
     pool.shutdown().await;
 }
 
@@ -204,10 +199,7 @@ async fn test_pool_crash_recovery() {
 
     // Create a new pool to test recovery flow.
     let pool2 = BrowserPool::new(pool_config());
-    let page = pool2
-        .acquire_page()
-        .await
-        .expect("should launch fresh Chrome");
+    let page = pool2.acquire_page().await.expect("should launch fresh Chrome");
     page.close().await;
     assert!(pool2.is_healthy());
     pool2.shutdown().await;

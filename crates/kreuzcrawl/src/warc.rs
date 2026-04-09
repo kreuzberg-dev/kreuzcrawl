@@ -32,8 +32,7 @@ impl WarcWriter {
     /// The file is created (or truncated) immediately but no records are written
     /// until explicit method calls.
     pub fn new(path: &Path) -> Result<Self, CrawlError> {
-        let file =
-            File::create(path).map_err(|e| CrawlError::Other(format!("create WARC file: {e}")))?;
+        let file = File::create(path).map_err(|e| CrawlError::Other(format!("create WARC file: {e}")))?;
         Ok(Self {
             writer: BufWriter::new(file),
             warcinfo_id: String::new().into_boxed_str(),
@@ -59,10 +58,7 @@ impl WarcWriter {
                 ("WARC-Date", Cow::Owned(date)),
                 ("WARC-Record-ID", Cow::Borrowed(&record_id)),
                 ("Content-Type", Cow::Borrowed("application/warc-fields")),
-                (
-                    "Content-Length",
-                    Cow::Owned(payload_bytes.len().to_string()),
-                ),
+                ("Content-Length", Cow::Owned(payload_bytes.len().to_string())),
             ],
             payload_bytes,
         )?;
@@ -93,10 +89,7 @@ impl WarcWriter {
             ("WARC-Date", Cow::Owned(date)),
             ("WARC-Target-URI", Cow::Borrowed(url)),
             ("WARC-Record-ID", Cow::Borrowed(&record_id)),
-            (
-                "Content-Type",
-                Cow::Borrowed("application/http; msgtype=response"),
-            ),
+            ("Content-Type", Cow::Borrowed("application/http; msgtype=response")),
             ("Content-Length", Cow::Owned(http_block.len().to_string())),
         ];
 
@@ -146,11 +139,7 @@ fn validate_header_value(name: &str, value: &str) -> Result<(), CrawlError> {
 }
 
 /// Construct the HTTP response block (status-line + headers + CRLF + body) as raw bytes.
-fn build_http_block(
-    status: u16,
-    headers: &[(&str, &str)],
-    body: &[u8],
-) -> Result<Vec<u8>, CrawlError> {
+fn build_http_block(status: u16, headers: &[(&str, &str)], body: &[u8]) -> Result<Vec<u8>, CrawlError> {
     for (name, value) in headers {
         validate_header_value(name, value)?;
     }
@@ -158,13 +147,7 @@ fn build_http_block(
     let reason = http_reason_phrase(status);
 
     // Estimate capacity: status line + headers + separator + body.
-    let estimated_size = 32
-        + headers
-            .iter()
-            .map(|(n, v)| n.len() + v.len() + 4)
-            .sum::<usize>()
-        + 2
-        + body.len();
+    let estimated_size = 32 + headers.iter().map(|(n, v)| n.len() + v.len() + 4).sum::<usize>() + 2 + body.len();
 
     let mut bytes = Vec::with_capacity(estimated_size);
     use std::io::Write as _;
@@ -178,11 +161,7 @@ fn build_http_block(
 }
 
 /// Write a single WARC record (version line + headers + payload + double-CRLF terminator).
-fn write_record(
-    w: &mut BufWriter<File>,
-    headers: &[(&str, Cow<'_, str>)],
-    payload: &[u8],
-) -> Result<(), CrawlError> {
+fn write_record(w: &mut BufWriter<File>, headers: &[(&str, Cow<'_, str>)], payload: &[u8]) -> Result<(), CrawlError> {
     let map_io = |e: std::io::Error| CrawlError::Other(format!("write WARC record: {e}"));
 
     w.write_all(WARC_VERSION.as_bytes()).map_err(&map_io)?;

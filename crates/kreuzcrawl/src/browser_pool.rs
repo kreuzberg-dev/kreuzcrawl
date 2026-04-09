@@ -167,11 +167,7 @@ impl BrowserPool {
         let mut guard = self.state.lock().await;
 
         // Ensure browser exists.
-        if guard.is_none()
-            || guard
-                .as_ref()
-                .is_some_and(|bs| bs.handler_handle.is_finished())
-        {
+        if guard.is_none() || guard.as_ref().is_some_and(|bs| bs.handler_handle.is_finished()) {
             self.healthy.store(false, Ordering::Release);
             if let Some(old) = guard.take() {
                 old.handler_handle.abort();
@@ -200,10 +196,7 @@ impl BrowserPool {
         }
 
         // Check if another caller already relaunched successfully.
-        if guard
-            .as_ref()
-            .is_some_and(|bs| !bs.handler_handle.is_finished())
-        {
+        if guard.as_ref().is_some_and(|bs| !bs.handler_handle.is_finished()) {
             return Ok(());
         }
 
@@ -225,18 +218,11 @@ impl BrowserPool {
 
     /// Launch (or connect to) a Chrome process according to the pool config.
     async fn launch_browser(&self) -> Result<BrowserState, CrawlError> {
-        let (browser, mut handler, data_dir) = if let Some(ref endpoint) =
-            self.config.browser_endpoint
-        {
-            let (browser, handler) =
-                tokio::time::timeout(self.config.launch_timeout, Browser::connect(endpoint))
-                    .await
-                    .map_err(|_| {
-                        CrawlError::BrowserError("timeout connecting to browser endpoint".into())
-                    })?
-                    .map_err(|e| {
-                        CrawlError::BrowserError(format!("failed to connect to browser: {e}"))
-                    })?;
+        let (browser, mut handler, data_dir) = if let Some(ref endpoint) = self.config.browser_endpoint {
+            let (browser, handler) = tokio::time::timeout(self.config.launch_timeout, Browser::connect(endpoint))
+                .await
+                .map_err(|_| CrawlError::BrowserError("timeout connecting to browser endpoint".into()))?
+                .map_err(|e| CrawlError::BrowserError(format!("failed to connect to browser: {e}")))?;
             (browser, handler, None)
         } else {
             // Use a unique temp dir per launch to avoid SingletonLock
@@ -259,13 +245,10 @@ impl BrowserPool {
                 .build()
                 .map_err(|e| CrawlError::BrowserError(format!("invalid browser config: {e}")))?;
 
-            let (browser, handler) =
-                tokio::time::timeout(self.config.launch_timeout, Browser::launch(browser_config))
-                    .await
-                    .map_err(|_| CrawlError::BrowserError("timeout launching Chrome".into()))?
-                    .map_err(|e| {
-                        CrawlError::BrowserError(format!("failed to launch Chrome: {e}"))
-                    })?;
+            let (browser, handler) = tokio::time::timeout(self.config.launch_timeout, Browser::launch(browser_config))
+                .await
+                .map_err(|_| CrawlError::BrowserError("timeout launching Chrome".into()))?
+                .map_err(|e| CrawlError::BrowserError(format!("failed to launch Chrome: {e}")))?;
             (browser, handler, Some(user_data_dir))
         };
 

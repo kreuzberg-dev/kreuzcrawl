@@ -62,10 +62,7 @@ impl Frontier for InMemoryFrontier {
     }
 
     async fn mark_seen(&self, url: &str) -> Result<(), CrawlError> {
-        self.seen
-            .lock()
-            .expect("lock poisoned")
-            .insert(url.to_owned());
+        self.seen.lock().expect("lock poisoned").insert(url.to_owned());
         Ok(())
     }
 

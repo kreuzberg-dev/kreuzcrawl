@@ -79,13 +79,8 @@ mod tests {
     impl Service<CrawlRequest> for EchoService {
         type Response = CrawlResponse;
         type Error = CrawlError;
-        type Future = std::pin::Pin<
-            Box<dyn std::future::Future<Output = Result<CrawlResponse, CrawlError>> + Send>,
-        >;
-        fn poll_ready(
-            &mut self,
-            _: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<Result<(), Self::Error>> {
+        type Future = std::pin::Pin<Box<dyn std::future::Future<Output = Result<CrawlResponse, CrawlError>> + Send>>;
+        fn poll_ready(&mut self, _: &mut std::task::Context<'_>) -> std::task::Poll<Result<(), Self::Error>> {
             std::task::Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: CrawlRequest) -> Self::Future {

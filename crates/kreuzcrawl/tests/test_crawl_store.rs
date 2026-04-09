@@ -4,8 +4,7 @@ use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
 use kreuzcrawl::{
-    CrawlConfig, CrawlEngine, CrawlError, CrawlPageResult, CrawlStats, CrawlStore, NoopRateLimiter,
-    ScrapeResult,
+    CrawlConfig, CrawlEngine, CrawlError, CrawlPageResult, CrawlStats, CrawlStore, NoopRateLimiter, ScrapeResult,
 };
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
@@ -30,11 +29,7 @@ impl CrawlStore for RecordingStore {
         Ok(())
     }
 
-    async fn store_crawl_page(
-        &self,
-        url: &str,
-        _result: &CrawlPageResult,
-    ) -> Result<(), CrawlError> {
+    async fn store_crawl_page(&self, url: &str, _result: &CrawlPageResult) -> Result<(), CrawlError> {
         self.state.pages.lock().unwrap().push(url.to_owned());
         Ok(())
     }
@@ -73,9 +68,7 @@ async fn test_store_receives_crawl_pages() {
         .await;
 
     let state = SharedState::default();
-    let store = RecordingStore {
-        state: state.clone(),
-    };
+    let store = RecordingStore { state: state.clone() };
     let config = CrawlConfig {
         max_depth: Some(1),
         ..Default::default()
@@ -95,8 +88,5 @@ async fn test_store_receives_crawl_pages() {
         "store should receive at least 2 pages, got {}",
         pages.len()
     );
-    assert!(
-        *state.completed.lock().unwrap(),
-        "on_complete should be called"
-    );
+    assert!(*state.completed.lock().unwrap(), "on_complete should be called");
 }

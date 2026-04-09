@@ -1,0 +1,11 @@
+target/
+.git/
+.github/
+e2e/
+packages/
+fixtures/
+*.md
+.claude/
+.ai-rulez/
+.rumdl.toml
+alef.toml

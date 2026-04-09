@@ -19,10 +19,7 @@ pub(crate) fn detect_charset(content_type: &str, body: &str) -> Option<String> {
     // From <meta charset="..."> in HTML body — search only first 2048 bytes
     let search_len = body.len().min(2048);
     // Find a char boundary at or before the limit
-    let search_end = (0..=search_len)
-        .rev()
-        .find(|&i| body.is_char_boundary(i))
-        .unwrap_or(0);
+    let search_end = (0..=search_len).rev().find(|&i| body.is_char_boundary(i)).unwrap_or(0);
     let head = &body[..search_end];
     if let Some(pos) = ascii_find_case_insensitive(head.as_bytes(), b"charset=") {
         let after = &head[pos + 8..];

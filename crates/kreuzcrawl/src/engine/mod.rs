@@ -49,15 +49,10 @@ impl CrawlEngine {
         use tower::ServiceBuilder;
 
         let service = ServiceBuilder::new()
-            .layer(crate::tower::PerDomainRateLimitLayer::new(
-                self.rate_limiter.clone(),
-            ))
+            .layer(crate::tower::PerDomainRateLimitLayer::new(self.rate_limiter.clone()))
             .layer(crate::tower::CrawlCacheLayer::new(self.cache.clone()))
             .layer(self.ua_rotation.clone())
-            .service(crate::tower::HttpFetchService::new(
-                client.clone(),
-                self.config.clone(),
-            ));
+            .service(crate::tower::HttpFetchService::new(client.clone(), self.config.clone()));
 
         #[cfg(feature = "tracing")]
         let service = tower::ServiceBuilder::new()

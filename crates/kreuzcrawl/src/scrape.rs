@@ -7,8 +7,8 @@ use crate::assets;
 use crate::browser_detect;
 use crate::error::CrawlError;
 use crate::html::{
-    apply_remove_tags, detect_charset, detect_nofollow, detect_noindex, extract_main_content,
-    extract_page_data, is_binary_content_type, is_binary_url, is_html_content, is_pdf_content,
+    apply_remove_tags, detect_charset, detect_nofollow, detect_noindex, extract_main_content, extract_page_data,
+    is_binary_content_type, is_binary_url, is_html_content, is_pdf_content,
 };
 use crate::http::{build_client, http_fetch};
 use crate::normalize::robots_url;
@@ -33,9 +33,7 @@ pub(crate) async fn scrape_from_crawl_response(
     let mut crawl_delay = None;
     if config.respect_robots_txt {
         let robots = robots_url(&parsed_url);
-        if let Ok(robots_resp) =
-            http_fetch(&robots, config, &std::collections::HashMap::new(), &client).await
-        {
+        if let Ok(robots_resp) = http_fetch(&robots, config, &std::collections::HashMap::new(), &client).await {
             let ua = config.user_agent.as_deref().unwrap_or("*");
             let rules = parse_robots_txt(&robots_resp.body, ua);
             is_allowed = is_path_allowed(parsed_url.path(), &rules);
@@ -62,10 +60,7 @@ pub(crate) async fn scrape_from_crawl_response(
     }
 
     // Check for X-Robots-Tag
-    let x_robots_tag = resp
-        .headers
-        .get("x-robots-tag")
-        .and_then(|v| v.first().cloned());
+    let x_robots_tag = resp.headers.get("x-robots-tag").and_then(|v| v.first().cloned());
 
     let mut noindex_detected = false;
     let mut nofollow_detected = false;
@@ -80,8 +75,7 @@ pub(crate) async fn scrape_from_crawl_response(
         }
     }
 
-    let was_skipped =
-        is_binary_content_type(&content_type) || is_binary_url(parsed_url.as_str()) || is_pdf;
+    let was_skipped = is_binary_content_type(&content_type) || is_binary_url(parsed_url.as_str()) || is_pdf;
 
     // Remove tags if specified
     if !config.remove_tags.is_empty() {

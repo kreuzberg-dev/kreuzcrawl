@@ -40,8 +40,7 @@ pub(crate) fn apply_remove_tags(html: &str, tags: &[String]) -> String {
 
 /// Compute the word count of visible text in the HTML body.
 pub(crate) fn compute_word_count(doc: &Html) -> usize {
-    static SEL_BODY: LazyLock<Selector> =
-        LazyLock::new(|| Selector::parse("body").expect("valid selector: body"));
+    static SEL_BODY: LazyLock<Selector> = LazyLock::new(|| Selector::parse("body").expect("valid selector: body"));
     let body_text = doc
         .select(&SEL_BODY)
         .next()

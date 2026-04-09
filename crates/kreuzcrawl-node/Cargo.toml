@@ -1,0 +1,41 @@
+[package]
+name = "kreuzcrawl-node"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "Node.js bindings (NAPI-RS) for kreuzcrawl"
+keywords = ["crawl", "scrape", "nodejs", "napi", "bindings"]
+categories = ["api-bindings"]
+
+[package.metadata.napi]
+package-json-name = "@kreuzberg/kreuzcrawl"
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+default = []
+
+[dependencies]
+kreuzcrawl = { path = "../kreuzcrawl" }
+kreuzcrawl-bindings-common = { path = "../kreuzcrawl-bindings-common" }
+napi = { workspace = true }
+napi-derive = { workspace = true }
+serde_json = { workspace = true }
+
+[build-dependencies]
+napi-build = "2.2"
+
+[lints.rust]
+unsafe_code = "allow"
+missing_docs = "warn"
+unused_must_use = "deny"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+multiple_crate_versions = { level = "allow", priority = 1 }

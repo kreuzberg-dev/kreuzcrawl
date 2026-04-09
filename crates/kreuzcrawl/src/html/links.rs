@@ -9,8 +9,8 @@ use super::selectors::{SEL_A_HREF, SEL_BASE_HREF};
 
 /// Document file extensions used for link classification.
 static DOCUMENT_EXTENSIONS: &[&str] = &[
-    ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".odt", ".ods", ".odp", ".rtf",
-    ".csv", ".txt", ".zip", ".tar", ".gz", ".rar",
+    ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".odt", ".ods", ".odp", ".rtf", ".csv", ".txt", ".zip",
+    ".tar", ".gz", ".rar",
 ];
 
 /// Classify a link as internal, external, anchor, or document.
@@ -96,10 +96,7 @@ pub(crate) fn extract_links(doc: &Html, base_url: &Url) -> Vec<LinkInfo> {
         };
 
         let rel = el.value().attr("rel").map(String::from);
-        let nofollow = rel
-            .as_ref()
-            .map(|r| r.contains("nofollow"))
-            .unwrap_or(false);
+        let nofollow = rel.as_ref().map(|r| r.contains("nofollow")).unwrap_or(false);
         let text = el.text().collect::<String>().trim().to_owned();
 
         links.push(LinkInfo {

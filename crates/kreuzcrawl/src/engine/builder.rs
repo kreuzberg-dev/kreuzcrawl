@@ -99,21 +99,13 @@ impl CrawlEngineBuilder {
             frontier: self
                 .frontier
                 .unwrap_or_else(|| Arc::new(defaults::InMemoryFrontier::new())),
-            rate_limiter: self.rate_limiter.unwrap_or_else(|| {
-                Arc::new(defaults::PerDomainThrottle::new(
-                    std::time::Duration::from_millis(200),
-                ))
-            }),
+            rate_limiter: self
+                .rate_limiter
+                .unwrap_or_else(|| Arc::new(defaults::PerDomainThrottle::new(std::time::Duration::from_millis(200)))),
             store: self.store.unwrap_or_else(|| Arc::new(defaults::NoopStore)),
-            event_emitter: self
-                .event_emitter
-                .unwrap_or_else(|| Arc::new(defaults::NoopEmitter)),
-            strategy: self
-                .strategy
-                .unwrap_or_else(|| Arc::new(defaults::BfsStrategy)),
-            content_filter: self
-                .content_filter
-                .unwrap_or_else(|| Arc::new(defaults::NoopFilter)),
+            event_emitter: self.event_emitter.unwrap_or_else(|| Arc::new(defaults::NoopEmitter)),
+            strategy: self.strategy.unwrap_or_else(|| Arc::new(defaults::BfsStrategy)),
+            content_filter: self.content_filter.unwrap_or_else(|| Arc::new(defaults::NoopFilter)),
             cache: self.cache.unwrap_or_else(|| Arc::new(defaults::NoopCache)),
             ua_rotation,
         })

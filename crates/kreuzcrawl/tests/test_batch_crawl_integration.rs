@@ -30,10 +30,7 @@ async fn test_batch_crawl_multiple_seeds() {
         .build()
         .unwrap();
 
-    let urls: Vec<String> = ["a", "b", "c"]
-        .iter()
-        .map(|n| format!("{}/{n}", mock.uri()))
-        .collect();
+    let urls: Vec<String> = ["a", "b", "c"].iter().map(|n| format!("{}/{n}", mock.uri())).collect();
     let url_refs: Vec<&str> = urls.iter().map(|s| s.as_str()).collect();
 
     let results = engine.batch_crawl(&url_refs).await;
@@ -44,9 +41,7 @@ async fn test_batch_crawl_multiple_seeds() {
 
     // Verify each result has pages.
     for (url, result) in &results {
-        let crawl = result
-            .as_ref()
-            .unwrap_or_else(|e| panic!("{url} failed: {e}"));
+        let crawl = result.as_ref().unwrap_or_else(|e| panic!("{url} failed: {e}"));
         assert!(!crawl.pages.is_empty(), "{url} should have at least 1 page");
     }
 }

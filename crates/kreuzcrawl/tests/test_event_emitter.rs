@@ -3,9 +3,7 @@
 use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
-use kreuzcrawl::{
-    CompleteEvent, CrawlConfig, CrawlEngine, ErrorEvent, EventEmitter, NoopRateLimiter, PageEvent,
-};
+use kreuzcrawl::{CompleteEvent, CrawlConfig, CrawlEngine, ErrorEvent, EventEmitter, NoopRateLimiter, PageEvent};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -63,9 +61,7 @@ async fn test_emitter_receives_events() {
         .await;
 
     let state = SharedState::default();
-    let emitter = RecordingEmitter {
-        state: state.clone(),
-    };
+    let emitter = RecordingEmitter { state: state.clone() };
     let config = CrawlConfig {
         max_depth: Some(1),
         ..Default::default()

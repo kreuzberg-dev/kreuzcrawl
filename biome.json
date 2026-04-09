@@ -1,0 +1,149 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.9/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": [
+			"**/*",
+			"!crates/kreuzberg-tesseract/third_party",
+			"!test_documents",
+			"!**/artifacts",
+			"!**/dist",
+			"!**/pkg",
+			"!**/vendor",
+			"!docs/snippets/typescript/docker/usage.ts",
+			"!packages/java/src/test/resources/test-large.html"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 120
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double",
+			"trailingCommas": "all"
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "warn",
+				"noImplicitAnyLet": "warn"
+			},
+			"complexity": {
+				"useLiteralKeys": "off"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["docs/snippets/**/*.ts"],
+			"linter": {
+				"enabled": false
+			},
+			"formatter": {
+				"enabled": false
+			}
+		},
+		{
+			"includes": [
+				"**/tests/**",
+				"**/*.spec.ts",
+				"**/*.test.ts",
+				"**/*.test.tsx",
+				"e2e/wasm-deno/**",
+				"e2e/wasm-workers/**"
+			],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noExplicitAny": "off",
+						"useIterableCallbackReturn": "off"
+					},
+					"style": {
+						"noNonNullAssertion": "off"
+					},
+					"correctness": {
+						"noUnusedFunctionParameters": "off",
+						"noUnusedImports": "off",
+						"noUnusedVariables": "off",
+						"useHookAtTopLevel": "off"
+					},
+					"a11y": {
+						"useButtonType": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["crates/kreuzberg-node/index.js"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noGlobalAssign": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/scripts/**/*.ts", "**/src/ocr/**/*.ts", "**/src/ocr/**/*.d.ts"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noExplicitAny": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["docs/**/*.css"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noImportantStyles": "off"
+					},
+					"style": {
+						"noDescendingSpecificity": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/utils/**/*.ts"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noExplicitAny": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"docs/**/*.html",
+				"crates/kreuzberg-wasm/examples/**/*.html",
+				"packages/java/src/test/resources/**/*.html"
+			],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"useButtonType": "off",
+						"noSvgWithoutTitle": "off",
+						"useHtmlLang": "off",
+						"noRedundantAlt": "off"
+					},
+					"complexity": {
+						"noArguments": "off"
+					}
+				}
+			}
+		}
+	]
+}

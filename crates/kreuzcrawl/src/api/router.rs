@@ -4,7 +4,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use axum::{
-    Router,
+    Json, Router,
     extract::Request,
     http::{StatusCode, header::AUTHORIZATION},
     middleware::{self, Next},
@@ -23,7 +23,9 @@ use tower_http::{
 
 use crate::engine::CrawlEngine;
 
-use super::{handlers, state::ApiState};
+use utoipa::OpenApi;
+
+use super::{handlers, openapi::ApiDoc, state::ApiState};
 
 /// Maximum request body size (10 MB).
 const MAX_REQUEST_BODY_BYTES: usize = 10 * 1024 * 1024;
@@ -42,10 +44,7 @@ const REQUEST_TIMEOUT: Duration = Duration::from_secs(300);
 pub fn create_router(engine: Arc<CrawlEngine>) -> Router {
     let state = Arc::new(ApiState::new(engine));
 
-    let cors_layer = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods(Any)
-        .allow_headers(Any);
+    let cors_layer = CorsLayer::new().allow_origin(Any).allow_methods(Any).allow_headers(Any);
 
     Router::new()
         // Firecrawl v1 endpoints
@@ -62,6 +61,7 @@ pub fn create_router(engine: Arc<CrawlEngine>) -> Router {
         // Operational endpoints
         .route("/health", get(handlers::health_handler))
         .route("/version", get(handlers::version_handler))
+        .route("/openapi.json", get(openapi_handler))
         // Middleware stack (outermost first)
         .layer(PropagateRequestIdLayer::x_request_id())
         .layer(SetRequestIdLayer::x_request_id(MakeRequestUuid))
@@ -73,6 +73,12 @@ pub fn create_router(engine: Arc<CrawlEngine>) -> Router {
         .layer(CatchPanicLayer::new())
         .layer(TraceLayer::new_for_http())
         .with_state(state)
+}
+
+/// Handler that returns the OpenAPI JSON schema.
+async fn openapi_handler() -> impl IntoResponse {
+    let schema = ApiDoc::openapi();
+    Json(schema)
 }
 
 /// Middleware that enforces a global request timeout.

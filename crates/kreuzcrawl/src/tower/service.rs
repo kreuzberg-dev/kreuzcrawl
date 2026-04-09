@@ -85,10 +85,7 @@ async fn do_fetch(
     }
 
     // Send
-    let resp = http_req
-        .send()
-        .await
-        .map_err(|e| classify_reqwest_error(&e))?;
+    let resp = http_req.send().await.map_err(|e| classify_reqwest_error(&e))?;
 
     let status = resp.status().as_u16();
     let content_type = resp
@@ -104,10 +101,7 @@ async fn do_fetch(
     let mut headers: HashMap<String, Vec<String>> = HashMap::new();
     for (name, value) in resp.headers().iter() {
         if let Ok(v) = value.to_str() {
-            headers
-                .entry(name.to_string())
-                .or_default()
-                .push(v.to_string());
+            headers.entry(name.to_string()).or_default().push(v.to_string());
         }
     }
 
@@ -123,9 +117,7 @@ async fn do_fetch(
             let body = resp.text().await.unwrap_or_default();
             if crate::http::is_waf_blocked(&server, &body, &headers) {
                 let vendor = crate::http::detect_waf_vendor(&server, &body.to_lowercase());
-                return Err(CrawlError::WafBlocked(format!(
-                    "waf/blocked detected: {vendor}"
-                )));
+                return Err(CrawlError::WafBlocked(format!("waf/blocked detected: {vendor}")));
             }
             return Err(CrawlError::Forbidden("forbidden".into()));
         }

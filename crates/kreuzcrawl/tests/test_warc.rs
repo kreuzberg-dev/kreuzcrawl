@@ -79,28 +79,18 @@ fn test_warc_multiple_records() {
     let content = std::fs::read_to_string(&path).expect("read file");
 
     // 1 warcinfo + 3 response = 4 total records
-    assert_eq!(
-        content.matches("WARC/1.1\r\n").count(),
-        4,
-        "expected 4 WARC records"
-    );
+    assert_eq!(content.matches("WARC/1.1\r\n").count(), 4, "expected 4 WARC records");
 
     // Each record is terminated by \r\n\r\n after the payload.
     // With 4 records we expect at least 4 double-CRLF terminators.
-    assert!(
-        content.matches("\r\n\r\n").count() >= 4,
-        "expected record separators"
-    );
+    assert!(content.matches("\r\n\r\n").count() >= 4, "expected record separators");
 
     for i in 0..3 {
         assert!(
             content.contains(&format!("WARC-Target-URI: https://example.com/page/{i}")),
             "missing target URI for page {i}"
         );
-        assert!(
-            content.contains(&format!("body-{i}")),
-            "missing body for page {i}"
-        );
+        assert!(content.contains(&format!("body-{i}")), "missing body for page {i}");
     }
 }
 
@@ -113,23 +103,11 @@ fn test_warc_record_ids_are_unique() {
         .expect("write warcinfo");
 
     let id1 = writer
-        .write_response(
-            "https://example.com/a",
-            200,
-            &sample_headers(),
-            b"a",
-            Utc::now(),
-        )
+        .write_response("https://example.com/a", 200, &sample_headers(), b"a", Utc::now())
         .expect("write response 1");
 
     let id2 = writer
-        .write_response(
-            "https://example.com/b",
-            200,
-            &sample_headers(),
-            b"b",
-            Utc::now(),
-        )
+        .write_response("https://example.com/b", 200, &sample_headers(), b"b", Utc::now())
         .expect("write response 2");
 
     writer.finish().expect("finish");
@@ -286,16 +264,12 @@ fn test_warc_header_crlf_injection_rejected() {
     let headers = vec![("X-Evil", "value\r\nInjected-Header: malicious")];
     let result = writer.write_response("https://example.com", 200, &headers, b"body", Utc::now());
 
-    assert!(
-        result.is_err(),
-        "CRLF injection in header value must be rejected"
-    );
+    assert!(result.is_err(), "CRLF injection in header value must be rejected");
 
     // Header name containing newline should also be rejected.
     let (mut writer2, _path2) = setup_writer();
     let headers2 = vec![("X-Evil\nName", "value")];
-    let result2 =
-        writer2.write_response("https://example.com", 200, &headers2, b"body", Utc::now());
+    let result2 = writer2.write_response("https://example.com", 200, &headers2, b"body", Utc::now());
 
     assert!(result2.is_err(), "newline in header name must be rejected");
 }

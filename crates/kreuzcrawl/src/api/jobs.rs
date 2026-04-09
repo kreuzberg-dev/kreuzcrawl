@@ -74,9 +74,7 @@ pub struct JobRegistry {
 impl JobRegistry {
     /// Create an empty registry.
     pub fn new() -> Self {
-        Self {
-            jobs: DashMap::new(),
-        }
+        Self { jobs: DashMap::new() }
     }
 
     /// Register a new job and return its unique identifier.
@@ -129,8 +127,7 @@ impl JobRegistry {
 
     /// Remove all jobs older than `max_age`.
     pub fn evict_expired(&self, max_age: Duration) {
-        self.jobs
-            .retain(|_, state| state.created_at().elapsed() < max_age);
+        self.jobs.retain(|_, state| state.created_at().elapsed() < max_age);
     }
 
     /// Spawn a background task that periodically evicts expired jobs.

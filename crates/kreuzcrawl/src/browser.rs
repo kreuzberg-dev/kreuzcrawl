@@ -6,9 +6,7 @@ use std::time::Duration;
 
 use chromiumoxide::Handler;
 use chromiumoxide::browser::{Browser, BrowserConfig as ChromeBrowserConfig};
-use chromiumoxide::cdp::browser_protocol::network::{
-    Headers, SetCookieParams, SetExtraHttpHeadersParams,
-};
+use chromiumoxide::cdp::browser_protocol::network::{Headers, SetCookieParams, SetExtraHttpHeadersParams};
 use tokio_stream::StreamExt;
 
 use crate::browser_pool::BrowserPool;
@@ -71,9 +69,7 @@ async fn page_fetch(
     // Set cookies from prior HTTP response.
     if let Some(cookies) = prior_cookies {
         for cookie in cookies {
-            let mut builder = SetCookieParams::builder()
-                .name(&cookie.name)
-                .value(&cookie.value);
+            let mut builder = SetCookieParams::builder().name(&cookie.name).value(&cookie.value);
             if let Some(ref domain) = cookie.domain {
                 builder = builder.domain(domain);
             }
@@ -99,17 +95,13 @@ async fn page_fetch(
                 serde_json::Value::String(format!("Bearer {token}")),
             );
         }
-        Some(AuthConfig::Header {
-            ref name,
-            ref value,
-        }) => {
+        Some(AuthConfig::Header { ref name, ref value }) => {
             extra_headers.insert(name.clone(), serde_json::Value::String(value.clone()));
         }
         _ => {}
     }
     if !extra_headers.is_empty() {
-        let params =
-            SetExtraHttpHeadersParams::new(Headers::new(serde_json::Value::Object(extra_headers)));
+        let params = SetExtraHttpHeadersParams::new(Headers::new(serde_json::Value::Object(extra_headers)));
         page.execute(params)
             .await
             .map_err(|e| CrawlError::BrowserError(format!("failed to set headers: {e}")))?;

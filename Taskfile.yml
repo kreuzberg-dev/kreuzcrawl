@@ -109,3 +109,73 @@ tasks:
       - cargo fmt --manifest-path e2e/rust/Cargo.toml --check
       - cargo clippy --manifest-path e2e/rust/Cargo.toml -- -D warnings
       - git diff --exit-code e2e/
+
+  # --- Docker tasks ---
+
+  docker:build:
+    desc: Build Docker image (API server)
+    cmds:
+      - docker build -f docker/Dockerfile -t kreuzcrawl:dev .
+
+  docker:build:cli:
+    desc: Build Docker image (CLI only)
+    cmds:
+      - docker build -f docker/Dockerfile.cli -t kreuzcrawl:cli .
+
+  docker:run:
+    desc: Run API server in Docker
+    deps: [docker:build]
+    cmds:
+      - docker run -p 3000:3000 kreuzcrawl:dev
+
+  # --- Schemathesis API contract tests ---
+
+  schemathesis:
+    desc: Run schemathesis API contract tests (requires running server on :3000)
+    cmds:
+      - pip3 install schemathesis
+      - >-
+        schemathesis run http://localhost:3000/openapi.json
+        --max-examples=10
+        --request-timeout=30000
+        --checks not_a_server_error,status_code_conformance,content_type_conformance,response_schema_conformance,negative_data_rejection
+
+  # --- Feature-gated test tasks ---
+
+  test:api:
+    desc: Run API tests
+    cmds:
+      - cargo test --workspace --features api
+
+  test:mcp:
+    desc: Run MCP tests
+    cmds:
+      - cargo test --workspace --features mcp
+
+  test:all-features:
+    desc: Run all tests with all features
+    cmds:
+      - cargo test --workspace --features "warc,interact,mcp,api,ai"
+
+  # --- Python tasks ---
+
+  python:install:
+    desc: Install Python dev dependencies via uv
+    cmds:
+      - uv sync --no-install-workspace --no-install-project
+
+  python:lint:
+    desc: Run Python linters
+    cmds:
+      - uv run ruff check --fix
+      - uv run ruff format
+
+  python:pyproject:format:
+    desc: Format pyproject.toml
+    cmds:
+      - uv run pyproject-fmt pyproject.toml
+
+  python:pyproject:validate:
+    desc: Validate pyproject.toml
+    cmds:
+      - uv run validate-pyproject pyproject.toml

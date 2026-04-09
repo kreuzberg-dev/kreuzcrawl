@@ -25,8 +25,7 @@ fn test_crawl_config_json_roundtrip() {
     };
 
     let json = serde_json::to_string_pretty(&config).expect("serialize should succeed");
-    let deserialized: CrawlConfig =
-        serde_json::from_str(&json).expect("deserialize should succeed");
+    let deserialized: CrawlConfig = serde_json::from_str(&json).expect("deserialize should succeed");
 
     assert_eq!(deserialized.max_depth, Some(5));
     assert_eq!(deserialized.max_pages, Some(100));

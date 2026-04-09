@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*", "tools/*", "packages/elixir/native/kreuzcrawl_nif"]
+members = ["crates/*", "packages/elixir/native/kreuzcrawl_nif", "tools/*"]
 exclude = [
     ".claude",
     "e2e/rust",
@@ -28,12 +28,20 @@ chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 dashmap = "6"
 dirs = "6"
+
+# Binding framework dependencies
+ext-php-rs = "0.15"
 flate2 = "1"
 html-to-markdown-rs = { version = "3.1", features = ["full"] }
 itertools = "0.14"
+libc = "0.2"
 liter-llm = { version = "1.2", features = ["native-http"] }
 memchr = "2"
 minijinja = "2"
+napi = { version = "3", default-features = false, features = ["napi8", "tokio_rt"] }
+napi-derive = "3"
+pyo3 = { version = "0.28", features = ["abi3-py310"] }
+pyo3-async-runtimes = { version = "0.28", features = ["tokio-runtime"] }
 quick-xml = "0.39"
 regex = "1"
 reqwest = { version = "0.13", features = ["cookies", "gzip", "brotli"] }
@@ -66,14 +74,7 @@ tower-http = { version = "0.6", features = [
 tracing = "0.1"
 url = "2"
 utoipa = { version = "5", features = ["axum_extras"] }
-uuid = { version = "1", features = ["v4"] }
+uuid = { version = "1.16", features = ["v4"] }
 walkdir = "2.5"
-
-# Binding framework dependencies
-ext-php-rs = "0.15"
-libc = "0.2"
-napi = { version = "3", default-features = false, features = ["napi8", "tokio_rt"] }
-napi-derive = "3"
-pyo3 = { version = "0.28", features = ["abi3-py310"] }
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"

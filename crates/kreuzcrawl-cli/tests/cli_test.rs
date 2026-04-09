@@ -18,10 +18,7 @@ fn test_cli_help() {
 
 #[test]
 fn test_cli_scrape_help() {
-    let output = cargo_bin()
-        .args(["scrape", "--help"])
-        .output()
-        .expect("failed");
+    let output = cargo_bin().args(["scrape", "--help"]).output().expect("failed");
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap();
     assert!(stdout.to_lowercase().contains("url"));
@@ -29,10 +26,7 @@ fn test_cli_scrape_help() {
 
 #[test]
 fn test_cli_crawl_help() {
-    let output = cargo_bin()
-        .args(["crawl", "--help"])
-        .output()
-        .expect("failed");
+    let output = cargo_bin().args(["crawl", "--help"]).output().expect("failed");
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap().to_lowercase();
     assert!(stdout.contains("depth"));
@@ -41,9 +35,6 @@ fn test_cli_crawl_help() {
 
 #[test]
 fn test_cli_map_help() {
-    let output = cargo_bin()
-        .args(["map", "--help"])
-        .output()
-        .expect("failed");
+    let output = cargo_bin().args(["map", "--help"]).output().expect("failed");
     assert!(output.status.success());
 }

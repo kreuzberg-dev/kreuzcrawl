@@ -11,6 +11,11 @@ description = "Command-line web crawler and scraper"
 name = "kreuzcrawl"
 path = "src/main.rs"
 
+[features]
+default = []
+api = ["kreuzcrawl/api"]
+mcp = ["kreuzcrawl/mcp"]
+
 [dependencies]
 clap = { workspace = true }
 kreuzcrawl = { path = "../kreuzcrawl" }

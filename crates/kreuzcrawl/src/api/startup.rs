@@ -53,11 +53,7 @@ pub async fn serve(host: &str, port: u16, engine: Arc<CrawlEngine>) -> Result<()
 ///
 /// Returns a [`CrawlError`] if the config is invalid, the address cannot be
 /// parsed, or the server fails to start.
-pub async fn serve_with_config(
-    host: &str,
-    port: u16,
-    config: CrawlConfig,
-) -> Result<(), CrawlError> {
+pub async fn serve_with_config(host: &str, port: u16, config: CrawlConfig) -> Result<(), CrawlError> {
     let engine = CrawlEngine::builder().config(config).build()?;
     serve(host, port, Arc::new(engine)).await
 }

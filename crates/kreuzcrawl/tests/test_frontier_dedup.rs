@@ -13,9 +13,7 @@ async fn test_duplicate_links_deduplicated() {
         .and(path("/"))
         .respond_with(
             ResponseTemplate::new(200)
-                .set_body_string(
-                    "<html><body><a href=\"/b\">B</a><a href=\"/c\">C</a></body></html>",
-                )
+                .set_body_string("<html><body><a href=\"/b\">B</a><a href=\"/c\">C</a></body></html>")
                 .append_header("content-type", "text/html"),
         )
         .mount(&mock)

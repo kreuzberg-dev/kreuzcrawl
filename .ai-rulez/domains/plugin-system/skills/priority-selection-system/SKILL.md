@@ -6,10 +6,10 @@ name: priority-selection-system
 Implement priority-based plugin selection
 
 1. Define priority semantics:
-    - Higher = more priority
-    - Default = 50 (middle)
-    - Custom = > 50
-    - Fallback = < 50
+   - Higher = more priority
+   - Default = 50 (middle)
+   - Custom = > 50
+   - Fallback = < 50
 2. Get matching plugins from registry
 3. Sort by priority (descending)
 4. For each plugin:

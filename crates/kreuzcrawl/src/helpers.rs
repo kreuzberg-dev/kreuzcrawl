@@ -34,10 +34,7 @@ pub(crate) fn find_ascii_case_insensitive(haystack: &str, needle: &str) -> Optio
 pub(crate) fn compile_regexes(patterns: &[String]) -> Result<Vec<Regex>, CrawlError> {
     patterns
         .iter()
-        .map(|pat| {
-            Regex::new(pat)
-                .map_err(|e| CrawlError::Other(format!("invalid regex pattern \"{pat}\": {e}")))
-        })
+        .map(|pat| Regex::new(pat).map_err(|e| CrawlError::Other(format!("invalid regex pattern \"{pat}\": {e}"))))
         .collect()
 }
 
@@ -55,14 +52,9 @@ pub(crate) async fn fetch_robots_rules(
         .user_agent
         .as_deref()
         .unwrap_or(concat!("kreuzcrawl/", env!("CARGO_PKG_VERSION")));
-    let resp = http_fetch(
-        &robots_url,
-        config,
-        &std::collections::HashMap::new(),
-        client,
-    )
-    .await
-    .ok()?;
+    let resp = http_fetch(&robots_url, config, &std::collections::HashMap::new(), client)
+        .await
+        .ok()?;
     if resp.status >= 400 {
         return None;
     }

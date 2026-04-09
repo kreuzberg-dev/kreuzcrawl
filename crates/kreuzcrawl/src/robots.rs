@@ -54,10 +54,7 @@ pub(crate) fn parse_robots_txt(body: &str, user_agent: &str) -> RobotsRules {
                     // We were collecting rules; this user-agent starts a new block.
                     // Save the previous block.
                     if !current_agents.is_empty() {
-                        blocks.push((
-                            std::mem::take(&mut current_agents),
-                            std::mem::take(&mut current_rules),
-                        ));
+                        blocks.push((std::mem::take(&mut current_agents), std::mem::take(&mut current_rules)));
                     }
                     in_rules = false;
                 }
@@ -111,8 +108,7 @@ pub(crate) fn parse_robots_txt(body: &str, user_agent: &str) -> RobotsRules {
         for agent in agents {
             if agent == "*" {
                 matches_wildcard = true;
-            } else if ua_lower != "*"
-                && (ua_lower.starts_with(agent.as_str()) || agent.starts_with(ua_lower.as_str()))
+            } else if ua_lower != "*" && (ua_lower.starts_with(agent.as_str()) || agent.starts_with(ua_lower.as_str()))
             {
                 matches_specific = true;
             }
@@ -134,9 +130,7 @@ pub(crate) fn parse_robots_txt(body: &str, user_agent: &str) -> RobotsRules {
         Some(block) => RobotsRules {
             allow: block.allow.clone(),
             disallow: block.disallow.clone(),
-            crawl_delay: block
-                .crawl_delay
-                .or(wildcard_block.and_then(|w| w.crawl_delay)),
+            crawl_delay: block.crawl_delay.or(wildcard_block.and_then(|w| w.crawl_delay)),
             sitemaps,
             is_wildcard_block: using_wildcard,
         },
@@ -185,11 +179,7 @@ fn robots_path_matches(path: &str, rule: &str) -> bool {
             None => return false,
         }
     }
-    if exact_end {
-        remaining.is_empty()
-    } else {
-        true
-    }
+    if exact_end { remaining.is_empty() } else { true }
 }
 
 /// Determine whether the given path is allowed by the robots.txt rules.
