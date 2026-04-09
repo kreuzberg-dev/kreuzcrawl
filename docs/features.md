@@ -147,7 +147,19 @@ HTML-to-markdown conversion runs automatically on every page via `html-to-markdo
 | **Charset detection** | Automatic encoding detection from HTTP headers and HTML meta tags |
 | **Binary/PDF skipping** | Content-type aware filtering to avoid processing non-HTML content |
 | **Config validation** | `serde` with `deny_unknown_fields` -- typos in config keys are compile-time or parse-time errors |
-| **WARC output** | Standards-compliant WARC archiving (feature-gated: `warc`) |
+
+---
+
+## WARC Output
+
+!!! info "Feature gate"
+    Requires the `warc` feature: `kreuzcrawl = { version = "0.1", features = ["warc"] }`
+
+| Feature | Description |
+|---------|-------------|
+| **WARC output** | Standards-compliant WARC archiving for entire crawl sessions |
+| **Archive format** | Web ARChive (WARC) format with complete HTTP request/response pairs |
+| **File storage** | Write to disk via `warc_output` configuration path |
 
 ---
 

@@ -2,11 +2,15 @@
 name = "kreuzcrawl-ffi"
 version.workspace = true
 edition.workspace = true
+authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme.workspace = true
 rust-version.workspace = true
 description = "C FFI bindings for kreuzcrawl"
-keywords = ["crawl", "scrape", "ffi", "c-bindings"]
+keywords = ["crawl", "scrape", "ffi", "c-bindings", "web"]
 categories = ["api-bindings"]
 
 [lib]

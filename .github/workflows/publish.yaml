@@ -386,7 +386,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       kreuzcrawl_exists: ${{ steps.check.outputs.exists }}
-      paddle_exists: ${{ steps.check.outputs.paddle_exists }}
       cli_exists: ${{ steps.check.outputs.cli_exists }}
       exists: ${{ steps.derive.outputs.all_exist }}
     steps:
@@ -404,7 +403,6 @@ jobs:
         id: derive
         run: |
           if [[ "${{ steps.check.outputs.exists }}" == "true" && \
-                "${{ steps.check.outputs.paddle_exists }}" == "true" && \
                 "${{ steps.check.outputs.cli_exists }}" == "true" ]]; then
             echo "all_exist=true" >> "$GITHUB_OUTPUT"
           else
@@ -556,7 +554,7 @@ jobs:
         shell: bash
         run: |
           echo "=== Building CLI Binary ==="
-          cargo build --release --package kreuzcrawl-cli --features all
+          cargo build --release --package kreuzcrawl-cli --features "api,mcp,warc,ai,tracing"
           mkdir -p packages/python/kreuzcrawl
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp target/release/kreuzcrawl.exe packages/python/kreuzcrawl/kreuzcrawl-cli.exe
@@ -606,7 +604,7 @@ jobs:
             # Note: before-script-linux CWD is the working-directory (packages/python),
             # but cargo outputs to the workspace root's target/ dir
             echo "=== Building CLI Binary (Linux) ==="
-            cargo build --release --package kreuzcrawl-cli --features all
+            cargo build --release --package kreuzcrawl-cli --features "api,mcp,warc,ai,tracing"
             mkdir -p kreuzcrawl
             cp ../../target/release/kreuzcrawl kreuzcrawl/kreuzcrawl-cli
 
@@ -789,12 +787,6 @@ jobs:
         with:
           node-version: 22
           check-latest: true
-
-      - name: Prepare ONNX Runtime (macOS)
-        if: startsWith(matrix.settings.target, 'aarch64-apple-darwin') || startsWith(matrix.settings.target, 'x86_64-apple-darwin')
-        uses: ./.github/actions/setup-prebuilt-onnx
-        with:
-          target: ${{ matrix.settings.target }}
 
       - name: Install Node dependencies
         shell: bash
@@ -1198,9 +1190,6 @@ jobs:
         if: runner.os == 'Linux'
         run: scripts/publish/ubuntu/free-disk-space.sh
 
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
-
       - name: Setup OpenSSL
         uses: kreuzcrawl-dev/actions/setup-openssl@v1
 
@@ -1224,25 +1213,6 @@ jobs:
       - name: Install Bundler
         shell: bash
         run: (gem install bundler -v 4.0.0 --no-document || gem install bundler --no-document) && bundler --version
-
-        with:
-
-        with:
-
-        with:
-          destination: packages/ruby/ext/kreuzcrawl_rb/native
-          additional-destinations: |
-            packages/ruby
-            packages/ruby/lib
-
-      - name: Setup ONNX Runtime
-        uses: ./.github/actions/setup-onnx-runtime
-        with:
-          dest-dir: target/release
-          strategy: bundled
-
-      - name: Setup Layout Models
-        uses: ./.github/actions/setup-layout-models
 
       - name: Install Ruby dependencies
         run: scripts/ci/ruby/install-ruby-deps.sh packages/ruby
@@ -1401,9 +1371,6 @@ jobs:
         shell: bash
         run: scripts/publish/go/configure-windows-gnu-toolchain.sh
 
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
-
       - name: Setup Rust
         uses: kreuzcrawl-dev/actions/setup-rust@v1
         with:
@@ -1424,13 +1391,8 @@ jobs:
         with:
           destination: target/release
 
-      - name: Setup ONNX Runtime
-        uses: ./.github/actions/setup-onnx-runtime
         with:
           strategy: bundled
-
-      - name: Setup Layout Models
-        uses: ./.github/actions/setup-layout-models
 
       - name: Setup MSYS2 (Windows)
         if: matrix.settings.os == 'windows-latest'
@@ -1533,9 +1495,6 @@ jobs:
         if: ${{ needs.prepare.outputs.target_sha != '' }}
         run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
 
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
-
       - name: Setup OpenSSL
         uses: kreuzcrawl-dev/actions/setup-openssl@v1
 
@@ -1556,14 +1515,9 @@ jobs:
         with:
           destination: target/release
 
-      - name: Setup ONNX Runtime (embeddings)
-        uses: ./.github/actions/setup-onnx-runtime
         with:
           dest-dir: target/release
           strategy: bundled
-
-      - name: Setup Layout Models
-        uses: ./.github/actions/setup-layout-models
 
       - name: Install Task
         uses: kreuzcrawl-dev/actions/install-task@v1
@@ -1669,9 +1623,6 @@ jobs:
       - name: Free up disk space
         run: scripts/publish/ubuntu/free-disk-space.sh
 
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
-
       - name: Setup OpenSSL
         uses: kreuzcrawl-dev/actions/setup-openssl@v1
 
@@ -1698,13 +1649,8 @@ jobs:
         with:
           destination: target/release
 
-      - name: Setup ONNX Runtime
-        uses: ./.github/actions/setup-onnx-runtime
         with:
           strategy: bundled
-
-      - name: Setup Layout Models
-        uses: ./.github/actions/setup-layout-models
 
       - name: Install Task
         uses: kreuzcrawl-dev/actions/install-task@v1
@@ -1783,9 +1729,6 @@ jobs:
         if: runner.os == 'Linux'
         run: scripts/publish/ubuntu/free-disk-space.sh
 
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
-
       - name: Setup OpenSSL
         uses: kreuzcrawl-dev/actions/setup-openssl@v1
 
@@ -1816,14 +1759,9 @@ jobs:
         with:
           destination: target/release
 
-      - name: Setup ONNX Runtime
-        uses: ./.github/actions/setup-onnx-runtime
         with:
           dest-dir: target/release
           strategy: bundled
-
-      - name: Setup Layout Models
-        uses: ./.github/actions/setup-layout-models
 
       - name: Install Task
         uses: kreuzcrawl-dev/actions/install-task@v1
@@ -1877,9 +1815,6 @@ jobs:
 
       - name: Free up disk space
         run: scripts/publish/ubuntu/free-disk-space.sh
-
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
 
       - name: Setup OpenSSL
         uses: kreuzcrawl-dev/actions/setup-openssl@v1
@@ -1976,9 +1911,6 @@ jobs:
       - name: Ensure target commit
         if: ${{ needs.prepare.outputs.target_sha != '' }}
         run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
-
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
 
       - name: Setup OpenSSL
         uses: kreuzcrawl-dev/actions/setup-openssl@v1
@@ -2207,9 +2139,6 @@ jobs:
         shell: bash
         run: scripts/publish/go/configure-windows-gnu-toolchain.sh
 
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
-
       - name: Setup Rust
         uses: kreuzcrawl-dev/actions/setup-rust@v1
         with:
@@ -2230,13 +2159,8 @@ jobs:
         with:
           destination: target/release
 
-      - name: Setup ONNX Runtime
-        uses: ./.github/actions/setup-onnx-runtime
         with:
           strategy: bundled
-
-      - name: Setup Layout Models
-        uses: ./.github/actions/setup-layout-models
 
       - name: Setup MSYS2 (Windows)
         if: matrix.settings.os == 'windows-latest'
@@ -2346,20 +2270,6 @@ jobs:
           VERSION: ${{ needs.prepare.outputs.version }}
         run: scripts/publish/check_cratesio.sh "${VERSION}" >> "$GITHUB_OUTPUT"
 
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ steps.oidc.outputs.token }}
-
-
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ steps.oidc.outputs.token }}
-
-
-        if: ${{ steps.crate_check.outputs.paddle_exists != 'true' && needs.prepare.outputs.dry_run != 'true' }}
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ steps.oidc.outputs.token }}
-
-        if: ${{ steps.crate_check.outputs.paddle_exists != 'true' && needs.prepare.outputs.dry_run != 'true' }}
-
       - name: Publish kreuzcrawl
         if: ${{ steps.crate_check.outputs.core_exists != 'true' && needs.prepare.outputs.dry_run != 'true' }}
         env:
@@ -2429,9 +2339,6 @@ jobs:
         shell: bash
         run: scripts/publish/go/configure-windows-gnu-toolchain.sh
 
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
-
       - name: Setup Rust
         uses: kreuzcrawl-dev/actions/setup-rust@v1
         with:
@@ -2471,8 +2378,6 @@ jobs:
         with:
           destination: target/release
 
-      - name: Setup ONNX Runtime
-        uses: ./.github/actions/setup-onnx-runtime
         with:
           strategy: bundled
 
@@ -3127,9 +3032,6 @@ jobs:
           package_json_file: package.json
           run_install: false
 
-      - name: Install system dependencies
-        uses: ./.github/actions/install-system-deps
-
       - name: Install WASI SDK
         uses: kreuzcrawl-dev/actions/install-wasi-sdk@v1
 
@@ -3223,8 +3125,6 @@ jobs:
 
       - name: Install system dependencies
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        uses: ./.github/actions/install-system-deps
-
       - name: Setup OpenSSL
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
         uses: kreuzcrawl-dev/actions/setup-openssl@v1
@@ -3270,15 +3170,6 @@ jobs:
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
         with:
           destination: target/release
-
-      - name: Setup ONNX Runtime
-        if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}
-        uses: ./.github/actions/setup-onnx-runtime
-        with:
-          strategy: bundled
-
-      - name: Setup Layout Models
-        uses: ./.github/actions/setup-layout-models
 
       - name: Download Java native artifacts
         if: ${{ needs.prepare.outputs.dry_run != 'true' && steps.maven_check.outputs.exists != 'true' }}

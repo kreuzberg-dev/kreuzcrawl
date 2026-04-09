@@ -2,11 +2,15 @@
 name = "kreuzcrawl-py"
 version.workspace = true
 edition.workspace = true
+authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme.workspace = true
 rust-version.workspace = true
-description = "Python bindings (PyO3) for kreuzcrawl"
-keywords = ["crawl", "scrape", "python", "pyo3", "bindings"]
+description = "Python bindings for kreuzcrawl"
+keywords = ["crawl", "scrape", "python", "pyo3", "web"]
 categories = ["api-bindings"]
 
 [lib]

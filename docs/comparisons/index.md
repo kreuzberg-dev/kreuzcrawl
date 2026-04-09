@@ -5,7 +5,9 @@ How kreuzcrawl compares to other web crawling and scraping tools.
 ---
 
 title: Kreuzcrawl vs Firecrawl
-description: Detailed comparison of Kreuzcrawl and Firecrawl web crawling tools
+
+## description: Detailed comparison of Kreuzcrawl and Firecrawl web crawling tools
+
 ---
 
 ## Kreuzcrawl vs Firecrawl
@@ -134,7 +136,9 @@ Firecrawl's AGPL-3.0 license requires that any modifications to the software be 
 ---
 
 title: Kreuzcrawl vs Spider
-description: Detailed comparison of Kreuzcrawl and Spider web crawling libraries
+
+## description: Detailed comparison of Kreuzcrawl and Spider web crawling libraries
+
 ---
 
 ## Kreuzcrawl vs Spider
@@ -267,7 +271,9 @@ Spider's MIT license is maximally permissive -- there are no restrictions on use
 ---
 
 title: Kreuzcrawl vs Crawl4AI
-description: Detailed comparison of Kreuzcrawl and Crawl4AI web crawling tools
+
+## description: Detailed comparison of Kreuzcrawl and Crawl4AI web crawling tools
+
 ---
 
 ## Kreuzcrawl vs Crawl4AI
@@ -401,7 +407,9 @@ Crawl4AI's Apache-2.0 license is highly permissive with an explicit patent grant
 ---
 
 title: Kreuzcrawl vs Webclaw
-description: Detailed comparison of Kreuzcrawl and Webclaw web crawling tools
+
+## description: Detailed comparison of Kreuzcrawl and Webclaw web crawling tools
+
 ---
 
 ## Kreuzcrawl vs Webclaw
@@ -535,7 +543,9 @@ Webclaw's AGPL-3.0 license has strong copyleft requirements: if you modify Webcl
 ---
 
 title: Kreuzcrawl vs CRW
-description: Detailed comparison of Kreuzcrawl and CRW web crawling tools
+
+## description: Detailed comparison of Kreuzcrawl and CRW web crawling tools
+
 ---
 
 ## Kreuzcrawl vs CRW
@@ -665,7 +675,9 @@ CRW's AGPL-3.0 license requires that modifications be open-sourced when the soft
 ---
 
 title: Kreuzcrawl vs ScrapeGraphAI
-description: Detailed comparison of Kreuzcrawl and ScrapeGraphAI web crawling tools
+
+## description: Detailed comparison of Kreuzcrawl and ScrapeGraphAI web crawling tools
+
 ---
 
 ## Kreuzcrawl vs ScrapeGraphAI
@@ -813,4 +825,3 @@ The cost difference between these tools deserves special attention because their
 These are rough estimates and vary significantly by LLM provider, model, and page complexity. The key point is that Kreuzcrawl's cost scales with compute only for standard extraction, while ScrapeGraphAI's cost scales linearly with page count due to per-page LLM calls.
 
 ---
-

@@ -2,10 +2,16 @@
 name = "kreuzcrawl"
 version.workspace = true
 edition.workspace = true
+authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme.workspace = true
 rust-version.workspace = true
-description = "A Rust crawling engine for turning websites into structured data"
+keywords.workspace = true
+categories.workspace = true
+description = "High-performance web crawling engine"
 
 [features]
 default = []

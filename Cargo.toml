@@ -11,9 +11,15 @@ resolver = "2"
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
+authors = ["Na'aman Hirschfeld <naaman@kreuzberg.dev>"]
 license = "Elastic-2.0"
 repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
+homepage = "https://kreuzberg.dev"
+documentation = "https://docs.rs/kreuzcrawl"
+readme = "README.md"
 rust-version = "1.91"
+keywords = ["crawl", "scrape", "web", "spider", "rust"]
+categories = ["web-programming", "network-programming"]
 
 [workspace.dependencies]
 ahash = "0.8"

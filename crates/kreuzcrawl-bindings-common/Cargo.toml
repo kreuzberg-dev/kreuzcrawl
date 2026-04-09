@@ -2,10 +2,16 @@
 name = "kreuzcrawl-bindings-common"
 version.workspace = true
 edition.workspace = true
+authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme.workspace = true
 rust-version.workspace = true
 description = "Shared adapter layer for kreuzcrawl language bindings"
+keywords = ["crawl", "scrape", "bindings", "web", "ffi"]
+categories = ["api-bindings"]
 
 [dependencies]
 kreuzcrawl = { path = "../kreuzcrawl" }
