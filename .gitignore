@@ -33,3 +33,6 @@ obj/
 *.nupkg
 pkg/
 site/
+packages/elixir/_build/
+packages/elixir/deps/
+packages/php/.php-cs-fixer.cache
