@@ -1,14 +1,26 @@
 {
-	"name": "kreuzberg-dev/kreuzcrawl",
-	"description": "High-performance web crawling engine",
+	"name": "kreuzberg/kreuzcrawl",
+	"description": "High-performance web crawling engine for PHP powered by Rust. Features async crawling, content scraping, and spider capabilities for efficient web data extraction.",
 	"license": "Elastic-2.0",
 	"type": "php-ext",
+	"version": "0.1.0",
+	"homepage": "https://kreuzberg.dev",
+	"support": {
+		"issues": "https://github.com/kreuzberg-dev/kreuzcrawl/issues",
+		"source": "https://github.com/kreuzberg-dev/kreuzcrawl",
+		"docs": "https://kreuzberg.dev"
+	},
+	"authors": [
+		{
+			"name": "Na'aman Hirschfeld",
+			"email": "naaman@kreuzberg.dev"
+		}
+	],
 	"require": {
-		"php": ">=8.1"
+		"php": ">=8.2"
 	},
 	"extra": {
 		"ext-name": "kreuzcrawl"
 	},
-	"keywords": ["crawl", "scrape", "web", "spider"],
-	"version": "0.1.0"
+	"keywords": ["crawl", "rust", "scrape", "spider", "web"]
 }
