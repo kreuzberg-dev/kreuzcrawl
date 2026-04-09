@@ -7,7 +7,7 @@ public record BrowserConfig(
     BrowserMode mode,
     Optional<String> endpoint,
     long timeout,
-    BrowserWait wait,
+    BrowserWait waitValue,
     Optional<String> waitSelector,
     Optional<Long> extraWait
 ) {

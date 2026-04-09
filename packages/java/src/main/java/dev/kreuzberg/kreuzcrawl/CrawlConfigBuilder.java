@@ -17,7 +17,7 @@ public class CrawlConfigBuilder {
     private List<String> includePaths = List.of();
     private List<String> excludePaths = List.of();
     private Map<String, String> customHeaders = Map.of();
-    private long requestTimeout = null;
+    private Long requestTimeout = null;
     private long maxRedirects = 0;
     private long retryCount = 0;
     private List<Short> retryCodes = List.of();
@@ -92,7 +92,7 @@ public class CrawlConfigBuilder {
         return this;
     }
 
-    public CrawlConfigBuilder withRequestTimeout(long value) {
+    public CrawlConfigBuilder withRequestTimeout(Long value) {
         this.requestTimeout = value;
         return this;
     }

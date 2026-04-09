@@ -2318,12 +2318,12 @@ pyo3::create_exception!(_kreuzcrawl, NotFoundError, pyo3::exceptions::PyExceptio
 pyo3::create_exception!(_kreuzcrawl, UnauthorizedError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, ForbiddenError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, WafBlockedError, pyo3::exceptions::PyException);
-pyo3::create_exception!(_kreuzcrawl, TimeoutError, pyo3::exceptions::PyException);
+pyo3::create_exception!(_kreuzcrawl, CrawlTimeoutError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, RateLimitedError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, ServerError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, BadGatewayError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, GoneError, pyo3::exceptions::PyException);
-pyo3::create_exception!(_kreuzcrawl, ConnectionError, pyo3::exceptions::PyException);
+pyo3::create_exception!(_kreuzcrawl, CrawlConnectionError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, DnsError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, SslError, pyo3::exceptions::PyException);
 pyo3::create_exception!(_kreuzcrawl, DataLossError, pyo3::exceptions::PyException);
@@ -2342,12 +2342,12 @@ fn crawl_error_to_py_err(e: kreuzcrawl::CrawlError) -> pyo3::PyErr {
         kreuzcrawl::CrawlError::Unauthorized(..) => UnauthorizedError::new_err(msg),
         kreuzcrawl::CrawlError::Forbidden(..) => ForbiddenError::new_err(msg),
         kreuzcrawl::CrawlError::WafBlocked(..) => WafBlockedError::new_err(msg),
-        kreuzcrawl::CrawlError::Timeout(..) => TimeoutError::new_err(msg),
+        kreuzcrawl::CrawlError::Timeout(..) => CrawlTimeoutError::new_err(msg),
         kreuzcrawl::CrawlError::RateLimited(..) => RateLimitedError::new_err(msg),
         kreuzcrawl::CrawlError::ServerError(..) => ServerError::new_err(msg),
         kreuzcrawl::CrawlError::BadGateway(..) => BadGatewayError::new_err(msg),
         kreuzcrawl::CrawlError::Gone(..) => GoneError::new_err(msg),
-        kreuzcrawl::CrawlError::Connection(..) => ConnectionError::new_err(msg),
+        kreuzcrawl::CrawlError::Connection(..) => CrawlConnectionError::new_err(msg),
         kreuzcrawl::CrawlError::Dns(..) => DnsError::new_err(msg),
         kreuzcrawl::CrawlError::Ssl(..) => SslError::new_err(msg),
         kreuzcrawl::CrawlError::DataLoss(..) => DataLossError::new_err(msg),
@@ -3499,12 +3499,12 @@ pub fn _kreuzcrawl(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("UnauthorizedError", m.py().get_type::<UnauthorizedError>())?;
     m.add("ForbiddenError", m.py().get_type::<ForbiddenError>())?;
     m.add("WafBlockedError", m.py().get_type::<WafBlockedError>())?;
-    m.add("TimeoutError", m.py().get_type::<TimeoutError>())?;
+    m.add("CrawlTimeoutError", m.py().get_type::<CrawlTimeoutError>())?;
     m.add("RateLimitedError", m.py().get_type::<RateLimitedError>())?;
     m.add("ServerError", m.py().get_type::<ServerError>())?;
     m.add("BadGatewayError", m.py().get_type::<BadGatewayError>())?;
     m.add("GoneError", m.py().get_type::<GoneError>())?;
-    m.add("ConnectionError", m.py().get_type::<ConnectionError>())?;
+    m.add("CrawlConnectionError", m.py().get_type::<CrawlConnectionError>())?;
     m.add("DnsError", m.py().get_type::<DnsError>())?;
     m.add("SslError", m.py().get_type::<SslError>())?;
     m.add("DataLossError", m.py().get_type::<DataLossError>())?;

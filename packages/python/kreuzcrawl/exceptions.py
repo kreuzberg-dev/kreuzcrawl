@@ -23,7 +23,7 @@ class WafBlockedError(CrawlError):
     """The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators)."""
 
 
-class TimeoutError(CrawlError):
+class CrawlTimeoutError(CrawlError):
     """The request timed out."""
 
 
@@ -43,7 +43,7 @@ class GoneError(CrawlError):
     """The resource is permanently gone (HTTP 410)."""
 
 
-class ConnectionError(CrawlError):
+class CrawlConnectionError(CrawlError):
     """A connection error occurred."""
 
 

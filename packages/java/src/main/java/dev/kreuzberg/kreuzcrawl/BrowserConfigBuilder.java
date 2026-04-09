@@ -7,8 +7,8 @@ public class BrowserConfigBuilder {
 
     private BrowserMode mode = null;
     private Optional<String> endpoint = Optional.empty();
-    private long timeout = null;
-    private BrowserWait wait = null;
+    private Long timeout = null;
+    private BrowserWait waitValue = null;
     private Optional<String> waitSelector = Optional.empty();
     private Optional<Long> extraWait = Optional.empty();
 
@@ -22,13 +22,13 @@ public class BrowserConfigBuilder {
         return this;
     }
 
-    public BrowserConfigBuilder withTimeout(long value) {
+    public BrowserConfigBuilder withTimeout(Long value) {
         this.timeout = value;
         return this;
     }
 
     public BrowserConfigBuilder withWait(BrowserWait value) {
-        this.wait = value;
+        this.waitValue = value;
         return this;
     }
 
@@ -47,7 +47,7 @@ public class BrowserConfigBuilder {
             mode,
             endpoint,
             timeout,
-            wait,
+            waitValue,
             waitSelector,
             extraWait
         );

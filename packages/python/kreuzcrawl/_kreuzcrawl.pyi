@@ -4,8 +4,6 @@
 from typing import Any
 
 class ExtractionMeta:
-    """Metadata about an LLM extraction pass."""
-
     cost: float | None
     prompt_tokens: int | None
     completion_tokens: int | None
@@ -21,16 +19,12 @@ class ExtractionMeta:
     ) -> None: ...
 
 class ProxyConfig:
-    """Proxy configuration for HTTP requests."""
-
     url: str
     username: str | None
     password: str | None
     def __init__(self, url: str, username: str | None = None, password: str | None = None) -> None: ...
 
 class BrowserConfig:
-    """Browser fallback configuration."""
-
     mode: BrowserMode
     endpoint: str | None
     timeout: int
@@ -50,8 +44,6 @@ class BrowserConfig:
     def default() -> BrowserConfig: ...
 
 class CrawlConfig:
-    """Configuration for crawl, scrape, and map operations."""
-
     max_depth: int | None
     max_pages: int | None
     max_concurrent: int | None
@@ -127,12 +119,6 @@ class CrawlConfig:
     def default() -> CrawlConfig: ...
 
 class DownloadedDocument:
-    """A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
-
-    When the crawler encounters non-HTML content and `download_documents` is
-    enabled, it downloads the raw bytes and populates this struct instead of
-    skipping the resource."""
-
     url: str
     mime_type: str
     content: bytes
@@ -152,8 +138,6 @@ class DownloadedDocument:
     ) -> None: ...
 
 class InteractionResult:
-    """Result of executing a sequence of page interaction actions."""
-
     action_results: list[ActionResult]
     final_html: str
     final_url: str
@@ -163,8 +147,6 @@ class InteractionResult:
     ) -> None: ...
 
 class ActionResult:
-    """Result from a single page action execution."""
-
     action_index: int
     action_type: str
     success: bool
@@ -180,8 +162,6 @@ class ActionResult:
     ) -> None: ...
 
 class ScrapeResult:
-    """The result of a single-page scrape operation."""
-
     status_code: int
     content_type: str
     html: str
@@ -243,8 +223,6 @@ class ScrapeResult:
     ) -> None: ...
 
 class CrawlPageResult:
-    """The result of crawling a single page during a crawl operation."""
-
     url: str
     normalized_url: str
     status_code: int
@@ -290,8 +268,6 @@ class CrawlPageResult:
     ) -> None: ...
 
 class CrawlResult:
-    """The result of a multi-page crawl operation."""
-
     pages: list[CrawlPageResult]
     final_url: str
     redirect_count: int
@@ -311,8 +287,6 @@ class CrawlResult:
     ) -> None: ...
 
 class SitemapUrl:
-    """A URL entry from a sitemap."""
-
     url: str
     lastmod: str | None
     changefreq: str | None
@@ -322,14 +296,10 @@ class SitemapUrl:
     ) -> None: ...
 
 class MapResult:
-    """The result of a map operation, containing discovered URLs."""
-
     urls: list[SitemapUrl]
     def __init__(self, urls: list[SitemapUrl]) -> None: ...
 
 class MarkdownResult:
-    """Rich markdown conversion result from HTML processing."""
-
     content: str
     document_structure: dict[str, Any] | None
     tables: list[dict[str, Any]]
@@ -347,8 +317,6 @@ class MarkdownResult:
     ) -> None: ...
 
 class CachedPage:
-    """Cached page data for HTTP response caching."""
-
     url: str
     status_code: int
     content_type: str
@@ -368,8 +336,6 @@ class CachedPage:
     ) -> None: ...
 
 class LinkInfo:
-    """Information about a link found on a page."""
-
     url: str
     text: str
     link_type: LinkType
@@ -378,8 +344,6 @@ class LinkInfo:
     def __init__(self, url: str, text: str, link_type: str, nofollow: bool, rel: str | None = None) -> None: ...
 
 class ImageInfo:
-    """Information about an image found on a page."""
-
     url: str
     alt: str | None
     width: int | None
@@ -390,24 +354,18 @@ class ImageInfo:
     ) -> None: ...
 
 class FeedInfo:
-    """Information about a feed link found on a page."""
-
     url: str
     title: str | None
     feed_type: FeedType
     def __init__(self, url: str, feed_type: str, title: str | None = None) -> None: ...
 
 class JsonLdEntry:
-    """A JSON-LD structured data entry found on a page."""
-
     schema_type: str
     name: str | None
     raw: str
     def __init__(self, schema_type: str, raw: str, name: str | None = None) -> None: ...
 
 class CookieInfo:
-    """Information about an HTTP cookie received from a response."""
-
     name: str
     value: str
     domain: str | None
@@ -415,8 +373,6 @@ class CookieInfo:
     def __init__(self, name: str, value: str, domain: str | None = None, path: str | None = None) -> None: ...
 
 class DownloadedAsset:
-    """A downloaded asset from a page."""
-
     url: str
     content_hash: str
     mime_type: str | None
@@ -434,8 +390,6 @@ class DownloadedAsset:
     ) -> None: ...
 
 class ArticleMetadata:
-    """Article metadata extracted from `article:*` Open Graph tags."""
-
     published_time: str | None
     modified_time: str | None
     author: str | None
@@ -451,15 +405,11 @@ class ArticleMetadata:
     ) -> None: ...
 
 class HreflangEntry:
-    """An hreflang alternate link entry."""
-
     lang: str
     url: str
     def __init__(self, lang: str, url: str) -> None: ...
 
 class FaviconInfo:
-    """Information about a favicon or icon link."""
-
     url: str
     rel: str
     sizes: str | None
@@ -467,15 +417,11 @@ class FaviconInfo:
     def __init__(self, url: str, rel: str, sizes: str | None = None, mime_type: str | None = None) -> None: ...
 
 class HeadingInfo:
-    """A heading element extracted from the page."""
-
     level: int
     text: str
     def __init__(self, level: int, text: str) -> None: ...
 
 class ResponseMeta:
-    """Response metadata extracted from HTTP headers."""
-
     etag: str | None
     last_modified: str | None
     cache_control: str | None
@@ -495,8 +441,6 @@ class ResponseMeta:
     ) -> None: ...
 
 class PageMetadata:
-    """Metadata extracted from an HTML page's `<meta>` tags and `<title>` element."""
-
     title: str | None
     description: str | None
     canonical_url: str | None
@@ -588,8 +532,6 @@ class PageMetadata:
     ) -> None: ...
 
 class CitationResult:
-    """Result of citation conversion."""
-
     content: str
     references: list[CitationReference]
     def __init__(self, content: str, references: list[CitationReference]) -> None: ...
@@ -600,76 +542,53 @@ class CitationReference:
     text: str
     def __init__(self, index: int, url: str, text: str) -> None: ...
 
-class CrawlEngineHandle:
-    """Opaque handle to a configured crawl engine.
-
-    Constructed via [`create_engine`] with an optional [`CrawlConfig`].
-    All default trait implementations (BFS strategy, in-memory frontier,
-    per-domain throttle, etc.) are used internally."""
+class CrawlEngineHandle: ...
 
 class BatchScrapeResult:
-    """Result from a single URL in a batch scrape operation."""
-
     url: str
     result: ScrapeResult | None
     error: str | None
     def __init__(self, url: str, result: ScrapeResult | None = None, error: str | None = None) -> None: ...
 
 class BatchCrawlResult:
-    """Result from a single URL in a batch crawl operation."""
-
     url: str
     result: CrawlResult | None
     error: str | None
     def __init__(self, url: str, result: CrawlResult | None = None, error: str | None = None) -> None: ...
 
 class BrowserMode:
-    """When to use the headless browser fallback."""
-
     Auto: int = 0
     Always: int = 1
     Never: int = 2
 
 class BrowserWait:
-    """Wait strategy for browser page rendering."""
-
     NetworkIdle: int = 0
     Selector: int = 1
     Fixed: int = 2
 
 class AuthConfig:
-    """Authentication configuration."""
-
     Basic: int = 0
     Bearer: int = 1
     Header: int = 2
 
 class LinkType:
-    """The classification of a link."""
-
     Internal: int = 0
     External: int = 1
     Anchor: int = 2
     Document: int = 3
 
 class ImageSource:
-    """The source of an image reference."""
-
     Img: int = 0
     PictureSource: int = 1
     OgImage: int = 2
     TwitterImage: int = 3
 
 class FeedType:
-    """The type of a feed (RSS, Atom, or JSON Feed)."""
-
     Rss: int = 0
     Atom: int = 1
     JsonFeed: int = 2
 
 class AssetCategory:
-    """The category of a downloaded asset."""
-
     Document: int = 0
     Image: int = 1
     Audio: int = 2
@@ -682,29 +601,13 @@ class AssetCategory:
     Other: int = 9
 
 class CrawlEvent:
-    """An event emitted during a streaming crawl operation."""
-
     Page: int = 0
     Error: int = 1
     Complete: int = 2
 
-def create_engine(config: CrawlConfig | None = None) -> CrawlEngineHandle:
-    """Create a new crawl engine with the given configuration.
-
-    If `config` is `None`, uses [`CrawlConfig::default()`].
-    Returns an error if the configuration is invalid."""
-
-def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult:
-    """Scrape a single URL, returning extracted page data."""
-
-def crawl(engine: CrawlEngineHandle, url: str) -> CrawlResult:
-    """Crawl a website starting from `url`, following links up to the configured depth."""
-
-def map_urls(engine: CrawlEngineHandle, url: str) -> MapResult:
-    """Discover all pages on a website by following links and sitemaps."""
-
-def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchScrapeResult]:
-    """Scrape multiple URLs concurrently."""
-
-def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchCrawlResult]:
-    """Crawl multiple seed URLs concurrently, each following links to configured depth."""
+def create_engine(config: CrawlConfig | None = None) -> CrawlEngineHandle: ...
+def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult: ...
+def crawl(engine: CrawlEngineHandle, url: str) -> CrawlResult: ...
+def map_urls(engine: CrawlEngineHandle, url: str) -> MapResult: ...
+def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchScrapeResult]: ...
+def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchCrawlResult]: ...
