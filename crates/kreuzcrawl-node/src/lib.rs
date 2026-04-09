@@ -252,7 +252,7 @@ pub struct JsActionResult {
     #[napi(js_name = "actionType")]
     pub action_type: Option<String>,
     pub success: Option<bool>,
-    pub data: Option<serde_json::Value>,
+    pub data: Option<String>,
     pub error: Option<String>,
 }
 
@@ -313,7 +313,7 @@ pub struct JsScrapeResult {
     pub browser_used: Option<bool>,
     pub markdown: Option<JsMarkdownResult>,
     #[napi(js_name = "extractedData")]
-    pub extracted_data: Option<serde_json::Value>,
+    pub extracted_data: Option<String>,
     #[napi(js_name = "extractionMeta")]
     pub extraction_meta: Option<JsExtractionMeta>,
     pub screenshot: Option<Vec<u8>>,
@@ -386,7 +386,7 @@ pub struct JsCrawlPageResult {
     pub detected_charset: Option<String>,
     pub markdown: Option<JsMarkdownResult>,
     #[napi(js_name = "extractedData")]
-    pub extracted_data: Option<serde_json::Value>,
+    pub extracted_data: Option<String>,
     #[napi(js_name = "extractionMeta")]
     pub extraction_meta: Option<JsExtractionMeta>,
     #[napi(js_name = "downloadedDocument")]
@@ -489,8 +489,8 @@ impl Default for JsMapResult {
 pub struct JsMarkdownResult {
     pub content: Option<String>,
     #[napi(js_name = "documentStructure")]
-    pub document_structure: Option<serde_json::Value>,
-    pub tables: Option<Vec<serde_json::Value>>,
+    pub document_structure: Option<String>,
+    pub tables: Option<Vec<String>>,
     pub warnings: Option<Vec<String>>,
     pub citations: Option<JsCitationResult>,
     #[napi(js_name = "fitContent")]
@@ -1596,7 +1596,10 @@ impl From<JsMarkdownResult> for kreuzcrawl::MarkdownResult {
                 .document_structure
                 .as_ref()
                 .and_then(|s| serde_json::from_str(s).ok()),
-            tables: val.tables.unwrap_or_default(),
+            tables: val
+                .tables
+                .map(|v| v.into_iter().filter_map(|s| serde_json::from_str(&s).ok()).collect())
+                .unwrap_or_default(),
             warnings: val.warnings.unwrap_or_default(),
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,

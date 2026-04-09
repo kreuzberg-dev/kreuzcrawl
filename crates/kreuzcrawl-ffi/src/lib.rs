@@ -389,16 +389,14 @@ pub unsafe extern "C" fn kcrawl_browser_config_wait_selector(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_browser_config_extra_wait(
-    ptr: *const kreuzcrawl::BrowserConfig,
-) -> *mut std::ffi::c_char {
+pub unsafe extern "C" fn kcrawl_browser_config_extra_wait(ptr: *const kreuzcrawl::BrowserConfig) -> u64 {
     if ptr.is_null() {
-        return std::ptr::null_mut();
+        return 0;
     }
     let obj = unsafe { &*ptr };
     match &obj.extra_wait {
         Some(val) => val.as_secs(),
-        None => std::ptr::null_mut(),
+        None => 0,
     }
 }
 
@@ -1143,9 +1141,7 @@ pub unsafe extern "C" fn kcrawl_interaction_result_final_url(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_interaction_result_screenshot(
-    ptr: *const kreuzcrawl::InteractionResult,
-) -> *mut std::ffi::c_char {
+pub unsafe extern "C" fn kcrawl_interaction_result_screenshot(ptr: *const kreuzcrawl::InteractionResult) -> *mut u8 {
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
@@ -1671,9 +1667,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_extraction_meta(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_scrape_result_screenshot(
-    ptr: *const kreuzcrawl::ScrapeResult,
-) -> *mut std::ffi::c_char {
+pub unsafe extern "C" fn kcrawl_scrape_result_screenshot(ptr: *const kreuzcrawl::ScrapeResult) -> *mut u8 {
     if ptr.is_null() {
         return std::ptr::null_mut();
     }

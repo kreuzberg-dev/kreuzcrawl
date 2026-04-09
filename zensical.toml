@@ -1,0 +1,249 @@
+[project]
+site_name = "Kreuzcrawl"
+site_description = "High-performance Rust web crawling engine for structured data extraction"
+site_url = "https://docs.kreuzcrawl.dev"
+site_author = "kreuzcrawl.dev"
+repo_name = "kreuzcrawl-dev/kreuzcrawl"
+repo_url = "https://github.com/kreuzcrawl-dev/kreuzcrawl"
+edit_uri = "edit/main/docs/"
+copyright = "Copyright &copy; 2023-2026 Kreuzcrawl.dev"
+
+extra_css = ["css/extra.css"]
+
+nav = [
+    { "Home" = "index.md" },
+    { "Getting Started" = [
+        { "Installation" = "getting-started/installation.md" },
+        { "Quick Start" = "getting-started/quickstart.md" },
+    ] },
+    { "Features" = "features.md" },
+    { "Concepts" = [
+        { "Architecture" = "concepts/architecture.md" },
+        { "Crawl Engine" = "concepts/crawl-engine.md" },
+        { "Tower Middleware" = "concepts/tower-middleware.md" },
+        { "Content Extraction" = "concepts/content-extraction.md" },
+        { "Plugin System" = "concepts/plugin-system.md" },
+    ] },
+    { "Guides" = [
+        { "Crawling" = "guides/crawling.md" },
+        { "Scraping" = "guides/scraping.md" },
+        { "URL Discovery" = "guides/url-discovery.md" },
+        { "Markdown Conversion" = "guides/markdown.md" },
+        { "LLM Extraction" = "guides/llm-extraction.md" },
+        { "Browser Automation" = "guides/browser.md" },
+        { "Page Interaction" = "guides/interaction.md" },
+        { "WARC Output" = "guides/warc.md" },
+        { "Deep Research" = "guides/research.md" },
+        { "Configuration" = "guides/configuration.md" },
+        { "Docker" = "guides/docker.md" },
+        { "API Server" = "guides/api-server.md" },
+        { "MCP Server" = "guides/mcp-server.md" },
+    ] },
+    { "CLI" = [
+        { "Usage" = "cli/usage.md" },
+    ] },
+    { "API Reference" = [
+        { "Rust" = "reference/api-rust.md" },
+        { "Python" = "reference/api-python.md" },
+        { "TypeScript" = "reference/api-typescript.md" },
+        { "Go" = "reference/api-go.md" },
+        { "Java" = "reference/api-java.md" },
+        { "C#" = "reference/api-csharp.md" },
+        { "Ruby" = "reference/api-ruby.md" },
+        { "PHP" = "reference/api-php.md" },
+        { "Elixir" = "reference/api-elixir.md" },
+        { "WASM" = "reference/api-wasm.md" },
+        { "C (FFI)" = "reference/api-c.md" },
+        { "REST API" = "reference/rest-api.md" },
+        { "MCP Tools" = "reference/mcp-tools.md" },
+        { "Configuration" = "reference/configuration.md" },
+        { "Types" = "reference/types.md" },
+        { "Errors" = "reference/errors.md" },
+    ] },
+    { "Comparisons" = [
+        { "vs Firecrawl" = "comparisons/vs-firecrawl.md" },
+        { "vs Spider" = "comparisons/vs-spider.md" },
+        { "vs Crawl4AI" = "comparisons/vs-crawl4ai.md" },
+        { "vs Webclaw" = "comparisons/vs-webclaw.md" },
+        { "vs CRW" = "comparisons/vs-crw.md" },
+        { "vs ScrapeGraphAI" = "comparisons/vs-scrapegraphai.md" },
+    ] },
+    { "Changelog" = "CHANGELOG.md" },
+    { "Contributing" = "contributing.md" },
+]
+
+[project.theme]
+name = "material"
+custom_dir = "docs/overrides"
+logo = "assets/logo.svg"
+favicon = "assets/favicon.ico"
+language = "en"
+features = [
+    "content.code.copy",
+    "content.code.annotate",
+    "content.tabs.link",
+    "navigation.instant",
+    "navigation.instant.progress",
+    "navigation.path",
+    "navigation.prune",
+    "navigation.indexes",
+    "navigation.sections",
+    "navigation.tabs",
+    "navigation.tabs.sticky",
+    "navigation.tracking",
+    "navigation.top",
+    "navigation.footer",
+    "search.highlight",
+    "search.share",
+    "search.suggest",
+    "toc.follow",
+    "toc.integrate",
+    "announce.dismiss",
+    "content.action.edit",
+    "content.action.view",
+]
+
+[project.theme.font]
+text = "Inter"
+code = "JetBrains Mono"
+
+[project.theme.icon]
+repo = "github"
+search = "search"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+
+[project.theme.palette.toggle]
+icon = "sun"
+name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+
+[project.theme.palette.toggle]
+icon = "moon"
+name = "Switch to dark mode"
+
+# --- Markdown Extensions ---
+
+[project.markdown_extensions.admonition]
+
+[project.markdown_extensions.attr_list]
+
+[project.markdown_extensions.def_list]
+
+[project.markdown_extensions.footnotes]
+
+[project.markdown_extensions.md_in_html]
+
+[project.markdown_extensions.tables]
+
+[project.markdown_extensions.toc]
+permalink = true
+toc_depth = 3
+
+[project.markdown_extensions.pymdownx.details]
+
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+options = { custom_icons = ["docs/overrides/.icons"] }
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+linenums = false
+use_pygments = true
+
+[project.markdown_extensions.pymdownx.inlinehilite]
+
+[project.markdown_extensions.pymdownx.keys]
+
+[project.markdown_extensions.pymdownx.mark]
+
+[project.markdown_extensions.pymdownx.smartsymbols]
+
+[project.markdown_extensions.pymdownx.snippets]
+base_path = [".", "docs"]
+check_paths = true
+
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [
+    { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+combine_header_slug = true
+
+[project.markdown_extensions.pymdownx.tabbed.slugify]
+case = "lower"
+
+[project.markdown_extensions.pymdownx.tasklist]
+custom_checkbox = true
+
+# --- Plugins ---
+
+[project.plugins.search]
+
+[project.plugins.mkdocstrings]
+default_handler = "python"
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["packages/python"]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+show_source = true
+show_root_heading = true
+heading_level = 2
+show_category_heading = true
+show_if_no_docstring = false
+show_signature_annotations = true
+show_submodules = false
+docstring_style = "google"
+docstring_section_style = "spacy"
+
+# --- Extra ---
+
+[project.extra]
+
+[project.extra.status]
+new = "Recently added"
+deprecated = "Deprecated"
+
+[project.extra.repo]
+stars = true
+forks = true
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/kreuzcrawl-dev/kreuzcrawl"
+name = "View on GitHub"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/python"
+link = "https://pypi.org/project/kreuzcrawl/"
+name = "View on PyPI"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/docker"
+link = "https://github.com/kreuzcrawl-dev/kreuzcrawl/pkgs/container/kreuzcrawl"
+name = "View on GitHub Container Registry"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/npm"
+link = "https://www.npmjs.com/package/kreuzcrawl"
+name = "View on npm"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/rust"
+link = "https://crates.io/crates/kreuzcrawl"
+name = "View on crates.io"
