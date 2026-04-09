@@ -112,9 +112,12 @@ tasks:
     desc: Update Node/TypeScript dependencies (all workspace packages)
     cmds:
       - echo "Updating Node/TypeScript dependencies across workspace..."
-      - corepack up
-      - pnpm up --latest -r
-      - pnpm up --latest -w
+      - cmd: corepack up
+        ignore_error: true
+      - cmd: pnpm up --latest -r
+        ignore_error: true
+      - cmd: pnpm up --latest -w
+        ignore_error: true
 
   e2e:generate:
     desc: Generate and format TypeScript E2E tests

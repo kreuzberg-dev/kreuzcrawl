@@ -22,8 +22,8 @@
 		}
 	},
 	"devDependencies": {
-		"@napi-rs/cli": "^3.0.0",
-		"vitest": "^3.0.0"
+		"@napi-rs/cli": "^3.6.1",
+		"vitest": "^4.1.4"
 	},
 	"scripts": {
 		"build": "napi build --platform --release",
