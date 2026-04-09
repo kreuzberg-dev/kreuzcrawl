@@ -2,10 +2,16 @@
 name = "kreuzcrawl_nif"
 version.workspace = true
 edition.workspace = true
+authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme.workspace = true
 rust-version.workspace = true
-description = "Elixir NIF bindings (Rustler) for kreuzcrawl"
+description = "Elixir NIF bindings for kreuzcrawl"
+keywords = ["crawl", "scrape", "elixir", "nif", "web"]
+categories = ["api-bindings"]
 
 [lib]
 name = "kreuzcrawl_nif"

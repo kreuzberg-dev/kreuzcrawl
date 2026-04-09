@@ -11,9 +11,9 @@ This script:
 """
 
 import os
-import sys
-import shutil
 import re
+import shutil
+import sys
 from pathlib import Path
 
 try:
@@ -56,7 +56,7 @@ def format_dependency(name: str, dep_spec: object) -> str:
     """Format a dependency spec for Cargo.toml."""
     if isinstance(dep_spec, str):
         return f'{name} = "{dep_spec}"'
-    elif isinstance(dep_spec, dict):
+    if isinstance(dep_spec, dict):
         version: str = dep_spec.get("version", "")
         package: str | None = dep_spec.get("package")
         features: list[str] = dep_spec.get("features", [])
@@ -94,18 +94,18 @@ def format_dependency(name: str, dep_spec: object) -> str:
             parts.append(f'version = "{version}"')
 
         if features:
-            features_str = ', '.join(f'"{f}"' for f in features)
-            parts.append(f'features = [{features_str}]')
+            features_str = ", ".join(f'"{f}"' for f in features)
+            parts.append(f"features = [{features_str}]")
 
         if default_features is False:
-            parts.append('default-features = false')
+            parts.append("default-features = false")
         elif default_features is True:
-            parts.append('default-features = true')
+            parts.append("default-features = true")
 
         if optional is True:
-            parts.append('optional = true')
+            parts.append("optional = true")
         elif optional is False:
-            parts.append('optional = false')
+            parts.append("optional = false")
 
         spec_str = ", ".join(parts)
         return f"{name} = {{ {spec_str} }}"
@@ -115,11 +115,11 @@ def format_dependency(name: str, dep_spec: object) -> str:
 
 def replace_workspace_deps_in_toml(toml_path: Path, workspace_deps: dict[str, object]) -> None:
     """Replace workspace = true with explicit versions in a Cargo.toml file."""
-    with open(toml_path, "r") as f:
+    with open(toml_path) as f:
         content = f.read()
 
     for name, dep_spec in workspace_deps.items():
-        pattern1 = rf'^{re.escape(name)} = \{{ workspace = true \}}$'
+        pattern1 = rf"^{re.escape(name)} = \{{ workspace = true \}}$"
         content = re.sub(pattern1, format_dependency(name, dep_spec), content, flags=re.MULTILINE)
 
         def replace_with_fields(match: re.Match[str]) -> str:
@@ -137,13 +137,13 @@ def replace_workspace_deps_in_toml(toml_path: Path, workspace_deps: dict[str, ob
             bracket_depth = 0
             current_field = ""
             for char in spec_part:
-                if char == '[':
+                if char == "[":
                     bracket_depth += 1
                     current_field += char
-                elif char == ']':
+                elif char == "]":
                     bracket_depth -= 1
                     current_field += char
-                elif char == ',' and bracket_depth == 0:
+                elif char == "," and bracket_depth == 0:
                     # End of field
                     field = current_field.strip()
                     if field and "=" in field:
@@ -165,13 +165,13 @@ def replace_workspace_deps_in_toml(toml_path: Path, workspace_deps: dict[str, ob
             bracket_depth = 0
             current_field = ""
             for char in other_fields_str:
-                if char == '[':
+                if char == "[":
                     bracket_depth += 1
                     current_field += char
-                elif char == ']':
+                elif char == "]":
                     bracket_depth -= 1
                     current_field += char
-                elif char == ',' and bracket_depth == 0:
+                elif char == "," and bracket_depth == 0:
                     # End of field
                     field = current_field.strip()
                     if field and "=" in field:
@@ -197,14 +197,16 @@ def replace_workspace_deps_in_toml(toml_path: Path, workspace_deps: dict[str, ob
 
             return f"{name} = {{ {merged_spec} }}"
 
-        pattern2 = rf'^{re.escape(name)} = \{{ workspace = true, (.+?) \}}$'
+        pattern2 = rf"^{re.escape(name)} = \{{ workspace = true, (.+?) \}}$"
         content = re.sub(pattern2, replace_with_fields, content, flags=re.MULTILINE | re.DOTALL)
 
     with open(toml_path, "w") as f:
         f.write(content)
 
 
-def generate_vendor_cargo_toml(repo_root: Path, workspace_deps: dict[str, object], core_version: str, copied_crates: list[str]) -> None:
+def generate_vendor_cargo_toml(
+    repo_root: Path, workspace_deps: dict[str, object], core_version: str, copied_crates: list[str]
+) -> None:
     """Generate vendor/Cargo.toml with workspace setup.
 
     Args:
@@ -221,11 +223,21 @@ def generate_vendor_cargo_toml(repo_root: Path, workspace_deps: dict[str, object
     deps_str = "\n".join(deps_lines)
 
     # Build members list based on actually copied crates
-    members = [name for name in ["kreuzcrawl", "kreuzcrawl-ffi", "kreuzcrawl-tesseract", "kreuzcrawl-paddle-ocr", "kreuzcrawl-pdfium-render", "rb-sys"]
-               if name in copied_crates]
-    members_str = ', '.join(f'"{m}"' for m in members)
+    members = [
+        name
+        for name in [
+            "kreuzcrawl",
+            "kreuzcrawl-ffi",
+            "kreuzcrawl-tesseract",
+            "kreuzcrawl-paddle-ocr",
+            "kreuzcrawl-pdfium-render",
+            "rb-sys",
+        ]
+        if name in copied_crates
+    ]
+    members_str = ", ".join(f'"{m}"' for m in members)
 
-    vendor_toml = f'''[workspace]
+    vendor_toml = f"""[workspace]
 members = [{members_str}]
 
 [workspace.package]
@@ -239,7 +251,7 @@ homepage = "https://kreuzcrawl.dev"
 
 [workspace.dependencies]
 {deps_str}
-'''
+"""
 
     vendor_dir = repo_root / "packages" / "ruby" / "vendor"
     vendor_dir.mkdir(parents=True, exist_ok=True)
@@ -264,8 +276,14 @@ def main() -> None:
     vendor_base: Path = repo_root / "packages" / "ruby" / "vendor"
 
     # Clean only crate directories, preserving vendor/bundle/ (Bundler gems)
-    crate_names = ["kreuzcrawl", "kreuzcrawl-ffi", "kreuzcrawl-tesseract",
-                   "kreuzcrawl-paddle-ocr", "kreuzcrawl-pdfium-render", "rb-sys"]
+    crate_names = [
+        "kreuzcrawl",
+        "kreuzcrawl-ffi",
+        "kreuzcrawl-tesseract",
+        "kreuzcrawl-paddle-ocr",
+        "kreuzcrawl-pdfium-render",
+        "rb-sys",
+    ]
     for name in crate_names:
         crate_path = vendor_base / name
         if crate_path.exists():
@@ -322,14 +340,19 @@ def main() -> None:
     for crate_dir in copied_crates:
         crate_toml = vendor_base / crate_dir / "Cargo.toml"
         if crate_toml.exists():
-            with open(crate_toml, "r") as f:
+            with open(crate_toml) as f:
                 content = f.read()
 
-            content = re.sub(r'^version\.workspace = true$', f'version = "{core_version}"', content, flags=re.MULTILINE)
-            content = re.sub(r'^edition\.workspace = true$', 'edition = "2024"', content, flags=re.MULTILINE)
-            content = re.sub(r'^rust-version\.workspace = true$', 'rust-version = "1.91"', content, flags=re.MULTILINE)
-            content = re.sub(r'^authors\.workspace = true$', 'authors = ["Na\'aman Hirschfeld <naaman@kreuzcrawl.dev>"]', content, flags=re.MULTILINE)
-            content = re.sub(r'^license\.workspace = true$', 'license = "MIT"', content, flags=re.MULTILINE)
+            content = re.sub(r"^version\.workspace = true$", f'version = "{core_version}"', content, flags=re.MULTILINE)
+            content = re.sub(r"^edition\.workspace = true$", 'edition = "2024"', content, flags=re.MULTILINE)
+            content = re.sub(r"^rust-version\.workspace = true$", 'rust-version = "1.91"', content, flags=re.MULTILINE)
+            content = re.sub(
+                r"^authors\.workspace = true$",
+                'authors = ["Na\'aman Hirschfeld <naaman@kreuzcrawl.dev>"]',
+                content,
+                flags=re.MULTILINE,
+            )
+            content = re.sub(r"^license\.workspace = true$", 'license = "MIT"', content, flags=re.MULTILINE)
 
             with open(crate_toml, "w") as f:
                 f.write(content)
@@ -341,15 +364,13 @@ def main() -> None:
     if "kreuzcrawl-ffi" in copied_crates and "kreuzcrawl" in copied_crates:
         ffi_toml = vendor_base / "kreuzcrawl-ffi" / "Cargo.toml"
         if ffi_toml.exists():
-            with open(ffi_toml, "r") as f:
+            with open(ffi_toml) as f:
                 content = f.read()
 
             # Replace kreuzcrawl workspace references with path dependency
             # Handle cases with path, version, or neither
             content = re.sub(
-                r'(kreuzcrawl = \{) (?:(?:path|version) = "[^"]*", )?',
-                r'\1 path = "../kreuzcrawl", ',
-                content
+                r'(kreuzcrawl = \{) (?:(?:path|version) = "[^"]*", )?', r'\1 path = "../kreuzcrawl", ', content
             )
 
             with open(ffi_toml, "w") as f:
@@ -359,7 +380,7 @@ def main() -> None:
     if "kreuzcrawl" in copied_crates:
         kreuzcrawl_toml = vendor_base / "kreuzcrawl" / "Cargo.toml"
         if kreuzcrawl_toml.exists():
-            with open(kreuzcrawl_toml, "r") as f:
+            with open(kreuzcrawl_toml) as f:
                 content = f.read()
 
             # Only update tesseract path if it was actually copied
@@ -367,21 +388,21 @@ def main() -> None:
                 content = re.sub(
                     r'kreuzcrawl-tesseract = \{ (?:path = "[^"]*", )?version = "[^"]*", optional = true \}',
                     'kreuzcrawl-tesseract = { path = "../kreuzcrawl-tesseract", optional = true }',
-                    content
+                    content,
                 )
             # Only update paddle-ocr path if it was actually copied
             if "kreuzcrawl-paddle-ocr" in copied_crates:
                 content = re.sub(
                     r'kreuzcrawl-paddle-ocr = \{ (?:path = "[^"]*", )?version = "[^"]*", optional = true \}',
                     'kreuzcrawl-paddle-ocr = { path = "../kreuzcrawl-paddle-ocr", optional = true }',
-                    content
+                    content,
                 )
             # Only update pdfium-render path if it was actually copied
             if "kreuzcrawl-pdfium-render" in copied_crates:
                 content = re.sub(
                     r'pdfium-render = \{ package = "kreuzcrawl-pdfium-render", (?:path = "[^"]*", )?version = "[^"]*"',
                     'pdfium-render = { package = "kreuzcrawl-pdfium-render", path = "../kreuzcrawl-pdfium-render"',
-                    content
+                    content,
                 )
 
             with open(kreuzcrawl_toml, "w") as f:
@@ -393,21 +414,19 @@ def main() -> None:
     # Update native extension Cargo.toml to use vendored crates
     native_toml = repo_root / "packages" / "ruby" / "ext" / "kreuzcrawl_rb" / "native" / "Cargo.toml"
     if native_toml.exists():
-        with open(native_toml, "r") as f:
+        with open(native_toml) as f:
             content = f.read()
 
         # Replace path dependencies to point to vendored crates
         # From: path = "../../../../../crates/kreuzcrawl"
         # To: path = "../../../vendor/kreuzcrawl"
         content = re.sub(
-            r'path = "\.\./\.\./\.\./\.\./\.\./crates/kreuzcrawl"',
-            'path = "../../../vendor/kreuzcrawl"',
-            content
+            r'path = "\.\./\.\./\.\./\.\./\.\./crates/kreuzcrawl"', 'path = "../../../vendor/kreuzcrawl"', content
         )
         content = re.sub(
             r'path = "\.\./\.\./\.\./\.\./\.\./crates/kreuzcrawl-ffi"',
             'path = "../../../vendor/kreuzcrawl-ffi"',
-            content
+            content,
         )
 
         with open(native_toml, "w") as f:

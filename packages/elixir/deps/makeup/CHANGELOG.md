@@ -1,6 +1,6 @@
 # Changelog
 
-### 1.2.1 - 2024-11-07
+## 1.2.1 - 2024-11-07
 
 Allow empty middle on string_like combinators.
 
@@ -32,7 +32,7 @@ Fix serious bug in the `Makeup.Lexer.Combinators.lexeme/1` when given a list of 
 
 Before this fix, the following combinator:
 
-```
+```text
 import Makeup.Lexer.Combinators
 
 characters_lexeme =
@@ -44,13 +44,13 @@ characters_lexeme =
 
 when given as input a string like `"àó"` would return the following invalid Unicode:
 
-```
+```text
 [{:character_lexeme, %{}, <<225, 242>>}]
 ```
 
 instead of
 
-```
+```text
 [{:character_lexeme, %{}, "áò"}]
 ```
 

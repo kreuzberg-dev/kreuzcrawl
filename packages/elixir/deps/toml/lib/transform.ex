@@ -31,9 +31,9 @@ defmodule Toml.Transform do
   The transformer must return one of two values:
 
     * `{:error, term}` - an error occurred in the transformer, and decoding should fail
-    * `term` - replace the value for the given key with the value returned from the 
+    * `term` - replace the value for the given key with the value returned from the
       transformer in the final document
-    
+
   ## Example
 
   An example transformation would be the conversion of tables of a certain shape to a known struct value.
@@ -43,18 +43,18 @@ defmodule Toml.Transform do
       defmodule Server do
         defstruct [:name, :ip, :ports]
       end
-      
+
 
   TOML which contains a table of this shape:
 
       [servers.alpha]
       ip = "192.168.1.1"
       ports = [8080, 8081]
-      
+
       [servers.beta]
       ip = "192.168.1.2"
       ports = [8082, 8083]
-      
+
 
   And finally, the transforer implementation:
 
@@ -87,11 +87,11 @@ defmodule Toml.Transform do
         # Ignore all other values
         def transform(_key, v), do: v
       end
-      
-    Assuming we decode with the following options: 
+
+    Assuming we decode with the following options:
 
         Toml.decode!(content, keys: :atoms, transforms: [ServerTransform])
-      
+
     The result would be:
 
         %{

@@ -5,7 +5,6 @@ Usage:
     python3 scripts/publish/check_all_registries.py <version>
 """
 
-
 import importlib.util
 import os
 import sys

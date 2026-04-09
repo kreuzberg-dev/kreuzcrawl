@@ -35,6 +35,7 @@
 * Add `~j` and `~J` sigils in module `Jason.Sigil` to support writing JSON literals in code
 
 ### Fixes
+
 * Fix error reporting when decoding strings (it was possible to mis-attribute the offending byte)
 * Verify fields given to `@derive`
 

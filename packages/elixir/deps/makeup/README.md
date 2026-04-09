@@ -80,7 +80,7 @@ You'll need a CSS stylesheet to get the different colors and styles.
 
 To generate a stylesheet:
 
-```
+```text
 Makeup.stylesheet(style) # by default, the StyleMap.default style is used.
 # ... output omitted
 ```

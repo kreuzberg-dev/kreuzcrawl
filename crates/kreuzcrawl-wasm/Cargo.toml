@@ -2,12 +2,16 @@
 name = "kreuzcrawl-wasm"
 version.workspace = true
 edition.workspace = true
+authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme.workspace = true
 rust-version.workspace = true
-description = "WebAssembly bindings (wasm-bindgen) for kreuzcrawl"
-keywords = ["crawl", "scrape", "wasm", "webassembly", "bindings"]
-categories = ["api-bindings", "wasm"]
+description = "WebAssembly bindings for kreuzcrawl"
+keywords = ["crawl", "scrape", "wasm", "webassembly", "web"]
+categories = ["api-bindings"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]

@@ -73,5 +73,3 @@ class InvalidConfigError(CrawlError):
 
 class OtherError(CrawlError):
     """An unclassified error occurred."""
-
-

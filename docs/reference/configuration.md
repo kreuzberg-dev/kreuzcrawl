@@ -12,7 +12,7 @@ The main configuration struct. All fields have sensible defaults. Serialized wit
 |-------|------|---------|-------------|
 | `max_depth` | `Option<usize>` | `None` (unlimited) | Maximum crawl depth (number of link hops from the start URL) |
 | `max_pages` | `Option<usize>` | `None` (unlimited) | Maximum number of pages to crawl. Must be > 0 if set. |
-| `max_concurrent` | `Option<usize>` | `None` (engine default) | Maximum number of concurrent requests. Must be > 0 if set. |
+| `max_concurrent` | `Option<usize>` | `None` (engine default: 10) | Maximum number of concurrent requests. Must be > 0 if set. |
 | `stay_on_domain` | `bool` | `false` | Restrict crawling to the same domain as the start URL |
 | `allow_subdomains` | `bool` | `false` | Allow subdomains when `stay_on_domain` is `true` |
 | `include_paths` | `Vec<String>` | `[]` | Regex patterns for paths to include during crawling |

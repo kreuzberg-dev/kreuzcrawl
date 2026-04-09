@@ -140,7 +140,7 @@ But can be deactivated
 ```
 
 
-  #### Wikilinks...
+#### Wikilinks
 
   are disabled by default
 
@@ -534,9 +534,9 @@ It still works for inline code, as it did before
 
 _attrs_ can be one or more of:
 
-  * `.className`
-  * `#id`
-  * name=value, name="value", or name='value'
+  - `.className`
+  - `#id`
+  - name=value, name="value", or name='value'
 
 For example:
 
@@ -584,7 +584,7 @@ containing an IAL-like string, as in the following example
 
 ## Limitations
 
-  * Block-level HTML is correctly handled only if each HTML
+  - Block-level HTML is correctly handled only if each HTML
     tag appears on its own line. So
 
         <div>
@@ -598,7 +598,7 @@ containing an IAL-like string, as in the following example
         <div>
         hello</div>
 
-  * John Gruber's tests contain an ambiguity when it comes to
+  - John Gruber's tests contain an ambiguity when it comes to
     lines that might be the start of a list inside paragraphs.
 
     One test says that
@@ -619,7 +619,7 @@ containing an IAL-like string, as in the following example
     I've chosen always to use the second interpretation—a line that looks like
     a list item will always be a list item.
 
-  * Rendering of block and inline elements.
+  - Rendering of block and inline elements.
 
     Block or void HTML elements that are at the absolute beginning of a line end
     the preceding paragraph.
@@ -772,9 +772,9 @@ Thank you all who have already helped with Earmark/EarmarkParser, your names are
 ## Author
 
 Copyright © 2014,5,6,7,8,9;2020 Dave Thomas, The Pragmatic Programmers
-@/+pragdave,  dave@pragprog.com
+@/+pragdave, <dave@pragprog.com>
 Copyright © 2020,1,2,3,4,5 Robert Dober
-robert.dober@gmail.com
+<robert.dober@gmail.com>
 
 ## LICENSE
 

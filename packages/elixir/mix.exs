@@ -1,7 +1,8 @@
-defmodule KreuzCrawl.MixProject do
+defmodule Kreuzcrawl.MixProject do
   use Mix.Project
 
   @version "0.1.0"
+  @source_url "https://github.com/kreuzberg-dev/kreuzcrawl"
 
   def project do
     [
@@ -10,8 +11,11 @@ defmodule KreuzCrawl.MixProject do
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      description: "High-performance web crawling engine - Elixir bindings",
-      package: package()
+      description: "High-performance web crawling engine",
+      package: package(),
+      docs: docs(),
+      source_url: @source_url,
+      rustler_crates: [kreuzcrawl: [mode: :release]]
     ]
   end
 
@@ -21,19 +25,32 @@ defmodule KreuzCrawl.MixProject do
 
   defp deps do
     [
-      {:rustler, "~> 0.36.0"},
+      {:rustler, "~> 0.37.0", optional: true, runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false}
     ]
   end
 
   defp package do
     [
-      name: "kreuzcrawl",
       licenses: ["Elastic-2.0"],
-      links: %{
-        "GitHub" => "https://github.com/kreuzberg-dev/kreuzcrawl"
-      },
-      files: ~w(lib native .formatter.exs mix.exs README.md LICENSE)
+      links: %{GitHub: @source_url},
+      files: ~w(
+        lib
+        native/kreuzcrawl_nif/src
+        native/kreuzcrawl_nif/Cargo.toml
+        mix.exs
+        README.md
+        .formatter.exs
+      )
+    ]
+  end
+
+  defp docs do
+    [
+      main: "Kreuzcrawl",
+      source_url: @source_url,
+      extras: ["README.md"]
     ]
   end
 end

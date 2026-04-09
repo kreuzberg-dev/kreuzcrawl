@@ -2,11 +2,15 @@
 name = "kreuzcrawl-php"
 version.workspace = true
 edition.workspace = true
+authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme.workspace = true
 rust-version.workspace = true
-description = "PHP bindings (ext-php-rs) for kreuzcrawl"
-keywords = ["crawl", "scrape", "php", "bindings"]
+description = "PHP bindings for kreuzcrawl"
+keywords = ["crawl", "scrape", "php", "web", "spider"]
 categories = ["api-bindings"]
 
 [lib]

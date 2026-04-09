@@ -6,7 +6,7 @@
 [![Total Download](https://img.shields.io/hexpm/dt/toml.svg?style=flat)](https://hex.pm/packages/toml)
 [![Last Updated](https://img.shields.io/github/last-commit/bitwalker/toml-elixir.svg?style=flat)](https://github.com/bitwalker/toml-elixir/commits/main)
 
-This is a TOML library for Elixir projects. 
+This is a TOML library for Elixir projects.
 
 It is compliant with version 1.0 of the [official TOML specification](https://github.com/toml-lang/toml). You can find a
 brief overview of the feature set below, but you are encouraged to read the full spec at the link above (it is short and easy to read!).
@@ -93,7 +93,7 @@ the same base type (e.g. integer and string respectively in the examples given).
 Certain features of TOML have implementation-specific behavior:
 
 - `-inf`, `inf`, and `+inf` are all valid infinity values in TOML.
-  In Erlang/Elixir, these don't have exact representations. Instead, by convention, 
+  In Erlang/Elixir, these don't have exact representations. Instead, by convention,
   `:infinity` is used for positive infinity, as atoms are always larger than integers
   when using comparison operators, so `:infinity > <any integer>` will always be true.
   However, negative infinity cannot be represented, as numbers are always considered smaller
@@ -102,7 +102,7 @@ Certain features of TOML have implementation-specific behavior:
   in comparisons/sorting/etc.
 - `-nan`, `nan`, and `+nan` are all valid NaN (not a number) values in TOML. In Erlang/Elixir,
   NaN is traditionally represented with `:nan`, but there is no representation for negative NaN,
-  and no API actually produces `:nan`, instead invalid numbers typically raise errors, in the typical 
+  and no API actually produces `:nan`, instead invalid numbers typically raise errors, in the typical
   spirit of "let it crash" in the face of errors. For purposes of preserving type information though,
   we use the `:nan` convention, and `:negative_nan` for -NaN. You will need to take care to deal with
   these values manually if the values need to be preserved.
@@ -204,7 +204,7 @@ end
 
 defmodule IPStringToCharlist do
   use Toml.Transform
-  
+
   def transform(:ip, v) when is_binary(v) do
     String.to_charlist(v)
   end
@@ -213,7 +213,7 @@ end
 
 defmodule CharlistToIP do
   use Toml.Transform
-  
+
   def transform(:ip, v) when is_list(v) do
     case :inet.parse_ipv4_address(v) do
       {:ok, address} ->
@@ -228,7 +228,7 @@ end
 
 defmodule ServerMapToList do
   use Toml.Transform
-  
+
   def transform(:servers, v) when is_map(v) do
     for {name, server} <- v, do: struct(Server, Map.put(server, :name, name))
   end

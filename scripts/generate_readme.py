@@ -6,12 +6,12 @@ Generates language-specific READMEs from templates and snippets using Jinja2.
 Supports validation mode to check if existing READMEs match generated output.
 """
 
-import sys
 import argparse
 import logging
-from pathlib import Path
-from typing import Dict, Any, Optional
 import re
+import sys
+from pathlib import Path
+from typing import Any
 
 try:
     import yaml
@@ -27,10 +27,7 @@ except ImportError:
 
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(levelname)s: %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -49,18 +46,17 @@ class ReadmeGenerator:
         self.config = {}
         self.jinja_env = None
 
-    def load_config(self) -> Dict[str, Any]:
+    def load_config(self) -> dict[str, Any]:
         """Load and parse README configuration from YAML."""
         config_path = self.scripts_dir / "readme_config.yaml"
 
         if not config_path.exists():
             raise FileNotFoundError(
-                f"Configuration file not found: {config_path}\n"
-                "Create readme_config.yaml in scripts/ directory."
+                f"Configuration file not found: {config_path}\nCreate readme_config.yaml in scripts/ directory."
             )
 
         try:
-            with open(config_path, 'r', encoding='utf-8') as f:
+            with open(config_path, encoding="utf-8") as f:
                 self.config = yaml.safe_load(f)
 
             if not self.config:
@@ -76,8 +72,7 @@ class ReadmeGenerator:
         """Configure Jinja2 environment with custom filters."""
         if not self.templates_dir.exists():
             raise FileNotFoundError(
-                f"Templates directory not found: {self.templates_dir}\n"
-                "Create readme_templates/ directory in scripts/"
+                f"Templates directory not found: {self.templates_dir}\nCreate readme_templates/ directory in scripts/"
             )
 
         self.jinja_env = Environment(
@@ -86,10 +81,10 @@ class ReadmeGenerator:
         )
 
         # Register custom filter - use a lambda to capture self
-        self.jinja_env.filters['include_snippet'] = lambda path, lang: self.include_snippet_filter(path, lang)
+        self.jinja_env.filters["include_snippet"] = lambda path, lang: self.include_snippet_filter(path, lang)
 
         # Also register as a global function for potential use in templates
-        self.jinja_env.globals['include_snippet'] = lambda path, lang: self.include_snippet_filter(path, lang)
+        self.jinja_env.globals["include_snippet"] = lambda path, lang: self.include_snippet_filter(path, lang)
 
         logger.debug("Jinja2 environment configured")
         return self.jinja_env
@@ -117,23 +112,20 @@ class ReadmeGenerator:
 
         # Try with .md extension first if no extension provided
         if not snippet_path.suffix:
-            md_path = snippet_path.with_suffix('.md')
+            md_path = snippet_path.with_suffix(".md")
             if md_path.exists():
                 snippet_path = md_path
 
         if not snippet_path.exists():
-            raise FileNotFoundError(
-                f"Snippet not found: {snippet_path}\n"
-                f"Looking for: docs/snippets/{language}/{path}"
-            )
+            raise FileNotFoundError(f"Snippet not found: {snippet_path}\nLooking for: docs/snippets/{language}/{path}")
 
         try:
-            content = snippet_path.read_text(encoding='utf-8')
+            content = snippet_path.read_text(encoding="utf-8")
         except Exception as e:
             raise ValueError(f"Failed to read snippet {snippet_path}: {e}")
 
         # Handle markdown files (extract code block)
-        if snippet_path.suffix == '.md':
+        if snippet_path.suffix == ".md":
             return self._extract_code_block(content, snippet_path)
 
         # Handle raw code files (wrap in code fences)
@@ -165,7 +157,7 @@ class ReadmeGenerator:
                 "Ensure file contains code wrapped in triple backticks"
             )
 
-        language = match.group(1) or 'text'
+        language = match.group(1) or "text"
         code = match.group(2).rstrip()
 
         # Return the complete code block with fences
@@ -185,35 +177,36 @@ class ReadmeGenerator:
         """
         # Check if content already has fence markers to prevent double-wrapping
         content_stripped = content.lstrip()
-        if content_stripped.startswith('```'):
+        if content_stripped.startswith("```"):
             # Content already has fences, return as-is
             return content
 
         # Determine language from file extension if not provided
         ext_map = {
-            '.py': 'python',
-            '.go': 'go',
-            '.java': 'java',
-            '.js': 'javascript',
-            '.ts': 'typescript',
-            '.rb': 'ruby',
-            '.php': 'php',
-            '.cs': 'csharp',
-            '.rs': 'rust',
-            '.ex': 'elixir',
-            '.exs': 'elixir',
+            ".py": "python",
+            ".go": "go",
+            ".java": "java",
+            ".js": "javascript",
+            ".ts": "typescript",
+            ".rb": "ruby",
+            ".php": "php",
+            ".cs": "csharp",
+            ".rs": "rust",
+            ".ex": "elixir",
+            ".exs": "elixir",
         }
 
         if language in ext_map:
             lang_id = ext_map[language]
         else:
-            lang_id = snippet_path.suffix.lstrip('.') or 'text'
+            lang_id = snippet_path.suffix.lstrip(".") or "text"
 
         code = content.rstrip()
         return f"```{lang_id}\n{code}\n```\n"
 
-    def generate_readme(self, lang_code: str, lang_config: Dict[str, Any],
-                        output_path: Path, dry_run: bool = False) -> str:
+    def generate_readme(
+        self, lang_code: str, lang_config: dict[str, Any], output_path: Path, dry_run: bool = False
+    ) -> str:
         """
         Render README from template using language configuration.
 
@@ -230,21 +223,20 @@ class ReadmeGenerator:
             TemplateNotFound: If template not found
             Exception: Other rendering errors
         """
-        template_name = lang_config.get('template', f'{lang_code}.md.jinja')
+        template_name = lang_config.get("template", f"{lang_code}.md.jinja")
 
         try:
             template = self.jinja_env.get_template(template_name)
         except TemplateNotFound:
             raise TemplateNotFound(
-                f"Template not found: {template_name}\n"
-                f"Expected at: {self.templates_dir / template_name}"
+                f"Template not found: {template_name}\nExpected at: {self.templates_dir / template_name}"
             )
 
         # Prepare context for template
         context = {
-            'language': lang_code,
-            'version': self.config.get('version', ''),
-            'license': self.config.get('license', 'MIT'),
+            "language": lang_code,
+            "version": self.config.get("version", ""),
+            "license": self.config.get("license", "MIT"),
             **lang_config,
         }
 
@@ -256,15 +248,14 @@ class ReadmeGenerator:
         # Write to disk unless dry-run
         if not dry_run:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            output_path.write_text(content, encoding='utf-8')
+            output_path.write_text(content, encoding="utf-8")
             logger.info(f"Generated: {output_path}")
         else:
             logger.info(f"[DRY-RUN] Would generate: {output_path}")
 
         return content
 
-    def validate_readme(self, lang_code: str, lang_config: Dict[str, Any],
-                        readme_path: Path) -> bool:
+    def validate_readme(self, lang_code: str, lang_config: dict[str, Any], readme_path: Path) -> bool:
         """
         Validate that existing README matches generated output.
 
@@ -283,21 +274,21 @@ class ReadmeGenerator:
         try:
             # Generate fresh README content
             generated = self.generate_readme(lang_code, lang_config, readme_path, dry_run=True)
-            existing = readme_path.read_text(encoding='utf-8')
+            existing = readme_path.read_text(encoding="utf-8")
 
             if generated == existing:
                 logger.info(f"Valid: {readme_path}")
                 return True
-            else:
-                logger.warning(f"Out of date: {readme_path}")
-                return False
+            logger.warning(f"Out of date: {readme_path}")
+            return False
 
         except Exception as e:
             logger.error(f"Validation error for {readme_path}: {e}")
             return False
 
-    def process_all_languages(self, language_filter: Optional[str] = None,
-                             dry_run: bool = False, validate_only: bool = False) -> bool:
+    def process_all_languages(
+        self, language_filter: str | None = None, dry_run: bool = False, validate_only: bool = False
+    ) -> bool:
         """
         Process READMEs for all configured languages.
 
@@ -313,7 +304,7 @@ class ReadmeGenerator:
             logger.error("Configuration not loaded")
             return False
 
-        languages = self.config.get('languages', {})
+        languages = self.config.get("languages", {})
 
         if language_filter:
             if language_filter not in languages:
@@ -327,8 +318,8 @@ class ReadmeGenerator:
         for lang_code, lang_config in languages.items():
             try:
                 # Check if language config has custom output_path
-                if 'output_path' in lang_config:
-                    readme_path = self.project_root / lang_config['output_path']
+                if "output_path" in lang_config:
+                    readme_path = self.project_root / lang_config["output_path"]
                 else:
                     readme_path = self.packages_dir / lang_code / "README.md"
 
@@ -363,9 +354,7 @@ class ReadmeGenerator:
 
             # Process languages
             success = self.process_all_languages(
-                language_filter=args.language,
-                dry_run=args.dry_run,
-                validate_only=args.validate
+                language_filter=args.language, dry_run=args.dry_run, validate_only=args.validate
             )
 
             if args.validate:
@@ -373,11 +362,10 @@ class ReadmeGenerator:
                     logger.info("All READMEs are up-to-date")
                 else:
                     logger.error("Some READMEs are out of date")
+            elif success:
+                logger.info("README generation completed successfully")
             else:
-                if success:
-                    logger.info("README generation completed successfully")
-                else:
-                    logger.error("README generation completed with errors")
+                logger.error("README generation completed with errors")
 
             return 0 if success else 1
 
@@ -407,31 +395,32 @@ Examples:
 
   # Validate specific language
   python scripts/generate_readme.py --language go --validate
-        """
+        """,
     )
 
     parser.add_argument(
-        '--language',
-        help='Generate README for specific language only',
-        metavar='LANG',
+        "--language",
+        help="Generate README for specific language only",
+        metavar="LANG",
     )
 
     parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Preview generation without writing to disk',
+        "--dry-run",
+        action="store_true",
+        help="Preview generation without writing to disk",
     )
 
     parser.add_argument(
-        '--validate',
-        action='store_true',
-        help='Validate existing READMEs match generated output',
+        "--validate",
+        action="store_true",
+        help="Validate existing READMEs match generated output",
     )
 
     parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Enable verbose output',
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose output",
     )
 
     return parser.parse_args()
@@ -452,5 +441,5 @@ def main() -> int:
     return generator.main(args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

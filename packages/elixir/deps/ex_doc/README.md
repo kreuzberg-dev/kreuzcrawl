@@ -8,20 +8,20 @@ ExDoc is a tool to generate documentation for Erlang and Elixir projects. To see
 
 ExDoc ships with many features:
 
-  * Automatically generates offline-accessible HTML, Markdown (including `llms.txt`), and EPUB documents from your API documentation.
-  * When hosted, ExDoc relies on browser's page transitions for better UX, caching, and enhanced accessibility.
-  * Responsive design, covering phones and tablets.
-  * Support for custom pages, guides, livebooks and cheatsheets.
-  * Support for custom grouping of modules, functions, and pages in the sidebar.
-  * Customizable logo and favicon.
-  * A direct link back to the source code for every documented entity.
-  * Full-text search.
-  * Keyboard shortcuts. (Press `?` to show help.)
-  * Quick-search with autocompletion support. (`s` keyboard shortcut.)
-  * Go-to shortcut with auto-complete to take the reader to any HexDocs package documentation. (`g` keyboard shortcut.)
-  * Support for night mode, activated according to the browser preference.
-  * Tooltips for links to modules and functions, both for the current project and other projects.
-  * Version dropdown and "Go to latest" notifications, automatically configured when hosted on HexDocs.
+* Automatically generates offline-accessible HTML, Markdown (including `llms.txt`), and EPUB documents from your API documentation.
+* When hosted, ExDoc relies on browser's page transitions for better UX, caching, and enhanced accessibility.
+* Responsive design, covering phones and tablets.
+* Support for custom pages, guides, livebooks and cheatsheets.
+* Support for custom grouping of modules, functions, and pages in the sidebar.
+* Customizable logo and favicon.
+* A direct link back to the source code for every documented entity.
+* Full-text search.
+* Keyboard shortcuts. (Press `?` to show help.)
+* Quick-search with autocompletion support. (`s` keyboard shortcut.)
+* Go-to shortcut with auto-complete to take the reader to any HexDocs package documentation. (`g` keyboard shortcut.)
+* Support for night mode, activated according to the browser preference.
+* Tooltips for links to modules and functions, both for the current project and other projects.
+* Version dropdown and "Go to latest" notifications, automatically configured when hosted on HexDocs.
 
 ## Usage
 
@@ -88,20 +88,20 @@ You can use ExDoc via the command line.
 1. Install ExDoc as an escript:
 
    ```bash
-   $ mix escript.install hex ex_doc
+   mix escript.install hex ex_doc
    ```
 
 2. Now you are ready to use it in your projects. Move into your project directory and make sure it's compiled:
 
    ```bash
-   $ cd PATH_TO_YOUR_PROJECT
-   $ mix compile
+   cd PATH_TO_YOUR_PROJECT
+   mix compile
    ```
 
 3. Invoke the `ex_doc` executable from your project:
 
    ```bash
-   $ ex_doc "PROJECT_NAME" "PROJECT_VERSION" _build/dev/lib/project/ebin -m "PROJECT_MODULE" -u "https://github.com/GITHUB_USER/GITHUB_REPO" -l path/to/logo.png
+   ex_doc "PROJECT_NAME" "PROJECT_VERSION" _build/dev/lib/project/ebin -m "PROJECT_MODULE" -u "https://github.com/GITHUB_USER/GITHUB_REPO" -l path/to/logo.png
    ```
 
    Examples of appropriate values:
@@ -117,7 +117,7 @@ You can use ExDoc via the command line.
 It is also possible to specify multiple `ebin` directories in the case of _umbrella_ projects:
 
    ```bash
-   $ ex_doc "PROJECT_NAME" "PROJECT_VERSION" _build/dev/lib/app1/ebin _build/dev/lib/app2/ebin -m "PROJECT_MODULE" -u "https://github.com/GITHUB_USER/GITHUB_REPO" -l path/to/logo.png
+   ex_doc "PROJECT_NAME" "PROJECT_VERSION" _build/dev/lib/app1/ebin _build/dev/lib/app2/ebin -m "PROJECT_MODULE" -u "https://github.com/GITHUB_USER/GITHUB_REPO" -l path/to/logo.png
    ```
 
 If multiple `ebin` directories are specified, modules are grouped by application by default. It is possible to override this behaviour by providing a custom `groups_per_modules` option.
@@ -152,11 +152,11 @@ You can find all supported languages under [the Makeup organization on GitHub](h
 
 You can publish additional pages in your project documentation by configuring them as `:extras`. The following formats and extensions are supported:
 
-  * Markdown (`.md` extension) - useful for general long-term text. [Learn more](https://daringfireball.net/projects/markdown/syntax).
+   * Markdown (`.md` extension) - useful for general long-term text. [Learn more](https://daringfireball.net/projects/markdown/syntax).
 
-  * Cheatsheets (`.cheatmd` extension) - useful for discovery and quick reference. [Learn more](https://hexdocs.pm/ex_doc/cheatsheet.html).
+   * Cheatsheets (`.cheatmd` extension) - useful for discovery and quick reference. [Learn more](https://hexdocs.pm/ex_doc/cheatsheet.html).
 
-  * Livebooks (`.livemd` extension) - useful for tutorials, interactive examples, and deep dives. [Learn more](https://livebook.dev/).
+   * Livebooks (`.livemd` extension) - useful for tutorials, interactive examples, and deep dives. [Learn more](https://livebook.dev/).
 
 For example, you can set your `:extras` to:
 
@@ -212,12 +212,12 @@ In Erlang's EDoc:
 
 The following metadata is available for both modules and functions:
 
-  * `deprecated` (binary) - marks a module/function as deprecated, with the given string as the reason.
-  * `since` (binary) - declares a module/function available from a particular version.
+   * `deprecated` (binary) - marks a module/function as deprecated, with the given string as the reason.
+   * `since` (binary) - declares a module/function available from a particular version.
 
 The following metadata is available for modules:
 
-  * `tags` (list of atoms) - tags to be added as module annotations. (Not supported by EDoc.)
+   * `tags` (list of atoms) - tags to be added as module annotations. (Not supported by EDoc.)
 
 ## Auto-linking
 
@@ -237,9 +237,9 @@ Link to extra pages in another application using the syntax `` [Writing Document
 
 It is also possible to place anchors after the module name and extra pages. For example:
 
-  * `` `m:Keyword#module-duplicate-keys-and-ordering` `` will create a link to `https://hexdocs.pm/elixir/Keyword.html#module-duplicate-keys-and-ordering`
+   * `` `m:Keyword#module-duplicate-keys-and-ordering` `` will create a link to `https://hexdocs.pm/elixir/Keyword.html#module-duplicate-keys-and-ordering`
 
-  * `` `e:elixir:syntax-reference.md#expressions` `` will create a link to `https://hexdocs.pm/elixir/syntax-reference.html#expressions`
+   * `` `e:elixir:syntax-reference.md#expressions` `` will create a link to `https://hexdocs.pm/elixir/syntax-reference.html#expressions`
 
 ### Erlang
 
@@ -255,9 +255,9 @@ Link to extra pages in another application using the syntax `` [Using unicode](`
 
 It is also possible to place anchors after the module name and extra pages. For example:
 
-  * `` `m:argparse#quick-start` `` will create a link to `https://erlang.org/doc/man/argparse#quick-start`
+   * `` `m:argparse#quick-start` `` will create a link to `https://erlang.org/doc/man/argparse#quick-start`
 
-  * `` `e:stdlib:unicode-usage.md#what-unicode-is` `` will create a link to `https://erlang.org/doc/apps/stdlib/unicode-usage.html#what-unicode-is`
+   * `` `e:stdlib:unicode-usage.md#what-unicode-is` `` will create a link to `https://erlang.org/doc/apps/stdlib/unicode-usage.html#what-unicode-is`
 
 <!-- tabs-close -->
 

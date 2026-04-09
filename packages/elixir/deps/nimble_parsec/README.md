@@ -12,23 +12,23 @@ combinators.
 Combinators are composed programmatically and compiled into multiple
 clauses with binary matching. This provides the following benefits:
 
-  * Performance: since it compiles to binary matching, it leverages
-    many Erlang VM optimizations to generate a fast parser code with
-    low memory usage
+* Performance: since it compiles to binary matching, it leverages
+  many Erlang VM optimizations to generate a fast parser code with
+  low memory usage
 
-  * Composable: this library does not rely on macros for building and
-    composing parsers, therefore they are fully composable. The only
-    macros are `defparsec/3` and `defparsecp/3` which emit the compiled
-    clauses with  binary matching
+* Composable: this library does not rely on macros for building and
+  composing parsers, therefore they are fully composable. The only
+  macros are `defparsec/3` and `defparsecp/3` which emit the compiled
+  clauses with binary matching
 
-  * No runtime dependency: after compilation, the generated parser
-    clauses have no runtime dependency on `NimbleParsec`. This opens up
-    the possibility to compile parsers and do not impose a dependency on
-    users of your library
+* No runtime dependency: after compilation, the generated parser
+  clauses have no runtime dependency on `NimbleParsec`. This opens up
+  the possibility to compile parsers and do not impose a dependency on
+  users of your library
 
-  * No footprints: `NimbleParsec` only needs to be imported in your modules.
-    There is no need for `use NimbleParsec`, leaving no footprints on your
-    modules
+* No footprints: `NimbleParsec` only needs to be imported in your modules.
+  There is no need for `use NimbleParsec`, leaving no footprints on your
+  modules
 
 The goal of this library is to focus on a set of primitives for writing
 efficient parser combinators. The composition aspect means you should be
@@ -131,12 +131,12 @@ end
 
 All nimble libraries by Dashbit:
 
-  * [NimbleCSV](https://github.com/dashbitco/nimble_csv) - simple and fast CSV parsing
-  * [NimbleOptions](https://github.com/dashbitco/nimble_options) - tiny library for validating and documenting high-level options
-  * [NimbleParsec](https://github.com/dashbitco/nimble_parsec) - simple and fast parser combinators
-  * [NimblePool](https://github.com/dashbitco/nimble_pool) - tiny resource-pool implementation
-  * [NimblePublisher](https://github.com/dashbitco/nimble_publisher) - a minimal filesystem-based publishing engine with Markdown support and code highlighting
-  * [NimbleTOTP](https://github.com/dashbitco/nimble_totp) - tiny library for generating time-based one time passwords (TOTP)
+* [NimbleCSV](https://github.com/dashbitco/nimble_csv) - simple and fast CSV parsing
+* [NimbleOptions](https://github.com/dashbitco/nimble_options) - tiny library for validating and documenting high-level options
+* [NimbleParsec](https://github.com/dashbitco/nimble_parsec) - simple and fast parser combinators
+* [NimblePool](https://github.com/dashbitco/nimble_pool) - tiny resource-pool implementation
+* [NimblePublisher](https://github.com/dashbitco/nimble_publisher) - a minimal filesystem-based publishing engine with Markdown support and code highlighting
+* [NimbleTOTP](https://github.com/dashbitco/nimble_totp) - tiny library for generating time-based one time passwords (TOTP)
 
 ## License
 

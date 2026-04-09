@@ -1,0 +1,1 @@
+{application,kreuzcrawl,[{modules,[]},{optional_applications,[]},{applications,[kernel,stdlib,elixir,logger,rustler]},{description,"High-performance web crawling engine - Elixir bindings"},{registered,[]},{vsn,"0.1.0"}]}.
