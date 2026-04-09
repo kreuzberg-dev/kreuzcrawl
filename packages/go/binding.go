@@ -241,6 +241,38 @@ type ProxyConfig struct {
 }
 
 
+// ProxyConfig option function
+type ProxyConfigOption func(*ProxyConfig)
+
+// WithUrl sets the url field.
+func WithUrl(v string) ProxyConfigOption {
+    return func(c *ProxyConfig) { c.Url = v }
+}
+
+// WithUsername sets the username field.
+func WithUsername(v string) ProxyConfigOption {
+    return func(c *ProxyConfig) { c.Username = v }
+}
+
+// WithPassword sets the password field.
+func WithPassword(v string) ProxyConfigOption {
+    return func(c *ProxyConfig) { c.Password = v }
+}
+
+// NewProxyConfig creates a ProxyConfig with optional parameters.
+func NewProxyConfig(opts ...ProxyConfigOption) *ProxyConfig {
+    c := &ProxyConfig {
+        Url: "",
+        Username: "",
+        Password: "",
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Browser fallback configuration.
 type BrowserConfig struct {
     // When to use the headless browser fallback.
@@ -744,6 +776,50 @@ type ActionResult struct {
 }
 
 
+// ActionResult option function
+type ActionResultOption func(*ActionResult)
+
+// WithActionIndex sets the action_index field.
+func WithActionIndex(v uint) ActionResultOption {
+    return func(c *ActionResult) { c.ActionIndex = v }
+}
+
+// WithActionType sets the action_type field.
+func WithActionType(v string) ActionResultOption {
+    return func(c *ActionResult) { c.ActionType = v }
+}
+
+// WithSuccess sets the success field.
+func WithSuccess(v bool) ActionResultOption {
+    return func(c *ActionResult) { c.Success = v }
+}
+
+// WithData sets the data field.
+func WithData(v map[string]interface{}) ActionResultOption {
+    return func(c *ActionResult) { c.Data = v }
+}
+
+// WithError sets the error field.
+func WithError(v string) ActionResultOption {
+    return func(c *ActionResult) { c.Error = v }
+}
+
+// NewActionResult creates a ActionResult with optional parameters.
+func NewActionResult(opts ...ActionResultOption) *ActionResult {
+    c := &ActionResult {
+        ActionIndex: 0,
+        ActionType: "",
+        Success: false,
+        Data: "",
+        Error: "",
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // The result of a single-page scrape operation.
 type ScrapeResult struct {
     // The HTTP status code of the response.
@@ -1180,6 +1256,8 @@ type CrawlResult struct {
     Error *string `json:"error,omitempty"`
     // Cookies collected during the crawl.
     Cookies []CookieInfo `json:"cookies"`
+    // Normalized URLs encountered during crawling (for deduplication counting).
+    NormalizedUrls []string `json:"normalized_urls"`
 }
 
 
@@ -1216,6 +1294,11 @@ func WithCookies(v []CookieInfo) CrawlResultOption {
     return func(c *CrawlResult) { c.Cookies = v }
 }
 
+// WithNormalizedUrls sets the normalized_urls field.
+func WithNormalizedUrls(v []string) CrawlResultOption {
+    return func(c *CrawlResult) { c.NormalizedUrls = v }
+}
+
 // NewCrawlResult creates a CrawlResult with optional parameters.
 func NewCrawlResult(opts ...CrawlResultOption) *CrawlResult {
     c := &CrawlResult {
@@ -1225,6 +1308,7 @@ func NewCrawlResult(opts ...CrawlResultOption) *CrawlResult {
         WasSkipped: false,
         Error: "",
         Cookies: [][]CookieInfo,
+        NormalizedUrls: [][]string,
     }
     for _, opt := range opts {
         opt(c)
@@ -1387,6 +1471,62 @@ type CachedPage struct {
     Etag *string `json:"etag,omitempty"`
     LastModified *string `json:"last_modified,omitempty"`
     CachedAt uint64 `json:"cached_at"`
+}
+
+
+// CachedPage option function
+type CachedPageOption func(*CachedPage)
+
+// WithUrl sets the url field.
+func WithUrl(v string) CachedPageOption {
+    return func(c *CachedPage) { c.Url = v }
+}
+
+// WithStatusCode sets the status_code field.
+func WithStatusCode(v uint16) CachedPageOption {
+    return func(c *CachedPage) { c.StatusCode = v }
+}
+
+// WithContentType sets the content_type field.
+func WithContentType(v string) CachedPageOption {
+    return func(c *CachedPage) { c.ContentType = v }
+}
+
+// WithBody sets the body field.
+func WithBody(v string) CachedPageOption {
+    return func(c *CachedPage) { c.Body = v }
+}
+
+// WithEtag sets the etag field.
+func WithEtag(v string) CachedPageOption {
+    return func(c *CachedPage) { c.Etag = v }
+}
+
+// WithLastModified sets the last_modified field.
+func WithLastModified(v string) CachedPageOption {
+    return func(c *CachedPage) { c.LastModified = v }
+}
+
+// WithCachedAt sets the cached_at field.
+func WithCachedAt(v uint64) CachedPageOption {
+    return func(c *CachedPage) { c.CachedAt = v }
+}
+
+// NewCachedPage creates a CachedPage with optional parameters.
+func NewCachedPage(opts ...CachedPageOption) *CachedPage {
+    c := &CachedPage {
+        Url: "",
+        StatusCode: 0,
+        ContentType: "",
+        Body: "",
+        Etag: "",
+        LastModified: "",
+        CachedAt: 0,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 
@@ -2373,6 +2513,38 @@ type CitationReference struct {
 }
 
 
+// CitationReference option function
+type CitationReferenceOption func(*CitationReference)
+
+// WithIndex sets the index field.
+func WithIndex(v uint) CitationReferenceOption {
+    return func(c *CitationReference) { c.Index = v }
+}
+
+// WithUrl sets the url field.
+func WithUrl(v string) CitationReferenceOption {
+    return func(c *CitationReference) { c.Url = v }
+}
+
+// WithText sets the text field.
+func WithText(v string) CitationReferenceOption {
+    return func(c *CitationReference) { c.Text = v }
+}
+
+// NewCitationReference creates a CitationReference with optional parameters.
+func NewCitationReference(opts ...CitationReferenceOption) *CitationReference {
+    c := &CitationReference {
+        Index: 0,
+        Url: "",
+        Text: "",
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Opaque handle to a configured crawl engine.
 //
 // Constructed via [`create_engine`] with an optional [`CrawlConfig`].
@@ -2393,6 +2565,38 @@ type BatchScrapeResult struct {
 }
 
 
+// BatchScrapeResult option function
+type BatchScrapeResultOption func(*BatchScrapeResult)
+
+// WithUrl sets the url field.
+func WithUrl(v string) BatchScrapeResultOption {
+    return func(c *BatchScrapeResult) { c.Url = v }
+}
+
+// WithResult sets the result field.
+func WithResult(v ScrapeResult) BatchScrapeResultOption {
+    return func(c *BatchScrapeResult) { c.Result = v }
+}
+
+// WithError sets the error field.
+func WithError(v string) BatchScrapeResultOption {
+    return func(c *BatchScrapeResult) { c.Error = v }
+}
+
+// NewBatchScrapeResult creates a BatchScrapeResult with optional parameters.
+func NewBatchScrapeResult(opts ...BatchScrapeResultOption) *BatchScrapeResult {
+    c := &BatchScrapeResult {
+        Url: "",
+        Result: &ScrapeResult{},
+        Error: "",
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Result from a single URL in a batch crawl operation.
 type BatchCrawlResult struct {
     // The seed URL that was crawled.
@@ -2401,6 +2605,38 @@ type BatchCrawlResult struct {
     Result *CrawlResult `json:"result,omitempty"`
     // The error message, if the crawl failed.
     Error *string `json:"error,omitempty"`
+}
+
+
+// BatchCrawlResult option function
+type BatchCrawlResultOption func(*BatchCrawlResult)
+
+// WithUrl sets the url field.
+func WithUrl(v string) BatchCrawlResultOption {
+    return func(c *BatchCrawlResult) { c.Url = v }
+}
+
+// WithResult sets the result field.
+func WithResult(v CrawlResult) BatchCrawlResultOption {
+    return func(c *BatchCrawlResult) { c.Result = v }
+}
+
+// WithError sets the error field.
+func WithError(v string) BatchCrawlResultOption {
+    return func(c *BatchCrawlResult) { c.Error = v }
+}
+
+// NewBatchCrawlResult creates a BatchCrawlResult with optional parameters.
+func NewBatchCrawlResult(opts ...BatchCrawlResultOption) *BatchCrawlResult {
+    c := &BatchCrawlResult {
+        Url: "",
+        Result: &CrawlResult{},
+        Error: "",
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 
@@ -2524,3 +2760,4 @@ func (r *CrawlConfig) Default() *CrawlConfig {
     ptr := C.kcrawl_crawl_config_default (unsafe.Pointer(r), )
     return unmarshalCrawlConfig(ptr)
 }
+

@@ -1,28 +1,33 @@
 {
-  "name": "@kreuzberg/kreuzcrawl",
-  "version": "0.1.0",
-  "description": "High-performance web crawling engine - Node.js bindings",
-  "license": "Elastic-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/kreuzberg-dev/kreuzcrawl"
-  },
-  "main": "index.js",
-  "types": "index.d.ts",
-  "keywords": ["crawl", "scrape", "web", "spider"],
-  "napi": {
-    "name": "kreuzcrawl",
-    "triples": {
-      "defaults": true
-    }
-  },
-  "devDependencies": {
-    "@napi-rs/cli": "^3.0.0",
-    "vitest": "^3.0.0"
-  },
-  "scripts": {
-    "build": "napi build --platform --release",
-    "build:debug": "napi build --platform",
-    "test": "vitest run"
-  }
+	"name": "@kreuzberg/kreuzcrawl",
+	"version": "0.1.0",
+	"description": "High-performance web crawling engine - Node.js bindings",
+	"license": "Elastic-2.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kreuzberg-dev/kreuzcrawl"
+	},
+	"main": "index.js",
+	"types": "index.d.ts",
+	"keywords": [
+		"crawl",
+		"scrape",
+		"web",
+		"spider"
+	],
+	"napi": {
+		"name": "kreuzcrawl",
+		"triples": {
+			"defaults": true
+		}
+	},
+	"devDependencies": {
+		"@napi-rs/cli": "^3.0.0",
+		"vitest": "^3.0.0"
+	},
+	"scripts": {
+		"build": "napi build --platform --release",
+		"build:debug": "napi build --platform",
+		"test": "vitest run"
+	}
 }

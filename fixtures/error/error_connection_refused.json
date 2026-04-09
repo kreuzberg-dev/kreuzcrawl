@@ -1,18 +1,18 @@
 {
-  "id": "error_connection_refused",
-  "description": "Handles connection refused error gracefully",
-  "tags": ["error", "network"],
-  "config": {
-    "respect_robots_txt": false,
-    "request_timeout_ms": 5000
-  },
-  "assertions": {
-    "error": {
-      "is_error": true,
-      "error_type": "connection"
-    }
-  },
-  "skip": {
-    "notes": "Requires connection to actually be refused (port with no listener)"
-  }
+	"id": "error_connection_refused",
+	"description": "Handles connection refused error gracefully",
+	"tags": ["error", "network"],
+	"config": {
+		"respect_robots_txt": false,
+		"request_timeout_ms": 5000
+	},
+	"assertions": {
+		"error": {
+			"is_error": true,
+			"error_type": "connection"
+		}
+	},
+	"skip": {
+		"notes": "Requires connection to actually be refused (port with no listener)"
+	}
 }

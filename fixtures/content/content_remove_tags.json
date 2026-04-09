@@ -1,17 +1,17 @@
 {
-  "id": "content_remove_tags",
-  "description": "Removes specified HTML elements by CSS selector before processing",
-  "tags": ["content", "filtering"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_file": "html/main_content_page.html"
-  },
-  "config": {
-    "respect_robots_txt": false,
-    "remove_tags": ["nav", "aside", "footer"]
-  },
-  "assertions": {
-    "html_not_empty": true
-  }
+	"id": "content_remove_tags",
+	"description": "Removes specified HTML elements by CSS selector before processing",
+	"tags": ["content", "filtering"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/main_content_page.html"
+	},
+	"config": {
+		"respect_robots_txt": false,
+		"remove_tags": ["nav", "aside", "footer"]
+	},
+	"assertions": {
+		"html_not_empty": true
+	}
 }

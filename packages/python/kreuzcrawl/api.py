@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 import kreuzcrawl._kreuzcrawl as _rust
 
 if TYPE_CHECKING:
-    from .options import BrowserConfig, CrawlConfig
+    from .options import BrowserConfig, CrawlConfig, ProxyConfig
 
 
 def _to_rust_browser_config(value: BrowserConfig | None) -> Any:
@@ -21,6 +21,17 @@ def _to_rust_browser_config(value: BrowserConfig | None) -> Any:
         wait=value.wait,
         wait_selector=value.wait_selector,
         extra_wait=value.extra_wait,
+    )
+
+
+def _to_rust_proxy_config(value: ProxyConfig | None) -> Any:
+    """Convert Python ProxyConfig to Rust binding type."""
+    if value is None:
+        return None
+    return _rust.ProxyConfig(
+        url=value.url,
+        username=value.username,
+        password=value.password,
     )
 
 
@@ -54,7 +65,7 @@ def _to_rust_crawl_config(value: CrawlConfig | None) -> Any:
         asset_types=value.asset_types,
         max_asset_size=value.max_asset_size,
         browser=_to_rust_browser_config(value.browser),
-        proxy=value.proxy,
+        proxy=_to_rust_proxy_config(value.proxy),
         user_agents=value.user_agents,
         capture_screenshot=value.capture_screenshot,
         download_documents=value.download_documents,
@@ -95,3 +106,5 @@ def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> Any:
 def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> Any:
     """Crawl multiple seed URLs concurrently, each following links to configured depth."""
     return _rust.batch_crawl(engine, urls)
+
+

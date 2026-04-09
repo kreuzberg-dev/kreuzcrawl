@@ -1,30 +1,30 @@
 {
-  "id": "crawl_stay_on_domain",
-  "description": "Does not follow external links when stay_on_domain is true",
-  "tags": ["crawl"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "status_code": 200,
-      "headers": { "content-type": "text/html; charset=utf-8" },
-      "body_inline": "<html><body><a href=\"/internal\">Internal</a><a href=\"https://external.com/page\">External</a></body></html>"
-    },
-    {
-      "path": "/internal",
-      "status_code": 200,
-      "headers": { "content-type": "text/html; charset=utf-8" },
-      "body_inline": "<html><body><h1>Internal Page</h1></body></html>"
-    }
-  ],
-  "config": {
-    "max_depth": 1,
-    "stay_on_domain": true,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "crawl": {
-      "pages_crawled": 2,
-      "stayed_on_domain": true
-    }
-  }
+	"id": "crawl_stay_on_domain",
+	"description": "Does not follow external links when stay_on_domain is true",
+	"tags": ["crawl"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><a href=\"/internal\">Internal</a><a href=\"https://external.com/page\">External</a></body></html>"
+		},
+		{
+			"path": "/internal",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Internal Page</h1></body></html>"
+		}
+	],
+	"config": {
+		"max_depth": 1,
+		"stay_on_domain": true,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"crawl": {
+			"pages_crawled": 2,
+			"stayed_on_domain": true
+		}
+	}
 }

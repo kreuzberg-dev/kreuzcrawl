@@ -1,23 +1,23 @@
 {
-  "id": "scrape_og_metadata",
-  "description": "Extracts full Open Graph metadata from a page",
-  "tags": ["scrape", "metadata", "og"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/html; charset=utf-8" },
-    "body_file": "html/og_metadata.html"
-  },
-  "assertions": {
-    "status_code": 200,
-    "og": {
-      "has_og_title": true,
-      "og_title": "Article Title",
-      "og_type": "article",
-      "og_image": "https://example.com/images/article-hero.jpg",
-      "has_og_description": true
-    },
-    "metadata": {
-      "title": "Article Title - Example Blog"
-    }
-  }
+	"id": "scrape_og_metadata",
+	"description": "Extracts full Open Graph metadata from a page",
+	"tags": ["scrape", "metadata", "og"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/og_metadata.html"
+	},
+	"assertions": {
+		"status_code": 200,
+		"og": {
+			"has_og_title": true,
+			"og_title": "Article Title",
+			"og_type": "article",
+			"og_image": "https://example.com/images/article-hero.jpg",
+			"has_og_description": true
+		},
+		"metadata": {
+			"title": "Article Title - Example Blog"
+		}
+	}
 }

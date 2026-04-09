@@ -1,30 +1,30 @@
 {
-  "id": "scrape_basic_html_page",
-  "description": "Scrapes a simple HTML page and extracts title, description, and links",
-  "tags": ["scrape", "metadata", "smoke"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/html; charset=utf-8" },
-    "body_file": "html/basic_page.html"
-  },
-  "config": {
-    "max_depth": 0,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "status_code": 200,
-    "content_type": "text/html",
-    "html_not_empty": true,
-    "metadata": {
-      "title": "Example Domain",
-      "description_contains": "illustrative examples",
-      "has_canonical_url": true
-    },
-    "links": {
-      "min_count": 1,
-      "has_type": ["external"]
-    },
-    "images": { "count": 0 },
-    "og": { "has_og_title": false }
-  }
+	"id": "scrape_basic_html_page",
+	"description": "Scrapes a simple HTML page and extracts title, description, and links",
+	"tags": ["scrape", "metadata", "smoke"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/basic_page.html"
+	},
+	"config": {
+		"max_depth": 0,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"status_code": 200,
+		"content_type": "text/html",
+		"html_not_empty": true,
+		"metadata": {
+			"title": "Example Domain",
+			"description_contains": "illustrative examples",
+			"has_canonical_url": true
+		},
+		"links": {
+			"min_count": 1,
+			"has_type": ["external"]
+		},
+		"images": { "count": 0 },
+		"og": { "has_og_title": false }
+	}
 }

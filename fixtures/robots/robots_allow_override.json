@@ -1,18 +1,18 @@
 {
-  "id": "robots_allow_override",
-  "description": "Allow directive overrides Disallow for specific paths",
-  "tags": ["robots", "allow"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/plain"},
-    "body_file": "robots/allow_override.txt"
-  },
-  "config": {
-    "respect_robots_txt": true
-  },
-  "assertions": {
-    "robots": {
-      "is_allowed": true
-    }
-  }
+	"id": "robots_allow_override",
+	"description": "Allow directive overrides Disallow for specific paths",
+	"tags": ["robots", "allow"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/plain" },
+		"body_file": "robots/allow_override.txt"
+	},
+	"config": {
+		"respect_robots_txt": true
+	},
+	"assertions": {
+		"robots": {
+			"is_allowed": true
+		}
+	}
 }

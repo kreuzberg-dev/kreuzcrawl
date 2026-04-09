@@ -14,7 +14,7 @@ public sealed class BatchScrapeResult
     /// The URL that was scraped.
     /// </summary>
     [JsonPropertyName("url")]
-    public required string Url { get; set; }
+    public string Url { get; set; } = "";
 
     /// <summary>
     /// The scrape result, if successful.

@@ -1,23 +1,23 @@
 {
-  "id": "auth_custom_header",
-  "description": "Sends authentication via custom header (X-API-Key)",
-  "tags": ["auth", "api-key"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_inline": "<html><body><h1>API Key Auth Page</h1></body></html>"
-  },
-  "config": {
-    "auth_header": {
-      "name": "X-API-Key",
-      "value": "sk-test-key-12345"
-    },
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "auth": {
-      "auth_header_sent": true,
-      "status_code": 200
-    }
-  }
+	"id": "auth_custom_header",
+	"description": "Sends authentication via custom header (X-API-Key)",
+	"tags": ["auth", "api-key"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_inline": "<html><body><h1>API Key Auth Page</h1></body></html>"
+	},
+	"config": {
+		"auth_header": {
+			"name": "X-API-Key",
+			"value": "sk-test-key-12345"
+		},
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"auth": {
+			"auth_header_sent": true,
+			"status_code": 200
+		}
+	}
 }

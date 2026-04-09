@@ -77,7 +77,7 @@ pub(crate) mod option_duration_ms {
 }
 
 /// Proxy configuration for HTTP requests.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ProxyConfig {
     /// Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").

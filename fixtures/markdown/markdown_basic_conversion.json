@@ -1,25 +1,25 @@
 {
-  "id": "markdown_basic_conversion",
-  "description": "HTML is always converted to markdown alongside raw HTML",
-  "tags": ["markdown"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_inline": "<html><head><title>Test</title></head><body><h1>Hello World</h1><p>This is a paragraph.</p></body></html>"
-  },
-  "config": {
-    "engine_mode": true
-  },
-  "assertions": {
-    "status_code": 200,
-    "metadata": {
-      "title": "Test"
-    },
-    "html_not_empty": true,
-    "markdown": {
-      "is_some": true,
-      "not_empty": true,
-      "contains": "Hello World"
-    }
-  }
+	"id": "markdown_basic_conversion",
+	"description": "HTML is always converted to markdown alongside raw HTML",
+	"tags": ["markdown"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_inline": "<html><head><title>Test</title></head><body><h1>Hello World</h1><p>This is a paragraph.</p></body></html>"
+	},
+	"config": {
+		"engine_mode": true
+	},
+	"assertions": {
+		"status_code": 200,
+		"metadata": {
+			"title": "Test"
+		},
+		"html_not_empty": true,
+		"markdown": {
+			"is_some": true,
+			"not_empty": true,
+			"contains": "Hello World"
+		}
+	}
 }

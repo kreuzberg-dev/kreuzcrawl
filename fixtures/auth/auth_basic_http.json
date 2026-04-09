@@ -1,23 +1,23 @@
 {
-  "id": "auth_basic_http",
-  "description": "Sends HTTP Basic authentication header",
-  "tags": ["auth", "basic"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_inline": "<html><body><h1>Authenticated Page</h1></body></html>"
-  },
-  "config": {
-    "auth_basic": {
-      "username": "testuser",
-      "password": "testpass"
-    },
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "auth": {
-      "auth_header_sent": true,
-      "status_code": 200
-    }
-  }
+	"id": "auth_basic_http",
+	"description": "Sends HTTP Basic authentication header",
+	"tags": ["auth", "basic"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_inline": "<html><body><h1>Authenticated Page</h1></body></html>"
+	},
+	"config": {
+		"auth_basic": {
+			"username": "testuser",
+			"password": "testpass"
+		},
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"auth": {
+			"auth_header_sent": true,
+			"status_code": 200
+		}
+	}
 }

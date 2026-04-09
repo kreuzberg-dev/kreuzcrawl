@@ -2067,6 +2067,7 @@ dependencies = [
  "kreuzcrawl-bindings-common",
  "pyo3",
  "pyo3-async-runtimes",
+ "serde_json",
 ]
 
 [[package]]

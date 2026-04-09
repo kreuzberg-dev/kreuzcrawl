@@ -1,18 +1,18 @@
 {
-  "id": "robots_disallow_path",
-  "description": "Robots.txt disallows specific paths",
-  "tags": ["robots"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/plain" },
-    "body_file": "robots/disallow_admin.txt"
-  },
-  "config": {
-    "respect_robots_txt": true
-  },
-  "assertions": {
-    "robots": {
-      "is_allowed": false
-    }
-  }
+	"id": "robots_disallow_path",
+	"description": "Robots.txt disallows specific paths",
+	"tags": ["robots"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/plain" },
+		"body_file": "robots/disallow_admin.txt"
+	},
+	"config": {
+		"respect_robots_txt": true
+	},
+	"assertions": {
+		"robots": {
+			"is_allowed": false
+		}
+	}
 }

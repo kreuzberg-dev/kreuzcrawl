@@ -17,7 +17,7 @@ pub struct CitationResult {
     pub references: Vec<CitationReference>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CitationReference {
     pub index: usize,

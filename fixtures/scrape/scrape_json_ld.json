@@ -1,18 +1,18 @@
 {
-  "id": "scrape_json_ld",
-  "description": "Extracts JSON-LD structured data from a page",
-  "tags": ["scrape", "metadata", "json-ld"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/html; charset=utf-8" },
-    "body_file": "html/json_ld.html"
-  },
-  "assertions": {
-    "status_code": 200,
-    "json_ld": {
-      "has_json_ld": true,
-      "json_ld_type": "Recipe",
-      "json_ld_name": "Best Chocolate Cake"
-    }
-  }
+	"id": "scrape_json_ld",
+	"description": "Extracts JSON-LD structured data from a page",
+	"tags": ["scrape", "metadata", "json-ld"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/json_ld.html"
+	},
+	"assertions": {
+		"status_code": 200,
+		"json_ld": {
+			"has_json_ld": true,
+			"json_ld_type": "Recipe",
+			"json_ld_name": "Best Chocolate Cake"
+		}
+	}
 }

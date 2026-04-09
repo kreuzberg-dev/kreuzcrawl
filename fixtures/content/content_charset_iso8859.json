@@ -1,18 +1,18 @@
 {
-  "id": "content_charset_iso8859",
-  "description": "Handles ISO-8859-1 encoded page correctly",
-  "tags": ["content", "charset"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=iso-8859-1"},
-    "body_file": "html/charset_iso8859.html"
-  },
-  "config": {
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "content": {
-      "detected_charset": "iso-8859-1"
-    }
-  }
+	"id": "content_charset_iso8859",
+	"description": "Handles ISO-8859-1 encoded page correctly",
+	"tags": ["content", "charset"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=iso-8859-1" },
+		"body_file": "html/charset_iso8859.html"
+	},
+	"config": {
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"content": {
+			"detected_charset": "iso-8859-1"
+		}
+	}
 }

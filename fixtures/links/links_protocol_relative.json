@@ -1,16 +1,16 @@
 {
-  "id": "links_protocol_relative",
-  "description": "Handles protocol-relative URLs (//example.com) correctly",
-  "tags": ["links", "edge-case"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_file": "html/protocol_relative_links.html"
-  },
-  "assertions": {
-    "links": {
-      "min_count": 2,
-      "has_protocol_relative": true
-    }
-  }
+	"id": "links_protocol_relative",
+	"description": "Handles protocol-relative URLs (//example.com) correctly",
+	"tags": ["links", "edge-case"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/protocol_relative_links.html"
+	},
+	"assertions": {
+		"links": {
+			"min_count": 2,
+			"has_protocol_relative": true
+		}
+	}
 }

@@ -48,7 +48,7 @@ pub struct InteractionResult {
 }
 
 /// Result from a single page action execution.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ActionResult {
     /// Zero-based index of the action in the sequence.
     pub action_index: usize,
@@ -191,8 +191,9 @@ pub struct CrawlResult {
     pub error: Option<String>,
     /// Cookies collected during the crawl.
     pub cookies: Vec<CookieInfo>,
-    /// Internal list of normalized URLs for deduplication counting.
-    normalized_urls: Vec<String>,
+    /// Normalized URLs encountered during crawling (for deduplication counting).
+    #[serde(default, skip_serializing)]
+    pub normalized_urls: Vec<String>,
 }
 
 impl CrawlResult {
@@ -268,7 +269,7 @@ pub struct MarkdownResult {
 }
 
 /// Cached page data for HTTP response caching.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CachedPage {
     pub url: String,
     pub status_code: u16,

@@ -1,13 +1,13 @@
 {
-  "id": "encoding_unicode_url",
-  "description": "Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic)",
-  "tags": ["encoding", "unicode"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_file": "html/unicode_content.html"
-  },
-  "assertions": {
-    "html_not_empty": true
-  }
+	"id": "encoding_unicode_url",
+	"description": "Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic)",
+	"tags": ["encoding", "unicode"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/unicode_content.html"
+	},
+	"assertions": {
+		"html_not_empty": true
+	}
 }

@@ -14,7 +14,7 @@ public sealed class BatchCrawlResult
     /// The seed URL that was crawled.
     /// </summary>
     [JsonPropertyName("url")]
-    public required string Url { get; set; }
+    public string Url { get; set; } = "";
 
     /// <summary>
     /// The crawl result, if successful.

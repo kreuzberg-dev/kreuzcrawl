@@ -8,4 +8,7 @@ public record BatchScrapeResult(
     Optional<ScrapeResult> result,
     Optional<String> error
 ) {
+    public static BatchScrapeResultBuilder builder() {
+        return new BatchScrapeResultBuilder();
+    }
 }

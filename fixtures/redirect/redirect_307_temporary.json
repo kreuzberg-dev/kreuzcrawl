@@ -1,30 +1,30 @@
 {
-  "id": "redirect_307_temporary",
-  "description": "Follows 307 Temporary Redirect (preserves method)",
-  "tags": ["redirect"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "method": "GET",
-      "status_code": 307,
-      "headers": {"location": "/temp-target"},
-      "body_inline": ""
-    },
-    {
-      "path": "/temp-target",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Temporary Target</h1></body></html>"
-    }
-  ],
-  "config": {
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "redirect": {
-      "final_url_contains": "/temp-target",
-      "redirect_count": 1
-    }
-  }
+	"id": "redirect_307_temporary",
+	"description": "Follows 307 Temporary Redirect (preserves method)",
+	"tags": ["redirect"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"method": "GET",
+			"status_code": 307,
+			"headers": { "location": "/temp-target" },
+			"body_inline": ""
+		},
+		{
+			"path": "/temp-target",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Temporary Target</h1></body></html>"
+		}
+	],
+	"config": {
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"redirect": {
+			"final_url_contains": "/temp-target",
+			"redirect_count": 1
+		}
+	}
 }

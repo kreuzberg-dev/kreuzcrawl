@@ -12,6 +12,7 @@ public class CrawlResultBuilder {
     private boolean wasSkipped = false;
     private Optional<String> error = Optional.empty();
     private List<CookieInfo> cookies = List.of();
+    private List<String> normalizedUrls = List.of();
 
     public CrawlResultBuilder withPages(List<CrawlPageResult> value) {
         this.pages = value;
@@ -43,6 +44,11 @@ public class CrawlResultBuilder {
         return this;
     }
 
+    public CrawlResultBuilder withNormalizedUrls(List<String> value) {
+        this.normalizedUrls = value;
+        return this;
+    }
+
     public CrawlResult build() {
         return new CrawlResult(
             pages,
@@ -50,7 +56,8 @@ public class CrawlResultBuilder {
             redirectCount,
             wasSkipped,
             error,
-            cookies
+            cookies,
+            normalizedUrls
         );
     }
 }

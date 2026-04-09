@@ -12,4 +12,7 @@ public record CachedPage(
     Optional<String> lastModified,
     long cachedAt
 ) {
+    public static CachedPageBuilder builder() {
+        return new CachedPageBuilder();
+    }
 }

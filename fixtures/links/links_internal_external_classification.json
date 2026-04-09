@@ -1,16 +1,16 @@
 {
-  "id": "links_internal_external_classification",
-  "description": "Correctly classifies internal vs external links by domain",
-  "tags": ["links"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/html; charset=utf-8" },
-    "body_file": "html/complex_links.html"
-  },
-  "assertions": {
-    "links": {
-      "min_count": 5,
-      "has_type": ["internal", "external"]
-    }
-  }
+	"id": "links_internal_external_classification",
+	"description": "Correctly classifies internal vs external links by domain",
+	"tags": ["links"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/complex_links.html"
+	},
+	"assertions": {
+		"links": {
+			"min_count": 5,
+			"has_type": ["internal", "external"]
+		}
+	}
 }

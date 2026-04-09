@@ -21,7 +21,7 @@ pub struct CrawlEngineHandle {
 }
 
 /// Result from a single URL in a batch scrape operation.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct BatchScrapeResult {
     /// The URL that was scraped.
     pub url: String,
@@ -32,7 +32,7 @@ pub struct BatchScrapeResult {
 }
 
 /// Result from a single URL in a batch crawl operation.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct BatchCrawlResult {
     /// The seed URL that was crawled.
     pub url: String,

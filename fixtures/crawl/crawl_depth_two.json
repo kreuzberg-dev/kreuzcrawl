@@ -1,38 +1,38 @@
 {
-  "id": "crawl_depth_two",
-  "description": "Crawls 3 levels deep (depth 0, 1, 2)",
-  "tags": ["crawl", "depth"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><a href=\"/level1\">Level 1</a></body></html>"
-    },
-    {
-      "path": "/level1",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><a href=\"/level2\">Level 2</a></body></html>"
-    },
-    {
-      "path": "/level2",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html; charset=utf-8"},
-      "body_inline": "<html><body><h1>Deepest Level</h1></body></html>"
-    }
-  ],
-  "config": {
-    "max_depth": 2,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "crawl": {
-      "pages_crawled": 3,
-      "min_pages": 3
-    }
-  }
+	"id": "crawl_depth_two",
+	"description": "Crawls 3 levels deep (depth 0, 1, 2)",
+	"tags": ["crawl", "depth"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><a href=\"/level1\">Level 1</a></body></html>"
+		},
+		{
+			"path": "/level1",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><a href=\"/level2\">Level 2</a></body></html>"
+		},
+		{
+			"path": "/level2",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html; charset=utf-8" },
+			"body_inline": "<html><body><h1>Deepest Level</h1></body></html>"
+		}
+	],
+	"config": {
+		"max_depth": 2,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"crawl": {
+			"pages_crawled": 3,
+			"min_pages": 3
+		}
+	}
 }

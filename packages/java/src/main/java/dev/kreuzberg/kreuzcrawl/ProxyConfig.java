@@ -4,4 +4,7 @@ package dev.kreuzberg.kreuzcrawl;
 import java.util.Optional;
 
 public record ProxyConfig(String url, Optional<String> username, Optional<String> password) {
+    public static ProxyConfigBuilder builder() {
+        return new ProxyConfigBuilder();
+    }
 }

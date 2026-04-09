@@ -1,18 +1,18 @@
 {
-  "id": "robots_meta_noindex",
-  "description": "Detects noindex meta robots tag in HTML page",
-  "tags": ["robots", "meta"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_file": "html/meta_noindex.html"
-  },
-  "config": {
-    "respect_robots_txt": true
-  },
-  "assertions": {
-    "robots": {
-      "noindex_detected": true
-    }
-  }
+	"id": "robots_meta_noindex",
+	"description": "Detects noindex meta robots tag in HTML page",
+	"tags": ["robots", "meta"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/meta_noindex.html"
+	},
+	"config": {
+		"respect_robots_txt": true
+	},
+	"assertions": {
+		"robots": {
+			"noindex_detected": true
+		}
+	}
 }

@@ -1,21 +1,21 @@
 {
-  "id": "sitemap_compressed_gzip",
-  "description": "Parses a gzip-compressed sitemap file",
-  "tags": ["sitemap", "compression"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "application/x-gzip"},
-    "body_file": "xml/sitemap_gzip.xml.gz"
-  },
-  "config": {
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "sitemap": {
-      "url_count": 3
-    }
-  },
-  "skip": {
-    "notes": "Binary gzip body requires load_response_body_bytes helper; not yet supported by generator"
-  }
+	"id": "sitemap_compressed_gzip",
+	"description": "Parses a gzip-compressed sitemap file",
+	"tags": ["sitemap", "compression"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "application/x-gzip" },
+		"body_file": "xml/sitemap_gzip.xml.gz"
+	},
+	"config": {
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"sitemap": {
+			"url_count": 3
+		}
+	},
+	"skip": {
+		"notes": "Binary gzip body requires load_response_body_bytes helper; not yet supported by generator"
+	}
 }

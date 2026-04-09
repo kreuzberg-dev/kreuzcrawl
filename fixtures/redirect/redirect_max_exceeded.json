@@ -1,44 +1,44 @@
 {
-  "id": "redirect_max_exceeded",
-  "description": "Aborts when redirect count exceeds max_redirects limit",
-  "tags": ["redirect", "error"],
-  "mock_responses": [
-    {
-      "path": "/",
-      "method": "GET",
-      "status_code": 301,
-      "headers": {"location": "/r1"},
-      "body_inline": ""
-    },
-    {
-      "path": "/r1",
-      "method": "GET",
-      "status_code": 301,
-      "headers": {"location": "/r2"},
-      "body_inline": ""
-    },
-    {
-      "path": "/r2",
-      "method": "GET",
-      "status_code": 301,
-      "headers": {"location": "/r3"},
-      "body_inline": ""
-    },
-    {
-      "path": "/r3",
-      "method": "GET",
-      "status_code": 200,
-      "headers": {"content-type": "text/html"},
-      "body_inline": "<html><body>Should not reach</body></html>"
-    }
-  ],
-  "config": {
-    "max_redirects": 2,
-    "respect_robots_txt": false
-  },
-  "assertions": {
-    "redirect": {
-      "is_error": true
-    }
-  }
+	"id": "redirect_max_exceeded",
+	"description": "Aborts when redirect count exceeds max_redirects limit",
+	"tags": ["redirect", "error"],
+	"mock_responses": [
+		{
+			"path": "/",
+			"method": "GET",
+			"status_code": 301,
+			"headers": { "location": "/r1" },
+			"body_inline": ""
+		},
+		{
+			"path": "/r1",
+			"method": "GET",
+			"status_code": 301,
+			"headers": { "location": "/r2" },
+			"body_inline": ""
+		},
+		{
+			"path": "/r2",
+			"method": "GET",
+			"status_code": 301,
+			"headers": { "location": "/r3" },
+			"body_inline": ""
+		},
+		{
+			"path": "/r3",
+			"method": "GET",
+			"status_code": 200,
+			"headers": { "content-type": "text/html" },
+			"body_inline": "<html><body>Should not reach</body></html>"
+		}
+	],
+	"config": {
+		"max_redirects": 2,
+		"respect_robots_txt": false
+	},
+	"assertions": {
+		"redirect": {
+			"is_error": true
+		}
+	}
 }

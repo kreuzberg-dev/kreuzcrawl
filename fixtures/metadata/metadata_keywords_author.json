@@ -1,28 +1,28 @@
 {
-  "id": "metadata_keywords_author",
-  "description": "Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata",
-  "tags": ["metadata"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": { "content-type": "text/html; charset=utf-8" },
-    "body_file": "html/comprehensive_metadata.html"
-  },
-  "assertions": {
-    "status_code": 200,
-    "metadata": {
-      "title": "Comprehensive Metadata Test Page",
-      "has_canonical_url": true
-    },
-    "extended_metadata": {
-      "has_keywords": true,
-      "keywords_contains": "rust",
-      "author": "Jane Developer",
-      "has_viewport": true,
-      "generator": "kreuzcrawl/1.0",
-      "theme_color": "#ff6600",
-      "robots_content": "index, follow",
-      "html_lang": "en",
-      "html_dir": "ltr"
-    }
-  }
+	"id": "metadata_keywords_author",
+	"description": "Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata",
+	"tags": ["metadata"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/comprehensive_metadata.html"
+	},
+	"assertions": {
+		"status_code": 200,
+		"metadata": {
+			"title": "Comprehensive Metadata Test Page",
+			"has_canonical_url": true
+		},
+		"extended_metadata": {
+			"has_keywords": true,
+			"keywords_contains": "rust",
+			"author": "Jane Developer",
+			"has_viewport": true,
+			"generator": "kreuzcrawl/1.0",
+			"theme_color": "#ff6600",
+			"robots_content": "index, follow",
+			"html_lang": "en",
+			"html_dir": "ltr"
+		}
+	}
 }

@@ -1,23 +1,23 @@
 {
-  "id": "browser_fallback_spa_render",
-  "description": "Browser auto re-fetches SPA shell when JS rendering is detected",
-  "tags": ["browser", "fallback", "spa"],
-  "mock_response": {
-    "status_code": 200,
-    "headers": {"content-type": "text/html; charset=utf-8"},
-    "body_file": "html/spa_react_shell.html"
-  },
-  "config": {
-    "browser_mode": "auto"
-  },
-  "assertions": {
-    "browser": {
-      "js_render_hint": true,
-      "browser_used": true
-    }
-  },
-  "skip": {
-    "requires_browser": true,
-    "notes": "Requires a running Chrome/Chromium instance to render the SPA"
-  }
+	"id": "browser_fallback_spa_render",
+	"description": "Browser auto re-fetches SPA shell when JS rendering is detected",
+	"tags": ["browser", "fallback", "spa"],
+	"mock_response": {
+		"status_code": 200,
+		"headers": { "content-type": "text/html; charset=utf-8" },
+		"body_file": "html/spa_react_shell.html"
+	},
+	"config": {
+		"browser_mode": "auto"
+	},
+	"assertions": {
+		"browser": {
+			"js_render_hint": true,
+			"browser_used": true
+		}
+	},
+	"skip": {
+		"requires_browser": true,
+		"notes": "Requires a running Chrome/Chromium instance to render the SPA"
+	}
 }

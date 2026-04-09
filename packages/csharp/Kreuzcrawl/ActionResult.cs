@@ -14,19 +14,19 @@ public sealed class ActionResult
     /// Zero-based index of the action in the sequence.
     /// </summary>
     [JsonPropertyName("actionIndex")]
-    public required nuint ActionIndex { get; set; }
+    public nuint ActionIndex { get; set; } = 0;
 
     /// <summary>
     /// The type of action that was executed.
     /// </summary>
     [JsonPropertyName("actionType")]
-    public required string ActionType { get; set; }
+    public string ActionType { get; set; } = "";
 
     /// <summary>
     /// Whether the action completed successfully.
     /// </summary>
     [JsonPropertyName("success")]
-    public required bool Success { get; set; }
+    public bool Success { get; set; } = false;
 
     /// <summary>
     /// Action-specific return data (screenshot bytes, JS return value, scraped HTML).

@@ -1,0 +1,28 @@
+version: "3"
+
+tasks:
+  build:
+    desc: Build Docker image (API server)
+    cmds:
+      - docker build -f docker/Dockerfile -t kreuzcrawl:dev .
+
+  build:cli:
+    desc: Build Docker image (CLI only)
+    cmds:
+      - docker build -f docker/Dockerfile.cli -t kreuzcrawl:cli .
+
+  run:
+    desc: Run API server in Docker
+    deps: [build]
+    cmds:
+      - docker run -p 3000:3000 kreuzcrawl:dev
+
+  schemathesis:
+    desc: Run schemathesis API contract tests (requires running server on :3000)
+    cmds:
+      - pip3 install schemathesis
+      - >-
+        schemathesis run http://localhost:3000/openapi.json
+        --max-examples=10
+        --request-timeout=30000
+        --checks not_a_server_error,status_code_conformance,content_type_conformance,response_schema_conformance,negative_data_rejection

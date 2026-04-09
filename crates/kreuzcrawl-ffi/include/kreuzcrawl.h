@@ -1023,6 +1023,13 @@ char *kcrawl_crawl_result_error(const KCRAWLCrawlResult *ptr);
 char *kcrawl_crawl_result_cookies(const KCRAWLCrawlResult *ptr);
 
 /**
+ * Get the `normalized_urls` field from a `CrawlResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_crawl_result_normalized_urls(const KCRAWLCrawlResult *ptr);
+
+/**
  * Create a `SitemapUrl` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.

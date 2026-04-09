@@ -102,11 +102,22 @@ pub struct JsProxyConfig {
 }
 
 
+impl Default for JsProxyConfig {
+    fn default() -> Self {
+        Self {
+            url: Default::default(),
+            username: Default::default(),
+            password: Default::default(),
+        }
+    }
+}
+
+
 #[wasm_bindgen]
 impl JsProxyConfig {
     #[wasm_bindgen(constructor)]
-    pub fn new(url: String, username: Option<String>, password: Option<String>) -> JsProxyConfig {
-        JsProxyConfig { url, username, password }
+    pub fn new(url: Option<String>, username: Option<String>, password: Option<String>) -> JsProxyConfig {
+        JsProxyConfig { url: url.unwrap_or_default(), username: username, password: password }
     }
 
     #[wasm_bindgen(getter)]
@@ -918,17 +929,30 @@ pub struct JsActionResult {
 }
 
 
+impl Default for JsActionResult {
+    fn default() -> Self {
+        Self {
+            action_index: Default::default(),
+            action_type: Default::default(),
+            success: Default::default(),
+            data: Default::default(),
+            error: Default::default(),
+        }
+    }
+}
+
+
 #[wasm_bindgen]
 impl JsActionResult {
     #[wasm_bindgen(constructor)]
     pub fn new(
-            action_index: usize,
-            action_type: String,
-            success: bool,
+            action_index: Option<usize>,
+            action_type: Option<String>,
+            success: Option<bool>,
             data: Option<JsValue>,
             error: Option<String>,
         ) -> JsActionResult {
-        JsActionResult { action_index, action_type, success, data, error }
+        JsActionResult { action_index: action_index.unwrap_or_default(), action_type: action_type.unwrap_or_default(), success: success.unwrap_or_default(), data: data, error: error }
     }
 
     #[wasm_bindgen(getter, js_name = "actionIndex")]
@@ -1661,6 +1685,7 @@ pub struct JsCrawlResult {
     was_skipped: bool,
     error: Option<String>,
     cookies: Vec<JsCookieInfo>,
+    normalized_urls: Vec<String>,
 }
 
 
@@ -1673,6 +1698,7 @@ impl Default for JsCrawlResult {
             was_skipped: Default::default(),
             error: Default::default(),
             cookies: Default::default(),
+            normalized_urls: Default::default(),
         }
     }
 }
@@ -1687,9 +1713,10 @@ impl JsCrawlResult {
             redirect_count: Option<usize>,
             was_skipped: Option<bool>,
             cookies: Option<Vec<JsCookieInfo>>,
+            normalized_urls: Option<Vec<String>>,
             error: Option<String>,
         ) -> JsCrawlResult {
-        JsCrawlResult { pages: pages.unwrap_or_default(), final_url: final_url.unwrap_or_default(), redirect_count: redirect_count.unwrap_or_default(), was_skipped: was_skipped.unwrap_or_default(), error: error, cookies: cookies.unwrap_or_default() }
+        JsCrawlResult { pages: pages.unwrap_or_default(), final_url: final_url.unwrap_or_default(), redirect_count: redirect_count.unwrap_or_default(), was_skipped: was_skipped.unwrap_or_default(), error: error, cookies: cookies.unwrap_or_default(), normalized_urls: normalized_urls.unwrap_or_default() }
     }
 
     #[wasm_bindgen(getter)]
@@ -1750,6 +1777,16 @@ impl JsCrawlResult {
     #[wasm_bindgen(setter)]
     pub fn set_cookies(&mut self, value: Vec<JsCookieInfo>) {
         self.cookies = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "normalizedUrls")]
+    pub fn normalized_urls(&self) -> Vec<String> {
+        self.normalized_urls.clone()
+    }
+
+    #[wasm_bindgen(setter, js_name = "normalizedUrls")]
+    pub fn set_normalized_urls(&mut self, value: Vec<String>) {
+        self.normalized_urls = value;
     }
 }
 
@@ -1971,19 +2008,34 @@ pub struct JsCachedPage {
 }
 
 
+impl Default for JsCachedPage {
+    fn default() -> Self {
+        Self {
+            url: Default::default(),
+            status_code: Default::default(),
+            content_type: Default::default(),
+            body: Default::default(),
+            etag: Default::default(),
+            last_modified: Default::default(),
+            cached_at: Default::default(),
+        }
+    }
+}
+
+
 #[wasm_bindgen]
 impl JsCachedPage {
     #[wasm_bindgen(constructor)]
     pub fn new(
-            url: String,
-            status_code: u16,
-            content_type: String,
-            body: String,
-            cached_at: u64,
+            url: Option<String>,
+            status_code: Option<u16>,
+            content_type: Option<String>,
+            body: Option<String>,
+            cached_at: Option<u64>,
             etag: Option<String>,
             last_modified: Option<String>,
         ) -> JsCachedPage {
-        JsCachedPage { url, status_code, content_type, body, etag, last_modified, cached_at }
+        JsCachedPage { url: url.unwrap_or_default(), status_code: status_code.unwrap_or_default(), content_type: content_type.unwrap_or_default(), body: body.unwrap_or_default(), etag: etag, last_modified: last_modified, cached_at: cached_at.unwrap_or_default() }
     }
 
     #[wasm_bindgen(getter)]
@@ -3521,11 +3573,22 @@ pub struct JsCitationReference {
 }
 
 
+impl Default for JsCitationReference {
+    fn default() -> Self {
+        Self {
+            index: Default::default(),
+            url: Default::default(),
+            text: Default::default(),
+        }
+    }
+}
+
+
 #[wasm_bindgen]
 impl JsCitationReference {
     #[wasm_bindgen(constructor)]
-    pub fn new(index: usize, url: String, text: String) -> JsCitationReference {
-        JsCitationReference { index, url, text }
+    pub fn new(index: Option<usize>, url: Option<String>, text: Option<String>) -> JsCitationReference {
+        JsCitationReference { index: index.unwrap_or_default(), url: url.unwrap_or_default(), text: text.unwrap_or_default() }
     }
 
     #[wasm_bindgen(getter)]
@@ -3578,11 +3641,22 @@ pub struct JsBatchScrapeResult {
 }
 
 
+impl Default for JsBatchScrapeResult {
+    fn default() -> Self {
+        Self {
+            url: Default::default(),
+            result: Default::default(),
+            error: Default::default(),
+        }
+    }
+}
+
+
 #[wasm_bindgen]
 impl JsBatchScrapeResult {
     #[wasm_bindgen(constructor)]
-    pub fn new(url: String, result: Option<JsScrapeResult>, error: Option<String>) -> JsBatchScrapeResult {
-        JsBatchScrapeResult { url, result, error }
+    pub fn new(url: Option<String>, result: Option<JsScrapeResult>, error: Option<String>) -> JsBatchScrapeResult {
+        JsBatchScrapeResult { url: url.unwrap_or_default(), result: result, error: error }
     }
 
     #[wasm_bindgen(getter)]
@@ -3625,11 +3699,22 @@ pub struct JsBatchCrawlResult {
 }
 
 
+impl Default for JsBatchCrawlResult {
+    fn default() -> Self {
+        Self {
+            url: Default::default(),
+            result: Default::default(),
+            error: Default::default(),
+        }
+    }
+}
+
+
 #[wasm_bindgen]
 impl JsBatchCrawlResult {
     #[wasm_bindgen(constructor)]
-    pub fn new(url: String, result: Option<JsCrawlResult>, error: Option<String>) -> JsBatchCrawlResult {
-        JsBatchCrawlResult { url, result, error }
+    pub fn new(url: Option<String>, result: Option<JsCrawlResult>, error: Option<String>) -> JsBatchCrawlResult {
+        JsBatchCrawlResult { url: url.unwrap_or_default(), result: result, error: error }
     }
 
     #[wasm_bindgen(getter)]
@@ -3992,6 +4077,204 @@ impl From<kreuzcrawl::DownloadedDocument> for JsDownloadedDocument {
     }
 }
 
+impl From<JsInteractionResult> for kreuzcrawl::InteractionResult {
+    fn from(val: JsInteractionResult) -> Self {
+        Self {
+            action_results: val.action_results.into_iter().map(Into::into).collect(),
+            final_html: val.final_html,
+            final_url: val.final_url,
+            screenshot: val.screenshot,
+        }
+    }
+}
+
+impl From<kreuzcrawl::InteractionResult> for JsInteractionResult {
+    fn from(val: kreuzcrawl::InteractionResult) -> Self {
+        Self {
+            action_results: val.action_results.into_iter().map(Into::into).collect(),
+            final_html: val.final_html,
+            final_url: val.final_url,
+            screenshot: val.screenshot.map(|v| v.to_vec()),
+        }
+    }
+}
+
+impl From<JsActionResult> for kreuzcrawl::ActionResult {
+    fn from(val: JsActionResult) -> Self {
+        Self {
+            action_index: val.action_index,
+            action_type: Default::default(),
+            success: val.success,
+            data: val.data.as_ref().and_then(|v| serde_wasm_bindgen::from_value(v.clone()).ok()),
+            error: val.error,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ActionResult> for JsActionResult {
+    fn from(val: kreuzcrawl::ActionResult) -> Self {
+        Self {
+            action_index: val.action_index,
+            action_type: val.action_type.to_string(),
+            success: val.success,
+            data: val.data.as_ref().and_then(|v| serde_wasm_bindgen::to_value(v).ok()),
+            error: val.error,
+        }
+    }
+}
+
+impl From<JsScrapeResult> for kreuzcrawl::ScrapeResult {
+    fn from(val: JsScrapeResult) -> Self {
+        Self {
+            status_code: val.status_code,
+            content_type: val.content_type,
+            html: val.html,
+            body_size: val.body_size,
+            metadata: val.metadata.into(),
+            links: val.links.into_iter().map(Into::into).collect(),
+            images: val.images.into_iter().map(Into::into).collect(),
+            feeds: val.feeds.into_iter().map(Into::into).collect(),
+            json_ld: val.json_ld.into_iter().map(Into::into).collect(),
+            is_allowed: val.is_allowed,
+            crawl_delay: val.crawl_delay,
+            noindex_detected: val.noindex_detected,
+            nofollow_detected: val.nofollow_detected,
+            x_robots_tag: val.x_robots_tag,
+            is_pdf: val.is_pdf,
+            was_skipped: val.was_skipped,
+            detected_charset: val.detected_charset,
+            main_content_only: val.main_content_only,
+            auth_header_sent: val.auth_header_sent,
+            response_meta: val.response_meta.map(Into::into),
+            assets: val.assets.into_iter().map(Into::into).collect(),
+            js_render_hint: val.js_render_hint,
+            browser_used: val.browser_used,
+            markdown: val.markdown.map(Into::into),
+            extracted_data: val.extracted_data.as_ref().and_then(|v| serde_wasm_bindgen::from_value(v.clone()).ok()),
+            extraction_meta: val.extraction_meta.map(Into::into),
+            screenshot: val.screenshot,
+            downloaded_document: val.downloaded_document.map(Into::into),
+        }
+    }
+}
+
+impl From<kreuzcrawl::ScrapeResult> for JsScrapeResult {
+    fn from(val: kreuzcrawl::ScrapeResult) -> Self {
+        Self {
+            status_code: val.status_code,
+            content_type: val.content_type,
+            html: val.html,
+            body_size: val.body_size,
+            metadata: val.metadata.into(),
+            links: val.links.into_iter().map(Into::into).collect(),
+            images: val.images.into_iter().map(Into::into).collect(),
+            feeds: val.feeds.into_iter().map(Into::into).collect(),
+            json_ld: val.json_ld.into_iter().map(Into::into).collect(),
+            is_allowed: val.is_allowed,
+            crawl_delay: val.crawl_delay,
+            noindex_detected: val.noindex_detected,
+            nofollow_detected: val.nofollow_detected,
+            x_robots_tag: val.x_robots_tag,
+            is_pdf: val.is_pdf,
+            was_skipped: val.was_skipped,
+            detected_charset: val.detected_charset,
+            main_content_only: val.main_content_only,
+            auth_header_sent: val.auth_header_sent,
+            response_meta: val.response_meta.map(Into::into),
+            assets: val.assets.into_iter().map(Into::into).collect(),
+            js_render_hint: val.js_render_hint,
+            browser_used: val.browser_used,
+            markdown: val.markdown.map(Into::into),
+            extracted_data: val.extracted_data.as_ref().and_then(|v| serde_wasm_bindgen::to_value(v).ok()),
+            extraction_meta: val.extraction_meta.map(Into::into),
+            screenshot: val.screenshot.map(|v| v.to_vec()),
+            downloaded_document: val.downloaded_document.map(Into::into),
+        }
+    }
+}
+
+impl From<JsCrawlPageResult> for kreuzcrawl::CrawlPageResult {
+    fn from(val: JsCrawlPageResult) -> Self {
+        Self {
+            url: val.url,
+            normalized_url: val.normalized_url,
+            status_code: val.status_code,
+            content_type: val.content_type,
+            html: val.html,
+            body_size: val.body_size,
+            metadata: val.metadata.into(),
+            links: val.links.into_iter().map(Into::into).collect(),
+            images: val.images.into_iter().map(Into::into).collect(),
+            feeds: val.feeds.into_iter().map(Into::into).collect(),
+            json_ld: val.json_ld.into_iter().map(Into::into).collect(),
+            depth: val.depth,
+            stayed_on_domain: val.stayed_on_domain,
+            was_skipped: val.was_skipped,
+            is_pdf: val.is_pdf,
+            detected_charset: val.detected_charset,
+            markdown: val.markdown.map(Into::into),
+            extracted_data: val.extracted_data.as_ref().and_then(|v| serde_wasm_bindgen::from_value(v.clone()).ok()),
+            extraction_meta: val.extraction_meta.map(Into::into),
+            downloaded_document: val.downloaded_document.map(Into::into),
+        }
+    }
+}
+
+impl From<kreuzcrawl::CrawlPageResult> for JsCrawlPageResult {
+    fn from(val: kreuzcrawl::CrawlPageResult) -> Self {
+        Self {
+            url: val.url,
+            normalized_url: val.normalized_url,
+            status_code: val.status_code,
+            content_type: val.content_type,
+            html: val.html,
+            body_size: val.body_size,
+            metadata: val.metadata.into(),
+            links: val.links.into_iter().map(Into::into).collect(),
+            images: val.images.into_iter().map(Into::into).collect(),
+            feeds: val.feeds.into_iter().map(Into::into).collect(),
+            json_ld: val.json_ld.into_iter().map(Into::into).collect(),
+            depth: val.depth,
+            stayed_on_domain: val.stayed_on_domain,
+            was_skipped: val.was_skipped,
+            is_pdf: val.is_pdf,
+            detected_charset: val.detected_charset,
+            markdown: val.markdown.map(Into::into),
+            extracted_data: val.extracted_data.as_ref().and_then(|v| serde_wasm_bindgen::to_value(v).ok()),
+            extraction_meta: val.extraction_meta.map(Into::into),
+            downloaded_document: val.downloaded_document.map(Into::into),
+        }
+    }
+}
+
+impl From<JsCrawlResult> for kreuzcrawl::CrawlResult {
+    fn from(val: JsCrawlResult) -> Self {
+        Self {
+            pages: val.pages.into_iter().map(Into::into).collect(),
+            final_url: val.final_url,
+            redirect_count: val.redirect_count,
+            was_skipped: val.was_skipped,
+            error: val.error,
+            cookies: val.cookies.into_iter().map(Into::into).collect(),
+            normalized_urls: val.normalized_urls,
+        }
+    }
+}
+
+impl From<kreuzcrawl::CrawlResult> for JsCrawlResult {
+    fn from(val: kreuzcrawl::CrawlResult) -> Self {
+        Self {
+            pages: val.pages.into_iter().map(Into::into).collect(),
+            final_url: val.final_url,
+            redirect_count: val.redirect_count,
+            was_skipped: val.was_skipped,
+            error: val.error,
+            cookies: val.cookies.into_iter().map(Into::into).collect(),
+            normalized_urls: val.normalized_urls,
+        }
+    }
+}
+
 impl From<JsSitemapUrl> for kreuzcrawl::SitemapUrl {
     fn from(val: JsSitemapUrl) -> Self {
         Self {
@@ -4026,6 +4309,32 @@ impl From<kreuzcrawl::MapResult> for JsMapResult {
     fn from(val: kreuzcrawl::MapResult) -> Self {
         Self {
             urls: val.urls.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<JsMarkdownResult> for kreuzcrawl::MarkdownResult {
+    fn from(val: JsMarkdownResult) -> Self {
+        Self {
+            content: val.content,
+            document_structure: val.document_structure.as_ref().and_then(|v| serde_wasm_bindgen::from_value(v.clone()).ok()),
+            tables: val.tables.into_iter().filter_map(|s| serde_json::from_str(&s).ok()).collect(),
+            warnings: val.warnings,
+            citations: val.citations.map(Into::into),
+            fit_content: val.fit_content,
+        }
+    }
+}
+
+impl From<kreuzcrawl::MarkdownResult> for JsMarkdownResult {
+    fn from(val: kreuzcrawl::MarkdownResult) -> Self {
+        Self {
+            content: val.content,
+            document_structure: val.document_structure.as_ref().and_then(|v| serde_wasm_bindgen::to_value(v).ok()),
+            tables: val.tables.iter().map(|v| v.to_string()).collect(),
+            warnings: val.warnings,
+            citations: val.citations.map(Into::into),
+            fit_content: val.fit_content,
         }
     }
 }
@@ -4438,6 +4747,46 @@ impl From<kreuzcrawl::CitationReference> for JsCitationReference {
             index: val.index,
             url: val.url,
             text: val.text,
+        }
+    }
+}
+
+impl From<JsBatchScrapeResult> for kreuzcrawl::BatchScrapeResult {
+    fn from(val: JsBatchScrapeResult) -> Self {
+        Self {
+            url: val.url,
+            result: val.result.map(Into::into),
+            error: val.error,
+        }
+    }
+}
+
+impl From<kreuzcrawl::BatchScrapeResult> for JsBatchScrapeResult {
+    fn from(val: kreuzcrawl::BatchScrapeResult) -> Self {
+        Self {
+            url: val.url,
+            result: val.result.map(Into::into),
+            error: val.error,
+        }
+    }
+}
+
+impl From<JsBatchCrawlResult> for kreuzcrawl::BatchCrawlResult {
+    fn from(val: JsBatchCrawlResult) -> Self {
+        Self {
+            url: val.url,
+            result: val.result.map(Into::into),
+            error: val.error,
+        }
+    }
+}
+
+impl From<kreuzcrawl::BatchCrawlResult> for JsBatchCrawlResult {
+    fn from(val: kreuzcrawl::BatchCrawlResult) -> Self {
+        Self {
+            url: val.url,
+            result: val.result.map(Into::into),
+            error: val.error,
         }
     }
 }
