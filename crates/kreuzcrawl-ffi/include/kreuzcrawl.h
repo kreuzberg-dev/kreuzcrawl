@@ -223,7 +223,7 @@ char *kcrawl_browser_config_wait_selector(const KCRAWLBrowserConfig *ptr);
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
-char *kcrawl_browser_config_extra_wait(const KCRAWLBrowserConfig *ptr);
+uint64_t kcrawl_browser_config_extra_wait(const KCRAWLBrowserConfig *ptr);
 
 /**
  * # Safety
@@ -562,7 +562,7 @@ char *kcrawl_interaction_result_final_url(const KCRAWLInteractionResult *ptr);
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
-char *kcrawl_interaction_result_screenshot(const KCRAWLInteractionResult *ptr);
+uint8_t *kcrawl_interaction_result_screenshot(const KCRAWLInteractionResult *ptr);
 
 /**
  * Free a `ActionResult` handle.
@@ -801,7 +801,7 @@ KCRAWLExtractionMeta *kcrawl_scrape_result_extraction_meta(const KCRAWLScrapeRes
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
-char *kcrawl_scrape_result_screenshot(const KCRAWLScrapeResult *ptr);
+uint8_t *kcrawl_scrape_result_screenshot(const KCRAWLScrapeResult *ptr);
 
 /**
  * Get the `downloaded_document` field from a `ScrapeResult`.

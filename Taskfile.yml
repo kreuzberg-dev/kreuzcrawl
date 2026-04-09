@@ -45,6 +45,10 @@ includes:
     taskfile: .task/tools/version-sync.yml
   docker:
     taskfile: .task/tools/docker.yml
+  docs:
+    taskfile: .task/tools/docs.yml
+  snippets:
+    taskfile: .task/workflows/snippets.yml
   _tools:
     taskfile: .task/tools/general.yml
     flatten: true

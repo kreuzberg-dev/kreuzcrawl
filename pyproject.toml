@@ -9,6 +9,11 @@ dev = [
     "ruff",
     "validate-pyproject",
 ]
+doc = [
+    "mkdocstrings>=1.0.3",
+    "mkdocstrings-python>=2.0.3",
+    "zensical",
+]
 
 [tool.uv]
 workspace.members = [ "packages/python" ]
