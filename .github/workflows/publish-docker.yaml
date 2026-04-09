@@ -1,0 +1,255 @@
+name: Publish Docker Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build (e.g., v0.1.0)"
+        required: true
+        type: string
+      dry_run:
+        description: "Prepare artifacts without publishing"
+        required: false
+        type: boolean
+        default: false
+      ref:
+        description: "Git ref (branch, tag, or commit) to build; defaults to the tag"
+        required: false
+        type: string
+      force_republish:
+        description: "Force re-publish even if artifacts already exist"
+        required: false
+        type: boolean
+        default: false
+  release:
+    types: [published]
+  repository_dispatch:
+    types: [publish-docker]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ (github.event_name == 'workflow_dispatch' && (github.event.inputs.ref || github.event.inputs.tag)) || github.ref || github.run_id }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Prepare metadata
+    if: ${{ github.event_name != 'release' || !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+      ref: ${{ steps.meta.outputs.ref }}
+      dry_run: ${{ steps.meta.outputs.dry_run }}
+      force_republish: ${{ steps.meta.outputs.force_republish }}
+      checkout_ref: ${{ steps.meta.outputs.checkout_ref }}
+      target_sha: ${{ steps.meta.outputs.target_sha }}
+      is_tag: ${{ steps.meta.outputs.is_tag }}
+      release_docker: ${{ steps.meta.outputs.release_docker }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Validate tag and compute version
+        id: meta
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+          INPUT_REF: ${{ inputs.ref }}
+          INPUT_TARGETS: "docker"
+          INPUT_FORCE_REPUBLISH: ${{ inputs.force_republish }}
+          EVENT_RELEASE_TAG: ${{ github.event.release.tag_name }}
+          EVENT_DISPATCH_TAG: ${{ github.event.client_payload.tag }}
+          EVENT_DISPATCH_DRY_RUN: ${{ github.event.client_payload.dry_run }}
+          EVENT_DISPATCH_REF: ${{ github.event.client_payload.ref }}
+          EVENT_DISPATCH_TARGETS: ${{ github.event.client_payload.targets }}
+        run: scripts/publish/prepare-release-metadata.sh
+
+      - name: Re-checkout at target ref
+        if: ${{ steps.meta.outputs.checkout_ref != '' }}
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.meta.outputs.checkout_ref }}
+          fetch-depth: 0
+
+      - name: Show metadata
+        run: |
+          {
+            echo "## Release Metadata"
+            echo "- **Tag**: \`${{ steps.meta.outputs.tag }}\`"
+            echo "- **Version**: \`${{ steps.meta.outputs.version }}\`"
+            echo "- **Dry Run**: \`${{ steps.meta.outputs.dry_run }}\`"
+            echo "- **Release Docker**: \`${{ steps.meta.outputs.release_docker }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  check-docker:
+    name: Check if Docker image tag exists
+    needs: prepare
+    if: ${{ needs.prepare.outputs.release_docker == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    outputs:
+      full_exists: ${{ steps.full.outputs.exists }}
+      cli_exists: ${{ steps.cli.outputs.exists }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check full image tag
+        id: full
+        env:
+          DOCKER_TAG: ghcr.io/kreuzberg-dev/kreuzcrawl:${{ needs.prepare.outputs.version }}
+          SUMMARY_LABEL: full
+        run: scripts/publish/check-docker-tag.sh
+
+      - name: Check CLI image tag
+        id: cli
+        env:
+          DOCKER_TAG: ghcr.io/kreuzberg-dev/kreuzcrawl-cli:${{ needs.prepare.outputs.version }}
+          SUMMARY_LABEL: cli
+        run: scripts/publish/check-docker-tag.sh
+
+  publish-docker:
+    name: Publish Docker image (${{ matrix.variant }})
+    needs:
+      - prepare
+      - check-docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: full
+            dockerfile: docker/Dockerfile
+            image: ghcr.io/kreuzberg-dev/kreuzcrawl
+            tag_suffix: ""
+            extra_tag: "latest"
+          - variant: cli
+            dockerfile: docker/Dockerfile.cli
+            image: ghcr.io/kreuzberg-dev/kreuzcrawl-cli
+            tag_suffix: ""
+            extra_tag: "latest"
+    if: ${{ needs.prepare.outputs.release_docker == 'true' }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
+
+      - name: Free up disk space
+        run: scripts/publish/ubuntu/free-disk-space.sh
+
+      - name: Ensure target commit
+        if: ${{ needs.prepare.outputs.target_sha != '' }}
+        run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Skip because tag already exists
+        if: >-
+          ${{
+            needs.prepare.outputs.force_republish != 'true' &&
+            ((matrix.variant == 'full' && needs.check-docker.outputs.full_exists == 'true') ||
+             (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists == 'true'))
+          }}
+        run: echo "Docker tag already exists for variant ${{ matrix.variant }}; skipping publish." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Build AMD64 test image
+        if: >-
+          ${{
+            needs.prepare.outputs.force_republish == 'true' ||
+            (matrix.variant == 'full' && needs.check-docker.outputs.full_exists != 'true') ||
+            (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists != 'true')
+          }}
+        run: docker build -f ${{ matrix.dockerfile }} -t kreuzcrawl-publish:${{ matrix.variant }}-test .
+
+      - name: Log in to GitHub Container Registry
+        if: >-
+          ${{
+            needs.prepare.outputs.dry_run != 'true' &&
+            (needs.prepare.outputs.force_republish == 'true' ||
+             (matrix.variant == 'full' && needs.check-docker.outputs.full_exists != 'true') ||
+             (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists != 'true'))
+          }}
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        if: >-
+          ${{
+            needs.prepare.outputs.dry_run != 'true' &&
+            (needs.prepare.outputs.force_republish == 'true' ||
+             (matrix.variant == 'full' && needs.check-docker.outputs.full_exists != 'true') ||
+             (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists != 'true'))
+          }}
+        id: docker_meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ matrix.image }}
+          tags: |
+            type=raw,value=${{ needs.prepare.outputs.version }}${{ matrix.tag_suffix }}
+            type=raw,value=${{ matrix.extra_tag }}
+
+      - name: Build and push image
+        if: >-
+          ${{
+            needs.prepare.outputs.dry_run != 'true' &&
+            (needs.prepare.outputs.force_republish == 'true' ||
+             (matrix.variant == 'full' && needs.check-docker.outputs.full_exists != 'true') ||
+             (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists != 'true'))
+          }}
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: |
+            ${{ steps.docker_meta.outputs.labels }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.description=Kreuzcrawl web crawling engine - ${{ matrix.variant }} variant
+            org.opencontainers.image.licenses=Elastic-2.0
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.variant }}
+
+      - name: Docker dry-run summary
+        if: ${{ needs.prepare.outputs.dry_run == 'true' }}
+        env:
+          IMAGE: ${{ matrix.image }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          TAG_SUFFIX: ${{ matrix.tag_suffix }}
+        run: scripts/publish/docker/dry-run-summary.sh
+
+      - name: Clean up local Docker images
+        if: ${{ always() }}
+        run: docker rmi kreuzcrawl-publish:${{ matrix.variant }}-test || true

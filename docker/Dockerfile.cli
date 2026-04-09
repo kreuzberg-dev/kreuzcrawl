@@ -1,33 +1,20 @@
 # =============================================================================
-# Builder Stage - Build Rust binary for CLI usage
+# Builder Stage - Build minimal CLI binary
 # =============================================================================
 FROM rust:1.91-bookworm AS builder
 
 WORKDIR /build
 
-# Install build dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        cmake \
-        g++ \
-        pkg-config \
-        libssl-dev \
-        && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends cmake g++ pkg-config libssl-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy workspace manifests for dependency caching
 COPY Cargo.toml Cargo.lock ./
-
-# Copy only the crates needed for the CLI build
 COPY crates/kreuzcrawl/ crates/kreuzcrawl/
 COPY crates/kreuzcrawl-cli/ crates/kreuzcrawl-cli/
 
-# Replace glob workspace members with only the crates we need.
-# The original uses "crates/*" and "tools/*" which would pull in binding crates.
 RUN sed -i 's|members = \["crates/\*", "tools/\*", "packages/elixir/native/kreuzcrawl_nif"\]|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-cli"]|' Cargo.toml
 
-# Build release binary with WARC support only (minimal feature set for CLI)
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/build/target \
@@ -37,35 +24,18 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     strip /build/kreuzcrawl
 
 # =============================================================================
-# Runtime Stage - Minimal runtime environment for CLI usage
+# Runtime Stage - Chainguard minimal
 # =============================================================================
-FROM debian:bookworm-slim
+FROM cgr.dev/chainguard/wolfi-base:latest
 
-# OCI labels for container metadata
 LABEL org.opencontainers.image.source="https://github.com/kreuzberg-dev/kreuzcrawl"
-LABEL org.opencontainers.image.description="Kreuzcrawl web crawler and scraper - CLI"
+LABEL org.opencontainers.image.description="Kreuzcrawl CLI — lightweight web crawler"
 LABEL org.opencontainers.image.licenses="Elastic-2.0"
 
-WORKDIR /app
+RUN apk add --no-cache ca-certificates
 
-# Install minimal runtime dependencies (TLS certificates for HTTPS requests)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        ca-certificates \
-        && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy binary from builder
 COPY --from=builder /build/kreuzcrawl /usr/local/bin/kreuzcrawl
-RUN chmod +x /usr/local/bin/kreuzcrawl
 
-# Create non-root user
-RUN groupadd -r kreuzcrawl && \
-    useradd -r -g kreuzcrawl -d /app -s /sbin/nologin kreuzcrawl && \
-    chown -R kreuzcrawl:kreuzcrawl /app
+USER nonroot
 
-USER kreuzcrawl
-
-# CLI image: user provides the command (scrape, crawl, map, etc.)
 ENTRYPOINT ["kreuzcrawl"]

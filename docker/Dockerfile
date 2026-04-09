@@ -1,5 +1,5 @@
 # =============================================================================
-# Builder Stage - Build Rust binary with all dependencies
+# Builder Stage - Build Rust binary with all features
 # =============================================================================
 FROM rust:1.91-bookworm AS builder
 
@@ -19,65 +19,65 @@ RUN apt-get update && \
 # Copy workspace manifests for dependency caching
 COPY Cargo.toml Cargo.lock ./
 
-# Copy only the crates needed for the API server build
+# Copy only the crates needed for the build
 COPY crates/kreuzcrawl/ crates/kreuzcrawl/
 COPY crates/kreuzcrawl-cli/ crates/kreuzcrawl-cli/
 
-# Replace glob workspace members with only the crates we need.
-# The original uses "crates/*" and "tools/*" which would pull in binding crates
-# that require PyO3, NAPI-RS, ext-php-rs, wasm-bindgen, etc.
+# Replace glob workspace members with only the crates we need
 RUN sed -i 's|members = \["crates/\*", "tools/\*", "packages/elixir/native/kreuzcrawl_nif"\]|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-cli"]|' Cargo.toml
 
-# Build release binary with full server features (API, MCP, WARC, AI)
+# Build release binary with all features
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/build/target \
     cargo build --release --package kreuzcrawl-cli \
-        --features "kreuzcrawl/api,kreuzcrawl/mcp,kreuzcrawl/warc,kreuzcrawl/ai,kreuzcrawl/tracing" && \
+        --features "kreuzcrawl/api,kreuzcrawl/mcp,kreuzcrawl/warc,kreuzcrawl/ai,kreuzcrawl/tracing,kreuzcrawl/browser,kreuzcrawl/interact" && \
     cp target/release/kreuzcrawl /build/kreuzcrawl && \
     strip /build/kreuzcrawl
 
 # =============================================================================
-# Runtime Stage - Minimal runtime environment
+# Runtime Stage - Chainguard base with Chromium for browser automation
 # =============================================================================
-FROM debian:bookworm-slim
+FROM cgr.dev/chainguard/wolfi-base:latest
 
-# OCI labels for container metadata
 LABEL org.opencontainers.image.source="https://github.com/kreuzberg-dev/kreuzcrawl"
-LABEL org.opencontainers.image.description="Kreuzcrawl web crawler and scraper - full API server"
+LABEL org.opencontainers.image.description="Kreuzcrawl — high-performance web crawler with browser automation, API server, and MCP"
 LABEL org.opencontainers.image.licenses="Elastic-2.0"
 
 WORKDIR /app
 
-# Install runtime dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        ca-certificates \
-        curl \
-        && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install runtime deps: Chromium + fonts + curl for healthcheck
+RUN apk add --no-cache \
+    ca-certificates \
+    curl \
+    chromium \
+    font-liberation \
+    font-noto-emoji \
+    glib \
+    nss
 
 # Copy binary from builder
 COPY --from=builder /build/kreuzcrawl /usr/local/bin/kreuzcrawl
-RUN chmod +x /usr/local/bin/kreuzcrawl
 
-# Create non-root user
-RUN groupadd -r kreuzcrawl && \
-    useradd -r -g kreuzcrawl -d /app -s /sbin/nologin kreuzcrawl && \
-    chown -R kreuzcrawl:kreuzcrawl /app
+# Chromium flags: set KREUZCRAWL_DISABLE_GPU=false to enable GPU acceleration
+# (useful when running with --gpus or in GPU-enabled environments)
+ARG DISABLE_GPU=true
+ENV RUST_LOG=info \
+    CHROME_BIN=/usr/bin/chromium-browser \
+    KREUZCRAWL_DISABLE_GPU=${DISABLE_GPU} \
+    CHROMIUM_FLAGS="--no-sandbox --disable-dev-shm-usage"
 
-# Environment configuration
-ENV RUST_LOG=info
-
-USER kreuzcrawl
+# Run as non-root (Chainguard images default to nonroot user)
+USER nonroot
 
 EXPOSE 3000
 
-# Health check against the API health endpoint
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD ["curl", "-f", "http://localhost:3000/health"]
 
-# Default: start the API server
+# Entrypoint: kreuzcrawl binary. Override CMD for CLI usage.
+# API server: docker run kreuzcrawl (default)
+# CLI:        docker run kreuzcrawl scrape https://example.com
+# MCP:        docker run kreuzcrawl mcp
 ENTRYPOINT ["kreuzcrawl"]
 CMD ["serve", "--host", "0.0.0.0", "--port", "3000"]
