@@ -95,13 +95,13 @@ pub struct BrowserConfig {
     /// CDP WebSocket endpoint for connecting to an external browser instance.
     pub endpoint: Option<String>,
     /// Timeout for browser page load and rendering (in milliseconds when serialized).
-    pub timeout: u64,
+    pub timeout: i64,
     /// Wait strategy after browser navigation.
     pub wait: String,
     /// CSS selector to wait for when `wait` is `Selector`.
     pub wait_selector: Option<String>,
     /// Extra time to wait after the wait condition is met.
-    pub extra_wait: Option<u64>,
+    pub extra_wait: Option<i64>,
 }
 
 impl Default for BrowserConfig {
@@ -157,7 +157,7 @@ pub struct CrawlConfig {
     /// Custom HTTP headers to send with each request.
     pub custom_headers: HashMap<String, String>,
     /// Timeout for individual HTTP requests (in milliseconds when serialized).
-    pub request_timeout: u64,
+    pub request_timeout: i64,
     /// Maximum number of redirects to follow.
     pub max_redirects: i64,
     /// Number of retry attempts for failed requests.
@@ -1543,7 +1543,7 @@ pub fn create_engine(config: Option<&CrawlConfig>) -> PhpResult<CrawlEngineHandl
 }
 
 #[php_function]
-pub fn scrape_async(engine: CrawlEngineHandle, url: String) -> PhpResult<ScrapeResult> {
+pub fn scrape_async(engine: &CrawlEngineHandle, url: String) -> PhpResult<ScrapeResult> {
     WORKER_RUNTIME.block_on(async {
         let result = kreuzcrawl::scrape(&engine.inner, &url)
             .await
@@ -1553,7 +1553,7 @@ pub fn scrape_async(engine: CrawlEngineHandle, url: String) -> PhpResult<ScrapeR
 }
 
 #[php_function]
-pub fn crawl_async(engine: CrawlEngineHandle, url: String) -> PhpResult<CrawlResult> {
+pub fn crawl_async(engine: &CrawlEngineHandle, url: String) -> PhpResult<CrawlResult> {
     WORKER_RUNTIME.block_on(async {
         let result = kreuzcrawl::crawl(&engine.inner, &url)
             .await
@@ -1563,7 +1563,7 @@ pub fn crawl_async(engine: CrawlEngineHandle, url: String) -> PhpResult<CrawlRes
 }
 
 #[php_function]
-pub fn map_urls_async(engine: CrawlEngineHandle, url: String) -> PhpResult<MapResult> {
+pub fn map_urls_async(engine: &CrawlEngineHandle, url: String) -> PhpResult<MapResult> {
     WORKER_RUNTIME.block_on(async {
         let result = kreuzcrawl::map_urls(&engine.inner, &url)
             .await
@@ -1573,13 +1573,13 @@ pub fn map_urls_async(engine: CrawlEngineHandle, url: String) -> PhpResult<MapRe
 }
 
 #[php_function]
-pub fn batch_scrape_async(engine: CrawlEngineHandle, urls: Vec<String>) -> Vec<BatchScrapeResult> {
+pub fn batch_scrape_async(engine: &CrawlEngineHandle, urls: Vec<String>) -> Vec<BatchScrapeResult> {
     let result = WORKER_RUNTIME.block_on(async { kreuzcrawl::batch_scrape(&engine.inner, urls).await });
     result.into_iter().map(Into::into).collect()
 }
 
 #[php_function]
-pub fn batch_crawl_async(engine: CrawlEngineHandle, urls: Vec<String>) -> Vec<BatchCrawlResult> {
+pub fn batch_crawl_async(engine: &CrawlEngineHandle, urls: Vec<String>) -> Vec<BatchCrawlResult> {
     let result = WORKER_RUNTIME.block_on(async { kreuzcrawl::batch_crawl(&engine.inner, urls).await });
     result.into_iter().map(Into::into).collect()
 }
@@ -1664,6 +1664,79 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
     }
 }
 
+impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
+    fn from(val: CrawlConfig) -> Self {
+        Self {
+            max_depth: val.max_depth.map(|v| v as usize),
+            max_pages: val.max_pages.map(|v| v as usize),
+            max_concurrent: val.max_concurrent.map(|v| v as usize),
+            respect_robots_txt: val.respect_robots_txt,
+            user_agent: val.user_agent,
+            stay_on_domain: val.stay_on_domain,
+            allow_subdomains: val.allow_subdomains,
+            include_paths: val.include_paths,
+            exclude_paths: val.exclude_paths,
+            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            request_timeout: std::time::Duration::from_secs(val.request_timeout as u64),
+            max_redirects: val.max_redirects as usize,
+            retry_count: val.retry_count as usize,
+            retry_codes: val.retry_codes,
+            cookies_enabled: val.cookies_enabled,
+            auth: val.auth.as_deref().map(|s| match s {
+                "Basic" => kreuzcrawl::AuthConfig::Basic {
+                    username: Default::default(),
+                    password: Default::default(),
+                },
+                "Bearer" => kreuzcrawl::AuthConfig::Bearer {
+                    token: Default::default(),
+                },
+                "Header" => kreuzcrawl::AuthConfig::Header {
+                    name: Default::default(),
+                    value: Default::default(),
+                },
+                _ => kreuzcrawl::AuthConfig::Basic {
+                    username: Default::default(),
+                    password: Default::default(),
+                },
+            }),
+            max_body_size: val.max_body_size.map(|v| v as usize),
+            main_content_only: val.main_content_only,
+            remove_tags: val.remove_tags,
+            map_limit: val.map_limit.map(|v| v as usize),
+            map_search: val.map_search,
+            download_assets: val.download_assets,
+            asset_types: val
+                .asset_types
+                .into_iter()
+                .map(|s| match s.as_str() {
+                    "Document" => kreuzcrawl::AssetCategory::Document,
+                    "Image" => kreuzcrawl::AssetCategory::Image,
+                    "Audio" => kreuzcrawl::AssetCategory::Audio,
+                    "Video" => kreuzcrawl::AssetCategory::Video,
+                    "Font" => kreuzcrawl::AssetCategory::Font,
+                    "Stylesheet" => kreuzcrawl::AssetCategory::Stylesheet,
+                    "Script" => kreuzcrawl::AssetCategory::Script,
+                    "Archive" => kreuzcrawl::AssetCategory::Archive,
+                    "Data" => kreuzcrawl::AssetCategory::Data,
+                    "Other" => kreuzcrawl::AssetCategory::Other,
+                    _ => kreuzcrawl::AssetCategory::Document,
+                })
+                .collect(),
+            max_asset_size: val.max_asset_size.map(|v| v as usize),
+            browser: val.browser.into(),
+            proxy: val.proxy.map(Into::into),
+            user_agents: val.user_agents,
+            capture_screenshot: val.capture_screenshot,
+            download_documents: val.download_documents,
+            document_max_size: val.document_max_size.map(|v| v as usize),
+            document_mime_types: val.document_mime_types,
+            warc_output: val.warc_output.map(Into::into),
+            browser_profile: val.browser_profile,
+            save_browser_profile: val.save_browser_profile,
+        }
+    }
+}
+
 impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
     fn from(val: kreuzcrawl::CrawlConfig) -> Self {
         Self {
@@ -1689,7 +1762,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             map_limit: val.map_limit.map(|v| v as i64),
             map_search: val.map_search,
             download_assets: val.download_assets,
-            asset_types: val.asset_types.into_iter().map(Into::into).collect(),
+            asset_types: val.asset_types.iter().map(|v| format!("{:?}", v)).collect(),
             max_asset_size: val.max_asset_size.map(|v| v as i64),
             browser: val.browser.into(),
             proxy: val.proxy.map(Into::into),
