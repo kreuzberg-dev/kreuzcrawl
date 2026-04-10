@@ -107,6 +107,12 @@ package = "dev.kreuzberg.kreuzcrawl"
 [csharp]
 namespace = "Kreuzcrawl"
 
+[ruby]
+gem_name = "kreuzcrawl"
+
+[ruby.stubs]
+output = "packages/ruby/sig/"
+
 [elixir]
 app_name = "kreuzcrawl"
 
