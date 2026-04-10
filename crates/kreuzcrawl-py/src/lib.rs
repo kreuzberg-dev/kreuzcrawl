@@ -3,11 +3,10 @@
 
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
-use pyo3_async_runtimes;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractionMeta {
     /// Estimated cost of the LLM call in USD.
@@ -25,18 +24,6 @@ pub struct ExtractionMeta {
     /// Number of content chunks sent to the LLM.
     #[pyo3(get)]
     pub chunks_processed: usize,
-}
-
-impl Default for ExtractionMeta {
-    fn default() -> Self {
-        Self {
-            cost: Default::default(),
-            prompt_tokens: Default::default(),
-            completion_tokens: Default::default(),
-            model: Default::default(),
-            chunks_processed: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -61,7 +48,7 @@ impl ExtractionMeta {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ProxyConfig {
     /// Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").
@@ -73,16 +60,6 @@ pub struct ProxyConfig {
     /// Optional password for proxy authentication.
     #[pyo3(get)]
     pub password: Option<String>,
-}
-
-impl Default for ProxyConfig {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            username: Default::default(),
-            password: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -99,7 +76,7 @@ impl ProxyConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct BrowserConfig {
     /// When to use the headless browser fallback.
@@ -120,19 +97,6 @@ pub struct BrowserConfig {
     /// Extra time to wait after the wait condition is met.
     #[pyo3(get)]
     pub extra_wait: Option<u64>,
-}
-
-impl Default for BrowserConfig {
-    fn default() -> Self {
-        Self {
-            mode: Default::default(),
-            endpoint: Default::default(),
-            timeout: Default::default(),
-            wait: Default::default(),
-            wait_selector: Default::default(),
-            extra_wait: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -166,7 +130,7 @@ impl BrowserConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct CrawlConfig {
@@ -274,47 +238,6 @@ pub struct CrawlConfig {
     pub save_browser_profile: bool,
 }
 
-impl Default for CrawlConfig {
-    fn default() -> Self {
-        Self {
-            max_depth: Default::default(),
-            max_pages: Default::default(),
-            max_concurrent: Default::default(),
-            respect_robots_txt: Default::default(),
-            user_agent: Default::default(),
-            stay_on_domain: Default::default(),
-            allow_subdomains: Default::default(),
-            include_paths: Default::default(),
-            exclude_paths: Default::default(),
-            custom_headers: Default::default(),
-            request_timeout: Default::default(),
-            max_redirects: Default::default(),
-            retry_count: Default::default(),
-            retry_codes: Default::default(),
-            cookies_enabled: Default::default(),
-            auth: Default::default(),
-            max_body_size: Default::default(),
-            main_content_only: Default::default(),
-            remove_tags: Default::default(),
-            map_limit: Default::default(),
-            map_search: Default::default(),
-            download_assets: Default::default(),
-            asset_types: Default::default(),
-            max_asset_size: Default::default(),
-            browser: Default::default(),
-            proxy: Default::default(),
-            user_agents: Default::default(),
-            capture_screenshot: Default::default(),
-            download_documents: Default::default(),
-            document_max_size: Default::default(),
-            document_mime_types: Default::default(),
-            warc_output: Default::default(),
-            browser_profile: Default::default(),
-            save_browser_profile: Default::default(),
-        }
-    }
-}
-
 #[pymethods]
 impl CrawlConfig {
     #[allow(clippy::too_many_arguments)]
@@ -361,37 +284,37 @@ impl CrawlConfig {
             max_depth,
             max_pages,
             max_concurrent,
-            respect_robots_txt: respect_robots_txt.unwrap_or_else(|| false),
+            respect_robots_txt: respect_robots_txt.unwrap_or(false),
             user_agent,
-            stay_on_domain: stay_on_domain.unwrap_or_else(|| false),
-            allow_subdomains: allow_subdomains.unwrap_or_else(|| false),
+            stay_on_domain: stay_on_domain.unwrap_or(false),
+            allow_subdomains: allow_subdomains.unwrap_or(false),
             include_paths: include_paths.unwrap_or_default(),
             exclude_paths: exclude_paths.unwrap_or_default(),
             custom_headers: custom_headers.unwrap_or_default(),
             request_timeout: request_timeout.unwrap_or_default(),
-            max_redirects: max_redirects.unwrap_or_else(|| 10),
-            retry_count: retry_count.unwrap_or_else(|| 0),
+            max_redirects: max_redirects.unwrap_or(10),
+            retry_count: retry_count.unwrap_or(0),
             retry_codes: retry_codes.unwrap_or_default(),
-            cookies_enabled: cookies_enabled.unwrap_or_else(|| false),
+            cookies_enabled: cookies_enabled.unwrap_or(false),
             auth,
             max_body_size,
-            main_content_only: main_content_only.unwrap_or_else(|| false),
+            main_content_only: main_content_only.unwrap_or(false),
             remove_tags: remove_tags.unwrap_or_default(),
             map_limit,
             map_search,
-            download_assets: download_assets.unwrap_or_else(|| false),
+            download_assets: download_assets.unwrap_or(false),
             asset_types: asset_types.unwrap_or_default(),
             max_asset_size,
             browser: browser.unwrap_or_default(),
             proxy,
             user_agents: user_agents.unwrap_or_default(),
-            capture_screenshot: capture_screenshot.unwrap_or_else(|| false),
-            download_documents: download_documents.unwrap_or_else(|| true),
+            capture_screenshot: capture_screenshot.unwrap_or(false),
+            download_documents: download_documents.unwrap_or(true),
             document_max_size,
             document_mime_types: document_mime_types.unwrap_or_default(),
             warc_output,
             browser_profile,
-            save_browser_profile: save_browser_profile.unwrap_or_else(|| false),
+            save_browser_profile: save_browser_profile.unwrap_or(false),
         }
     }
 
@@ -403,7 +326,7 @@ impl CrawlConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct DownloadedDocument {
     /// The URL the document was fetched from.
@@ -427,20 +350,6 @@ pub struct DownloadedDocument {
     /// Selected response headers.
     #[pyo3(get)]
     pub headers: HashMap<String, String>,
-}
-
-impl Default for DownloadedDocument {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            mime_type: Default::default(),
-            content: Default::default(),
-            size: Default::default(),
-            filename: Default::default(),
-            content_hash: Default::default(),
-            headers: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -469,7 +378,7 @@ impl DownloadedDocument {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct InteractionResult {
     /// Results from each executed action.
@@ -484,17 +393,6 @@ pub struct InteractionResult {
     /// Screenshot taken after all actions, if requested.
     #[pyo3(get)]
     pub screenshot: Option<Vec<u8>>,
-}
-
-impl Default for InteractionResult {
-    fn default() -> Self {
-        Self {
-            action_results: Default::default(),
-            final_html: Default::default(),
-            final_url: Default::default(),
-            screenshot: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -517,7 +415,7 @@ impl InteractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ActionResult {
     /// Zero-based index of the action in the sequence.
@@ -535,18 +433,6 @@ pub struct ActionResult {
     /// Error message if the action failed.
     #[pyo3(get)]
     pub error: Option<String>,
-}
-
-impl Default for ActionResult {
-    fn default() -> Self {
-        Self {
-            action_index: Default::default(),
-            action_type: Default::default(),
-            success: Default::default(),
-            data: Default::default(),
-            error: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -571,7 +457,7 @@ impl ActionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
@@ -660,41 +546,6 @@ pub struct ScrapeResult {
     pub downloaded_document: Option<DownloadedDocument>,
 }
 
-impl Default for ScrapeResult {
-    fn default() -> Self {
-        Self {
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            is_allowed: Default::default(),
-            crawl_delay: Default::default(),
-            noindex_detected: Default::default(),
-            nofollow_detected: Default::default(),
-            x_robots_tag: Default::default(),
-            is_pdf: Default::default(),
-            was_skipped: Default::default(),
-            detected_charset: Default::default(),
-            main_content_only: Default::default(),
-            auth_header_sent: Default::default(),
-            response_meta: Default::default(),
-            assets: Default::default(),
-            js_render_hint: Default::default(),
-            browser_used: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            screenshot: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
 #[pymethods]
 impl ScrapeResult {
     #[allow(clippy::too_many_arguments)]
@@ -764,7 +615,7 @@ impl ScrapeResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct CrawlPageResult {
     /// The original URL of the page.
@@ -829,33 +680,6 @@ pub struct CrawlPageResult {
     pub downloaded_document: Option<DownloadedDocument>,
 }
 
-impl Default for CrawlPageResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            normalized_url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            depth: Default::default(),
-            stayed_on_domain: Default::default(),
-            was_skipped: Default::default(),
-            is_pdf: Default::default(),
-            detected_charset: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
 #[pymethods]
 impl CrawlPageResult {
     #[allow(clippy::too_many_arguments)]
@@ -909,7 +733,7 @@ impl CrawlPageResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct CrawlResult {
     /// The list of crawled pages.
@@ -933,20 +757,6 @@ pub struct CrawlResult {
     /// Normalized URLs encountered during crawling (for deduplication counting).
     #[pyo3(get)]
     pub normalized_urls: Vec<String>,
-}
-
-impl Default for CrawlResult {
-    fn default() -> Self {
-        Self {
-            pages: Default::default(),
-            final_url: Default::default(),
-            redirect_count: Default::default(),
-            was_skipped: Default::default(),
-            error: Default::default(),
-            cookies: Default::default(),
-            normalized_urls: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -975,7 +785,7 @@ impl CrawlResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct SitemapUrl {
     /// The URL.
@@ -990,17 +800,6 @@ pub struct SitemapUrl {
     /// The priority, if present.
     #[pyo3(get)]
     pub priority: Option<String>,
-}
-
-impl Default for SitemapUrl {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            lastmod: Default::default(),
-            changefreq: Default::default(),
-            priority: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1023,20 +822,12 @@ impl SitemapUrl {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct MapResult {
     /// The list of discovered URLs.
     #[pyo3(get)]
     pub urls: Vec<SitemapUrl>,
-}
-
-impl Default for MapResult {
-    fn default() -> Self {
-        Self {
-            urls: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1051,7 +842,7 @@ impl MapResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct MarkdownResult {
     /// Converted markdown text.
@@ -1072,19 +863,6 @@ pub struct MarkdownResult {
     /// Content-filtered markdown optimized for LLM consumption.
     #[pyo3(get)]
     pub fit_content: Option<String>,
-}
-
-impl Default for MarkdownResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            document_structure: Default::default(),
-            tables: Default::default(),
-            warnings: Default::default(),
-            citations: Default::default(),
-            fit_content: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1111,7 +889,7 @@ impl MarkdownResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct CachedPage {
     #[pyo3(get)]
@@ -1128,20 +906,6 @@ pub struct CachedPage {
     pub last_modified: Option<String>,
     #[pyo3(get)]
     pub cached_at: u64,
-}
-
-impl Default for CachedPage {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            body: Default::default(),
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cached_at: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1170,7 +934,7 @@ impl CachedPage {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct LinkInfo {
@@ -1189,18 +953,6 @@ pub struct LinkInfo {
     /// Whether the link has `rel="nofollow"`.
     #[pyo3(get)]
     pub nofollow: bool,
-}
-
-impl Default for LinkInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            text: Default::default(),
-            link_type: Default::default(),
-            rel: Default::default(),
-            nofollow: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1225,7 +977,7 @@ impl LinkInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ImageInfo {
     /// The image URL.
@@ -1243,18 +995,6 @@ pub struct ImageInfo {
     /// The source of the image reference.
     #[pyo3(get)]
     pub source: ImageSource,
-}
-
-impl Default for ImageInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            alt: Default::default(),
-            width: Default::default(),
-            height: Default::default(),
-            source: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1279,7 +1019,7 @@ impl ImageInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct FeedInfo {
     /// The feed URL.
@@ -1291,16 +1031,6 @@ pub struct FeedInfo {
     /// The type of feed.
     #[pyo3(get)]
     pub feed_type: FeedType,
-}
-
-impl Default for FeedInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            title: Default::default(),
-            feed_type: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1317,7 +1047,7 @@ impl FeedInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct JsonLdEntry {
     /// The `@type` value from the JSON-LD object.
@@ -1329,16 +1059,6 @@ pub struct JsonLdEntry {
     /// The raw JSON-LD string.
     #[pyo3(get)]
     pub raw: String,
-}
-
-impl Default for JsonLdEntry {
-    fn default() -> Self {
-        Self {
-            schema_type: Default::default(),
-            name: Default::default(),
-            raw: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1355,7 +1075,7 @@ impl JsonLdEntry {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct CookieInfo {
     /// The cookie name.
@@ -1370,17 +1090,6 @@ pub struct CookieInfo {
     /// The cookie path, if specified.
     #[pyo3(get)]
     pub path: Option<String>,
-}
-
-impl Default for CookieInfo {
-    fn default() -> Self {
-        Self {
-            name: Default::default(),
-            value: Default::default(),
-            domain: Default::default(),
-            path: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1398,7 +1107,7 @@ impl CookieInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct DownloadedAsset {
     /// The original URL of the asset.
@@ -1419,19 +1128,6 @@ pub struct DownloadedAsset {
     /// The HTML tag that referenced this asset (e.g., "link", "script", "img").
     #[pyo3(get)]
     pub html_tag: Option<String>,
-}
-
-impl Default for DownloadedAsset {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            content_hash: Default::default(),
-            mime_type: Default::default(),
-            size: Default::default(),
-            asset_category: Default::default(),
-            html_tag: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1458,7 +1154,7 @@ impl DownloadedAsset {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ArticleMetadata {
     /// The article publication time.
@@ -1476,18 +1172,6 @@ pub struct ArticleMetadata {
     /// The article tags.
     #[pyo3(get)]
     pub tags: Vec<String>,
-}
-
-impl Default for ArticleMetadata {
-    fn default() -> Self {
-        Self {
-            published_time: Default::default(),
-            modified_time: Default::default(),
-            author: Default::default(),
-            section: Default::default(),
-            tags: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1512,7 +1196,7 @@ impl ArticleMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct HreflangEntry {
     /// The language code (e.g., "en", "fr", "x-default").
@@ -1521,15 +1205,6 @@ pub struct HreflangEntry {
     /// The URL for this language variant.
     #[pyo3(get)]
     pub url: String,
-}
-
-impl Default for HreflangEntry {
-    fn default() -> Self {
-        Self {
-            lang: Default::default(),
-            url: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1545,7 +1220,7 @@ impl HreflangEntry {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct FaviconInfo {
@@ -1563,17 +1238,6 @@ pub struct FaviconInfo {
     pub mime_type: Option<String>,
 }
 
-impl Default for FaviconInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            rel: Default::default(),
-            sizes: Default::default(),
-            mime_type: Default::default(),
-        }
-    }
-}
-
 #[pymethods]
 impl FaviconInfo {
     #[must_use]
@@ -1589,7 +1253,7 @@ impl FaviconInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct HeadingInfo {
     /// The heading level (1-6).
@@ -1598,15 +1262,6 @@ pub struct HeadingInfo {
     /// The heading text content.
     #[pyo3(get)]
     pub text: String,
-}
-
-impl Default for HeadingInfo {
-    fn default() -> Self {
-        Self {
-            level: Default::default(),
-            text: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1622,7 +1277,7 @@ impl HeadingInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ResponseMeta {
     /// The ETag header value.
@@ -1646,20 +1301,6 @@ pub struct ResponseMeta {
     /// The Content-Encoding header value.
     #[pyo3(get)]
     pub content_encoding: Option<String>,
-}
-
-impl Default for ResponseMeta {
-    fn default() -> Self {
-        Self {
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cache_control: Default::default(),
-            server: Default::default(),
-            x_powered_by: Default::default(),
-            content_language: Default::default(),
-            content_encoding: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -1688,7 +1329,7 @@ impl ResponseMeta {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct PageMetadata {
@@ -1823,56 +1464,6 @@ pub struct PageMetadata {
     pub word_count: Option<usize>,
 }
 
-impl Default for PageMetadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            description: Default::default(),
-            canonical_url: Default::default(),
-            keywords: Default::default(),
-            author: Default::default(),
-            viewport: Default::default(),
-            theme_color: Default::default(),
-            generator: Default::default(),
-            robots: Default::default(),
-            html_lang: Default::default(),
-            html_dir: Default::default(),
-            og_title: Default::default(),
-            og_type: Default::default(),
-            og_image: Default::default(),
-            og_description: Default::default(),
-            og_url: Default::default(),
-            og_site_name: Default::default(),
-            og_locale: Default::default(),
-            og_video: Default::default(),
-            og_audio: Default::default(),
-            og_locale_alternates: Default::default(),
-            twitter_card: Default::default(),
-            twitter_title: Default::default(),
-            twitter_description: Default::default(),
-            twitter_image: Default::default(),
-            twitter_site: Default::default(),
-            twitter_creator: Default::default(),
-            dc_title: Default::default(),
-            dc_creator: Default::default(),
-            dc_subject: Default::default(),
-            dc_description: Default::default(),
-            dc_publisher: Default::default(),
-            dc_date: Default::default(),
-            dc_type: Default::default(),
-            dc_format: Default::default(),
-            dc_identifier: Default::default(),
-            dc_language: Default::default(),
-            dc_rights: Default::default(),
-            article: Default::default(),
-            hreflangs: Default::default(),
-            favicons: Default::default(),
-            headings: Default::default(),
-            word_count: Default::default(),
-        }
-    }
-}
-
 #[pymethods]
 impl PageMetadata {
     #[allow(clippy::too_many_arguments)]
@@ -1972,7 +1563,7 @@ impl PageMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct CitationResult {
     /// Markdown with links replaced by numbered citations.
@@ -1981,15 +1572,6 @@ pub struct CitationResult {
     /// Numbered reference list: (index, url, text).
     #[pyo3(get)]
     pub references: Vec<CitationReference>,
-}
-
-impl Default for CitationResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            references: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -2005,7 +1587,7 @@ impl CitationResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct CitationReference {
     #[pyo3(get)]
@@ -2014,16 +1596,6 @@ pub struct CitationReference {
     pub url: String,
     #[pyo3(get)]
     pub text: String,
-}
-
-impl Default for CitationReference {
-    fn default() -> Self {
-        Self {
-            index: Default::default(),
-            url: Default::default(),
-            text: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -2046,7 +1618,7 @@ pub struct CrawlEngineHandle {
     inner: Arc<kreuzcrawl::CrawlEngineHandle>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct BatchScrapeResult {
     /// The URL that was scraped.
@@ -2058,16 +1630,6 @@ pub struct BatchScrapeResult {
     /// The error message, if the scrape failed.
     #[pyo3(get)]
     pub error: Option<String>,
-}
-
-impl Default for BatchScrapeResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -2084,7 +1646,7 @@ impl BatchScrapeResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct BatchCrawlResult {
     /// The seed URL that was crawled.
@@ -2096,16 +1658,6 @@ pub struct BatchCrawlResult {
     /// The error message, if the crawl failed.
     #[pyo3(get)]
     pub error: Option<String>,
-}
-
-impl Default for BatchCrawlResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
 }
 
 #[pymethods]
@@ -2130,6 +1682,7 @@ pub enum BrowserMode {
     Never = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for BrowserMode {
     fn default() -> Self {
         Self::Auto
@@ -2144,6 +1697,7 @@ pub enum BrowserWait {
     Fixed = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for BrowserWait {
     fn default() -> Self {
         Self::NetworkIdle
@@ -2158,6 +1712,7 @@ pub enum AuthConfig {
     Header = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for AuthConfig {
     fn default() -> Self {
         Self::Basic
@@ -2173,6 +1728,7 @@ pub enum LinkType {
     Document = 3,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for LinkType {
     fn default() -> Self {
         Self::Internal
@@ -2188,6 +1744,7 @@ pub enum ImageSource {
     TwitterImage = 3,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for ImageSource {
     fn default() -> Self {
         Self::Img
@@ -2202,6 +1759,7 @@ pub enum FeedType {
     JsonFeed = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for FeedType {
     fn default() -> Self {
         Self::Rss
@@ -2223,6 +1781,7 @@ pub enum AssetCategory {
     Other = 9,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for AssetCategory {
     fn default() -> Self {
         Self::Document
@@ -2237,6 +1796,7 @@ pub enum CrawlEvent {
     Complete = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for CrawlEvent {
     fn default() -> Self {
         Self::Page
@@ -2294,10 +1854,7 @@ pub fn map_urls<'py>(py: Python<'py>, engine: CrawlEngineHandle, url: String) ->
 pub fn batch_scrape<'py>(py: Python<'py>, engine: CrawlEngineHandle, urls: Vec<String>) -> PyResult<Bound<'py, PyAny>> {
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let result = kreuzcrawl::batch_scrape(&engine.inner, urls).await;
-        Ok(result
-            .into_iter()
-            .map(|v| BatchScrapeResult::from(v))
-            .collect::<Vec<_>>())
+        Ok(result.into_iter().map(BatchScrapeResult::from).collect::<Vec<_>>())
     })
 }
 
@@ -2306,10 +1863,7 @@ pub fn batch_scrape<'py>(py: Python<'py>, engine: CrawlEngineHandle, urls: Vec<S
 pub fn batch_crawl<'py>(py: Python<'py>, engine: CrawlEngineHandle, urls: Vec<String>) -> PyResult<Bound<'py, PyAny>> {
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let result = kreuzcrawl::batch_crawl(&engine.inner, urls).await;
-        Ok(result
-            .into_iter()
-            .map(|v| BatchCrawlResult::from(v))
-            .collect::<Vec<_>>())
+        Ok(result.into_iter().map(BatchCrawlResult::from).collect::<Vec<_>>())
     })
 }
 
@@ -2429,6 +1983,7 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
     }
 }
 
+#[allow(clippy::needless_update)]
 impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
     fn from(val: CrawlConfig) -> Self {
         Self {
@@ -2441,7 +1996,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: std::time::Duration::from_secs(val.request_timeout),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
@@ -2483,7 +2038,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: val.request_timeout.as_secs(),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
@@ -2533,7 +2088,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
             mime_type: val.mime_type.to_string(),
             content: val.content.to_vec(),
             size: val.size,
-            filename: val.filename.as_ref().map(|v| v.to_string()),
+            filename: val.filename.as_ref().map(ToString::to_string),
             content_hash: val.content_hash.to_string(),
             headers: val
                 .headers
@@ -2584,7 +2139,7 @@ impl From<kreuzcrawl::ActionResult> for ActionResult {
             action_index: val.action_index,
             action_type: val.action_type.to_string(),
             success: val.success,
-            data: val.data.as_ref().map(|v| v.to_string()),
+            data: val.data.as_ref().map(ToString::to_string),
             error: val.error,
         }
     }
@@ -2652,7 +2207,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             js_render_hint: val.js_render_hint,
             browser_used: val.browser_used,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             screenshot: val.screenshot.map(|v| v.to_vec()),
             downloaded_document: val.downloaded_document.map(Into::into),
@@ -2707,7 +2262,7 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
             is_pdf: val.is_pdf,
             detected_charset: val.detected_charset,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             downloaded_document: val.downloaded_document.map(Into::into),
         }
@@ -2804,8 +2359,8 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
     fn from(val: kreuzcrawl::MarkdownResult) -> Self {
         Self {
             content: val.content,
-            document_structure: val.document_structure.as_ref().map(|v| v.to_string()),
-            tables: val.tables.iter().map(|v| v.to_string()).collect(),
+            document_structure: val.document_structure.as_ref().map(ToString::to_string),
+            tables: val.tables.iter().map(ToString::to_string).collect(),
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,

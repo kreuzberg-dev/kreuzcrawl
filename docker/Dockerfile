@@ -39,7 +39,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # =============================================================================
 # Runtime Stage - Chainguard base with Chromium for browser automation
 # =============================================================================
-FROM cgr.dev/chainguard/wolfi-base:latest
+FROM debian:bookworm-slim
 
 LABEL org.opencontainers.image.source="https://github.com/kreuzberg-dev/kreuzcrawl"
 LABEL org.opencontainers.image.description="Kreuzcrawl — high-performance web crawler with browser automation, API server, and MCP"
@@ -48,14 +48,16 @@ LABEL org.opencontainers.image.licenses="Elastic-2.0"
 WORKDIR /app
 
 # Install runtime deps: Chromium + fonts + curl for healthcheck
-RUN apk add --no-cache \
-    ca-certificates \
-    curl \
-    chromium \
-    font-liberation \
-    font-noto-emoji \
-    glib \
-    nss
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        chromium \
+        fonts-liberation \
+        fonts-noto-color-emoji \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy binary from builder
 COPY --from=builder /build/kreuzcrawl /usr/local/bin/kreuzcrawl
@@ -63,13 +65,16 @@ COPY --from=builder /build/kreuzcrawl /usr/local/bin/kreuzcrawl
 # Chromium flags: set KREUZCRAWL_DISABLE_GPU=false to enable GPU acceleration
 # (useful when running with --gpus or in GPU-enabled environments)
 ARG DISABLE_GPU=true
+RUN groupadd -r kreuzcrawl && \
+    useradd -r -g kreuzcrawl -d /app -s /sbin/nologin kreuzcrawl && \
+    chown -R kreuzcrawl:kreuzcrawl /app
+
 ENV RUST_LOG=info \
-    CHROME_BIN=/usr/bin/chromium-browser \
+    CHROME_BIN=/usr/bin/chromium \
     KREUZCRAWL_DISABLE_GPU=${DISABLE_GPU} \
     CHROMIUM_FLAGS="--no-sandbox --disable-dev-shm-usage"
 
-# Run as non-root (Chainguard images default to nonroot user)
-USER nonroot
+USER kreuzcrawl
 
 EXPOSE 3000
 

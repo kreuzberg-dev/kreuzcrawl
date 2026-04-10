@@ -3295,6 +3295,7 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
     }
 }
 
+#[allow(clippy::needless_update)]
 impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
     fn from(val: CrawlConfig) -> Self {
         Self {
@@ -3307,7 +3308,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: std::time::Duration::from_secs(val.request_timeout),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
@@ -3349,7 +3350,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: val.request_timeout.as_secs(),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
@@ -3399,7 +3400,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
             mime_type: val.mime_type.to_string(),
             content: val.content.to_vec(),
             size: val.size,
-            filename: val.filename.as_ref().map(|v| v.to_string()),
+            filename: val.filename.as_ref().map(ToString::to_string),
             content_hash: val.content_hash.to_string(),
             headers: val.headers.into_iter().map(|(k, v)| (k.to_string(), v.to_string())).collect(),
         }
@@ -3446,7 +3447,7 @@ impl From<kreuzcrawl::ActionResult> for ActionResult {
             action_index: val.action_index,
             action_type: val.action_type.to_string(),
             success: val.success,
-            data: val.data.as_ref().map(|v| v.to_string()),
+            data: val.data.as_ref().map(ToString::to_string),
             error: val.error,
         }
     }
@@ -3514,7 +3515,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             js_render_hint: val.js_render_hint,
             browser_used: val.browser_used,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             screenshot: val.screenshot.map(|v| v.to_vec()),
             downloaded_document: val.downloaded_document.map(Into::into),
@@ -3569,7 +3570,7 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
             is_pdf: val.is_pdf,
             detected_charset: val.detected_charset,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             downloaded_document: val.downloaded_document.map(Into::into),
         }
@@ -3659,8 +3660,8 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
     fn from(val: kreuzcrawl::MarkdownResult) -> Self {
         Self {
             content: val.content,
-            document_structure: val.document_structure.as_ref().map(|v| v.to_string()),
-            tables: val.tables.iter().map(|v| v.to_string()).collect(),
+            document_structure: val.document_structure.as_ref().map(ToString::to_string),
+            tables: val.tables.iter().map(ToString::to_string).collect(),
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,

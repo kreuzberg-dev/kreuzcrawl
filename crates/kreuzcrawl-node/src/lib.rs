@@ -13,7 +13,7 @@ static WORKER_POOL: std::sync::LazyLock<tokio::runtime::Runtime> = std::sync::La
         .expect("Failed to create Tokio runtime")
 });
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsExtractionMeta {
     pub cost: Option<f64>,
@@ -26,19 +26,7 @@ pub struct JsExtractionMeta {
     pub chunks_processed: Option<i64>,
 }
 
-impl Default for JsExtractionMeta {
-    fn default() -> Self {
-        Self {
-            cost: Default::default(),
-            prompt_tokens: Default::default(),
-            completion_tokens: Default::default(),
-            model: Default::default(),
-            chunks_processed: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsProxyConfig {
     pub url: Option<String>,
@@ -46,17 +34,7 @@ pub struct JsProxyConfig {
     pub password: Option<String>,
 }
 
-impl Default for JsProxyConfig {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            username: Default::default(),
-            password: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsBrowserConfig {
     pub mode: Option<JsBrowserMode>,
@@ -69,20 +47,7 @@ pub struct JsBrowserConfig {
     pub extra_wait: Option<i64>,
 }
 
-impl Default for JsBrowserConfig {
-    fn default() -> Self {
-        Self {
-            mode: Default::default(),
-            endpoint: Default::default(),
-            timeout: Default::default(),
-            wait: Default::default(),
-            wait_selector: Default::default(),
-            extra_wait: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsCrawlConfig {
     #[napi(js_name = "maxDepth")]
@@ -152,48 +117,7 @@ pub struct JsCrawlConfig {
     pub save_browser_profile: Option<bool>,
 }
 
-impl Default for JsCrawlConfig {
-    fn default() -> Self {
-        Self {
-            max_depth: Default::default(),
-            max_pages: Default::default(),
-            max_concurrent: Default::default(),
-            respect_robots_txt: Default::default(),
-            user_agent: Default::default(),
-            stay_on_domain: Default::default(),
-            allow_subdomains: Default::default(),
-            include_paths: Default::default(),
-            exclude_paths: Default::default(),
-            custom_headers: Default::default(),
-            request_timeout: Default::default(),
-            max_redirects: Default::default(),
-            retry_count: Default::default(),
-            retry_codes: Default::default(),
-            cookies_enabled: Default::default(),
-            auth: Default::default(),
-            max_body_size: Default::default(),
-            main_content_only: Default::default(),
-            remove_tags: Default::default(),
-            map_limit: Default::default(),
-            map_search: Default::default(),
-            download_assets: Default::default(),
-            asset_types: Default::default(),
-            max_asset_size: Default::default(),
-            browser: Default::default(),
-            proxy: Default::default(),
-            user_agents: Default::default(),
-            capture_screenshot: Default::default(),
-            download_documents: Default::default(),
-            document_max_size: Default::default(),
-            document_mime_types: Default::default(),
-            warc_output: Default::default(),
-            browser_profile: Default::default(),
-            save_browser_profile: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsDownloadedDocument {
     pub url: Option<String>,
@@ -207,21 +131,7 @@ pub struct JsDownloadedDocument {
     pub headers: Option<HashMap<String, String>>,
 }
 
-impl Default for JsDownloadedDocument {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            mime_type: Default::default(),
-            content: Default::default(),
-            size: Default::default(),
-            filename: Default::default(),
-            content_hash: Default::default(),
-            headers: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsInteractionResult {
     #[napi(js_name = "actionResults")]
@@ -233,18 +143,7 @@ pub struct JsInteractionResult {
     pub screenshot: Option<Vec<u8>>,
 }
 
-impl Default for JsInteractionResult {
-    fn default() -> Self {
-        Self {
-            action_results: Default::default(),
-            final_html: Default::default(),
-            final_url: Default::default(),
-            screenshot: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsActionResult {
     #[napi(js_name = "actionIndex")]
@@ -256,19 +155,7 @@ pub struct JsActionResult {
     pub error: Option<String>,
 }
 
-impl Default for JsActionResult {
-    fn default() -> Self {
-        Self {
-            action_index: Default::default(),
-            action_type: Default::default(),
-            success: Default::default(),
-            data: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsScrapeResult {
     #[napi(js_name = "statusCode")]
@@ -321,42 +208,7 @@ pub struct JsScrapeResult {
     pub downloaded_document: Option<JsDownloadedDocument>,
 }
 
-impl Default for JsScrapeResult {
-    fn default() -> Self {
-        Self {
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            is_allowed: Default::default(),
-            crawl_delay: Default::default(),
-            noindex_detected: Default::default(),
-            nofollow_detected: Default::default(),
-            x_robots_tag: Default::default(),
-            is_pdf: Default::default(),
-            was_skipped: Default::default(),
-            detected_charset: Default::default(),
-            main_content_only: Default::default(),
-            auth_header_sent: Default::default(),
-            response_meta: Default::default(),
-            assets: Default::default(),
-            js_render_hint: Default::default(),
-            browser_used: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            screenshot: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsCrawlPageResult {
     pub url: Option<String>,
@@ -393,34 +245,7 @@ pub struct JsCrawlPageResult {
     pub downloaded_document: Option<JsDownloadedDocument>,
 }
 
-impl Default for JsCrawlPageResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            normalized_url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            depth: Default::default(),
-            stayed_on_domain: Default::default(),
-            was_skipped: Default::default(),
-            is_pdf: Default::default(),
-            detected_charset: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsCrawlResult {
     pub pages: Option<Vec<JsCrawlPageResult>>,
@@ -436,21 +261,7 @@ pub struct JsCrawlResult {
     pub normalized_urls: Option<Vec<String>>,
 }
 
-impl Default for JsCrawlResult {
-    fn default() -> Self {
-        Self {
-            pages: Default::default(),
-            final_url: Default::default(),
-            redirect_count: Default::default(),
-            was_skipped: Default::default(),
-            error: Default::default(),
-            cookies: Default::default(),
-            normalized_urls: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsSitemapUrl {
     pub url: Option<String>,
@@ -459,32 +270,13 @@ pub struct JsSitemapUrl {
     pub priority: Option<String>,
 }
 
-impl Default for JsSitemapUrl {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            lastmod: Default::default(),
-            changefreq: Default::default(),
-            priority: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsMapResult {
     pub urls: Option<Vec<JsSitemapUrl>>,
 }
 
-impl Default for JsMapResult {
-    fn default() -> Self {
-        Self {
-            urls: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsMarkdownResult {
     pub content: Option<String>,
@@ -497,20 +289,7 @@ pub struct JsMarkdownResult {
     pub fit_content: Option<String>,
 }
 
-impl Default for JsMarkdownResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            document_structure: Default::default(),
-            tables: Default::default(),
-            warnings: Default::default(),
-            citations: Default::default(),
-            fit_content: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsCachedPage {
     pub url: Option<String>,
@@ -526,21 +305,7 @@ pub struct JsCachedPage {
     pub cached_at: Option<i64>,
 }
 
-impl Default for JsCachedPage {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            body: Default::default(),
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cached_at: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsLinkInfo {
     pub url: Option<String>,
@@ -551,19 +316,7 @@ pub struct JsLinkInfo {
     pub nofollow: Option<bool>,
 }
 
-impl Default for JsLinkInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            text: Default::default(),
-            link_type: Default::default(),
-            rel: Default::default(),
-            nofollow: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsImageInfo {
     pub url: Option<String>,
@@ -573,19 +326,7 @@ pub struct JsImageInfo {
     pub source: Option<JsImageSource>,
 }
 
-impl Default for JsImageInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            alt: Default::default(),
-            width: Default::default(),
-            height: Default::default(),
-            source: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsFeedInfo {
     pub url: Option<String>,
@@ -594,17 +335,7 @@ pub struct JsFeedInfo {
     pub feed_type: Option<JsFeedType>,
 }
 
-impl Default for JsFeedInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            title: Default::default(),
-            feed_type: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsJsonLdEntry {
     #[napi(js_name = "schemaType")]
@@ -613,17 +344,7 @@ pub struct JsJsonLdEntry {
     pub raw: Option<String>,
 }
 
-impl Default for JsJsonLdEntry {
-    fn default() -> Self {
-        Self {
-            schema_type: Default::default(),
-            name: Default::default(),
-            raw: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsCookieInfo {
     pub name: Option<String>,
@@ -632,18 +353,7 @@ pub struct JsCookieInfo {
     pub path: Option<String>,
 }
 
-impl Default for JsCookieInfo {
-    fn default() -> Self {
-        Self {
-            name: Default::default(),
-            value: Default::default(),
-            domain: Default::default(),
-            path: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsDownloadedAsset {
     pub url: Option<String>,
@@ -658,20 +368,7 @@ pub struct JsDownloadedAsset {
     pub html_tag: Option<String>,
 }
 
-impl Default for JsDownloadedAsset {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            content_hash: Default::default(),
-            mime_type: Default::default(),
-            size: Default::default(),
-            asset_category: Default::default(),
-            html_tag: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsArticleMetadata {
     #[napi(js_name = "publishedTime")]
@@ -683,35 +380,14 @@ pub struct JsArticleMetadata {
     pub tags: Option<Vec<String>>,
 }
 
-impl Default for JsArticleMetadata {
-    fn default() -> Self {
-        Self {
-            published_time: Default::default(),
-            modified_time: Default::default(),
-            author: Default::default(),
-            section: Default::default(),
-            tags: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsHreflangEntry {
     pub lang: Option<String>,
     pub url: Option<String>,
 }
 
-impl Default for JsHreflangEntry {
-    fn default() -> Self {
-        Self {
-            lang: Default::default(),
-            url: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsFaviconInfo {
     pub url: Option<String>,
@@ -721,34 +397,14 @@ pub struct JsFaviconInfo {
     pub mime_type: Option<String>,
 }
 
-impl Default for JsFaviconInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            rel: Default::default(),
-            sizes: Default::default(),
-            mime_type: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsHeadingInfo {
     pub level: Option<u8>,
     pub text: Option<String>,
 }
 
-impl Default for JsHeadingInfo {
-    fn default() -> Self {
-        Self {
-            level: Default::default(),
-            text: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsResponseMeta {
     pub etag: Option<String>,
@@ -765,21 +421,7 @@ pub struct JsResponseMeta {
     pub content_encoding: Option<String>,
 }
 
-impl Default for JsResponseMeta {
-    fn default() -> Self {
-        Self {
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cache_control: Default::default(),
-            server: Default::default(),
-            x_powered_by: Default::default(),
-            content_language: Default::default(),
-            content_encoding: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsPageMetadata {
     pub title: Option<String>,
@@ -859,88 +501,19 @@ pub struct JsPageMetadata {
     pub word_count: Option<i64>,
 }
 
-impl Default for JsPageMetadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            description: Default::default(),
-            canonical_url: Default::default(),
-            keywords: Default::default(),
-            author: Default::default(),
-            viewport: Default::default(),
-            theme_color: Default::default(),
-            generator: Default::default(),
-            robots: Default::default(),
-            html_lang: Default::default(),
-            html_dir: Default::default(),
-            og_title: Default::default(),
-            og_type: Default::default(),
-            og_image: Default::default(),
-            og_description: Default::default(),
-            og_url: Default::default(),
-            og_site_name: Default::default(),
-            og_locale: Default::default(),
-            og_video: Default::default(),
-            og_audio: Default::default(),
-            og_locale_alternates: Default::default(),
-            twitter_card: Default::default(),
-            twitter_title: Default::default(),
-            twitter_description: Default::default(),
-            twitter_image: Default::default(),
-            twitter_site: Default::default(),
-            twitter_creator: Default::default(),
-            dc_title: Default::default(),
-            dc_creator: Default::default(),
-            dc_subject: Default::default(),
-            dc_description: Default::default(),
-            dc_publisher: Default::default(),
-            dc_date: Default::default(),
-            dc_type: Default::default(),
-            dc_format: Default::default(),
-            dc_identifier: Default::default(),
-            dc_language: Default::default(),
-            dc_rights: Default::default(),
-            article: Default::default(),
-            hreflangs: Default::default(),
-            favicons: Default::default(),
-            headings: Default::default(),
-            word_count: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsCitationResult {
     pub content: Option<String>,
     pub references: Option<Vec<JsCitationReference>>,
 }
 
-impl Default for JsCitationResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            references: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsCitationReference {
     pub index: Option<i64>,
     pub url: Option<String>,
     pub text: Option<String>,
-}
-
-impl Default for JsCitationReference {
-    fn default() -> Self {
-        Self {
-            index: Default::default(),
-            url: Default::default(),
-            text: Default::default(),
-        }
-    }
 }
 
 #[derive(Clone)]
@@ -952,7 +525,7 @@ pub struct JsCrawlEngineHandle {
 #[napi]
 impl JsCrawlEngineHandle {}
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsBatchScrapeResult {
     pub url: Option<String>,
@@ -960,32 +533,12 @@ pub struct JsBatchScrapeResult {
     pub error: Option<String>,
 }
 
-impl Default for JsBatchScrapeResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsBatchCrawlResult {
     pub url: Option<String>,
     pub result: Option<JsCrawlResult>,
     pub error: Option<String>,
-}
-
-impl Default for JsBatchCrawlResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
 }
 
 #[napi(string_enum)]
@@ -996,6 +549,7 @@ pub enum JsBrowserMode {
     Never,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsBrowserMode {
     fn default() -> Self {
         Self::Auto
@@ -1010,6 +564,7 @@ pub enum JsBrowserWait {
     Fixed,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsBrowserWait {
     fn default() -> Self {
         Self::NetworkIdle
@@ -1024,6 +579,7 @@ pub enum JsAuthConfig {
     Header,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsAuthConfig {
     fn default() -> Self {
         Self::Basic
@@ -1039,6 +595,7 @@ pub enum JsLinkType {
     Document,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsLinkType {
     fn default() -> Self {
         Self::Internal
@@ -1054,6 +611,7 @@ pub enum JsImageSource {
     TwitterImage,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsImageSource {
     fn default() -> Self {
         Self::Img
@@ -1068,6 +626,7 @@ pub enum JsFeedType {
     JsonFeed,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsFeedType {
     fn default() -> Self {
         Self::Rss
@@ -1089,6 +648,7 @@ pub enum JsAssetCategory {
     Other,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsAssetCategory {
     fn default() -> Self {
         Self::Document
@@ -1103,6 +663,7 @@ pub enum JsCrawlEvent {
     Complete,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsCrawlEvent {
     fn default() -> Self {
         Self::Page
@@ -1191,6 +752,7 @@ impl From<kreuzcrawl::BrowserConfig> for JsBrowserConfig {
     }
 }
 
+#[allow(clippy::needless_update)]
 impl From<JsCrawlConfig> for kreuzcrawl::CrawlConfig {
     fn from(val: JsCrawlConfig) -> Self {
         Self {
@@ -1251,7 +813,7 @@ impl From<kreuzcrawl::CrawlConfig> for JsCrawlConfig {
             allow_subdomains: Some(val.allow_subdomains),
             include_paths: Some(val.include_paths),
             exclude_paths: Some(val.exclude_paths),
-            custom_headers: Some(val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect()),
+            custom_headers: Some(val.custom_headers.into_iter().collect()),
             request_timeout: Some(val.request_timeout.as_secs() as i64),
             max_redirects: Some(val.max_redirects as i64),
             retry_count: Some(val.retry_count as i64),
@@ -1301,7 +863,7 @@ impl From<kreuzcrawl::DownloadedDocument> for JsDownloadedDocument {
             mime_type: Some(val.mime_type.to_string()),
             content: Some(val.content.to_vec()),
             size: Some(val.size as i64),
-            filename: val.filename.as_ref().map(|v| v.to_string()),
+            filename: val.filename.as_ref().map(ToString::to_string),
             content_hash: Some(val.content_hash.to_string()),
             headers: Some(
                 val.headers
@@ -1356,7 +918,7 @@ impl From<kreuzcrawl::ActionResult> for JsActionResult {
             action_index: Some(val.action_index as i64),
             action_type: Some(val.action_type.to_string()),
             success: Some(val.success),
-            data: val.data.as_ref().map(|v| v.to_string()),
+            data: val.data.as_ref().map(ToString::to_string),
             error: val.error,
         }
     }
@@ -1439,7 +1001,7 @@ impl From<kreuzcrawl::ScrapeResult> for JsScrapeResult {
             js_render_hint: Some(val.js_render_hint),
             browser_used: Some(val.browser_used),
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             screenshot: val.screenshot.map(|v| v.to_vec()),
             downloaded_document: val.downloaded_document.map(Into::into),
@@ -1506,7 +1068,7 @@ impl From<kreuzcrawl::CrawlPageResult> for JsCrawlPageResult {
             is_pdf: Some(val.is_pdf),
             detected_charset: val.detected_charset,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             downloaded_document: val.downloaded_document.map(Into::into),
         }
@@ -1611,8 +1173,8 @@ impl From<kreuzcrawl::MarkdownResult> for JsMarkdownResult {
     fn from(val: kreuzcrawl::MarkdownResult) -> Self {
         Self {
             content: Some(val.content),
-            document_structure: val.document_structure.as_ref().map(|v| v.to_string()),
-            tables: Some(val.tables.iter().map(|v| v.to_string()).collect()),
+            document_structure: val.document_structure.as_ref().map(ToString::to_string),
+            tables: Some(val.tables.iter().map(ToString::to_string).collect()),
             warnings: Some(val.warnings),
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,

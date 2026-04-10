@@ -9,7 +9,7 @@ static WORKER_RUNTIME: std::sync::LazyLock<tokio::runtime::Runtime> = std::sync:
         .expect("Failed to create Tokio runtime")
 });
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct ExtractionMeta {
     /// Estimated cost of the LLM call in USD.
@@ -22,18 +22,6 @@ pub struct ExtractionMeta {
     pub model: Option<String>,
     /// Number of content chunks sent to the LLM.
     pub chunks_processed: i64,
-}
-
-impl Default for ExtractionMeta {
-    fn default() -> Self {
-        Self {
-            cost: Default::default(),
-            prompt_tokens: Default::default(),
-            completion_tokens: Default::default(),
-            model: Default::default(),
-            chunks_processed: Default::default(),
-        }
-    }
 }
 
 #[php_impl]
@@ -50,12 +38,12 @@ impl ExtractionMeta {
             prompt_tokens,
             completion_tokens,
             model,
-            chunks_processed: chunks_processed.unwrap_or(0),
+            chunks_processed: chunks_processed.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct ProxyConfig {
     /// Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").
@@ -66,28 +54,18 @@ pub struct ProxyConfig {
     pub password: Option<String>,
 }
 
-impl Default for ProxyConfig {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            username: Default::default(),
-            password: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl ProxyConfig {
     pub fn __construct(url: Option<String>, username: Option<String>, password: Option<String>) -> Self {
         Self {
-            url: url.unwrap_or(String::new()),
+            url: url.unwrap_or_default(),
             username,
             password,
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct BrowserConfig {
     /// When to use the headless browser fallback.
@@ -104,26 +82,12 @@ pub struct BrowserConfig {
     pub extra_wait: Option<i64>,
 }
 
-impl Default for BrowserConfig {
-    fn default() -> Self {
-        Self {
-            mode: Default::default(),
-            endpoint: Default::default(),
-            timeout: Default::default(),
-            wait: Default::default(),
-            wait_selector: Default::default(),
-            extra_wait: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl BrowserConfig {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for BrowserConfig requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for BrowserConfig requires complex params".to_string(),
+        ))
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -132,7 +96,7 @@ impl BrowserConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 #[allow(clippy::similar_names)]
 pub struct CrawlConfig {
@@ -206,54 +170,12 @@ pub struct CrawlConfig {
     pub save_browser_profile: bool,
 }
 
-impl Default for CrawlConfig {
-    fn default() -> Self {
-        Self {
-            max_depth: Default::default(),
-            max_pages: Default::default(),
-            max_concurrent: Default::default(),
-            respect_robots_txt: Default::default(),
-            user_agent: Default::default(),
-            stay_on_domain: Default::default(),
-            allow_subdomains: Default::default(),
-            include_paths: Default::default(),
-            exclude_paths: Default::default(),
-            custom_headers: Default::default(),
-            request_timeout: Default::default(),
-            max_redirects: Default::default(),
-            retry_count: Default::default(),
-            retry_codes: Default::default(),
-            cookies_enabled: Default::default(),
-            auth: Default::default(),
-            max_body_size: Default::default(),
-            main_content_only: Default::default(),
-            remove_tags: Default::default(),
-            map_limit: Default::default(),
-            map_search: Default::default(),
-            download_assets: Default::default(),
-            asset_types: Default::default(),
-            max_asset_size: Default::default(),
-            browser: Default::default(),
-            proxy: Default::default(),
-            user_agents: Default::default(),
-            capture_screenshot: Default::default(),
-            download_documents: Default::default(),
-            document_max_size: Default::default(),
-            document_mime_types: Default::default(),
-            warc_output: Default::default(),
-            browser_profile: Default::default(),
-            save_browser_profile: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl CrawlConfig {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for CrawlConfig requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for CrawlConfig requires complex params".to_string(),
+        ))
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -262,7 +184,7 @@ impl CrawlConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct DownloadedDocument {
     /// The URL the document was fetched from.
@@ -281,20 +203,6 @@ pub struct DownloadedDocument {
     pub headers: HashMap<String, String>,
 }
 
-impl Default for DownloadedDocument {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            mime_type: Default::default(),
-            content: Default::default(),
-            size: Default::default(),
-            filename: Default::default(),
-            content_hash: Default::default(),
-            headers: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl DownloadedDocument {
     pub fn __construct(
@@ -307,18 +215,18 @@ impl DownloadedDocument {
         headers: Option<HashMap<String, String>>,
     ) -> Self {
         Self {
-            url: url.unwrap_or(String::new()),
-            mime_type: mime_type.unwrap_or(String::new()),
-            content: content.unwrap_or(Default::default()),
-            size: size.unwrap_or(0),
+            url: url.unwrap_or_default(),
+            mime_type: mime_type.unwrap_or_default(),
+            content: content.unwrap_or_default(),
+            size: size.unwrap_or_default(),
             filename,
-            content_hash: content_hash.unwrap_or(String::new()),
-            headers: headers.unwrap_or(Default::default()),
+            content_hash: content_hash.unwrap_or_default(),
+            headers: headers.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct InteractionResult {
     /// Results from each executed action.
@@ -331,28 +239,16 @@ pub struct InteractionResult {
     pub screenshot: Option<Vec<u8>>,
 }
 
-impl Default for InteractionResult {
-    fn default() -> Self {
-        Self {
-            action_results: Default::default(),
-            final_html: Default::default(),
-            final_url: Default::default(),
-            screenshot: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl InteractionResult {
     pub fn __construct() -> PhpResult<Self> {
         Err(PhpException::default(
             "Not implemented: constructor for InteractionResult requires complex params".to_string(),
-        )
-        .into())
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct ActionResult {
     /// Zero-based index of the action in the sequence.
@@ -367,18 +263,6 @@ pub struct ActionResult {
     pub error: Option<String>,
 }
 
-impl Default for ActionResult {
-    fn default() -> Self {
-        Self {
-            action_index: Default::default(),
-            action_type: Default::default(),
-            success: Default::default(),
-            data: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl ActionResult {
     pub fn __construct(
@@ -389,16 +273,16 @@ impl ActionResult {
         error: Option<String>,
     ) -> Self {
         Self {
-            action_index: action_index.unwrap_or(0),
-            action_type: action_type.unwrap_or(String::new()),
-            success: success.unwrap_or(false),
+            action_index: action_index.unwrap_or_default(),
+            action_type: action_type.unwrap_or_default(),
+            success: success.unwrap_or_default(),
             data,
             error,
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
@@ -459,52 +343,16 @@ pub struct ScrapeResult {
     pub downloaded_document: Option<DownloadedDocument>,
 }
 
-impl Default for ScrapeResult {
-    fn default() -> Self {
-        Self {
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            is_allowed: Default::default(),
-            crawl_delay: Default::default(),
-            noindex_detected: Default::default(),
-            nofollow_detected: Default::default(),
-            x_robots_tag: Default::default(),
-            is_pdf: Default::default(),
-            was_skipped: Default::default(),
-            detected_charset: Default::default(),
-            main_content_only: Default::default(),
-            auth_header_sent: Default::default(),
-            response_meta: Default::default(),
-            assets: Default::default(),
-            js_render_hint: Default::default(),
-            browser_used: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            screenshot: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl ScrapeResult {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for ScrapeResult requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for ScrapeResult requires complex params".to_string(),
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct CrawlPageResult {
     /// The original URL of the page.
@@ -549,44 +397,16 @@ pub struct CrawlPageResult {
     pub downloaded_document: Option<DownloadedDocument>,
 }
 
-impl Default for CrawlPageResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            normalized_url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            depth: Default::default(),
-            stayed_on_domain: Default::default(),
-            was_skipped: Default::default(),
-            is_pdf: Default::default(),
-            detected_charset: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl CrawlPageResult {
     pub fn __construct() -> PhpResult<Self> {
         Err(PhpException::default(
             "Not implemented: constructor for CrawlPageResult requires complex params".to_string(),
-        )
-        .into())
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct CrawlResult {
     /// The list of crawled pages.
@@ -605,31 +425,16 @@ pub struct CrawlResult {
     pub normalized_urls: Vec<String>,
 }
 
-impl Default for CrawlResult {
-    fn default() -> Self {
-        Self {
-            pages: Default::default(),
-            final_url: Default::default(),
-            redirect_count: Default::default(),
-            was_skipped: Default::default(),
-            error: Default::default(),
-            cookies: Default::default(),
-            normalized_urls: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl CrawlResult {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for CrawlResult requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for CrawlResult requires complex params".to_string(),
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct SitemapUrl {
     /// The URL.
@@ -642,17 +447,6 @@ pub struct SitemapUrl {
     pub priority: Option<String>,
 }
 
-impl Default for SitemapUrl {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            lastmod: Default::default(),
-            changefreq: Default::default(),
-            priority: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl SitemapUrl {
     pub fn __construct(
@@ -662,7 +456,7 @@ impl SitemapUrl {
         priority: Option<String>,
     ) -> Self {
         Self {
-            url: url.unwrap_or(String::new()),
+            url: url.unwrap_or_default(),
             lastmod,
             changefreq,
             priority,
@@ -670,32 +464,23 @@ impl SitemapUrl {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct MapResult {
     /// The list of discovered URLs.
     pub urls: Vec<SitemapUrl>,
 }
 
-impl Default for MapResult {
-    fn default() -> Self {
-        Self {
-            urls: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl MapResult {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for MapResult requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for MapResult requires complex params".to_string(),
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct MarkdownResult {
     /// Converted markdown text.
@@ -712,30 +497,16 @@ pub struct MarkdownResult {
     pub fit_content: Option<String>,
 }
 
-impl Default for MarkdownResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            document_structure: Default::default(),
-            tables: Default::default(),
-            warnings: Default::default(),
-            citations: Default::default(),
-            fit_content: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl MarkdownResult {
     pub fn __construct() -> PhpResult<Self> {
         Err(PhpException::default(
             "Not implemented: constructor for MarkdownResult requires complex params".to_string(),
-        )
-        .into())
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct CachedPage {
     pub url: String,
@@ -745,20 +516,6 @@ pub struct CachedPage {
     pub etag: Option<String>,
     pub last_modified: Option<String>,
     pub cached_at: i64,
-}
-
-impl Default for CachedPage {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            body: Default::default(),
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cached_at: Default::default(),
-        }
-    }
 }
 
 #[php_impl]
@@ -773,18 +530,18 @@ impl CachedPage {
         cached_at: Option<i64>,
     ) -> Self {
         Self {
-            url: url.unwrap_or(String::new()),
-            status_code: status_code.unwrap_or(0),
-            content_type: content_type.unwrap_or(String::new()),
-            body: body.unwrap_or(String::new()),
+            url: url.unwrap_or_default(),
+            status_code: status_code.unwrap_or_default(),
+            content_type: content_type.unwrap_or_default(),
+            body: body.unwrap_or_default(),
             etag,
             last_modified,
-            cached_at: cached_at.unwrap_or(0),
+            cached_at: cached_at.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 #[allow(clippy::similar_names)]
 pub struct LinkInfo {
@@ -800,29 +557,16 @@ pub struct LinkInfo {
     pub nofollow: bool,
 }
 
-impl Default for LinkInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            text: Default::default(),
-            link_type: Default::default(),
-            rel: Default::default(),
-            nofollow: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl LinkInfo {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for LinkInfo requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for LinkInfo requires complex params".to_string(),
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct ImageInfo {
     /// The image URL.
@@ -837,29 +581,16 @@ pub struct ImageInfo {
     pub source: String,
 }
 
-impl Default for ImageInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            alt: Default::default(),
-            width: Default::default(),
-            height: Default::default(),
-            source: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl ImageInfo {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for ImageInfo requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for ImageInfo requires complex params".to_string(),
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct FeedInfo {
     /// The feed URL.
@@ -870,27 +601,16 @@ pub struct FeedInfo {
     pub feed_type: String,
 }
 
-impl Default for FeedInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            title: Default::default(),
-            feed_type: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl FeedInfo {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for FeedInfo requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for FeedInfo requires complex params".to_string(),
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct JsonLdEntry {
     /// The `@type` value from the JSON-LD object.
@@ -901,28 +621,18 @@ pub struct JsonLdEntry {
     pub raw: String,
 }
 
-impl Default for JsonLdEntry {
-    fn default() -> Self {
-        Self {
-            schema_type: Default::default(),
-            name: Default::default(),
-            raw: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl JsonLdEntry {
     pub fn __construct(schema_type: Option<String>, name: Option<String>, raw: Option<String>) -> Self {
         Self {
-            schema_type: schema_type.unwrap_or(String::new()),
+            schema_type: schema_type.unwrap_or_default(),
             name,
-            raw: raw.unwrap_or(String::new()),
+            raw: raw.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct CookieInfo {
     /// The cookie name.
@@ -935,17 +645,6 @@ pub struct CookieInfo {
     pub path: Option<String>,
 }
 
-impl Default for CookieInfo {
-    fn default() -> Self {
-        Self {
-            name: Default::default(),
-            value: Default::default(),
-            domain: Default::default(),
-            path: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl CookieInfo {
     pub fn __construct(
@@ -955,15 +654,15 @@ impl CookieInfo {
         path: Option<String>,
     ) -> Self {
         Self {
-            name: name.unwrap_or(String::new()),
-            value: value.unwrap_or(String::new()),
+            name: name.unwrap_or_default(),
+            value: value.unwrap_or_default(),
             domain,
             path,
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct DownloadedAsset {
     /// The original URL of the asset.
@@ -980,30 +679,16 @@ pub struct DownloadedAsset {
     pub html_tag: Option<String>,
 }
 
-impl Default for DownloadedAsset {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            content_hash: Default::default(),
-            mime_type: Default::default(),
-            size: Default::default(),
-            asset_category: Default::default(),
-            html_tag: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl DownloadedAsset {
     pub fn __construct() -> PhpResult<Self> {
         Err(PhpException::default(
             "Not implemented: constructor for DownloadedAsset requires complex params".to_string(),
-        )
-        .into())
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct ArticleMetadata {
     /// The article publication time.
@@ -1016,18 +701,6 @@ pub struct ArticleMetadata {
     pub section: Option<String>,
     /// The article tags.
     pub tags: Vec<String>,
-}
-
-impl Default for ArticleMetadata {
-    fn default() -> Self {
-        Self {
-            published_time: Default::default(),
-            modified_time: Default::default(),
-            author: Default::default(),
-            section: Default::default(),
-            tags: Default::default(),
-        }
-    }
 }
 
 #[php_impl]
@@ -1044,12 +717,12 @@ impl ArticleMetadata {
             modified_time,
             author,
             section,
-            tags: tags.unwrap_or(vec![]),
+            tags: tags.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct HreflangEntry {
     /// The language code (e.g., "en", "fr", "x-default").
@@ -1058,26 +731,17 @@ pub struct HreflangEntry {
     pub url: String,
 }
 
-impl Default for HreflangEntry {
-    fn default() -> Self {
-        Self {
-            lang: Default::default(),
-            url: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl HreflangEntry {
     pub fn __construct(lang: Option<String>, url: Option<String>) -> Self {
         Self {
-            lang: lang.unwrap_or(String::new()),
-            url: url.unwrap_or(String::new()),
+            lang: lang.unwrap_or_default(),
+            url: url.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 #[allow(clippy::similar_names)]
 pub struct FaviconInfo {
@@ -1091,17 +755,6 @@ pub struct FaviconInfo {
     pub mime_type: Option<String>,
 }
 
-impl Default for FaviconInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            rel: Default::default(),
-            sizes: Default::default(),
-            mime_type: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl FaviconInfo {
     pub fn __construct(
@@ -1111,15 +764,15 @@ impl FaviconInfo {
         mime_type: Option<String>,
     ) -> Self {
         Self {
-            url: url.unwrap_or(String::new()),
-            rel: rel.unwrap_or(String::new()),
+            url: url.unwrap_or_default(),
+            rel: rel.unwrap_or_default(),
             sizes,
             mime_type,
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct HeadingInfo {
     /// The heading level (1-6).
@@ -1128,26 +781,17 @@ pub struct HeadingInfo {
     pub text: String,
 }
 
-impl Default for HeadingInfo {
-    fn default() -> Self {
-        Self {
-            level: Default::default(),
-            text: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl HeadingInfo {
     pub fn __construct(level: Option<u8>, text: Option<String>) -> Self {
         Self {
-            level: level.unwrap_or(0),
-            text: text.unwrap_or(String::new()),
+            level: level.unwrap_or_default(),
+            text: text.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct ResponseMeta {
     /// The ETag header value.
@@ -1164,20 +808,6 @@ pub struct ResponseMeta {
     pub content_language: Option<String>,
     /// The Content-Encoding header value.
     pub content_encoding: Option<String>,
-}
-
-impl Default for ResponseMeta {
-    fn default() -> Self {
-        Self {
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cache_control: Default::default(),
-            server: Default::default(),
-            x_powered_by: Default::default(),
-            content_language: Default::default(),
-            content_encoding: Default::default(),
-        }
-    }
 }
 
 #[php_impl]
@@ -1203,7 +833,7 @@ impl ResponseMeta {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 #[allow(clippy::similar_names)]
 pub struct PageMetadata {
@@ -1295,67 +925,16 @@ pub struct PageMetadata {
     pub word_count: Option<i64>,
 }
 
-impl Default for PageMetadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            description: Default::default(),
-            canonical_url: Default::default(),
-            keywords: Default::default(),
-            author: Default::default(),
-            viewport: Default::default(),
-            theme_color: Default::default(),
-            generator: Default::default(),
-            robots: Default::default(),
-            html_lang: Default::default(),
-            html_dir: Default::default(),
-            og_title: Default::default(),
-            og_type: Default::default(),
-            og_image: Default::default(),
-            og_description: Default::default(),
-            og_url: Default::default(),
-            og_site_name: Default::default(),
-            og_locale: Default::default(),
-            og_video: Default::default(),
-            og_audio: Default::default(),
-            og_locale_alternates: Default::default(),
-            twitter_card: Default::default(),
-            twitter_title: Default::default(),
-            twitter_description: Default::default(),
-            twitter_image: Default::default(),
-            twitter_site: Default::default(),
-            twitter_creator: Default::default(),
-            dc_title: Default::default(),
-            dc_creator: Default::default(),
-            dc_subject: Default::default(),
-            dc_description: Default::default(),
-            dc_publisher: Default::default(),
-            dc_date: Default::default(),
-            dc_type: Default::default(),
-            dc_format: Default::default(),
-            dc_identifier: Default::default(),
-            dc_language: Default::default(),
-            dc_rights: Default::default(),
-            article: Default::default(),
-            hreflangs: Default::default(),
-            favicons: Default::default(),
-            headings: Default::default(),
-            word_count: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl PageMetadata {
     pub fn __construct() -> PhpResult<Self> {
-        Err(
-            PhpException::default("Not implemented: constructor for PageMetadata requires complex params".to_string())
-                .into(),
-        )
+        Err(PhpException::default(
+            "Not implemented: constructor for PageMetadata requires complex params".to_string(),
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct CitationResult {
     /// Markdown with links replaced by numbered citations.
@@ -1364,26 +943,16 @@ pub struct CitationResult {
     pub references: Vec<CitationReference>,
 }
 
-impl Default for CitationResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            references: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl CitationResult {
     pub fn __construct() -> PhpResult<Self> {
         Err(PhpException::default(
             "Not implemented: constructor for CitationResult requires complex params".to_string(),
-        )
-        .into())
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct CitationReference {
     pub index: i64,
@@ -1391,23 +960,13 @@ pub struct CitationReference {
     pub text: String,
 }
 
-impl Default for CitationReference {
-    fn default() -> Self {
-        Self {
-            index: Default::default(),
-            url: Default::default(),
-            text: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl CitationReference {
     pub fn __construct(index: Option<i64>, url: Option<String>, text: Option<String>) -> Self {
         Self {
-            index: index.unwrap_or(0),
-            url: url.unwrap_or(String::new()),
-            text: text.unwrap_or(String::new()),
+            index: index.unwrap_or_default(),
+            url: url.unwrap_or_default(),
+            text: text.unwrap_or_default(),
         }
     }
 }
@@ -1421,7 +980,7 @@ pub struct CrawlEngineHandle {
 #[php_impl]
 impl CrawlEngineHandle {}
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct BatchScrapeResult {
     /// The URL that was scraped.
@@ -1432,27 +991,16 @@ pub struct BatchScrapeResult {
     pub error: Option<String>,
 }
 
-impl Default for BatchScrapeResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl BatchScrapeResult {
     pub fn __construct() -> PhpResult<Self> {
         Err(PhpException::default(
             "Not implemented: constructor for BatchScrapeResult requires complex params".to_string(),
-        )
-        .into())
+        ))
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[php_class]
 pub struct BatchCrawlResult {
     /// The seed URL that was crawled.
@@ -1463,23 +1011,12 @@ pub struct BatchCrawlResult {
     pub error: Option<String>,
 }
 
-impl Default for BatchCrawlResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
 #[php_impl]
 impl BatchCrawlResult {
     pub fn __construct() -> PhpResult<Self> {
         Err(PhpException::default(
             "Not implemented: constructor for BatchCrawlResult requires complex params".to_string(),
-        )
-        .into())
+        ))
     }
 }
 
@@ -1676,7 +1213,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: std::time::Duration::from_secs(val.request_timeout as u64),
             max_redirects: val.max_redirects as usize,
             retry_count: val.retry_count as usize,
@@ -1749,7 +1286,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: val.request_timeout.as_secs() as i64,
             max_redirects: val.max_redirects as i64,
             retry_count: val.retry_count as i64,
@@ -1799,7 +1336,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
             mime_type: val.mime_type.to_string(),
             content: val.content.to_vec(),
             size: val.size as i64,
-            filename: val.filename.as_ref().map(|v| v.to_string()),
+            filename: val.filename.as_ref().map(ToString::to_string),
             content_hash: val.content_hash.to_string(),
             headers: val
                 .headers
@@ -1850,7 +1387,7 @@ impl From<kreuzcrawl::ActionResult> for ActionResult {
             action_index: val.action_index as i64,
             action_type: val.action_type.to_string(),
             success: val.success,
-            data: val.data.as_ref().map(|v| v.to_string()),
+            data: val.data.as_ref().map(ToString::to_string),
             error: val.error,
         }
     }
@@ -1918,7 +1455,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             js_render_hint: val.js_render_hint,
             browser_used: val.browser_used,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             screenshot: val.screenshot.map(|v| v.to_vec()),
             downloaded_document: val.downloaded_document.map(Into::into),
@@ -1973,7 +1510,7 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
             is_pdf: val.is_pdf,
             detected_charset: val.detected_charset,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             downloaded_document: val.downloaded_document.map(Into::into),
         }
@@ -2067,8 +1604,8 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
     fn from(val: kreuzcrawl::MarkdownResult) -> Self {
         Self {
             content: val.content,
-            document_structure: val.document_structure.as_ref().map(|v| v.to_string()),
-            tables: val.tables.iter().map(|v| v.to_string()).collect(),
+            document_structure: val.document_structure.as_ref().map(ToString::to_string),
+            tables: val.tables.iter().map(ToString::to_string).collect(),
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,
