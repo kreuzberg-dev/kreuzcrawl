@@ -9,7 +9,6 @@ This script reads the version from Cargo.toml [workspace.package] and updates:
 - R DESCRIPTION file
 - Cargo.toml files with hardcoded versions (not using workspace)
 """
-# ruff: noqa: T201, TRY003
 
 import json
 import re

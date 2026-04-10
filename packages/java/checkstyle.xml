@@ -93,8 +93,5 @@
         <module name="UpperEll"/>
     </module>
 
-    <!-- Javadoc -->
-    <module name="JavadocPackage">
-        <property name="allowLegacy" value="true"/>
-    </module>
+    <!-- Javadoc disabled for auto-generated code -->
 </module>

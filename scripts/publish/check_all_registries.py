@@ -4,7 +4,6 @@
 Usage:
     python3 scripts/publish/check_all_registries.py <version>
 """
-# ruff: noqa: T201
 
 import importlib.util
 import os
@@ -23,7 +22,7 @@ if not CHECK_PY.exists():
 
 # Import check.py as a module
 spec = importlib.util.spec_from_file_location("check_registry", CHECK_PY)
-assert spec and spec.loader  # noqa: S101 - required for importlib
+assert spec and spec.loader
 check_mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(check_mod)
 
