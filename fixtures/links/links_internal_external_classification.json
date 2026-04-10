@@ -1,16 +1,40 @@
 {
 	"id": "links_internal_external_classification",
 	"description": "Correctly classifies internal vs external links by domain",
-	"tags": ["links"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/complex_links.html"
+	"tags": [
+		"links"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"links": {
-			"min_count": 5,
-			"has_type": ["internal", "external"]
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/complex_links.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "greater_than",
+			"field": "links.length",
+			"value": 4
+		},
+		{
+			"type": "contains_all",
+			"field": "links[].link_type",
+			"values": [
+				"internal",
+				"external"
+			]
 		}
-	}
+	]
 }

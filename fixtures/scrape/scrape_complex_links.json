@@ -1,17 +1,48 @@
 {
 	"id": "scrape_complex_links",
 	"description": "Classifies links by type: internal, external, anchor, document, image",
-	"tags": ["scrape", "links"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/complex_links.html"
+	"tags": [
+		"scrape",
+		"links"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"links": {
-			"min_count": 10,
-			"has_type": ["internal", "external", "anchor", "document"]
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/complex_links.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "greater_than",
+			"field": "links.length",
+			"value": 9
+		},
+		{
+			"type": "contains_all",
+			"field": "links[].link_type",
+			"values": [
+				"internal",
+				"external",
+				"anchor",
+				"document"
+			]
 		}
-	}
+	]
 }

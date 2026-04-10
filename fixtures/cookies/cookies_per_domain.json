@@ -1,35 +1,55 @@
 {
 	"id": "cookies_per_domain",
 	"description": "Isolates cookies per domain during crawl",
-	"tags": ["cookies", "isolation"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"method": "GET",
-			"status_code": 200,
-			"headers": {
-				"content-type": "text/html; charset=utf-8",
-				"set-cookie": "domain_cookie=value1; Path=/"
+	"tags": [
+		"cookies",
+		"isolation"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
+	},
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8",
+					"set-cookie": "domain_cookie=value1; Path=/"
+				},
+				"body_inline": "<html><body><a href=\"/local\">Local</a></body></html>"
 			},
-			"body_inline": "<html><body><a href=\"/local\">Local</a></body></html>"
+			{
+				"path": "/local",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Local Page</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 1,
+			"cookies_enabled": true,
+			"respect_robots_txt": false
+		}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "cookies.length",
+			"value": 1
 		},
 		{
-			"path": "/local",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Local Page</h1></body></html>"
+			"type": "contains",
+			"field": "cookies",
+			"value": "domain_cookie"
 		}
-	],
-	"config": {
-		"max_depth": 1,
-		"cookies_enabled": true,
-		"respect_robots_txt": false
-	},
-	"assertions": {
-		"cookies": {
-			"cookie_count": 1,
-			"has_cookie": "domain_cookie"
-		}
-	}
+	]
 }

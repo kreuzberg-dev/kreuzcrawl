@@ -1,17 +1,46 @@
 {
 	"id": "browser_detect_next_empty",
 	"description": "Detects Next.js page with __NEXT_DATA__ but no rendered content as needing JS rendering",
-	"tags": ["browser", "detection"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/spa_next_empty.html"
+	"tags": [
+		"browser",
+		"detection"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c",
+			"go",
+			"java",
+			"csharp"
+		],
+		"reason": "requires browser feature"
 	},
-	"assertions": {
-		"status_code": 200,
-		"browser": {
-			"js_render_hint": true,
-			"browser_used": false
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/spa_next_empty.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "browser.js_render_hint",
+			"value": true
+		},
+		{
+			"type": "equals",
+			"field": "browser.browser_used",
+			"value": false
 		}
-	}
+	]
 }

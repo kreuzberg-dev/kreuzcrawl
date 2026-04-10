@@ -1,35 +1,58 @@
 {
 	"id": "crawl_depth_one",
 	"description": "Follows links one level deep from start page",
-	"tags": ["crawl"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><a href=\"/page1\">Page 1</a><a href=\"/page2\">Page 2</a></body></html>"
-		},
-		{
-			"path": "/page1",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Page 1</h1><a href=\"/page3\">Page 3 (should not follow)</a></body></html>"
-		},
-		{
-			"path": "/page2",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Page 2</h1></body></html>"
-		}
+	"tags": [
+		"crawl"
 	],
-	"config": {
-		"max_depth": 1,
-		"respect_robots_txt": false
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"pages_crawled": 3,
-			"stayed_on_domain": true
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><a href=\"/page1\">Page 1</a><a href=\"/page2\">Page 2</a></body></html>"
+			},
+			{
+				"path": "/page1",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Page 1</h1><a href=\"/page3\">Page 3 (should not follow)</a></body></html>"
+			},
+			{
+				"path": "/page2",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Page 2</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 1,
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "pages.length",
+			"value": 3
+		},
+		{
+			"type": "equals",
+			"field": "stayed_on_domain",
+			"value": true
+		}
+	]
 }

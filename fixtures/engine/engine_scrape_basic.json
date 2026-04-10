@@ -1,28 +1,66 @@
 {
 	"id": "engine_scrape_basic",
 	"description": "CrawlEngine with defaults scrapes a page identically to the free function",
-	"tags": ["engine", "scrape"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_inline": "<html><head><title>Engine Test</title><meta name=\"description\" content=\"Testing the engine\"></head><body><h1>Hello Engine</h1><a href=\"/page2\">Link</a></body></html>"
+	"tags": [
+		"engine",
+		"scrape"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"engine_mode": true
-	},
-	"assertions": {
-		"status_code": 200,
-		"content_type": "text/html",
-		"metadata": {
-			"title": "Engine Test",
-			"description_contains": "Testing the engine"
-		},
-		"links": {
-			"min_count": 1
-		},
-		"headings": {
-			"h1_count": 1,
-			"h1_text": "Hello Engine"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><head><title>Engine Test</title><meta name=\"description\" content=\"Testing the engine\"></head><body><h1>Hello Engine</h1><a href=\"/page2\">Link</a></body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "content_type",
+			"value": "text/html"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.title",
+			"value": "Engine Test"
+		},
+		{
+			"type": "contains",
+			"field": "metadata.description_contains",
+			"value": "Testing the engine"
+		},
+		{
+			"type": "greater_than_or_equal",
+			"field": "links.min_count",
+			"value": 1
+		},
+		{
+			"type": "equals",
+			"field": "headings.h1_count",
+			"value": 1
+		},
+		{
+			"type": "equals",
+			"field": "headings.h1_text",
+			"value": "Hello Engine"
+		}
+	]
 }

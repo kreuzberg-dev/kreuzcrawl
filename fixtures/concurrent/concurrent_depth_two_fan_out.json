@@ -1,37 +1,59 @@
 {
 	"id": "concurrent_depth_two_fan_out",
 	"description": "Concurrent depth=2 crawl correctly fans out and deduplicates across levels",
-	"tags": ["concurrent", "depth"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>"
-		},
-		{
-			"path": "/a",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/c\">C</a><a href=\"/b\">B</a></body></html>"
-		},
-		{
-			"path": "/b",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/c\">C</a></body></html>"
-		},
-		{
-			"path": "/c",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Leaf</h1></body></html>"
-		}
+	"tags": [
+		"concurrent",
+		"depth"
 	],
-	"config": {
-		"engine_mode": true,
-		"max_depth": 2,
-		"max_concurrent": 3
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"pages_crawled": 4
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>"
+			},
+			{
+				"path": "/a",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/c\">C</a><a href=\"/b\">B</a></body></html>"
+			},
+			{
+				"path": "/b",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/c\">C</a></body></html>"
+			},
+			{
+				"path": "/c",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Leaf</h1></body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true,
+			"max_depth": 2,
+			"max_concurrent": 3
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "pages.length",
+			"value": 4
+		}
+	]
 }

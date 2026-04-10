@@ -1,17 +1,46 @@
 {
 	"id": "browser_detect_minimal_page",
 	"description": "Does NOT flag a short but real content page as needing JS rendering",
-	"tags": ["browser", "detection"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/spa_minimal_page.html"
+	"tags": [
+		"browser",
+		"detection"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c",
+			"go",
+			"java",
+			"csharp"
+		],
+		"reason": "requires browser feature"
 	},
-	"assertions": {
-		"status_code": 200,
-		"browser": {
-			"js_render_hint": false,
-			"browser_used": false
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/spa_minimal_page.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "browser.js_render_hint",
+			"value": false
+		},
+		{
+			"type": "equals",
+			"field": "browser.browser_used",
+			"value": false
 		}
-	}
+	]
 }

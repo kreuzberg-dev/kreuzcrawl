@@ -1,13 +1,32 @@
 {
 	"id": "scrape_js_heavy_spa",
 	"description": "Handles SPA page with JavaScript-only content (no server-rendered HTML)",
-	"tags": ["scrape", "javascript"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/js_heavy_spa.html"
+	"tags": [
+		"scrape",
+		"javascript"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"html_not_empty": true
-	}
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/js_heavy_spa.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "not_empty",
+			"field": "html"
+		}
+	]
 }

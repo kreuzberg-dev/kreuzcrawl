@@ -1,0 +1,156 @@
+import { describe, it, expect } from 'vitest';
+import { scrape } from '@kreuzberg/kreuzcrawl';
+
+describe('crawl', () => {
+  it('content_binary_skip: Skips image and video content types gracefully', async () => {
+    const result = await scrape();
+    expect(result.content.wasSkipped).toBe(true);
+  });
+
+  it('content_pdf_link_skip: Encounters PDF link and skips or marks as document type', async () => {
+    const result = await scrape();
+    expect(result.content.wasSkipped).toBe(true);
+  });
+
+  it('crawl_concurrent_depth: Concurrent crawl respects max_depth limit', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(3);
+    expect(result.stayedOnDomain).toBe(true);
+  });
+
+  it('crawl_concurrent_limit: Respects max concurrent requests limit during crawl', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(5);
+  });
+
+  it('crawl_concurrent_max_pages: Concurrent crawl respects max_pages budget', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBeLessThanOrEqual(3);
+  });
+
+  it('crawl_custom_headers: Sends custom headers on all crawl requests', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(2);
+  });
+
+  it('crawl_depth_one: Follows links one level deep from start page', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(3);
+    expect(result.stayedOnDomain).toBe(true);
+  });
+
+  it('crawl_depth_priority: Crawls in breadth-first order, processing depth-0 pages before depth-1', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(4);
+  });
+
+  it('crawl_depth_two: Crawls 3 levels deep (depth 0, 1, 2)', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(3);
+    expect(result.pages.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('crawl_depth_two_chain: Depth=2 crawl follows a chain of links across three levels', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(3);
+  });
+
+  it('crawl_double_slash_normalization: Normalizes double slashes in URL paths (//page to /page)', async () => {
+    const result = await scrape();
+    expect(result.uniqueUrls.length).toBe(2);
+  });
+
+  it('crawl_empty_page_no_links: Crawl completes when child page has no outgoing links', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(2);
+  });
+
+  it('crawl_exclude_path_pattern: Skips URLs matching the exclude path pattern', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(2);
+  });
+
+  it('crawl_external_links_ignored: External links are discovered but not followed when stay_on_domain is true', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(2);
+    expect(result.stayedOnDomain).toBe(true);
+  });
+
+  it('crawl_fragment_stripping: Strips #fragment from URLs for deduplication', async () => {
+    const result = await scrape();
+    expect(result.uniqueUrls.length).toBe(2);
+  });
+
+  it('crawl_include_path_pattern: Only follows URLs matching the include path pattern', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(2);
+  });
+
+  it('crawl_max_depth_zero: max_depth=0 crawls only the seed page with no link following', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(1);
+    expect(result.pages.length).toBeLessThanOrEqual(1);
+  });
+
+  it('crawl_max_pages: Stops crawling at page budget limit', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBeLessThanOrEqual(3);
+  });
+
+  it('crawl_mixed_content_types: Crawl handles links to non-HTML content types gracefully', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('crawl_multiple_redirects_in_traversal: Multiple linked pages with redirects are handled during crawl traversal', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('crawl_query_param_dedup: Deduplicates URLs with same query params in different order', async () => {
+    const result = await scrape();
+    expect(result.uniqueUrls.length).toBe(2);
+  });
+
+  it('crawl_redirect_in_traversal: Links that redirect are followed during crawl traversal', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('crawl_self_link_no_loop: Page linking to itself does not cause infinite crawl loop', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(2);
+  });
+
+  it('crawl_single_page_no_links: Crawling a page with no links returns only the seed page', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(1);
+  });
+
+  it('crawl_stay_on_domain: Does not follow external links when stay_on_domain is true', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(2);
+    expect(result.stayedOnDomain).toBe(true);
+  });
+
+  it('crawl_subdomain_exclusion: Stays on exact domain and skips subdomain links', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBe(2);
+    expect(result.stayedOnDomain).toBe(true);
+  });
+
+  it('crawl_subdomain_inclusion: Crawls subdomains when allow_subdomains is enabled', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('crawl_trailing_slash_dedup: Deduplicates /page and /page/ as the same URL', async () => {
+    const result = await scrape();
+    expect(result.uniqueUrls.length).toBe(2);
+  });
+
+  it('crawl_url_deduplication: Deduplicates URLs that differ only by fragment or query params', async () => {
+    const result = await scrape();
+    expect(result.pages.length).toBeLessThanOrEqual(2);
+  });
+});

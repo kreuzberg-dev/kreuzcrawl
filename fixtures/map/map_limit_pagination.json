@@ -1,20 +1,38 @@
 {
 	"id": "map_limit_pagination",
 	"description": "Limits map result count to specified maximum",
-	"tags": ["map", "pagination"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_inline": "<html><body><a href=\"/p1\">P1</a><a href=\"/p2\">P2</a><a href=\"/p3\">P3</a><a href=\"/p4\">P4</a><a href=\"/p5\">P5</a><a href=\"/p6\">P6</a><a href=\"/p7\">P7</a><a href=\"/p8\">P8</a><a href=\"/p9\">P9</a><a href=\"/p10\">P10</a></body></html>"
+	"tags": [
+		"map",
+		"pagination"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"max_depth": 0,
-		"respect_robots_txt": false,
-		"map_limit": 5
-	},
-	"assertions": {
-		"map": {
-			"max_urls": 5
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><a href=\"/p1\">P1</a><a href=\"/p2\">P2</a><a href=\"/p3\">P3</a><a href=\"/p4\">P4</a><a href=\"/p5\">P5</a><a href=\"/p6\">P6</a><a href=\"/p7\">P7</a><a href=\"/p8\">P8</a><a href=\"/p9\">P9</a><a href=\"/p10\">P10</a></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 0,
+			"respect_robots_txt": false,
+			"map_limit": 5
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "less_than_or_equal",
+			"field": "urls.length",
+			"value": 5
+		}
+	]
 }

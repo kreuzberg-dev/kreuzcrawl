@@ -1,36 +1,63 @@
 {
 	"id": "crawl_stream_events",
 	"description": "Crawl stream produces page and complete events",
-	"tags": ["stream"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><a href=\"/page1\">Page 1</a><a href=\"/page2\">Page 2</a></body></html>"
-		},
-		{
-			"path": "/page1",
-			"status_code": 200,
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 1</h1></body></html>"
-		},
-		{
-			"path": "/page2",
-			"status_code": 200,
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 2</h1></body></html>"
-		}
+	"tags": [
+		"stream"
 	],
-	"config": {
-		"max_depth": 1,
-		"respect_robots_txt": false
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"stream": {
-			"event_count_min": 4,
-			"has_page_event": true,
-			"has_complete_event": true
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><a href=\"/page1\">Page 1</a><a href=\"/page2\">Page 2</a></body></html>"
+			},
+			{
+				"path": "/page1",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 1</h1></body></html>"
+			},
+			{
+				"path": "/page2",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 2</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 1,
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "greater_than_or_equal",
+			"field": "stream.event_count_min",
+			"value": 4
+		},
+		{
+			"type": "equals",
+			"field": "stream.has_page_event",
+			"value": true
+		},
+		{
+			"type": "equals",
+			"field": "stream.has_complete_event",
+			"value": true
+		}
+	]
 }

@@ -1,15 +1,40 @@
 {
 	"id": "markdown_fit_content",
 	"description": "Fit markdown removes navigation and boilerplate content",
-	"tags": ["markdown", "fit"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_inline": "<html><body><nav><a href=\"/\">Home</a> | <a href=\"/about\">About</a> | <a href=\"/contact\">Contact</a></nav><article><h1>Main Content</h1><p>This is the substantial main content of the page with enough text to be meaningful.</p></article><footer>Copyright © 2024 All Rights Reserved. Privacy Policy.</footer></body></html>"
+	"tags": [
+		"markdown",
+		"fit"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": { "engine_mode": true },
-	"assertions": {
-		"status_code": 200,
-		"markdown": { "is_some": true, "not_empty": true }
-	}
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><nav><a href=\"/\">Home</a> | <a href=\"/about\">About</a> | <a href=\"/contact\">Contact</a></nav><article><h1>Main Content</h1><p>This is the substantial main content of the page with enough text to be meaningful.</p></article><footer>Copyright © 2024 All Rights Reserved. Privacy Policy.</footer></body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true
+		}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "not_empty",
+			"field": "markdown"
+		}
+	]
 }

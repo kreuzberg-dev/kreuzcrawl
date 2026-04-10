@@ -1,22 +1,37 @@
 {
 	"id": "error_timeout",
 	"description": "Handles request timeout",
-	"tags": ["error"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html" },
-		"body_inline": "<html><body>slow</body></html>"
+	"tags": [
+		"error"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server; Requires wiremock delay to reliably trigger timeout"
 	},
-	"config": {
-		"request_timeout_ms": 1
-	},
-	"assertions": {
-		"error": {
-			"is_error": true,
-			"error_type": "timeout"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>slow</body></html>"
+			}
+		],
+		"config": {
+			"request_timeout_ms": 1
 		}
 	},
-	"skip": {
-		"notes": "Requires wiremock delay to reliably trigger timeout"
-	}
+	"assertions": [
+		{
+			"type": "error"
+		},
+		{
+			"type": "error",
+			"value": "timeout"
+		}
+	]
 }

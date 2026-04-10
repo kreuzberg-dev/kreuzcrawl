@@ -1,15 +1,43 @@
 {
 	"id": "scrape_image_sources",
 	"description": "Extracts images from img, picture, og:image, twitter:image",
-	"tags": ["scrape", "images"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/image_sources.html"
+	"tags": [
+		"scrape",
+		"images"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"images": { "min_count": 5 },
-		"og": { "og_image": "https://example.com/images/og-hero.jpg" }
-	}
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/image_sources.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "greater_than",
+			"field": "images.length",
+			"value": 4
+		},
+		{
+			"type": "equals",
+			"field": "og.image",
+			"value": "https://example.com/images/og-hero.jpg"
+		}
+	]
 }

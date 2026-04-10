@@ -1,30 +1,82 @@
 {
 	"id": "scrape_basic_html_page",
 	"description": "Scrapes a simple HTML page and extracts title, description, and links",
-	"tags": ["scrape", "metadata", "smoke"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/basic_page.html"
+	"tags": [
+		"scrape",
+		"metadata",
+		"smoke"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"max_depth": 0,
-		"respect_robots_txt": false
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/basic_page.html"
+			}
+		],
+		"config": {
+			"max_depth": 0,
+			"respect_robots_txt": false
+		}
 	},
-	"assertions": {
-		"status_code": 200,
-		"content_type": "text/html",
-		"html_not_empty": true,
-		"metadata": {
-			"title": "Example Domain",
-			"description_contains": "illustrative examples",
-			"has_canonical_url": true
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
 		},
-		"links": {
-			"min_count": 1,
-			"has_type": ["external"]
+		{
+			"type": "equals",
+			"field": "content_type",
+			"value": "text/html"
 		},
-		"images": { "count": 0 },
-		"og": { "has_og_title": false }
-	}
+		{
+			"type": "not_empty",
+			"field": "html"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.title",
+			"value": "Example Domain"
+		},
+		{
+			"type": "contains",
+			"field": "metadata.description",
+			"value": "illustrative examples"
+		},
+		{
+			"type": "not_empty",
+			"field": "metadata.canonical_url"
+		},
+		{
+			"type": "greater_than",
+			"field": "links.length",
+			"value": 0
+		},
+		{
+			"type": "contains_all",
+			"field": "links[].link_type",
+			"values": [
+				"external"
+			]
+		},
+		{
+			"type": "equals",
+			"field": "images.length",
+			"value": 0
+		},
+		{
+			"type": "is_empty",
+			"field": "og.title"
+		}
+	]
 }

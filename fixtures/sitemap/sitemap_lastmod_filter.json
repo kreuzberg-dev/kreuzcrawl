@@ -1,19 +1,41 @@
 {
 	"id": "sitemap_lastmod_filter",
 	"description": "Filters sitemap URLs by lastmod date",
-	"tags": ["sitemap", "lastmod"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "application/xml" },
-		"body_file": "xml/sitemap_with_lastmod.xml"
+	"tags": [
+		"sitemap",
+		"lastmod"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": false
-	},
-	"assertions": {
-		"sitemap": {
-			"url_count": 4,
-			"has_lastmod": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "application/xml"
+				},
+				"body_file": "xml/sitemap_with_lastmod.xml"
+			}
+		],
+		"config": {
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "urls.length",
+			"value": 4
+		},
+		{
+			"type": "equals",
+			"field": "has_lastmod",
+			"value": true
+		}
+	]
 }

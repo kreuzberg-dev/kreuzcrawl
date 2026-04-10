@@ -1,18 +1,36 @@
 {
 	"id": "robots_meta_nofollow",
 	"description": "Detects nofollow meta robots tag and skips link extraction",
-	"tags": ["robots", "meta"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/meta_nofollow.html"
+	"tags": [
+		"robots",
+		"meta"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": true
-	},
-	"assertions": {
-		"robots": {
-			"nofollow_detected": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/meta_nofollow.html"
+			}
+		],
+		"config": {
+			"respect_robots_txt": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "robots.nofollow_detected",
+			"value": true
+		}
+	]
 }

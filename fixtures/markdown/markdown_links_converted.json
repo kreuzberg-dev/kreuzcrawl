@@ -1,21 +1,48 @@
 {
 	"id": "markdown_links_converted",
 	"description": "HTML links are converted to markdown link syntax",
-	"tags": ["markdown"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_inline": "<html><body><p>Visit <a href=\"https://example.com\">Example</a> for more.</p></body></html>"
+	"tags": [
+		"markdown"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"engine_mode": true
-	},
-	"assertions": {
-		"status_code": 200,
-		"html_not_empty": true,
-		"markdown": {
-			"is_some": true,
-			"contains": "Example"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><p>Visit <a href=\"https://example.com\">Example</a> for more.</p></body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "not_empty",
+			"field": "html"
+		},
+		{
+			"type": "not_empty",
+			"field": "markdown"
+		},
+		{
+			"type": "contains",
+			"field": "markdown",
+			"value": "Example"
+		}
+	]
 }

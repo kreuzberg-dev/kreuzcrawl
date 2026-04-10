@@ -1,17 +1,39 @@
 {
 	"id": "error_403_forbidden",
 	"description": "Handles 403 Forbidden response correctly",
-	"tags": ["error"],
-	"mock_response": {
-		"status_code": 403,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_inline": "<html><body><h1>403 Forbidden</h1></body></html>"
+	"tags": [
+		"error"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 403,
-		"error": {
-			"is_error": true,
-			"error_type": "forbidden"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 403,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>403 Forbidden</h1></body></html>"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 403
+		},
+		{
+			"type": "error"
+		},
+		{
+			"type": "error",
+			"value": "forbidden"
 		}
-	}
+	]
 }

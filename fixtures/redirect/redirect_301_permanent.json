@@ -1,30 +1,52 @@
 {
 	"id": "redirect_301_permanent",
 	"description": "Follows 301 permanent redirect and returns final page content",
-	"tags": ["redirect", "smoke"],
-	"mock_responses": [
+	"tags": [
+		"redirect",
+		"smoke"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
+	},
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"method": "GET",
+				"status_code": 301,
+				"headers": {
+					"location": "/target"
+				},
+				"body_inline": ""
+			},
+			{
+				"path": "/target",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Final Page</h1></body></html>"
+			}
+		],
+		"config": {
+			"respect_robots_txt": false
+		}
+	},
+	"assertions": [
 		{
-			"path": "/",
-			"method": "GET",
-			"status_code": 301,
-			"headers": { "location": "/target" },
-			"body_inline": ""
+			"type": "contains",
+			"field": "final_url",
+			"value": "/target"
 		},
 		{
-			"path": "/target",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Final Page</h1></body></html>"
+			"type": "equals",
+			"field": "redirect_count",
+			"value": 1
 		}
-	],
-	"config": {
-		"respect_robots_txt": false
-	},
-	"assertions": {
-		"redirect": {
-			"final_url_contains": "/target",
-			"redirect_count": 1
-		}
-	}
+	]
 }

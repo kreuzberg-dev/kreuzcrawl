@@ -1,16 +1,38 @@
 {
 	"id": "links_mailto_javascript_skip",
 	"description": "Skips mailto:, javascript:, and tel: scheme links",
-	"tags": ["links", "filtering"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/mailto_javascript_links.html"
+	"tags": [
+		"links",
+		"filtering"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"links": {
-			"min_count": 1,
-			"excludes_url": "mailto:"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/mailto_javascript_links.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "greater_than",
+			"field": "links.length",
+			"value": 0
+		},
+		{
+			"type": "not_contains",
+			"field": "links[].url",
+			"value": "mailto:"
 		}
-	}
+	]
 }

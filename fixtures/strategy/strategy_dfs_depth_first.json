@@ -1,45 +1,77 @@
 {
 	"id": "strategy_dfs_depth_first",
 	"description": "DFS strategy visits pages in depth-first order",
-	"tags": ["strategy", "dfs"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>"
-		},
-		{
-			"path": "/a",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/a/1\">A1</a></body></html>"
-		},
-		{
-			"path": "/b",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/b/1\">B1</a></body></html>"
-		},
-		{
-			"path": "/a/1",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>A1</h1></body></html>"
-		},
-		{
-			"path": "/b/1",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>B1</h1></body></html>"
-		}
+	"tags": [
+		"strategy",
+		"dfs"
 	],
-	"config": {
-		"max_depth": 2,
-		"max_concurrent": 1,
-		"crawl_strategy": "dfs"
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"pages_crawled": 5
-		},
-		"strategy": {
-			"crawl_order": ["/", "/b", "/b/1", "/a", "/a/1"]
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/a\">A</a><a href=\"/b\">B</a></body></html>"
+			},
+			{
+				"path": "/a",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/a/1\">A1</a></body></html>"
+			},
+			{
+				"path": "/b",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/b/1\">B1</a></body></html>"
+			},
+			{
+				"path": "/a/1",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>A1</h1></body></html>"
+			},
+			{
+				"path": "/b/1",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>B1</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 2,
+			"max_concurrent": 1,
+			"crawl_strategy": "dfs"
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "crawl.pages_crawled",
+			"value": 5
+		},
+		{
+			"type": "equals",
+			"field": "strategy.crawl_order",
+			"value": [
+				"/",
+				"/b",
+				"/b/1",
+				"/a",
+				"/a/1"
+			]
+		}
+	]
 }

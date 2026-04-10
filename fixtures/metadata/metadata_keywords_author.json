@@ -1,28 +1,84 @@
 {
 	"id": "metadata_keywords_author",
 	"description": "Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata",
-	"tags": ["metadata"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/comprehensive_metadata.html"
+	"tags": [
+		"metadata"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"metadata": {
-			"title": "Comprehensive Metadata Test Page",
-			"has_canonical_url": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/comprehensive_metadata.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
 		},
-		"extended_metadata": {
-			"has_keywords": true,
-			"keywords_contains": "rust",
-			"author": "Jane Developer",
-			"has_viewport": true,
-			"generator": "kreuzcrawl/1.0",
-			"theme_color": "#ff6600",
-			"robots_content": "index, follow",
-			"html_lang": "en",
-			"html_dir": "ltr"
+		{
+			"type": "equals",
+			"field": "metadata.title",
+			"value": "Comprehensive Metadata Test Page"
+		},
+		{
+			"type": "not_empty",
+			"field": "metadata.canonical_url"
+		},
+		{
+			"type": "not_empty",
+			"field": "metadata.keywords"
+		},
+		{
+			"type": "contains",
+			"field": "metadata.keywords",
+			"value": "rust"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.author",
+			"value": "Jane Developer"
+		},
+		{
+			"type": "not_empty",
+			"field": "metadata.viewport"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.generator",
+			"value": "kreuzcrawl/1.0"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.theme_color",
+			"value": "#ff6600"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.robots",
+			"value": "index, follow"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.lang",
+			"value": "en"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.dir",
+			"value": "ltr"
 		}
-	}
+	]
 }

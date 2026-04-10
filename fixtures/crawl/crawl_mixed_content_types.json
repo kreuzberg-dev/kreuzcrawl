@@ -1,32 +1,52 @@
 {
 	"id": "crawl_mixed_content_types",
 	"description": "Crawl handles links to non-HTML content types gracefully",
-	"tags": ["crawl", "content"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/page\">Page</a><a href=\"/image.png\">Image</a></body></html>"
-		},
-		{
-			"path": "/page",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Normal Page</h1></body></html>"
-		},
-		{
-			"path": "/image.png",
-			"headers": { "content-type": "image/png" },
-			"body_inline": "fake-png-data"
-		}
+	"tags": [
+		"crawl",
+		"content"
 	],
-	"config": {
-		"engine_mode": true,
-		"max_depth": 1,
-		"max_concurrent": 1
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"min_pages": 2
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/page\">Page</a><a href=\"/image.png\">Image</a></body></html>"
+			},
+			{
+				"path": "/page",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Normal Page</h1></body></html>"
+			},
+			{
+				"path": "/image.png",
+				"headers": {
+					"content-type": "image/png"
+				},
+				"body_inline": "fake-png-data"
+			}
+		],
+		"config": {
+			"engine_mode": true,
+			"max_depth": 1,
+			"max_concurrent": 1
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "greater_than_or_equal",
+			"field": "pages.length",
+			"value": 2
+		}
+	]
 }

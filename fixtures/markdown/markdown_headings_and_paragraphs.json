@@ -1,20 +1,40 @@
 {
 	"id": "markdown_headings_and_paragraphs",
 	"description": "Markdown conversion preserves heading hierarchy and paragraph text",
-	"tags": ["markdown", "content"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html" },
-		"body_inline": "<html><body><h1>Main Title</h1><p>First paragraph.</p><h2>Subsection</h2><p>Second paragraph with details.</p></body></html>"
+	"tags": [
+		"markdown",
+		"content"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"engine_mode": true
-	},
-	"assertions": {
-		"markdown": {
-			"is_some": true,
-			"not_empty": true,
-			"contains": "Main Title"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Main Title</h1><p>First paragraph.</p><h2>Subsection</h2><p>Second paragraph with details.</p></body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "not_empty",
+			"field": "markdown"
+		},
+		{
+			"type": "contains",
+			"field": "markdown",
+			"value": "Main Title"
+		}
+	]
 }

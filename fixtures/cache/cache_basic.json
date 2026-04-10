@@ -1,14 +1,35 @@
 {
 	"id": "cache_basic",
 	"description": "Crawling with disk cache enabled succeeds without errors",
-	"tags": ["cache"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Cached</h1></body></html>"
-		}
+	"tags": [
+		"cache"
 	],
-	"config": { "engine_mode": true },
-	"assertions": { "status_code": 200 }
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
+	},
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Cached</h1></body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true
+		}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		}
+	]
 }

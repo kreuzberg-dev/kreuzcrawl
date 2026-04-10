@@ -1,0 +1,3 @@
+"""Pytest configuration for e2e tests."""
+# Ensure the package is importable.
+# The kreuzcrawl package is expected to be installed in the current environment.

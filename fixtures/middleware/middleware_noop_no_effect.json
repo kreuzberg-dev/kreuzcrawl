@@ -1,19 +1,40 @@
 {
 	"id": "middleware_noop_no_effect",
 	"description": "Default middleware chain does not affect normal scraping",
-	"tags": ["middleware"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_inline": "<html><head><title>Middleware Test</title></head><body><h1>Hello</h1></body></html>"
+	"tags": [
+		"middleware"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"engine_mode": true
-	},
-	"assertions": {
-		"status_code": 200,
-		"metadata": {
-			"title": "Middleware Test"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><head><title>Middleware Test</title></head><body><h1>Hello</h1></body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "metadata.title",
+			"value": "Middleware Test"
+		}
+	]
 }

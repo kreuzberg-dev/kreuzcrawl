@@ -1,25 +1,41 @@
 {
 	"id": "browser_fallback_waf_blocked",
 	"description": "Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)",
-	"tags": ["browser", "fallback", "waf"],
-	"mock_response": {
-		"status_code": 403,
-		"headers": {
-			"content-type": "text/html",
-			"server": "cloudflare"
-		},
-		"body_file": "error/cloudflare_challenge.html"
+	"tags": [
+		"browser",
+		"fallback",
+		"waf"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c",
+			"go",
+			"java",
+			"csharp"
+		],
+		"reason": "requires browser feature; requires browser; Requires a running Chrome/Chromium instance"
 	},
-	"config": {
-		"browser_mode": "auto"
-	},
-	"assertions": {
-		"browser": {
-			"browser_used": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 403,
+				"headers": {
+					"content-type": "text/html",
+					"server": "cloudflare"
+				},
+				"body_file": "error/cloudflare_challenge.html"
+			}
+		],
+		"config": {
+			"browser_mode": "auto"
 		}
 	},
-	"skip": {
-		"requires_browser": true,
-		"notes": "Requires a running Chrome/Chromium instance"
-	}
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "browser.browser_used",
+			"value": true
+		}
+	]
 }

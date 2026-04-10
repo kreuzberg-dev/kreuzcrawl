@@ -1,18 +1,36 @@
 {
 	"id": "sitemap_only_mode",
 	"description": "Uses sitemap URLs exclusively without following page links",
-	"tags": ["sitemap", "mode"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "application/xml" },
-		"body_file": "xml/sitemap_basic.xml"
+	"tags": [
+		"sitemap",
+		"mode"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": false
-	},
-	"assertions": {
-		"sitemap": {
-			"url_count": 4
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "application/xml"
+				},
+				"body_file": "xml/sitemap_basic.xml"
+			}
+		],
+		"config": {
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "urls.length",
+			"value": 4
+		}
+	]
 }

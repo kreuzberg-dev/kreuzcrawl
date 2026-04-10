@@ -1,19 +1,37 @@
 {
 	"id": "robots_crawl_delay",
 	"description": "Respects crawl-delay directive from robots.txt",
-	"tags": ["robots", "rate-limit"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/plain" },
-		"body_file": "robots/crawl_delay.txt"
+	"tags": [
+		"robots",
+		"rate-limit"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": true,
-		"user_agent": "kreuzcrawl"
-	},
-	"assertions": {
-		"robots": {
-			"crawl_delay": 2
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/plain"
+				},
+				"body_file": "robots/crawl_delay.txt"
+			}
+		],
+		"config": {
+			"respect_robots_txt": true,
+			"user_agent": "kreuzcrawl"
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "robots.crawl_delay",
+			"value": 2
+		}
+	]
 }

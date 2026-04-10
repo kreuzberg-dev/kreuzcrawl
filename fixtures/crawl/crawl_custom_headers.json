@@ -1,34 +1,52 @@
 {
 	"id": "crawl_custom_headers",
 	"description": "Sends custom headers on all crawl requests",
-	"tags": ["crawl", "headers"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><a href=\"/page1\">Page 1</a></body></html>"
-		},
-		{
-			"path": "/page1",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Page 1</h1></body></html>"
-		}
+	"tags": [
+		"crawl",
+		"headers"
 	],
-	"config": {
-		"max_depth": 1,
-		"custom_headers": {
-			"X-Custom-Header": "test-value",
-			"Accept-Language": "en-US"
-		},
-		"respect_robots_txt": false
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"pages_crawled": 2
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><a href=\"/page1\">Page 1</a></body></html>"
+			},
+			{
+				"path": "/page1",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Page 1</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 1,
+			"custom_headers": {
+				"X-Custom-Header": "test-value",
+				"Accept-Language": "en-US"
+			},
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "pages.length",
+			"value": 2
+		}
+	]
 }

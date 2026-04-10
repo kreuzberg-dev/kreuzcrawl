@@ -1,13 +1,34 @@
 {
 	"id": "content_204_no_content",
 	"description": "Handles 204 No Content response gracefully",
-	"tags": ["content", "edge-case"],
-	"mock_response": {
-		"status_code": 204,
-		"headers": {}
+	"tags": [
+		"content",
+		"edge-case"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 204,
-		"html_not_empty": false
-	}
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 204,
+				"headers": {}
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 204
+		},
+		{
+			"type": "is_empty",
+			"field": "html"
+		}
+	]
 }

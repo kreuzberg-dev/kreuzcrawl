@@ -1,19 +1,30 @@
 {
 	"id": "error_dns_resolution",
 	"description": "Handles DNS resolution failure gracefully",
-	"tags": ["error", "network"],
-	"config": {
-		"respect_robots_txt": false,
-		"request_timeout_ms": 5000
+	"tags": [
+		"error",
+		"network"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server; requires network; Requires real DNS resolution to fail"
 	},
-	"assertions": {
-		"error": {
-			"is_error": true,
-			"error_type": "dns"
+	"input": {
+		"config": {
+			"respect_robots_txt": false,
+			"request_timeout_ms": 5000
 		}
 	},
-	"skip": {
-		"requires_network": true,
-		"notes": "Requires real DNS resolution to fail"
-	}
+	"assertions": [
+		{
+			"type": "error"
+		},
+		{
+			"type": "error",
+			"value": "dns"
+		}
+	]
 }

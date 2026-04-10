@@ -1,0 +1,81 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Kreuzberg\E2e;
+
+use PHPUnit\Framework\TestCase;
+use Kreuzcrawl\Kreuzcrawl;
+
+/** E2e tests for category: links. */
+final class LinksTest extends TestCase
+{
+    /** Identifies fragment-only links as anchor type */
+    public function test_links_anchor_fragment(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertStringContainsString("anchor", $result->links[""]->link_type);
+    }
+
+    /** Resolves relative URLs using base tag href */
+    public function test_links_base_tag(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertGreaterThan(2, count($result->links));
+        $this->assertStringContainsString("example.com", $result->links[""]->url);
+    }
+
+    /** Detects PDF, DOCX, XLSX links as document type */
+    public function test_links_document_types(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertStringContainsString("document", $result->links[""]->link_type);
+    }
+
+    /** Handles empty href attributes without errors */
+    public function test_links_empty_href(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertGreaterThan(0, count($result->links));
+        $this->assertStringContainsString("/valid", $result->links[""]->url);
+    }
+
+    /** Correctly classifies internal vs external links by domain */
+    public function test_links_internal_external_classification(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertGreaterThan(4, count($result->links));
+        $this->assertStringContainsString("internal", $result->links[""]->link_type);
+        $this->assertStringContainsString("external", $result->links[""]->link_type);
+    }
+
+    /** Skips mailto:, javascript:, and tel: scheme links */
+    public function test_links_mailto_javascript_skip(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertGreaterThan(0, count($result->links));
+        $this->assertStringNotContainsString("mailto:", $result->links[""]->url);
+    }
+
+    /** Handles protocol-relative URLs (//example.com) correctly */
+    public function test_links_protocol_relative(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertGreaterThan(1, count($result->links));
+        $this->assertNotEmpty($result->links[""]->protocol_relative);
+    }
+
+    /** Preserves rel=nofollow and rel=canonical attributes */
+    public function test_links_rel_attributes(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertGreaterThan(0, count($result->links));
+    }
+
+    /** Resolves ../ and ./ relative parent path links correctly */
+    public function test_links_relative_parent(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertGreaterThan(3, count($result->links));
+    }
+}

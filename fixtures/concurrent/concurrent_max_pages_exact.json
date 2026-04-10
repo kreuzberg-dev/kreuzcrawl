@@ -1,31 +1,95 @@
 {
 	"id": "concurrent_max_pages_exact",
 	"description": "Concurrent crawling does not exceed max_pages limit even with high concurrency",
-	"tags": ["concurrent", "max_pages"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/p1\">1</a><a href=\"/p2\">2</a><a href=\"/p3\">3</a><a href=\"/p4\">4</a><a href=\"/p5\">5</a><a href=\"/p6\">6</a><a href=\"/p7\">7</a><a href=\"/p8\">8</a></body></html>"
-		},
-		{ "path": "/p1", "headers": { "content-type": "text/html" }, "body_inline": "<html><body>P1</body></html>" },
-		{ "path": "/p2", "headers": { "content-type": "text/html" }, "body_inline": "<html><body>P2</body></html>" },
-		{ "path": "/p3", "headers": { "content-type": "text/html" }, "body_inline": "<html><body>P3</body></html>" },
-		{ "path": "/p4", "headers": { "content-type": "text/html" }, "body_inline": "<html><body>P4</body></html>" },
-		{ "path": "/p5", "headers": { "content-type": "text/html" }, "body_inline": "<html><body>P5</body></html>" },
-		{ "path": "/p6", "headers": { "content-type": "text/html" }, "body_inline": "<html><body>P6</body></html>" },
-		{ "path": "/p7", "headers": { "content-type": "text/html" }, "body_inline": "<html><body>P7</body></html>" },
-		{ "path": "/p8", "headers": { "content-type": "text/html" }, "body_inline": "<html><body>P8</body></html>" }
+	"tags": [
+		"concurrent",
+		"max_pages"
 	],
-	"config": {
-		"engine_mode": true,
-		"max_depth": 1,
-		"max_pages": 3,
-		"max_concurrent": 5
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"max_pages": 3
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/p1\">1</a><a href=\"/p2\">2</a><a href=\"/p3\">3</a><a href=\"/p4\">4</a><a href=\"/p5\">5</a><a href=\"/p6\">6</a><a href=\"/p7\">7</a><a href=\"/p8\">8</a></body></html>"
+			},
+			{
+				"path": "/p1",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>P1</body></html>"
+			},
+			{
+				"path": "/p2",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>P2</body></html>"
+			},
+			{
+				"path": "/p3",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>P3</body></html>"
+			},
+			{
+				"path": "/p4",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>P4</body></html>"
+			},
+			{
+				"path": "/p5",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>P5</body></html>"
+			},
+			{
+				"path": "/p6",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>P6</body></html>"
+			},
+			{
+				"path": "/p7",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>P7</body></html>"
+			},
+			{
+				"path": "/p8",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body>P8</body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true,
+			"max_depth": 1,
+			"max_pages": 3,
+			"max_concurrent": 5
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "less_than_or_equal",
+			"field": "pages.length",
+			"value": 3
+		}
+	]
 }

@@ -1,17 +1,39 @@
 {
 	"id": "error_502_bad_gateway",
 	"description": "Handles 502 Bad Gateway response correctly",
-	"tags": ["error"],
-	"mock_response": {
-		"status_code": 502,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_inline": "<html><body><h1>502 Bad Gateway</h1></body></html>"
+	"tags": [
+		"error"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 502,
-		"error": {
-			"is_error": true,
-			"error_type": "bad_gateway"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 502,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>502 Bad Gateway</h1></body></html>"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 502
+		},
+		{
+			"type": "error"
+		},
+		{
+			"type": "error",
+			"value": "bad_gateway"
 		}
-	}
+	]
 }

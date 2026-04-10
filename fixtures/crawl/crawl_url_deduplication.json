@@ -1,30 +1,48 @@
 {
 	"id": "crawl_url_deduplication",
 	"description": "Deduplicates URLs that differ only by fragment or query params",
-	"tags": ["crawl", "dedup"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><a href=\"/page\">Page</a><a href=\"/page#section\">Page Section</a><a href=\"/page?ref=home\">Page Ref</a></body></html>"
-		},
-		{
-			"path": "/page",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>The Page</h1></body></html>"
-		}
+	"tags": [
+		"crawl",
+		"dedup"
 	],
-	"config": {
-		"max_depth": 1,
-		"respect_robots_txt": false
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"max_pages": 2
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><a href=\"/page\">Page</a><a href=\"/page#section\">Page Section</a><a href=\"/page?ref=home\">Page Ref</a></body></html>"
+			},
+			{
+				"path": "/page",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>The Page</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 1,
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "less_than_or_equal",
+			"field": "pages.length",
+			"value": 2
+		}
+	]
 }

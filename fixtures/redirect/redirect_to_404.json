@@ -1,31 +1,57 @@
 {
 	"id": "redirect_to_404",
 	"description": "Redirect target returns 404 Not Found",
-	"tags": ["redirect", "error"],
-	"mock_responses": [
+	"tags": [
+		"redirect",
+		"error"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
+	},
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"method": "GET",
+				"status_code": 301,
+				"headers": {
+					"location": "/gone"
+				},
+				"body_inline": ""
+			},
+			{
+				"path": "/gone",
+				"method": "GET",
+				"status_code": 404,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>404 Not Found</h1></body></html>"
+			}
+		],
+		"config": {
+			"respect_robots_txt": false
+		}
+	},
+	"assertions": [
 		{
-			"path": "/",
-			"method": "GET",
-			"status_code": 301,
-			"headers": { "location": "/gone" },
-			"body_inline": ""
+			"type": "contains",
+			"field": "final_url",
+			"value": "/gone"
 		},
 		{
-			"path": "/gone",
-			"method": "GET",
-			"status_code": 404,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>404 Not Found</h1></body></html>"
+			"type": "equals",
+			"field": "redirect_count",
+			"value": 1
+		},
+		{
+			"type": "equals",
+			"field": "is_error",
+			"value": true
 		}
-	],
-	"config": {
-		"respect_robots_txt": false
-	},
-	"assertions": {
-		"redirect": {
-			"final_url_contains": "/gone",
-			"redirect_count": 1,
-			"is_error": true
-		}
-	}
+	]
 }

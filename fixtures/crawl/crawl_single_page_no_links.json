@@ -1,21 +1,36 @@
 {
 	"id": "crawl_single_page_no_links",
 	"description": "Crawling a page with no links returns only the seed page",
-	"tags": ["crawl"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><p>No links here</p></body></html>"
-		}
+	"tags": [
+		"crawl"
 	],
-	"config": {
-		"engine_mode": true,
-		"max_depth": 2
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"pages_crawled": 1
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><p>No links here</p></body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true,
+			"max_depth": 2
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "pages.length",
+			"value": 1
+		}
+	]
 }
