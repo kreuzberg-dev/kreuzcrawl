@@ -13,7 +13,8 @@ final class AuthTest extends TestCase
     /** Sends HTTP Basic authentication header */
     public function test_auth_basic_http(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(true, $result->auth_header_sent);
         $this->assertEquals(200, $result->status_code);
     }
@@ -21,7 +22,8 @@ final class AuthTest extends TestCase
     /** Sends Bearer token in Authorization header */
     public function test_auth_bearer_token(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(true, $result->auth_header_sent);
         $this->assertEquals(200, $result->status_code);
     }
@@ -29,7 +31,8 @@ final class AuthTest extends TestCase
     /** Sends authentication via custom header (X-API-Key) */
     public function test_auth_custom_header(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(true, $result->auth_header_sent);
         $this->assertEquals(200, $result->status_code);
     }

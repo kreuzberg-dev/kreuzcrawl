@@ -10,7 +10,8 @@ import (
 
 func Test_RateLimitBasicDelay(t *testing.T) {
 	// Rate limiter adds delay between requests to the same domain
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -24,7 +25,8 @@ func Test_RateLimitBasicDelay(t *testing.T) {
 
 func Test_RateLimitZeroNoDelay(t *testing.T) {
 	// Rate limiter with zero delay does not slow crawling
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

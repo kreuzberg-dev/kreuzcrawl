@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,58 +8,65 @@ namespace Kreuzberg.E2e;
 public class FilterTests
 {
     [Fact]
-    public void Test_FilterBm25CrawlIntegration()
+    public async Task Test_FilterBm25CrawlIntegration()
     {
         // BM25 filter works during multi-page crawl, keeping relevant pages
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("rust", result.Filter.RemainingContainKeyword);
     }
 
     [Fact]
-    public void Test_FilterBm25EmptyQuery()
+    public async Task Test_FilterBm25EmptyQuery()
     {
         // BM25 filter with empty query passes all pages through
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(2, result.Crawl.PagesCrawled.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(2, result.Crawl.PagesCrawled);
     }
 
     [Fact]
-    public void Test_FilterBm25HighThreshold()
+    public async Task Test_FilterBm25HighThreshold()
     {
         // BM25 filter with very high threshold filters out all pages
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(0, result.Filter.PagesAfterFilter.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(0, result.Filter.PagesAfterFilter);
     }
 
     [Fact]
-    public void Test_FilterBm25RelevantPages()
+    public async Task Test_FilterBm25RelevantPages()
     {
         // BM25 filter keeps only pages relevant to the query
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("rust", result.Filter.RemainingContainKeyword);
     }
 
     [Fact]
-    public void Test_FilterBm25ThresholdZero()
+    public async Task Test_FilterBm25ThresholdZero()
     {
         // BM25 filter with zero threshold passes all pages
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(2, result.Crawl.PagesCrawled.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(2, result.Crawl.PagesCrawled);
     }
 
     [Fact]
-    public void Test_FilterNoopCrawlAllKept()
+    public async Task Test_FilterNoopCrawlAllKept()
     {
         // NoopFilter keeps all pages during a multi-page crawl
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(3, result.Filter.PagesAfterFilter.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(3, result.Filter.PagesAfterFilter);
     }
 
     [Fact]
-    public void Test_FilterNoopPassesAll()
+    public async Task Test_FilterNoopPassesAll()
     {
         // No content filter passes all crawled pages through
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(3, result.Crawl.PagesCrawled.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(3, result.Crawl.PagesCrawled);
     }
 }

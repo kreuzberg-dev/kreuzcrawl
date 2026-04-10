@@ -10,7 +10,8 @@ import (
 
 func Test_StrategyBestFirstSeed(t *testing.T) {
 	// BestFirst strategy always processes the seed URL first
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -24,7 +25,8 @@ func Test_StrategyBestFirstSeed(t *testing.T) {
 
 func Test_StrategyBfsDefaultOrder(t *testing.T) {
 	// BFS strategy visits pages in breadth-first order
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -38,7 +40,8 @@ func Test_StrategyBfsDefaultOrder(t *testing.T) {
 
 func Test_StrategyDfsDepthFirst(t *testing.T) {
 	// DFS strategy visits pages in depth-first order
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

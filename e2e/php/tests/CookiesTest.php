@@ -13,7 +13,8 @@ final class CookiesTest extends TestCase
     /** Isolates cookies per domain during crawl */
     public function test_cookies_per_domain(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(1, count($result->cookies));
         $this->assertStringContainsString("domain_cookie", $result->cookies);
     }
@@ -21,14 +22,16 @@ final class CookiesTest extends TestCase
     /** Maintains cookies across multiple crawl requests */
     public function test_cookies_persistence(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertStringContainsString("session", $result->cookies);
     }
 
     /** Respects Set-Cookie header from server responses */
     public function test_cookies_set_cookie_response(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertStringContainsString("tracking", $result->cookies);
     }
 }

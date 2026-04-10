@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,117 +8,131 @@ namespace Kreuzberg.E2e;
 public class RobotsTests
 {
     [Fact]
-    public void Test_RobotsAllowAll()
+    public async Task Test_RobotsAllowAll()
     {
         // Permissive robots.txt allows all paths
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsAllowOverride()
+    public async Task Test_RobotsAllowOverride()
     {
         // Allow directive overrides Disallow for specific paths
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsCommentsHandling()
+    public async Task Test_RobotsCommentsHandling()
     {
         // Correctly parses robots.txt with inline and line comments
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsCrawlDelay()
+    public async Task Test_RobotsCrawlDelay()
     {
         // Respects crawl-delay directive from robots.txt
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(2, result.Robots.CrawlDelay.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(2, result.Robots.CrawlDelay);
     }
 
     [Fact]
-    public void Test_RobotsDisallowPath()
+    public async Task Test_RobotsDisallowPath()
     {
         // Robots.txt disallows specific paths
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(false, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(false, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsMetaNofollow()
+    public async Task Test_RobotsMetaNofollow()
     {
         // Detects nofollow meta robots tag and skips link extraction
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Robots.NofollowDetected.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Robots.NofollowDetected);
     }
 
     [Fact]
-    public void Test_RobotsMetaNoindex()
+    public async Task Test_RobotsMetaNoindex()
     {
         // Detects noindex meta robots tag in HTML page
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Robots.NoindexDetected.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Robots.NoindexDetected);
     }
 
     [Fact]
-    public void Test_RobotsMissing404()
+    public async Task Test_RobotsMissing404()
     {
         // Missing robots.txt (404) allows all crawling
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsMultipleUserAgents()
+    public async Task Test_RobotsMultipleUserAgents()
     {
         // Picks the most specific user-agent block from robots.txt
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsRequestRate()
+    public async Task Test_RobotsRequestRate()
     {
         // Parses request-rate directive from robots.txt
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(5, result.Robots.CrawlDelay.Trim());
-        Assert.Equal(true, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(5, result.Robots.CrawlDelay);
+        Assert.Equal(true, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsSitemapDirective()
+    public async Task Test_RobotsSitemapDirective()
     {
         // Discovers sitemap URL from Sitemap directive in robots.txt
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsUserAgentSpecific()
+    public async Task Test_RobotsUserAgentSpecific()
     {
         // Matches user-agent specific rules in robots.txt
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(false, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(false, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsWildcardPaths()
+    public async Task Test_RobotsWildcardPaths()
     {
         // Handles wildcard Disallow patterns in robots.txt
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(false, result.Robots.IsAllowed.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(false, result.Robots.IsAllowed);
     }
 
     [Fact]
-    public void Test_RobotsXRobotsTag()
+    public async Task Test_RobotsXRobotsTag()
     {
         // Respects X-Robots-Tag HTTP header directives
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal("noindex, nofollow", result.Robots.XRobotsTag.Trim());
-        Assert.Equal(true, result.Robots.NoindexDetected.Trim());
-        Assert.Equal(true, result.Robots.NofollowDetected.Trim());
+        Assert.Equal(true, result.Robots.NoindexDetected);
+        Assert.Equal(true, result.Robots.NofollowDetected);
     }
 }

@@ -8,8 +8,9 @@ class MarkdownTest {
     @Test
     void testMarkdownBasicConversion() throws Exception {
         // HTML is always converted to markdown alongside raw HTML
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertEquals("Test", result.metadata().title().orElse(""));
         assertFalse(result.html().isEmpty(), "expected non-empty value");
         assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
@@ -19,22 +20,25 @@ class MarkdownTest {
     @Test
     void testMarkdownCrawlAllPages() throws Exception {
         // All crawled pages have markdown field populated
-        var result = Kreuzcrawl.scrape();
-        assertEquals(2, result.crawl().pages_crawled());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(2, result.crawl().pagesCrawled());
     }
 
     @Test
     void testMarkdownFitContent() throws Exception {
         // Fit markdown removes navigation and boilerplate content
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
     }
 
     @Test
     void testMarkdownHeadingsAndParagraphs() throws Exception {
         // Markdown conversion preserves heading hierarchy and paragraph text
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
         assertTrue(result.markdown().orElse("").contains("Main Title"), "expected to contain: " + "Main Title");
     }
@@ -42,8 +46,9 @@ class MarkdownTest {
     @Test
     void testMarkdownLinksConverted() throws Exception {
         // HTML links are converted to markdown link syntax
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
         assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
         assertTrue(result.markdown().orElse("").contains("Example"), "expected to contain: " + "Example");
@@ -52,8 +57,9 @@ class MarkdownTest {
     @Test
     void testMarkdownWithCitations() throws Exception {
         // Markdown includes citation conversion with numbered references
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
     }
 

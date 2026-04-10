@@ -4,24 +4,28 @@ require "kreuzcrawl"
 
 RSpec.describe "engine" do
   it "engine_batch_basic: CrawlEngine with defaults batch scrapes like the free function" do
-    result = Kreuzcrawl.scrape()
+    engine = Kreuzcrawl.create_engine(nil)
+    result = Kreuzcrawl.scrape(engine, "")
     expect(result.batch.completed_count).to eq(2)
     expect(result.batch.total_count).to eq(2)
   end
 
   it "engine_crawl_basic: CrawlEngine with defaults crawls multiple pages like the free function" do
-    result = Kreuzcrawl.scrape()
+    engine = Kreuzcrawl.create_engine(nil)
+    result = Kreuzcrawl.scrape(engine, "")
     expect(result.crawl.pages_crawled).to eq(3)
     expect(result.crawl.min_pages).to be >= 3
   end
 
   it "engine_map_basic: CrawlEngine with defaults discovers URLs like the free function" do
-    result = Kreuzcrawl.scrape()
+    engine = Kreuzcrawl.create_engine(nil)
+    result = Kreuzcrawl.scrape(engine, "")
     expect(result.map.min_urls).to be >= 2
   end
 
   it "engine_scrape_basic: CrawlEngine with defaults scrapes a page identically to the free function" do
-    result = Kreuzcrawl.scrape()
+    engine = Kreuzcrawl.create_engine(nil)
+    result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
     expect(result.content_type).to eq("text/html")
     expect(result.metadata.title).to eq("Engine Test")
@@ -32,7 +36,8 @@ RSpec.describe "engine" do
   end
 
   it "engine_stream_basic: CrawlEngine with defaults streams events like the free function" do
-    result = Kreuzcrawl.scrape()
+    engine = Kreuzcrawl.create_engine(nil)
+    result = Kreuzcrawl.scrape(engine, "")
     expect(result.stream.has_page_event).to eq(true)
     expect(result.stream.has_complete_event).to eq(true)
     expect(result.stream.event_count_min).to be >= 3

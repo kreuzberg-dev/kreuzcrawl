@@ -8,7 +8,8 @@ class CookiesTest {
     @Test
     void testCookiesPerDomain() throws Exception {
         // Isolates cookies per domain during crawl
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(1, result.cookies().size());
         assertTrue(result.cookies().contains("domain_cookie"), "expected to contain: " + "domain_cookie");
     }
@@ -16,14 +17,16 @@ class CookiesTest {
     @Test
     void testCookiesPersistence() throws Exception {
         // Maintains cookies across multiple crawl requests
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertTrue(result.cookies().contains("session"), "expected to contain: " + "session");
     }
 
     @Test
     void testCookiesSetCookieResponse() throws Exception {
         // Respects Set-Cookie header from server responses
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertTrue(result.cookies().contains("tracking"), "expected to contain: " + "tracking");
     }
 

@@ -1,13 +1,14 @@
 //! E2e tests for category: scrape
 
 use kreuzcrawl::scrape;
+use kreuzcrawl::create_engine;
 
 #[test]
 fn test_scrape_asset_dedup() {
     // Same asset linked twice results in one download with one unique hash
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert_eq!(result.assets.len(), "2", "equals assertion failed");
     assert_eq!(result.assets.unique_hashes, "2", "equals assertion failed");
@@ -16,9 +17,9 @@ fn test_scrape_asset_dedup() {
 #[test]
 fn test_scrape_asset_max_size() {
     // Skips assets exceeding max_asset_size limit
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert_eq!(result.assets.len(), "2", "equals assertion failed");
 }
@@ -26,9 +27,9 @@ fn test_scrape_asset_max_size() {
 #[test]
 fn test_scrape_asset_type_filter() {
     // Only downloads image assets when asset_types filter is set
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert_eq!(result.assets.len(), "1", "equals assertion failed");
     assert!(result.assets.get("").map(|s| s.as_str()).category.contains(r#"image"#), "expected to contain: {}", r#"image"#);
@@ -37,9 +38,9 @@ fn test_scrape_asset_type_filter() {
 #[test]
 fn test_scrape_basic_html_page() {
     // Scrapes a simple HTML page and extracts title, description, and links
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
     let metadata_description = result.metadata.description.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
@@ -57,9 +58,9 @@ fn test_scrape_basic_html_page() {
 #[test]
 fn test_scrape_complex_links() {
     // Classifies links by type: internal, external, anchor, document, image
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(result.links.len() > 9_f64, "expected > 9");
     assert!(result.links.get("").map(|s| s.as_str()).link_type.contains(r#"internal"#), "expected to contain: {}", r#"internal"#);
@@ -71,9 +72,9 @@ fn test_scrape_complex_links() {
 #[test]
 fn test_scrape_download_assets() {
     // Downloads CSS, JS, and image assets from page
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(result.assets.len() > 2_f64, "expected > 2");
 }
@@ -81,9 +82,9 @@ fn test_scrape_download_assets() {
 #[test]
 fn test_scrape_dublin_core() {
     // Extracts Dublin Core metadata from a page
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(!result.dublin_core.title.is_empty(), "expected non-empty value");
     assert_eq!(result.dublin_core.title, r#"Effects of Climate Change on Marine Biodiversity"#, "equals assertion failed");
@@ -93,9 +94,9 @@ fn test_scrape_dublin_core() {
 #[test]
 fn test_scrape_empty_page() {
     // Handles an empty HTML document without errors
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(result.links.len() > -1_f64, "expected > -1");
     assert_eq!(result.images.len(), "0", "equals assertion failed");
@@ -104,9 +105,9 @@ fn test_scrape_empty_page() {
 #[test]
 fn test_scrape_feed_discovery() {
     // Discovers RSS, Atom, and JSON feed links
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert_eq!(result.feeds.rss.len(), "1", "equals assertion failed");
     assert_eq!(result.feeds.atom.len(), "1", "equals assertion failed");
@@ -116,9 +117,9 @@ fn test_scrape_feed_discovery() {
 #[test]
 fn test_scrape_image_sources() {
     // Extracts images from img, picture, og:image, twitter:image
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(result.images.len() > 4_f64, "expected > 4");
     assert_eq!(result.og.image, r#"https://example.com/images/og-hero.jpg"#, "equals assertion failed");
@@ -127,18 +128,18 @@ fn test_scrape_image_sources() {
 #[test]
 fn test_scrape_js_heavy_spa() {
     // Handles SPA page with JavaScript-only content (no server-rendered HTML)
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
 }
 
 #[test]
 fn test_scrape_json_ld() {
     // Extracts JSON-LD structured data from a page
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(!result.json_ld.is_empty(), "expected non-empty value");
     assert_eq!(result.json_ld.type, r#"Recipe"#, "equals assertion failed");
@@ -148,9 +149,9 @@ fn test_scrape_json_ld() {
 #[test]
 fn test_scrape_malformed_html() {
     // Gracefully handles broken HTML without crashing
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     let metadata_description = result.metadata.description.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(!result.html.is_empty(), "expected non-empty value");
@@ -160,9 +161,9 @@ fn test_scrape_malformed_html() {
 #[test]
 fn test_scrape_og_metadata() {
     // Extracts full Open Graph metadata from a page
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(!result.og.title.is_empty(), "expected non-empty value");
@@ -176,9 +177,9 @@ fn test_scrape_og_metadata() {
 #[test]
 fn test_scrape_twitter_card() {
     // Extracts Twitter Card metadata from a page
-    let engine = None;
-    let url = None;
-    let result = scrape(engine, url).expect("should succeed");
+    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let url = String::new();
+    let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(!result.twitter.card.is_empty(), "expected non-empty value");
     assert_eq!(result.twitter.card_type, r#"summary_large_image"#, "equals assertion failed");

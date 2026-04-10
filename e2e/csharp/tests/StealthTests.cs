@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,10 +8,11 @@ namespace Kreuzberg.E2e;
 public class StealthTests
 {
     [Fact]
-    public void Test_StealthUaRotationConfig()
+    public async Task Test_StealthUaRotationConfig()
     {
         // User-agent rotation config is accepted and crawl succeeds
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
     }
 }

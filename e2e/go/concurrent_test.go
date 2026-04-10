@@ -10,7 +10,8 @@ import (
 
 func Test_ConcurrentBasic(t *testing.T) {
 	// Concurrent crawling fetches all pages with max_concurrent workers
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -24,7 +25,8 @@ func Test_ConcurrentBasic(t *testing.T) {
 
 func Test_ConcurrentDepthTwoFanOut(t *testing.T) {
 	// Concurrent depth=2 crawl correctly fans out and deduplicates across levels
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -35,7 +37,8 @@ func Test_ConcurrentDepthTwoFanOut(t *testing.T) {
 
 func Test_ConcurrentMaxPagesExact(t *testing.T) {
 	// Concurrent crawling does not exceed max_pages limit even with high concurrency
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -46,7 +49,8 @@ func Test_ConcurrentMaxPagesExact(t *testing.T) {
 
 func Test_ConcurrentPartialErrors(t *testing.T) {
 	// Concurrent crawl handles partial failures gracefully
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -57,7 +61,8 @@ func Test_ConcurrentPartialErrors(t *testing.T) {
 
 func Test_ConcurrentRespectsMaxPages(t *testing.T) {
 	// Concurrent crawling respects max_pages limit
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

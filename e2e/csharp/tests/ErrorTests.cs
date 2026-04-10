@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,144 +8,164 @@ namespace Kreuzberg.E2e;
 public class ErrorTests
 {
     [Fact]
-    public void Test_Error401Unauthorized()
+    public async Task Test_Error401Unauthorized()
     {
         // Handles 401 Unauthorized response correctly
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_Error403Forbidden()
+    public async Task Test_Error403Forbidden()
     {
         // Handles 403 Forbidden response correctly
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_Error404Page()
+    public async Task Test_Error404Page()
     {
         // Handles 404 response correctly
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_Error408RequestTimeout()
+    public async Task Test_Error408RequestTimeout()
     {
         // Handles 408 Request Timeout response correctly
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_Error410Gone()
+    public async Task Test_Error410Gone()
     {
         // Handles 410 Gone response correctly
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_Error500Server()
+    public async Task Test_Error500Server()
     {
         // Handles 500 server error
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_Error502BadGateway()
+    public async Task Test_Error502BadGateway()
     {
         // Handles 502 Bad Gateway response correctly
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorConnectionRefused()
+    public async Task Test_ErrorConnectionRefused()
     {
         // Handles connection refused error gracefully
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorDnsResolution()
+    public async Task Test_ErrorDnsResolution()
     {
         // Handles DNS resolution failure gracefully
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorEmptyResponse()
+    public async Task Test_ErrorEmptyResponse()
     {
         // Handles 200 with completely empty body gracefully
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(false, result.HtmlNotEmpty.Trim());
-        Assert.Equal(false, result.Error.IsError.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(false, result.HtmlNotEmpty);
+        Assert.Equal(false, result.Error.IsError);
     }
 
     [Fact]
-    public void Test_ErrorInvalidProxy()
+    public async Task Test_ErrorInvalidProxy()
     {
         // Proxy pointing to unreachable address causes connection error during scrape
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorPartialResponse()
+    public async Task Test_ErrorPartialResponse()
     {
         // Handles incomplete or truncated HTTP response
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorRateLimited()
+    public async Task Test_ErrorRateLimited()
     {
         // Handles 429 rate limiting with Retry-After
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorRetry503()
+    public async Task Test_ErrorRetry503()
     {
         // Retries request on 503 Service Unavailable response
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorRetryBackoff()
+    public async Task Test_ErrorRetryBackoff()
     {
         // Implements exponential backoff when retrying failed requests
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorSslInvalidCert()
+    public async Task Test_ErrorSslInvalidCert()
     {
         // Handles SSL certificate validation error
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorTimeout()
+    public async Task Test_ErrorTimeout()
     {
         // Handles request timeout
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorWafAkamai()
+    public async Task Test_ErrorWafAkamai()
     {
         // Akamai WAF detection returns WafBlocked error
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorWafFalse403()
+    public async Task Test_ErrorWafFalse403()
     {
         // Detects WAF/bot protection false 403 (Cloudflare challenge page)
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ErrorWafImperva()
+    public async Task Test_ErrorWafImperva()
     {
         // Imperva/Incapsula WAF detection
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 }

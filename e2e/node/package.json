@@ -7,7 +7,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@kreuzberg/kreuzcrawl": "file:../../packages/typescript",
+    "@kreuzberg/kreuzcrawl": "file:../../crates/kreuzcrawl-node",
     "vitest": "^3.0.0"
   }
 }

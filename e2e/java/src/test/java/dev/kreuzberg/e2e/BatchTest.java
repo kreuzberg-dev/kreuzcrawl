@@ -8,26 +8,29 @@ class BatchTest {
     @Test
     void testScrapeBatchBasic() throws Exception {
         // Batch scrape of multiple URLs all succeeding
-        var result = Kreuzcrawl.scrape();
-        assertEquals(3, result.batch().completed_count());
-        assertEquals(0, result.batch().failed_count());
-        assertEquals(3, result.batch().total_count());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(3, result.batch().completedCount());
+        assertEquals(0, result.batch().failedCount());
+        assertEquals(3, result.batch().totalCount());
     }
 
     @Test
     void testScrapeBatchPartialFailure() throws Exception {
         // Batch scrape with one URL failing returns partial results
-        var result = Kreuzcrawl.scrape();
-        assertEquals(2, result.batch().completed_count());
-        assertEquals(1, result.batch().failed_count());
-        assertEquals(3, result.batch().total_count());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(2, result.batch().completedCount());
+        assertEquals(1, result.batch().failedCount());
+        assertEquals(3, result.batch().totalCount());
     }
 
     @Test
     void testScrapeBatchProgress() throws Exception {
         // Batch scrape results include specific URL
-        var result = Kreuzcrawl.scrape();
-        assertEquals(2, result.batch().total_count());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(2, result.batch().totalCount());
         assertTrue(result.batch().results().contains("/target"), "expected to contain: " + "/target");
     }
 

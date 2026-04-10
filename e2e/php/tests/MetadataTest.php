@@ -13,7 +13,8 @@ final class MetadataTest extends TestCase
     /** Extracts article:published_time, modified_time, author, section, and tags */
     public function test_metadata_article_times(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("2024-01-15T10:00:00Z", $result->article->published_time);
         $this->assertEquals("2024-06-20T14:30:00Z", $result->article->modified_time);
@@ -25,7 +26,8 @@ final class MetadataTest extends TestCase
     /** Extracts favicon link tags including apple-touch-icon */
     public function test_metadata_favicons(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(5, count($result->favicons));
         $this->assertNotEmpty($result->favicons[""]->apple_touch);
@@ -34,7 +36,8 @@ final class MetadataTest extends TestCase
     /** Extracts heading hierarchy (h1-h6) from HTML page */
     public function test_metadata_headings(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(1, count($result->headings->h1));
         $this->assertEquals("Primary Heading", $result->headings->h1["0"]->text);
@@ -44,7 +47,8 @@ final class MetadataTest extends TestCase
     /** Extracts hreflang alternate link tags */
     public function test_metadata_hreflang(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(4, count($result->hreflang));
         $this->assertStringContainsString("en", $result->hreflang[""]->lang);
@@ -53,7 +57,8 @@ final class MetadataTest extends TestCase
     /** Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata */
     public function test_metadata_keywords_author(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("Comprehensive Metadata Test Page", $result->metadata->title);
         $this->assertNotEmpty($result->metadata->canonical_url);
@@ -71,7 +76,8 @@ final class MetadataTest extends TestCase
     /** Extracts og:video, og:audio, and og:locale:alternate metadata */
     public function test_metadata_og_video_audio(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("https://example.com/video.mp4", $result->og->video);
         $this->assertEquals("https://example.com/audio.mp3", $result->og->audio);
@@ -81,7 +87,8 @@ final class MetadataTest extends TestCase
     /** Extracts response metadata from HTTP headers (etag, server, content-language) */
     public function test_metadata_response_headers(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->response_headers->etag);
         $this->assertNotEmpty($result->response_headers->last_modified);
@@ -92,7 +99,8 @@ final class MetadataTest extends TestCase
     /** Computes word count from visible page text */
     public function test_metadata_word_count(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertGreaterThan(99, $result->computed->word_count);
         $this->assertLessThan(301, $result->computed->word_count);

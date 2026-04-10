@@ -13,21 +13,24 @@ final class MapTest extends TestCase
     /** Discovers all URLs on a site without fetching full content */
     public function test_map_discover_urls(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertGreaterThanOrEqual(3, count($result->urls));
     }
 
     /** Excludes URLs matching patterns from URL map */
     public function test_map_exclude_patterns(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(1, count($result->urls));
     }
 
     /** Includes subdomain URLs in URL map discovery */
     public function test_map_include_subdomains(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertGreaterThanOrEqual(2, count($result->urls));
         $this->assertStringContainsString("blog.example.com", $result->urls);
     }
@@ -35,21 +38,24 @@ final class MapTest extends TestCase
     /** Handles large sitemap with 100+ URLs */
     public function test_map_large_sitemap(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertGreaterThanOrEqual(100, count($result->urls));
     }
 
     /** Limits map result count to specified maximum */
     public function test_map_limit_pagination(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertLessThanOrEqual(5, count($result->urls));
     }
 
     /** Filters map results by search keyword */
     public function test_map_search_filter(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertGreaterThanOrEqual(2, count($result->urls));
         $this->assertStringContainsString("blog", $result->urls);
     }

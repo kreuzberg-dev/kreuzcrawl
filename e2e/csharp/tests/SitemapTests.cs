@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,69 +8,77 @@ namespace Kreuzberg.E2e;
 public class SitemapTests
 {
     [Fact]
-    public void Test_SitemapBasic()
+    public async Task Test_SitemapBasic()
     {
         // Parses a standard urlset sitemap
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(4, result.Urls.Count.Trim());
-        Assert.Equal(true, result.HasLastmod.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(4, result.Urls.Count);
+        Assert.Equal(true, result.HasLastmod);
     }
 
     [Fact]
-    public void Test_SitemapCompressedGzip()
+    public async Task Test_SitemapCompressedGzip()
     {
         // Parses a gzip-compressed sitemap file
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(3, result.Urls.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(3, result.Urls.Count);
     }
 
     [Fact]
-    public void Test_SitemapEmpty()
+    public async Task Test_SitemapEmpty()
     {
         // Handles empty sitemap gracefully
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(0, result.Urls.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(0, result.Urls.Count);
     }
 
     [Fact]
-    public void Test_SitemapFromRobotsTxt()
+    public async Task Test_SitemapFromRobotsTxt()
     {
         // Discovers sitemap via robots.txt Sitemap directive
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(4, result.Urls.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(4, result.Urls.Count);
     }
 
     [Fact]
-    public void Test_SitemapIndex()
+    public async Task Test_SitemapIndex()
     {
         // Follows sitemap index to discover child sitemaps
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(3, result.Urls.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(3, result.Urls.Count);
     }
 
     [Fact]
-    public void Test_SitemapLastmodFilter()
+    public async Task Test_SitemapLastmodFilter()
     {
         // Filters sitemap URLs by lastmod date
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(4, result.Urls.Count.Trim());
-        Assert.Equal(true, result.HasLastmod.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(4, result.Urls.Count);
+        Assert.Equal(true, result.HasLastmod);
     }
 
     [Fact]
-    public void Test_SitemapOnlyMode()
+    public async Task Test_SitemapOnlyMode()
     {
         // Uses sitemap URLs exclusively without following page links
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(4, result.Urls.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(4, result.Urls.Count);
     }
 
     [Fact]
-    public void Test_SitemapXhtmlLinks()
+    public async Task Test_SitemapXhtmlLinks()
     {
         // Parses sitemap with XHTML namespace alternate links
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(2, result.Urls.Count.Trim());
-        Assert.Equal(false, result.HasLastmod.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(2, result.Urls.Count);
+        Assert.Equal(false, result.HasLastmod);
     }
 }

@@ -10,7 +10,8 @@ import (
 
 func Test_FilterBm25CrawlIntegration(t *testing.T) {
 	// BM25 filter works during multi-page crawl, keeping relevant pages
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -21,7 +22,8 @@ func Test_FilterBm25CrawlIntegration(t *testing.T) {
 
 func Test_FilterBm25EmptyQuery(t *testing.T) {
 	// BM25 filter with empty query passes all pages through
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -32,7 +34,8 @@ func Test_FilterBm25EmptyQuery(t *testing.T) {
 
 func Test_FilterBm25HighThreshold(t *testing.T) {
 	// BM25 filter with very high threshold filters out all pages
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -43,7 +46,8 @@ func Test_FilterBm25HighThreshold(t *testing.T) {
 
 func Test_FilterBm25RelevantPages(t *testing.T) {
 	// BM25 filter keeps only pages relevant to the query
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -54,7 +58,8 @@ func Test_FilterBm25RelevantPages(t *testing.T) {
 
 func Test_FilterBm25ThresholdZero(t *testing.T) {
 	// BM25 filter with zero threshold passes all pages
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -65,7 +70,8 @@ func Test_FilterBm25ThresholdZero(t *testing.T) {
 
 func Test_FilterNoopCrawlAllKept(t *testing.T) {
 	// NoopFilter keeps all pages during a multi-page crawl
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -76,7 +82,8 @@ func Test_FilterNoopCrawlAllKept(t *testing.T) {
 
 func Test_FilterNoopPassesAll(t *testing.T) {
 	// No content filter passes all crawled pages through
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

@@ -13,7 +13,8 @@ final class StealthTest extends TestCase
     /** User-agent rotation config is accepted and crawl succeeds */
     public function test_stealth_ua_rotation_config(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
     }
 }

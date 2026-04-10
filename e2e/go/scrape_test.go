@@ -10,7 +10,8 @@ import (
 
 func Test_ScrapeAssetDedup(t *testing.T) {
 	// Same asset linked twice results in one download with one unique hash
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -27,7 +28,8 @@ func Test_ScrapeAssetDedup(t *testing.T) {
 
 func Test_ScrapeAssetMaxSize(t *testing.T) {
 	// Skips assets exceeding max_asset_size limit
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -41,7 +43,8 @@ func Test_ScrapeAssetMaxSize(t *testing.T) {
 
 func Test_ScrapeAssetTypeFilter(t *testing.T) {
 	// Only downloads image assets when asset_types filter is set
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -58,7 +61,8 @@ func Test_ScrapeAssetTypeFilter(t *testing.T) {
 
 func Test_ScrapeBasicHtmlPage(t *testing.T) {
 	// Scrapes a simple HTML page and extracts title, description, and links
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -108,7 +112,8 @@ func Test_ScrapeBasicHtmlPage(t *testing.T) {
 
 func Test_ScrapeComplexLinks(t *testing.T) {
 	// Classifies links by type: internal, external, anchor, document, image
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -134,7 +139,8 @@ func Test_ScrapeComplexLinks(t *testing.T) {
 
 func Test_ScrapeDownloadAssets(t *testing.T) {
 	// Downloads CSS, JS, and image assets from page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -148,7 +154,8 @@ func Test_ScrapeDownloadAssets(t *testing.T) {
 
 func Test_ScrapeDublinCore(t *testing.T) {
 	// Extracts Dublin Core metadata from a page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -168,7 +175,8 @@ func Test_ScrapeDublinCore(t *testing.T) {
 
 func Test_ScrapeEmptyPage(t *testing.T) {
 	// Handles an empty HTML document without errors
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -185,7 +193,8 @@ func Test_ScrapeEmptyPage(t *testing.T) {
 
 func Test_ScrapeFeedDiscovery(t *testing.T) {
 	// Discovers RSS, Atom, and JSON feed links
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -205,7 +214,8 @@ func Test_ScrapeFeedDiscovery(t *testing.T) {
 
 func Test_ScrapeImageSources(t *testing.T) {
 	// Extracts images from img, picture, og:image, twitter:image
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -222,7 +232,8 @@ func Test_ScrapeImageSources(t *testing.T) {
 
 func Test_ScrapeJsHeavySpa(t *testing.T) {
 	// Handles SPA page with JavaScript-only content (no server-rendered HTML)
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -233,7 +244,8 @@ func Test_ScrapeJsHeavySpa(t *testing.T) {
 
 func Test_ScrapeJsonLd(t *testing.T) {
 	// Extracts JSON-LD structured data from a page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -253,7 +265,8 @@ func Test_ScrapeJsonLd(t *testing.T) {
 
 func Test_ScrapeMalformedHtml(t *testing.T) {
 	// Gracefully handles broken HTML without crashing
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -274,7 +287,8 @@ func Test_ScrapeMalformedHtml(t *testing.T) {
 
 func Test_ScrapeOgMetadata(t *testing.T) {
 	// Extracts full Open Graph metadata from a page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -307,7 +321,8 @@ func Test_ScrapeOgMetadata(t *testing.T) {
 
 func Test_ScrapeTwitterCard(t *testing.T) {
 	// Extracts Twitter Card metadata from a page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

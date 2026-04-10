@@ -1,12 +1,12 @@
 """E2e tests for category: metadata.
 """
-from kreuzcrawl import scrape
+from kreuzcrawl import create_engine, scrape
 
 
 def test_metadata_article_times() -> None:
     """Extracts article:published_time, modified_time, author, section, and tags."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.article.published_time == "2024-01-15T10:00:00Z"
@@ -17,8 +17,8 @@ def test_metadata_article_times() -> None:
 
 def test_metadata_favicons() -> None:
     """Extracts favicon link tags including apple-touch-icon."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.favicons) == 5
@@ -26,8 +26,8 @@ def test_metadata_favicons() -> None:
 
 def test_metadata_headings() -> None:
     """Extracts heading hierarchy (h1-h6) from HTML page."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.headings.h1) == 1
@@ -36,8 +36,8 @@ def test_metadata_headings() -> None:
 
 def test_metadata_hreflang() -> None:
     """Extracts hreflang alternate link tags."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.hreflang) == 4
@@ -45,8 +45,8 @@ def test_metadata_hreflang() -> None:
 
 def test_metadata_keywords_author() -> None:
     """Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.metadata.title == "Comprehensive Metadata Test Page"
@@ -63,8 +63,8 @@ def test_metadata_keywords_author() -> None:
 
 def test_metadata_og_video_audio() -> None:
     """Extracts og:video, og:audio, and og:locale:alternate metadata."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.og.video == "https://example.com/video.mp4"
@@ -73,8 +73,8 @@ def test_metadata_og_video_audio() -> None:
 
 def test_metadata_response_headers() -> None:
     """Extracts response metadata from HTTP headers (etag, server, content-language)."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.response_headers.etag
@@ -84,8 +84,8 @@ def test_metadata_response_headers() -> None:
 
 def test_metadata_word_count() -> None:
     """Computes word count from visible page text."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.computed.word_count > 99

@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
-// Load the PHP package autoloader first (binding wrapper classes).
-require_once __DIR__ . '/../../packages/php/vendor/autoload.php';
-
 // Load the e2e project autoloader (PHPUnit, test helpers).
 require_once __DIR__ . '/vendor/autoload.php';
+
+// Load the PHP binding package classes via its Composer autoloader.
+// The package's autoloader is separate from the e2e project's autoloader
+// since the php-ext type prevents direct composer path dependency.
+$pkgAutoloader = __DIR__ . '/../../packages/php/vendor/autoload.php';
+if (file_exists($pkgAutoloader)) {
+    require_once $pkgAutoloader;
+}

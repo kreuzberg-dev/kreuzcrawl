@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,40 +8,44 @@ namespace Kreuzberg.E2e;
 public class ScrapeTests
 {
     [Fact]
-    public void Test_ScrapeAssetDedup()
+    public async Task Test_ScrapeAssetDedup()
     {
         // Same asset linked twice results in one download with one unique hash
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
-        Assert.Equal(2, result.Assets.Count.Trim());
-        Assert.Equal(2, result.Assets.UniqueHashes.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
+        Assert.Equal(2, result.Assets.Count);
+        Assert.Equal(2, result.Assets.UniqueHashes);
     }
 
     [Fact]
-    public void Test_ScrapeAssetMaxSize()
+    public async Task Test_ScrapeAssetMaxSize()
     {
         // Skips assets exceeding max_asset_size limit
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
-        Assert.Equal(2, result.Assets.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
+        Assert.Equal(2, result.Assets.Count);
     }
 
     [Fact]
-    public void Test_ScrapeAssetTypeFilter()
+    public async Task Test_ScrapeAssetTypeFilter()
     {
         // Only downloads image assets when asset_types filter is set
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
-        Assert.Equal(1, result.Assets.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
+        Assert.Equal(1, result.Assets.Count);
         Assert.Contains("image", result.Assets[""].Category);
     }
 
     [Fact]
-    public void Test_ScrapeBasicHtmlPage()
+    public async Task Test_ScrapeBasicHtmlPage()
     {
         // Scrapes a simple HTML page and extracts title, description, and links
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.Equal("text/html", result.ContentType.Trim());
         Assert.NotEmpty(result.Html);
         Assert.Equal("Example Domain", result.Metadata.Title.Trim());
@@ -48,16 +53,17 @@ public class ScrapeTests
         Assert.NotEmpty(result.Metadata.CanonicalUrl);
         Assert.True(result.Links.Count > 0, "expected > 0");
         Assert.Contains("external", result.Links[""].LinkType);
-        Assert.Equal(0, result.Images.Count.Trim());
+        Assert.Equal(0, result.Images.Count);
         Assert.Empty(result.Og.Title);
     }
 
     [Fact]
-    public void Test_ScrapeComplexLinks()
+    public async Task Test_ScrapeComplexLinks()
     {
         // Classifies links by type: internal, external, anchor, document, image
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.True(result.Links.Count > 9, "expected > 9");
         Assert.Contains("internal", result.Links[""].LinkType);
         Assert.Contains("external", result.Links[""].LinkType);
@@ -66,91 +72,100 @@ public class ScrapeTests
     }
 
     [Fact]
-    public void Test_ScrapeDownloadAssets()
+    public async Task Test_ScrapeDownloadAssets()
     {
         // Downloads CSS, JS, and image assets from page
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.True(result.Assets.Count > 2, "expected > 2");
     }
 
     [Fact]
-    public void Test_ScrapeDublinCore()
+    public async Task Test_ScrapeDublinCore()
     {
         // Extracts Dublin Core metadata from a page
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.DublinCore.Title);
         Assert.Equal("Effects of Climate Change on Marine Biodiversity", result.DublinCore.Title.Trim());
         Assert.Equal("Dr. Jane Smith", result.DublinCore.Creator.Trim());
     }
 
     [Fact]
-    public void Test_ScrapeEmptyPage()
+    public async Task Test_ScrapeEmptyPage()
     {
         // Handles an empty HTML document without errors
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.True(result.Links.Count > -1, "expected > -1");
-        Assert.Equal(0, result.Images.Count.Trim());
+        Assert.Equal(0, result.Images.Count);
     }
 
     [Fact]
-    public void Test_ScrapeFeedDiscovery()
+    public async Task Test_ScrapeFeedDiscovery()
     {
         // Discovers RSS, Atom, and JSON feed links
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
-        Assert.Equal(1, result.Feeds.Rss.Count.Trim());
-        Assert.Equal(1, result.Feeds.Atom.Count.Trim());
-        Assert.Equal(1, result.Feeds.JsonFeed.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
+        Assert.Equal(1, result.Feeds.Rss.Count);
+        Assert.Equal(1, result.Feeds.Atom.Count);
+        Assert.Equal(1, result.Feeds.JsonFeed.Count);
     }
 
     [Fact]
-    public void Test_ScrapeImageSources()
+    public async Task Test_ScrapeImageSources()
     {
         // Extracts images from img, picture, og:image, twitter:image
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.True(result.Images.Count > 4, "expected > 4");
         Assert.Equal("https://example.com/images/og-hero.jpg", result.Og.Image.Trim());
     }
 
     [Fact]
-    public void Test_ScrapeJsHeavySpa()
+    public async Task Test_ScrapeJsHeavySpa()
     {
         // Handles SPA page with JavaScript-only content (no server-rendered HTML)
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.NotEmpty(result.Html);
     }
 
     [Fact]
-    public void Test_ScrapeJsonLd()
+    public async Task Test_ScrapeJsonLd()
     {
         // Extracts JSON-LD structured data from a page
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.JsonLd);
         Assert.Equal("Recipe", result.JsonLd.Type.Trim());
         Assert.Equal("Best Chocolate Cake", result.JsonLd.Name.Trim());
     }
 
     [Fact]
-    public void Test_ScrapeMalformedHtml()
+    public async Task Test_ScrapeMalformedHtml()
     {
         // Gracefully handles broken HTML without crashing
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Html);
         Assert.Contains("broken HTML", result.Metadata.Description);
     }
 
     [Fact]
-    public void Test_ScrapeOgMetadata()
+    public async Task Test_ScrapeOgMetadata()
     {
         // Extracts full Open Graph metadata from a page
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Og.Title);
         Assert.Equal("Article Title", result.Og.Title.Trim());
         Assert.Equal("article", result.Og.Type.Trim());
@@ -160,11 +175,12 @@ public class ScrapeTests
     }
 
     [Fact]
-    public void Test_ScrapeTwitterCard()
+    public async Task Test_ScrapeTwitterCard()
     {
         // Extracts Twitter Card metadata from a page
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Twitter.Card);
         Assert.Equal("summary_large_image", result.Twitter.CardType.Trim());
         Assert.Equal("New Product Launch", result.Twitter.Title.Trim());

@@ -10,7 +10,8 @@ import (
 
 func Test_CookiesPerDomain(t *testing.T) {
 	// Isolates cookies per domain during crawl
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -24,7 +25,8 @@ func Test_CookiesPerDomain(t *testing.T) {
 
 func Test_CookiesPersistence(t *testing.T) {
 	// Maintains cookies across multiple crawl requests
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -35,7 +37,8 @@ func Test_CookiesPersistence(t *testing.T) {
 
 func Test_CookiesSetCookieResponse(t *testing.T) {
 	// Respects Set-Cookie header from server responses
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

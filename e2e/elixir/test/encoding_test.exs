@@ -4,7 +4,8 @@ defmodule E2e.EncodingTest do
 
   describe "encoding_double_encoded" do
     test "Handles double-encoded URL characters (%25C3%25B6)" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert result.html != ""
       assert length(result.links) >= 1
     end
@@ -12,14 +13,16 @@ defmodule E2e.EncodingTest do
 
   describe "encoding_mixed_charset_page" do
     test "Handles charset mismatch between HTTP header and HTML meta tag" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert result.html != ""
     end
   end
 
   describe "encoding_percent_encoded_path" do
     test "Handles percent-encoded spaces and characters in URL paths" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert result.html != ""
       assert length(result.links) >= 2
     end
@@ -27,7 +30,8 @@ defmodule E2e.EncodingTest do
 
   describe "encoding_unicode_url" do
     test "Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic)" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert result.html != ""
     end
   end

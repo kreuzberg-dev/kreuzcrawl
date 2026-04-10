@@ -10,7 +10,8 @@ import (
 
 func Test_RobotsAllowAll(t *testing.T) {
 	// Permissive robots.txt allows all paths
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -21,7 +22,8 @@ func Test_RobotsAllowAll(t *testing.T) {
 
 func Test_RobotsAllowOverride(t *testing.T) {
 	// Allow directive overrides Disallow for specific paths
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -32,7 +34,8 @@ func Test_RobotsAllowOverride(t *testing.T) {
 
 func Test_RobotsCommentsHandling(t *testing.T) {
 	// Correctly parses robots.txt with inline and line comments
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -43,7 +46,8 @@ func Test_RobotsCommentsHandling(t *testing.T) {
 
 func Test_RobotsCrawlDelay(t *testing.T) {
 	// Respects crawl-delay directive from robots.txt
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -54,7 +58,8 @@ func Test_RobotsCrawlDelay(t *testing.T) {
 
 func Test_RobotsDisallowPath(t *testing.T) {
 	// Robots.txt disallows specific paths
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -65,7 +70,8 @@ func Test_RobotsDisallowPath(t *testing.T) {
 
 func Test_RobotsMetaNofollow(t *testing.T) {
 	// Detects nofollow meta robots tag and skips link extraction
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -76,7 +82,8 @@ func Test_RobotsMetaNofollow(t *testing.T) {
 
 func Test_RobotsMetaNoindex(t *testing.T) {
 	// Detects noindex meta robots tag in HTML page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -87,7 +94,8 @@ func Test_RobotsMetaNoindex(t *testing.T) {
 
 func Test_RobotsMissing404(t *testing.T) {
 	// Missing robots.txt (404) allows all crawling
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -98,7 +106,8 @@ func Test_RobotsMissing404(t *testing.T) {
 
 func Test_RobotsMultipleUserAgents(t *testing.T) {
 	// Picks the most specific user-agent block from robots.txt
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -109,7 +118,8 @@ func Test_RobotsMultipleUserAgents(t *testing.T) {
 
 func Test_RobotsRequestRate(t *testing.T) {
 	// Parses request-rate directive from robots.txt
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -123,7 +133,8 @@ func Test_RobotsRequestRate(t *testing.T) {
 
 func Test_RobotsSitemapDirective(t *testing.T) {
 	// Discovers sitemap URL from Sitemap directive in robots.txt
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -134,7 +145,8 @@ func Test_RobotsSitemapDirective(t *testing.T) {
 
 func Test_RobotsUserAgentSpecific(t *testing.T) {
 	// Matches user-agent specific rules in robots.txt
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -145,7 +157,8 @@ func Test_RobotsUserAgentSpecific(t *testing.T) {
 
 func Test_RobotsWildcardPaths(t *testing.T) {
 	// Handles wildcard Disallow patterns in robots.txt
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -156,7 +169,8 @@ func Test_RobotsWildcardPaths(t *testing.T) {
 
 func Test_RobotsXRobotsTag(t *testing.T) {
 	// Respects X-Robots-Tag HTTP header directives
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
