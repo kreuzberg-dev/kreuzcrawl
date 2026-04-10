@@ -1,10 +1,11 @@
 //! Link extraction and classification from HTML documents.
 
-use scraper::Html;
+use tl::VDom;
 use url::Url;
 
 use crate::types::{LinkInfo, LinkType};
 
+use super::get_attr;
 use super::selectors::{SEL_A_HREF, SEL_BASE_HREF};
 
 /// Document file extensions used for link classification.
@@ -46,66 +47,79 @@ pub(crate) fn classify_link(href: &str, base_url: &Url) -> LinkType {
 }
 
 /// Extract all links from a parsed HTML document.
-pub(crate) fn extract_links(doc: &Html, base_url: &Url) -> Vec<LinkInfo> {
+pub(crate) fn extract_links(dom: &VDom<'_>, base_url: &Url) -> Vec<LinkInfo> {
+    let parser = dom.parser();
+
     // Check for <base> tag
-    let effective_base = doc
-        .select(&SEL_BASE_HREF)
-        .next()
-        .and_then(|el| el.value().attr("href"))
-        .and_then(|href| Url::parse(href).ok())
+    let effective_base = dom
+        .query_selector(SEL_BASE_HREF)
+        .and_then(|mut iter| {
+            iter.next()
+                .and_then(|h| h.get(parser))
+                .and_then(|n| n.as_tag())
+                .and_then(|tag| get_attr(tag, "href"))
+                .and_then(|href| Url::parse(href).ok())
+        })
         .unwrap_or_else(|| base_url.clone());
 
     let mut links = Vec::new();
-    for el in doc.select(&SEL_A_HREF) {
-        let href = el.value().attr("href").unwrap_or("").trim();
-        if href.is_empty() {
-            continue;
-        }
 
-        // Skip non-HTTP schemes
-        if href.starts_with("mailto:")
-            || href.starts_with("javascript:")
-            || href.starts_with("tel:")
-            || href.starts_with("data:")
-        {
-            continue;
-        }
+    if let Some(iter) = dom.query_selector(SEL_A_HREF) {
+        for handle in iter {
+            let Some(tag) = handle.get(parser).and_then(|n| n.as_tag()) else {
+                continue;
+            };
 
-        // Protocol-relative URLs
-        let link_type = if href.starts_with("//") {
-            let resolved = format!("{}:{}", effective_base.scheme(), href);
-            if let Ok(u) = Url::parse(&resolved) {
-                if u.host_str() != effective_base.host_str() {
-                    LinkType::External
+            let href = get_attr(tag, "href").unwrap_or("").trim();
+            if href.is_empty() {
+                continue;
+            }
+
+            // Skip non-HTTP schemes
+            if href.starts_with("mailto:")
+                || href.starts_with("javascript:")
+                || href.starts_with("tel:")
+                || href.starts_with("data:")
+            {
+                continue;
+            }
+
+            // Protocol-relative URLs
+            let link_type = if href.starts_with("//") {
+                let resolved = format!("{}:{}", effective_base.scheme(), href);
+                if let Ok(u) = Url::parse(&resolved) {
+                    if u.host_str() != effective_base.host_str() {
+                        LinkType::External
+                    } else {
+                        LinkType::Internal
+                    }
                 } else {
-                    LinkType::Internal
+                    LinkType::External
                 }
             } else {
-                LinkType::External
-            }
-        } else {
-            classify_link(href, &effective_base)
-        };
+                classify_link(href, &effective_base)
+            };
 
-        let resolved_url = if href.starts_with("//") {
-            href.to_owned()
-        } else if let Ok(u) = effective_base.join(href) {
-            u.to_string()
-        } else {
-            href.to_owned()
-        };
+            let resolved_url = if href.starts_with("//") {
+                href.to_owned()
+            } else if let Ok(u) = effective_base.join(href) {
+                u.to_string()
+            } else {
+                href.to_owned()
+            };
 
-        let rel = el.value().attr("rel").map(String::from);
-        let nofollow = rel.as_ref().map(|r| r.contains("nofollow")).unwrap_or(false);
-        let text = el.text().collect::<String>().trim().to_owned();
+            let rel = get_attr(tag, "rel").map(String::from);
+            let nofollow = rel.as_ref().map(|r| r.contains("nofollow")).unwrap_or(false);
+            let text = tag.inner_text(parser).trim().to_owned();
 
-        links.push(LinkInfo {
-            url: resolved_url,
-            text,
-            link_type,
-            rel,
-            nofollow,
-        });
+            links.push(LinkInfo {
+                url: resolved_url,
+                text,
+                link_type,
+                rel,
+                nofollow,
+            });
+        }
     }
     links
 }

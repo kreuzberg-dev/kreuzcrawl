@@ -11,6 +11,7 @@ mod links;
 mod metadata;
 pub(crate) mod selectors;
 
+use tl::{HTMLTag, Parser, VDom};
 use url::Url;
 
 pub(crate) fn resolve_url(src: &str, base_url: &Url) -> String {
@@ -18,6 +19,30 @@ pub(crate) fn resolve_url(src: &str, base_url: &Url) -> String {
         .join(src)
         .map(|u| u.to_string())
         .unwrap_or_else(|_| src.to_owned())
+}
+
+/// Get a string attribute value from an HTMLTag.
+///
+/// Returns `None` if the attribute does not exist or has no value.
+pub(crate) fn get_attr<'a>(tag: &'a HTMLTag<'_>, attr: &'a str) -> Option<&'a str> {
+    tag.attributes().get(attr).flatten().and_then(|b| b.try_as_utf8_str())
+}
+
+/// Iterate over nodes matching a CSS selector, calling the closure for each tag.
+pub(crate) fn query_tags<'a, F>(dom: &'a VDom<'a>, selector: &str, mut f: F)
+where
+    F: FnMut(&HTMLTag<'a>, &Parser<'a>),
+{
+    let parser = dom.parser();
+    if let Some(iter) = dom.query_selector(selector) {
+        for handle in iter {
+            if let Some(node) = handle.get(parser)
+                && let Some(tag) = node.as_tag()
+            {
+                f(tag, parser);
+            }
+        }
+    }
 }
 
 pub(crate) use charset::detect_charset;

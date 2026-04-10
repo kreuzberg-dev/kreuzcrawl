@@ -22,7 +22,6 @@ default = []
 [dependencies]
 ext-php-rs = { workspace = true }
 kreuzcrawl = { path = "../kreuzcrawl" }
-kreuzcrawl-bindings-common = { path = "../kreuzcrawl-bindings-common" }
 serde_json = { workspace = true }
 tokio = { workspace = true }
 

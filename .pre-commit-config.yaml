@@ -1,7 +1,7 @@
 default_install_hook_types:
   - pre-commit
   - commit-msg
-exclude: ^target/|node_modules/
+exclude: ^docs/snippets/|vendor/|node_modules/|target/|invalid*|dist/|artifacts/|test_documents/|test_apps/|scripts/ci/|packages/.*/tools/vendor-
 
 repos:
   # Commit message linting
@@ -54,7 +54,7 @@ repos:
 
   # Python: ruff (linting + formatting) + mypy (type checking)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.9
+    rev: v0.15.10
     hooks:
       - id: ruff
         args: [--fix]
@@ -75,24 +75,24 @@ repos:
         types: [rust]
       # Clippy: split by compilation unit so only changed code recompiles
       - id: cargo-clippy
-        args:
-          [
-            "--fix",
-            "--allow-dirty",
-            "--allow-staged",
-            "--workspace",
-            "--all-features",
-            "--all-targets",
-            "--",
-            "-D",
-            "warnings",
-          ]
-
-  - repo: https://github.com/DevinR528/cargo-sort
-    rev: "v2.1.3"
-    hooks:
-      - id: cargo-sort
-        args: [-w]
+        name: clippy (workspace — core, cli, ffi, bindings)
+        args: ["--fix", "--allow-dirty", "--allow-staged", "--workspace",
+               "--exclude=kreuzcrawl-php", "--exclude=kreuzcrawl-wasm",
+               "--all-features", "--all-targets", "--", "-D", "warnings"]
+        files: ^(crates/|tools/|e2e/rust/|Cargo\.(toml|lock))
+        types_or: [rust, toml]
+      - id: cargo-clippy
+        name: clippy (kreuzcrawl-php)
+        args: ["--fix", "--allow-dirty", "--allow-staged",
+               "-p", "kreuzcrawl-php", "--all-targets", "--", "-D", "warnings"]
+        files: ^crates/kreuzcrawl-php/
+        types: [rust]
+      - id: cargo-clippy
+        name: clippy (kreuzcrawl-wasm)
+        args: ["--fix", "--allow-dirty", "--allow-staged",
+               "-p", "kreuzcrawl-wasm", "--all-targets", "--", "-D", "warnings"]
+        files: ^crates/kreuzcrawl-wasm/
+        types: [rust]
 
   - repo: https://github.com/bnjbvr/cargo-machete
     rev: v0.9.1
@@ -107,7 +107,7 @@ repos:
 
   # JavaScript/TypeScript/JSON/CSS: biome (formatting + linting with autofixes)
   - repo: https://github.com/biomejs/pre-commit
-    rev: v2.4.10
+    rev: v2.4.11
     hooks:
       - id: biome-format
         exclude: ^tools/benchmark-harness/fixtures/

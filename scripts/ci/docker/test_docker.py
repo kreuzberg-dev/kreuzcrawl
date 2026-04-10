@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Unified Docker image test script for all variants (core, full, cli)."""
+# ruff: noqa: T201, S603, S607, S311, S108, TRY300, PLR2004, PLC0415, PERF203, PTH108, SIM115
 
 from __future__ import annotations
 
@@ -78,7 +79,7 @@ class TestRunner:
 
     def docker_run(self, *args: str, capture: bool = True) -> subprocess.CompletedProcess[str]:
         cmd = ["docker", "run", "--rm", *args]
-        return subprocess.run(cmd, capture_output=capture, text=True, timeout=120)
+        return subprocess.run(cmd, check=False, capture_output=capture, text=True, timeout=120)
 
     def docker_run_detached(self, *args: str) -> str:
         name = self.container_name()
@@ -87,7 +88,7 @@ class TestRunner:
         return name
 
     def docker_rm(self, name: str) -> None:
-        subprocess.run(["docker", "rm", "-f", name], capture_output=True, timeout=30)
+        subprocess.run(["docker", "rm", "-f", name], check=False, capture_output=True, timeout=30)
 
     def cleanup(self) -> None:
         for c in self.containers:
@@ -125,7 +126,7 @@ class TestRunner:
 
 def test_image_exists(t: TestRunner) -> None:
     t.start("Docker image exists")
-    r = subprocess.run(["docker", "inspect", t.image], capture_output=True, timeout=30)
+    r = subprocess.run(["docker", "inspect", t.image], check=False, capture_output=True, timeout=30)
     if r.returncode == 0:
         t.pass_test()
     else:
@@ -187,7 +188,7 @@ def test_extract_pdf(t: TestRunner) -> None:
             "extract",
             "/data/pdf/searchable.pdf",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=120,
     )
@@ -240,7 +241,7 @@ def test_nonexistent_file(t: TestRunner) -> None:
     t.start("Non-existent file returns error")
     r = subprocess.run(
         ["docker", "run", "--rm", t.image, "extract", "/nonexistent/file.pdf"],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=60,
     )
@@ -269,7 +270,7 @@ def test_readonly_mount(t: TestRunner) -> None:
             "extract",
             "/data/text/simple.txt",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=60,
     )
@@ -292,7 +293,7 @@ def _wait_for_api(port: int, retries: int = 10) -> bool:
         try:
             urllib.request.urlopen(f"http://localhost:{port}/health", timeout=3)
             return True
-        except Exception:
+        except (OSError, urllib.error.URLError):
             time.sleep(2)
     return False
 
@@ -303,7 +304,7 @@ def _api_get(port: int, path: str) -> str | None:
     try:
         with urllib.request.urlopen(f"http://localhost:{port}{path}", timeout=10) as resp:
             return resp.read().decode()
-    except Exception:
+    except (OSError, urllib.error.URLError):
         return None
 
 
@@ -311,7 +312,7 @@ def _api_post_file(port: int, path: str, filepath: str) -> str | None:
     """POST a file using curl (simplest multipart approach)."""
     r = subprocess.run(
         ["curl", "-f", "-s", "-X", "POST", f"http://localhost:{port}{path}", "-F", f"files=@{filepath}"],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=30,
     )
@@ -338,7 +339,7 @@ def test_ocr_extraction(t: TestRunner) -> None:
             "--ocr",
             "true",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=120,
     )
@@ -372,7 +373,7 @@ def test_paddle_ocr_extraction(t: TestRunner) -> None:
             "--ocr-backend",
             "paddle-ocr",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=120,
     )
@@ -402,7 +403,7 @@ def test_doc_extraction(t: TestRunner) -> None:
             "extract",
             "/data/doc/unit_test_lists.doc",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=120,
     )
@@ -582,7 +583,7 @@ def test_api_cache(t: TestRunner) -> None:
     t.start("API /cache/clear endpoint")
     r = subprocess.run(
         ["curl", "-f", "-s", "-X", "DELETE", f"http://localhost:{port}/cache/clear"],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=10,
     )
@@ -630,7 +631,7 @@ def test_api_batch(t: TestRunner) -> None:
             "-F",
             f"files=@{tmp2.name}",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=30,
     )
@@ -664,7 +665,7 @@ def test_cli_batch_json(t: TestRunner) -> None:
             "--format",
             "json",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=120,
     )
@@ -688,7 +689,7 @@ def test_mcp_server(t: TestRunner) -> None:
     time.sleep(3)
     r = subprocess.run(
         ["docker", "ps", "--filter", f"name={name}", "--format", "{{.Names}}"],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=10,
     )
@@ -705,7 +706,7 @@ def test_cli_cache(t: TestRunner) -> None:
     name = t.container_name()
     r = subprocess.run(
         ["docker", "run", "--rm", "--name", name, t.image, "cache", "stats", "--format", "json"],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=60,
     )
@@ -720,7 +721,7 @@ def test_cli_cache(t: TestRunner) -> None:
     name = t.container_name()
     r = subprocess.run(
         ["docker", "run", "--rm", "--name", name, t.image, "cache", "clear", "--format", "json"],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=60,
     )
@@ -737,7 +738,7 @@ def test_security_nonroot(t: TestRunner) -> None:
     name = t.container_name()
     r = subprocess.run(
         ["docker", "run", "--rm", "--name", name, "--entrypoint", "/bin/sh", t.image, "-c", "whoami"],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=30,
     )
@@ -768,7 +769,7 @@ def test_security_readonly(t: TestRunner) -> None:
                 "-c",
                 "echo 'attempt' > /data/test2.txt 2>&1 || echo 'READ_ONLY'",
             ],
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=30,
         )
@@ -799,7 +800,7 @@ def test_security_memlimit(t: TestRunner) -> None:
             "-c",
             "echo 'Memory limit test passed'",
         ],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=30,
     )
@@ -818,7 +819,7 @@ def test_cli_image_size(t: TestRunner) -> None:
     t.start("Image size is reasonable (< 200MB)")
     r = subprocess.run(
         ["docker", "inspect", t.image, "--format", "{{.Size}}"],
-        capture_output=True,
+        check=False, capture_output=True,
         text=True,
         timeout=10,
     )

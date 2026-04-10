@@ -3,11 +3,12 @@
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use scraper::Html;
 use sha2::{Digest, Sha256};
+use tl::VDom;
 use tokio::sync::Semaphore;
 use url::Url;
 
+use crate::html::get_attr;
 use crate::html::selectors::{SEL_IMG_SRC, SEL_LINK_CSS, SEL_SCRIPT_SRC};
 use crate::types::{AssetCategory, CrawlConfig, DownloadedAsset};
 
@@ -19,46 +20,56 @@ pub(crate) struct AssetRef {
 }
 
 /// Discover downloadable assets from a parsed HTML document.
-pub(crate) fn discover_assets(doc: &Html, base_url: &Url) -> Vec<AssetRef> {
+pub(crate) fn discover_assets(dom: &VDom<'_>, base_url: &Url) -> Vec<AssetRef> {
+    let parser = dom.parser();
     let mut assets = Vec::new();
 
     // CSS stylesheets
-    for el in doc.select(&SEL_LINK_CSS) {
-        if let Some(href) = el.value().attr("href")
-            && let Ok(url) = base_url.join(href)
-        {
-            assets.push(AssetRef {
-                url: url.to_string(),
-                category: AssetCategory::Stylesheet,
-                html_tag: "link".to_owned(),
-            });
+    if let Some(iter) = dom.query_selector(SEL_LINK_CSS) {
+        for handle in iter {
+            if let Some(tag) = handle.get(parser).and_then(|n| n.as_tag())
+                && let Some(href) = get_attr(tag, "href")
+                && let Ok(url) = base_url.join(href)
+            {
+                assets.push(AssetRef {
+                    url: url.to_string(),
+                    category: AssetCategory::Stylesheet,
+                    html_tag: "link".to_owned(),
+                });
+            }
         }
     }
 
     // JavaScript files
-    for el in doc.select(&SEL_SCRIPT_SRC) {
-        if let Some(src) = el.value().attr("src")
-            && let Ok(url) = base_url.join(src)
-        {
-            assets.push(AssetRef {
-                url: url.to_string(),
-                category: AssetCategory::Script,
-                html_tag: "script".to_owned(),
-            });
+    if let Some(iter) = dom.query_selector(SEL_SCRIPT_SRC) {
+        for handle in iter {
+            if let Some(tag) = handle.get(parser).and_then(|n| n.as_tag())
+                && let Some(src) = get_attr(tag, "src")
+                && let Ok(url) = base_url.join(src)
+            {
+                assets.push(AssetRef {
+                    url: url.to_string(),
+                    category: AssetCategory::Script,
+                    html_tag: "script".to_owned(),
+                });
+            }
         }
     }
 
     // Images
-    for el in doc.select(&SEL_IMG_SRC) {
-        if let Some(src) = el.value().attr("src")
-            && !src.starts_with("data:")
-            && let Ok(url) = base_url.join(src)
-        {
-            assets.push(AssetRef {
-                url: url.to_string(),
-                category: AssetCategory::Image,
-                html_tag: "img".to_owned(),
-            });
+    if let Some(iter) = dom.query_selector(SEL_IMG_SRC) {
+        for handle in iter {
+            if let Some(tag) = handle.get(parser).and_then(|n| n.as_tag())
+                && let Some(src) = get_attr(tag, "src")
+                && !src.starts_with("data:")
+                && let Ok(url) = base_url.join(src)
+            {
+                assets.push(AssetRef {
+                    url: url.to_string(),
+                    category: AssetCategory::Image,
+                    html_tag: "img".to_owned(),
+                });
+            }
         }
     }
 

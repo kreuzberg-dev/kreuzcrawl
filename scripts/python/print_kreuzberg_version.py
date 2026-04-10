@@ -7,12 +7,12 @@ import sys
 
 def main() -> int:
     try:
-        import kreuzcrawl  # type: ignore
-    except Exception as exc:  # pragma: no cover - runtime helper
-        print(f"Failed to import kreuzcrawl: {exc}", file=sys.stderr)
+        import kreuzcrawl  # type: ignore[import-untyped]
+    except ImportError as exc:  # pragma: no cover - runtime helper
+        print(f"Failed to import kreuzcrawl: {exc}", file=sys.stderr)  # noqa: T201
         return 1
 
-    print(f"Kreuzcrawl version: {getattr(kreuzcrawl, '__version__', 'unknown')}")
+    print(f"Kreuzcrawl version: {getattr(kreuzcrawl, '__version__', 'unknown')}")  # noqa: T201
     return 0
 
 

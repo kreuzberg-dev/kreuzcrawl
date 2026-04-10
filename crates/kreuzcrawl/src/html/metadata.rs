@@ -1,9 +1,10 @@
 //! Metadata extraction from HTML documents.
 
-use scraper::Html;
+use tl::VDom;
 
 use crate::types::{ArticleMetadata, PageMetadata};
 
+use super::get_attr;
 use super::selectors::{
     META_RE_CONTENT_NAME, META_RE_NAME_CONTENT, SEL_CANONICAL, SEL_HTML, SEL_META, SEL_META_REFRESH, SEL_ROBOTS_META,
     SEL_TITLE,
@@ -22,12 +23,21 @@ fn extract_metadata_from_raw(body: &str) -> Vec<(String, String)> {
 }
 
 /// Extract metadata from a parsed HTML document, with regex fallback for malformed content.
-pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
-    let title = doc.select(&SEL_TITLE).next().map(|el| el.text().collect::<String>());
-    let canonical_url = doc
-        .select(&SEL_CANONICAL)
-        .next()
-        .and_then(|el| el.value().attr("href").map(String::from));
+pub(crate) fn extract_metadata(dom: &VDom<'_>, raw_body: &str) -> PageMetadata {
+    let parser = dom.parser();
+
+    let title = dom.query_selector(SEL_TITLE).and_then(|mut iter| {
+        iter.next()
+            .and_then(|h| h.get(parser))
+            .map(|node| node.inner_text(parser).to_string())
+    });
+
+    let canonical_url = dom.query_selector(SEL_CANONICAL).and_then(|mut iter| {
+        iter.next()
+            .and_then(|h| h.get(parser))
+            .and_then(|node| node.as_tag())
+            .and_then(|tag| get_attr(tag, "href").map(String::from))
+    });
 
     let mut md = PageMetadata {
         title,
@@ -36,21 +46,24 @@ pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
     };
 
     // Extract html lang and dir attributes
-    if let Some(html_el) = doc.select(&SEL_HTML).next() {
-        md.html_lang = html_el.value().attr("lang").map(String::from);
-        md.html_dir = html_el.value().attr("dir").map(String::from);
+    if let Some(mut iter) = dom.query_selector(SEL_HTML)
+        && let Some(tag) = iter.next().and_then(|h| h.get(parser)).and_then(|n| n.as_tag())
+    {
+        md.html_lang = get_attr(tag, "lang").map(String::from);
+        md.html_dir = get_attr(tag, "dir").map(String::from);
     }
 
     let mut article = ArticleMetadata::default();
     let mut has_article = false;
     let mut og_locale_alternates: Vec<String> = Vec::new();
 
-    for meta in doc.select(&SEL_META) {
-        let el = meta.value();
-        let name = el.attr("name").or_else(|| el.attr("property")).unwrap_or("");
-        let content = el.attr("content").unwrap_or("").to_owned();
+    super::query_tags(dom, SEL_META, |tag, _parser| {
+        let name = get_attr(tag, "name")
+            .or_else(|| get_attr(tag, "property"))
+            .unwrap_or("");
+        let content = get_attr(tag, "content").unwrap_or("").to_owned();
         if content.is_empty() {
-            continue;
+            return;
         }
 
         let name_lower = name.to_lowercase();
@@ -111,7 +124,7 @@ pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
             "dc.rights" => md.dc_rights = Some(content),
             _ => {}
         }
-    }
+    });
 
     if has_article {
         md.article = Some(article);
@@ -145,42 +158,51 @@ pub(crate) fn extract_metadata(doc: &Html, raw_body: &str) -> PageMetadata {
 }
 
 /// Check whether a meta robots directive contains the given keyword.
-fn has_robots_directive(doc: &Html, directive: &str) -> bool {
-    for el in doc.select(&SEL_ROBOTS_META) {
-        if let Some(content) = el.value().attr("content")
-            && content.to_lowercase().contains(directive)
-        {
-            return true;
+fn has_robots_directive(dom: &VDom<'_>, directive: &str) -> bool {
+    let parser = dom.parser();
+    if let Some(iter) = dom.query_selector(SEL_ROBOTS_META) {
+        for handle in iter {
+            if let Some(tag) = handle.get(parser).and_then(|n| n.as_tag())
+                && let Some(content) = get_attr(tag, "content")
+                && content.to_lowercase().contains(directive)
+            {
+                return true;
+            }
         }
     }
     false
 }
 
 /// Detect whether a page has a `noindex` robots directive in its meta tags.
-pub(crate) fn detect_noindex(doc: &Html) -> bool {
-    has_robots_directive(doc, "noindex")
+pub(crate) fn detect_noindex(dom: &VDom<'_>) -> bool {
+    has_robots_directive(dom, "noindex")
 }
 
 /// Detect whether a page has a `nofollow` robots directive in its meta tags.
-pub(crate) fn detect_nofollow(doc: &Html) -> bool {
-    has_robots_directive(doc, "nofollow")
+pub(crate) fn detect_nofollow(dom: &VDom<'_>) -> bool {
+    has_robots_directive(dom, "nofollow")
 }
 
 /// Detect a `<meta http-equiv="refresh">` tag and return the redirect target URL.
-pub(crate) fn detect_meta_refresh(doc: &Html) -> Option<String> {
-    for el in doc.select(&SEL_META_REFRESH) {
-        if let Some(content) = el.value().attr("content") {
-            // Format: "N;url=TARGET" or "N; url=TARGET"
-            // Case-insensitive search on original bytes to preserve correct offset
-            let bytes = content.as_bytes();
-            let needle = b"url=";
-            let pos = bytes
-                .windows(needle.len())
-                .position(|w| w.iter().zip(needle).all(|(a, b)| a.to_ascii_lowercase() == *b));
-            if let Some(pos) = pos {
-                let target = content[pos + 4..].trim().to_owned();
-                if !target.is_empty() {
-                    return Some(target);
+pub(crate) fn detect_meta_refresh(dom: &VDom<'_>) -> Option<String> {
+    let parser = dom.parser();
+    if let Some(iter) = dom.query_selector(SEL_META_REFRESH) {
+        for handle in iter {
+            if let Some(tag) = handle.get(parser).and_then(|n| n.as_tag())
+                && let Some(content) = get_attr(tag, "content")
+            {
+                // Format: "N;url=TARGET" or "N; url=TARGET"
+                // Case-insensitive search on original bytes to preserve correct offset
+                let bytes = content.as_bytes();
+                let needle = b"url=";
+                let pos = bytes
+                    .windows(needle.len())
+                    .position(|w| w.iter().zip(needle).all(|(a, b)| a.to_ascii_lowercase() == *b));
+                if let Some(pos) = pos {
+                    let target = content[pos + 4..].trim().to_owned();
+                    if !target.is_empty() {
+                        return Some(target);
+                    }
                 }
             }
         }

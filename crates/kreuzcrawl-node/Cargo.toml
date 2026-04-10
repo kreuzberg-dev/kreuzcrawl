@@ -24,7 +24,6 @@ default = []
 
 [dependencies]
 kreuzcrawl = { path = "../kreuzcrawl" }
-kreuzcrawl-bindings-common = { path = "../kreuzcrawl-bindings-common" }
 napi = { workspace = true }
 napi-derive = { workspace = true }
 serde_json = { workspace = true }

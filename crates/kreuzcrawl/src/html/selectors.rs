@@ -1,9 +1,11 @@
-//! Lazily-initialized CSS selectors and regex patterns used across html submodules.
+//! CSS selector strings and regex patterns used across html submodules.
+//!
+//! With `tl`, CSS selectors are parsed on each `query_selector` call,
+//! so we store them as string constants rather than pre-compiled objects.
 
 use std::sync::LazyLock;
 
 use regex::Regex;
-use scraper::Selector;
 
 // --- LazyLock regex patterns for metadata extraction ---
 
@@ -16,55 +18,25 @@ pub(super) static META_RE_CONTENT_NAME: LazyLock<Regex> = LazyLock::new(|| {
         .expect("valid regex: META_RE_CONTENT_NAME")
 });
 
-// --- LazyLock CSS selectors ---
+// --- CSS selector strings ---
 
-pub(super) static SEL_META: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("meta").expect("valid selector: meta"));
-pub(super) static SEL_TITLE: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("title").expect("valid selector: title"));
-pub(super) static SEL_CANONICAL: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("link[rel='canonical']").expect("valid selector: link[rel='canonical']"));
-pub(super) static SEL_ROBOTS_META: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("meta[name='robots']").expect("valid selector: meta[name='robots']"));
-pub(super) static SEL_META_REFRESH: LazyLock<Selector> = LazyLock::new(|| {
-    Selector::parse("meta[http-equiv='refresh']").expect("valid selector: meta[http-equiv='refresh']")
-});
-pub(super) static SEL_A_HREF: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("a[href]").expect("valid selector: a[href]"));
-pub(super) static SEL_BASE_HREF: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("base[href]").expect("valid selector: base[href]"));
-pub(crate) static SEL_IMG_SRC: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("img[src]").expect("valid selector: img[src]"));
-pub(super) static SEL_SOURCE_SRCSET: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("source[srcset]").expect("valid selector: source[srcset]"));
-pub(super) static SEL_OG_IMAGE: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("meta[property='og:image']").expect("valid selector: meta[property='og:image']"));
-pub(super) static SEL_TWITTER_IMAGE: LazyLock<Selector> = LazyLock::new(|| {
-    Selector::parse("meta[name='twitter:image']").expect("valid selector: meta[name='twitter:image']")
-});
-pub(super) static SEL_FEED_ALTERNATE: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("link[rel='alternate']").expect("valid selector: link[rel='alternate']"));
-pub(super) static SEL_JSON_LD: LazyLock<Selector> = LazyLock::new(|| {
-    Selector::parse("script[type='application/ld+json']").expect("valid selector: script[type='application/ld+json']")
-});
-pub(super) static SEL_MAIN_CONTENT: LazyLock<Selector> = LazyLock::new(|| {
-    Selector::parse("main, article, [role='main']").expect("valid selector: main, article, [role='main']")
-});
-pub(super) static SEL_HTML: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("html").expect("valid selector: html"));
-pub(super) static SEL_HREFLANG: LazyLock<Selector> = LazyLock::new(|| {
-    Selector::parse("link[rel='alternate'][hreflang]").expect("valid selector: link[rel='alternate'][hreflang]")
-});
-pub(super) static SEL_FAVICON: LazyLock<Selector> = LazyLock::new(|| {
-    Selector::parse("link[rel='icon'], link[rel='shortcut icon'], link[rel='apple-touch-icon']").expect(
-        "valid selector: link[rel='icon'], \
-             link[rel='shortcut icon'], link[rel='apple-touch-icon']",
-    )
-});
-pub(super) static SEL_HEADINGS: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("h1, h2, h3, h4, h5, h6").expect("valid selector: h1, h2, h3, h4, h5, h6"));
-pub(crate) static SEL_LINK_CSS: LazyLock<Selector> = LazyLock::new(|| {
-    Selector::parse("link[rel='stylesheet'][href]").expect("valid selector: link[rel='stylesheet'][href]")
-});
-pub(crate) static SEL_SCRIPT_SRC: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("script[src]").expect("valid selector: script[src]"));
+pub(super) const SEL_META: &str = "meta";
+pub(super) const SEL_TITLE: &str = "title";
+pub(super) const SEL_CANONICAL: &str = "link[rel='canonical']";
+pub(super) const SEL_ROBOTS_META: &str = "meta[name='robots']";
+pub(super) const SEL_META_REFRESH: &str = "meta[http-equiv='refresh']";
+pub(super) const SEL_A_HREF: &str = "a[href]";
+pub(super) const SEL_BASE_HREF: &str = "base[href]";
+pub(crate) const SEL_IMG_SRC: &str = "img[src]";
+pub(super) const SEL_SOURCE_SRCSET: &str = "source[srcset]";
+pub(super) const SEL_OG_IMAGE: &str = "meta[property='og:image']";
+pub(super) const SEL_TWITTER_IMAGE: &str = "meta[name='twitter:image']";
+pub(super) const SEL_FEED_ALTERNATE: &str = "link[rel='alternate']";
+pub(super) const SEL_JSON_LD: &str = "script[type='application/ld+json']";
+pub(super) const SEL_MAIN_CONTENT: &str = "main, article, [role='main']";
+pub(super) const SEL_HTML: &str = "html";
+pub(super) const SEL_HREFLANG: &str = "link[rel='alternate'][hreflang]";
+pub(super) const SEL_FAVICON: &str = "link[rel='icon'], link[rel='shortcut icon'], link[rel='apple-touch-icon']";
+pub(super) const SEL_HEADINGS: &str = "h1, h2, h3, h4, h5, h6";
+pub(crate) const SEL_LINK_CSS: &str = "link[rel='stylesheet'][href]";
+pub(crate) const SEL_SCRIPT_SRC: &str = "script[src]";

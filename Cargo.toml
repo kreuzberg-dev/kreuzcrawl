@@ -54,12 +54,12 @@ regex = "1"
 reqwest = { version = "0.13", features = ["cookies", "gzip", "brotli"] }
 rmcp = { version = "1", features = ["server", "macros", "transport-io"] }
 schemars = "1.2"
-scraper = "0.26"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.11"
 tempfile = "3"
 thiserror = "2"
+tl = { package = "astral-tl", version = "0.7" }
 tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1"
 toml = "1.1"

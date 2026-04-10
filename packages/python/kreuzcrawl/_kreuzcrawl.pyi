@@ -33,9 +33,9 @@ class BrowserConfig:
     extra_wait: int | None
     def __init__(
         self,
-        mode: str,
+        mode: BrowserMode | str,
         timeout: int,
-        wait: str,
+        wait: BrowserWait | str,
         endpoint: str | None = None,
         wait_selector: str | None = None,
         extra_wait: int | None = None,
@@ -105,7 +105,7 @@ class CrawlConfig:
         max_pages: int | None = None,
         max_concurrent: int | None = None,
         user_agent: str | None = None,
-        auth: str | None = None,
+        auth: AuthConfig | str | None = None,
         max_body_size: int | None = None,
         map_limit: int | None = None,
         map_search: str | None = None,
@@ -349,7 +349,14 @@ class LinkInfo:
     link_type: LinkType
     rel: str | None
     nofollow: bool
-    def __init__(self, url: str, text: str, link_type: str, nofollow: bool, rel: str | None = None) -> None: ...
+    def __init__(
+        self,
+        url: str,
+        text: str,
+        link_type: LinkType | str,
+        nofollow: bool,
+        rel: str | None = None,
+    ) -> None: ...
 
 class ImageInfo:
     url: str
@@ -360,7 +367,7 @@ class ImageInfo:
     def __init__(
         self,
         url: str,
-        source: str,
+        source: ImageSource | str,
         alt: str | None = None,
         width: int | None = None,
         height: int | None = None,
@@ -370,7 +377,7 @@ class FeedInfo:
     url: str
     title: str | None
     feed_type: FeedType
-    def __init__(self, url: str, feed_type: str, title: str | None = None) -> None: ...
+    def __init__(self, url: str, feed_type: FeedType | str, title: str | None = None) -> None: ...
 
 class JsonLdEntry:
     schema_type: str
@@ -397,7 +404,7 @@ class DownloadedAsset:
         url: str,
         content_hash: str,
         size: int,
-        asset_category: str,
+        asset_category: AssetCategory | str,
         mime_type: str | None = None,
         html_tag: str | None = None,
     ) -> None: ...
@@ -573,33 +580,39 @@ class BrowserMode:
     Auto: int = 0
     Always: int = 1
     Never: int = 2
+    def __init__(self, value: int | str) -> None: ...
 
 class BrowserWait:
     NetworkIdle: int = 0
     Selector: int = 1
     Fixed: int = 2
+    def __init__(self, value: int | str) -> None: ...
 
 class AuthConfig:
     Basic: int = 0
     Bearer: int = 1
     Header: int = 2
+    def __init__(self, value: int | str) -> None: ...
 
 class LinkType:
     Internal: int = 0
     External: int = 1
     Anchor: int = 2
     Document: int = 3
+    def __init__(self, value: int | str) -> None: ...
 
 class ImageSource:
     Img: int = 0
     PictureSource: int = 1
     OgImage: int = 2
     TwitterImage: int = 3
+    def __init__(self, value: int | str) -> None: ...
 
 class FeedType:
     Rss: int = 0
     Atom: int = 1
     JsonFeed: int = 2
+    def __init__(self, value: int | str) -> None: ...
 
 class AssetCategory:
     Document: int = 0
@@ -612,11 +625,13 @@ class AssetCategory:
     Archive: int = 7
     Data: int = 8
     Other: int = 9
+    def __init__(self, value: int | str) -> None: ...
 
 class CrawlEvent:
     Page: int = 0
     Error: int = 1
     Complete: int = 2
+    def __init__(self, value: int | str) -> None: ...
 
 def create_engine(config: CrawlConfig | None = None) -> CrawlEngineHandle: ...
 def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult: ...

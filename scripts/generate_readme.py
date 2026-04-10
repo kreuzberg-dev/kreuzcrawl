@@ -5,6 +5,7 @@ README generation script for Kreuzcrawl.
 Generates language-specific READMEs from templates and snippets using Jinja2.
 Supports validation mode to check if existing READMEs match generated output.
 """
+# ruff: noqa: TRY003, TRY300, TRY400
 
 import argparse
 import logging
@@ -16,13 +17,13 @@ from typing import Any
 try:
     import yaml
 except ImportError:
-    print("Error: PyYAML is required. Install with: pip install pyyaml jinja2")
+    print("Error: PyYAML is required. Install with: pip install pyyaml jinja2")  # noqa: T201
     sys.exit(1)
 
 try:
     from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 except ImportError:
-    print("Error: Jinja2 is required. Install with: pip install pyyaml jinja2")
+    print("Error: Jinja2 is required. Install with: pip install pyyaml jinja2")  # noqa: T201
     sys.exit(1)
 
 
@@ -66,7 +67,7 @@ class ReadmeGenerator:
             return self.config
 
         except yaml.YAMLError as e:
-            raise ValueError(f"Failed to parse YAML configuration: {e}")
+            raise ValueError(f"Failed to parse YAML configuration: {e}") from e
 
     def setup_jinja_env(self) -> Environment:
         """Configure Jinja2 environment with custom filters."""
@@ -75,7 +76,7 @@ class ReadmeGenerator:
                 f"Templates directory not found: {self.templates_dir}\nCreate readme_templates/ directory in scripts/"
             )
 
-        self.jinja_env = Environment(
+        self.jinja_env = Environment(  # noqa: S701
             loader=FileSystemLoader(str(self.templates_dir)),
             keep_trailing_newline=True,
         )
@@ -121,8 +122,8 @@ class ReadmeGenerator:
 
         try:
             content = snippet_path.read_text(encoding="utf-8")
-        except Exception as e:
-            raise ValueError(f"Failed to read snippet {snippet_path}: {e}")
+        except OSError as e:
+            raise ValueError(f"Failed to read snippet {snippet_path}: {e}") from e
 
         # Handle markdown files (extract code block)
         if snippet_path.suffix == ".md":
@@ -227,10 +228,10 @@ class ReadmeGenerator:
 
         try:
             template = self.jinja_env.get_template(template_name)
-        except TemplateNotFound:
+        except TemplateNotFound as e:
             raise TemplateNotFound(
                 f"Template not found: {template_name}\nExpected at: {self.templates_dir / template_name}"
-            )
+            ) from e
 
         # Prepare context for template
         context = {
@@ -243,7 +244,7 @@ class ReadmeGenerator:
         try:
             content = template.render(**context)
         except Exception as e:
-            raise Exception(f"Failed to render template {template_name}: {e}")
+            raise RuntimeError(f"Failed to render template {template_name}: {e}") from e
 
         # Write to disk unless dry-run
         if not dry_run:
@@ -282,7 +283,7 @@ class ReadmeGenerator:
             logger.warning(f"Out of date: {readme_path}")
             return False
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - top-level validation handler
             logger.error(f"Validation error for {readme_path}: {e}")
             return False
 
@@ -329,7 +330,7 @@ class ReadmeGenerator:
                 else:
                     self.generate_readme(lang_code, lang_config, readme_path, dry_run)
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 - top-level per-language handler
                 logger.error(f"Failed to process {lang_code}: {e}")
                 all_ok = False
 
