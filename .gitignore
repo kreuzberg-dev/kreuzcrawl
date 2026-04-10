@@ -139,6 +139,7 @@ tests/e2e/test_report.json
 temp-test-*
 
 # AI / MCP / Agent config
+.alef/
 .claude/
 .codex/
 .gemini/
