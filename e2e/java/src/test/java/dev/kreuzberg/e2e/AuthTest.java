@@ -8,25 +8,28 @@ class AuthTest {
     @Test
     void testAuthBasicHttp() throws Exception {
         // Sends HTTP Basic authentication header
-        var result = Kreuzcrawl.scrape();
-        assertEquals(true, result.auth_header_sent());
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(true, result.authHeaderSent());
+        assertEquals(200, result.statusCode());
     }
 
     @Test
     void testAuthBearerToken() throws Exception {
         // Sends Bearer token in Authorization header
-        var result = Kreuzcrawl.scrape();
-        assertEquals(true, result.auth_header_sent());
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(true, result.authHeaderSent());
+        assertEquals(200, result.statusCode());
     }
 
     @Test
     void testAuthCustomHeader() throws Exception {
         // Sends authentication via custom header (X-API-Key)
-        var result = Kreuzcrawl.scrape();
-        assertEquals(true, result.auth_header_sent());
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(true, result.authHeaderSent());
+        assertEquals(200, result.statusCode());
     }
 
 }

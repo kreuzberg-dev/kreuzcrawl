@@ -8,8 +8,9 @@ class CacheTest {
     @Test
     void testCacheBasic() throws Exception {
         // Crawling with disk cache enabled succeeds without errors
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
     }
 
 }

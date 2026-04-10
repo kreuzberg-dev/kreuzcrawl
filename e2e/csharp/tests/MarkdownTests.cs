@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,11 +8,12 @@ namespace Kreuzberg.E2e;
 public class MarkdownTests
 {
     [Fact]
-    public void Test_MarkdownBasicConversion()
+    public async Task Test_MarkdownBasicConversion()
     {
         // HTML is always converted to markdown alongside raw HTML
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.Equal("Test", result.Metadata.Title.Trim());
         Assert.NotEmpty(result.Html);
         Assert.NotEmpty(result.Markdown);
@@ -19,48 +21,53 @@ public class MarkdownTests
     }
 
     [Fact]
-    public void Test_MarkdownCrawlAllPages()
+    public async Task Test_MarkdownCrawlAllPages()
     {
         // All crawled pages have markdown field populated
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(2, result.Crawl.PagesCrawled.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(2, result.Crawl.PagesCrawled);
     }
 
     [Fact]
-    public void Test_MarkdownFitContent()
+    public async Task Test_MarkdownFitContent()
     {
         // Fit markdown removes navigation and boilerplate content
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Markdown);
     }
 
     [Fact]
-    public void Test_MarkdownHeadingsAndParagraphs()
+    public async Task Test_MarkdownHeadingsAndParagraphs()
     {
         // Markdown conversion preserves heading hierarchy and paragraph text
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.NotEmpty(result.Markdown);
         Assert.Contains("Main Title", result.Markdown);
     }
 
     [Fact]
-    public void Test_MarkdownLinksConverted()
+    public async Task Test_MarkdownLinksConverted()
     {
         // HTML links are converted to markdown link syntax
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Html);
         Assert.NotEmpty(result.Markdown);
         Assert.Contains("Example", result.Markdown);
     }
 
     [Fact]
-    public void Test_MarkdownWithCitations()
+    public async Task Test_MarkdownWithCitations()
     {
         // Markdown includes citation conversion with numbered references
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Markdown);
     }
 }

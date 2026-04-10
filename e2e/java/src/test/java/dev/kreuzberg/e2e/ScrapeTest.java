@@ -8,25 +8,28 @@ class ScrapeTest {
     @Test
     void testScrapeAssetDedup() throws Exception {
         // Same asset linked twice results in one download with one unique hash
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertEquals(2, result.assets().size());
-        assertEquals(2, result.assets().unique_hashes());
+        assertEquals(2, result.assets().uniqueHashes());
     }
 
     @Test
     void testScrapeAssetMaxSize() throws Exception {
         // Skips assets exceeding max_asset_size limit
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertEquals(2, result.assets().size());
     }
 
     @Test
     void testScrapeAssetTypeFilter() throws Exception {
         // Only downloads image assets when asset_types filter is set
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertEquals(1, result.assets().size());
         assertTrue(result.assets().get("").category().contains("image"), "expected to contain: " + "image");
     }
@@ -34,15 +37,16 @@ class ScrapeTest {
     @Test
     void testScrapeBasicHtmlPage() throws Exception {
         // Scrapes a simple HTML page and extracts title, description, and links
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
-        assertEquals("text/html", result.content_type());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
+        assertEquals("text/html", result.contentType());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
         assertEquals("Example Domain", result.metadata().title().orElse(""));
         assertTrue(result.metadata().description().orElse("").contains("illustrative examples"), "expected to contain: " + "illustrative examples");
-        assertFalse(result.metadata().canonical_url().orElse("").isEmpty(), "expected non-empty value");
+        assertFalse(result.metadata().canonicalUrl().orElse("").isEmpty(), "expected non-empty value");
         assertTrue(result.links().size() > 0, "expected > 0");
-        assertTrue(result.links().get("").link_type().contains("external"), "expected to contain: " + "external");
+        assertTrue(result.links().get("").linkType().contains("external"), "expected to contain: " + "external");
         assertEquals(0, result.images().size());
         assertTrue(result.og().title().isEmpty(), "expected empty value");
     }
@@ -50,38 +54,42 @@ class ScrapeTest {
     @Test
     void testScrapeComplexLinks() throws Exception {
         // Classifies links by type: internal, external, anchor, document, image
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertTrue(result.links().size() > 9, "expected > 9");
-        assertTrue(result.links().get("").link_type().contains("internal"), "expected to contain: " + "internal");
-        assertTrue(result.links().get("").link_type().contains("external"), "expected to contain: " + "external");
-        assertTrue(result.links().get("").link_type().contains("anchor"), "expected to contain: " + "anchor");
-        assertTrue(result.links().get("").link_type().contains("document"), "expected to contain: " + "document");
+        assertTrue(result.links().get("").linkType().contains("internal"), "expected to contain: " + "internal");
+        assertTrue(result.links().get("").linkType().contains("external"), "expected to contain: " + "external");
+        assertTrue(result.links().get("").linkType().contains("anchor"), "expected to contain: " + "anchor");
+        assertTrue(result.links().get("").linkType().contains("document"), "expected to contain: " + "document");
     }
 
     @Test
     void testScrapeDownloadAssets() throws Exception {
         // Downloads CSS, JS, and image assets from page
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertTrue(result.assets().size() > 2, "expected > 2");
     }
 
     @Test
     void testScrapeDublinCore() throws Exception {
         // Extracts Dublin Core metadata from a page
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
-        assertFalse(result.dublin_core().title().isEmpty(), "expected non-empty value");
-        assertEquals("Effects of Climate Change on Marine Biodiversity", result.dublin_core().title());
-        assertEquals("Dr. Jane Smith", result.dublin_core().creator());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
+        assertFalse(result.dublinCore().title().isEmpty(), "expected non-empty value");
+        assertEquals("Effects of Climate Change on Marine Biodiversity", result.dublinCore().title());
+        assertEquals("Dr. Jane Smith", result.dublinCore().creator());
     }
 
     @Test
     void testScrapeEmptyPage() throws Exception {
         // Handles an empty HTML document without errors
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertTrue(result.links().size() > -1, "expected > -1");
         assertEquals(0, result.images().size());
     }
@@ -89,18 +97,20 @@ class ScrapeTest {
     @Test
     void testScrapeFeedDiscovery() throws Exception {
         // Discovers RSS, Atom, and JSON feed links
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertEquals(1, result.feeds().rss().size());
         assertEquals(1, result.feeds().atom().size());
-        assertEquals(1, result.feeds().json_feed().size());
+        assertEquals(1, result.feeds().jsonFeed().size());
     }
 
     @Test
     void testScrapeImageSources() throws Exception {
         // Extracts images from img, picture, og:image, twitter:image
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertTrue(result.images().size() > 4, "expected > 4");
         assertEquals("https://example.com/images/og-hero.jpg", result.og().image());
     }
@@ -108,25 +118,28 @@ class ScrapeTest {
     @Test
     void testScrapeJsHeavySpa() throws Exception {
         // Handles SPA page with JavaScript-only content (no server-rendered HTML)
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertFalse(result.html().isEmpty(), "expected non-empty value");
     }
 
     @Test
     void testScrapeJsonLd() throws Exception {
         // Extracts JSON-LD structured data from a page
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
-        assertFalse(result.json_ld().isEmpty(), "expected non-empty value");
-        assertEquals("Recipe", result.json_ld().type());
-        assertEquals("Best Chocolate Cake", result.json_ld().name());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
+        assertFalse(result.jsonLd().isEmpty(), "expected non-empty value");
+        assertEquals("Recipe", result.jsonLd().type());
+        assertEquals("Best Chocolate Cake", result.jsonLd().name());
     }
 
     @Test
     void testScrapeMalformedHtml() throws Exception {
         // Gracefully handles broken HTML without crashing
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
         assertTrue(result.metadata().description().orElse("").contains("broken HTML"), "expected to contain: " + "broken HTML");
     }
@@ -134,8 +147,9 @@ class ScrapeTest {
     @Test
     void testScrapeOgMetadata() throws Exception {
         // Extracts full Open Graph metadata from a page
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertFalse(result.og().title().isEmpty(), "expected non-empty value");
         assertEquals("Article Title", result.og().title());
         assertEquals("article", result.og().type());
@@ -147,10 +161,11 @@ class ScrapeTest {
     @Test
     void testScrapeTwitterCard() throws Exception {
         // Extracts Twitter Card metadata from a page
-        var result = Kreuzcrawl.scrape();
-        assertEquals(200, result.status_code());
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
+        assertEquals(200, result.statusCode());
         assertFalse(result.twitter().card().isEmpty(), "expected non-empty value");
-        assertEquals("summary_large_image", result.twitter().card_type());
+        assertEquals("summary_large_image", result.twitter().cardType());
         assertEquals("New Product Launch", result.twitter().title());
     }
 

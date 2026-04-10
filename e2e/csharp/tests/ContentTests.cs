@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,76 +8,85 @@ namespace Kreuzberg.E2e;
 public class ContentTests
 {
     [Fact]
-    public void Test_Content204NoContent()
+    public async Task Test_Content204NoContent()
     {
         // Handles 204 No Content response gracefully
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(204, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(204, result.StatusCode);
         Assert.Empty(result.Html);
     }
 
     [Fact]
-    public void Test_ContentCharsetIso8859()
+    public async Task Test_ContentCharsetIso8859()
     {
         // Handles ISO-8859-1 encoded page correctly
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal("iso-8859-1", result.Content.DetectedCharset.Trim());
     }
 
     [Fact]
-    public void Test_ContentEmptyBody()
+    public async Task Test_ContentEmptyBody()
     {
         // Handles 200 response with empty body gracefully
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
     }
 
     [Fact]
-    public void Test_ContentGzipCompressed()
+    public async Task Test_ContentGzipCompressed()
     {
         // Handles response with Accept-Encoding gzip negotiation
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.NotEmpty(result.Html);
-        Assert.Equal(200, result.StatusCode.Trim());
+        Assert.Equal(200, result.StatusCode);
     }
 
     [Fact]
-    public void Test_ContentLargePageLimit()
+    public async Task Test_ContentLargePageLimit()
     {
         // Respects max body size limit and truncates or skips oversized pages
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.True(result.Content.BodySize < 1025, "expected < 1025");
     }
 
     [Fact]
-    public void Test_ContentMainOnly()
+    public async Task Test_ContentMainOnly()
     {
         // Extracts only main content area, excluding nav, sidebar, footer
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Content.MainContentOnly.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Content.MainContentOnly);
     }
 
     [Fact]
-    public void Test_ContentPdfNoExtension()
+    public async Task Test_ContentPdfNoExtension()
     {
         // Detects PDF content by Content-Type header when URL has no .pdf extension
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Content.IsPdf.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Content.IsPdf);
     }
 
     [Fact]
-    public void Test_ContentRemoveTags()
+    public async Task Test_ContentRemoveTags()
     {
         // Removes specified HTML elements by CSS selector before processing
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.NotEmpty(result.Html);
     }
 
     [Fact]
-    public void Test_ContentUtf8Bom()
+    public async Task Test_ContentUtf8Bom()
     {
         // Handles UTF-8 content with BOM marker correctly
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal("utf-8", result.Content.DetectedCharset.Trim());
         Assert.NotEmpty(result.Html);
     }

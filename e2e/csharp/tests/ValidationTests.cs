@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,44 +8,50 @@ namespace Kreuzberg.E2e;
 public class ValidationTests
 {
     [Fact]
-    public void Test_ValidationInvalidExcludeRegex()
+    public async Task Test_ValidationInvalidExcludeRegex()
     {
         // Invalid regex in exclude_paths is rejected
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ValidationInvalidIncludeRegex()
+    public async Task Test_ValidationInvalidIncludeRegex()
     {
         // Invalid regex in include_paths is rejected
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ValidationInvalidRetryCode()
+    public async Task Test_ValidationInvalidRetryCode()
     {
         // Retry code outside 100-599 is rejected
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ValidationMaxPagesZero()
+    public async Task Test_ValidationMaxPagesZero()
     {
         // max_pages=0 is rejected as invalid config
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ValidationMaxRedirectsTooHigh()
+    public async Task Test_ValidationMaxRedirectsTooHigh()
     {
         // max_redirects > 100 is rejected as invalid config
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 
     [Fact]
-    public void Test_ValidationTimeoutZero()
+    public async Task Test_ValidationTimeoutZero()
     {
         // Zero request timeout is rejected as invalid config
-        Assert.Throws<Exception>(() => KreuzcrawlLib.Scrape());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
     }
 }

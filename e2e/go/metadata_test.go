@@ -10,7 +10,8 @@ import (
 
 func Test_MetadataArticleTimes(t *testing.T) {
 	// Extracts article:published_time, modified_time, author, section, and tags
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -36,7 +37,8 @@ func Test_MetadataArticleTimes(t *testing.T) {
 
 func Test_MetadataFavicons(t *testing.T) {
 	// Extracts favicon link tags including apple-touch-icon
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -53,7 +55,8 @@ func Test_MetadataFavicons(t *testing.T) {
 
 func Test_MetadataHeadings(t *testing.T) {
 	// Extracts heading hierarchy (h1-h6) from HTML page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -73,7 +76,8 @@ func Test_MetadataHeadings(t *testing.T) {
 
 func Test_MetadataHreflang(t *testing.T) {
 	// Extracts hreflang alternate link tags
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -90,7 +94,8 @@ func Test_MetadataHreflang(t *testing.T) {
 
 func Test_MetadataKeywordsAuthor(t *testing.T) {
 	// Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -160,7 +165,8 @@ func Test_MetadataKeywordsAuthor(t *testing.T) {
 
 func Test_MetadataOgVideoAudio(t *testing.T) {
 	// Extracts og:video, og:audio, and og:locale:alternate metadata
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -180,7 +186,8 @@ func Test_MetadataOgVideoAudio(t *testing.T) {
 
 func Test_MetadataResponseHeaders(t *testing.T) {
 	// Extracts response metadata from HTTP headers (etag, server, content-language)
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -203,7 +210,8 @@ func Test_MetadataResponseHeaders(t *testing.T) {
 
 func Test_MetadataWordCount(t *testing.T) {
 	// Computes word count from visible page text
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

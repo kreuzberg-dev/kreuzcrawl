@@ -10,7 +10,8 @@ import (
 
 func Test_ContentBinarySkip(t *testing.T) {
 	// Skips image and video content types gracefully
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -21,7 +22,8 @@ func Test_ContentBinarySkip(t *testing.T) {
 
 func Test_ContentPdfLinkSkip(t *testing.T) {
 	// Encounters PDF link and skips or marks as document type
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -32,7 +34,8 @@ func Test_ContentPdfLinkSkip(t *testing.T) {
 
 func Test_CrawlConcurrentDepth(t *testing.T) {
 	// Concurrent crawl respects max_depth limit
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -46,7 +49,8 @@ func Test_CrawlConcurrentDepth(t *testing.T) {
 
 func Test_CrawlConcurrentLimit(t *testing.T) {
 	// Respects max concurrent requests limit during crawl
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -57,7 +61,8 @@ func Test_CrawlConcurrentLimit(t *testing.T) {
 
 func Test_CrawlConcurrentMaxPages(t *testing.T) {
 	// Concurrent crawl respects max_pages budget
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -68,7 +73,8 @@ func Test_CrawlConcurrentMaxPages(t *testing.T) {
 
 func Test_CrawlCustomHeaders(t *testing.T) {
 	// Sends custom headers on all crawl requests
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -79,7 +85,8 @@ func Test_CrawlCustomHeaders(t *testing.T) {
 
 func Test_CrawlDepthOne(t *testing.T) {
 	// Follows links one level deep from start page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -93,7 +100,8 @@ func Test_CrawlDepthOne(t *testing.T) {
 
 func Test_CrawlDepthPriority(t *testing.T) {
 	// Crawls in breadth-first order, processing depth-0 pages before depth-1
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -104,7 +112,8 @@ func Test_CrawlDepthPriority(t *testing.T) {
 
 func Test_CrawlDepthTwo(t *testing.T) {
 	// Crawls 3 levels deep (depth 0, 1, 2)
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -118,7 +127,8 @@ func Test_CrawlDepthTwo(t *testing.T) {
 
 func Test_CrawlDepthTwoChain(t *testing.T) {
 	// Depth=2 crawl follows a chain of links across three levels
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -129,7 +139,8 @@ func Test_CrawlDepthTwoChain(t *testing.T) {
 
 func Test_CrawlDoubleSlashNormalization(t *testing.T) {
 	// Normalizes double slashes in URL paths (//page to /page)
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -140,7 +151,8 @@ func Test_CrawlDoubleSlashNormalization(t *testing.T) {
 
 func Test_CrawlEmptyPageNoLinks(t *testing.T) {
 	// Crawl completes when child page has no outgoing links
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -151,7 +163,8 @@ func Test_CrawlEmptyPageNoLinks(t *testing.T) {
 
 func Test_CrawlExcludePathPattern(t *testing.T) {
 	// Skips URLs matching the exclude path pattern
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -162,7 +175,8 @@ func Test_CrawlExcludePathPattern(t *testing.T) {
 
 func Test_CrawlExternalLinksIgnored(t *testing.T) {
 	// External links are discovered but not followed when stay_on_domain is true
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -176,7 +190,8 @@ func Test_CrawlExternalLinksIgnored(t *testing.T) {
 
 func Test_CrawlFragmentStripping(t *testing.T) {
 	// Strips #fragment from URLs for deduplication
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -187,7 +202,8 @@ func Test_CrawlFragmentStripping(t *testing.T) {
 
 func Test_CrawlIncludePathPattern(t *testing.T) {
 	// Only follows URLs matching the include path pattern
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -198,7 +214,8 @@ func Test_CrawlIncludePathPattern(t *testing.T) {
 
 func Test_CrawlMaxDepthZero(t *testing.T) {
 	// max_depth=0 crawls only the seed page with no link following
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -212,7 +229,8 @@ func Test_CrawlMaxDepthZero(t *testing.T) {
 
 func Test_CrawlMaxPages(t *testing.T) {
 	// Stops crawling at page budget limit
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -223,7 +241,8 @@ func Test_CrawlMaxPages(t *testing.T) {
 
 func Test_CrawlMixedContentTypes(t *testing.T) {
 	// Crawl handles links to non-HTML content types gracefully
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -234,7 +253,8 @@ func Test_CrawlMixedContentTypes(t *testing.T) {
 
 func Test_CrawlMultipleRedirectsInTraversal(t *testing.T) {
 	// Multiple linked pages with redirects are handled during crawl traversal
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -245,7 +265,8 @@ func Test_CrawlMultipleRedirectsInTraversal(t *testing.T) {
 
 func Test_CrawlQueryParamDedup(t *testing.T) {
 	// Deduplicates URLs with same query params in different order
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -256,7 +277,8 @@ func Test_CrawlQueryParamDedup(t *testing.T) {
 
 func Test_CrawlRedirectInTraversal(t *testing.T) {
 	// Links that redirect are followed during crawl traversal
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -267,7 +289,8 @@ func Test_CrawlRedirectInTraversal(t *testing.T) {
 
 func Test_CrawlSelfLinkNoLoop(t *testing.T) {
 	// Page linking to itself does not cause infinite crawl loop
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -278,7 +301,8 @@ func Test_CrawlSelfLinkNoLoop(t *testing.T) {
 
 func Test_CrawlSinglePageNoLinks(t *testing.T) {
 	// Crawling a page with no links returns only the seed page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -289,7 +313,8 @@ func Test_CrawlSinglePageNoLinks(t *testing.T) {
 
 func Test_CrawlStayOnDomain(t *testing.T) {
 	// Does not follow external links when stay_on_domain is true
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -303,7 +328,8 @@ func Test_CrawlStayOnDomain(t *testing.T) {
 
 func Test_CrawlSubdomainExclusion(t *testing.T) {
 	// Stays on exact domain and skips subdomain links
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -317,7 +343,8 @@ func Test_CrawlSubdomainExclusion(t *testing.T) {
 
 func Test_CrawlSubdomainInclusion(t *testing.T) {
 	// Crawls subdomains when allow_subdomains is enabled
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -328,7 +355,8 @@ func Test_CrawlSubdomainInclusion(t *testing.T) {
 
 func Test_CrawlTrailingSlashDedup(t *testing.T) {
 	// Deduplicates /page and /page/ as the same URL
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -339,7 +367,8 @@ func Test_CrawlTrailingSlashDedup(t *testing.T) {
 
 func Test_CrawlUrlDeduplication(t *testing.T) {
 	// Deduplicates URLs that differ only by fragment or query params
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

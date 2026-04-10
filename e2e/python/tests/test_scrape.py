@@ -1,12 +1,12 @@
 """E2e tests for category: scrape.
 """
-from kreuzcrawl import scrape
+from kreuzcrawl import create_engine, scrape
 
 
 def test_scrape_asset_dedup() -> None:
     """Same asset linked twice results in one download with one unique hash."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.assets) == 2
@@ -14,16 +14,16 @@ def test_scrape_asset_dedup() -> None:
 
 def test_scrape_asset_max_size() -> None:
     """Skips assets exceeding max_asset_size limit."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.assets) == 2
 
 def test_scrape_asset_type_filter() -> None:
     """Only downloads image assets when asset_types filter is set."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.assets) == 1
@@ -31,8 +31,8 @@ def test_scrape_asset_type_filter() -> None:
 
 def test_scrape_basic_html_page() -> None:
     """Scrapes a simple HTML page and extracts title, description, and links."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.content_type == "text/html"
@@ -47,8 +47,8 @@ def test_scrape_basic_html_page() -> None:
 
 def test_scrape_complex_links() -> None:
     """Classifies links by type: internal, external, anchor, document, image."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.links) > 9
@@ -59,16 +59,16 @@ def test_scrape_complex_links() -> None:
 
 def test_scrape_download_assets() -> None:
     """Downloads CSS, JS, and image assets from page."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.assets) > 2
 
 def test_scrape_dublin_core() -> None:
     """Extracts Dublin Core metadata from a page."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.dublin_core.title
@@ -77,8 +77,8 @@ def test_scrape_dublin_core() -> None:
 
 def test_scrape_empty_page() -> None:
     """Handles an empty HTML document without errors."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.links) > -1
@@ -86,8 +86,8 @@ def test_scrape_empty_page() -> None:
 
 def test_scrape_feed_discovery() -> None:
     """Discovers RSS, Atom, and JSON feed links."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.feeds.rss) == 1
@@ -96,8 +96,8 @@ def test_scrape_feed_discovery() -> None:
 
 def test_scrape_image_sources() -> None:
     """Extracts images from img, picture, og:image, twitter:image."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.images) > 4
@@ -105,15 +105,15 @@ def test_scrape_image_sources() -> None:
 
 def test_scrape_js_heavy_spa() -> None:
     """Handles SPA page with JavaScript-only content (no server-rendered HTML)."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.html
 
 def test_scrape_json_ld() -> None:
     """Extracts JSON-LD structured data from a page."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.json_ld
@@ -122,8 +122,8 @@ def test_scrape_json_ld() -> None:
 
 def test_scrape_malformed_html() -> None:
     """Gracefully handles broken HTML without crashing."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.html
@@ -131,8 +131,8 @@ def test_scrape_malformed_html() -> None:
 
 def test_scrape_og_metadata() -> None:
     """Extracts full Open Graph metadata from a page."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.og.title
@@ -144,8 +144,8 @@ def test_scrape_og_metadata() -> None:
 
 def test_scrape_twitter_card() -> None:
     """Extracts Twitter Card metadata from a page."""
-    engine = None
-    url = None
+    engine = create_engine()
+    url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.twitter.card

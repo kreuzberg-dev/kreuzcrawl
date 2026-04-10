@@ -10,7 +10,8 @@ import (
 
 func Test_EngineBatchBasic(t *testing.T) {
 	// CrawlEngine with defaults batch scrapes like the free function
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -24,7 +25,8 @@ func Test_EngineBatchBasic(t *testing.T) {
 
 func Test_EngineCrawlBasic(t *testing.T) {
 	// CrawlEngine with defaults crawls multiple pages like the free function
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -38,7 +40,8 @@ func Test_EngineCrawlBasic(t *testing.T) {
 
 func Test_EngineMapBasic(t *testing.T) {
 	// CrawlEngine with defaults discovers URLs like the free function
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -49,7 +52,8 @@ func Test_EngineMapBasic(t *testing.T) {
 
 func Test_EngineScrapeBasic(t *testing.T) {
 	// CrawlEngine with defaults scrapes a page identically to the free function
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -84,7 +88,8 @@ func Test_EngineScrapeBasic(t *testing.T) {
 
 func Test_EngineStreamBasic(t *testing.T) {
 	// CrawlEngine with defaults streams events like the free function
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

@@ -4,7 +4,8 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_article_times" do
     test "Extracts article:published_time, modified_time, author, section, and tags" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert String.trim(result.article.published_time) == "2024-01-15T10:00:00Z"
       assert String.trim(result.article.modified_time) == "2024-06-20T14:30:00Z"
@@ -16,7 +17,8 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_favicons" do
     test "Extracts favicon link tags including apple-touch-icon" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert String.trim(length(result.favicons)) == 5
       assert result.favicons.get("").apple_touch != ""
@@ -25,7 +27,8 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_headings" do
     test "Extracts heading hierarchy (h1-h6) from HTML page" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert String.trim(length(result.headings.h1)) == 1
       assert String.trim(result.headings.h1.get("0").text) == "Primary Heading"
@@ -35,7 +38,8 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_hreflang" do
     test "Extracts hreflang alternate link tags" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert String.trim(length(result.hreflang)) == 4
       assert String.contains?(result.hreflang.get("").lang, "en")
@@ -44,7 +48,8 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_keywords_author" do
     test "Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert String.trim(result.metadata.title) == "Comprehensive Metadata Test Page"
       assert result.metadata.canonical_url != ""
@@ -62,7 +67,8 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_og_video_audio" do
     test "Extracts og:video, og:audio, and og:locale:alternate metadata" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert String.trim(result.og.video) == "https://example.com/video.mp4"
       assert String.trim(result.og.audio) == "https://example.com/audio.mp3"
@@ -72,7 +78,8 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_response_headers" do
     test "Extracts response metadata from HTTP headers (etag, server, content-language)" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert result.response_headers.etag != ""
       assert result.response_headers.last_modified != ""
@@ -83,7 +90,8 @@ defmodule E2e.MetadataTest do
 
   describe "metadata_word_count" do
     test "Computes word count from visible page text" do
-      result = Kreuzcrawl.scrape!()
+      engine = Kreuzcrawl.create_engine!(nil)
+      result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert result.computed.word_count > 99
       assert result.computed.word_count < 301

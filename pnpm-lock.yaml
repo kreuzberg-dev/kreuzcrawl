@@ -66,8 +66,8 @@ importers:
   e2e/node:
     devDependencies:
       '@kreuzberg/kreuzcrawl':
-        specifier: file:../../packages/typescript
-        version: link:../../packages/typescript
+        specifier: file:../../crates/kreuzcrawl-node
+        version: kreuzcrawl-node@file:crates/kreuzcrawl-node
       vitest:
         specifier: ^3.0.0
         version: 3.2.4(lightningcss@1.32.0)
@@ -1801,6 +1801,9 @@ packages:
 
   keyv@5.6.0:
     resolution: {integrity: sha512-CYDD3SOtsHtyXeEORYRx2qBtpDJFjRTGXUtmNEMGyzYOKj1TE3tycdlho7kA1Ufx9OYWZzg52QFBGALTirzDSw==}
+
+  kreuzcrawl-node@file:crates/kreuzcrawl-node:
+    resolution: {directory: crates/kreuzcrawl-node, type: directory}
 
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -4161,6 +4164,8 @@ snapshots:
   keyv@5.6.0:
     dependencies:
       '@keyv/serialize': 1.1.1
+
+  kreuzcrawl-node@file:crates/kreuzcrawl-node: {}
 
   levn@0.4.1:
     dependencies:

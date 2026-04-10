@@ -10,7 +10,8 @@ import (
 
 func Test_CrawlStreamEvents(t *testing.T) {
 	// Crawl stream produces page and complete events
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -27,7 +28,8 @@ func Test_CrawlStreamEvents(t *testing.T) {
 
 func Test_StreamDepthCrawl(t *testing.T) {
 	// Stream produces events for multi-depth crawl with link following
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -44,7 +46,8 @@ func Test_StreamDepthCrawl(t *testing.T) {
 
 func Test_StreamWithErrorEvent(t *testing.T) {
 	// Stream emits page and complete events even when some pages fail
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

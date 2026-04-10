@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,29 +8,32 @@ namespace Kreuzberg.E2e;
 public class AuthTests
 {
     [Fact]
-    public void Test_AuthBasicHttp()
+    public async Task Test_AuthBasicHttp()
     {
         // Sends HTTP Basic authentication header
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.AuthHeaderSent.Trim());
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.AuthHeaderSent);
+        Assert.Equal(200, result.StatusCode);
     }
 
     [Fact]
-    public void Test_AuthBearerToken()
+    public async Task Test_AuthBearerToken()
     {
         // Sends Bearer token in Authorization header
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.AuthHeaderSent.Trim());
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.AuthHeaderSent);
+        Assert.Equal(200, result.StatusCode);
     }
 
     [Fact]
-    public void Test_AuthCustomHeader()
+    public async Task Test_AuthCustomHeader()
     {
         // Sends authentication via custom header (X-API-Key)
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.AuthHeaderSent.Trim());
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.AuthHeaderSent);
+        Assert.Equal(200, result.StatusCode);
     }
 }

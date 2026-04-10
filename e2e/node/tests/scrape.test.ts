@@ -1,29 +1,33 @@
 import { describe, it, expect } from 'vitest';
-import { scrape } from '@kreuzberg/kreuzcrawl';
+import { scrape, createEngine } from '@kreuzberg/kreuzcrawl';
 
 describe('scrape', () => {
   it('scrape_asset_dedup: Same asset linked twice results in one download with one unique hash', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.assets.length).toBe(2);
     expect(result.assets.uniqueHashes).toBe(2);
   });
 
   it('scrape_asset_max_size: Skips assets exceeding max_asset_size limit', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.assets.length).toBe(2);
   });
 
   it('scrape_asset_type_filter: Only downloads image assets when asset_types filter is set', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.assets.length).toBe(1);
     expect(result.assets[""].category).toContain("image");
   });
 
   it('scrape_basic_html_page: Scrapes a simple HTML page and extracts title, description, and links', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.contentType).toBe("text/html");
     expect(result.html.length).toBeGreaterThan(0);
@@ -37,7 +41,8 @@ describe('scrape', () => {
   });
 
   it('scrape_complex_links: Classifies links by type: internal, external, anchor, document, image', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.links.length).toBeGreaterThan(9);
     expect(result.links[""].linkType).toContain("internal");
@@ -47,13 +52,15 @@ describe('scrape', () => {
   });
 
   it('scrape_download_assets: Downloads CSS, JS, and image assets from page', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.assets.length).toBeGreaterThan(2);
   });
 
   it('scrape_dublin_core: Extracts Dublin Core metadata from a page', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.dublinCore.title.length).toBeGreaterThan(0);
     expect(result.dublinCore.title).toBe("Effects of Climate Change on Marine Biodiversity");
@@ -61,14 +68,16 @@ describe('scrape', () => {
   });
 
   it('scrape_empty_page: Handles an empty HTML document without errors', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.links.length).toBeGreaterThan(-1);
     expect(result.images.length).toBe(0);
   });
 
   it('scrape_feed_discovery: Discovers RSS, Atom, and JSON feed links', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.feeds.rss.length).toBe(1);
     expect(result.feeds.atom.length).toBe(1);
@@ -76,19 +85,22 @@ describe('scrape', () => {
   });
 
   it('scrape_image_sources: Extracts images from img, picture, og:image, twitter:image', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.images.length).toBeGreaterThan(4);
     expect(result.og.image).toBe("https://example.com/images/og-hero.jpg");
   });
 
   it('scrape_js_heavy_spa: Handles SPA page with JavaScript-only content (no server-rendered HTML)', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.html.length).toBeGreaterThan(0);
   });
 
   it('scrape_json_ld: Extracts JSON-LD structured data from a page', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.jsonLd.length).toBeGreaterThan(0);
     expect(result.jsonLd.type).toBe("Recipe");
@@ -96,14 +108,16 @@ describe('scrape', () => {
   });
 
   it('scrape_malformed_html: Gracefully handles broken HTML without crashing', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.html.length).toBeGreaterThan(0);
     expect(result.metadata.description).toContain("broken HTML");
   });
 
   it('scrape_og_metadata: Extracts full Open Graph metadata from a page', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.og.title.length).toBeGreaterThan(0);
     expect(result.og.title).toBe("Article Title");
@@ -114,7 +128,8 @@ describe('scrape', () => {
   });
 
   it('scrape_twitter_card: Extracts Twitter Card metadata from a page', async () => {
-    const result = await scrape();
+    const engine = createEngine(null);
+    const result = await scrape(engine, "");
     expect(result.statusCode).toBe(200);
     expect(result.twitter.card.length).toBeGreaterThan(0);
     expect(result.twitter.cardType).toBe("summary_large_image");

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,27 +8,30 @@ namespace Kreuzberg.E2e;
 public class CookiesTests
 {
     [Fact]
-    public void Test_CookiesPerDomain()
+    public async Task Test_CookiesPerDomain()
     {
         // Isolates cookies per domain during crawl
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(1, result.Cookies.Count.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(1, result.Cookies.Count);
         Assert.Contains("domain_cookie", result.Cookies);
     }
 
     [Fact]
-    public void Test_CookiesPersistence()
+    public async Task Test_CookiesPersistence()
     {
         // Maintains cookies across multiple crawl requests
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("session", result.Cookies);
     }
 
     [Fact]
-    public void Test_CookiesSetCookieResponse()
+    public async Task Test_CookiesSetCookieResponse()
     {
         // Respects Set-Cookie header from server responses
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("tracking", result.Cookies);
     }
 }

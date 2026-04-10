@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,109 +8,121 @@ namespace Kreuzberg.E2e;
 public class RedirectTests
 {
     [Fact]
-    public void Test_Redirect301Permanent()
+    public async Task Test_Redirect301Permanent()
     {
         // Follows 301 permanent redirect and returns final page content
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/target", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
+        Assert.Equal(1, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_Redirect302Found()
+    public async Task Test_Redirect302Found()
     {
         // Follows 302 Found redirect correctly
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/found-target", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
+        Assert.Equal(1, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_Redirect303SeeOther()
+    public async Task Test_Redirect303SeeOther()
     {
         // Follows 303 See Other redirect (method changes to GET)
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/see-other", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
+        Assert.Equal(1, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_Redirect307Temporary()
+    public async Task Test_Redirect307Temporary()
     {
         // Follows 307 Temporary Redirect (preserves method)
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/temp-target", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
+        Assert.Equal(1, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_Redirect308Permanent()
+    public async Task Test_Redirect308Permanent()
     {
         // Follows 308 Permanent Redirect (preserves method)
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/perm-target", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
+        Assert.Equal(1, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_RedirectChain()
+    public async Task Test_RedirectChain()
     {
         // Follows a chain of redirects (301 -> 302 -> 200)
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/step2", result.FinalUrl);
-        Assert.Equal(2, result.RedirectCount.Trim());
+        Assert.Equal(2, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_RedirectCrossDomain()
+    public async Task Test_RedirectCrossDomain()
     {
         // Reports cross-domain redirect target without following to external domain
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/external-redirect", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
+        Assert.Equal(1, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_RedirectLoop()
+    public async Task Test_RedirectLoop()
     {
         // Detects redirect loop (A -> B -> A) and returns error
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.IsError.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.IsError);
     }
 
     [Fact]
-    public void Test_RedirectMaxExceeded()
+    public async Task Test_RedirectMaxExceeded()
     {
         // Aborts when redirect count exceeds max_redirects limit
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.IsError.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.IsError);
     }
 
     [Fact]
-    public void Test_RedirectMetaRefresh()
+    public async Task Test_RedirectMetaRefresh()
     {
         // Follows HTML meta-refresh redirect to target page
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/target", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
+        Assert.Equal(1, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_RedirectRefreshHeader()
+    public async Task Test_RedirectRefreshHeader()
     {
         // Handles HTTP Refresh header redirect
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/refreshed", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
+        Assert.Equal(1, result.RedirectCount);
     }
 
     [Fact]
-    public void Test_RedirectTo404()
+    public async Task Test_RedirectTo404()
     {
         // Redirect target returns 404 Not Found
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Contains("/gone", result.FinalUrl);
-        Assert.Equal(1, result.RedirectCount.Trim());
-        Assert.Equal(true, result.IsError.Trim());
+        Assert.Equal(1, result.RedirectCount);
+        Assert.Equal(true, result.IsError);
     }
 }

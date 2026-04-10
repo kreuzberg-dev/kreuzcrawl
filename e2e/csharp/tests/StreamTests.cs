@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,32 +8,35 @@ namespace Kreuzberg.E2e;
 public class StreamTests
 {
     [Fact]
-    public void Test_CrawlStreamEvents()
+    public async Task Test_CrawlStreamEvents()
     {
         // Crawl stream produces page and complete events
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.True(result.Stream.EventCountMin >= 4, "expected >= 4");
-        Assert.Equal(true, result.Stream.HasPageEvent.Trim());
-        Assert.Equal(true, result.Stream.HasCompleteEvent.Trim());
+        Assert.Equal(true, result.Stream.HasPageEvent);
+        Assert.Equal(true, result.Stream.HasCompleteEvent);
     }
 
     [Fact]
-    public void Test_StreamDepthCrawl()
+    public async Task Test_StreamDepthCrawl()
     {
         // Stream produces events for multi-depth crawl with link following
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.True(result.Stream.EventCountMin >= 5, "expected >= 5");
-        Assert.Equal(true, result.Stream.HasPageEvent.Trim());
-        Assert.Equal(true, result.Stream.HasCompleteEvent.Trim());
+        Assert.Equal(true, result.Stream.HasPageEvent);
+        Assert.Equal(true, result.Stream.HasCompleteEvent);
     }
 
     [Fact]
-    public void Test_StreamWithErrorEvent()
+    public async Task Test_StreamWithErrorEvent()
     {
         // Stream emits page and complete events even when some pages fail
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Stream.HasPageEvent.Trim());
-        Assert.Equal(true, result.Stream.HasCompleteEvent.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Stream.HasPageEvent);
+        Assert.Equal(true, result.Stream.HasCompleteEvent);
         Assert.True(result.Stream.EventCountMin >= 2, "expected >= 2");
     }
 }

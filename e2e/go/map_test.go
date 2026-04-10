@@ -10,7 +10,8 @@ import (
 
 func Test_MapDiscoverUrls(t *testing.T) {
 	// Discovers all URLs on a site without fetching full content
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -21,7 +22,8 @@ func Test_MapDiscoverUrls(t *testing.T) {
 
 func Test_MapExcludePatterns(t *testing.T) {
 	// Excludes URLs matching patterns from URL map
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -32,7 +34,8 @@ func Test_MapExcludePatterns(t *testing.T) {
 
 func Test_MapIncludeSubdomains(t *testing.T) {
 	// Includes subdomain URLs in URL map discovery
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -46,7 +49,8 @@ func Test_MapIncludeSubdomains(t *testing.T) {
 
 func Test_MapLargeSitemap(t *testing.T) {
 	// Handles large sitemap with 100+ URLs
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -57,7 +61,8 @@ func Test_MapLargeSitemap(t *testing.T) {
 
 func Test_MapLimitPagination(t *testing.T) {
 	// Limits map result count to specified maximum
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -68,7 +73,8 @@ func Test_MapLimitPagination(t *testing.T) {
 
 func Test_MapSearchFilter(t *testing.T) {
 	// Filters map results by search keyword
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

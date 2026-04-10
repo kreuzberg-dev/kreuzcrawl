@@ -13,7 +13,8 @@ final class BatchTest extends TestCase
     /** Batch scrape of multiple URLs all succeeding */
     public function test_scrape_batch_basic(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(3, $result->batch->completed_count);
         $this->assertEquals(0, $result->batch->failed_count);
         $this->assertEquals(3, $result->batch->total_count);
@@ -22,7 +23,8 @@ final class BatchTest extends TestCase
     /** Batch scrape with one URL failing returns partial results */
     public function test_scrape_batch_partial_failure(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(2, $result->batch->completed_count);
         $this->assertEquals(1, $result->batch->failed_count);
         $this->assertEquals(3, $result->batch->total_count);
@@ -31,7 +33,8 @@ final class BatchTest extends TestCase
     /** Batch scrape results include specific URL */
     public function test_scrape_batch_progress(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(2, $result->batch->total_count);
         $this->assertStringContainsString("/target", $result->batch->results);
     }

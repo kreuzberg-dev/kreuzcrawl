@@ -10,7 +10,8 @@ import (
 
 func Test_Redirect301Permanent(t *testing.T) {
 	// Follows 301 permanent redirect and returns final page content
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -24,7 +25,8 @@ func Test_Redirect301Permanent(t *testing.T) {
 
 func Test_Redirect302Found(t *testing.T) {
 	// Follows 302 Found redirect correctly
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -38,7 +40,8 @@ func Test_Redirect302Found(t *testing.T) {
 
 func Test_Redirect303SeeOther(t *testing.T) {
 	// Follows 303 See Other redirect (method changes to GET)
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -52,7 +55,8 @@ func Test_Redirect303SeeOther(t *testing.T) {
 
 func Test_Redirect307Temporary(t *testing.T) {
 	// Follows 307 Temporary Redirect (preserves method)
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -66,7 +70,8 @@ func Test_Redirect307Temporary(t *testing.T) {
 
 func Test_Redirect308Permanent(t *testing.T) {
 	// Follows 308 Permanent Redirect (preserves method)
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -80,7 +85,8 @@ func Test_Redirect308Permanent(t *testing.T) {
 
 func Test_RedirectChain(t *testing.T) {
 	// Follows a chain of redirects (301 -> 302 -> 200)
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -94,7 +100,8 @@ func Test_RedirectChain(t *testing.T) {
 
 func Test_RedirectCrossDomain(t *testing.T) {
 	// Reports cross-domain redirect target without following to external domain
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -108,7 +115,8 @@ func Test_RedirectCrossDomain(t *testing.T) {
 
 func Test_RedirectLoop(t *testing.T) {
 	// Detects redirect loop (A -> B -> A) and returns error
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -119,7 +127,8 @@ func Test_RedirectLoop(t *testing.T) {
 
 func Test_RedirectMaxExceeded(t *testing.T) {
 	// Aborts when redirect count exceeds max_redirects limit
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -130,7 +139,8 @@ func Test_RedirectMaxExceeded(t *testing.T) {
 
 func Test_RedirectMetaRefresh(t *testing.T) {
 	// Follows HTML meta-refresh redirect to target page
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -144,7 +154,8 @@ func Test_RedirectMetaRefresh(t *testing.T) {
 
 func Test_RedirectRefreshHeader(t *testing.T) {
 	// Handles HTTP Refresh header redirect
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -158,7 +169,8 @@ func Test_RedirectRefreshHeader(t *testing.T) {
 
 func Test_RedirectTo404(t *testing.T) {
 	// Redirect target returns 404 Not Found
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

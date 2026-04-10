@@ -10,7 +10,8 @@ import (
 
 func Test_MarkdownBasicConversion(t *testing.T) {
 	// HTML is always converted to markdown alongside raw HTML
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -41,7 +42,8 @@ func Test_MarkdownBasicConversion(t *testing.T) {
 
 func Test_MarkdownCrawlAllPages(t *testing.T) {
 	// All crawled pages have markdown field populated
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -52,7 +54,8 @@ func Test_MarkdownCrawlAllPages(t *testing.T) {
 
 func Test_MarkdownFitContent(t *testing.T) {
 	// Fit markdown removes navigation and boilerplate content
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -70,7 +73,8 @@ func Test_MarkdownFitContent(t *testing.T) {
 
 func Test_MarkdownHeadingsAndParagraphs(t *testing.T) {
 	// Markdown conversion preserves heading hierarchy and paragraph text
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -88,7 +92,8 @@ func Test_MarkdownHeadingsAndParagraphs(t *testing.T) {
 
 func Test_MarkdownLinksConverted(t *testing.T) {
 	// HTML links are converted to markdown link syntax
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -112,7 +117,8 @@ func Test_MarkdownLinksConverted(t *testing.T) {
 
 func Test_MarkdownWithCitations(t *testing.T) {
 	// Markdown includes citation conversion with numbered references
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

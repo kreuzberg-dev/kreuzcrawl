@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,10 +8,11 @@ namespace Kreuzberg.E2e;
 public class CacheTests
 {
     [Fact]
-    public void Test_CacheBasic()
+    public async Task Test_CacheBasic()
     {
         // Crawling with disk cache enabled succeeds without errors
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
     }
 }

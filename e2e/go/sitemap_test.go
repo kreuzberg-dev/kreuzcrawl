@@ -10,7 +10,8 @@ import (
 
 func Test_SitemapBasic(t *testing.T) {
 	// Parses a standard urlset sitemap
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -24,7 +25,8 @@ func Test_SitemapBasic(t *testing.T) {
 
 func Test_SitemapCompressedGzip(t *testing.T) {
 	// Parses a gzip-compressed sitemap file
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -35,7 +37,8 @@ func Test_SitemapCompressedGzip(t *testing.T) {
 
 func Test_SitemapEmpty(t *testing.T) {
 	// Handles empty sitemap gracefully
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -46,7 +49,8 @@ func Test_SitemapEmpty(t *testing.T) {
 
 func Test_SitemapFromRobotsTxt(t *testing.T) {
 	// Discovers sitemap via robots.txt Sitemap directive
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -57,7 +61,8 @@ func Test_SitemapFromRobotsTxt(t *testing.T) {
 
 func Test_SitemapIndex(t *testing.T) {
 	// Follows sitemap index to discover child sitemaps
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -68,7 +73,8 @@ func Test_SitemapIndex(t *testing.T) {
 
 func Test_SitemapLastmodFilter(t *testing.T) {
 	// Filters sitemap URLs by lastmod date
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -82,7 +88,8 @@ func Test_SitemapLastmodFilter(t *testing.T) {
 
 func Test_SitemapOnlyMode(t *testing.T) {
 	// Uses sitemap URLs exclusively without following page links
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -93,7 +100,8 @@ func Test_SitemapOnlyMode(t *testing.T) {
 
 func Test_SitemapXhtmlLinks(t *testing.T) {
 	// Parses sitemap with XHTML namespace alternate links
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

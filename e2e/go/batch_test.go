@@ -10,7 +10,8 @@ import (
 
 func Test_ScrapeBatchBasic(t *testing.T) {
 	// Batch scrape of multiple URLs all succeeding
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -27,7 +28,8 @@ func Test_ScrapeBatchBasic(t *testing.T) {
 
 func Test_ScrapeBatchPartialFailure(t *testing.T) {
 	// Batch scrape with one URL failing returns partial results
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -44,7 +46,8 @@ func Test_ScrapeBatchPartialFailure(t *testing.T) {
 
 func Test_ScrapeBatchProgress(t *testing.T) {
 	// Batch scrape results include specific URL
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

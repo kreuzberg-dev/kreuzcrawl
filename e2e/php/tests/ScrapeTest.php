@@ -13,7 +13,8 @@ final class ScrapeTest extends TestCase
     /** Same asset linked twice results in one download with one unique hash */
     public function test_scrape_asset_dedup(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(2, count($result->assets));
         $this->assertEquals(2, $result->assets->unique_hashes);
@@ -22,7 +23,8 @@ final class ScrapeTest extends TestCase
     /** Skips assets exceeding max_asset_size limit */
     public function test_scrape_asset_max_size(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(2, count($result->assets));
     }
@@ -30,7 +32,8 @@ final class ScrapeTest extends TestCase
     /** Only downloads image assets when asset_types filter is set */
     public function test_scrape_asset_type_filter(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(1, count($result->assets));
         $this->assertStringContainsString("image", $result->assets[""]->category);
@@ -39,7 +42,8 @@ final class ScrapeTest extends TestCase
     /** Scrapes a simple HTML page and extracts title, description, and links */
     public function test_scrape_basic_html_page(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("text/html", $result->content_type);
         $this->assertNotEmpty($result->html);
@@ -55,7 +59,8 @@ final class ScrapeTest extends TestCase
     /** Classifies links by type: internal, external, anchor, document, image */
     public function test_scrape_complex_links(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertGreaterThan(9, count($result->links));
         $this->assertStringContainsString("internal", $result->links[""]->link_type);
@@ -67,7 +72,8 @@ final class ScrapeTest extends TestCase
     /** Downloads CSS, JS, and image assets from page */
     public function test_scrape_download_assets(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertGreaterThan(2, count($result->assets));
     }
@@ -75,7 +81,8 @@ final class ScrapeTest extends TestCase
     /** Extracts Dublin Core metadata from a page */
     public function test_scrape_dublin_core(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->dublin_core->title);
         $this->assertEquals("Effects of Climate Change on Marine Biodiversity", $result->dublin_core->title);
@@ -85,7 +92,8 @@ final class ScrapeTest extends TestCase
     /** Handles an empty HTML document without errors */
     public function test_scrape_empty_page(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertGreaterThan(-1, count($result->links));
         $this->assertEquals(0, count($result->images));
@@ -94,7 +102,8 @@ final class ScrapeTest extends TestCase
     /** Discovers RSS, Atom, and JSON feed links */
     public function test_scrape_feed_discovery(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(1, count($result->feeds->rss));
         $this->assertEquals(1, count($result->feeds->atom));
@@ -104,7 +113,8 @@ final class ScrapeTest extends TestCase
     /** Extracts images from img, picture, og:image, twitter:image */
     public function test_scrape_image_sources(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertGreaterThan(4, count($result->images));
         $this->assertEquals("https://example.com/images/og-hero.jpg", $result->og->image);
@@ -113,14 +123,16 @@ final class ScrapeTest extends TestCase
     /** Handles SPA page with JavaScript-only content (no server-rendered HTML) */
     public function test_scrape_js_heavy_spa(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertNotEmpty($result->html);
     }
 
     /** Extracts JSON-LD structured data from a page */
     public function test_scrape_json_ld(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->json_ld);
         $this->assertEquals("Recipe", $result->json_ld->type);
@@ -130,7 +142,8 @@ final class ScrapeTest extends TestCase
     /** Gracefully handles broken HTML without crashing */
     public function test_scrape_malformed_html(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->html);
         $this->assertStringContainsString("broken HTML", $result->metadata->description);
@@ -139,7 +152,8 @@ final class ScrapeTest extends TestCase
     /** Extracts full Open Graph metadata from a page */
     public function test_scrape_og_metadata(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->og->title);
         $this->assertEquals("Article Title", $result->og->title);
@@ -152,7 +166,8 @@ final class ScrapeTest extends TestCase
     /** Extracts Twitter Card metadata from a page */
     public function test_scrape_twitter_card(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->twitter->card);
         $this->assertEquals("summary_large_image", $result->twitter->card_type);

@@ -186,10 +186,11 @@ path = "../../packages/python"
 
 [e2e.packages.node]
 name = "@kreuzberg/kreuzcrawl"
-path = "../../packages/typescript"
+path = "../../crates/kreuzcrawl-node"
 
 [e2e.packages.go]
 module = "github.com/kreuzberg-dev/kreuzcrawl"
+path = "../../packages/go"
 
 [test.python]
 command = "task python:test"

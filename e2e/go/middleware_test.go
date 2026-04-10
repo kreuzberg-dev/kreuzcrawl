@@ -10,7 +10,8 @@ import (
 
 func Test_MiddlewareEngineCrawlWithDefaults(t *testing.T) {
 	// Engine crawl with default middleware chain produces correct multi-page results
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -24,7 +25,8 @@ func Test_MiddlewareEngineCrawlWithDefaults(t *testing.T) {
 
 func Test_MiddlewareNoopNoEffect(t *testing.T) {
 	// Default middleware chain does not affect normal scraping
-	result, err := pkg.Scrape()
+	engine, _ := pkg.CreateEngine(nil)
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

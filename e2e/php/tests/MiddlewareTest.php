@@ -13,7 +13,8 @@ final class MiddlewareTest extends TestCase
     /** Engine crawl with default middleware chain produces correct multi-page results */
     public function test_middleware_engine_crawl_with_defaults(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(3, $result->crawl->pages_crawled);
         $this->assertGreaterThanOrEqual(3, $result->crawl->min_pages);
     }
@@ -21,7 +22,8 @@ final class MiddlewareTest extends TestCase
     /** Default middleware chain does not affect normal scraping */
     public function test_middleware_noop_no_effect(): void
     {
-        $result = Kreuzcrawl::scrape();
+        $engine = Kreuzcrawl::createEngine(null);
+        $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("Middleware Test", $result->metadata->title);
     }

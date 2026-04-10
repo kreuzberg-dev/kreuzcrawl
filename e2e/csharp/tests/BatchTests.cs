@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,31 +8,34 @@ namespace Kreuzberg.E2e;
 public class BatchTests
 {
     [Fact]
-    public void Test_ScrapeBatchBasic()
+    public async Task Test_ScrapeBatchBasic()
     {
         // Batch scrape of multiple URLs all succeeding
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(3, result.Batch.CompletedCount.Trim());
-        Assert.Equal(0, result.Batch.FailedCount.Trim());
-        Assert.Equal(3, result.Batch.TotalCount.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(3, result.Batch.CompletedCount);
+        Assert.Equal(0, result.Batch.FailedCount);
+        Assert.Equal(3, result.Batch.TotalCount);
     }
 
     [Fact]
-    public void Test_ScrapeBatchPartialFailure()
+    public async Task Test_ScrapeBatchPartialFailure()
     {
         // Batch scrape with one URL failing returns partial results
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(2, result.Batch.CompletedCount.Trim());
-        Assert.Equal(1, result.Batch.FailedCount.Trim());
-        Assert.Equal(3, result.Batch.TotalCount.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(2, result.Batch.CompletedCount);
+        Assert.Equal(1, result.Batch.FailedCount);
+        Assert.Equal(3, result.Batch.TotalCount);
     }
 
     [Fact]
-    public void Test_ScrapeBatchProgress()
+    public async Task Test_ScrapeBatchProgress()
     {
         // Batch scrape results include specific URL
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(2, result.Batch.TotalCount.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(2, result.Batch.TotalCount);
         Assert.Contains("/target", result.Batch.Results);
     }
 }

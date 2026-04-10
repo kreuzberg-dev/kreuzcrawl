@@ -8,60 +8,68 @@ class SitemapTest {
     @Test
     void testSitemapBasic() throws Exception {
         // Parses a standard urlset sitemap
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(4, result.urls().size());
-        assertEquals(true, result.has_lastmod());
+        assertEquals(true, result.hasLastmod());
     }
 
     @Test
     void testSitemapCompressedGzip() throws Exception {
         // Parses a gzip-compressed sitemap file
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(3, result.urls().size());
     }
 
     @Test
     void testSitemapEmpty() throws Exception {
         // Handles empty sitemap gracefully
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(0, result.urls().size());
     }
 
     @Test
     void testSitemapFromRobotsTxt() throws Exception {
         // Discovers sitemap via robots.txt Sitemap directive
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(4, result.urls().size());
     }
 
     @Test
     void testSitemapIndex() throws Exception {
         // Follows sitemap index to discover child sitemaps
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(3, result.urls().size());
     }
 
     @Test
     void testSitemapLastmodFilter() throws Exception {
         // Filters sitemap URLs by lastmod date
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(4, result.urls().size());
-        assertEquals(true, result.has_lastmod());
+        assertEquals(true, result.hasLastmod());
     }
 
     @Test
     void testSitemapOnlyMode() throws Exception {
         // Uses sitemap URLs exclusively without following page links
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(4, result.urls().size());
     }
 
     @Test
     void testSitemapXhtmlLinks() throws Exception {
         // Parses sitemap with XHTML namespace alternate links
-        var result = Kreuzcrawl.scrape();
+        var engine = Kreuzcrawl.createEngine(null);
+        var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(2, result.urls().size());
-        assertEquals(false, result.has_lastmod());
+        assertEquals(false, result.hasLastmod());
     }
 
 }

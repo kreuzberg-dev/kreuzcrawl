@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
 
@@ -7,52 +8,57 @@ namespace Kreuzberg.E2e;
 public class EngineTests
 {
     [Fact]
-    public void Test_EngineBatchBasic()
+    public async Task Test_EngineBatchBasic()
     {
         // CrawlEngine with defaults batch scrapes like the free function
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(2, result.Batch.CompletedCount.Trim());
-        Assert.Equal(2, result.Batch.TotalCount.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(2, result.Batch.CompletedCount);
+        Assert.Equal(2, result.Batch.TotalCount);
     }
 
     [Fact]
-    public void Test_EngineCrawlBasic()
+    public async Task Test_EngineCrawlBasic()
     {
         // CrawlEngine with defaults crawls multiple pages like the free function
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(3, result.Crawl.PagesCrawled.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(3, result.Crawl.PagesCrawled);
         Assert.True(result.Crawl.MinPages >= 3, "expected >= 3");
     }
 
     [Fact]
-    public void Test_EngineMapBasic()
+    public async Task Test_EngineMapBasic()
     {
         // CrawlEngine with defaults discovers URLs like the free function
-        var result = KreuzcrawlLib.Scrape();
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.True(result.Map.MinUrls >= 2, "expected >= 2");
     }
 
     [Fact]
-    public void Test_EngineScrapeBasic()
+    public async Task Test_EngineScrapeBasic()
     {
         // CrawlEngine with defaults scrapes a page identically to the free function
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(200, result.StatusCode.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(200, result.StatusCode);
         Assert.Equal("text/html", result.ContentType.Trim());
         Assert.Equal("Engine Test", result.Metadata.Title.Trim());
         Assert.Contains("Testing the engine", result.Metadata.DescriptionContains);
         Assert.True(result.Links.MinCount >= 1, "expected >= 1");
-        Assert.Equal(1, result.Headings.H1Count.Trim());
+        Assert.Equal(1, result.Headings.H1Count);
         Assert.Equal("Hello Engine", result.Headings.H1Text.Trim());
     }
 
     [Fact]
-    public void Test_EngineStreamBasic()
+    public async Task Test_EngineStreamBasic()
     {
         // CrawlEngine with defaults streams events like the free function
-        var result = KreuzcrawlLib.Scrape();
-        Assert.Equal(true, result.Stream.HasPageEvent.Trim());
-        Assert.Equal(true, result.Stream.HasCompleteEvent.Trim());
+        var engine = KreuzcrawlLib.CreateEngine(null);
+        var result = await KreuzcrawlLib.Scrape(engine, "");
+        Assert.Equal(true, result.Stream.HasPageEvent);
+        Assert.Equal(true, result.Stream.HasCompleteEvent);
         Assert.True(result.Stream.EventCountMin >= 3, "expected >= 3");
     }
 }
