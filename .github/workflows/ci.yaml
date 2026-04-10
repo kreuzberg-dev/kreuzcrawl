@@ -500,7 +500,7 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Build Docker image (core/full)
-        if: matrix.variant == 'default'
+        if: matrix.variant == 'full'
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -524,7 +524,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=ci-docker-cli
 
       - name: Save Docker image as artifact (core/full)
-        if: matrix.variant == 'default'
+        if: matrix.variant == 'full'
         shell: bash
         run: scripts/ci/docker/save-image.sh "${{ matrix.variant }}" /tmp
 
@@ -556,7 +556,7 @@ jobs:
       fail-fast: true
       matrix:
         variant:
-          - default
+          - full
           - cli
     steps:
       - name: Checkout repository
@@ -580,7 +580,7 @@ jobs:
         run: docker load < /tmp/kreuzcrawl-${{ matrix.variant }}.tar.gz
 
       - name: Test Docker image size (core/full)
-        if: matrix.variant == 'default'
+        if: matrix.variant == 'full'
         shell: bash
         run: scripts/ci/docker/check-image-size.sh "${{ matrix.variant }}"
 
@@ -595,15 +595,15 @@ jobs:
           fi
 
       - name: Run comprehensive feature tests (core/full)
-        if: matrix.variant == 'default'
+        if: matrix.variant == 'full'
         run: scripts/ci/docker/run-feature-tests.sh "${{ matrix.variant }}"
 
       - name: Run configuration tests (core/full)
-        if: matrix.variant == 'default'
+        if: matrix.variant == 'full'
         run: scripts/ci/docker/run-config-tests.sh "${{ matrix.variant }}"
 
       - name: Run API contract tests with schemathesis (core/full)
-        if: matrix.variant == 'default'
+        if: matrix.variant == 'full'
         run: |
           pip3 install schemathesis
           container_id=$(docker run -d -p 3000:3000 kreuzcrawl:${{ matrix.variant }})
@@ -621,7 +621,7 @@ jobs:
         run: scripts/ci/docker/run-cli-tests.sh
 
       - name: Upload test results
-        if: always() && matrix.variant == 'default' && hashFiles('/tmp/kreuzcrawl-docker-test-results.json') != ''
+        if: always() && matrix.variant == 'full' && hashFiles('/tmp/kreuzcrawl-docker-test-results.json') != ''
         uses: actions/upload-artifact@v7
         with:
           name: docker-test-results-${{ matrix.variant }}
@@ -650,7 +650,7 @@ jobs:
           retention-days: 7
 
       - name: Clean up Docker resources (core/full)
-        if: always() && matrix.variant == 'default'
+        if: always() && matrix.variant == 'full'
         shell: bash
         run: scripts/ci/docker/cleanup.sh "${{ matrix.variant }}"
 
@@ -663,7 +663,7 @@ jobs:
           docker system prune -af --volumes || true
 
       - name: Summary (core/full)
-        if: success() && matrix.variant == 'default'
+        if: success() && matrix.variant == 'full'
         shell: bash
         run: scripts/ci/docker/summary.sh "${{ matrix.variant }}" /tmp/kreuzcrawl-docker-test-results.json
 

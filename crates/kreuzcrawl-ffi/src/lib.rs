@@ -56,7 +56,7 @@ pub unsafe extern "C" fn kcrawl_free_string(ptr: *mut c_char) {
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_version() -> *const c_char {
     static VERSION: &str = concat!(env!("CARGO_PKG_VERSION"), "\0");
-    VERSION.as_ptr() as *const c_char
+    VERSION.as_ptr().cast::<c_char>()
 }
 
 /// Create a `ExtractionMeta` from a JSON string. Returns null on failure.
@@ -70,12 +70,11 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_from_json(json: *const c_char) -
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::ExtractionMeta>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -102,7 +101,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_free(ptr: *mut kreuzcrawl::Extra
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_extraction_meta_cost(ptr: *const kreuzcrawl::ExtractionMeta) -> f64 {
+pub const unsafe extern "C" fn kcrawl_extraction_meta_cost(ptr: *const kreuzcrawl::ExtractionMeta) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -117,7 +116,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_cost(ptr: *const kreuzcrawl::Ext
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_extraction_meta_prompt_tokens(ptr: *const kreuzcrawl::ExtractionMeta) -> u64 {
+pub const unsafe extern "C" fn kcrawl_extraction_meta_prompt_tokens(ptr: *const kreuzcrawl::ExtractionMeta) -> u64 {
     if ptr.is_null() {
         return 0;
     }
@@ -132,7 +131,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_prompt_tokens(ptr: *const kreuzc
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_extraction_meta_completion_tokens(ptr: *const kreuzcrawl::ExtractionMeta) -> u64 {
+pub const unsafe extern "C" fn kcrawl_extraction_meta_completion_tokens(ptr: *const kreuzcrawl::ExtractionMeta) -> u64 {
     if ptr.is_null() {
         return 0;
     }
@@ -153,7 +152,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_model(ptr: *const kreuzcrawl::Ex
     }
     let obj = unsafe { &*ptr };
     match &obj.model {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -186,12 +185,11 @@ pub unsafe extern "C" fn kcrawl_proxy_config_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::ProxyConfig>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -223,7 +221,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_url(ptr: *const kreuzcrawl::ProxyCo
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -239,7 +237,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_username(ptr: *const kreuzcrawl::Pr
     }
     let obj = unsafe { &*ptr };
     match &obj.username {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -257,7 +255,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_password(ptr: *const kreuzcrawl::Pr
     }
     let obj = unsafe { &*ptr };
     match &obj.password {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -276,12 +274,11 @@ pub unsafe extern "C" fn kcrawl_browser_config_from_json(json: *const c_char) ->
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::BrowserConfig>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -330,7 +327,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_endpoint(
     }
     let obj = unsafe { &*ptr };
     match &obj.endpoint {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -342,7 +339,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_endpoint(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_browser_config_timeout(ptr: *const kreuzcrawl::BrowserConfig) -> u64 {
+pub const unsafe extern "C" fn kcrawl_browser_config_timeout(ptr: *const kreuzcrawl::BrowserConfig) -> u64 {
     if ptr.is_null() {
         return 0;
     }
@@ -376,7 +373,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_wait_selector(
     }
     let obj = unsafe { &*ptr };
     match &obj.wait_selector {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -388,7 +385,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_wait_selector(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_browser_config_extra_wait(ptr: *const kreuzcrawl::BrowserConfig) -> u64 {
+pub const unsafe extern "C" fn kcrawl_browser_config_extra_wait(ptr: *const kreuzcrawl::BrowserConfig) -> u64 {
     if ptr.is_null() {
         return 0;
     }
@@ -420,12 +417,11 @@ pub unsafe extern "C" fn kcrawl_crawl_config_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::CrawlConfig>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -452,7 +448,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_free(ptr: *mut kreuzcrawl::CrawlCon
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_max_depth(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub const unsafe extern "C" fn kcrawl_crawl_config_max_depth(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -467,7 +463,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_depth(ptr: *const kreuzcrawl::C
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_max_pages(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub const unsafe extern "C" fn kcrawl_crawl_config_max_pages(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -482,7 +478,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_pages(ptr: *const kreuzcrawl::C
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_max_concurrent(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub const unsafe extern "C" fn kcrawl_crawl_config_max_concurrent(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -515,7 +511,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_user_agent(ptr: *const kreuzcrawl::
     }
     let obj = unsafe { &*ptr };
     match &obj.user_agent {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -611,7 +607,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_custom_headers(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_request_timeout(ptr: *const kreuzcrawl::CrawlConfig) -> u64 {
+pub const unsafe extern "C" fn kcrawl_crawl_config_request_timeout(ptr: *const kreuzcrawl::CrawlConfig) -> u64 {
     if ptr.is_null() {
         return 0;
     }
@@ -692,7 +688,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_auth(ptr: *const kreuzcrawl::CrawlC
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_max_body_size(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub const unsafe extern "C" fn kcrawl_crawl_config_max_body_size(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -737,7 +733,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_remove_tags(ptr: *const kreuzcrawl:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_map_limit(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub const unsafe extern "C" fn kcrawl_crawl_config_map_limit(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -758,7 +754,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_map_search(ptr: *const kreuzcrawl::
     }
     let obj = unsafe { &*ptr };
     match &obj.map_search {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -800,7 +796,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_asset_types(ptr: *const kreuzcrawl:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_max_asset_size(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub const unsafe extern "C" fn kcrawl_crawl_config_max_asset_size(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -888,7 +884,7 @@ pub const unsafe extern "C" fn kcrawl_crawl_config_download_documents(ptr: *cons
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_document_max_size(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub const unsafe extern "C" fn kcrawl_crawl_config_document_max_size(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -949,7 +945,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_browser_profile(
     }
     let obj = unsafe { &*ptr };
     match &obj.browser_profile {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -1002,7 +998,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_url(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1026,7 +1022,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_content(
             *out_len = data.len();
         }
     }
-    data.as_ptr() as *mut u8
+    data.as_ptr().cast_mut()
 }
 
 /// Get the `size` field from a `DownloadedDocument`.
@@ -1054,12 +1050,11 @@ pub unsafe extern "C" fn kcrawl_interaction_result_from_json(
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::InteractionResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -1113,7 +1108,7 @@ pub unsafe extern "C" fn kcrawl_interaction_result_final_html(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.final_html.to_string()) {
+    match CString::new(obj.final_html.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1130,7 +1125,7 @@ pub unsafe extern "C" fn kcrawl_interaction_result_final_url(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.final_url.to_string()) {
+    match CString::new(obj.final_url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1140,13 +1135,15 @@ pub unsafe extern "C" fn kcrawl_interaction_result_final_url(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_interaction_result_screenshot(ptr: *const kreuzcrawl::InteractionResult) -> *mut u8 {
+pub const unsafe extern "C" fn kcrawl_interaction_result_screenshot(
+    ptr: *const kreuzcrawl::InteractionResult,
+) -> *mut u8 {
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
     match &obj.screenshot {
-        Some(val) => val.as_ptr() as *mut u8,
+        Some(val) => val.as_ptr().cast_mut(),
         None => std::ptr::null_mut(),
     }
 }
@@ -1218,7 +1215,7 @@ pub unsafe extern "C" fn kcrawl_action_result_error(ptr: *const kreuzcrawl::Acti
     }
     let obj = unsafe { &*ptr };
     match &obj.error {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -1237,12 +1234,11 @@ pub unsafe extern "C" fn kcrawl_scrape_result_from_json(json: *const c_char) -> 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::ScrapeResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -1288,7 +1284,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_content_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.content_type.to_string()) {
+    match CString::new(obj.content_type.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1303,7 +1299,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_html(ptr: *const kreuzcrawl::Scrap
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.html.to_string()) {
+    match CString::new(obj.html.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1423,7 +1419,7 @@ pub const unsafe extern "C" fn kcrawl_scrape_result_is_allowed(ptr: *const kreuz
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_scrape_result_crawl_delay(ptr: *const kreuzcrawl::ScrapeResult) -> u64 {
+pub const unsafe extern "C" fn kcrawl_scrape_result_crawl_delay(ptr: *const kreuzcrawl::ScrapeResult) -> u64 {
     if ptr.is_null() {
         return 0;
     }
@@ -1470,7 +1466,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_x_robots_tag(
     }
     let obj = unsafe { &*ptr };
     match &obj.x_robots_tag {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -1514,7 +1510,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_detected_charset(
     }
     let obj = unsafe { &*ptr };
     match &obj.detected_charset {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -1666,13 +1662,13 @@ pub unsafe extern "C" fn kcrawl_scrape_result_extraction_meta(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_scrape_result_screenshot(ptr: *const kreuzcrawl::ScrapeResult) -> *mut u8 {
+pub const unsafe extern "C" fn kcrawl_scrape_result_screenshot(ptr: *const kreuzcrawl::ScrapeResult) -> *mut u8 {
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
     match &obj.screenshot {
-        Some(val) => val.as_ptr() as *mut u8,
+        Some(val) => val.as_ptr().cast_mut(),
         None => std::ptr::null_mut(),
     }
 }
@@ -1705,12 +1701,11 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_from_json(json: *const c_char)
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::CrawlPageResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -1744,7 +1739,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_url(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1761,7 +1756,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_normalized_url(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.normalized_url.to_string()) {
+    match CString::new(obj.normalized_url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1790,7 +1785,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_content_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.content_type.to_string()) {
+    match CString::new(obj.content_type.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1807,7 +1802,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_html(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.html.to_string()) {
+    match CString::new(obj.html.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -1981,7 +1976,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_detected_charset(
     }
     let obj = unsafe { &*ptr };
     match &obj.detected_charset {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2074,12 +2069,11 @@ pub unsafe extern "C" fn kcrawl_crawl_result_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::CrawlResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -2129,7 +2123,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_final_url(ptr: *const kreuzcrawl::C
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.final_url.to_string()) {
+    match CString::new(obj.final_url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2169,7 +2163,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_error(ptr: *const kreuzcrawl::Crawl
     }
     let obj = unsafe { &*ptr };
     match &obj.error {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2226,12 +2220,11 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_from_json(json: *const c_char) -> *m
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::SitemapUrl>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -2263,7 +2256,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_url(ptr: *const kreuzcrawl::SitemapU
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2279,7 +2272,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_lastmod(ptr: *const kreuzcrawl::Site
     }
     let obj = unsafe { &*ptr };
     match &obj.lastmod {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2297,7 +2290,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_changefreq(ptr: *const kreuzcrawl::S
     }
     let obj = unsafe { &*ptr };
     match &obj.changefreq {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2315,7 +2308,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_priority(ptr: *const kreuzcrawl::Sit
     }
     let obj = unsafe { &*ptr };
     match &obj.priority {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2334,12 +2327,11 @@ pub unsafe extern "C" fn kcrawl_map_result_from_json(json: *const c_char) -> *mu
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::MapResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -2391,12 +2383,11 @@ pub unsafe extern "C" fn kcrawl_markdown_result_from_json(json: *const c_char) -
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::MarkdownResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -2430,7 +2421,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_content(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.content.to_string()) {
+    match CString::new(obj.content.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2528,7 +2519,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_fit_content(
     }
     let obj = unsafe { &*ptr };
     match &obj.fit_content {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2547,12 +2538,11 @@ pub unsafe extern "C" fn kcrawl_cached_page_from_json(json: *const c_char) -> *m
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::CachedPage>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -2584,7 +2574,7 @@ pub unsafe extern "C" fn kcrawl_cached_page_url(ptr: *const kreuzcrawl::CachedPa
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2611,7 +2601,7 @@ pub unsafe extern "C" fn kcrawl_cached_page_content_type(ptr: *const kreuzcrawl:
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.content_type.to_string()) {
+    match CString::new(obj.content_type.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2626,7 +2616,7 @@ pub unsafe extern "C" fn kcrawl_cached_page_body(ptr: *const kreuzcrawl::CachedP
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.body.to_string()) {
+    match CString::new(obj.body.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2642,7 +2632,7 @@ pub unsafe extern "C" fn kcrawl_cached_page_etag(ptr: *const kreuzcrawl::CachedP
     }
     let obj = unsafe { &*ptr };
     match &obj.etag {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2660,7 +2650,7 @@ pub unsafe extern "C" fn kcrawl_cached_page_last_modified(ptr: *const kreuzcrawl
     }
     let obj = unsafe { &*ptr };
     match &obj.last_modified {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2691,12 +2681,11 @@ pub unsafe extern "C" fn kcrawl_link_info_from_json(json: *const c_char) -> *mut
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::LinkInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -2728,7 +2717,7 @@ pub unsafe extern "C" fn kcrawl_link_info_url(ptr: *const kreuzcrawl::LinkInfo) 
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2743,7 +2732,7 @@ pub unsafe extern "C" fn kcrawl_link_info_text(ptr: *const kreuzcrawl::LinkInfo)
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.text.to_string()) {
+    match CString::new(obj.text.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2771,7 +2760,7 @@ pub unsafe extern "C" fn kcrawl_link_info_rel(ptr: *const kreuzcrawl::LinkInfo) 
     }
     let obj = unsafe { &*ptr };
     match &obj.rel {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2802,12 +2791,11 @@ pub unsafe extern "C" fn kcrawl_image_info_from_json(json: *const c_char) -> *mu
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::ImageInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -2839,7 +2827,7 @@ pub unsafe extern "C" fn kcrawl_image_info_url(ptr: *const kreuzcrawl::ImageInfo
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2855,7 +2843,7 @@ pub unsafe extern "C" fn kcrawl_image_info_alt(ptr: *const kreuzcrawl::ImageInfo
     }
     let obj = unsafe { &*ptr };
     match &obj.alt {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -2867,7 +2855,7 @@ pub unsafe extern "C" fn kcrawl_image_info_alt(ptr: *const kreuzcrawl::ImageInfo
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_image_info_width(ptr: *const kreuzcrawl::ImageInfo) -> u32 {
+pub const unsafe extern "C" fn kcrawl_image_info_width(ptr: *const kreuzcrawl::ImageInfo) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -2882,7 +2870,7 @@ pub unsafe extern "C" fn kcrawl_image_info_width(ptr: *const kreuzcrawl::ImageIn
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_image_info_height(ptr: *const kreuzcrawl::ImageInfo) -> u32 {
+pub const unsafe extern "C" fn kcrawl_image_info_height(ptr: *const kreuzcrawl::ImageInfo) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -2916,12 +2904,11 @@ pub unsafe extern "C" fn kcrawl_feed_info_from_json(json: *const c_char) -> *mut
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::FeedInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -2953,7 +2940,7 @@ pub unsafe extern "C" fn kcrawl_feed_info_url(ptr: *const kreuzcrawl::FeedInfo) 
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -2969,7 +2956,7 @@ pub unsafe extern "C" fn kcrawl_feed_info_title(ptr: *const kreuzcrawl::FeedInfo
     }
     let obj = unsafe { &*ptr };
     match &obj.title {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3000,12 +2987,11 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_from_json(json: *const c_char) -> 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::JsonLdEntry>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3039,7 +3025,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_schema_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.schema_type.to_string()) {
+    match CString::new(obj.schema_type.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3055,7 +3041,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_name(ptr: *const kreuzcrawl::JsonL
     }
     let obj = unsafe { &*ptr };
     match &obj.name {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3072,7 +3058,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_raw(ptr: *const kreuzcrawl::JsonLd
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.raw.to_string()) {
+    match CString::new(obj.raw.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3089,12 +3075,11 @@ pub unsafe extern "C" fn kcrawl_cookie_info_from_json(json: *const c_char) -> *m
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::CookieInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3126,7 +3111,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_name(ptr: *const kreuzcrawl::CookieI
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.name.to_string()) {
+    match CString::new(obj.name.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3141,7 +3126,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_value(ptr: *const kreuzcrawl::Cookie
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.value.to_string()) {
+    match CString::new(obj.value.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3157,7 +3142,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_domain(ptr: *const kreuzcrawl::Cooki
     }
     let obj = unsafe { &*ptr };
     match &obj.domain {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3175,7 +3160,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_path(ptr: *const kreuzcrawl::CookieI
     }
     let obj = unsafe { &*ptr };
     match &obj.path {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3194,12 +3179,11 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_from_json(json: *const c_char) 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::DownloadedAsset>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3231,7 +3215,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_url(ptr: *const kreuzcrawl::Dow
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3248,7 +3232,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_content_hash(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.content_hash.to_string()) {
+    match CString::new(obj.content_hash.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3266,7 +3250,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_mime_type(
     }
     let obj = unsafe { &*ptr };
     match &obj.mime_type {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3312,7 +3296,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_html_tag(
     }
     let obj = unsafe { &*ptr };
     match &obj.html_tag {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3331,12 +3315,11 @@ pub unsafe extern "C" fn kcrawl_article_metadata_from_json(json: *const c_char) 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::ArticleMetadata>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3371,7 +3354,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_published_time(
     }
     let obj = unsafe { &*ptr };
     match &obj.published_time {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3391,7 +3374,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_modified_time(
     }
     let obj = unsafe { &*ptr };
     match &obj.modified_time {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3411,7 +3394,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_author(
     }
     let obj = unsafe { &*ptr };
     match &obj.author {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3431,7 +3414,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_section(
     }
     let obj = unsafe { &*ptr };
     match &obj.section {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3470,12 +3453,11 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_from_json(json: *const c_char) ->
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::HreflangEntry>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3507,7 +3489,7 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_lang(ptr: *const kreuzcrawl::Href
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.lang.to_string()) {
+    match CString::new(obj.lang.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3522,7 +3504,7 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_url(ptr: *const kreuzcrawl::Hrefl
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3539,12 +3521,11 @@ pub unsafe extern "C" fn kcrawl_favicon_info_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::FaviconInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3576,7 +3557,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_url(ptr: *const kreuzcrawl::Favicon
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3591,7 +3572,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_rel(ptr: *const kreuzcrawl::Favicon
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.rel.to_string()) {
+    match CString::new(obj.rel.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3607,7 +3588,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_sizes(ptr: *const kreuzcrawl::Favic
     }
     let obj = unsafe { &*ptr };
     match &obj.sizes {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3625,7 +3606,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_mime_type(ptr: *const kreuzcrawl::F
     }
     let obj = unsafe { &*ptr };
     match &obj.mime_type {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3644,12 +3625,11 @@ pub unsafe extern "C" fn kcrawl_heading_info_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::HeadingInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3693,7 +3673,7 @@ pub unsafe extern "C" fn kcrawl_heading_info_text(ptr: *const kreuzcrawl::Headin
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.text.to_string()) {
+    match CString::new(obj.text.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -3710,12 +3690,11 @@ pub unsafe extern "C" fn kcrawl_response_meta_from_json(json: *const c_char) -> 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::ResponseMeta>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3748,7 +3727,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_etag(ptr: *const kreuzcrawl::Respo
     }
     let obj = unsafe { &*ptr };
     match &obj.etag {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3768,7 +3747,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_last_modified(
     }
     let obj = unsafe { &*ptr };
     match &obj.last_modified {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3788,7 +3767,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_cache_control(
     }
     let obj = unsafe { &*ptr };
     match &obj.cache_control {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3806,7 +3785,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_server(ptr: *const kreuzcrawl::Res
     }
     let obj = unsafe { &*ptr };
     match &obj.server {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3826,7 +3805,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_x_powered_by(
     }
     let obj = unsafe { &*ptr };
     match &obj.x_powered_by {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3846,7 +3825,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_content_language(
     }
     let obj = unsafe { &*ptr };
     match &obj.content_language {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3866,7 +3845,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_content_encoding(
     }
     let obj = unsafe { &*ptr };
     match &obj.content_encoding {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3885,12 +3864,11 @@ pub unsafe extern "C" fn kcrawl_page_metadata_from_json(json: *const c_char) -> 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::PageMetadata>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -3923,7 +3901,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_title(ptr: *const kreuzcrawl::Page
     }
     let obj = unsafe { &*ptr };
     match &obj.title {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3943,7 +3921,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_description(
     }
     let obj = unsafe { &*ptr };
     match &obj.description {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3963,7 +3941,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_canonical_url(
     }
     let obj = unsafe { &*ptr };
     match &obj.canonical_url {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3981,7 +3959,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_keywords(ptr: *const kreuzcrawl::P
     }
     let obj = unsafe { &*ptr };
     match &obj.keywords {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -3999,7 +3977,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_author(ptr: *const kreuzcrawl::Pag
     }
     let obj = unsafe { &*ptr };
     match &obj.author {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4017,7 +3995,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_viewport(ptr: *const kreuzcrawl::P
     }
     let obj = unsafe { &*ptr };
     match &obj.viewport {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4037,7 +4015,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_theme_color(
     }
     let obj = unsafe { &*ptr };
     match &obj.theme_color {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4055,7 +4033,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_generator(ptr: *const kreuzcrawl::
     }
     let obj = unsafe { &*ptr };
     match &obj.generator {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4073,7 +4051,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_robots(ptr: *const kreuzcrawl::Pag
     }
     let obj = unsafe { &*ptr };
     match &obj.robots {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4091,7 +4069,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_html_lang(ptr: *const kreuzcrawl::
     }
     let obj = unsafe { &*ptr };
     match &obj.html_lang {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4109,7 +4087,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_html_dir(ptr: *const kreuzcrawl::P
     }
     let obj = unsafe { &*ptr };
     match &obj.html_dir {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4127,7 +4105,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_title(ptr: *const kreuzcrawl::P
     }
     let obj = unsafe { &*ptr };
     match &obj.og_title {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4145,7 +4123,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_type(ptr: *const kreuzcrawl::Pa
     }
     let obj = unsafe { &*ptr };
     match &obj.og_type {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4163,7 +4141,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_image(ptr: *const kreuzcrawl::P
     }
     let obj = unsafe { &*ptr };
     match &obj.og_image {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4183,7 +4161,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_description(
     }
     let obj = unsafe { &*ptr };
     match &obj.og_description {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4201,7 +4179,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_url(ptr: *const kreuzcrawl::Pag
     }
     let obj = unsafe { &*ptr };
     match &obj.og_url {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4221,7 +4199,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_site_name(
     }
     let obj = unsafe { &*ptr };
     match &obj.og_site_name {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4239,7 +4217,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_locale(ptr: *const kreuzcrawl::
     }
     let obj = unsafe { &*ptr };
     match &obj.og_locale {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4257,7 +4235,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_video(ptr: *const kreuzcrawl::P
     }
     let obj = unsafe { &*ptr };
     match &obj.og_video {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4275,7 +4253,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_audio(ptr: *const kreuzcrawl::P
     }
     let obj = unsafe { &*ptr };
     match &obj.og_audio {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4318,7 +4296,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_card(
     }
     let obj = unsafe { &*ptr };
     match &obj.twitter_card {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4338,7 +4316,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_title(
     }
     let obj = unsafe { &*ptr };
     match &obj.twitter_title {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4358,7 +4336,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_description(
     }
     let obj = unsafe { &*ptr };
     match &obj.twitter_description {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4378,7 +4356,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_image(
     }
     let obj = unsafe { &*ptr };
     match &obj.twitter_image {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4398,7 +4376,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_site(
     }
     let obj = unsafe { &*ptr };
     match &obj.twitter_site {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4418,7 +4396,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_creator(
     }
     let obj = unsafe { &*ptr };
     match &obj.twitter_creator {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4436,7 +4414,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_title(ptr: *const kreuzcrawl::P
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_title {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4456,7 +4434,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_creator(
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_creator {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4476,7 +4454,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_subject(
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_subject {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4496,7 +4474,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_description(
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_description {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4516,7 +4494,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_publisher(
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_publisher {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4534,7 +4512,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_date(ptr: *const kreuzcrawl::Pa
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_date {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4552,7 +4530,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_type(ptr: *const kreuzcrawl::Pa
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_type {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4570,7 +4548,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_format(ptr: *const kreuzcrawl::
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_format {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4590,7 +4568,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_identifier(
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_identifier {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4610,7 +4588,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_language(
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_language {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4628,7 +4606,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_rights(ptr: *const kreuzcrawl::
     }
     let obj = unsafe { &*ptr };
     match &obj.dc_rights {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -4720,7 +4698,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_headings(ptr: *const kreuzcrawl::P
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_page_metadata_word_count(ptr: *const kreuzcrawl::PageMetadata) -> usize {
+pub const unsafe extern "C" fn kcrawl_page_metadata_word_count(ptr: *const kreuzcrawl::PageMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -4742,12 +4720,11 @@ pub unsafe extern "C" fn kcrawl_citation_result_from_json(json: *const c_char) -
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::CitationResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -4781,7 +4758,7 @@ pub unsafe extern "C" fn kcrawl_citation_result_content(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.content.to_string()) {
+    match CString::new(obj.content.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -4820,12 +4797,11 @@ pub unsafe extern "C" fn kcrawl_citation_reference_from_json(
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::CitationReference>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -4871,7 +4847,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_url(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -4888,7 +4864,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_text(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.text.to_string()) {
+    match CString::new(obj.text.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -4919,12 +4895,11 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_from_json(
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::BatchScrapeResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -4958,7 +4933,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_url(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -4993,7 +4968,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_error(
     }
     let obj = unsafe { &*ptr };
     match &obj.error {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -5012,12 +4987,11 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_from_json(json: *const c_char
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
+    let c_str = if let Ok(s) = unsafe { CStr::from_ptr(json) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in JSON string");
+        return std::ptr::null_mut();
     };
     match serde_json::from_str::<kreuzcrawl::BatchCrawlResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
@@ -5051,7 +5025,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_url(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    match CString::new(obj.url.to_string()) {
+    match CString::new(obj.url.clone()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
     }
@@ -5086,7 +5060,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_error(
     }
     let obj = unsafe { &*ptr };
     match &obj.error {
-        Some(val) => match CString::new(val.to_string()) {
+        Some(val) => match CString::new(val.clone()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
         },
@@ -5120,12 +5094,11 @@ pub unsafe extern "C" fn kcrawl_browser_mode_from_str(name: *const c_char) -> i3
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
-    let s = match unsafe { CStr::from_ptr(name) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in enum name");
-            return -1;
-        }
+    let s = if let Ok(s) = unsafe { CStr::from_ptr(name) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in enum name");
+        return -1;
     };
     match s {
         "Auto" => 0,
@@ -5164,12 +5137,11 @@ pub unsafe extern "C" fn kcrawl_browser_wait_from_str(name: *const c_char) -> i3
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
-    let s = match unsafe { CStr::from_ptr(name) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in enum name");
-            return -1;
-        }
+    let s = if let Ok(s) = unsafe { CStr::from_ptr(name) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in enum name");
+        return -1;
     };
     match s {
         "NetworkIdle" => 0,
@@ -5208,12 +5180,11 @@ pub unsafe extern "C" fn kcrawl_auth_config_from_str(name: *const c_char) -> i32
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
-    let s = match unsafe { CStr::from_ptr(name) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in enum name");
-            return -1;
-        }
+    let s = if let Ok(s) = unsafe { CStr::from_ptr(name) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in enum name");
+        return -1;
     };
     match s {
         "Basic" => 0,
@@ -5253,12 +5224,11 @@ pub unsafe extern "C" fn kcrawl_link_type_from_str(name: *const c_char) -> i32 {
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
-    let s = match unsafe { CStr::from_ptr(name) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in enum name");
-            return -1;
-        }
+    let s = if let Ok(s) = unsafe { CStr::from_ptr(name) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in enum name");
+        return -1;
     };
     match s {
         "Internal" => 0,
@@ -5299,12 +5269,11 @@ pub unsafe extern "C" fn kcrawl_image_source_from_str(name: *const c_char) -> i3
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
-    let s = match unsafe { CStr::from_ptr(name) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in enum name");
-            return -1;
-        }
+    let s = if let Ok(s) = unsafe { CStr::from_ptr(name) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in enum name");
+        return -1;
     };
     match s {
         "Img" => 0,
@@ -5344,12 +5313,11 @@ pub unsafe extern "C" fn kcrawl_feed_type_from_str(name: *const c_char) -> i32 {
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
-    let s = match unsafe { CStr::from_ptr(name) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in enum name");
-            return -1;
-        }
+    let s = if let Ok(s) = unsafe { CStr::from_ptr(name) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in enum name");
+        return -1;
     };
     match s {
         "Rss" => 0,
@@ -5395,12 +5363,11 @@ pub unsafe extern "C" fn kcrawl_asset_category_from_str(name: *const c_char) -> 
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
-    let s = match unsafe { CStr::from_ptr(name) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in enum name");
-            return -1;
-        }
+    let s = if let Ok(s) = unsafe { CStr::from_ptr(name) }.to_str() {
+        s
+    } else {
+        set_last_error(1, "Invalid UTF-8 in enum name");
+        return -1;
     };
     match s {
         "Document" => 0,

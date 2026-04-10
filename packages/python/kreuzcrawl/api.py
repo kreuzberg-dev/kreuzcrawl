@@ -7,8 +7,17 @@ from typing import TYPE_CHECKING
 import kreuzcrawl._kreuzcrawl as _rust
 
 if TYPE_CHECKING:
-    from .options import BatchCrawlResult, BatchScrapeResult, BrowserConfig, CrawlConfig, CrawlResult, MapResult, ProxyConfig, ScrapeResult
     from ._kreuzcrawl import CrawlEngineHandle
+    from .options import (
+        BatchCrawlResult,
+        BatchScrapeResult,
+        BrowserConfig,
+        CrawlConfig,
+        CrawlResult,
+        MapResult,
+        ProxyConfig,
+        ScrapeResult,
+    )
 
 
 def _to_rust_browser_config(value: BrowserConfig | None) -> object:
@@ -107,5 +116,3 @@ def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchScrape
 def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchCrawlResult]:
     """Crawl multiple seed URLs concurrently, each following links to configured depth."""
     return _rust.batch_crawl(engine, urls)
-
-

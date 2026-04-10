@@ -51,7 +51,7 @@ impl ExtractionMeta {
 #[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ProxyConfig {
-    /// Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").
+    /// Proxy URL (e.g. "<http://proxy:8080>", "<socks5://proxy:1080>").
     #[pyo3(get)]
     pub url: String,
     /// Optional username for proxy authentication.
@@ -125,7 +125,8 @@ impl BrowserConfig {
     #[allow(clippy::should_implement_trait)]
     #[staticmethod]
     #[pyo3(signature = ())]
-    pub fn default() -> BrowserConfig {
+    #[must_use]
+    pub fn default() -> Self {
         kreuzcrawl::BrowserConfig::default().into()
     }
 }
@@ -321,7 +322,8 @@ impl CrawlConfig {
     #[allow(clippy::should_implement_trait)]
     #[staticmethod]
     #[pyo3(signature = ())]
-    pub fn default() -> CrawlConfig {
+    #[must_use]
+    pub fn default() -> Self {
         kreuzcrawl::CrawlConfig::default().into()
     }
 }
@@ -511,7 +513,7 @@ pub struct ScrapeResult {
     /// The detected character set encoding.
     #[pyo3(get)]
     pub detected_charset: Option<String>,
-    /// Whether main_content_only was active during extraction.
+    /// Whether `main_content_only` was active during extraction.
     #[pyo3(get)]
     pub main_content_only: bool,
     /// Whether an authentication header was sent with the request.
@@ -532,13 +534,13 @@ pub struct ScrapeResult {
     /// Markdown conversion of the page content.
     #[pyo3(get)]
     pub markdown: Option<MarkdownResult>,
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when using `LlmExtractor`.
     #[pyo3(get)]
     pub extracted_data: Option<String>,
     /// Metadata about the LLM extraction pass (cost, tokens, model).
     #[pyo3(get)]
     pub extraction_meta: Option<ExtractionMeta>,
-    /// Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.
+    /// Screenshot of the page as PNG bytes. Populated when browser is used and `capture_screenshot` is enabled.
     #[pyo3(get)]
     pub screenshot: Option<Vec<u8>>,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
@@ -669,7 +671,7 @@ pub struct CrawlPageResult {
     /// Markdown conversion of the page content.
     #[pyo3(get)]
     pub markdown: Option<MarkdownResult>,
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when using `LlmExtractor`.
     #[pyo3(get)]
     pub extracted_data: Option<String>,
     /// Metadata about the LLM extraction pass (cost, tokens, model).
@@ -1280,7 +1282,7 @@ impl HeadingInfo {
 #[derive(Clone, Default)]
 #[pyclass(frozen, from_py_object)]
 pub struct ResponseMeta {
-    /// The ETag header value.
+    /// The `ETag` header value.
     #[pyo3(get)]
     pub etag: Option<String>,
     /// The Last-Modified header value.
@@ -1308,7 +1310,7 @@ impl ResponseMeta {
     #[must_use]
     #[pyo3(signature = (etag=None, last_modified=None, cache_control=None, server=None, x_powered_by=None, content_language=None, content_encoding=None))]
     #[new]
-    pub fn new(
+    pub const fn new(
         etag: Option<String>,
         last_modified: Option<String>,
         cache_control: Option<String>,
@@ -1470,7 +1472,7 @@ impl PageMetadata {
     #[must_use]
     #[pyo3(signature = (title=None, description=None, canonical_url=None, keywords=None, author=None, viewport=None, theme_color=None, generator=None, robots=None, html_lang=None, html_dir=None, og_title=None, og_type=None, og_image=None, og_description=None, og_url=None, og_site_name=None, og_locale=None, og_video=None, og_audio=None, og_locale_alternates=None, twitter_card=None, twitter_title=None, twitter_description=None, twitter_image=None, twitter_site=None, twitter_creator=None, dc_title=None, dc_creator=None, dc_subject=None, dc_description=None, dc_publisher=None, dc_date=None, dc_type=None, dc_format=None, dc_identifier=None, dc_language=None, dc_rights=None, article=None, hreflangs=None, favicons=None, headings=None, word_count=None))]
     #[new]
-    pub fn new(
+    pub const fn new(
         title: Option<String>,
         description: Option<String>,
         canonical_url: Option<String>,
@@ -1674,7 +1676,7 @@ impl BatchCrawlResult {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum BrowserMode {
     Auto = 0,
@@ -1689,7 +1691,7 @@ impl Default for BrowserMode {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum BrowserWait {
     NetworkIdle = 0,
@@ -1704,7 +1706,7 @@ impl Default for BrowserWait {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum AuthConfig {
     Basic = 0,
@@ -1719,7 +1721,7 @@ impl Default for AuthConfig {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum LinkType {
     Internal = 0,
@@ -1735,7 +1737,7 @@ impl Default for LinkType {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ImageSource {
     Img = 0,
@@ -1751,7 +1753,7 @@ impl Default for ImageSource {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum FeedType {
     Rss = 0,
@@ -1766,7 +1768,7 @@ impl Default for FeedType {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum AssetCategory {
     Document = 0,
@@ -1788,7 +1790,7 @@ impl Default for AssetCategory {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum CrawlEvent {
     Page = 0,
@@ -1816,7 +1818,7 @@ pub fn create_engine(config: Option<CrawlConfig>) -> PyResult<CrawlEngineHandle>
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (engine, url))]
-pub fn scrape<'py>(py: Python<'py>, engine: CrawlEngineHandle, url: String) -> PyResult<Bound<'py, PyAny>> {
+pub fn scrape(py: Python<'_>, engine: CrawlEngineHandle, url: String) -> PyResult<Bound<'_, PyAny>> {
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let result = kreuzcrawl::scrape(&engine.inner, &url)
             .await
@@ -1828,7 +1830,7 @@ pub fn scrape<'py>(py: Python<'py>, engine: CrawlEngineHandle, url: String) -> P
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (engine, url))]
-pub fn crawl<'py>(py: Python<'py>, engine: CrawlEngineHandle, url: String) -> PyResult<Bound<'py, PyAny>> {
+pub fn crawl(py: Python<'_>, engine: CrawlEngineHandle, url: String) -> PyResult<Bound<'_, PyAny>> {
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let result = kreuzcrawl::crawl(&engine.inner, &url)
             .await
@@ -1840,7 +1842,7 @@ pub fn crawl<'py>(py: Python<'py>, engine: CrawlEngineHandle, url: String) -> Py
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (engine, url))]
-pub fn map_urls<'py>(py: Python<'py>, engine: CrawlEngineHandle, url: String) -> PyResult<Bound<'py, PyAny>> {
+pub fn map_urls(py: Python<'_>, engine: CrawlEngineHandle, url: String) -> PyResult<Bound<'_, PyAny>> {
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let result = kreuzcrawl::map_urls(&engine.inner, &url)
             .await
@@ -1851,7 +1853,7 @@ pub fn map_urls<'py>(py: Python<'py>, engine: CrawlEngineHandle, url: String) ->
 
 #[pyfunction]
 #[pyo3(signature = (engine, urls))]
-pub fn batch_scrape<'py>(py: Python<'py>, engine: CrawlEngineHandle, urls: Vec<String>) -> PyResult<Bound<'py, PyAny>> {
+pub fn batch_scrape(py: Python<'_>, engine: CrawlEngineHandle, urls: Vec<String>) -> PyResult<Bound<'_, PyAny>> {
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let result = kreuzcrawl::batch_scrape(&engine.inner, urls).await;
         Ok(result.into_iter().map(BatchScrapeResult::from).collect::<Vec<_>>())
@@ -1860,7 +1862,7 @@ pub fn batch_scrape<'py>(py: Python<'py>, engine: CrawlEngineHandle, urls: Vec<S
 
 #[pyfunction]
 #[pyo3(signature = (engine, urls))]
-pub fn batch_crawl<'py>(py: Python<'py>, engine: CrawlEngineHandle, urls: Vec<String>) -> PyResult<Bound<'py, PyAny>> {
+pub fn batch_crawl(py: Python<'_>, engine: CrawlEngineHandle, urls: Vec<String>) -> PyResult<Bound<'_, PyAny>> {
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let result = kreuzcrawl::batch_crawl(&engine.inner, urls).await;
         Ok(result.into_iter().map(BatchCrawlResult::from).collect::<Vec<_>>())
@@ -2086,7 +2088,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
         Self {
             url: val.url,
             mime_type: val.mime_type.to_string(),
-            content: val.content.to_vec(),
+            content: val.content.clone(),
             size: val.size,
             filename: val.filename.as_ref().map(ToString::to_string),
             content_hash: val.content_hash.to_string(),
@@ -2116,7 +2118,7 @@ impl From<kreuzcrawl::InteractionResult> for InteractionResult {
             action_results: val.action_results.into_iter().map(Into::into).collect(),
             final_html: val.final_html,
             final_url: val.final_url,
-            screenshot: val.screenshot.map(|v| v.to_vec()),
+            screenshot: val.screenshot,
         }
     }
 }
@@ -2209,7 +2211,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             markdown: val.markdown.map(Into::into),
             extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
-            screenshot: val.screenshot.map(|v| v.to_vec()),
+            screenshot: val.screenshot,
             downloaded_document: val.downloaded_document.map(Into::into),
         }
     }
@@ -2997,7 +2999,7 @@ impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
 }
 
 #[pyfunction]
-pub fn init_async_runtime() -> PyResult<()> {
+pub const fn init_async_runtime() -> PyResult<()> {
     // Tokio runtime auto-initializes on first future_into_py call
     Ok(())
 }

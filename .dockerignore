@@ -9,3 +9,6 @@ fixtures/
 .ai-rulez/
 .rumdl.toml
 alef.toml
+.env
+.env.*
+node_modules/
