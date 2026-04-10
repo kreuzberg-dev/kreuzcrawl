@@ -26,6 +26,6 @@ public sealed class FeedInfo
     /// The type of feed.
     /// </summary>
     [JsonPropertyName("feedType")]
-    public FeedType FeedType { get; set; } = null;
+    public FeedType FeedType { get; set; } = default;
 
 }

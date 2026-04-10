@@ -68,7 +68,7 @@ public sealed class CrawlConfig
     /// Custom HTTP headers to send with each request.
     /// </summary>
     [JsonPropertyName("customHeaders")]
-    public Dictionary<string, string> CustomHeaders { get; set; } = new Dictionary<>();
+    public Dictionary<string, string> CustomHeaders { get; set; } = new Dictionary<string, string>();
 
     /// <summary>
     /// Timeout for individual HTTP requests (in milliseconds when serialized).
@@ -158,7 +158,7 @@ public sealed class CrawlConfig
     /// Browser configuration.
     /// </summary>
     [JsonPropertyName("browser")]
-    public BrowserConfig Browser { get; set; } = null;
+    public BrowserConfig Browser { get; set; } = default!;
 
     /// <summary>
     /// Proxy configuration for HTTP requests.

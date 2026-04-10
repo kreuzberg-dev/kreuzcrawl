@@ -26,7 +26,7 @@ public sealed class LinkInfo
     /// The classification of the link.
     /// </summary>
     [JsonPropertyName("linkType")]
-    public LinkType LinkType { get; set; } = null;
+    public LinkType LinkType { get; set; } = default;
 
     /// <summary>
     /// The `rel` attribute value, if present.
