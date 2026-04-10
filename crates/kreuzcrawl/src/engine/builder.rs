@@ -93,6 +93,7 @@ impl CrawlEngineBuilder {
     pub fn build(self) -> Result<CrawlEngine, CrawlError> {
         let config = self.config.unwrap_or_default();
         config.validate()?;
+        #[cfg(not(target_arch = "wasm32"))]
         let ua_rotation = crate::tower::UaRotationLayer::new(config.user_agents.clone());
         Ok(CrawlEngine {
             config,
@@ -107,6 +108,7 @@ impl CrawlEngineBuilder {
             strategy: self.strategy.unwrap_or_else(|| Arc::new(defaults::BfsStrategy)),
             content_filter: self.content_filter.unwrap_or_else(|| Arc::new(defaults::NoopFilter)),
             cache: self.cache.unwrap_or_else(|| Arc::new(defaults::NoopCache)),
+            #[cfg(not(target_arch = "wasm32"))]
             ua_rotation,
         })
     }

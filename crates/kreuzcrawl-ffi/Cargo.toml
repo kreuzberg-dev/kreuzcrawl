@@ -20,7 +20,7 @@ crate-type = ["cdylib", "staticlib"]
 default = []
 
 [dependencies]
-kreuzcrawl = { path = "../kreuzcrawl" }
+kreuzcrawl = { path = "../kreuzcrawl", features = ["native-runtime"] }
 serde_json = { workspace = true }
 tokio = { workspace = true }
 

@@ -23,7 +23,7 @@ crate-type = ["cdylib"]
 default = []
 
 [dependencies]
-kreuzcrawl = { path = "../kreuzcrawl" }
+kreuzcrawl = { path = "../kreuzcrawl", features = ["native-runtime"] }
 napi = { workspace = true }
 napi-derive = { workspace = true }
 serde_json = { workspace = true }

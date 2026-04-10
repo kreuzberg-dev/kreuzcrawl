@@ -1,10 +1,12 @@
 //! Asset discovery and downloading from HTML pages.
 
 use std::collections::HashSet;
+#[cfg(not(target_arch = "wasm32"))]
 use std::sync::Arc;
 
 use sha2::{Digest, Sha256};
 use tl::VDom;
+#[cfg(not(target_arch = "wasm32"))]
 use tokio::sync::Semaphore;
 use url::Url;
 
@@ -76,6 +78,46 @@ pub(crate) fn discover_assets(dom: &VDom<'_>, base_url: &Url) -> Vec<AssetRef> {
     assets
 }
 
+/// Download a single asset, returning `None` if the download fails or is filtered.
+async fn download_single_asset(
+    asset_ref: AssetRef,
+    client: &reqwest::Client,
+    max_asset_size: Option<usize>,
+) -> Option<DownloadedAsset> {
+    let resp = client.get(&asset_ref.url).send().await.ok()?;
+    if !resp.status().is_success() {
+        return None;
+    }
+
+    let mime_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .map(String::from);
+
+    let bytes = resp.bytes().await.ok()?;
+
+    if let Some(max_size) = max_asset_size
+        && bytes.len() > max_size
+    {
+        return None;
+    }
+
+    let mut hasher = Sha256::new();
+    hasher.update(&bytes);
+    let hash_bytes = hasher.finalize();
+    let hash = hash_bytes.iter().map(|b| format!("{b:02x}")).collect::<String>();
+
+    Some(DownloadedAsset {
+        url: asset_ref.url,
+        content_hash: hash,
+        mime_type,
+        size: bytes.len(),
+        asset_category: asset_ref.category,
+        html_tag: Some(asset_ref.html_tag),
+    })
+}
+
 /// Download discovered assets, applying config filters.
 pub(crate) async fn download_assets(
     refs: Vec<AssetRef>,
@@ -100,58 +142,43 @@ pub(crate) async fn download_assets(
         })
         .collect();
 
-    let semaphore = Arc::new(Semaphore::new(config.max_concurrent.unwrap_or(8)));
-    let client = client.clone();
     let max_asset_size = config.max_asset_size;
 
-    let mut handles = Vec::with_capacity(unique_refs.len());
-    for asset_ref in unique_refs {
-        let permit = Arc::clone(&semaphore);
+    // On native targets, download concurrently with tokio::spawn
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let semaphore = Arc::new(Semaphore::new(config.max_concurrent.unwrap_or(8)));
         let client = client.clone();
-        handles.push(tokio::spawn(async move {
-            let _permit = permit.acquire().await.ok()?;
 
-            let resp = client.get(&asset_ref.url).send().await.ok()?;
-            if !resp.status().is_success() {
-                return None;
-            }
-
-            let mime_type = resp
-                .headers()
-                .get("content-type")
-                .and_then(|v| v.to_str().ok())
-                .map(String::from);
-
-            let bytes = resp.bytes().await.ok()?;
-
-            if let Some(max_size) = max_asset_size
-                && bytes.len() > max_size
-            {
-                return None;
-            }
-
-            let mut hasher = Sha256::new();
-            hasher.update(&bytes);
-            let hash_bytes = hasher.finalize();
-            let hash = hash_bytes.iter().map(|b| format!("{b:02x}")).collect::<String>();
-
-            Some(DownloadedAsset {
-                url: asset_ref.url,
-                content_hash: hash,
-                mime_type,
-                size: bytes.len(),
-                asset_category: asset_ref.category,
-                html_tag: Some(asset_ref.html_tag),
-            })
-        }));
-    }
-
-    let mut downloaded = Vec::new();
-    for handle in handles {
-        if let Ok(Some(asset)) = handle.await {
-            downloaded.push(asset);
+        let mut handles = Vec::with_capacity(unique_refs.len());
+        for asset_ref in unique_refs {
+            let permit = Arc::clone(&semaphore);
+            let client = client.clone();
+            handles.push(tokio::spawn(async move {
+                let _permit = permit.acquire().await.ok()?;
+                download_single_asset(asset_ref, &client, max_asset_size).await
+            }));
         }
+
+        let mut downloaded = Vec::new();
+        for handle in handles {
+            if let Ok(Some(asset)) = handle.await {
+                downloaded.push(asset);
+            }
+        }
+
+        downloaded
     }
 
-    downloaded
+    // On wasm, download sequentially (no tokio::spawn)
+    #[cfg(target_arch = "wasm32")]
+    {
+        let mut downloaded = Vec::new();
+        for asset_ref in unique_refs {
+            if let Some(asset) = download_single_asset(asset_ref, client, max_asset_size).await {
+                downloaded.push(asset);
+            }
+        }
+        downloaded
+    }
 }

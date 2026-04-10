@@ -73,6 +73,7 @@ pub(crate) fn error_chain_string(e: &reqwest::Error) -> String {
 ///
 /// Walks the full error source chain to detect DNS, SSL/TLS, and other
 /// network-level errors that reqwest wraps in generic connect errors.
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
     let chain = error_chain_string(e);
     if e.is_timeout() || chain.contains("timed out") || chain.contains("timeout") {
@@ -93,6 +94,35 @@ pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
         CrawlError::Connection(format!("connection: {e}"))
     } else if e.is_body()
         || chain.contains("content-length")
+        || chain.contains("truncat")
+        || chain.contains("incomplete")
+    {
+        CrawlError::DataLoss(format!("data_loss: {e}"))
+    } else {
+        CrawlError::Other(format!("other: {e}"))
+    }
+}
+
+/// Classify a `reqwest::Error` into the appropriate `CrawlError` variant (wasm fallback).
+///
+/// On wasm32, reqwest does not expose `.is_timeout()`, `.is_connect()`, or `.is_body()`
+/// methods, so we rely solely on the error chain string for classification.
+#[cfg(target_arch = "wasm32")]
+pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
+    let chain = error_chain_string(e);
+    if chain.contains("timed out") || chain.contains("timeout") {
+        CrawlError::Timeout(format!("timeout: {e}"))
+    } else if chain.contains("dns") || chain.contains("resolve") || chain.contains("lookup") {
+        CrawlError::Dns(format!("dns: {e}"))
+    } else if chain.contains("ssl")
+        || chain.contains("tls")
+        || chain.contains("certificate")
+        || chain.contains("handshake")
+    {
+        CrawlError::Ssl(format!("ssl: {e}"))
+    } else if chain.contains("connection") || chain.contains("connect") {
+        CrawlError::Connection(format!("connection: {e}"))
+    } else if chain.contains("content-length")
         || chain.contains("truncat")
         || chain.contains("incomplete")
     {

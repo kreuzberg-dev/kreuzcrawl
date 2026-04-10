@@ -118,14 +118,15 @@ pub(crate) async fn http_fetch(
         // Walk the error source chain to detect body/data-loss errors that
         // reqwest wraps in generic errors.
         let chain = error_chain_string(&e);
-        if chain.contains("content-length")
+        let is_body_error = chain.contains("content-length")
             || chain.contains("truncat")
             || chain.contains("incomplete")
             || chain.contains("end of file")
             || chain.contains("body error")
-            || chain.contains("body from connection")
-            || e.is_body()
-        {
+            || chain.contains("body from connection");
+        #[cfg(not(target_arch = "wasm32"))]
+        let is_body_error = is_body_error || e.is_body();
+        if is_body_error {
             CrawlError::DataLoss(format!("data_loss: {e}"))
         } else {
             classify_reqwest_error(&e)
@@ -155,15 +156,22 @@ pub(crate) async fn http_fetch(
 
 /// Build a `reqwest::Client` with the given configuration (redirect policy, timeout, cookies, proxy).
 pub(crate) fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, CrawlError> {
-    let mut builder = reqwest::Client::builder()
-        .redirect(reqwest::redirect::Policy::none())
-        .timeout(config.request_timeout);
+    let mut builder = reqwest::Client::builder();
 
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        builder = builder
+            .redirect(reqwest::redirect::Policy::none())
+            .timeout(config.request_timeout);
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
     if config.cookies_enabled {
         builder = builder.cookie_store(true);
     }
 
-    // Proxy support
+    // Proxy support (not available on wasm)
+    #[cfg(not(target_arch = "wasm32"))]
     if let Some(ref proxy_config) = config.proxy {
         let mut proxy = reqwest::Proxy::all(&proxy_config.url)
             .map_err(|e| CrawlError::InvalidConfig(format!("invalid proxy URL: {e}")))?;

@@ -18,7 +18,7 @@ name = "kreuzcrawl_nif"
 crate-type = ["cdylib"]
 
 [dependencies]
-kreuzcrawl = { path = "../../../../crates/kreuzcrawl" }
+kreuzcrawl = { path = "../../../../crates/kreuzcrawl", features = ["native-runtime"] }
 rustler = "0.37"
 serde_json = { workspace = true }
 tokio = { workspace = true }
