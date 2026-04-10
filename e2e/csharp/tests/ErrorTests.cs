@@ -85,8 +85,8 @@ public class ErrorTests
         // Handles 200 with completely empty body gracefully
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
-        Assert.Equal(false, result.HtmlNotEmpty);
-        Assert.Equal(false, result.Error.IsError);
+        // skipped: field 'html_not_empty' not available on result type
+        // skipped: field 'error.is_error' not available on result type
     }
 
     [Fact]

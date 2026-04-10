@@ -10,7 +10,10 @@ import (
 
 func Test_CacheBasic(t *testing.T) {
 	// Crawling with disk cache enabled succeeds without errors
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)

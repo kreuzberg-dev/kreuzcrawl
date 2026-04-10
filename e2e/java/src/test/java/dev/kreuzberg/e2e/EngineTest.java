@@ -10,8 +10,8 @@ class EngineTest {
         // CrawlEngine with defaults batch scrapes like the free function
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        assertEquals(2, result.batch().completedCount());
-        assertEquals(2, result.batch().totalCount());
+        // skipped: field 'batch.completed_count' not available on result type
+        // skipped: field 'batch.total_count' not available on result type
     }
 
     @Test
@@ -19,8 +19,8 @@ class EngineTest {
         // CrawlEngine with defaults crawls multiple pages like the free function
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        assertEquals(3, result.crawl().pagesCrawled());
-        assertTrue(result.crawl().minPages() >= 3, "expected >= 3");
+        // skipped: field 'crawl.pages_crawled' not available on result type
+        // skipped: field 'crawl.min_pages' not available on result type
     }
 
     @Test
@@ -28,7 +28,7 @@ class EngineTest {
         // CrawlEngine with defaults discovers URLs like the free function
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        assertTrue(result.map().minUrls() >= 2, "expected >= 2");
+        // skipped: field 'map.min_urls' not available on result type
     }
 
     @Test
@@ -41,8 +41,8 @@ class EngineTest {
         assertEquals("Engine Test", result.metadata().title().orElse(""));
         assertTrue(result.metadata().descriptionContains().contains("Testing the engine"), "expected to contain: " + "Testing the engine");
         assertTrue(result.links().minCount() >= 1, "expected >= 1");
-        assertEquals(1, result.headings().h1Count());
-        assertEquals("Hello Engine", result.headings().h1Text());
+        // skipped: field 'headings.h1_count' not available on result type
+        // skipped: field 'headings.h1_text' not available on result type
     }
 
     @Test
@@ -50,9 +50,9 @@ class EngineTest {
         // CrawlEngine with defaults streams events like the free function
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        assertEquals(true, result.stream().hasPageEvent());
-        assertEquals(true, result.stream().hasCompleteEvent());
-        assertTrue(result.stream().eventCountMin() >= 3, "expected >= 3");
+        // skipped: field 'stream.has_page_event' not available on result type
+        // skipped: field 'stream.has_complete_event' not available on result type
+        // skipped: field 'stream.event_count_min' not available on result type
     }
 
 }

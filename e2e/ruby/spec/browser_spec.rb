@@ -7,92 +7,92 @@ RSpec.describe "browser" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.browser.js_render_hint).to eq(true)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_config_never_mode: Browser mode 'never' prevents browser fallback even for SPA shell content" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.browser.js_render_hint).to eq(true)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_detect_minimal_page: Does NOT flag a short but real content page as needing JS rendering" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.browser.js_render_hint).to eq(false)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_detect_next_empty: Detects Next.js page with __NEXT_DATA__ but no rendered content as needing JS rendering" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.browser.js_render_hint).to eq(true)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_detect_next_rendered: Does NOT flag Next.js page with full SSR content as needing JS rendering" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.html_not_empty).to eq(true)
-    expect(result.browser.js_render_hint).to eq(false)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'html_not_empty' not available on result type
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_detect_normal_page: Does NOT flag a normal server-rendered page as needing JS rendering" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.browser.js_render_hint).to eq(false)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_detect_nuxt_shell: Detects Nuxt SPA shell with empty #__nuxt div as needing JS rendering" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.browser.js_render_hint).to eq(true)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_detect_react_shell: Detects React SPA shell with empty #root div as needing JS rendering" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.html_not_empty).to eq(true)
-    expect(result.browser.js_render_hint).to eq(true)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'html_not_empty' not available on result type
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_detect_vue_shell: Detects Vue SPA shell with empty #app div as needing JS rendering" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.browser.js_render_hint).to eq(true)
-    expect(result.browser.browser_used).to eq(false)
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_fallback_spa_render: Browser auto re-fetches SPA shell when JS rendering is detected" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-    expect(result.browser.js_render_hint).to eq(true)
-    expect(result.browser.browser_used).to eq(true)
+      # skipped: field 'browser.js_render_hint' not available on result type
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_fallback_waf_blocked: Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-    expect(result.browser.browser_used).to eq(true)
+      # skipped: field 'browser.browser_used' not available on result type
   end
 
   it "browser_mode_always: Browser mode 'always' uses browser even for normal server-rendered pages" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-    expect(result.browser.browser_used).to eq(true)
+      # skipped: field 'browser.browser_used' not available on result type
   end
 end

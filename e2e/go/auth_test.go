@@ -10,7 +10,10 @@ import (
 
 func Test_AuthBasicHttp(t *testing.T) {
 	// Sends HTTP Basic authentication header
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
@@ -25,7 +28,10 @@ func Test_AuthBasicHttp(t *testing.T) {
 
 func Test_AuthBearerToken(t *testing.T) {
 	// Sends Bearer token in Authorization header
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
@@ -40,7 +46,10 @@ func Test_AuthBearerToken(t *testing.T) {
 
 func Test_AuthCustomHeader(t *testing.T) {
 	// Sends authentication via custom header (X-API-Key)
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)

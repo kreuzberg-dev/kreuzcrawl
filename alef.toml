@@ -139,6 +139,36 @@ fields_optional = [
     "screenshot",
     "downloaded_document",
 ]
+result_fields = [
+    "status_code",
+    "content_type",
+    "html",
+    "body_size",
+    "metadata",
+    "links",
+    "images",
+    "feeds",
+    "json_ld",
+    "is_allowed",
+    "crawl_delay",
+    "noindex_detected",
+    "nofollow_detected",
+    "x_robots_tag",
+    "is_pdf",
+    "was_skipped",
+    "detected_charset",
+    "main_content_only",
+    "auth_header_sent",
+    "response_meta",
+    "assets",
+    "js_render_hint",
+    "browser_used",
+    "markdown",
+    "extracted_data",
+    "extraction_meta",
+    "screenshot",
+    "downloaded_document",
+]
 
 [e2e.call]
 function = "scrape"

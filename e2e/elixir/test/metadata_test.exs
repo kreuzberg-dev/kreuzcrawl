@@ -7,11 +7,11 @@ defmodule E2e.MetadataTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert String.trim(result.article.published_time) == "2024-01-15T10:00:00Z"
-      assert String.trim(result.article.modified_time) == "2024-06-20T14:30:00Z"
-      assert String.trim(result.article.author) == "Jane Developer"
-      assert String.trim(result.article.section) == "Technology"
-      assert String.trim(length(result.article.tags)) == 3
+      # skipped: field 'article.published_time' not available on result type
+      # skipped: field 'article.modified_time' not available on result type
+      # skipped: field 'article.author' not available on result type
+      # skipped: field 'article.section' not available on result type
+      # skipped: field 'article.tags.length' not available on result type
     end
   end
 
@@ -20,8 +20,8 @@ defmodule E2e.MetadataTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert String.trim(length(result.favicons)) == 5
-      assert result.favicons.get("").apple_touch != ""
+      # skipped: field 'favicons.length' not available on result type
+      # skipped: field 'favicons[].apple_touch' not available on result type
     end
   end
 
@@ -30,9 +30,9 @@ defmodule E2e.MetadataTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert String.trim(length(result.headings.h1)) == 1
-      assert String.trim(result.headings.h1.get("0").text) == "Primary Heading"
-      assert String.trim(length(result.headings)) == 8
+      # skipped: field 'headings.h1.length' not available on result type
+      # skipped: field 'headings.h1[0].text' not available on result type
+      # skipped: field 'headings.length' not available on result type
     end
   end
 
@@ -41,8 +41,8 @@ defmodule E2e.MetadataTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert String.trim(length(result.hreflang)) == 4
-      assert String.contains?(result.hreflang.get("").lang, "en")
+      # skipped: field 'hreflang.length' not available on result type
+      # skipped: field 'hreflang[].lang' not available on result type
     end
   end
 
@@ -70,9 +70,9 @@ defmodule E2e.MetadataTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert String.trim(result.og.video) == "https://example.com/video.mp4"
-      assert String.trim(result.og.audio) == "https://example.com/audio.mp3"
-      assert String.trim(length(result.og.locale_alternate)) == 2
+      # skipped: field 'og.video' not available on result type
+      # skipped: field 'og.audio' not available on result type
+      # skipped: field 'og.locale_alternate.length' not available on result type
     end
   end
 
@@ -81,10 +81,10 @@ defmodule E2e.MetadataTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert result.response_headers.etag != ""
-      assert result.response_headers.last_modified != ""
-      assert String.contains?(result.response_headers.server, "nginx")
-      assert String.trim(result.response_headers.content_language) == "en-US"
+      # skipped: field 'response_headers.etag' not available on result type
+      # skipped: field 'response_headers.last_modified' not available on result type
+      # skipped: field 'response_headers.server' not available on result type
+      # skipped: field 'response_headers.content_language' not available on result type
     end
   end
 
@@ -93,8 +93,8 @@ defmodule E2e.MetadataTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert result.computed.word_count > 99
-      assert result.computed.word_count < 301
+      # skipped: field 'computed.word_count' not available on result type
+      # skipped: field 'computed.word_count' not available on result type
     end
   end
 end

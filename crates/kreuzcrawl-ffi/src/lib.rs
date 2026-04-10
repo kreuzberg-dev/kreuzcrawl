@@ -86,6 +86,33 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_from_json(json: *const c_char) -
     }
 }
 
+/// Serialize a `ExtractionMeta` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_extraction_meta_to_json(ptr: *const kreuzcrawl::ExtractionMeta) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `ExtractionMeta` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -202,6 +229,33 @@ pub unsafe extern "C" fn kcrawl_proxy_config_from_json(json: *const c_char) -> *
     }
 }
 
+/// Serialize a `ProxyConfig` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_proxy_config_to_json(ptr: *const kreuzcrawl::ProxyConfig) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `ProxyConfig` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -285,6 +339,33 @@ pub unsafe extern "C" fn kcrawl_browser_config_from_json(json: *const c_char) ->
     };
     match serde_json::from_str::<kreuzcrawl::BrowserConfig>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `BrowserConfig` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_browser_config_to_json(ptr: *const kreuzcrawl::BrowserConfig) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -429,6 +510,33 @@ pub unsafe extern "C" fn kcrawl_crawl_config_from_json(json: *const c_char) -> *
     };
     match serde_json::from_str::<kreuzcrawl::CrawlConfig>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `CrawlConfig` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_crawl_config_to_json(ptr: *const kreuzcrawl::CrawlConfig) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -1070,6 +1178,33 @@ pub unsafe extern "C" fn kcrawl_interaction_result_from_json(
     }
 }
 
+/// Serialize a `InteractionResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_interaction_result_to_json(ptr: *const kreuzcrawl::InteractionResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `InteractionResult` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -1246,6 +1381,33 @@ pub unsafe extern "C" fn kcrawl_scrape_result_from_json(json: *const c_char) -> 
     };
     match serde_json::from_str::<kreuzcrawl::ScrapeResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `ScrapeResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_scrape_result_to_json(ptr: *const kreuzcrawl::ScrapeResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -1721,6 +1883,33 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_from_json(json: *const c_char)
     }
 }
 
+/// Serialize a `CrawlPageResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_crawl_page_result_to_json(ptr: *const kreuzcrawl::CrawlPageResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `CrawlPageResult` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -2090,6 +2279,33 @@ pub unsafe extern "C" fn kcrawl_crawl_result_from_json(json: *const c_char) -> *
     }
 }
 
+/// Serialize a `CrawlResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_crawl_result_to_json(ptr: *const kreuzcrawl::CrawlResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `CrawlResult` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -2242,6 +2458,33 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_from_json(json: *const c_char) -> *m
     }
 }
 
+/// Serialize a `SitemapUrl` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_sitemap_url_to_json(ptr: *const kreuzcrawl::SitemapUrl) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `SitemapUrl` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -2350,6 +2593,33 @@ pub unsafe extern "C" fn kcrawl_map_result_from_json(json: *const c_char) -> *mu
     }
 }
 
+/// Serialize a `MapResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_map_result_to_json(ptr: *const kreuzcrawl::MapResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `MapResult` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -2400,6 +2670,33 @@ pub unsafe extern "C" fn kcrawl_markdown_result_from_json(json: *const c_char) -
     };
     match serde_json::from_str::<kreuzcrawl::MarkdownResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `MarkdownResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_markdown_result_to_json(ptr: *const kreuzcrawl::MarkdownResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -2563,6 +2860,33 @@ pub unsafe extern "C" fn kcrawl_cached_page_from_json(json: *const c_char) -> *m
     }
 }
 
+/// Serialize a `CachedPage` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_cached_page_to_json(ptr: *const kreuzcrawl::CachedPage) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `CachedPage` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -2707,6 +3031,33 @@ pub unsafe extern "C" fn kcrawl_link_info_from_json(json: *const c_char) -> *mut
     }
 }
 
+/// Serialize a `LinkInfo` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_link_info_to_json(ptr: *const kreuzcrawl::LinkInfo) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `LinkInfo` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -2811,6 +3162,33 @@ pub unsafe extern "C" fn kcrawl_image_info_from_json(json: *const c_char) -> *mu
     };
     match serde_json::from_str::<kreuzcrawl::ImageInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `ImageInfo` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_image_info_to_json(ptr: *const kreuzcrawl::ImageInfo) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -2932,6 +3310,33 @@ pub unsafe extern "C" fn kcrawl_feed_info_from_json(json: *const c_char) -> *mut
     }
 }
 
+/// Serialize a `FeedInfo` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_feed_info_to_json(ptr: *const kreuzcrawl::FeedInfo) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `FeedInfo` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -3009,6 +3414,33 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_from_json(json: *const c_char) -> 
     };
     match serde_json::from_str::<kreuzcrawl::JsonLdEntry>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `JsonLdEntry` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_json_ld_entry_to_json(ptr: *const kreuzcrawl::JsonLdEntry) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -3098,6 +3530,33 @@ pub unsafe extern "C" fn kcrawl_cookie_info_from_json(json: *const c_char) -> *m
     };
     match serde_json::from_str::<kreuzcrawl::CookieInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `CookieInfo` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_cookie_info_to_json(ptr: *const kreuzcrawl::CookieInfo) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -3203,6 +3662,33 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_from_json(json: *const c_char) 
     };
     match serde_json::from_str::<kreuzcrawl::DownloadedAsset>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `DownloadedAsset` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_downloaded_asset_to_json(ptr: *const kreuzcrawl::DownloadedAsset) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -3340,6 +3826,33 @@ pub unsafe extern "C" fn kcrawl_article_metadata_from_json(json: *const c_char) 
     };
     match serde_json::from_str::<kreuzcrawl::ArticleMetadata>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `ArticleMetadata` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_article_metadata_to_json(ptr: *const kreuzcrawl::ArticleMetadata) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -3486,6 +3999,33 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_from_json(json: *const c_char) ->
     }
 }
 
+/// Serialize a `HreflangEntry` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_hreflang_entry_to_json(ptr: *const kreuzcrawl::HreflangEntry) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `HreflangEntry` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -3548,6 +4088,33 @@ pub unsafe extern "C" fn kcrawl_favicon_info_from_json(json: *const c_char) -> *
     };
     match serde_json::from_str::<kreuzcrawl::FaviconInfo>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `FaviconInfo` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_favicon_info_to_json(ptr: *const kreuzcrawl::FaviconInfo) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -3660,6 +4227,33 @@ pub unsafe extern "C" fn kcrawl_heading_info_from_json(json: *const c_char) -> *
     }
 }
 
+/// Serialize a `HeadingInfo` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_heading_info_to_json(ptr: *const kreuzcrawl::HeadingInfo) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `HeadingInfo` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -3719,6 +4313,33 @@ pub unsafe extern "C" fn kcrawl_response_meta_from_json(json: *const c_char) -> 
     };
     match serde_json::from_str::<kreuzcrawl::ResponseMeta>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `ResponseMeta` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_response_meta_to_json(ptr: *const kreuzcrawl::ResponseMeta) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -3894,6 +4515,33 @@ pub unsafe extern "C" fn kcrawl_page_metadata_from_json(json: *const c_char) -> 
     };
     match serde_json::from_str::<kreuzcrawl::PageMetadata>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `PageMetadata` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_page_metadata_to_json(ptr: *const kreuzcrawl::PageMetadata) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -4758,6 +5406,33 @@ pub unsafe extern "C" fn kcrawl_citation_result_from_json(json: *const c_char) -
     }
 }
 
+/// Serialize a `CitationResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_citation_result_to_json(ptr: *const kreuzcrawl::CitationResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `CitationResult` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -4829,6 +5504,33 @@ pub unsafe extern "C" fn kcrawl_citation_reference_from_json(
     };
     match serde_json::from_str::<kreuzcrawl::CitationReference>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `CitationReference` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_citation_reference_to_json(ptr: *const kreuzcrawl::CitationReference) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -4935,6 +5637,33 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_from_json(
     }
 }
 
+/// Serialize a `BatchScrapeResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_batch_scrape_result_to_json(ptr: *const kreuzcrawl::BatchScrapeResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `BatchScrapeResult` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -5021,6 +5750,33 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_from_json(json: *const c_char
     };
     match serde_json::from_str::<kreuzcrawl::BatchCrawlResult>(c_str) {
         Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `BatchCrawlResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_batch_crawl_result_to_json(ptr: *const kreuzcrawl::BatchCrawlResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()

@@ -9,7 +9,10 @@ import (
 
 func Test_EncodingDoubleEncoded(t *testing.T) {
 	// Handles double-encoded URL characters (%25C3%25B6)
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
@@ -24,7 +27,10 @@ func Test_EncodingDoubleEncoded(t *testing.T) {
 
 func Test_EncodingMixedCharsetPage(t *testing.T) {
 	// Handles charset mismatch between HTTP header and HTML meta tag
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
@@ -36,7 +42,10 @@ func Test_EncodingMixedCharsetPage(t *testing.T) {
 
 func Test_EncodingPercentEncodedPath(t *testing.T) {
 	// Handles percent-encoded spaces and characters in URL paths
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
@@ -51,7 +60,10 @@ func Test_EncodingPercentEncodedPath(t *testing.T) {
 
 func Test_EncodingUnicodeUrl(t *testing.T) {
 	// Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic)
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)

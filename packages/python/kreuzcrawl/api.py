@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 import kreuzcrawl._kreuzcrawl as _rust
 
 if TYPE_CHECKING:
-    from ._kreuzcrawl import CrawlEngineHandle
     from .options import BrowserConfig, CrawlConfig, ProxyConfig
+    from ._kreuzcrawl import CrawlEngineHandle
 
 
 def _to_rust_browser_config(value: BrowserConfig | None) -> _rust.BrowserConfig | None:

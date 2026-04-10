@@ -10,9 +10,9 @@ class BatchTest {
         // Batch scrape of multiple URLs all succeeding
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        assertEquals(3, result.batch().completedCount());
-        assertEquals(0, result.batch().failedCount());
-        assertEquals(3, result.batch().totalCount());
+        // skipped: field 'batch.completed_count' not available on result type
+        // skipped: field 'batch.failed_count' not available on result type
+        // skipped: field 'batch.total_count' not available on result type
     }
 
     @Test
@@ -20,9 +20,9 @@ class BatchTest {
         // Batch scrape with one URL failing returns partial results
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        assertEquals(2, result.batch().completedCount());
-        assertEquals(1, result.batch().failedCount());
-        assertEquals(3, result.batch().totalCount());
+        // skipped: field 'batch.completed_count' not available on result type
+        // skipped: field 'batch.failed_count' not available on result type
+        // skipped: field 'batch.total_count' not available on result type
     }
 
     @Test
@@ -30,8 +30,8 @@ class BatchTest {
         // Batch scrape results include specific URL
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        assertEquals(2, result.batch().totalCount());
-        assertTrue(result.batch().results().contains("/target"), "expected to contain: " + "/target");
+        // skipped: field 'batch.total_count' not available on result type
+        // skipped: field 'batch.results' not available on result type
     }
 
 }

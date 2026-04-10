@@ -357,11 +357,11 @@ type CrawlConfig struct {
     // Whether to allow subdomains when `stay_on_domain` is true.
     AllowSubdomains bool `json:"allow_subdomains"`
     // Regex patterns for paths to include during crawling.
-    IncludePaths []string `json:"include_paths"`
+    IncludePaths []string `json:"include_paths,omitempty"`
     // Regex patterns for paths to exclude during crawling.
-    ExcludePaths []string `json:"exclude_paths"`
+    ExcludePaths []string `json:"exclude_paths,omitempty"`
     // Custom HTTP headers to send with each request.
-    CustomHeaders map[string]string `json:"custom_headers"`
+    CustomHeaders map[string]string `json:"custom_headers,omitempty"`
     // Timeout for individual HTTP requests (in milliseconds when serialized).
     RequestTimeout uint64 `json:"request_timeout"`
     // Maximum number of redirects to follow.
@@ -369,7 +369,7 @@ type CrawlConfig struct {
     // Number of retry attempts for failed requests.
     RetryCount uint `json:"retry_count"`
     // HTTP status codes that should trigger a retry.
-    RetryCodes []uint16 `json:"retry_codes"`
+    RetryCodes []uint16 `json:"retry_codes,omitempty"`
     // Whether to enable cookie handling.
     CookiesEnabled bool `json:"cookies_enabled"`
     // Authentication configuration.
@@ -379,7 +379,7 @@ type CrawlConfig struct {
     // Whether to extract only the main content from HTML pages.
     MainContentOnly bool `json:"main_content_only"`
     // CSS selectors for tags to remove from HTML before processing.
-    RemoveTags []string `json:"remove_tags"`
+    RemoveTags []string `json:"remove_tags,omitempty"`
     // Maximum number of URLs to return from a map operation.
     MapLimit *uint `json:"map_limit,omitempty"`
     // Search filter for map results (case-insensitive substring match on URLs).
@@ -387,7 +387,7 @@ type CrawlConfig struct {
     // Whether to download assets (CSS, JS, images, etc.) from the page.
     DownloadAssets bool `json:"download_assets"`
     // Filter for asset categories to download.
-    AssetTypes []AssetCategory `json:"asset_types"`
+    AssetTypes []AssetCategory `json:"asset_types,omitempty"`
     // Maximum size in bytes for individual asset downloads.
     MaxAssetSize *uint `json:"max_asset_size,omitempty"`
     // Browser configuration.
@@ -395,7 +395,7 @@ type CrawlConfig struct {
     // Proxy configuration for HTTP requests.
     Proxy *ProxyConfig `json:"proxy,omitempty"`
     // List of user-agent strings for rotation. If non-empty, overrides `user_agent`.
-    UserAgents []string `json:"user_agents"`
+    UserAgents []string `json:"user_agents,omitempty"`
     // Whether to capture a screenshot when using the browser.
     CaptureScreenshot bool `json:"capture_screenshot"`
     // Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them.
@@ -403,7 +403,7 @@ type CrawlConfig struct {
     // Maximum size in bytes for document downloads. Defaults to 50 MB.
     DocumentMaxSize *uint `json:"document_max_size,omitempty"`
     // Allowlist of MIME types to download. If empty, uses built-in defaults.
-    DocumentMimeTypes []string `json:"document_mime_types"`
+    DocumentMimeTypes []string `json:"document_mime_types,omitempty"`
     // Path to write WARC output. If `None`, WARC output is disabled.
     WarcOutput *string `json:"warc_output,omitempty"`
     // Named browser profile for persistent sessions (cookies, localStorage).
@@ -650,7 +650,7 @@ type DownloadedDocument struct {
     // SHA-256 hex digest of the content.
     ContentHash string `json:"content_hash"`
     // Selected response headers.
-    Headers map[string]string `json:"headers"`
+    Headers map[string]string `json:"headers,omitempty"`
 }
 
 
@@ -713,7 +713,7 @@ func NewDownloadedDocument(opts ...DownloadedDocumentOption) *DownloadedDocument
 // Result of executing a sequence of page interaction actions.
 type InteractionResult struct {
     // Results from each executed action.
-    ActionResults []ActionResult `json:"action_results"`
+    ActionResults []ActionResult `json:"action_results,omitempty"`
     // Final page HTML after all actions completed.
     FinalHtml string `json:"final_html"`
     // Final page URL (may have changed due to navigation).
@@ -833,13 +833,13 @@ type ScrapeResult struct {
     // Extracted metadata from the page.
     Metadata PageMetadata `json:"metadata"`
     // Links found on the page.
-    Links []LinkInfo `json:"links"`
+    Links []LinkInfo `json:"links,omitempty"`
     // Images found on the page.
-    Images []ImageInfo `json:"images"`
+    Images []ImageInfo `json:"images,omitempty"`
     // Feed links found on the page.
-    Feeds []FeedInfo `json:"feeds"`
+    Feeds []FeedInfo `json:"feeds,omitempty"`
     // JSON-LD entries found on the page.
-    JsonLd []JsonLdEntry `json:"json_ld"`
+    JsonLd []JsonLdEntry `json:"json_ld,omitempty"`
     // Whether the URL is allowed by robots.txt.
     IsAllowed bool `json:"is_allowed"`
     // The crawl delay from robots.txt, in seconds.
@@ -863,7 +863,7 @@ type ScrapeResult struct {
     // Response metadata extracted from HTTP headers.
     ResponseMeta *ResponseMeta `json:"response_meta,omitempty"`
     // Downloaded assets from the page.
-    Assets []DownloadedAsset `json:"assets"`
+    Assets []DownloadedAsset `json:"assets,omitempty"`
     // Whether the page content suggests JavaScript rendering is needed.
     JsRenderHint bool `json:"js_render_hint"`
     // Whether the browser fallback was used to fetch this page.
@@ -1080,13 +1080,13 @@ type CrawlPageResult struct {
     // Extracted metadata from the page.
     Metadata PageMetadata `json:"metadata"`
     // Links found on the page.
-    Links []LinkInfo `json:"links"`
+    Links []LinkInfo `json:"links,omitempty"`
     // Images found on the page.
-    Images []ImageInfo `json:"images"`
+    Images []ImageInfo `json:"images,omitempty"`
     // Feed links found on the page.
-    Feeds []FeedInfo `json:"feeds"`
+    Feeds []FeedInfo `json:"feeds,omitempty"`
     // JSON-LD entries found on the page.
-    JsonLd []JsonLdEntry `json:"json_ld"`
+    JsonLd []JsonLdEntry `json:"json_ld,omitempty"`
     // The depth of this page from the start URL.
     Depth uint `json:"depth"`
     // Whether this page is on the same domain as the start URL.
@@ -1245,7 +1245,7 @@ func NewCrawlPageResult(opts ...CrawlPageResultOption) *CrawlPageResult {
 // The result of a multi-page crawl operation.
 type CrawlResult struct {
     // The list of crawled pages.
-    Pages []CrawlPageResult `json:"pages"`
+    Pages []CrawlPageResult `json:"pages,omitempty"`
     // The final URL after following redirects.
     FinalUrl string `json:"final_url"`
     // The number of redirects followed.
@@ -1255,9 +1255,9 @@ type CrawlResult struct {
     // An error message, if the crawl encountered an issue.
     Error *string `json:"error,omitempty"`
     // Cookies collected during the crawl.
-    Cookies []CookieInfo `json:"cookies"`
+    Cookies []CookieInfo `json:"cookies,omitempty"`
     // Normalized URLs encountered during crawling (for deduplication counting).
-    NormalizedUrls []string `json:"normalized_urls"`
+    NormalizedUrls []string `json:"normalized_urls,omitempty"`
 }
 
 
@@ -1371,7 +1371,7 @@ func NewSitemapUrl(opts ...SitemapUrlOption) *SitemapUrl {
 // The result of a map operation, containing discovered URLs.
 type MapResult struct {
     // The list of discovered URLs.
-    Urls []SitemapUrl `json:"urls"`
+    Urls []SitemapUrl `json:"urls,omitempty"`
 }
 
 
@@ -1402,9 +1402,9 @@ type MarkdownResult struct {
     // Structured document tree with semantic nodes.
     DocumentStructure *map[string]interface{} `json:"document_structure,omitempty"`
     // Extracted tables with structured cell data.
-    Tables []map[string]interface{} `json:"tables"`
+    Tables []map[string]interface{} `json:"tables,omitempty"`
     // Non-fatal processing warnings.
-    Warnings []string `json:"warnings"`
+    Warnings []string `json:"warnings,omitempty"`
     // Content with links replaced by numbered citations.
     Citations *CitationResult `json:"citations,omitempty"`
     // Content-filtered markdown optimized for LLM consumption.
@@ -1863,7 +1863,7 @@ type ArticleMetadata struct {
     // The article section.
     Section *string `json:"section,omitempty"`
     // The article tags.
-    Tags []string `json:"tags"`
+    Tags []string `json:"tags,omitempty"`
 }
 
 
@@ -2475,7 +2475,7 @@ type CitationResult struct {
     // Markdown with links replaced by numbered citations.
     Content string `json:"content"`
     // Numbered reference list: (index, url, text).
-    References []CitationReference `json:"references"`
+    References []CitationReference `json:"references,omitempty"`
 }
 
 
@@ -2637,5 +2637,187 @@ func NewBatchCrawlResult(opts ...BatchCrawlResultOption) *BatchCrawlResult {
         opt(c)
     }
     return c
+}
+
+
+// Create a new crawl engine with the given configuration.
+//
+// If `config` is `None`, uses [`CrawlConfig::default()`].
+// Returns an error if the configuration is invalid.
+func CreateEngine(config ...*CrawlConfig) (*CrawlEngineHandle, error) {
+    var configVal *CrawlConfig
+    if len(config) > 0 {
+        configVal = config[0]
+    }
+    jsonBytescConfigVal, err := json.Marshal(configVal)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcConfigVal := C.CString(string(jsonBytescConfigVal))
+    cConfigVal := C.kcrawl_crawl_config_from_json(tmpStrcConfigVal)
+    C.free(unsafe.Pointer(tmpStrcConfigVal))
+    defer C.kcrawl_crawl_config_free(cConfigVal)
+
+    ptr := C.kcrawl_create_engine(cConfigVal)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kcrawl_crawl_engine_handle_free(ptr)
+        }
+        return nil, err
+    }
+    defer C.kcrawl_crawl_engine_handle_free(ptr)
+    return func() *CrawlEngineHandle {
+	jsonPtr := C.kcrawl_crawl_engine_handle_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kcrawl_free_string(jsonPtr)
+	var result CrawlEngineHandle
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
+// Scrape a single URL, returning extracted page data.
+func Scrape(engine CrawlEngineHandle, url string) (*ScrapeResult, error) {
+    jsonBytescEngine, err := json.Marshal(engine)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcEngine := C.CString(string(jsonBytescEngine))
+    cEngine := C.kcrawl_crawl_engine_handle_from_json(tmpStrcEngine)
+    C.free(unsafe.Pointer(tmpStrcEngine))
+    defer C.kcrawl_crawl_engine_handle_free(cEngine)
+
+    cUrl := C.CString(url)
+    defer C.free(unsafe.Pointer(cUrl))
+
+    ptr := C.kcrawl_scrape(cEngine, cUrl)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kcrawl_scrape_result_free(ptr)
+        }
+        return nil, err
+    }
+    defer C.kcrawl_scrape_result_free(ptr)
+    return func() *ScrapeResult {
+	jsonPtr := C.kcrawl_scrape_result_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kcrawl_free_string(jsonPtr)
+	var result ScrapeResult
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
+// Crawl a website starting from `url`, following links up to the configured depth.
+func Crawl(engine CrawlEngineHandle, url string) (*CrawlResult, error) {
+    jsonBytescEngine, err := json.Marshal(engine)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcEngine := C.CString(string(jsonBytescEngine))
+    cEngine := C.kcrawl_crawl_engine_handle_from_json(tmpStrcEngine)
+    C.free(unsafe.Pointer(tmpStrcEngine))
+    defer C.kcrawl_crawl_engine_handle_free(cEngine)
+
+    cUrl := C.CString(url)
+    defer C.free(unsafe.Pointer(cUrl))
+
+    ptr := C.kcrawl_crawl(cEngine, cUrl)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kcrawl_crawl_result_free(ptr)
+        }
+        return nil, err
+    }
+    defer C.kcrawl_crawl_result_free(ptr)
+    return func() *CrawlResult {
+	jsonPtr := C.kcrawl_crawl_result_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kcrawl_free_string(jsonPtr)
+	var result CrawlResult
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
+// Discover all pages on a website by following links and sitemaps.
+func MapUrls(engine CrawlEngineHandle, url string) (*MapResult, error) {
+    jsonBytescEngine, err := json.Marshal(engine)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcEngine := C.CString(string(jsonBytescEngine))
+    cEngine := C.kcrawl_crawl_engine_handle_from_json(tmpStrcEngine)
+    C.free(unsafe.Pointer(tmpStrcEngine))
+    defer C.kcrawl_crawl_engine_handle_free(cEngine)
+
+    cUrl := C.CString(url)
+    defer C.free(unsafe.Pointer(cUrl))
+
+    ptr := C.kcrawl_map_urls(cEngine, cUrl)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kcrawl_map_result_free(ptr)
+        }
+        return nil, err
+    }
+    defer C.kcrawl_map_result_free(ptr)
+    return func() *MapResult {
+	jsonPtr := C.kcrawl_map_result_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kcrawl_free_string(jsonPtr)
+	var result MapResult
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
+// Scrape multiple URLs concurrently.
+func BatchScrape(engine CrawlEngineHandle, urls []string) *[]BatchScrapeResult {
+    jsonBytescEngine, err := json.Marshal(engine)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcEngine := C.CString(string(jsonBytescEngine))
+    cEngine := C.kcrawl_crawl_engine_handle_from_json(tmpStrcEngine)
+    C.free(unsafe.Pointer(tmpStrcEngine))
+    defer C.kcrawl_crawl_engine_handle_free(cEngine)
+
+    jsonBytescUrls, err := json.Marshal(urls)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cUrls := C.CString(string(jsonBytescUrls))
+    defer C.free(unsafe.Pointer(cUrls))
+
+    ptr := C.kcrawl_batch_scrape(cEngine, cUrls)
+    return unmarshalListBatchScrapeResult(ptr)
+}
+
+
+// Crawl multiple seed URLs concurrently, each following links to configured depth.
+func BatchCrawl(engine CrawlEngineHandle, urls []string) *[]BatchCrawlResult {
+    jsonBytescEngine, err := json.Marshal(engine)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcEngine := C.CString(string(jsonBytescEngine))
+    cEngine := C.kcrawl_crawl_engine_handle_from_json(tmpStrcEngine)
+    C.free(unsafe.Pointer(tmpStrcEngine))
+    defer C.kcrawl_crawl_engine_handle_free(cEngine)
+
+    jsonBytescUrls, err := json.Marshal(urls)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cUrls := C.CString(string(jsonBytescUrls))
+    defer C.free(unsafe.Pointer(cUrls))
+
+    ptr := C.kcrawl_batch_crawl(cEngine, cUrls)
+    return unmarshalListBatchCrawlResult(ptr)
 }
 
