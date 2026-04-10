@@ -14,7 +14,7 @@ public sealed class BrowserConfig
     /// When to use the headless browser fallback.
     /// </summary>
     [JsonPropertyName("mode")]
-    public BrowserMode Mode { get; set; } = null;
+    public BrowserMode Mode { get; set; } = default;
 
     /// <summary>
     /// CDP WebSocket endpoint for connecting to an external browser instance.
@@ -32,7 +32,7 @@ public sealed class BrowserConfig
     /// Wait strategy after browser navigation.
     /// </summary>
     [JsonPropertyName("wait")]
-    public BrowserWait Wait { get; set; } = null;
+    public BrowserWait Wait { get; set; } = default;
 
     /// <summary>
     /// CSS selector to wait for when `wait` is `Selector`.

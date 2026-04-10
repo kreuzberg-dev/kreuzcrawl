@@ -54,6 +54,6 @@ public sealed class DownloadedDocument
     /// Selected response headers.
     /// </summary>
     [JsonPropertyName("headers")]
-    public Dictionary<string, string> Headers { get; set; } = new Dictionary<>();
+    public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
 
 }

@@ -38,7 +38,7 @@ public sealed class DownloadedAsset
     /// The category of the asset.
     /// </summary>
     [JsonPropertyName("assetCategory")]
-    public AssetCategory AssetCategory { get; set; } = null;
+    public AssetCategory AssetCategory { get; set; } = default;
 
     /// <summary>
     /// The HTML tag that referenced this asset (e.g., "link", "script", "img").

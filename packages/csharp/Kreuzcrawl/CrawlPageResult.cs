@@ -50,7 +50,7 @@ public sealed class CrawlPageResult
     /// Extracted metadata from the page.
     /// </summary>
     [JsonPropertyName("metadata")]
-    public PageMetadata Metadata { get; set; } = null;
+    public PageMetadata Metadata { get; set; } = default!;
 
     /// <summary>
     /// Links found on the page.

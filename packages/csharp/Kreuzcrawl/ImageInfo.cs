@@ -38,6 +38,6 @@ public sealed class ImageInfo
     /// The source of the image reference.
     /// </summary>
     [JsonPropertyName("source")]
-    public ImageSource Source { get; set; } = null;
+    public ImageSource Source { get; set; } = default;
 
 }

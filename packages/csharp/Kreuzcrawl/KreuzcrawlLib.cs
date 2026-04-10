@@ -20,7 +20,7 @@ public static class KreuzcrawlLib
     public static CrawlEngineHandle CreateEngine(CrawlConfig? config)
     {
         var result = NativeMethods.CreateEngine(
-            config
+            config!
         );
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
