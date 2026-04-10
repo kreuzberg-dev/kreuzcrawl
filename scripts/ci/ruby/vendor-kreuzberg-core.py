@@ -10,7 +10,6 @@ This script:
 3. Replaces workspace = true with explicit versions
 4. Generates vendor/Cargo.toml with proper workspace setup
 """
-# ruff: noqa: T201
 
 import os
 import re
@@ -454,6 +453,6 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except Exception as e:  # noqa: BLE001 - top-level CLI error handler
+    except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

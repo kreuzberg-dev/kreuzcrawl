@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Unified Docker image test script for all variants (core, full, cli)."""
-# ruff: noqa: T201, S603, S607, S311, S108, TRY300, PLR2004, PLC0415, PERF203, PTH108, SIM115
 
 from __future__ import annotations
 

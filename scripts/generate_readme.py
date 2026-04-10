@@ -5,7 +5,6 @@ README generation script for Kreuzcrawl.
 Generates language-specific READMEs from templates and snippets using Jinja2.
 Supports validation mode to check if existing READMEs match generated output.
 """
-# ruff: noqa: TRY003, TRY300, TRY400
 
 import argparse
 import logging
@@ -17,13 +16,13 @@ from typing import Any
 try:
     import yaml
 except ImportError:
-    print("Error: PyYAML is required. Install with: pip install pyyaml jinja2")  # noqa: T201
+    print("Error: PyYAML is required. Install with: pip install pyyaml jinja2")
     sys.exit(1)
 
 try:
     from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 except ImportError:
-    print("Error: Jinja2 is required. Install with: pip install pyyaml jinja2")  # noqa: T201
+    print("Error: Jinja2 is required. Install with: pip install pyyaml jinja2")
     sys.exit(1)
 
 
@@ -76,7 +75,7 @@ class ReadmeGenerator:
                 f"Templates directory not found: {self.templates_dir}\nCreate readme_templates/ directory in scripts/"
             )
 
-        self.jinja_env = Environment(  # noqa: S701
+        self.jinja_env = Environment(
             loader=FileSystemLoader(str(self.templates_dir)),
             keep_trailing_newline=True,
         )
@@ -283,7 +282,7 @@ class ReadmeGenerator:
             logger.warning(f"Out of date: {readme_path}")
             return False
 
-        except Exception as e:  # noqa: BLE001 - top-level validation handler
+        except Exception as e:
             logger.error(f"Validation error for {readme_path}: {e}")
             return False
 
@@ -330,7 +329,7 @@ class ReadmeGenerator:
                 else:
                     self.generate_readme(lang_code, lang_config, readme_path, dry_run)
 
-            except Exception as e:  # noqa: BLE001 - top-level per-language handler
+            except Exception as e:
                 logger.error(f"Failed to process {lang_code}: {e}")
                 all_ok = False
 

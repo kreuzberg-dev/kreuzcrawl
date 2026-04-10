@@ -1,5 +1,4 @@
 """Codesign native binaries inside macOS wheels."""
-# ruff: noqa: S603, TRY003
 
 from __future__ import annotations
 
@@ -41,7 +40,7 @@ def repack_wheel(pkg_dir: Path, wheel_dir: Path, original_name: Path) -> None:
 
 
 def sign_wheel(wheel_path: Path, identity: str) -> None:
-    print(f"Signing binaries inside {wheel_path.name}")  # noqa: T201
+    print(f"Signing binaries inside {wheel_path.name}")
     wheel_dir = wheel_path.parent
     with tempfile.TemporaryDirectory() as temp_dir_str:
         temp_dir = Path(temp_dir_str)
@@ -53,7 +52,7 @@ def sign_wheel(wheel_path: Path, identity: str) -> None:
 
         for target in targets:
             if target.exists():
-                print(f"  codesign {target.relative_to(unpacked_dir)}")  # noqa: T201
+                print(f"  codesign {target.relative_to(unpacked_dir)}")
                 codesign(target, identity)
 
         backup = wheel_path.with_suffix(wheel_path.suffix + ".unsigned")
