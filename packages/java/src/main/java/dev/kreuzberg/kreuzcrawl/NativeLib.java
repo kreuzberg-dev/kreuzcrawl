@@ -20,6 +20,26 @@ final class NativeLib {
         LIB.find("kcrawl_create_engine").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
+    static final MethodHandle KCRAWL_SCRAPE = LINKER.downcallHandle(
+        LIB.find("kcrawl_scrape").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_CRAWL = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_MAP_URLS = LINKER.downcallHandle(
+        LIB.find("kcrawl_map_urls").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_BATCH_SCRAPE = LINKER.downcallHandle(
+        LIB.find("kcrawl_batch_scrape").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_BATCH_CRAWL = LINKER.downcallHandle(
+        LIB.find("kcrawl_batch_crawl").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
 
     static final MethodHandle KCRAWL_FREE_STRING = LINKER.downcallHandle(
         LIB.find("kcrawl_free_string").orElseThrow(),

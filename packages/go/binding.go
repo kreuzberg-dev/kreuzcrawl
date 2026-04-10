@@ -1,6 +1,8 @@
 package kreuzcrawl
 
 /*
+#cgo CFLAGS: -I${SRCDIR}/../../crates/kreuzcrawl-ffi/include
+#cgo LDFLAGS: -L${SRCDIR}/../../target/release -lkreuzcrawl_ffi
 #include "kreuzcrawl.h"
 */
 import "C"
@@ -2760,4 +2762,3 @@ func (r *CrawlConfig) Default() *CrawlConfig {
     ptr := C.kcrawl_crawl_config_default (unsafe.Pointer(r), )
     return unmarshalCrawlConfig(ptr)
 }
-

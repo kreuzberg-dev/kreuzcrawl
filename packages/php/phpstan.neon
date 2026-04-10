@@ -2,4 +2,6 @@ parameters:
     level: max
     paths:
         - src
+    scanFiles:
+        - stubs/kreuzcrawl_extension.php
     treatPhpDocTypesAsCertain: false
