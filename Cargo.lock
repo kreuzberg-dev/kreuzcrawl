@@ -2118,11 +2118,8 @@ name = "kreuzcrawl-wasm"
 version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
- "kreuzcrawl-bindings-common",
  "serde-wasm-bindgen",
- "serde_json",
  "wasm-bindgen",
- "wasm-bindgen-futures",
 ]
 
 [[package]]
