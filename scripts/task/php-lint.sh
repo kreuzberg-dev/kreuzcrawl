@@ -19,13 +19,13 @@ cd "$root/packages/php"
 case "$mode" in
 fix)
   "$fixer" fix || failed=1
-  if compgen -G "src/*.php" > /dev/null 2>&1; then
+  if compgen -G "src/*.php" >/dev/null 2>&1; then
     "$phpstan" analyse --memory-limit=512M || failed=1
   fi
   ;;
 check)
   "$fixer" fix --dry-run --diff || failed=1
-  if compgen -G "src/*.php" > /dev/null 2>&1; then
+  if compgen -G "src/*.php" >/dev/null 2>&1; then
     "$phpstan" analyse --memory-limit=512M || failed=1
   fi
   ;;
