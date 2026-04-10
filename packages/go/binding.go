@@ -2760,3 +2760,4 @@ func (r *CrawlConfig) Default() *CrawlConfig {
     ptr := C.kcrawl_crawl_config_default (unsafe.Pointer(r), )
     return unmarshalCrawlConfig(ptr)
 }
+

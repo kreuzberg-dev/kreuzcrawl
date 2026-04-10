@@ -80,11 +80,9 @@ class ReadmeGenerator:
             keep_trailing_newline=True,
         )
 
-        # Register custom filter - use a lambda to capture self
-        self.jinja_env.filters["include_snippet"] = lambda path, lang: self.include_snippet_filter(path, lang)
-
-        # Also register as a global function for potential use in templates
-        self.jinja_env.globals["include_snippet"] = lambda path, lang: self.include_snippet_filter(path, lang)
+        # Register custom filter and global function
+        self.jinja_env.filters["include_snippet"] = self.include_snippet_filter
+        self.jinja_env.globals["include_snippet"] = self.include_snippet_filter
 
         logger.debug("Jinja2 environment configured")
         return self.jinja_env
