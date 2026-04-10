@@ -1,38 +1,60 @@
 {
 	"id": "crawl_exclude_path_pattern",
 	"description": "Skips URLs matching the exclude path pattern",
-	"tags": ["crawl", "filter"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><a href=\"/public\">Public</a><a href=\"/admin/dashboard\">Admin</a></body></html>"
-		},
-		{
-			"path": "/public",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Public Page</h1></body></html>"
-		},
-		{
-			"path": "/admin/dashboard",
-			"method": "GET",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Admin</h1></body></html>"
-		}
+	"tags": [
+		"crawl",
+		"filter"
 	],
-	"config": {
-		"max_depth": 1,
-		"exclude_paths": ["/admin/.*"],
-		"respect_robots_txt": false
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"pages_crawled": 2
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><a href=\"/public\">Public</a><a href=\"/admin/dashboard\">Admin</a></body></html>"
+			},
+			{
+				"path": "/public",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Public Page</h1></body></html>"
+			},
+			{
+				"path": "/admin/dashboard",
+				"method": "GET",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Admin</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 1,
+			"exclude_paths": [
+				"/admin/.*"
+			],
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "pages.length",
+			"value": 2
+		}
+	]
 }

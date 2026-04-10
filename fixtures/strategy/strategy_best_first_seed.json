@@ -1,35 +1,57 @@
 {
 	"id": "strategy_best_first_seed",
 	"description": "BestFirst strategy always processes the seed URL first",
-	"tags": ["strategy", "best_first"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><a href=\"/page1\">Page 1</a><a href=\"/page2\">Page 2</a></body></html>"
-		},
-		{
-			"path": "/page1",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 1</h1></body></html>"
-		},
-		{
-			"path": "/page2",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 2</h1></body></html>"
-		}
+	"tags": [
+		"strategy",
+		"best_first"
 	],
-	"config": {
-		"max_depth": 1,
-		"max_concurrent": 1,
-		"crawl_strategy": "best_first"
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"pages_crawled": 3
-		},
-		"strategy": {
-			"first_page_url_contains": "/"
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><a href=\"/page1\">Page 1</a><a href=\"/page2\">Page 2</a></body></html>"
+			},
+			{
+				"path": "/page1",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 1</h1></body></html>"
+			},
+			{
+				"path": "/page2",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 2</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_depth": 1,
+			"max_concurrent": 1,
+			"crawl_strategy": "best_first"
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "crawl.pages_crawled",
+			"value": 3
+		},
+		{
+			"type": "contains",
+			"field": "strategy.first_page_url_contains",
+			"value": "/"
+		}
+	]
 }

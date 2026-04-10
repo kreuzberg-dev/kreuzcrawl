@@ -1,15 +1,33 @@
 {
 	"id": "sitemap_empty",
 	"description": "Handles empty sitemap gracefully",
-	"tags": ["sitemap", "edge-case"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "application/xml" },
-		"body_inline": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"></urlset>"
+	"tags": [
+		"sitemap",
+		"edge-case"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"sitemap": {
-			"url_count": 0
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "application/xml"
+				},
+				"body_inline": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"></urlset>"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "urls.length",
+			"value": 0
 		}
-	}
+	]
 }

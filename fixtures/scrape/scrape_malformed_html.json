@@ -1,17 +1,42 @@
 {
 	"id": "scrape_malformed_html",
 	"description": "Gracefully handles broken HTML without crashing",
-	"tags": ["scrape", "edge-case"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/malformed.html"
+	"tags": [
+		"scrape",
+		"edge-case"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"html_not_empty": true,
-		"metadata": {
-			"description_contains": "broken HTML"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/malformed.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "not_empty",
+			"field": "html"
+		},
+		{
+			"type": "contains",
+			"field": "metadata.description",
+			"value": "broken HTML"
 		}
-	}
+	]
 }

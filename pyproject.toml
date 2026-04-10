@@ -68,6 +68,12 @@ lint.per-file-ignores."scripts/**/*.py" = [
     "TRY300",
     "TRY400",
 ]
+lint.per-file-ignores."e2e/**/*.py" = [
+    "B017",
+    "PLR2004",
+    "PT011",
+    "S",
+]
 
 [tool.pyproject-fmt]
 column_limit = 120

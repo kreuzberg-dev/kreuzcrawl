@@ -1,18 +1,36 @@
 {
 	"id": "robots_meta_noindex",
 	"description": "Detects noindex meta robots tag in HTML page",
-	"tags": ["robots", "meta"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/meta_noindex.html"
+	"tags": [
+		"robots",
+		"meta"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": true
-	},
-	"assertions": {
-		"robots": {
-			"noindex_detected": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/meta_noindex.html"
+			}
+		],
+		"config": {
+			"respect_robots_txt": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "robots.noindex_detected",
+			"value": true
+		}
+	]
 }

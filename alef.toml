@@ -123,6 +123,74 @@ repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 authors = ["Kreuzberg Team"]
 keywords = ["crawl", "scrape", "web", "spider"]
 
+[e2e]
+fixtures = "fixtures"
+output = "e2e"
+languages = ["rust", "python", "node", "go", "java", "csharp", "php", "ruby", "elixir"]
+fields_optional = [
+    "metadata",
+    "markdown",
+    "metadata.title",
+    "metadata.description",
+    "metadata.canonical_url",
+    "response_meta",
+    "extracted_data",
+    "extraction_meta",
+    "screenshot",
+    "downloaded_document",
+]
+
+[e2e.call]
+function = "scrape"
+module = "kreuzcrawl"
+result_var = "result"
+async = true
+
+[[e2e.call.args]]
+name = "engine"
+field = "engine"
+type = "handle"
+optional = false
+
+[[e2e.call.args]]
+name = "url"
+field = "url"
+type = "string"
+optional = false
+
+[e2e.call.overrides.python]
+module = "kreuzcrawl"
+function = "scrape"
+
+[e2e.call.overrides.node]
+module = "@kreuzberg/kreuzcrawl"
+function = "scrape"
+
+[e2e.call.overrides.go]
+module = "github.com/kreuzberg-dev/kreuzcrawl"
+function = "Scrape"
+
+[e2e.call.overrides.rust]
+crate_name = "kreuzcrawl"
+
+[e2e.fields]
+"title" = "metadata.title"
+"description" = "metadata.description"
+
+[e2e.packages.rust]
+path = "../../crates/kreuzcrawl"
+
+[e2e.packages.python]
+name = "kreuzcrawl"
+path = "../../packages/python"
+
+[e2e.packages.node]
+name = "@kreuzberg/kreuzcrawl"
+path = "../../packages/typescript"
+
+[e2e.packages.go]
+module = "github.com/kreuzberg-dev/kreuzcrawl"
+
 [test.python]
 command = "task python:test"
 e2e = "cd e2e/python && python3 -m pytest tests/ -q"

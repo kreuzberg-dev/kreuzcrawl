@@ -1,18 +1,36 @@
 {
 	"id": "robots_sitemap_directive",
 	"description": "Discovers sitemap URL from Sitemap directive in robots.txt",
-	"tags": ["robots", "sitemap"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/plain" },
-		"body_file": "robots/with_sitemap.txt"
+	"tags": [
+		"robots",
+		"sitemap"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": true
-	},
-	"assertions": {
-		"robots": {
-			"is_allowed": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/plain"
+				},
+				"body_file": "robots/with_sitemap.txt"
+			}
+		],
+		"config": {
+			"respect_robots_txt": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "robots.is_allowed",
+			"value": true
+		}
+	]
 }

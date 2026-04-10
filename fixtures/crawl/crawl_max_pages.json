@@ -1,52 +1,77 @@
 {
 	"id": "crawl_max_pages",
 	"description": "Stops crawling at page budget limit",
-	"tags": ["crawl"],
-	"mock_responses": [
-		{
-			"path": "/",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><a href=\"/p1\">1</a><a href=\"/p2\">2</a><a href=\"/p3\">3</a><a href=\"/p4\">4</a><a href=\"/p5\">5</a></body></html>"
-		},
-		{
-			"path": "/p1",
-			"status_code": 200,
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 1</h1></body></html>"
-		},
-		{
-			"path": "/p2",
-			"status_code": 200,
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 2</h1></body></html>"
-		},
-		{
-			"path": "/p3",
-			"status_code": 200,
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 3</h1></body></html>"
-		},
-		{
-			"path": "/p4",
-			"status_code": 200,
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 4</h1></body></html>"
-		},
-		{
-			"path": "/p5",
-			"status_code": 200,
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><body><h1>Page 5</h1></body></html>"
-		}
+	"tags": [
+		"crawl"
 	],
-	"config": {
-		"max_pages": 3,
-		"respect_robots_txt": false
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"crawl": {
-			"max_pages": 3
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><a href=\"/p1\">1</a><a href=\"/p2\">2</a><a href=\"/p3\">3</a><a href=\"/p4\">4</a><a href=\"/p5\">5</a></body></html>"
+			},
+			{
+				"path": "/p1",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 1</h1></body></html>"
+			},
+			{
+				"path": "/p2",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 2</h1></body></html>"
+			},
+			{
+				"path": "/p3",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 3</h1></body></html>"
+			},
+			{
+				"path": "/p4",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 4</h1></body></html>"
+			},
+			{
+				"path": "/p5",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><body><h1>Page 5</h1></body></html>"
+			}
+		],
+		"config": {
+			"max_pages": 3,
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "less_than_or_equal",
+			"field": "pages.length",
+			"value": 3
+		}
+	]
 }

@@ -1,16 +1,38 @@
 {
 	"id": "links_empty_href",
 	"description": "Handles empty href attributes without errors",
-	"tags": ["links", "edge-case"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/empty_href_links.html"
+	"tags": [
+		"links",
+		"edge-case"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"links": {
-			"min_count": 1,
-			"contains_url": "/valid"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/empty_href_links.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "greater_than",
+			"field": "links.length",
+			"value": 0
+		},
+		{
+			"type": "contains",
+			"field": "links[].url",
+			"value": "/valid"
 		}
-	}
+	]
 }

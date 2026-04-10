@@ -1,19 +1,41 @@
 {
 	"id": "sitemap_xhtml_links",
 	"description": "Parses sitemap with XHTML namespace alternate links",
-	"tags": ["sitemap", "xhtml"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "application/xml" },
-		"body_file": "xml/sitemap_xhtml.xml"
+	"tags": [
+		"sitemap",
+		"xhtml"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": false
-	},
-	"assertions": {
-		"sitemap": {
-			"url_count": 2,
-			"has_lastmod": false
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "application/xml"
+				},
+				"body_file": "xml/sitemap_xhtml.xml"
+			}
+		],
+		"config": {
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "urls.length",
+			"value": 2
+		},
+		{
+			"type": "equals",
+			"field": "has_lastmod",
+			"value": false
+		}
+	]
 }

@@ -1,15 +1,43 @@
 {
 	"id": "scrape_empty_page",
 	"description": "Handles an empty HTML document without errors",
-	"tags": ["scrape", "edge-case"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/empty.html"
+	"tags": [
+		"scrape",
+		"edge-case"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"links": { "min_count": 0 },
-		"images": { "count": 0 }
-	}
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/empty.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "greater_than",
+			"field": "links.length",
+			"value": -1
+		},
+		{
+			"type": "equals",
+			"field": "images.length",
+			"value": 0
+		}
+	]
 }

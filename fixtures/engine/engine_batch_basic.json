@@ -1,27 +1,52 @@
 {
 	"id": "engine_batch_basic",
 	"description": "CrawlEngine with defaults batch scrapes like the free function",
-	"tags": ["engine", "batch"],
-	"mock_responses": [
+	"tags": [
+		"engine",
+		"batch"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
+	},
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/page1",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><head><title>Batch 1</title></head><body>Content 1</body></html>"
+			},
+			{
+				"path": "/page2",
+				"headers": {
+					"content-type": "text/html"
+				},
+				"body_inline": "<html><head><title>Batch 2</title></head><body>Content 2</body></html>"
+			}
+		],
+		"config": {
+			"engine_mode": true,
+			"batch_urls": [
+				"/page1",
+				"/page2"
+			]
+		}
+	},
+	"assertions": [
 		{
-			"path": "/page1",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><head><title>Batch 1</title></head><body>Content 1</body></html>"
+			"type": "equals",
+			"field": "batch.completed_count",
+			"value": 2
 		},
 		{
-			"path": "/page2",
-			"headers": { "content-type": "text/html" },
-			"body_inline": "<html><head><title>Batch 2</title></head><body>Content 2</body></html>"
+			"type": "equals",
+			"field": "batch.total_count",
+			"value": 2
 		}
-	],
-	"config": {
-		"engine_mode": true,
-		"batch_urls": ["/page1", "/page2"]
-	},
-	"assertions": {
-		"batch": {
-			"completed_count": 2,
-			"total_count": 2
-		}
-	}
+	]
 }

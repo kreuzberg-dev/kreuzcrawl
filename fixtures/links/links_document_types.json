@@ -1,15 +1,35 @@
 {
 	"id": "links_document_types",
 	"description": "Detects PDF, DOCX, XLSX links as document type",
-	"tags": ["links", "documents"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/complex_links.html"
+	"tags": [
+		"links",
+		"documents"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"links": {
-			"has_type": ["document"]
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/complex_links.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "contains_all",
+			"field": "links[].link_type",
+			"values": [
+				"document"
+			]
 		}
-	}
+	]
 }

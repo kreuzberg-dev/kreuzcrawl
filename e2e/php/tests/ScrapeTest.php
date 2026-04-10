@@ -1,0 +1,161 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Kreuzberg\E2e;
+
+use PHPUnit\Framework\TestCase;
+use Kreuzcrawl\Kreuzcrawl;
+
+/** E2e tests for category: scrape. */
+final class ScrapeTest extends TestCase
+{
+    /** Same asset linked twice results in one download with one unique hash */
+    public function test_scrape_asset_dedup(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertEquals(2, count($result->assets));
+        $this->assertEquals(2, $result->assets->unique_hashes);
+    }
+
+    /** Skips assets exceeding max_asset_size limit */
+    public function test_scrape_asset_max_size(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertEquals(2, count($result->assets));
+    }
+
+    /** Only downloads image assets when asset_types filter is set */
+    public function test_scrape_asset_type_filter(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertEquals(1, count($result->assets));
+        $this->assertStringContainsString("image", $result->assets[""]->category);
+    }
+
+    /** Scrapes a simple HTML page and extracts title, description, and links */
+    public function test_scrape_basic_html_page(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertEquals("text/html", $result->content_type);
+        $this->assertNotEmpty($result->html);
+        $this->assertEquals("Example Domain", $result->metadata->title);
+        $this->assertStringContainsString("illustrative examples", $result->metadata->description);
+        $this->assertNotEmpty($result->metadata->canonical_url);
+        $this->assertGreaterThan(0, count($result->links));
+        $this->assertStringContainsString("external", $result->links[""]->link_type);
+        $this->assertEquals(0, count($result->images));
+        $this->assertEmpty($result->og->title);
+    }
+
+    /** Classifies links by type: internal, external, anchor, document, image */
+    public function test_scrape_complex_links(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertGreaterThan(9, count($result->links));
+        $this->assertStringContainsString("internal", $result->links[""]->link_type);
+        $this->assertStringContainsString("external", $result->links[""]->link_type);
+        $this->assertStringContainsString("anchor", $result->links[""]->link_type);
+        $this->assertStringContainsString("document", $result->links[""]->link_type);
+    }
+
+    /** Downloads CSS, JS, and image assets from page */
+    public function test_scrape_download_assets(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertGreaterThan(2, count($result->assets));
+    }
+
+    /** Extracts Dublin Core metadata from a page */
+    public function test_scrape_dublin_core(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertNotEmpty($result->dublin_core->title);
+        $this->assertEquals("Effects of Climate Change on Marine Biodiversity", $result->dublin_core->title);
+        $this->assertEquals("Dr. Jane Smith", $result->dublin_core->creator);
+    }
+
+    /** Handles an empty HTML document without errors */
+    public function test_scrape_empty_page(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertGreaterThan(-1, count($result->links));
+        $this->assertEquals(0, count($result->images));
+    }
+
+    /** Discovers RSS, Atom, and JSON feed links */
+    public function test_scrape_feed_discovery(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertEquals(1, count($result->feeds->rss));
+        $this->assertEquals(1, count($result->feeds->atom));
+        $this->assertEquals(1, count($result->feeds->json_feed));
+    }
+
+    /** Extracts images from img, picture, og:image, twitter:image */
+    public function test_scrape_image_sources(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertGreaterThan(4, count($result->images));
+        $this->assertEquals("https://example.com/images/og-hero.jpg", $result->og->image);
+    }
+
+    /** Handles SPA page with JavaScript-only content (no server-rendered HTML) */
+    public function test_scrape_js_heavy_spa(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertNotEmpty($result->html);
+    }
+
+    /** Extracts JSON-LD structured data from a page */
+    public function test_scrape_json_ld(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertNotEmpty($result->json_ld);
+        $this->assertEquals("Recipe", $result->json_ld->type);
+        $this->assertEquals("Best Chocolate Cake", $result->json_ld->name);
+    }
+
+    /** Gracefully handles broken HTML without crashing */
+    public function test_scrape_malformed_html(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertNotEmpty($result->html);
+        $this->assertStringContainsString("broken HTML", $result->metadata->description);
+    }
+
+    /** Extracts full Open Graph metadata from a page */
+    public function test_scrape_og_metadata(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertNotEmpty($result->og->title);
+        $this->assertEquals("Article Title", $result->og->title);
+        $this->assertEquals("article", $result->og->type);
+        $this->assertEquals("https://example.com/images/article-hero.jpg", $result->og->image);
+        $this->assertNotEmpty($result->og->description);
+        $this->assertEquals("Article Title - Example Blog", $result->metadata->title);
+    }
+
+    /** Extracts Twitter Card metadata from a page */
+    public function test_scrape_twitter_card(): void
+    {
+        $result = Kreuzcrawl::scrape();
+        $this->assertEquals(200, $result->status_code);
+        $this->assertNotEmpty($result->twitter->card);
+        $this->assertEquals("summary_large_image", $result->twitter->card_type);
+        $this->assertEquals("New Product Launch", $result->twitter->title);
+    }
+}

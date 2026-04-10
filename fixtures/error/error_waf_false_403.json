@@ -1,17 +1,41 @@
 {
 	"id": "error_waf_false_403",
 	"description": "Detects WAF/bot protection false 403 (Cloudflare challenge page)",
-	"tags": ["error", "waf"],
-	"mock_response": {
-		"status_code": 403,
-		"headers": { "content-type": "text/html; charset=utf-8", "server": "cloudflare" },
-		"body_file": "error/cloudflare_challenge.html"
+	"tags": [
+		"error",
+		"waf"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"error": {
-			"is_error": true,
-			"error_type": "forbidden",
-			"is_waf_blocked": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 403,
+				"headers": {
+					"content-type": "text/html; charset=utf-8",
+					"server": "cloudflare"
+				},
+				"body_file": "error/cloudflare_challenge.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "error"
+		},
+		{
+			"type": "error",
+			"value": "forbidden"
+		},
+		{
+			"type": "equals",
+			"field": "error.is_waf_blocked",
+			"value": true
 		}
-	}
+	]
 }

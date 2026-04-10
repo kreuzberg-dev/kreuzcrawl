@@ -1,13 +1,37 @@
 {
 	"id": "error_waf_akamai",
 	"description": "Akamai WAF detection returns WafBlocked error",
-	"tags": ["error", "waf"],
-	"mock_response": {
-		"status_code": 403,
-		"headers": { "content-type": "text/html", "server": "AkamaiGHost" },
-		"body_inline": "<html><body>Access Denied. Reference #18.abc123</body></html>"
+	"tags": [
+		"error",
+		"waf"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"error": { "is_error": true, "is_waf_blocked": true }
-	}
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 403,
+				"headers": {
+					"content-type": "text/html",
+					"server": "AkamaiGHost"
+				},
+				"body_inline": "<html><body>Access Denied. Reference #18.abc123</body></html>"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "error"
+		},
+		{
+			"type": "equals",
+			"field": "error.is_waf_blocked",
+			"value": true
+		}
+	]
 }

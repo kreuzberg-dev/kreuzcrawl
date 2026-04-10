@@ -1,29 +1,47 @@
 {
 	"id": "redirect_loop",
 	"description": "Detects redirect loop (A -> B -> A) and returns error",
-	"tags": ["redirect", "error"],
-	"mock_responses": [
-		{
-			"path": "/a",
-			"method": "GET",
-			"status_code": 302,
-			"headers": { "location": "/b" },
-			"body_inline": ""
-		},
-		{
-			"path": "/b",
-			"method": "GET",
-			"status_code": 302,
-			"headers": { "location": "/a" },
-			"body_inline": ""
-		}
+	"tags": [
+		"redirect",
+		"error"
 	],
-	"config": {
-		"respect_robots_txt": false
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"redirect": {
-			"is_error": true
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/a",
+				"method": "GET",
+				"status_code": 302,
+				"headers": {
+					"location": "/b"
+				},
+				"body_inline": ""
+			},
+			{
+				"path": "/b",
+				"method": "GET",
+				"status_code": 302,
+				"headers": {
+					"location": "/a"
+				},
+				"body_inline": ""
+			}
+		],
+		"config": {
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "is_error",
+			"value": true
+		}
+	]
 }

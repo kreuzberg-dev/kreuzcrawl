@@ -1,23 +1,62 @@
 {
 	"id": "scrape_og_metadata",
 	"description": "Extracts full Open Graph metadata from a page",
-	"tags": ["scrape", "metadata", "og"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/og_metadata.html"
+	"tags": [
+		"scrape",
+		"metadata",
+		"og"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"og": {
-			"has_og_title": true,
-			"og_title": "Article Title",
-			"og_type": "article",
-			"og_image": "https://example.com/images/article-hero.jpg",
-			"has_og_description": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/og_metadata.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
 		},
-		"metadata": {
-			"title": "Article Title - Example Blog"
+		{
+			"type": "not_empty",
+			"field": "og.title"
+		},
+		{
+			"type": "equals",
+			"field": "og.title",
+			"value": "Article Title"
+		},
+		{
+			"type": "equals",
+			"field": "og.type",
+			"value": "article"
+		},
+		{
+			"type": "equals",
+			"field": "og.image",
+			"value": "https://example.com/images/article-hero.jpg"
+		},
+		{
+			"type": "not_empty",
+			"field": "og.description"
+		},
+		{
+			"type": "equals",
+			"field": "metadata.title",
+			"value": "Article Title - Example Blog"
 		}
-	}
+	]
 }

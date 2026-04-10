@@ -1,35 +1,66 @@
 {
 	"id": "scrape_batch_basic",
 	"description": "Batch scrape of multiple URLs all succeeding",
-	"tags": ["batch"],
-	"mock_responses": [
-		{
-			"path": "/page1",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Page 1</h1></body></html>"
-		},
-		{
-			"path": "/page2",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Page 2</h1></body></html>"
-		},
-		{
-			"path": "/page3",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Page 3</h1></body></html>"
-		}
+	"tags": [
+		"batch"
 	],
-	"config": {
-		"batch_urls": ["/page1", "/page2", "/page3"]
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"batch": {
-			"completed_count": 3,
-			"failed_count": 0,
-			"total_count": 3
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/page1",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Page 1</h1></body></html>"
+			},
+			{
+				"path": "/page2",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Page 2</h1></body></html>"
+			},
+			{
+				"path": "/page3",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Page 3</h1></body></html>"
+			}
+		],
+		"config": {
+			"batch_urls": [
+				"/page1",
+				"/page2",
+				"/page3"
+			]
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "batch.completed_count",
+			"value": 3
+		},
+		{
+			"type": "equals",
+			"field": "batch.failed_count",
+			"value": 0
+		},
+		{
+			"type": "equals",
+			"field": "batch.total_count",
+			"value": 3
+		}
+	]
 }

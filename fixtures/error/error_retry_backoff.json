@@ -1,24 +1,44 @@
 {
 	"id": "error_retry_backoff",
 	"description": "Implements exponential backoff when retrying failed requests",
-	"tags": ["error", "retry", "backoff"],
-	"mock_response": {
-		"status_code": 429,
-		"headers": {
-			"content-type": "text/html",
-			"retry-after": "1"
-		},
-		"body_inline": "<html><body>Too Many Requests</body></html>"
+	"tags": [
+		"error",
+		"retry",
+		"backoff"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": false,
-		"retry_count": 3,
-		"retry_codes": [429]
-	},
-	"assertions": {
-		"error": {
-			"is_error": true,
-			"error_type": "rate_limited"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 429,
+				"headers": {
+					"content-type": "text/html",
+					"retry-after": "1"
+				},
+				"body_inline": "<html><body>Too Many Requests</body></html>"
+			}
+		],
+		"config": {
+			"respect_robots_txt": false,
+			"retry_count": 3,
+			"retry_codes": [
+				429
+			]
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "error"
+		},
+		{
+			"type": "error",
+			"value": "rate_limited"
+		}
+	]
 }

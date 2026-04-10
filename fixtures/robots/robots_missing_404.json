@@ -1,18 +1,35 @@
 {
 	"id": "robots_missing_404",
 	"description": "Missing robots.txt (404) allows all crawling",
-	"tags": ["robots"],
-	"mock_response": {
-		"status_code": 404,
-		"headers": { "content-type": "text/plain" },
-		"body_inline": "Not Found"
+	"tags": [
+		"robots"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": true
-	},
-	"assertions": {
-		"robots": {
-			"is_allowed": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 404,
+				"headers": {
+					"content-type": "text/plain"
+				},
+				"body_inline": "Not Found"
+			}
+		],
+		"config": {
+			"respect_robots_txt": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "robots.is_allowed",
+			"value": true
+		}
+	]
 }

@@ -1,0 +1,45 @@
+// E2e tests for category: cookies
+package e2e_test
+
+import (
+	"strings"
+	"testing"
+
+	pkg "github.com/kreuzberg-dev/kreuzcrawl"
+)
+
+func Test_CookiesPerDomain(t *testing.T) {
+	// Isolates cookies per domain during crawl
+	result, err := pkg.Scrape()
+	if err != nil {
+		t.Fatalf("call failed: %v", err)
+	}
+	if len(result.Cookies) != 1 {
+		t.Errorf("equals mismatch: got %q", len(result.Cookies))
+	}
+	if !strings.Contains(result.Cookies, `domain_cookie`) {
+		t.Errorf("expected to contain %s, got %q", `domain_cookie`, result.Cookies)
+	}
+}
+
+func Test_CookiesPersistence(t *testing.T) {
+	// Maintains cookies across multiple crawl requests
+	result, err := pkg.Scrape()
+	if err != nil {
+		t.Fatalf("call failed: %v", err)
+	}
+	if !strings.Contains(result.Cookies, `session`) {
+		t.Errorf("expected to contain %s, got %q", `session`, result.Cookies)
+	}
+}
+
+func Test_CookiesSetCookieResponse(t *testing.T) {
+	// Respects Set-Cookie header from server responses
+	result, err := pkg.Scrape()
+	if err != nil {
+		t.Fatalf("call failed: %v", err)
+	}
+	if !strings.Contains(result.Cookies, `tracking`) {
+		t.Errorf("expected to contain %s, got %q", `tracking`, result.Cookies)
+	}
+}

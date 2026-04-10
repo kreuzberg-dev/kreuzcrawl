@@ -1,18 +1,47 @@
 {
 	"id": "metadata_og_video_audio",
 	"description": "Extracts og:video, og:audio, and og:locale:alternate metadata",
-	"tags": ["metadata"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/comprehensive_metadata.html"
+	"tags": [
+		"metadata"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"extended_og": {
-			"og_video": "https://example.com/video.mp4",
-			"og_audio": "https://example.com/audio.mp3",
-			"og_locale_alternate_count": 2
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/comprehensive_metadata.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "og.video",
+			"value": "https://example.com/video.mp4"
+		},
+		{
+			"type": "equals",
+			"field": "og.audio",
+			"value": "https://example.com/audio.mp3"
+		},
+		{
+			"type": "equals",
+			"field": "og.locale_alternate.length",
+			"value": 2
 		}
-	}
+	]
 }

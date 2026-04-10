@@ -1,17 +1,42 @@
 {
 	"id": "metadata_hreflang",
 	"description": "Extracts hreflang alternate link tags",
-	"tags": ["metadata"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/comprehensive_metadata.html"
+	"tags": [
+		"metadata"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"hreflang": {
-			"count": 4,
-			"has_lang": "en"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/comprehensive_metadata.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "hreflang.length",
+			"value": 4
+		},
+		{
+			"type": "contains",
+			"field": "hreflang[].lang",
+			"value": "en"
 		}
-	}
+	]
 }

@@ -1,18 +1,47 @@
 {
 	"id": "metadata_headings",
 	"description": "Extracts heading hierarchy (h1-h6) from HTML page",
-	"tags": ["metadata"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/headings_hierarchy.html"
+	"tags": [
+		"metadata"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"headings": {
-			"h1_count": 1,
-			"h1_text": "Primary Heading",
-			"total_count": 8
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/headings_hierarchy.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "headings.h1.length",
+			"value": 1
+		},
+		{
+			"type": "equals",
+			"field": "headings.h1[0].text",
+			"value": "Primary Heading"
+		},
+		{
+			"type": "equals",
+			"field": "headings.length",
+			"value": 8
 		}
-	}
+	]
 }

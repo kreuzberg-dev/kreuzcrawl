@@ -1,23 +1,45 @@
 {
 	"id": "auth_basic_http",
 	"description": "Sends HTTP Basic authentication header",
-	"tags": ["auth", "basic"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_inline": "<html><body><h1>Authenticated Page</h1></body></html>"
+	"tags": [
+		"auth",
+		"basic"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"auth_basic": {
-			"username": "testuser",
-			"password": "testpass"
-		},
-		"respect_robots_txt": false
-	},
-	"assertions": {
-		"auth": {
-			"auth_header_sent": true,
-			"status_code": 200
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Authenticated Page</h1></body></html>"
+			}
+		],
+		"config": {
+			"auth_basic": {
+				"username": "testuser",
+				"password": "testpass"
+			},
+			"respect_robots_txt": false
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "auth_header_sent",
+			"value": true
+		},
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		}
+	]
 }

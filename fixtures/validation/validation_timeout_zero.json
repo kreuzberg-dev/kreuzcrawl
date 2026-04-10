@@ -1,17 +1,31 @@
 {
 	"id": "validation_timeout_zero",
 	"description": "Zero request timeout is rejected as invalid config",
-	"tags": ["validation"],
-	"mock_response": {
-		"status_code": 200,
-		"body_inline": "<html></html>"
+	"tags": [
+		"validation"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"request_timeout_ms": 0
-	},
-	"assertions": {
-		"validation": {
-			"error_contains": "request_timeout"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"body_inline": "<html></html>"
+			}
+		],
+		"config": {
+			"request_timeout_ms": 0
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "error",
+			"value": "request_timeout"
+		}
+	]
 }

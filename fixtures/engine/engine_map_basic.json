@@ -1,25 +1,43 @@
 {
 	"id": "engine_map_basic",
 	"description": "CrawlEngine with defaults discovers URLs like the free function",
-	"tags": ["engine", "map"],
-	"mock_responses": [
-		{
-			"path": "/robots.txt",
-			"headers": { "content-type": "text/plain" },
-			"body_inline": "User-agent: *\nAllow: /\nSitemap: {{mock_uri}}/sitemap.xml"
-		},
-		{
-			"path": "/sitemap.xml",
-			"headers": { "content-type": "application/xml" },
-			"body_inline": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>{{mock_uri}}/page1</loc></url><url><loc>{{mock_uri}}/page2</loc></url></urlset>"
-		}
+	"tags": [
+		"engine",
+		"map"
 	],
-	"config": {
-		"engine_mode": true
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"map": {
-			"min_urls": 2
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/robots.txt",
+				"headers": {
+					"content-type": "text/plain"
+				},
+				"body_inline": "User-agent: *\nAllow: /\nSitemap: {{mock_uri}}/sitemap.xml"
+			},
+			{
+				"path": "/sitemap.xml",
+				"headers": {
+					"content-type": "application/xml"
+				},
+				"body_inline": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>{{mock_uri}}/page1</loc></url><url><loc>{{mock_uri}}/page2</loc></url></urlset>"
+			}
+		],
+		"config": {
+			"engine_mode": true
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "greater_than_or_equal",
+			"field": "map.min_urls",
+			"value": 2
+		}
+	]
 }

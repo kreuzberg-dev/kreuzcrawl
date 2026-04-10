@@ -1,17 +1,41 @@
 {
 	"id": "metadata_favicons",
 	"description": "Extracts favicon link tags including apple-touch-icon",
-	"tags": ["metadata"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/favicon_variants.html"
+	"tags": [
+		"metadata"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"favicons": {
-			"count": 5,
-			"has_apple_touch": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/favicon_variants.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "favicons.length",
+			"value": 5
+		},
+		{
+			"type": "not_empty",
+			"field": "favicons[].apple_touch"
 		}
-	}
+	]
 }

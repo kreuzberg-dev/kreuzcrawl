@@ -1,18 +1,48 @@
 {
 	"id": "scrape_twitter_card",
 	"description": "Extracts Twitter Card metadata from a page",
-	"tags": ["scrape", "metadata", "twitter"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/twitter_card.html"
+	"tags": [
+		"scrape",
+		"metadata",
+		"twitter"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"twitter": {
-			"has_twitter_card": true,
-			"twitter_card_type": "summary_large_image",
-			"twitter_title": "New Product Launch"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/twitter_card.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "not_empty",
+			"field": "twitter.card"
+		},
+		{
+			"type": "equals",
+			"field": "twitter.card_type",
+			"value": "summary_large_image"
+		},
+		{
+			"type": "equals",
+			"field": "twitter.title",
+			"value": "New Product Launch"
 		}
-	}
+	]
 }

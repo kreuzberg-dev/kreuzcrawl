@@ -1,22 +1,39 @@
 {
 	"id": "browser_mode_always",
 	"description": "Browser mode 'always' uses browser even for normal server-rendered pages",
-	"tags": ["browser", "config"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/basic_page.html"
+	"tags": [
+		"browser",
+		"config"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c",
+			"go",
+			"java",
+			"csharp"
+		],
+		"reason": "requires browser feature; requires browser; Requires a running Chrome/Chromium instance"
 	},
-	"config": {
-		"browser_mode": "always"
-	},
-	"assertions": {
-		"browser": {
-			"browser_used": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/basic_page.html"
+			}
+		],
+		"config": {
+			"browser_mode": "always"
 		}
 	},
-	"skip": {
-		"requires_browser": true,
-		"notes": "Requires a running Chrome/Chromium instance"
-	}
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "browser.browser_used",
+			"value": true
+		}
+	]
 }

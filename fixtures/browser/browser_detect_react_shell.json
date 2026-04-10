@@ -1,18 +1,51 @@
 {
 	"id": "browser_detect_react_shell",
 	"description": "Detects React SPA shell with empty #root div as needing JS rendering",
-	"tags": ["browser", "detection"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/spa_react_shell.html"
+	"tags": [
+		"browser",
+		"detection"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c",
+			"go",
+			"java",
+			"csharp"
+		],
+		"reason": "requires browser feature"
 	},
-	"assertions": {
-		"status_code": 200,
-		"html_not_empty": true,
-		"browser": {
-			"js_render_hint": true,
-			"browser_used": false
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/spa_react_shell.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "equals",
+			"field": "html_not_empty",
+			"value": true
+		},
+		{
+			"type": "equals",
+			"field": "browser.js_render_hint",
+			"value": true
+		},
+		{
+			"type": "equals",
+			"field": "browser.browser_used",
+			"value": false
 		}
-	}
+	]
 }

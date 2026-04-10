@@ -1,28 +1,52 @@
 {
 	"id": "scrape_batch_progress",
 	"description": "Batch scrape results include specific URL",
-	"tags": ["batch"],
-	"mock_responses": [
+	"tags": [
+		"batch"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
+	},
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/target",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Target Page</h1></body></html>"
+			},
+			{
+				"path": "/other",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Other Page</h1></body></html>"
+			}
+		],
+		"config": {
+			"batch_urls": [
+				"/target",
+				"/other"
+			]
+		}
+	},
+	"assertions": [
 		{
-			"path": "/target",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Target Page</h1></body></html>"
+			"type": "equals",
+			"field": "batch.total_count",
+			"value": 2
 		},
 		{
-			"path": "/other",
-			"status_code": 200,
-			"headers": { "content-type": "text/html; charset=utf-8" },
-			"body_inline": "<html><body><h1>Other Page</h1></body></html>"
+			"type": "contains",
+			"field": "batch.results",
+			"value": "/target"
 		}
-	],
-	"config": {
-		"batch_urls": ["/target", "/other"]
-	},
-	"assertions": {
-		"batch": {
-			"total_count": 2,
-			"has_url_result": "/target"
-		}
-	}
+	]
 }

@@ -1,16 +1,37 @@
 {
 	"id": "sitemap_basic",
 	"description": "Parses a standard urlset sitemap",
-	"tags": ["sitemap"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "application/xml" },
-		"body_file": "xml/sitemap_basic.xml"
+	"tags": [
+		"sitemap"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"sitemap": {
-			"url_count": 4,
-			"has_lastmod": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "application/xml"
+				},
+				"body_file": "xml/sitemap_basic.xml"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "urls.length",
+			"value": 4
+		},
+		{
+			"type": "equals",
+			"field": "has_lastmod",
+			"value": true
 		}
-	}
+	]
 }

@@ -1,18 +1,48 @@
 {
 	"id": "scrape_json_ld",
 	"description": "Extracts JSON-LD structured data from a page",
-	"tags": ["scrape", "metadata", "json-ld"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/json_ld.html"
+	"tags": [
+		"scrape",
+		"metadata",
+		"json-ld"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"json_ld": {
-			"has_json_ld": true,
-			"json_ld_type": "Recipe",
-			"json_ld_name": "Best Chocolate Cake"
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/json_ld.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "not_empty",
+			"field": "json_ld"
+		},
+		{
+			"type": "equals",
+			"field": "json_ld.type",
+			"value": "Recipe"
+		},
+		{
+			"type": "equals",
+			"field": "json_ld.name",
+			"value": "Best Chocolate Cake"
 		}
-	}
+	]
 }

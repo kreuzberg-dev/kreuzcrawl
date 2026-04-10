@@ -1,17 +1,42 @@
 {
 	"id": "metadata_word_count",
 	"description": "Computes word count from visible page text",
-	"tags": ["metadata"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/comprehensive_metadata.html"
+	"tags": [
+		"metadata"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"status_code": 200,
-		"computed": {
-			"word_count_min": 100,
-			"word_count_max": 300
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/comprehensive_metadata.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "greater_than",
+			"field": "computed.word_count",
+			"value": 99
+		},
+		{
+			"type": "less_than",
+			"field": "computed.word_count",
+			"value": 301
 		}
-	}
+	]
 }

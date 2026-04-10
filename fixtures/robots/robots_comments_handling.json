@@ -1,19 +1,37 @@
 {
 	"id": "robots_comments_handling",
 	"description": "Correctly parses robots.txt with inline and line comments",
-	"tags": ["robots", "parsing"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/plain" },
-		"body_file": "robots/with_comments.txt"
+	"tags": [
+		"robots",
+		"parsing"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"config": {
-		"respect_robots_txt": true,
-		"user_agent": "kreuzcrawl"
-	},
-	"assertions": {
-		"robots": {
-			"is_allowed": true
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/plain"
+				},
+				"body_file": "robots/with_comments.txt"
+			}
+		],
+		"config": {
+			"respect_robots_txt": true,
+			"user_agent": "kreuzcrawl"
 		}
-	}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "robots.is_allowed",
+			"value": true
+		}
+	]
 }

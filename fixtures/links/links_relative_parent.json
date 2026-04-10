@@ -1,15 +1,33 @@
 {
 	"id": "links_relative_parent",
 	"description": "Resolves ../ and ./ relative parent path links correctly",
-	"tags": ["links", "resolution"],
-	"mock_response": {
-		"status_code": 200,
-		"headers": { "content-type": "text/html; charset=utf-8" },
-		"body_file": "html/relative_parent_links.html"
+	"tags": [
+		"links",
+		"resolution"
+	],
+	"skip": {
+		"languages": [
+			"wasm",
+			"c"
+		],
+		"reason": "requires mock HTTP server"
 	},
-	"assertions": {
-		"links": {
-			"min_count": 4
+	"input": {
+		"mock_responses": [
+			{
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_file": "html/relative_parent_links.html"
+			}
+		]
+	},
+	"assertions": [
+		{
+			"type": "greater_than",
+			"field": "links.length",
+			"value": 3
 		}
-	}
+	]
 }
