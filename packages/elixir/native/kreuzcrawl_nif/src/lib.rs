@@ -5,7 +5,7 @@ use rustler::ResourceArc;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.ExtractionMeta"]
 pub struct ExtractionMeta {
     pub cost: Option<f64>,
@@ -15,18 +15,6 @@ pub struct ExtractionMeta {
     pub chunks_processed: usize,
 }
 
-impl Default for ExtractionMeta {
-    fn default() -> Self {
-        Self {
-            cost: Default::default(),
-            prompt_tokens: Default::default(),
-            completion_tokens: Default::default(),
-            model: Default::default(),
-            chunks_processed: Default::default(),
-        }
-    }
-}
-
 impl ExtractionMeta {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
@@ -34,12 +22,15 @@ impl ExtractionMeta {
             prompt_tokens: opts.get("prompt_tokens").and_then(|t| t.decode().ok()),
             completion_tokens: opts.get("completion_tokens").and_then(|t| t.decode().ok()),
             model: opts.get("model").and_then(|t| t.decode().ok()),
-            chunks_processed: opts.get("chunks_processed").and_then(|t| t.decode().ok()).unwrap_or(0),
+            chunks_processed: opts
+                .get("chunks_processed")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.ProxyConfig"]
 pub struct ProxyConfig {
     pub url: String,
@@ -47,27 +38,17 @@ pub struct ProxyConfig {
     pub password: Option<String>,
 }
 
-impl Default for ProxyConfig {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            username: Default::default(),
-            password: Default::default(),
-        }
-    }
-}
-
 impl ProxyConfig {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             username: opts.get("username").and_then(|t| t.decode().ok()),
             password: opts.get("password").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.BrowserConfig"]
 pub struct BrowserConfig {
     pub mode: BrowserMode,
@@ -78,19 +59,6 @@ pub struct BrowserConfig {
     pub extra_wait: Option<u64>,
 }
 
-impl Default for BrowserConfig {
-    fn default() -> Self {
-        Self {
-            mode: Default::default(),
-            endpoint: Default::default(),
-            timeout: Default::default(),
-            wait: Default::default(),
-            wait_selector: Default::default(),
-            extra_wait: Default::default(),
-        }
-    }
-}
-
 impl BrowserConfig {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
@@ -99,21 +67,15 @@ impl BrowserConfig {
                 .and_then(|t| t.decode().ok())
                 .unwrap_or(BrowserMode::Auto),
             endpoint: opts.get("endpoint").and_then(|t| t.decode().ok()),
-            timeout: opts
-                .get("timeout")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
-            wait: opts
-                .get("wait")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+            timeout: opts.get("timeout").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            wait: opts.get("wait").and_then(|t| t.decode().ok()).unwrap_or_default(),
             wait_selector: opts.get("wait_selector").and_then(|t| t.decode().ok()),
             extra_wait: opts.get("extra_wait").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.CrawlConfig"]
 pub struct CrawlConfig {
     pub max_depth: Option<usize>,
@@ -152,47 +114,6 @@ pub struct CrawlConfig {
     pub save_browser_profile: bool,
 }
 
-impl Default for CrawlConfig {
-    fn default() -> Self {
-        Self {
-            max_depth: Default::default(),
-            max_pages: Default::default(),
-            max_concurrent: Default::default(),
-            respect_robots_txt: Default::default(),
-            user_agent: Default::default(),
-            stay_on_domain: Default::default(),
-            allow_subdomains: Default::default(),
-            include_paths: Default::default(),
-            exclude_paths: Default::default(),
-            custom_headers: Default::default(),
-            request_timeout: Default::default(),
-            max_redirects: Default::default(),
-            retry_count: Default::default(),
-            retry_codes: Default::default(),
-            cookies_enabled: Default::default(),
-            auth: Default::default(),
-            max_body_size: Default::default(),
-            main_content_only: Default::default(),
-            remove_tags: Default::default(),
-            map_limit: Default::default(),
-            map_search: Default::default(),
-            download_assets: Default::default(),
-            asset_types: Default::default(),
-            max_asset_size: Default::default(),
-            browser: Default::default(),
-            proxy: Default::default(),
-            user_agents: Default::default(),
-            capture_screenshot: Default::default(),
-            download_documents: Default::default(),
-            document_max_size: Default::default(),
-            document_mime_types: Default::default(),
-            warc_output: Default::default(),
-            browser_profile: Default::default(),
-            save_browser_profile: Default::default(),
-        }
-    }
-}
-
 impl CrawlConfig {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
@@ -215,22 +136,25 @@ impl CrawlConfig {
             include_paths: opts
                 .get("include_paths")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(vec![]),
+                .unwrap_or_default(),
             exclude_paths: opts
                 .get("exclude_paths")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(vec![]),
+                .unwrap_or_default(),
             custom_headers: opts
                 .get("custom_headers")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+                .unwrap_or_default(),
             request_timeout: opts
                 .get("request_timeout")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+                .unwrap_or_default(),
             max_redirects: opts.get("max_redirects").and_then(|t| t.decode().ok()).unwrap_or(10),
             retry_count: opts.get("retry_count").and_then(|t| t.decode().ok()).unwrap_or(0),
-            retry_codes: opts.get("retry_codes").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            retry_codes: opts
+                .get("retry_codes")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             cookies_enabled: opts
                 .get("cookies_enabled")
                 .and_then(|t| t.decode().ok())
@@ -241,21 +165,27 @@ impl CrawlConfig {
                 .get("main_content_only")
                 .and_then(|t| t.decode().ok())
                 .unwrap_or(false),
-            remove_tags: opts.get("remove_tags").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            remove_tags: opts
+                .get("remove_tags")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             map_limit: opts.get("map_limit").and_then(|t| t.decode().ok()),
             map_search: opts.get("map_search").and_then(|t| t.decode().ok()),
             download_assets: opts
                 .get("download_assets")
                 .and_then(|t| t.decode().ok())
                 .unwrap_or(false),
-            asset_types: opts.get("asset_types").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            max_asset_size: opts.get("max_asset_size").and_then(|t| t.decode().ok()),
-            browser: opts
-                .get("browser")
+            asset_types: opts
+                .get("asset_types")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+                .unwrap_or_default(),
+            max_asset_size: opts.get("max_asset_size").and_then(|t| t.decode().ok()),
+            browser: opts.get("browser").and_then(|t| t.decode().ok()).unwrap_or_default(),
             proxy: opts.get("proxy").and_then(|t| t.decode().ok()),
-            user_agents: opts.get("user_agents").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            user_agents: opts
+                .get("user_agents")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             capture_screenshot: opts
                 .get("capture_screenshot")
                 .and_then(|t| t.decode().ok())
@@ -268,7 +198,7 @@ impl CrawlConfig {
             document_mime_types: opts
                 .get("document_mime_types")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(vec![]),
+                .unwrap_or_default(),
             warc_output: opts.get("warc_output").and_then(|t| t.decode().ok()),
             browser_profile: opts.get("browser_profile").and_then(|t| t.decode().ok()),
             save_browser_profile: opts
@@ -279,7 +209,7 @@ impl CrawlConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.DownloadedDocument"]
 pub struct DownloadedDocument {
     pub url: String,
@@ -291,47 +221,24 @@ pub struct DownloadedDocument {
     pub headers: HashMap<String, String>,
 }
 
-impl Default for DownloadedDocument {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            mime_type: Default::default(),
-            content: Default::default(),
-            size: Default::default(),
-            filename: Default::default(),
-            content_hash: Default::default(),
-            headers: Default::default(),
-        }
-    }
-}
-
 impl DownloadedDocument {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            mime_type: opts
-                .get("mime_type")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            content: opts
-                .get("content")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
-            size: opts.get("size").and_then(|t| t.decode().ok()).unwrap_or(0),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            mime_type: opts.get("mime_type").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            content: opts.get("content").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            size: opts.get("size").and_then(|t| t.decode().ok()).unwrap_or_default(),
             filename: opts.get("filename").and_then(|t| t.decode().ok()),
             content_hash: opts
                 .get("content_hash")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            headers: opts
-                .get("headers")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+                .unwrap_or_default(),
+            headers: opts.get("headers").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.InteractionResult"]
 pub struct InteractionResult {
     pub action_results: Vec<ActionResult>,
@@ -340,38 +247,21 @@ pub struct InteractionResult {
     pub screenshot: Option<Vec<u8>>,
 }
 
-impl Default for InteractionResult {
-    fn default() -> Self {
-        Self {
-            action_results: Default::default(),
-            final_html: Default::default(),
-            final_url: Default::default(),
-            screenshot: Default::default(),
-        }
-    }
-}
-
 impl InteractionResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
             action_results: opts
                 .get("action_results")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(vec![]),
-            final_html: opts
-                .get("final_html")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            final_url: opts
-                .get("final_url")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
+                .unwrap_or_default(),
+            final_html: opts.get("final_html").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            final_url: opts.get("final_url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             screenshot: opts.get("screenshot").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.ActionResult"]
 pub struct ActionResult {
     pub action_index: usize,
@@ -381,34 +271,25 @@ pub struct ActionResult {
     pub error: Option<String>,
 }
 
-impl Default for ActionResult {
-    fn default() -> Self {
-        Self {
-            action_index: Default::default(),
-            action_type: Default::default(),
-            success: Default::default(),
-            data: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
 impl ActionResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            action_index: opts.get("action_index").and_then(|t| t.decode().ok()).unwrap_or(0),
+            action_index: opts
+                .get("action_index")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             action_type: opts
                 .get("action_type")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            success: opts.get("success").and_then(|t| t.decode().ok()).unwrap_or(false),
+                .unwrap_or_default(),
+            success: opts.get("success").and_then(|t| t.decode().ok()).unwrap_or_default(),
             data: opts.get("data").and_then(|t| t.decode().ok()),
             error: opts.get("error").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.ScrapeResult"]
 pub struct ScrapeResult {
     pub status_code: u16,
@@ -441,88 +322,59 @@ pub struct ScrapeResult {
     pub downloaded_document: Option<DownloadedDocument>,
 }
 
-impl Default for ScrapeResult {
-    fn default() -> Self {
-        Self {
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            is_allowed: Default::default(),
-            crawl_delay: Default::default(),
-            noindex_detected: Default::default(),
-            nofollow_detected: Default::default(),
-            x_robots_tag: Default::default(),
-            is_pdf: Default::default(),
-            was_skipped: Default::default(),
-            detected_charset: Default::default(),
-            main_content_only: Default::default(),
-            auth_header_sent: Default::default(),
-            response_meta: Default::default(),
-            assets: Default::default(),
-            js_render_hint: Default::default(),
-            browser_used: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            screenshot: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
 impl ScrapeResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            status_code: opts.get("status_code").and_then(|t| t.decode().ok()).unwrap_or(0),
+            status_code: opts
+                .get("status_code")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             content_type: opts
                 .get("content_type")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            html: opts.get("html").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            body_size: opts.get("body_size").and_then(|t| t.decode().ok()).unwrap_or(0),
-            metadata: opts
-                .get("metadata")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
-            links: opts.get("links").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            images: opts.get("images").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            feeds: opts.get("feeds").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            json_ld: opts.get("json_ld").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            is_allowed: opts.get("is_allowed").and_then(|t| t.decode().ok()).unwrap_or(false),
+                .unwrap_or_default(),
+            html: opts.get("html").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            body_size: opts.get("body_size").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            metadata: opts.get("metadata").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            links: opts.get("links").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            images: opts.get("images").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            feeds: opts.get("feeds").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            json_ld: opts.get("json_ld").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            is_allowed: opts.get("is_allowed").and_then(|t| t.decode().ok()).unwrap_or_default(),
             crawl_delay: opts.get("crawl_delay").and_then(|t| t.decode().ok()),
             noindex_detected: opts
                 .get("noindex_detected")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
+                .unwrap_or_default(),
             nofollow_detected: opts
                 .get("nofollow_detected")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
+                .unwrap_or_default(),
             x_robots_tag: opts.get("x_robots_tag").and_then(|t| t.decode().ok()),
-            is_pdf: opts.get("is_pdf").and_then(|t| t.decode().ok()).unwrap_or(false),
-            was_skipped: opts.get("was_skipped").and_then(|t| t.decode().ok()).unwrap_or(false),
+            is_pdf: opts.get("is_pdf").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            was_skipped: opts
+                .get("was_skipped")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             detected_charset: opts.get("detected_charset").and_then(|t| t.decode().ok()),
             main_content_only: opts
                 .get("main_content_only")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
+                .unwrap_or_default(),
             auth_header_sent: opts
                 .get("auth_header_sent")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
+                .unwrap_or_default(),
             response_meta: opts.get("response_meta").and_then(|t| t.decode().ok()),
-            assets: opts.get("assets").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            assets: opts.get("assets").and_then(|t| t.decode().ok()).unwrap_or_default(),
             js_render_hint: opts
                 .get("js_render_hint")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
-            browser_used: opts.get("browser_used").and_then(|t| t.decode().ok()).unwrap_or(false),
+                .unwrap_or_default(),
+            browser_used: opts
+                .get("browser_used")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             markdown: opts.get("markdown").and_then(|t| t.decode().ok()),
             extracted_data: opts.get("extracted_data").and_then(|t| t.decode().ok()),
             extraction_meta: opts.get("extraction_meta").and_then(|t| t.decode().ok()),
@@ -532,7 +384,7 @@ impl ScrapeResult {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.CrawlPageResult"]
 pub struct CrawlPageResult {
     pub url: String,
@@ -557,63 +409,39 @@ pub struct CrawlPageResult {
     pub downloaded_document: Option<DownloadedDocument>,
 }
 
-impl Default for CrawlPageResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            normalized_url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            depth: Default::default(),
-            stayed_on_domain: Default::default(),
-            was_skipped: Default::default(),
-            is_pdf: Default::default(),
-            detected_charset: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
 impl CrawlPageResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             normalized_url: opts
                 .get("normalized_url")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            status_code: opts.get("status_code").and_then(|t| t.decode().ok()).unwrap_or(0),
+                .unwrap_or_default(),
+            status_code: opts
+                .get("status_code")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             content_type: opts
                 .get("content_type")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            html: opts.get("html").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            body_size: opts.get("body_size").and_then(|t| t.decode().ok()).unwrap_or(0),
-            metadata: opts
-                .get("metadata")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
-            links: opts.get("links").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            images: opts.get("images").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            feeds: opts.get("feeds").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            json_ld: opts.get("json_ld").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            depth: opts.get("depth").and_then(|t| t.decode().ok()).unwrap_or(0),
+                .unwrap_or_default(),
+            html: opts.get("html").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            body_size: opts.get("body_size").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            metadata: opts.get("metadata").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            links: opts.get("links").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            images: opts.get("images").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            feeds: opts.get("feeds").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            json_ld: opts.get("json_ld").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            depth: opts.get("depth").and_then(|t| t.decode().ok()).unwrap_or_default(),
             stayed_on_domain: opts
                 .get("stayed_on_domain")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
-            was_skipped: opts.get("was_skipped").and_then(|t| t.decode().ok()).unwrap_or(false),
-            is_pdf: opts.get("is_pdf").and_then(|t| t.decode().ok()).unwrap_or(false),
+                .unwrap_or_default(),
+            was_skipped: opts
+                .get("was_skipped")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            is_pdf: opts.get("is_pdf").and_then(|t| t.decode().ok()).unwrap_or_default(),
             detected_charset: opts.get("detected_charset").and_then(|t| t.decode().ok()),
             markdown: opts.get("markdown").and_then(|t| t.decode().ok()),
             extracted_data: opts.get("extracted_data").and_then(|t| t.decode().ok()),
@@ -623,7 +451,7 @@ impl CrawlPageResult {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.CrawlResult"]
 pub struct CrawlResult {
     pub pages: Vec<CrawlPageResult>,
@@ -635,41 +463,30 @@ pub struct CrawlResult {
     pub normalized_urls: Vec<String>,
 }
 
-impl Default for CrawlResult {
-    fn default() -> Self {
-        Self {
-            pages: Default::default(),
-            final_url: Default::default(),
-            redirect_count: Default::default(),
-            was_skipped: Default::default(),
-            error: Default::default(),
-            cookies: Default::default(),
-            normalized_urls: Default::default(),
-        }
-    }
-}
-
 impl CrawlResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            pages: opts.get("pages").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            final_url: opts
-                .get("final_url")
+            pages: opts.get("pages").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            final_url: opts.get("final_url").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            redirect_count: opts
+                .get("redirect_count")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            redirect_count: opts.get("redirect_count").and_then(|t| t.decode().ok()).unwrap_or(0),
-            was_skipped: opts.get("was_skipped").and_then(|t| t.decode().ok()).unwrap_or(false),
+                .unwrap_or_default(),
+            was_skipped: opts
+                .get("was_skipped")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             error: opts.get("error").and_then(|t| t.decode().ok()),
-            cookies: opts.get("cookies").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            cookies: opts.get("cookies").and_then(|t| t.decode().ok()).unwrap_or_default(),
             normalized_urls: opts
                 .get("normalized_urls")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(vec![]),
+                .unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.SitemapUrl"]
 pub struct SitemapUrl {
     pub url: String,
@@ -678,21 +495,10 @@ pub struct SitemapUrl {
     pub priority: Option<String>,
 }
 
-impl Default for SitemapUrl {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            lastmod: Default::default(),
-            changefreq: Default::default(),
-            priority: Default::default(),
-        }
-    }
-}
-
 impl SitemapUrl {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             lastmod: opts.get("lastmod").and_then(|t| t.decode().ok()),
             changefreq: opts.get("changefreq").and_then(|t| t.decode().ok()),
             priority: opts.get("priority").and_then(|t| t.decode().ok()),
@@ -700,29 +506,21 @@ impl SitemapUrl {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.MapResult"]
 pub struct MapResult {
     pub urls: Vec<SitemapUrl>,
 }
 
-impl Default for MapResult {
-    fn default() -> Self {
-        Self {
-            urls: Default::default(),
-        }
-    }
-}
-
 impl MapResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            urls: opts.get("urls").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            urls: opts.get("urls").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.MarkdownResult"]
 pub struct MarkdownResult {
     pub content: String,
@@ -733,36 +531,20 @@ pub struct MarkdownResult {
     pub fit_content: Option<String>,
 }
 
-impl Default for MarkdownResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            document_structure: Default::default(),
-            tables: Default::default(),
-            warnings: Default::default(),
-            citations: Default::default(),
-            fit_content: Default::default(),
-        }
-    }
-}
-
 impl MarkdownResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            content: opts
-                .get("content")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
+            content: opts.get("content").and_then(|t| t.decode().ok()).unwrap_or_default(),
             document_structure: opts.get("document_structure").and_then(|t| t.decode().ok()),
-            tables: opts.get("tables").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
-            warnings: opts.get("warnings").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            tables: opts.get("tables").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            warnings: opts.get("warnings").and_then(|t| t.decode().ok()).unwrap_or_default(),
             citations: opts.get("citations").and_then(|t| t.decode().ok()),
             fit_content: opts.get("fit_content").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.CachedPage"]
 pub struct CachedPage {
     pub url: String,
@@ -774,38 +556,27 @@ pub struct CachedPage {
     pub cached_at: u64,
 }
 
-impl Default for CachedPage {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            body: Default::default(),
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cached_at: Default::default(),
-        }
-    }
-}
-
 impl CachedPage {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            status_code: opts.get("status_code").and_then(|t| t.decode().ok()).unwrap_or(0),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            status_code: opts
+                .get("status_code")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
             content_type: opts
                 .get("content_type")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            body: opts.get("body").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+                .unwrap_or_default(),
+            body: opts.get("body").and_then(|t| t.decode().ok()).unwrap_or_default(),
             etag: opts.get("etag").and_then(|t| t.decode().ok()),
             last_modified: opts.get("last_modified").and_then(|t| t.decode().ok()),
-            cached_at: opts.get("cached_at").and_then(|t| t.decode().ok()).unwrap_or(0),
+            cached_at: opts.get("cached_at").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.LinkInfo"]
 pub struct LinkInfo {
     pub url: String,
@@ -815,34 +586,19 @@ pub struct LinkInfo {
     pub nofollow: bool,
 }
 
-impl Default for LinkInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            text: Default::default(),
-            link_type: Default::default(),
-            rel: Default::default(),
-            nofollow: Default::default(),
-        }
-    }
-}
-
 impl LinkInfo {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            text: opts.get("text").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            link_type: opts
-                .get("link_type")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            text: opts.get("text").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            link_type: opts.get("link_type").and_then(|t| t.decode().ok()).unwrap_or_default(),
             rel: opts.get("rel").and_then(|t| t.decode().ok()),
-            nofollow: opts.get("nofollow").and_then(|t| t.decode().ok()).unwrap_or(false),
+            nofollow: opts.get("nofollow").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.ImageInfo"]
 pub struct ImageInfo {
     pub url: String,
@@ -852,34 +608,19 @@ pub struct ImageInfo {
     pub source: ImageSource,
 }
 
-impl Default for ImageInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            alt: Default::default(),
-            width: Default::default(),
-            height: Default::default(),
-            source: Default::default(),
-        }
-    }
-}
-
 impl ImageInfo {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             alt: opts.get("alt").and_then(|t| t.decode().ok()),
             width: opts.get("width").and_then(|t| t.decode().ok()),
             height: opts.get("height").and_then(|t| t.decode().ok()),
-            source: opts
-                .get("source")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+            source: opts.get("source").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.FeedInfo"]
 pub struct FeedInfo {
     pub url: String,
@@ -887,45 +628,22 @@ pub struct FeedInfo {
     pub feed_type: FeedType,
 }
 
-impl Default for FeedInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            title: Default::default(),
-            feed_type: Default::default(),
-        }
-    }
-}
-
 impl FeedInfo {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             title: opts.get("title").and_then(|t| t.decode().ok()),
-            feed_type: opts
-                .get("feed_type")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+            feed_type: opts.get("feed_type").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.JsonLdEntry"]
 pub struct JsonLdEntry {
     pub schema_type: String,
     pub name: Option<String>,
     pub raw: String,
-}
-
-impl Default for JsonLdEntry {
-    fn default() -> Self {
-        Self {
-            schema_type: Default::default(),
-            name: Default::default(),
-            raw: Default::default(),
-        }
-    }
 }
 
 impl JsonLdEntry {
@@ -934,14 +652,14 @@ impl JsonLdEntry {
             schema_type: opts
                 .get("schema_type")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
+                .unwrap_or_default(),
             name: opts.get("name").and_then(|t| t.decode().ok()),
-            raw: opts.get("raw").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            raw: opts.get("raw").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.CookieInfo"]
 pub struct CookieInfo {
     pub name: String,
@@ -950,29 +668,18 @@ pub struct CookieInfo {
     pub path: Option<String>,
 }
 
-impl Default for CookieInfo {
-    fn default() -> Self {
-        Self {
-            name: Default::default(),
-            value: Default::default(),
-            domain: Default::default(),
-            path: Default::default(),
-        }
-    }
-}
-
 impl CookieInfo {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            name: opts.get("name").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            value: opts.get("value").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            name: opts.get("name").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            value: opts.get("value").and_then(|t| t.decode().ok()).unwrap_or_default(),
             domain: opts.get("domain").and_then(|t| t.decode().ok()),
             path: opts.get("path").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.DownloadedAsset"]
 pub struct DownloadedAsset {
     pub url: String,
@@ -983,39 +690,26 @@ pub struct DownloadedAsset {
     pub html_tag: Option<String>,
 }
 
-impl Default for DownloadedAsset {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            content_hash: Default::default(),
-            mime_type: Default::default(),
-            size: Default::default(),
-            asset_category: Default::default(),
-            html_tag: Default::default(),
-        }
-    }
-}
-
 impl DownloadedAsset {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             content_hash: opts
                 .get("content_hash")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
+                .unwrap_or_default(),
             mime_type: opts.get("mime_type").and_then(|t| t.decode().ok()),
-            size: opts.get("size").and_then(|t| t.decode().ok()).unwrap_or(0),
+            size: opts.get("size").and_then(|t| t.decode().ok()).unwrap_or_default(),
             asset_category: opts
                 .get("asset_category")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or(Default::default()),
+                .unwrap_or_default(),
             html_tag: opts.get("html_tag").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.ArticleMetadata"]
 pub struct ArticleMetadata {
     pub published_time: Option<String>,
@@ -1025,18 +719,6 @@ pub struct ArticleMetadata {
     pub tags: Vec<String>,
 }
 
-impl Default for ArticleMetadata {
-    fn default() -> Self {
-        Self {
-            published_time: Default::default(),
-            modified_time: Default::default(),
-            author: Default::default(),
-            section: Default::default(),
-            tags: Default::default(),
-        }
-    }
-}
-
 impl ArticleMetadata {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
@@ -1044,37 +726,28 @@ impl ArticleMetadata {
             modified_time: opts.get("modified_time").and_then(|t| t.decode().ok()),
             author: opts.get("author").and_then(|t| t.decode().ok()),
             section: opts.get("section").and_then(|t| t.decode().ok()),
-            tags: opts.get("tags").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            tags: opts.get("tags").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.HreflangEntry"]
 pub struct HreflangEntry {
     pub lang: String,
     pub url: String,
 }
 
-impl Default for HreflangEntry {
-    fn default() -> Self {
-        Self {
-            lang: Default::default(),
-            url: Default::default(),
-        }
-    }
-}
-
 impl HreflangEntry {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            lang: opts.get("lang").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            lang: opts.get("lang").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.FaviconInfo"]
 pub struct FaviconInfo {
     pub url: String,
@@ -1083,54 +756,34 @@ pub struct FaviconInfo {
     pub mime_type: Option<String>,
 }
 
-impl Default for FaviconInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            rel: Default::default(),
-            sizes: Default::default(),
-            mime_type: Default::default(),
-        }
-    }
-}
-
 impl FaviconInfo {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            rel: opts.get("rel").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            rel: opts.get("rel").and_then(|t| t.decode().ok()).unwrap_or_default(),
             sizes: opts.get("sizes").and_then(|t| t.decode().ok()),
             mime_type: opts.get("mime_type").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.HeadingInfo"]
 pub struct HeadingInfo {
     pub level: u8,
     pub text: String,
 }
 
-impl Default for HeadingInfo {
-    fn default() -> Self {
-        Self {
-            level: Default::default(),
-            text: Default::default(),
-        }
-    }
-}
-
 impl HeadingInfo {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            level: opts.get("level").and_then(|t| t.decode().ok()).unwrap_or(0),
-            text: opts.get("text").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            level: opts.get("level").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            text: opts.get("text").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.ResponseMeta"]
 pub struct ResponseMeta {
     pub etag: Option<String>,
@@ -1140,20 +793,6 @@ pub struct ResponseMeta {
     pub x_powered_by: Option<String>,
     pub content_language: Option<String>,
     pub content_encoding: Option<String>,
-}
-
-impl Default for ResponseMeta {
-    fn default() -> Self {
-        Self {
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cache_control: Default::default(),
-            server: Default::default(),
-            x_powered_by: Default::default(),
-            content_language: Default::default(),
-            content_encoding: Default::default(),
-        }
-    }
 }
 
 impl ResponseMeta {
@@ -1170,7 +809,7 @@ impl ResponseMeta {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.PageMetadata"]
 pub struct PageMetadata {
     pub title: Option<String>,
@@ -1216,56 +855,6 @@ pub struct PageMetadata {
     pub favicons: Option<Vec<FaviconInfo>>,
     pub headings: Option<Vec<HeadingInfo>>,
     pub word_count: Option<usize>,
-}
-
-impl Default for PageMetadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            description: Default::default(),
-            canonical_url: Default::default(),
-            keywords: Default::default(),
-            author: Default::default(),
-            viewport: Default::default(),
-            theme_color: Default::default(),
-            generator: Default::default(),
-            robots: Default::default(),
-            html_lang: Default::default(),
-            html_dir: Default::default(),
-            og_title: Default::default(),
-            og_type: Default::default(),
-            og_image: Default::default(),
-            og_description: Default::default(),
-            og_url: Default::default(),
-            og_site_name: Default::default(),
-            og_locale: Default::default(),
-            og_video: Default::default(),
-            og_audio: Default::default(),
-            og_locale_alternates: Default::default(),
-            twitter_card: Default::default(),
-            twitter_title: Default::default(),
-            twitter_description: Default::default(),
-            twitter_image: Default::default(),
-            twitter_site: Default::default(),
-            twitter_creator: Default::default(),
-            dc_title: Default::default(),
-            dc_creator: Default::default(),
-            dc_subject: Default::default(),
-            dc_description: Default::default(),
-            dc_publisher: Default::default(),
-            dc_date: Default::default(),
-            dc_type: Default::default(),
-            dc_format: Default::default(),
-            dc_identifier: Default::default(),
-            dc_language: Default::default(),
-            dc_rights: Default::default(),
-            article: Default::default(),
-            hreflangs: Default::default(),
-            favicons: Default::default(),
-            headings: Default::default(),
-            word_count: Default::default(),
-        }
-    }
 }
 
 impl PageMetadata {
@@ -1318,35 +907,23 @@ impl PageMetadata {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.CitationResult"]
 pub struct CitationResult {
     pub content: String,
     pub references: Vec<CitationReference>,
 }
 
-impl Default for CitationResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            references: Default::default(),
-        }
-    }
-}
-
 impl CitationResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            content: opts
-                .get("content")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(String::new()),
-            references: opts.get("references").and_then(|t| t.decode().ok()).unwrap_or(vec![]),
+            content: opts.get("content").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            references: opts.get("references").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.CitationReference"]
 pub struct CitationReference {
     pub index: usize,
@@ -1354,22 +931,12 @@ pub struct CitationReference {
     pub text: String,
 }
 
-impl Default for CitationReference {
-    fn default() -> Self {
-        Self {
-            index: Default::default(),
-            url: Default::default(),
-            text: Default::default(),
-        }
-    }
-}
-
 impl CitationReference {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            index: opts.get("index").and_then(|t| t.decode().ok()).unwrap_or(0),
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
-            text: opts.get("text").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            index: opts.get("index").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            text: opts.get("text").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
@@ -1384,7 +951,7 @@ impl std::panic::RefUnwindSafe for CrawlEngineHandle {}
 
 impl rustler::Resource for CrawlEngineHandle {}
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.BatchScrapeResult"]
 pub struct BatchScrapeResult {
     pub url: String,
@@ -1392,27 +959,17 @@ pub struct BatchScrapeResult {
     pub error: Option<String>,
 }
 
-impl Default for BatchScrapeResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
 impl BatchScrapeResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             result: opts.get("result").and_then(|t| t.decode().ok()),
             error: opts.get("error").and_then(|t| t.decode().ok()),
         }
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, rustler::NifStruct)]
 #[module = "Kreuzcrawl.BatchCrawlResult"]
 pub struct BatchCrawlResult {
     pub url: String,
@@ -1420,20 +977,10 @@ pub struct BatchCrawlResult {
     pub error: Option<String>,
 }
 
-impl Default for BatchCrawlResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
 impl BatchCrawlResult {
     pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
         Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or(String::new()),
+            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
             result: opts.get("result").and_then(|t| t.decode().ok()),
             error: opts.get("error").and_then(|t| t.decode().ok()),
         }
@@ -1447,6 +994,7 @@ pub enum BrowserMode {
     Never,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for BrowserMode {
     fn default() -> Self {
         Self::Auto
@@ -1460,6 +1008,7 @@ pub enum BrowserWait {
     Fixed,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for BrowserWait {
     fn default() -> Self {
         Self::NetworkIdle
@@ -1473,6 +1022,7 @@ pub enum AuthConfig {
     Header,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for AuthConfig {
     fn default() -> Self {
         Self::Basic
@@ -1487,6 +1037,7 @@ pub enum LinkType {
     Document,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for LinkType {
     fn default() -> Self {
         Self::Internal
@@ -1501,6 +1052,7 @@ pub enum ImageSource {
     TwitterImage,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for ImageSource {
     fn default() -> Self {
         Self::Img
@@ -1514,6 +1066,7 @@ pub enum FeedType {
     JsonFeed,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for FeedType {
     fn default() -> Self {
         Self::Rss
@@ -1534,6 +1087,7 @@ pub enum AssetCategory {
     Other,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for AssetCategory {
     fn default() -> Self {
         Self::Document
@@ -1547,6 +1101,7 @@ pub enum CrawlEvent {
     Complete,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for CrawlEvent {
     fn default() -> Self {
         Self::Page
@@ -1682,6 +1237,7 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
     }
 }
 
+#[allow(clippy::needless_update)]
 impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
     fn from(val: CrawlConfig) -> Self {
         Self {
@@ -1694,7 +1250,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: std::time::Duration::from_secs(val.request_timeout),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
@@ -1736,7 +1292,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().map(|(k, v)| (k, v)).collect(),
+            custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: val.request_timeout.as_secs(),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
@@ -1786,7 +1342,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
             mime_type: val.mime_type.to_string(),
             content: val.content.to_vec(),
             size: val.size,
-            filename: val.filename.as_ref().map(|v| v.to_string()),
+            filename: val.filename.as_ref().map(ToString::to_string),
             content_hash: val.content_hash.to_string(),
             headers: val
                 .headers
@@ -1837,7 +1393,7 @@ impl From<kreuzcrawl::ActionResult> for ActionResult {
             action_index: val.action_index,
             action_type: val.action_type.to_string(),
             success: val.success,
-            data: val.data.as_ref().map(|v| v.to_string()),
+            data: val.data.as_ref().map(ToString::to_string),
             error: val.error,
         }
     }
@@ -1905,7 +1461,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             js_render_hint: val.js_render_hint,
             browser_used: val.browser_used,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             screenshot: val.screenshot.map(|v| v.to_vec()),
             downloaded_document: val.downloaded_document.map(Into::into),
@@ -1960,7 +1516,7 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
             is_pdf: val.is_pdf,
             detected_charset: val.detected_charset,
             markdown: val.markdown.map(Into::into),
-            extracted_data: val.extracted_data.as_ref().map(|v| v.to_string()),
+            extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
             downloaded_document: val.downloaded_document.map(Into::into),
         }
@@ -2057,8 +1613,8 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
     fn from(val: kreuzcrawl::MarkdownResult) -> Self {
         Self {
             content: val.content,
-            document_structure: val.document_structure.as_ref().map(|v| v.to_string()),
-            tables: val.tables.iter().map(|v| v.to_string()).collect(),
+            document_structure: val.document_structure.as_ref().map(ToString::to_string),
+            tables: val.tables.iter().map(ToString::to_string).collect(),
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,

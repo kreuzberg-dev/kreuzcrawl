@@ -27,16 +27,21 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # =============================================================================
 # Runtime Stage - Chainguard minimal
 # =============================================================================
-FROM cgr.dev/chainguard/wolfi-base:latest
+FROM debian:bookworm-slim
 
 LABEL org.opencontainers.image.source="https://github.com/kreuzberg-dev/kreuzcrawl"
 LABEL org.opencontainers.image.description="Kreuzcrawl CLI — lightweight web crawler"
 LABEL org.opencontainers.image.licenses="Elastic-2.0"
 
-RUN apk add --no-cache ca-certificates
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /build/kreuzcrawl /usr/local/bin/kreuzcrawl
 
-USER nonroot
+RUN groupadd -r kreuzcrawl && \
+    useradd -r -g kreuzcrawl -d /app -s /sbin/nologin kreuzcrawl
+
+USER kreuzcrawl
 
 ENTRYPOINT ["kreuzcrawl"]

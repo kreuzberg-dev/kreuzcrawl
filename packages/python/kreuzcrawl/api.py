@@ -7,17 +7,8 @@ from typing import TYPE_CHECKING
 import kreuzcrawl._kreuzcrawl as _rust
 
 if TYPE_CHECKING:
+    from .options import BatchCrawlResult, BatchScrapeResult, BrowserConfig, CrawlConfig, CrawlResult, MapResult, ProxyConfig, ScrapeResult
     from ._kreuzcrawl import CrawlEngineHandle
-    from .options import (
-        BatchCrawlResult,
-        BatchScrapeResult,
-        BrowserConfig,
-        CrawlConfig,
-        CrawlResult,
-        MapResult,
-        ProxyConfig,
-        ScrapeResult,
-    )
 
 
 def _to_rust_browser_config(value: BrowserConfig | None) -> object:

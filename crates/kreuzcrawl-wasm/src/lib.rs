@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use wasm_bindgen::prelude::*;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsExtractionMeta {
     cost: Option<f64>,
@@ -13,18 +13,6 @@ pub struct JsExtractionMeta {
     completion_tokens: Option<u64>,
     model: Option<String>,
     chunks_processed: usize,
-}
-
-impl Default for JsExtractionMeta {
-    fn default() -> Self {
-        Self {
-            cost: Default::default(),
-            prompt_tokens: Default::default(),
-            completion_tokens: Default::default(),
-            model: Default::default(),
-            chunks_processed: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -97,22 +85,12 @@ impl JsExtractionMeta {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsProxyConfig {
     url: String,
     username: Option<String>,
     password: Option<String>,
-}
-
-impl Default for JsProxyConfig {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            username: Default::default(),
-            password: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -157,7 +135,7 @@ impl JsProxyConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsBrowserConfig {
     mode: JsBrowserMode,
@@ -166,19 +144,6 @@ pub struct JsBrowserConfig {
     wait: JsBrowserWait,
     wait_selector: Option<String>,
     extra_wait: Option<u64>,
-}
-
-impl Default for JsBrowserConfig {
-    fn default() -> Self {
-        Self {
-            mode: Default::default(),
-            endpoint: Default::default(),
-            timeout: Default::default(),
-            wait: Default::default(),
-            wait_selector: Default::default(),
-            extra_wait: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -204,7 +169,7 @@ impl JsBrowserConfig {
 
     #[wasm_bindgen(getter)]
     pub fn mode(&self) -> JsBrowserMode {
-        self.mode.clone()
+        self.mode
     }
 
     #[wasm_bindgen(setter)]
@@ -234,7 +199,7 @@ impl JsBrowserConfig {
 
     #[wasm_bindgen(getter)]
     pub fn wait(&self) -> JsBrowserWait {
-        self.wait.clone()
+        self.wait
     }
 
     #[wasm_bindgen(setter)]
@@ -269,7 +234,7 @@ impl JsBrowserConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsCrawlConfig {
     max_depth: Option<usize>,
@@ -308,49 +273,9 @@ pub struct JsCrawlConfig {
     save_browser_profile: bool,
 }
 
-impl Default for JsCrawlConfig {
-    fn default() -> Self {
-        Self {
-            max_depth: Default::default(),
-            max_pages: Default::default(),
-            max_concurrent: Default::default(),
-            respect_robots_txt: Default::default(),
-            user_agent: Default::default(),
-            stay_on_domain: Default::default(),
-            allow_subdomains: Default::default(),
-            include_paths: Default::default(),
-            exclude_paths: Default::default(),
-            custom_headers: Default::default(),
-            request_timeout: Default::default(),
-            max_redirects: Default::default(),
-            retry_count: Default::default(),
-            retry_codes: Default::default(),
-            cookies_enabled: Default::default(),
-            auth: Default::default(),
-            max_body_size: Default::default(),
-            main_content_only: Default::default(),
-            remove_tags: Default::default(),
-            map_limit: Default::default(),
-            map_search: Default::default(),
-            download_assets: Default::default(),
-            asset_types: Default::default(),
-            max_asset_size: Default::default(),
-            browser: Default::default(),
-            proxy: Default::default(),
-            user_agents: Default::default(),
-            capture_screenshot: Default::default(),
-            download_documents: Default::default(),
-            document_max_size: Default::default(),
-            document_mime_types: Default::default(),
-            warc_output: Default::default(),
-            browser_profile: Default::default(),
-            save_browser_profile: Default::default(),
-        }
-    }
-}
-
 #[wasm_bindgen]
 impl JsCrawlConfig {
+    #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
         respect_robots_txt: Option<bool>,
@@ -392,37 +317,37 @@ impl JsCrawlConfig {
             max_depth,
             max_pages,
             max_concurrent,
-            respect_robots_txt: respect_robots_txt.unwrap_or_else(|| false),
+            respect_robots_txt: respect_robots_txt.unwrap_or(false),
             user_agent,
-            stay_on_domain: stay_on_domain.unwrap_or_else(|| false),
-            allow_subdomains: allow_subdomains.unwrap_or_else(|| false),
+            stay_on_domain: stay_on_domain.unwrap_or(false),
+            allow_subdomains: allow_subdomains.unwrap_or(false),
             include_paths: include_paths.unwrap_or_default(),
             exclude_paths: exclude_paths.unwrap_or_default(),
             custom_headers: custom_headers.unwrap_or_default(),
             request_timeout: request_timeout.unwrap_or_default(),
-            max_redirects: max_redirects.unwrap_or_else(|| 10),
-            retry_count: retry_count.unwrap_or_else(|| 0),
+            max_redirects: max_redirects.unwrap_or(10),
+            retry_count: retry_count.unwrap_or(0),
             retry_codes: retry_codes.unwrap_or_default(),
-            cookies_enabled: cookies_enabled.unwrap_or_else(|| false),
+            cookies_enabled: cookies_enabled.unwrap_or(false),
             auth,
             max_body_size,
-            main_content_only: main_content_only.unwrap_or_else(|| false),
+            main_content_only: main_content_only.unwrap_or(false),
             remove_tags: remove_tags.unwrap_or_default(),
             map_limit,
             map_search,
-            download_assets: download_assets.unwrap_or_else(|| false),
+            download_assets: download_assets.unwrap_or(false),
             asset_types: asset_types.unwrap_or_default(),
             max_asset_size,
             browser: browser.unwrap_or_default(),
             proxy,
             user_agents: user_agents.unwrap_or_default(),
-            capture_screenshot: capture_screenshot.unwrap_or_else(|| false),
-            download_documents: download_documents.unwrap_or_else(|| true),
+            capture_screenshot: capture_screenshot.unwrap_or(false),
+            download_documents: download_documents.unwrap_or(true),
             document_max_size,
             document_mime_types: document_mime_types.unwrap_or_default(),
             warc_output,
             browser_profile,
-            save_browser_profile: save_browser_profile.unwrap_or_else(|| false),
+            save_browser_profile: save_browser_profile.unwrap_or(false),
         }
     }
 
@@ -578,7 +503,7 @@ impl JsCrawlConfig {
 
     #[wasm_bindgen(getter)]
     pub fn auth(&self) -> Option<JsAuthConfig> {
-        self.auth.clone()
+        self.auth
     }
 
     #[wasm_bindgen(setter)]
@@ -773,7 +698,7 @@ impl JsCrawlConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsDownloadedDocument {
     url: String,
@@ -783,20 +708,6 @@ pub struct JsDownloadedDocument {
     filename: Option<String>,
     content_hash: String,
     headers: JsValue,
-}
-
-impl Default for JsDownloadedDocument {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            mime_type: Default::default(),
-            content: Default::default(),
-            size: Default::default(),
-            filename: Default::default(),
-            content_hash: Default::default(),
-            headers: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -893,24 +804,13 @@ impl JsDownloadedDocument {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsInteractionResult {
     action_results: Vec<JsActionResult>,
     final_html: String,
     final_url: String,
     screenshot: Option<Vec<u8>>,
-}
-
-impl Default for JsInteractionResult {
-    fn default() -> Self {
-        Self {
-            action_results: Default::default(),
-            final_html: Default::default(),
-            final_url: Default::default(),
-            screenshot: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -971,7 +871,7 @@ impl JsInteractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsActionResult {
     action_index: usize,
@@ -979,18 +879,6 @@ pub struct JsActionResult {
     success: bool,
     data: Option<JsValue>,
     error: Option<String>,
-}
-
-impl Default for JsActionResult {
-    fn default() -> Self {
-        Self {
-            action_index: Default::default(),
-            action_type: Default::default(),
-            success: Default::default(),
-            data: Default::default(),
-            error: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -1063,7 +951,7 @@ impl JsActionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsScrapeResult {
     status_code: u16,
@@ -1096,43 +984,9 @@ pub struct JsScrapeResult {
     downloaded_document: Option<JsDownloadedDocument>,
 }
 
-impl Default for JsScrapeResult {
-    fn default() -> Self {
-        Self {
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            is_allowed: Default::default(),
-            crawl_delay: Default::default(),
-            noindex_detected: Default::default(),
-            nofollow_detected: Default::default(),
-            x_robots_tag: Default::default(),
-            is_pdf: Default::default(),
-            was_skipped: Default::default(),
-            detected_charset: Default::default(),
-            main_content_only: Default::default(),
-            auth_header_sent: Default::default(),
-            response_meta: Default::default(),
-            assets: Default::default(),
-            js_render_hint: Default::default(),
-            browser_used: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            screenshot: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
 #[wasm_bindgen]
 impl JsScrapeResult {
+    #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
         status_code: Option<u16>,
@@ -1477,7 +1331,7 @@ impl JsScrapeResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsCrawlPageResult {
     url: String,
@@ -1502,35 +1356,9 @@ pub struct JsCrawlPageResult {
     downloaded_document: Option<JsDownloadedDocument>,
 }
 
-impl Default for JsCrawlPageResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            normalized_url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            html: Default::default(),
-            body_size: Default::default(),
-            metadata: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            feeds: Default::default(),
-            json_ld: Default::default(),
-            depth: Default::default(),
-            stayed_on_domain: Default::default(),
-            was_skipped: Default::default(),
-            is_pdf: Default::default(),
-            detected_charset: Default::default(),
-            markdown: Default::default(),
-            extracted_data: Default::default(),
-            extraction_meta: Default::default(),
-            downloaded_document: Default::default(),
-        }
-    }
-}
-
 #[wasm_bindgen]
 impl JsCrawlPageResult {
+    #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
         url: Option<String>,
@@ -1779,7 +1607,7 @@ impl JsCrawlPageResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsCrawlResult {
     pages: Vec<JsCrawlPageResult>,
@@ -1789,20 +1617,6 @@ pub struct JsCrawlResult {
     error: Option<String>,
     cookies: Vec<JsCookieInfo>,
     normalized_urls: Vec<String>,
-}
-
-impl Default for JsCrawlResult {
-    fn default() -> Self {
-        Self {
-            pages: Default::default(),
-            final_url: Default::default(),
-            redirect_count: Default::default(),
-            was_skipped: Default::default(),
-            error: Default::default(),
-            cookies: Default::default(),
-            normalized_urls: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -1899,24 +1713,13 @@ impl JsCrawlResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsSitemapUrl {
     url: String,
     lastmod: Option<String>,
     changefreq: Option<String>,
     priority: Option<String>,
-}
-
-impl Default for JsSitemapUrl {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            lastmod: Default::default(),
-            changefreq: Default::default(),
-            priority: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -1977,18 +1780,10 @@ impl JsSitemapUrl {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsMapResult {
     urls: Vec<JsSitemapUrl>,
-}
-
-impl Default for JsMapResult {
-    fn default() -> Self {
-        Self {
-            urls: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2011,7 +1806,7 @@ impl JsMapResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsMarkdownResult {
     content: String,
@@ -2020,19 +1815,6 @@ pub struct JsMarkdownResult {
     warnings: Vec<String>,
     citations: Option<JsCitationResult>,
     fit_content: Option<String>,
-}
-
-impl Default for JsMarkdownResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            document_structure: Default::default(),
-            tables: Default::default(),
-            warnings: Default::default(),
-            citations: Default::default(),
-            fit_content: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2117,7 +1899,7 @@ impl JsMarkdownResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsCachedPage {
     url: String,
@@ -2127,20 +1909,6 @@ pub struct JsCachedPage {
     etag: Option<String>,
     last_modified: Option<String>,
     cached_at: u64,
-}
-
-impl Default for JsCachedPage {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            body: Default::default(),
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cached_at: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2237,7 +2005,7 @@ impl JsCachedPage {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsLinkInfo {
     url: String,
@@ -2245,18 +2013,6 @@ pub struct JsLinkInfo {
     link_type: JsLinkType,
     rel: Option<String>,
     nofollow: bool,
-}
-
-impl Default for JsLinkInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            text: Default::default(),
-            link_type: Default::default(),
-            rel: Default::default(),
-            nofollow: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2300,7 +2056,7 @@ impl JsLinkInfo {
 
     #[wasm_bindgen(getter, js_name = "linkType")]
     pub fn link_type(&self) -> JsLinkType {
-        self.link_type.clone()
+        self.link_type
     }
 
     #[wasm_bindgen(setter, js_name = "linkType")]
@@ -2329,7 +2085,7 @@ impl JsLinkInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsImageInfo {
     url: String,
@@ -2337,18 +2093,6 @@ pub struct JsImageInfo {
     width: Option<u32>,
     height: Option<u32>,
     source: JsImageSource,
-}
-
-impl Default for JsImageInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            alt: Default::default(),
-            width: Default::default(),
-            height: Default::default(),
-            source: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2412,7 +2156,7 @@ impl JsImageInfo {
 
     #[wasm_bindgen(getter)]
     pub fn source(&self) -> JsImageSource {
-        self.source.clone()
+        self.source
     }
 
     #[wasm_bindgen(setter)]
@@ -2421,22 +2165,12 @@ impl JsImageInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsFeedInfo {
     url: String,
     title: Option<String>,
     feed_type: JsFeedType,
-}
-
-impl Default for JsFeedInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            title: Default::default(),
-            feed_type: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2472,7 +2206,7 @@ impl JsFeedInfo {
 
     #[wasm_bindgen(getter, js_name = "feedType")]
     pub fn feed_type(&self) -> JsFeedType {
-        self.feed_type.clone()
+        self.feed_type
     }
 
     #[wasm_bindgen(setter, js_name = "feedType")]
@@ -2481,22 +2215,12 @@ impl JsFeedInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsJsonLdEntry {
     schema_type: String,
     name: Option<String>,
     raw: String,
-}
-
-impl Default for JsJsonLdEntry {
-    fn default() -> Self {
-        Self {
-            schema_type: Default::default(),
-            name: Default::default(),
-            raw: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2541,24 +2265,13 @@ impl JsJsonLdEntry {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsCookieInfo {
     name: String,
     value: String,
     domain: Option<String>,
     path: Option<String>,
-}
-
-impl Default for JsCookieInfo {
-    fn default() -> Self {
-        Self {
-            name: Default::default(),
-            value: Default::default(),
-            domain: Default::default(),
-            path: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2619,7 +2332,7 @@ impl JsCookieInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsDownloadedAsset {
     url: String,
@@ -2628,19 +2341,6 @@ pub struct JsDownloadedAsset {
     size: usize,
     asset_category: JsAssetCategory,
     html_tag: Option<String>,
-}
-
-impl Default for JsDownloadedAsset {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            content_hash: Default::default(),
-            mime_type: Default::default(),
-            size: Default::default(),
-            asset_category: Default::default(),
-            html_tag: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2706,7 +2406,7 @@ impl JsDownloadedAsset {
 
     #[wasm_bindgen(getter, js_name = "assetCategory")]
     pub fn asset_category(&self) -> JsAssetCategory {
-        self.asset_category.clone()
+        self.asset_category
     }
 
     #[wasm_bindgen(setter, js_name = "assetCategory")]
@@ -2725,7 +2425,7 @@ impl JsDownloadedAsset {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsArticleMetadata {
     published_time: Option<String>,
@@ -2733,18 +2433,6 @@ pub struct JsArticleMetadata {
     author: Option<String>,
     section: Option<String>,
     tags: Vec<String>,
-}
-
-impl Default for JsArticleMetadata {
-    fn default() -> Self {
-        Self {
-            published_time: Default::default(),
-            modified_time: Default::default(),
-            author: Default::default(),
-            section: Default::default(),
-            tags: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2817,20 +2505,11 @@ impl JsArticleMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsHreflangEntry {
     lang: String,
     url: String,
-}
-
-impl Default for JsHreflangEntry {
-    fn default() -> Self {
-        Self {
-            lang: Default::default(),
-            url: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2864,24 +2543,13 @@ impl JsHreflangEntry {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsFaviconInfo {
     url: String,
     rel: String,
     sizes: Option<String>,
     mime_type: Option<String>,
-}
-
-impl Default for JsFaviconInfo {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            rel: Default::default(),
-            sizes: Default::default(),
-            mime_type: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2942,20 +2610,11 @@ impl JsFaviconInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsHeadingInfo {
     level: u8,
     text: String,
-}
-
-impl Default for JsHeadingInfo {
-    fn default() -> Self {
-        Self {
-            level: Default::default(),
-            text: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -2989,7 +2648,7 @@ impl JsHeadingInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsResponseMeta {
     etag: Option<String>,
@@ -2999,20 +2658,6 @@ pub struct JsResponseMeta {
     x_powered_by: Option<String>,
     content_language: Option<String>,
     content_encoding: Option<String>,
-}
-
-impl Default for JsResponseMeta {
-    fn default() -> Self {
-        Self {
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cache_control: Default::default(),
-            server: Default::default(),
-            x_powered_by: Default::default(),
-            content_language: Default::default(),
-            content_encoding: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -3109,7 +2754,7 @@ impl JsResponseMeta {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsPageMetadata {
     title: Option<String>,
@@ -3157,58 +2802,9 @@ pub struct JsPageMetadata {
     word_count: Option<usize>,
 }
 
-impl Default for JsPageMetadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            description: Default::default(),
-            canonical_url: Default::default(),
-            keywords: Default::default(),
-            author: Default::default(),
-            viewport: Default::default(),
-            theme_color: Default::default(),
-            generator: Default::default(),
-            robots: Default::default(),
-            html_lang: Default::default(),
-            html_dir: Default::default(),
-            og_title: Default::default(),
-            og_type: Default::default(),
-            og_image: Default::default(),
-            og_description: Default::default(),
-            og_url: Default::default(),
-            og_site_name: Default::default(),
-            og_locale: Default::default(),
-            og_video: Default::default(),
-            og_audio: Default::default(),
-            og_locale_alternates: Default::default(),
-            twitter_card: Default::default(),
-            twitter_title: Default::default(),
-            twitter_description: Default::default(),
-            twitter_image: Default::default(),
-            twitter_site: Default::default(),
-            twitter_creator: Default::default(),
-            dc_title: Default::default(),
-            dc_creator: Default::default(),
-            dc_subject: Default::default(),
-            dc_description: Default::default(),
-            dc_publisher: Default::default(),
-            dc_date: Default::default(),
-            dc_type: Default::default(),
-            dc_format: Default::default(),
-            dc_identifier: Default::default(),
-            dc_language: Default::default(),
-            dc_rights: Default::default(),
-            article: Default::default(),
-            hreflangs: Default::default(),
-            favicons: Default::default(),
-            headings: Default::default(),
-            word_count: Default::default(),
-        }
-    }
-}
-
 #[wasm_bindgen]
 impl JsPageMetadata {
+    #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
         title: Option<String>,
@@ -3733,20 +3329,11 @@ impl JsPageMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsCitationResult {
     content: String,
     references: Vec<JsCitationReference>,
-}
-
-impl Default for JsCitationResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            references: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -3780,22 +3367,12 @@ impl JsCitationResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsCitationReference {
     index: usize,
     url: String,
     text: String,
-}
-
-impl Default for JsCitationReference {
-    fn default() -> Self {
-        Self {
-            index: Default::default(),
-            url: Default::default(),
-            text: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -3849,22 +3426,12 @@ pub struct JsCrawlEngineHandle {
 #[wasm_bindgen]
 impl JsCrawlEngineHandle {}
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsBatchScrapeResult {
     url: String,
     result: Option<JsScrapeResult>,
     error: Option<String>,
-}
-
-impl Default for JsBatchScrapeResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -3909,22 +3476,12 @@ impl JsBatchScrapeResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsBatchCrawlResult {
     url: String,
     result: Option<JsCrawlResult>,
     error: Option<String>,
-}
-
-impl Default for JsBatchCrawlResult {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            result: Default::default(),
-            error: Default::default(),
-        }
-    }
 }
 
 #[wasm_bindgen]
@@ -3977,6 +3534,7 @@ pub enum JsBrowserMode {
     Never = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsBrowserMode {
     fn default() -> Self {
         Self::Auto
@@ -3991,6 +3549,7 @@ pub enum JsBrowserWait {
     Fixed = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsBrowserWait {
     fn default() -> Self {
         Self::NetworkIdle
@@ -4005,6 +3564,7 @@ pub enum JsAuthConfig {
     Header = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsAuthConfig {
     fn default() -> Self {
         Self::Basic
@@ -4020,6 +3580,7 @@ pub enum JsLinkType {
     Document = 3,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsLinkType {
     fn default() -> Self {
         Self::Internal
@@ -4035,6 +3596,7 @@ pub enum JsImageSource {
     TwitterImage = 3,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsImageSource {
     fn default() -> Self {
         Self::Img
@@ -4049,6 +3611,7 @@ pub enum JsFeedType {
     JsonFeed = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsFeedType {
     fn default() -> Self {
         Self::Rss
@@ -4070,6 +3633,7 @@ pub enum JsAssetCategory {
     Other = 9,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsAssetCategory {
     fn default() -> Self {
         Self::Document
@@ -4084,6 +3648,7 @@ pub enum JsCrawlEvent {
     Complete = 2,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for JsCrawlEvent {
     fn default() -> Self {
         Self::Page
@@ -4129,19 +3694,13 @@ pub async fn map_urls(engine: JsCrawlEngineHandle, url: String) -> Result<JsMapR
 #[wasm_bindgen(js_name = "batchScrape")]
 pub async fn batch_scrape(engine: JsCrawlEngineHandle, urls: Vec<String>) -> Vec<JsBatchScrapeResult> {
     let result = kreuzcrawl::batch_scrape(&engine.inner, urls).await;
-    result
-        .into_iter()
-        .map(|v| JsBatchScrapeResult::from(v))
-        .collect::<Vec<_>>()
+    result.into_iter().map(JsBatchScrapeResult::from).collect::<Vec<_>>()
 }
 
 #[wasm_bindgen(js_name = "batchCrawl")]
 pub async fn batch_crawl(engine: JsCrawlEngineHandle, urls: Vec<String>) -> Vec<JsBatchCrawlResult> {
     let result = kreuzcrawl::batch_crawl(&engine.inner, urls).await;
-    result
-        .into_iter()
-        .map(|v| JsBatchCrawlResult::from(v))
-        .collect::<Vec<_>>()
+    result.into_iter().map(JsBatchCrawlResult::from).collect::<Vec<_>>()
 }
 
 impl From<JsExtractionMeta> for kreuzcrawl::ExtractionMeta {
@@ -4214,6 +3773,7 @@ impl From<kreuzcrawl::BrowserConfig> for JsBrowserConfig {
     }
 }
 
+#[allow(clippy::needless_update)]
 impl From<JsCrawlConfig> for kreuzcrawl::CrawlConfig {
     fn from(val: JsCrawlConfig) -> Self {
         Self {
@@ -4318,7 +3878,7 @@ impl From<kreuzcrawl::DownloadedDocument> for JsDownloadedDocument {
             mime_type: val.mime_type.to_string(),
             content: val.content.to_vec(),
             size: val.size,
-            filename: val.filename.as_ref().map(|v| v.to_string()),
+            filename: val.filename.as_ref().map(ToString::to_string),
             content_hash: val.content_hash.to_string(),
             headers: serde_wasm_bindgen::to_value(&val.headers).unwrap_or(JsValue::NULL),
         }
