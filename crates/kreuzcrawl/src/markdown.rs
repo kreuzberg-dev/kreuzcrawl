@@ -2,47 +2,58 @@
 
 use crate::types::MarkdownResult;
 
+/// Perform the actual HTML-to-Markdown conversion (synchronous).
+fn convert_html_to_markdown(html: &str) -> Option<MarkdownResult> {
+    let options = html_to_markdown_rs::options::ConversionOptions {
+        include_document_structure: true,
+        ..Default::default()
+    };
+
+    match html_to_markdown_rs::convert(html, Some(options)) {
+        Ok(result) => {
+            let content = result.content.unwrap_or_default();
+            let document_structure = result.document.and_then(|d| serde_json::to_value(d).ok());
+            let tables = result
+                .tables
+                .iter()
+                .filter_map(|t| serde_json::to_value(t).ok())
+                .collect();
+            let warnings = result.warnings.iter().map(|w| format!("{:?}", w)).collect();
+
+            let citations = Some(crate::citations::generate_citations(&content));
+            let fit_content = Some(crate::pruning::generate_fit_markdown(&content));
+
+            Some(MarkdownResult {
+                content,
+                document_structure,
+                tables,
+                warnings,
+                citations,
+                fit_content,
+            })
+        }
+        Err(_) => None,
+    }
+}
+
 /// Convert an HTML string to Markdown, returning a rich result.
 ///
-/// Delegates to `html-to-markdown-rs` in a blocking task so the
-/// conversion does not block the async runtime.
+/// On native targets, delegates to a blocking task so the conversion
+/// does not block the async runtime. On wasm, runs synchronously.
 pub(crate) async fn convert_to_markdown(html: &str) -> Option<MarkdownResult> {
-    let html = html.to_owned();
-    tokio::task::spawn_blocking(move || {
-        let options = html_to_markdown_rs::options::ConversionOptions {
-            include_document_structure: true,
-            ..Default::default()
-        };
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let html = html.to_owned();
+        tokio::task::spawn_blocking(move || convert_html_to_markdown(&html))
+            .await
+            .ok()
+            .flatten()
+    }
 
-        match html_to_markdown_rs::convert(&html, Some(options)) {
-            Ok(result) => {
-                let content = result.content.unwrap_or_default();
-                let document_structure = result.document.and_then(|d| serde_json::to_value(d).ok());
-                let tables = result
-                    .tables
-                    .iter()
-                    .filter_map(|t| serde_json::to_value(t).ok())
-                    .collect();
-                let warnings = result.warnings.iter().map(|w| format!("{:?}", w)).collect();
-
-                let citations = Some(crate::citations::generate_citations(&content));
-                let fit_content = Some(crate::pruning::generate_fit_markdown(&content));
-
-                Some(MarkdownResult {
-                    content,
-                    document_structure,
-                    tables,
-                    warnings,
-                    citations,
-                    fit_content,
-                })
-            }
-            Err(_) => None,
-        }
-    })
-    .await
-    .ok()
-    .flatten()
+    #[cfg(target_arch = "wasm32")]
+    {
+        convert_html_to_markdown(html)
+    }
 }
 
 #[cfg(test)]

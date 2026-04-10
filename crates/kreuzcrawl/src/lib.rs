@@ -47,8 +47,10 @@ pub use browser_pool::{BrowserPool, BrowserPoolConfig, PooledPage};
 pub use citations::{CitationReference, CitationResult};
 #[cfg(feature = "ai")]
 pub use defaults::LlmExtractor;
+#[cfg(not(target_arch = "wasm32"))]
+pub use defaults::DiskCache;
 pub use defaults::{
-    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, DfsStrategy, DiskCache, InMemoryFrontier, NoopCache,
+    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, DfsStrategy, InMemoryFrontier, NoopCache,
     NoopEmitter, NoopFilter, NoopRateLimiter, NoopStore, PerDomainThrottle,
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};

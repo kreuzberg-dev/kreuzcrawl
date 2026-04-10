@@ -14,4 +14,4 @@ keywords = ["crawl", "scrape", "bindings", "web", "ffi"]
 categories = ["api-bindings"]
 
 [dependencies]
-kreuzcrawl = { path = "../kreuzcrawl" }
+kreuzcrawl = { path = "../kreuzcrawl", features = ["native-runtime"] }

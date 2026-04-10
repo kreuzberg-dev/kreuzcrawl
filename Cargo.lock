@@ -1941,6 +1941,7 @@ dependencies = [
  "dashmap",
  "dirs",
  "flate2",
+ "getrandom 0.3.4",
  "html-to-markdown-rs",
  "liter-llm",
  "memchr",
@@ -2041,6 +2042,7 @@ dependencies = [
 name = "kreuzcrawl-wasm"
 version = "0.1.0"
 dependencies = [
+ "getrandom 0.3.4",
  "kreuzcrawl",
  "serde-wasm-bindgen",
  "wasm-bindgen",

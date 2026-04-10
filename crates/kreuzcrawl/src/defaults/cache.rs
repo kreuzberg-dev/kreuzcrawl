@@ -1,6 +1,8 @@
 //! Disk-backed HTTP response cache using blake3 for key hashing.
 
+#[cfg(not(target_arch = "wasm32"))]
 use std::path::{Path, PathBuf};
+#[cfg(not(target_arch = "wasm32"))]
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use async_trait::async_trait;
@@ -14,6 +16,9 @@ use crate::types::CachedPage;
 /// Stores cached pages as JSON files in a configurable directory,
 /// using blake3 hashes of URLs as filenames. Supports TTL-based
 /// expiry and maximum entry count with LRU eviction.
+///
+/// Not available on `wasm32` targets (no filesystem access).
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Debug)]
 pub struct DiskCache {
     cache_dir: PathBuf,
@@ -25,6 +30,7 @@ pub struct DiskCache {
 #[derive(Debug, Clone, Default)]
 pub struct NoopCache;
 
+#[cfg(not(target_arch = "wasm32"))]
 impl DiskCache {
     /// Create a new disk cache.
     ///
@@ -64,12 +70,13 @@ impl DiskCache {
 
 #[cfg(test)]
 pub(crate) fn now_secs() -> u64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
         .unwrap_or_default()
         .as_secs()
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 #[async_trait]
 impl CrawlCache for DiskCache {
     async fn get(&self, key: &str) -> Result<Option<CachedPage>, CrawlError> {

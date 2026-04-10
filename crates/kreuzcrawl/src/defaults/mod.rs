@@ -9,7 +9,9 @@ mod rate_limiter;
 mod store;
 mod strategy;
 
-pub use cache::{DiskCache, NoopCache};
+#[cfg(not(target_arch = "wasm32"))]
+pub use cache::DiskCache;
+pub use cache::NoopCache;
 pub use emitter::NoopEmitter;
 pub use filter::{Bm25Filter, NoopFilter};
 pub use frontier::InMemoryFrontier;

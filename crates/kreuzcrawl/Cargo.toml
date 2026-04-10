@@ -14,11 +14,12 @@ categories.workspace = true
 description = "High-performance web crawling engine"
 
 [package.metadata.cargo-machete]
-ignored = ["base64", "memchr"]
+ignored = ["base64", "getrandom", "memchr"]
 
 [features]
-default = []
-browser = ["dep:chromiumoxide"]
+default = ["native-runtime"]
+native-runtime = ["tokio/rt-multi-thread", "tokio/net", "tokio/fs", "tokio/signal", "tokio/process", "tokio/io-util"]
+browser = ["dep:chromiumoxide", "dep:dirs", "native-runtime"]
 ai = ["dep:liter-llm", "dep:minijinja"]
 tracing = ["dep:tracing"]
 interact = ["browser"]
@@ -30,6 +31,7 @@ api = [
     "dep:uuid",
     "dep:dashmap",
     "dep:base64",
+    "native-runtime",
 ]
 mcp-http = ["mcp", "api"]
 warc = ["dep:uuid"]
@@ -43,7 +45,7 @@ blake3 = { workspace = true }
 chromiumoxide = { workspace = true, optional = true }
 chrono = { workspace = true }
 dashmap = { workspace = true, optional = true }
-dirs = { workspace = true }
+dirs = { workspace = true, optional = true }
 flate2 = { workspace = true }
 html-to-markdown-rs = { workspace = true }
 liter-llm = { workspace = true, optional = true }
@@ -59,7 +61,7 @@ serde_json = { workspace = true }
 sha2 = { workspace = true }
 thiserror = { workspace = true }
 tl = { workspace = true }
-tokio = { workspace = true }
+tokio = { version = "1", features = ["rt", "macros", "sync", "time"] }
 tokio-stream = { workspace = true }
 tower = { workspace = true }
 tower-http = { workspace = true, optional = true }
@@ -67,6 +69,9 @@ tracing = { workspace = true, optional = true }
 url = { workspace = true }
 utoipa = { workspace = true, optional = true }
 uuid = { workspace = true, optional = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"] }
 
 [dev-dependencies]
 async-trait = { workspace = true }
