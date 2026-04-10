@@ -3,7 +3,7 @@
 use std::collections::HashSet;
 
 use regex::Regex;
-use scraper::Html;
+use tl::ParserOptions;
 use url::Url;
 
 use crate::error::CrawlError;
@@ -99,8 +99,9 @@ pub async fn map(url: &str, config: &CrawlConfig) -> Result<MapResult, CrawlErro
     }
 
     // Fall back to link extraction from HTML
-    if is_html_content(&resp.content_type, &resp.body) {
-        let doc = Html::parse_document(&resp.body);
+    if is_html_content(&resp.content_type, &resp.body)
+        && let Ok(doc) = tl::parse(&resp.body, ParserOptions::default())
+    {
         let links = extract_links(&doc, &parsed_url);
         let mut url_set: Vec<SitemapUrl> = Vec::new();
         let mut seen: HashSet<String> = HashSet::new();

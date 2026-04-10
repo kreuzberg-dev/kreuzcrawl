@@ -13,6 +13,9 @@ keywords.workspace = true
 categories.workspace = true
 description = "High-performance web crawling engine"
 
+[package.metadata.cargo-machete]
+ignored = ["base64", "memchr"]
+
 [features]
 default = []
 browser = ["dep:chromiumoxide"]
@@ -51,11 +54,11 @@ regex = { workspace = true }
 reqwest = { workspace = true }
 rmcp = { workspace = true, optional = true }
 schemars = { workspace = true, optional = true }
-scraper = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha2 = { workspace = true }
 thiserror = { workspace = true }
+tl = { workspace = true }
 tokio = { workspace = true }
 tokio-stream = { workspace = true }
 tower = { workspace = true }

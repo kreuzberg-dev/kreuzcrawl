@@ -37,6 +37,10 @@ mkdocstrings = "mkdocstrings"
 rumdl = "rumdl"
 flate = "flate"
 tha = "tha"
+# Substring matching in error classification (e.g. chain.contains("truncat"))
+truncat = "truncat"
+AIMD = "AIMD"
+kreuzcrawl = "kreuzcrawl"
 # Domain-specific terms
 opf = "opf"
 hocr = "hocr"
@@ -92,6 +96,7 @@ execpt = "execpt"
 faiure = "faiure"
 # Tesseract upstream code
 splitted = "splitted"
+# Algorithm names
 # Short words flagged in code/data contexts
 mis = "mis"
 tre = "tre"

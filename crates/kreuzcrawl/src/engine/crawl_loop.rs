@@ -8,7 +8,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use regex::Regex;
-use scraper::Html;
+use tl::ParserOptions;
 use tokio::sync::Semaphore;
 use tokio::task::JoinSet;
 use url::Url;
@@ -104,15 +104,24 @@ impl CrawlState {
 
 /// Perform HTML extraction in a blocking context.
 ///
-/// `Html::parse_document` is `!Send`, so this must run via `spawn_blocking`.
+/// `tl::parse` borrows the input string, so this must run via `spawn_blocking`.
 fn blocking_extract_page(url: &str, content_type: &str, body: &str) -> PageExtraction {
     let parsed_url = Url::parse(url).unwrap_or_else(|_| FALLBACK_URL.clone());
     let is_binary = is_binary_content_type(content_type) || is_binary_url(url);
     let is_pdf = is_pdf_content(content_type, body) || is_pdf_url(url);
     let is_html = is_html_content(content_type, body);
 
-    let doc = Html::parse_document(body);
-    let extraction = extract_page_data(&doc, body, &parsed_url, is_html && !is_binary && !is_pdf, false);
+    let extraction = if let Ok(doc) = tl::parse(body, ParserOptions::default()) {
+        extract_page_data(&doc, body, &parsed_url, is_html && !is_binary && !is_pdf, false)
+    } else {
+        HtmlExtraction {
+            metadata: PageMetadata::default(),
+            links: Vec::new(),
+            images: Vec::new(),
+            feeds: Vec::new(),
+            json_ld: Vec::new(),
+        }
+    };
     let detected_charset = detect_charset(content_type, body);
 
     PageExtraction {
@@ -301,19 +310,19 @@ impl CrawlEngine {
             }
 
             // Check meta refresh
-            if is_html_content(&resp.content_type, &resp.body) {
-                let doc = Html::parse_document(&resp.body);
-                if let Some(refresh_target) = detect_meta_refresh(&doc) {
-                    let target = resolve_redirect(&current_url, &refresh_target);
-                    if let Some(t) = self.try_follow_redirect(&target, &seen_redirects, max_redirects, state) {
-                        seen_redirects.insert(t.clone());
-                        state.redirect_count += 1;
-                        current_url = t;
-                        continue;
-                    }
-                    if state.error.is_some() {
-                        break;
-                    }
+            if is_html_content(&resp.content_type, &resp.body)
+                && let Ok(doc) = tl::parse(&resp.body, ParserOptions::default())
+                && let Some(refresh_target) = detect_meta_refresh(&doc)
+            {
+                let target = resolve_redirect(&current_url, &refresh_target);
+                if let Some(t) = self.try_follow_redirect(&target, &seen_redirects, max_redirects, state) {
+                    seen_redirects.insert(t.clone());
+                    state.redirect_count += 1;
+                    current_url = t;
+                    continue;
+                }
+                if state.error.is_some() {
+                    break;
                 }
             }
 

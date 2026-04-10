@@ -163,3 +163,13 @@ GEMINI.md
 # Misc
 output.txt
 /tmp/kreuzcrawl-docker-test-results.json
+*.pyd
+.gems/
+vendor/bundle/
+vendor/
+*.h.bak
+*.test
+*.class
+bin/
+obj/
+pkg/

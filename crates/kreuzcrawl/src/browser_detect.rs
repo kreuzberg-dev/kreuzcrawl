@@ -6,7 +6,7 @@
 use std::sync::LazyLock;
 
 use regex::Regex;
-use scraper::{Html, Selector};
+use tl::ParserOptions;
 
 /// Minimum word count to consider a page as having substantial content.
 const MIN_CONTENT_WORD_COUNT: usize = 50;
@@ -16,14 +16,6 @@ const SPARSE_CONTENT_WORD_COUNT: usize = 20;
 
 /// Well-known SPA mount-point IDs with typically empty content.
 static SPA_MOUNT_IDS: &[&str] = &["root", "app", "__next", "__nuxt"];
-
-/// Selector for script elements.
-static SCRIPT_SELECTOR: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("script[src]").expect("valid selector: script[src]"));
-
-/// Selector for noscript elements.
-static NOSCRIPT_SELECTOR: LazyLock<Selector> =
-    LazyLock::new(|| Selector::parse("noscript").expect("valid selector: noscript"));
 
 /// Pattern matching common noscript warning text.
 static NOSCRIPT_WARNING: LazyLock<Regex> = LazyLock::new(|| {
@@ -41,20 +33,23 @@ pub(crate) fn detect_js_render_needed(body: &str, word_count: usize) -> bool {
         return false;
     }
 
-    let doc = Html::parse_document(body);
+    let Ok(dom) = tl::parse(body, ParserOptions::default()) else {
+        return false;
+    };
+    let parser = dom.parser();
 
     // Check for SPA mount points with empty or near-empty content.
-    if has_empty_spa_mount(&doc) {
+    if has_empty_spa_mount(&dom) {
         return true;
     }
 
     // Check for noscript warnings about JS being required.
-    if has_noscript_js_warning(&doc) {
+    if has_noscript_js_warning(&dom, parser) {
         return true;
     }
 
     // Low text content combined with script tags suggests client-side rendering.
-    if word_count < SPARSE_CONTENT_WORD_COUNT && has_script_tags(&doc) {
+    if word_count < SPARSE_CONTENT_WORD_COUNT && has_script_tags(&dom) {
         return true;
     }
 
@@ -63,16 +58,15 @@ pub(crate) fn detect_js_render_needed(body: &str, word_count: usize) -> bool {
 
 /// Check if the document has a well-known SPA mount-point div that is empty
 /// or contains only whitespace.
-fn has_empty_spa_mount(doc: &Html) -> bool {
+fn has_empty_spa_mount(dom: &tl::VDom<'_>) -> bool {
+    let parser = dom.parser();
     for id in SPA_MOUNT_IDS {
-        let selector_str = format!("#{id}");
-        if let Ok(selector) = Selector::parse(&selector_str) {
-            for el in doc.select(&selector) {
-                let inner_text: String = el.text().collect::<String>();
-                let trimmed = inner_text.trim();
-                if trimmed.is_empty() {
-                    return true;
-                }
+        if let Some(handle) = dom.get_element_by_id(*id)
+            && let Some(tag) = handle.get(parser).and_then(|n| n.as_tag())
+        {
+            let inner_text = tag.inner_text(parser);
+            if inner_text.trim().is_empty() {
+                return true;
             }
         }
     }
@@ -81,19 +75,24 @@ fn has_empty_spa_mount(doc: &Html) -> bool {
 
 /// Check if the document has a `<noscript>` element with text suggesting
 /// JavaScript is required to use the page.
-fn has_noscript_js_warning(doc: &Html) -> bool {
-    for el in doc.select(&NOSCRIPT_SELECTOR) {
-        let text: String = el.text().collect();
-        if NOSCRIPT_WARNING.is_match(&text) {
-            return true;
+fn has_noscript_js_warning(dom: &tl::VDom<'_>, parser: &tl::Parser<'_>) -> bool {
+    if let Some(iter) = dom.query_selector("noscript") {
+        for handle in iter {
+            if let Some(node) = handle.get(parser) {
+                let text = node.inner_text(parser).to_string();
+                if NOSCRIPT_WARNING.is_match(&text) {
+                    return true;
+                }
+            }
         }
     }
     false
 }
 
 /// Check if the document has external script tags.
-fn has_script_tags(doc: &Html) -> bool {
-    doc.select(&SCRIPT_SELECTOR).next().is_some()
+fn has_script_tags(dom: &tl::VDom<'_>) -> bool {
+    dom.query_selector("script[src]")
+        .is_some_and(|mut iter| iter.next().is_some())
 }
 
 #[cfg(test)]

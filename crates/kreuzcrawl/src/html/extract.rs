@@ -1,6 +1,6 @@
 //! Shared HTML data extraction used by both scrape and crawl.
 
-use scraper::Html;
+use tl::VDom;
 use url::Url;
 
 use crate::types::{FeedInfo, ImageInfo, JsonLdEntry, LinkInfo, PageMetadata};
@@ -26,7 +26,7 @@ pub(crate) struct HtmlExtraction {
 /// When `include_extended` is true, also extracts hreflangs, favicons,
 /// headings, and word count into the metadata.
 pub(crate) fn extract_page_data(
-    doc: &Html,
+    dom: &VDom<'_>,
     body: &str,
     base_url: &Url,
     is_html: bool,
@@ -42,28 +42,28 @@ pub(crate) fn extract_page_data(
         };
     }
 
-    let mut metadata = extract_metadata(doc, body);
+    let mut metadata = extract_metadata(dom, body);
 
     if include_extended {
-        let hreflangs = extract_hreflangs(doc);
+        let hreflangs = extract_hreflangs(dom);
         if !hreflangs.is_empty() {
             metadata.hreflangs = Some(hreflangs);
         }
-        let favicons = extract_favicons(doc);
+        let favicons = extract_favicons(dom);
         if !favicons.is_empty() {
             metadata.favicons = Some(favicons);
         }
-        let headings = extract_headings(doc);
+        let headings = extract_headings(dom);
         if !headings.is_empty() {
             metadata.headings = Some(headings);
         }
-        metadata.word_count = Some(super::content::compute_word_count(doc));
+        metadata.word_count = Some(super::content::compute_word_count(dom));
     }
 
-    let links = extract_links(doc, base_url);
-    let images = extract_images(doc, base_url);
-    let feeds = extract_feeds(doc);
-    let json_ld = extract_json_ld(doc);
+    let links = extract_links(dom, base_url);
+    let images = extract_images(dom, base_url);
+    let feeds = extract_feeds(dom);
+    let json_ld = extract_json_ld(dom);
 
     HtmlExtraction {
         metadata,

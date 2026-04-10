@@ -1,6 +1,6 @@
 //! Single-page scrape operation.
 
-use scraper::Html;
+use tl::ParserOptions;
 use url::Url;
 
 use crate::assets;
@@ -91,7 +91,8 @@ pub(crate) async fn scrape_from_crawl_response(
     let is_html = is_html_content(&content_type, &body);
 
     let (extraction, asset_refs) = {
-        let doc = Html::parse_document(&body);
+        let doc = tl::parse(&body, ParserOptions::default())
+            .map_err(|e| CrawlError::Other(format!("HTML parse error: {e:?}")))?;
 
         if !noindex_detected {
             noindex_detected = detect_noindex(&doc);

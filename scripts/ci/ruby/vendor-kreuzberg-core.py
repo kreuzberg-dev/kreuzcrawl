@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Vendor kreuzcrawl core crate into Ruby package
+Vendor kreuzcrawl core crate into Ruby package.
+
 Used by: ci-ruby.yaml - Vendor kreuzcrawl core crate step
 
 This script:
@@ -9,6 +10,7 @@ This script:
 3. Replaces workspace = true with explicit versions
 4. Generates vendor/Cargo.toml with proper workspace setup
 """
+# ruff: noqa: T201
 
 import os
 import re
@@ -19,7 +21,7 @@ from pathlib import Path
 try:
     import tomllib
 except ImportError:
-    import tomli as tomllib  # type: ignore
+    import tomli as tomllib  # type: ignore[import-untyped]
 
 
 def get_repo_root() -> Path:
@@ -314,7 +316,7 @@ def main() -> None:
                 shutil.copytree(src, dest)
                 copied_crates.append(dest_name)
                 print(f"Copied {dest_name}")
-            except Exception as e:
+            except OSError as e:
                 print(f"Warning: Failed to copy {dest_name}: {e}", file=sys.stderr)
         else:
             print(f"Warning: Source directory not found: {src_rel}")
@@ -452,6 +454,6 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - top-level CLI error handler
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
