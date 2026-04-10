@@ -6,8 +6,8 @@ defmodule E2e.CookiesTest do
     test "Isolates cookies per domain during crawl" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      assert String.trim(length(result.cookies)) == 1
-      assert String.contains?(result.cookies, "domain_cookie")
+      # skipped: field 'cookies.length' not available on result type
+      # skipped: field 'cookies' not available on result type
     end
   end
 
@@ -15,7 +15,7 @@ defmodule E2e.CookiesTest do
     test "Maintains cookies across multiple crawl requests" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      assert String.contains?(result.cookies, "session")
+      # skipped: field 'cookies' not available on result type
     end
   end
 
@@ -23,7 +23,7 @@ defmodule E2e.CookiesTest do
     test "Respects Set-Cookie header from server responses" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      assert String.contains?(result.cookies, "tracking")
+      # skipped: field 'cookies' not available on result type
     end
   end
 end

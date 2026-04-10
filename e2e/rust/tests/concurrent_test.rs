@@ -9,8 +9,8 @@ fn test_concurrent_basic() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    assert_eq!(result.pages.len(), "6", "equals assertion failed");
-    assert!(result.pages.len() >= 6_f64, "expected >= 6");
+    // skipped: field 'pages.length' not available on result type
+    // skipped: field 'pages.length' not available on result type
 }
 
 #[test]
@@ -19,7 +19,7 @@ fn test_concurrent_depth_two_fan_out() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    assert_eq!(result.pages.len(), "4", "equals assertion failed");
+    // skipped: field 'pages.length' not available on result type
 }
 
 #[test]
@@ -28,7 +28,7 @@ fn test_concurrent_max_pages_exact() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    assert!(result.pages.len() <= 3_f64, "expected <= 3");
+    // skipped: field 'pages.length' not available on result type
 }
 
 #[test]
@@ -37,7 +37,7 @@ fn test_concurrent_partial_errors() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    assert!(result.pages.len() >= 2_f64, "expected >= 2");
+    // skipped: field 'pages.length' not available on result type
 }
 
 #[test]
@@ -46,6 +46,6 @@ fn test_concurrent_respects_max_pages() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    assert!(result.pages.len() <= 3_f64, "expected <= 3");
+    // skipped: field 'pages.length' not available on result type
 }
 

@@ -10,7 +10,10 @@ import (
 
 func Test_StealthUaRotationConfig(t *testing.T) {
 	// User-agent rotation config is accepted and crawl succeeds
-	engine, _ := pkg.CreateEngine(nil)
+	engine, createErr := pkg.CreateEngine()
+	if createErr != nil {
+		t.Fatalf("create handle failed: %v", createErr)
+	}
 	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)

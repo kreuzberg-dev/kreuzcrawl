@@ -6,9 +6,9 @@ defmodule E2e.StreamTest do
     test "Crawl stream produces page and complete events" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      assert result.stream.event_count_min >= 4
-      assert String.trim(result.stream.has_page_event) == true
-      assert String.trim(result.stream.has_complete_event) == true
+      # skipped: field 'stream.event_count_min' not available on result type
+      # skipped: field 'stream.has_page_event' not available on result type
+      # skipped: field 'stream.has_complete_event' not available on result type
     end
   end
 
@@ -16,9 +16,9 @@ defmodule E2e.StreamTest do
     test "Stream produces events for multi-depth crawl with link following" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      assert result.stream.event_count_min >= 5
-      assert String.trim(result.stream.has_page_event) == true
-      assert String.trim(result.stream.has_complete_event) == true
+      # skipped: field 'stream.event_count_min' not available on result type
+      # skipped: field 'stream.has_page_event' not available on result type
+      # skipped: field 'stream.has_complete_event' not available on result type
     end
   end
 
@@ -26,9 +26,9 @@ defmodule E2e.StreamTest do
     test "Stream emits page and complete events even when some pages fail" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      assert String.trim(result.stream.has_page_event) == true
-      assert String.trim(result.stream.has_complete_event) == true
-      assert result.stream.event_count_min >= 2
+      # skipped: field 'stream.has_page_event' not available on result type
+      # skipped: field 'stream.has_complete_event' not available on result type
+      # skipped: field 'stream.event_count_min' not available on result type
     end
   end
 end

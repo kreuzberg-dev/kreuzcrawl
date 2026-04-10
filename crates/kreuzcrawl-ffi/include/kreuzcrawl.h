@@ -91,6 +91,14 @@ const char *kcrawl_version(void);
 KCRAWLExtractionMeta *kcrawl_extraction_meta_from_json(const char *json);
 
 /**
+ * Serialize a `ExtractionMeta` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_extraction_meta_to_json(const KCRAWLExtractionMeta *ptr);
+
+/**
  * Free a `ExtractionMeta` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -141,6 +149,14 @@ uintptr_t kcrawl_extraction_meta_chunks_processed(const KCRAWLExtractionMeta *pt
 KCRAWLProxyConfig *kcrawl_proxy_config_from_json(const char *json);
 
 /**
+ * Serialize a `ProxyConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_proxy_config_to_json(const KCRAWLProxyConfig *ptr);
+
+/**
  * Free a `ProxyConfig` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -175,6 +191,14 @@ char *kcrawl_proxy_config_password(const KCRAWLProxyConfig *ptr);
  * Returned handle must be freed with `kcrawl_browser_config_free`.
  */
 KCRAWLBrowserConfig *kcrawl_browser_config_from_json(const char *json);
+
+/**
+ * Serialize a `BrowserConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_config_to_json(const KCRAWLBrowserConfig *ptr);
 
 /**
  * Free a `BrowserConfig` handle.
@@ -239,6 +263,14 @@ KCRAWLBrowserConfig *kcrawl_browser_config_default(void);
  * Returned handle must be freed with `kcrawl_crawl_config_free`.
  */
 KCRAWLCrawlConfig *kcrawl_crawl_config_from_json(const char *json);
+
+/**
+ * Serialize a `CrawlConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_crawl_config_to_json(const KCRAWLCrawlConfig *ptr);
 
 /**
  * Free a `CrawlConfig` handle.
@@ -530,6 +562,14 @@ uintptr_t kcrawl_downloaded_document_size(const KCRAWLDownloadedDocument *ptr);
 KCRAWLInteractionResult *kcrawl_interaction_result_from_json(const char *json);
 
 /**
+ * Serialize a `InteractionResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_interaction_result_to_json(const KCRAWLInteractionResult *ptr);
+
+/**
  * Free a `InteractionResult` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -606,6 +646,14 @@ char *kcrawl_action_result_error(const KCRAWLActionResult *ptr);
  * Returned handle must be freed with `kcrawl_scrape_result_free`.
  */
 KCRAWLScrapeResult *kcrawl_scrape_result_from_json(const char *json);
+
+/**
+ * Serialize a `ScrapeResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_scrape_result_to_json(const KCRAWLScrapeResult *ptr);
 
 /**
  * Free a `ScrapeResult` handle.
@@ -819,6 +867,14 @@ KCRAWLDownloadedDocument *kcrawl_scrape_result_downloaded_document(const KCRAWLS
 KCRAWLCrawlPageResult *kcrawl_crawl_page_result_from_json(const char *json);
 
 /**
+ * Serialize a `CrawlPageResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_crawl_page_result_to_json(const KCRAWLCrawlPageResult *ptr);
+
+/**
  * Free a `CrawlPageResult` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -974,6 +1030,14 @@ KCRAWLDownloadedDocument *kcrawl_crawl_page_result_downloaded_document(const KCR
 KCRAWLCrawlResult *kcrawl_crawl_result_from_json(const char *json);
 
 /**
+ * Serialize a `CrawlResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_crawl_result_to_json(const KCRAWLCrawlResult *ptr);
+
+/**
  * Free a `CrawlResult` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1038,6 +1102,14 @@ char *kcrawl_crawl_result_normalized_urls(const KCRAWLCrawlResult *ptr);
 KCRAWLSitemapUrl *kcrawl_sitemap_url_from_json(const char *json);
 
 /**
+ * Serialize a `SitemapUrl` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_sitemap_url_to_json(const KCRAWLSitemapUrl *ptr);
+
+/**
  * Free a `SitemapUrl` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1081,6 +1153,14 @@ char *kcrawl_sitemap_url_priority(const KCRAWLSitemapUrl *ptr);
 KCRAWLMapResult *kcrawl_map_result_from_json(const char *json);
 
 /**
+ * Serialize a `MapResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_map_result_to_json(const KCRAWLMapResult *ptr);
+
+/**
  * Free a `MapResult` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1101,6 +1181,14 @@ char *kcrawl_map_result_urls(const KCRAWLMapResult *ptr);
  * Returned handle must be freed with `kcrawl_markdown_result_free`.
  */
 KCRAWLMarkdownResult *kcrawl_markdown_result_from_json(const char *json);
+
+/**
+ * Serialize a `MarkdownResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_markdown_result_to_json(const KCRAWLMarkdownResult *ptr);
 
 /**
  * Free a `MarkdownResult` handle.
@@ -1158,6 +1246,14 @@ char *kcrawl_markdown_result_fit_content(const KCRAWLMarkdownResult *ptr);
  * Returned handle must be freed with `kcrawl_cached_page_free`.
  */
 KCRAWLCachedPage *kcrawl_cached_page_from_json(const char *json);
+
+/**
+ * Serialize a `CachedPage` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_cached_page_to_json(const KCRAWLCachedPage *ptr);
 
 /**
  * Free a `CachedPage` handle.
@@ -1224,6 +1320,14 @@ uint64_t kcrawl_cached_page_cached_at(const KCRAWLCachedPage *ptr);
 KCRAWLLinkInfo *kcrawl_link_info_from_json(const char *json);
 
 /**
+ * Serialize a `LinkInfo` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_link_info_to_json(const KCRAWLLinkInfo *ptr);
+
+/**
  * Free a `LinkInfo` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1272,6 +1376,14 @@ int32_t kcrawl_link_info_nofollow(const KCRAWLLinkInfo *ptr);
  * Returned handle must be freed with `kcrawl_image_info_free`.
  */
 KCRAWLImageInfo *kcrawl_image_info_from_json(const char *json);
+
+/**
+ * Serialize a `ImageInfo` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_image_info_to_json(const KCRAWLImageInfo *ptr);
 
 /**
  * Free a `ImageInfo` handle.
@@ -1324,6 +1436,14 @@ KCRAWLImageSource *kcrawl_image_info_source(const KCRAWLImageInfo *ptr);
 KCRAWLFeedInfo *kcrawl_feed_info_from_json(const char *json);
 
 /**
+ * Serialize a `FeedInfo` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_feed_info_to_json(const KCRAWLFeedInfo *ptr);
+
+/**
  * Free a `FeedInfo` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1360,6 +1480,14 @@ KCRAWLFeedType *kcrawl_feed_info_feed_type(const KCRAWLFeedInfo *ptr);
 KCRAWLJsonLdEntry *kcrawl_json_ld_entry_from_json(const char *json);
 
 /**
+ * Serialize a `JsonLdEntry` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_json_ld_entry_to_json(const KCRAWLJsonLdEntry *ptr);
+
+/**
  * Free a `JsonLdEntry` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1394,6 +1522,14 @@ char *kcrawl_json_ld_entry_raw(const KCRAWLJsonLdEntry *ptr);
  * Returned handle must be freed with `kcrawl_cookie_info_free`.
  */
 KCRAWLCookieInfo *kcrawl_cookie_info_from_json(const char *json);
+
+/**
+ * Serialize a `CookieInfo` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_cookie_info_to_json(const KCRAWLCookieInfo *ptr);
 
 /**
  * Free a `CookieInfo` handle.
@@ -1437,6 +1573,14 @@ char *kcrawl_cookie_info_path(const KCRAWLCookieInfo *ptr);
  * Returned handle must be freed with `kcrawl_downloaded_asset_free`.
  */
 KCRAWLDownloadedAsset *kcrawl_downloaded_asset_from_json(const char *json);
+
+/**
+ * Serialize a `DownloadedAsset` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_downloaded_asset_to_json(const KCRAWLDownloadedAsset *ptr);
 
 /**
  * Free a `DownloadedAsset` handle.
@@ -1496,6 +1640,14 @@ char *kcrawl_downloaded_asset_html_tag(const KCRAWLDownloadedAsset *ptr);
 KCRAWLArticleMetadata *kcrawl_article_metadata_from_json(const char *json);
 
 /**
+ * Serialize a `ArticleMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_article_metadata_to_json(const KCRAWLArticleMetadata *ptr);
+
+/**
  * Free a `ArticleMetadata` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1546,6 +1698,14 @@ char *kcrawl_article_metadata_tags(const KCRAWLArticleMetadata *ptr);
 KCRAWLHreflangEntry *kcrawl_hreflang_entry_from_json(const char *json);
 
 /**
+ * Serialize a `HreflangEntry` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_hreflang_entry_to_json(const KCRAWLHreflangEntry *ptr);
+
+/**
  * Free a `HreflangEntry` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1573,6 +1733,14 @@ char *kcrawl_hreflang_entry_url(const KCRAWLHreflangEntry *ptr);
  * Returned handle must be freed with `kcrawl_favicon_info_free`.
  */
 KCRAWLFaviconInfo *kcrawl_favicon_info_from_json(const char *json);
+
+/**
+ * Serialize a `FaviconInfo` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_favicon_info_to_json(const KCRAWLFaviconInfo *ptr);
 
 /**
  * Free a `FaviconInfo` handle.
@@ -1618,6 +1786,14 @@ char *kcrawl_favicon_info_mime_type(const KCRAWLFaviconInfo *ptr);
 KCRAWLHeadingInfo *kcrawl_heading_info_from_json(const char *json);
 
 /**
+ * Serialize a `HeadingInfo` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_heading_info_to_json(const KCRAWLHeadingInfo *ptr);
+
+/**
  * Free a `HeadingInfo` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -1645,6 +1821,14 @@ char *kcrawl_heading_info_text(const KCRAWLHeadingInfo *ptr);
  * Returned handle must be freed with `kcrawl_response_meta_free`.
  */
 KCRAWLResponseMeta *kcrawl_response_meta_from_json(const char *json);
+
+/**
+ * Serialize a `ResponseMeta` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_response_meta_to_json(const KCRAWLResponseMeta *ptr);
 
 /**
  * Free a `ResponseMeta` handle.
@@ -1709,6 +1893,14 @@ char *kcrawl_response_meta_content_encoding(const KCRAWLResponseMeta *ptr);
  * Returned handle must be freed with `kcrawl_page_metadata_free`.
  */
 KCRAWLPageMetadata *kcrawl_page_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `PageMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_page_metadata_to_json(const KCRAWLPageMetadata *ptr);
 
 /**
  * Free a `PageMetadata` handle.
@@ -2027,6 +2219,14 @@ uintptr_t kcrawl_page_metadata_word_count(const KCRAWLPageMetadata *ptr);
 KCRAWLCitationResult *kcrawl_citation_result_from_json(const char *json);
 
 /**
+ * Serialize a `CitationResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_citation_result_to_json(const KCRAWLCitationResult *ptr);
+
+/**
  * Free a `CitationResult` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -2054,6 +2254,14 @@ char *kcrawl_citation_result_references(const KCRAWLCitationResult *ptr);
  * Returned handle must be freed with `kcrawl_citation_reference_free`.
  */
 KCRAWLCitationReference *kcrawl_citation_reference_from_json(const char *json);
+
+/**
+ * Serialize a `CitationReference` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_citation_reference_to_json(const KCRAWLCitationReference *ptr);
 
 /**
  * Free a `CitationReference` handle.
@@ -2099,6 +2307,14 @@ void kcrawl_crawl_engine_handle_free(KCRAWLCrawlEngineHandle *ptr);
 KCRAWLBatchScrapeResult *kcrawl_batch_scrape_result_from_json(const char *json);
 
 /**
+ * Serialize a `BatchScrapeResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_batch_scrape_result_to_json(const KCRAWLBatchScrapeResult *ptr);
+
+/**
  * Free a `BatchScrapeResult` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -2133,6 +2349,14 @@ char *kcrawl_batch_scrape_result_error(const KCRAWLBatchScrapeResult *ptr);
  * Returned handle must be freed with `kcrawl_batch_crawl_result_free`.
  */
 KCRAWLBatchCrawlResult *kcrawl_batch_crawl_result_from_json(const char *json);
+
+/**
+ * Serialize a `BatchCrawlResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_batch_crawl_result_to_json(const KCRAWLBatchCrawlResult *ptr);
 
 /**
  * Free a `BatchCrawlResult` handle.
