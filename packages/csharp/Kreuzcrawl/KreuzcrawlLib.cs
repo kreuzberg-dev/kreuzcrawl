@@ -10,6 +10,13 @@ namespace Kreuzcrawl;
 
 public static class KreuzcrawlLib
 {
+    /// <summary>
+    /// Create a new crawl engine with the given configuration.
+    ///
+    /// If `config` is `None`, uses [`CrawlConfig::default()`].
+    /// Returns an error if the configuration is invalid.
+    /// </summary>
+    /// <param name="config">Optional.</param>
     public static CrawlEngineHandle CreateEngine(CrawlConfig? config)
     {
         var result = NativeMethods.CreateEngine(
@@ -20,59 +27,107 @@ public static class KreuzcrawlLib
         return JsonSerializer.Deserialize<CrawlEngineHandle>(json ?? "null")!;
     }
 
-    public static ScrapeResult Scrape(CrawlEngineHandle engine, string url)
+    /// <summary>
+    /// Scrape a single URL, returning extracted page data.
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="url"></param>
+    public static async Task<ScrapeResult> Scrape(CrawlEngineHandle engine, string url)
     {
-        var result = NativeMethods.Scrape(
-            engine,
-            url
-        );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        return JsonSerializer.Deserialize<ScrapeResult>(json ?? "null")!;
+        ArgumentNullException.ThrowIfNull(engine);
+        ArgumentNullException.ThrowIfNull(url);
+        return await Task.Run(() =>
+        {
+            var result = NativeMethods.Scrape(
+                engine,
+                url
+            );
+            var json = Marshal.PtrToStringUTF8(result);
+            NativeMethods.FreeString(result);
+            return JsonSerializer.Deserialize<ScrapeResult>(json ?? "null")!;
+        });
     }
 
-    public static CrawlResult Crawl(CrawlEngineHandle engine, string url)
+    /// <summary>
+    /// Crawl a website starting from `url`, following links up to the configured depth.
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="url"></param>
+    public static async Task<CrawlResult> Crawl(CrawlEngineHandle engine, string url)
     {
-        var result = NativeMethods.Crawl(
-            engine,
-            url
-        );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        return JsonSerializer.Deserialize<CrawlResult>(json ?? "null")!;
+        ArgumentNullException.ThrowIfNull(engine);
+        ArgumentNullException.ThrowIfNull(url);
+        return await Task.Run(() =>
+        {
+            var result = NativeMethods.Crawl(
+                engine,
+                url
+            );
+            var json = Marshal.PtrToStringUTF8(result);
+            NativeMethods.FreeString(result);
+            return JsonSerializer.Deserialize<CrawlResult>(json ?? "null")!;
+        });
     }
 
-    public static MapResult MapUrls(CrawlEngineHandle engine, string url)
+    /// <summary>
+    /// Discover all pages on a website by following links and sitemaps.
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="url"></param>
+    public static async Task<MapResult> MapUrls(CrawlEngineHandle engine, string url)
     {
-        var result = NativeMethods.MapUrls(
-            engine,
-            url
-        );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        return JsonSerializer.Deserialize<MapResult>(json ?? "null")!;
+        ArgumentNullException.ThrowIfNull(engine);
+        ArgumentNullException.ThrowIfNull(url);
+        return await Task.Run(() =>
+        {
+            var result = NativeMethods.MapUrls(
+                engine,
+                url
+            );
+            var json = Marshal.PtrToStringUTF8(result);
+            NativeMethods.FreeString(result);
+            return JsonSerializer.Deserialize<MapResult>(json ?? "null")!;
+        });
     }
 
-    public static List<BatchScrapeResult> BatchScrape(CrawlEngineHandle engine, List<string> urls)
+    /// <summary>
+    /// Scrape multiple URLs concurrently.
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="urls"></param>
+    public static async Task<List<BatchScrapeResult>> BatchScrape(CrawlEngineHandle engine, List<string> urls)
     {
-        var result = NativeMethods.BatchScrape(
-            engine,
-            urls
-        );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        return JsonSerializer.Deserialize<List<BatchScrapeResult>>(json ?? "null")!;
+        ArgumentNullException.ThrowIfNull(engine);
+        return await Task.Run(() =>
+        {
+            var result = NativeMethods.BatchScrape(
+                engine,
+                urls
+            );
+            var json = Marshal.PtrToStringUTF8(result);
+            NativeMethods.FreeString(result);
+            return JsonSerializer.Deserialize<List<BatchScrapeResult>>(json ?? "null")!;
+        });
     }
 
-    public static List<BatchCrawlResult> BatchCrawl(CrawlEngineHandle engine, List<string> urls)
+    /// <summary>
+    /// Crawl multiple seed URLs concurrently, each following links to configured depth.
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="urls"></param>
+    public static async Task<List<BatchCrawlResult>> BatchCrawl(CrawlEngineHandle engine, List<string> urls)
     {
-        var result = NativeMethods.BatchCrawl(
-            engine,
-            urls
-        );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        return JsonSerializer.Deserialize<List<BatchCrawlResult>>(json ?? "null")!;
+        ArgumentNullException.ThrowIfNull(engine);
+        return await Task.Run(() =>
+        {
+            var result = NativeMethods.BatchCrawl(
+                engine,
+                urls
+            );
+            var json = Marshal.PtrToStringUTF8(result);
+            NativeMethods.FreeString(result);
+            return JsonSerializer.Deserialize<List<BatchCrawlResult>>(json ?? "null")!;
+        });
     }
 
     public static BrowserConfig BrowserConfigDefault()

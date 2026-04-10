@@ -3,32 +3,37 @@ defmodule Kreuzcrawl do
   @moduledoc "High-level API for kreuzcrawl."
 
   @doc "Create a new crawl engine with the given configuration."
-  @spec create_engine(term()) :: {:ok, term()} | {:error, term()}
+  @spec create_engine(map() | nil) :: {:ok, reference()} | {:error, String.t()}
   def create_engine(config) do
     Kreuzcrawl.Native.create_engine(config)
   end
 
   @doc "Scrape a single URL, returning extracted page data."
+  @spec scrape(reference(), String.t()) :: {:ok, map()} | {:error, String.t()}
   def scrape(engine, url) do
     Kreuzcrawl.Native.scrape(engine, url)
   end
 
   @doc "Crawl a website starting from `url`, following links up to the configured depth."
+  @spec crawl(reference(), String.t()) :: {:ok, map()} | {:error, String.t()}
   def crawl(engine, url) do
     Kreuzcrawl.Native.crawl(engine, url)
   end
 
   @doc "Discover all pages on a website by following links and sitemaps."
+  @spec map_urls(reference(), String.t()) :: {:ok, map()} | {:error, String.t()}
   def map_urls(engine, url) do
     Kreuzcrawl.Native.map_urls(engine, url)
   end
 
   @doc "Scrape multiple URLs concurrently."
+  @spec batch_scrape(reference(), [String.t()]) :: [map()]
   def batch_scrape(engine, urls) do
     Kreuzcrawl.Native.batch_scrape(engine, urls)
   end
 
   @doc "Crawl multiple seed URLs concurrently, each following links to configured depth."
+  @spec batch_crawl(reference(), [String.t()]) :: [map()]
   def batch_crawl(engine, urls) do
     Kreuzcrawl.Native.batch_crawl(engine, urls)
   end
