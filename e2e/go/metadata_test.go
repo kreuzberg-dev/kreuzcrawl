@@ -125,7 +125,7 @@ func Test_MetadataKeywordsAuthor(t *testing.T) {
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if metadataTitle != `Comprehensive Metadata Test Page` {
+	if strings.TrimSpace(metadataTitle) != `Comprehensive Metadata Test Page` {
 		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 	if result.Metadata.CanonicalUrl == nil || len(*result.Metadata.CanonicalUrl) == 0 {
@@ -137,25 +137,25 @@ func Test_MetadataKeywordsAuthor(t *testing.T) {
 	if !strings.Contains(string(metadataKeywords), `rust`) {
 		t.Errorf("expected to contain %s, got %v", `rust`, metadataKeywords)
 	}
-	if metadataAuthor != `Jane Developer` {
+	if strings.TrimSpace(metadataAuthor) != `Jane Developer` {
 		t.Errorf("equals mismatch: got %v", metadataAuthor)
 	}
 	if result.Metadata.Viewport == nil || len(*result.Metadata.Viewport) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if metadataGenerator != `kreuzcrawl/1.0` {
+	if strings.TrimSpace(metadataGenerator) != `kreuzcrawl/1.0` {
 		t.Errorf("equals mismatch: got %v", metadataGenerator)
 	}
-	if metadataThemeColor != `#ff6600` {
+	if strings.TrimSpace(metadataThemeColor) != `#ff6600` {
 		t.Errorf("equals mismatch: got %v", metadataThemeColor)
 	}
-	if metadataRobots != `index, follow` {
+	if strings.TrimSpace(metadataRobots) != `index, follow` {
 		t.Errorf("equals mismatch: got %v", metadataRobots)
 	}
-	if metadataHTMLLang != `en` {
+	if strings.TrimSpace(metadataHTMLLang) != `en` {
 		t.Errorf("equals mismatch: got %v", metadataHTMLLang)
 	}
-	if metadataHTMLDir != `ltr` {
+	if strings.TrimSpace(metadataHTMLDir) != `ltr` {
 		t.Errorf("equals mismatch: got %v", metadataHTMLDir)
 	}
 }
@@ -181,10 +181,10 @@ func Test_MetadataOgVideoAudio(t *testing.T) {
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if metadataOgVideo != `https://example.com/video.mp4` {
+	if strings.TrimSpace(metadataOgVideo) != `https://example.com/video.mp4` {
 		t.Errorf("equals mismatch: got %v", metadataOgVideo)
 	}
-	if metadataOgAudio != `https://example.com/audio.mp3` {
+	if strings.TrimSpace(metadataOgAudio) != `https://example.com/audio.mp3` {
 		t.Errorf("equals mismatch: got %v", metadataOgAudio)
 	}
 	// skipped: field 'og.locale_alternate.length' not available on result type

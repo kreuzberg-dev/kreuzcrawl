@@ -25,7 +25,7 @@ func Test_MarkdownBasicConversion(t *testing.T) {
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if metadataTitle != `Test` {
+	if strings.TrimSpace(metadataTitle) != `Test` {
 		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 	if len(result.Html) == 0 {

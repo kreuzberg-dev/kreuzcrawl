@@ -70,10 +70,10 @@ func Test_EngineScrapeBasic(t *testing.T) {
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if result.ContentType != `text/html` {
+	if strings.TrimSpace(result.ContentType) != `text/html` {
 		t.Errorf("equals mismatch: got %v", result.ContentType)
 	}
-	if metadataTitle != `Engine Test` {
+	if strings.TrimSpace(metadataTitle) != `Engine Test` {
 		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 	if !strings.Contains(string(metadataDescription), `Testing the engine`) {

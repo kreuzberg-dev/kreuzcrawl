@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require "kreuzcrawl"
+require 'kreuzcrawl'
 
-RSpec.describe "cache" do
-  it "cache_basic: Crawling with disk cache enabled succeeds without errors" do
+RSpec.describe 'cache' do
+  it 'cache_basic: Crawling with disk cache enabled succeeds without errors' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, "")
+    result = Kreuzcrawl.scrape(engine, '')
     expect(result.status_code).to eq(200)
   end
 end

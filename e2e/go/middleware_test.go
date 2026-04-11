@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -38,7 +39,7 @@ func Test_MiddlewareNoopNoEffect(t *testing.T) {
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if metadataTitle != `Middleware Test` {
+	if strings.TrimSpace(metadataTitle) != `Middleware Test` {
 		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 }

@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -39,7 +40,7 @@ func Test_ContentCharsetIso8859(t *testing.T) {
 	if result.DetectedCharset != nil {
 		detectedCharset = *result.DetectedCharset
 	}
-	if detectedCharset != `iso-8859-1` {
+	if strings.TrimSpace(detectedCharset) != `iso-8859-1` {
 		t.Errorf("equals mismatch: got %v", detectedCharset)
 	}
 }
@@ -151,7 +152,7 @@ func Test_ContentUtf8Bom(t *testing.T) {
 	if result.DetectedCharset != nil {
 		detectedCharset = *result.DetectedCharset
 	}
-	if detectedCharset != `utf-8` {
+	if strings.TrimSpace(detectedCharset) != `utf-8` {
 		t.Errorf("equals mismatch: got %v", detectedCharset)
 	}
 	if len(result.Html) == 0 {

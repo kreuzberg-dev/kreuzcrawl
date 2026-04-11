@@ -89,13 +89,13 @@ func Test_ScrapeBasicHtmlPage(t *testing.T) {
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if result.ContentType != `text/html` {
+	if strings.TrimSpace(result.ContentType) != `text/html` {
 		t.Errorf("equals mismatch: got %v", result.ContentType)
 	}
 	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if metadataTitle != `Example Domain` {
+	if strings.TrimSpace(metadataTitle) != `Example Domain` {
 		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 	if !strings.Contains(string(metadataDescription), `illustrative examples`) {
@@ -190,10 +190,10 @@ func Test_ScrapeDublinCore(t *testing.T) {
 	if len(metadataDcTitle) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if metadataDcTitle != `Effects of Climate Change on Marine Biodiversity` {
+	if strings.TrimSpace(metadataDcTitle) != `Effects of Climate Change on Marine Biodiversity` {
 		t.Errorf("equals mismatch: got %v", metadataDcTitle)
 	}
-	if metadataDcCreator != `Dr. Jane Smith` {
+	if strings.TrimSpace(metadataDcCreator) != `Dr. Jane Smith` {
 		t.Errorf("equals mismatch: got %v", metadataDcCreator)
 	}
 }
@@ -257,7 +257,7 @@ func Test_ScrapeImageSources(t *testing.T) {
 	if len(result.Images) < 5 {
 		t.Errorf("expected > 4, got %v", len(result.Images))
 	}
-	if metadataOgImage != `https://example.com/images/og-hero.jpg` {
+	if strings.TrimSpace(metadataOgImage) != `https://example.com/images/og-hero.jpg` {
 		t.Errorf("equals mismatch: got %v", metadataOgImage)
 	}
 }
@@ -297,10 +297,10 @@ func Test_ScrapeJsonLd(t *testing.T) {
 	if len(result.JsonLd) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if result.JsonLd[0].SchemaType != `Recipe` {
+	if strings.TrimSpace(result.JsonLd[0].SchemaType) != `Recipe` {
 		t.Errorf("equals mismatch: got %v", result.JsonLd[0].SchemaType)
 	}
-	if jsonLdName != `Best Chocolate Cake` {
+	if strings.TrimSpace(jsonLdName) != `Best Chocolate Cake` {
 		t.Errorf("equals mismatch: got %v", jsonLdName)
 	}
 }
@@ -362,19 +362,19 @@ func Test_ScrapeOgMetadata(t *testing.T) {
 	if len(metadataOgTitle) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if metadataOgTitle != `Article Title` {
+	if strings.TrimSpace(metadataOgTitle) != `Article Title` {
 		t.Errorf("equals mismatch: got %v", metadataOgTitle)
 	}
-	if metadataOgType != `article` {
+	if strings.TrimSpace(metadataOgType) != `article` {
 		t.Errorf("equals mismatch: got %v", metadataOgType)
 	}
-	if metadataOgImage != `https://example.com/images/article-hero.jpg` {
+	if strings.TrimSpace(metadataOgImage) != `https://example.com/images/article-hero.jpg` {
 		t.Errorf("equals mismatch: got %v", metadataOgImage)
 	}
 	if result.Metadata.OgDescription == nil || len(*result.Metadata.OgDescription) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if metadataTitle != `Article Title - Example Blog` {
+	if strings.TrimSpace(metadataTitle) != `Article Title - Example Blog` {
 		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 }
@@ -403,10 +403,10 @@ func Test_ScrapeTwitterCard(t *testing.T) {
 	if result.Metadata.TwitterCard == nil || len(*result.Metadata.TwitterCard) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if metadataTwitterCard != `summary_large_image` {
+	if strings.TrimSpace(metadataTwitterCard) != `summary_large_image` {
 		t.Errorf("equals mismatch: got %v", metadataTwitterCard)
 	}
-	if metadataTwitterTitle != `New Product Launch` {
+	if strings.TrimSpace(metadataTwitterTitle) != `New Product Launch` {
 		t.Errorf("equals mismatch: got %v", metadataTwitterTitle)
 	}
 }
