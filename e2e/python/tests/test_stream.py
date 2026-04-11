@@ -2,12 +2,12 @@
 
 import os
 
-from kreuzcrawl import create_engine, scrape
+from kreuzcrawl import CrawlConfig, create_engine, scrape
 
 
 def test_crawl_stream_events() -> None:
     """Crawl stream produces page and complete events."""
-    engine_config = {"max_depth": 1, "respect_robots_txt": False}
+    engine_config = CrawlConfig(max_depth=1, respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/crawl_stream_events"
     _ = scrape(engine=engine, url=url)
@@ -18,7 +18,7 @@ def test_crawl_stream_events() -> None:
 
 def test_stream_depth_crawl() -> None:
     """Stream produces events for multi-depth crawl with link following."""
-    engine_config = {"max_concurrent": 1, "max_depth": 2}
+    engine_config = CrawlConfig(max_concurrent=1, max_depth=2)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/stream_depth_crawl"
     _ = scrape(engine=engine, url=url)
@@ -29,7 +29,7 @@ def test_stream_depth_crawl() -> None:
 
 def test_stream_with_error_event() -> None:
     """Stream emits page and complete events even when some pages fail."""
-    engine_config = {"max_concurrent": 1, "max_depth": 1}
+    engine_config = CrawlConfig(max_concurrent=1, max_depth=1)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/stream_with_error_event"
     _ = scrape(engine=engine, url=url)

@@ -3,7 +3,7 @@
 import os
 
 import pytest
-from kreuzcrawl import create_engine, scrape
+from kreuzcrawl import CrawlConfig, create_engine, scrape
 
 
 def test_error_401_unauthorized() -> None:
@@ -65,7 +65,7 @@ def test_error_502_bad_gateway() -> None:
 @pytest.mark.skip(reason="requires real network failure, cannot be tested via mock server")
 def test_error_connection_refused() -> None:
     """Handles connection refused error gracefully."""
-    engine_config = {"request_timeout": 5000, "respect_robots_txt": False}
+    engine_config = CrawlConfig(request_timeout=5000, respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/error_connection_refused"
     with pytest.raises(Exception):
@@ -75,7 +75,7 @@ def test_error_connection_refused() -> None:
 @pytest.mark.skip(reason="requires real network failure, cannot be tested via mock server")
 def test_error_dns_resolution() -> None:
     """Handles DNS resolution failure gracefully."""
-    engine_config = {"request_timeout": 5000, "respect_robots_txt": False}
+    engine_config = CrawlConfig(request_timeout=5000, respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/error_dns_resolution"
     with pytest.raises(Exception):
@@ -93,7 +93,7 @@ def test_error_empty_response() -> None:
 
 def test_error_invalid_proxy() -> None:
     """Proxy pointing to unreachable address causes connection error during scrape."""
-    engine_config = {"proxy": {"url": "http://127.0.0.1:1"}, "request_timeout": 2000}
+    engine_config = CrawlConfig(proxy={"url": "http://127.0.0.1:1"}, request_timeout=2000)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/error_invalid_proxy"
     with pytest.raises(Exception):
@@ -102,7 +102,7 @@ def test_error_invalid_proxy() -> None:
 
 def test_error_partial_response() -> None:
     """Handles incomplete or truncated HTTP response."""
-    engine_config = {"respect_robots_txt": False}
+    engine_config = CrawlConfig(respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/error_partial_response"
     with pytest.raises(Exception):
@@ -119,7 +119,7 @@ def test_error_rate_limited() -> None:
 
 def test_error_retry_503() -> None:
     """Retries request on 503 Service Unavailable response."""
-    engine_config = {"respect_robots_txt": False, "retry_codes": [503], "retry_count": 2}
+    engine_config = CrawlConfig(respect_robots_txt=False, retry_codes=[503], retry_count=2)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/error_retry_503"
     with pytest.raises(Exception):
@@ -128,7 +128,7 @@ def test_error_retry_503() -> None:
 
 def test_error_retry_backoff() -> None:
     """Implements exponential backoff when retrying failed requests."""
-    engine_config = {"respect_robots_txt": False, "retry_codes": [429], "retry_count": 3}
+    engine_config = CrawlConfig(respect_robots_txt=False, retry_codes=[429], retry_count=3)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/error_retry_backoff"
     with pytest.raises(Exception):
@@ -138,7 +138,7 @@ def test_error_retry_backoff() -> None:
 @pytest.mark.skip(reason="requires real network failure, cannot be tested via mock server")
 def test_error_ssl_invalid_cert() -> None:
     """Handles SSL certificate validation error."""
-    engine_config = {"request_timeout": 5000, "respect_robots_txt": False}
+    engine_config = CrawlConfig(request_timeout=5000, respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/error_ssl_invalid_cert"
     with pytest.raises(Exception):
@@ -147,7 +147,7 @@ def test_error_ssl_invalid_cert() -> None:
 
 def test_error_timeout() -> None:
     """Handles request timeout."""
-    engine_config = {"request_timeout": 1}
+    engine_config = CrawlConfig(request_timeout=1)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/error_timeout"
     with pytest.raises(Exception):
