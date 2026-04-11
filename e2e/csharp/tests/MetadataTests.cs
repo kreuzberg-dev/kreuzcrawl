@@ -12,7 +12,8 @@ public class MetadataTests
     {
         // Extracts article:published_time, modified_time, author, section, and tags
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/metadata_article_times";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         // skipped: field 'article.published_time' not available on result type
         // skipped: field 'article.modified_time' not available on result type
@@ -26,7 +27,8 @@ public class MetadataTests
     {
         // Extracts favicon link tags including apple-touch-icon
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/metadata_favicons";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         // skipped: field 'favicons.length' not available on result type
         // skipped: field 'favicons[].apple_touch' not available on result type
@@ -37,7 +39,8 @@ public class MetadataTests
     {
         // Extracts heading hierarchy (h1-h6) from HTML page
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/metadata_headings";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         // skipped: field 'headings.h1.length' not available on result type
         // skipped: field 'headings.h1[0].text' not available on result type
@@ -49,7 +52,8 @@ public class MetadataTests
     {
         // Extracts hreflang alternate link tags
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/metadata_hreflang";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         // skipped: field 'hreflang.length' not available on result type
         // skipped: field 'hreflang[].lang' not available on result type
@@ -60,7 +64,8 @@ public class MetadataTests
     {
         // Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/metadata_keywords_author";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.Equal("Comprehensive Metadata Test Page", result.Metadata.Title.Trim());
         Assert.NotEmpty(result.Metadata.CanonicalUrl);
@@ -80,7 +85,8 @@ public class MetadataTests
     {
         // Extracts og:video, og:audio, and og:locale:alternate metadata
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/metadata_og_video_audio";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.Equal("https://example.com/video.mp4", result.Metadata.OgVideo.Trim());
         Assert.Equal("https://example.com/audio.mp3", result.Metadata.OgAudio.Trim());
@@ -92,7 +98,8 @@ public class MetadataTests
     {
         // Extracts response metadata from HTTP headers (etag, server, content-language)
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/metadata_response_headers";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         // skipped: field 'response_headers.etag' not available on result type
         // skipped: field 'response_headers.last_modified' not available on result type
@@ -105,7 +112,8 @@ public class MetadataTests
     {
         // Computes word count from visible page text
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/metadata_word_count";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         // skipped: field 'computed.word_count' not available on result type
         // skipped: field 'computed.word_count' not available on result type

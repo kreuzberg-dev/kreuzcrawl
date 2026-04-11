@@ -7,7 +7,7 @@ use kreuzcrawl::create_engine;
 async fn test_encoding_double_encoded() {
     // Handles double-encoded URL characters (%25C3%25B6)
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "encoding_double_encoded");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
     assert!(result.links.len() >= 1, "expected >= 1");
@@ -17,7 +17,7 @@ async fn test_encoding_double_encoded() {
 async fn test_encoding_mixed_charset_page() {
     // Handles charset mismatch between HTTP header and HTML meta tag
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "encoding_mixed_charset_page");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
 }
@@ -26,7 +26,7 @@ async fn test_encoding_mixed_charset_page() {
 async fn test_encoding_percent_encoded_path() {
     // Handles percent-encoded spaces and characters in URL paths
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "encoding_percent_encoded_path");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
     assert!(result.links.len() >= 2, "expected >= 2");
@@ -36,7 +36,7 @@ async fn test_encoding_percent_encoded_path() {
 async fn test_encoding_unicode_url() {
     // Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic)
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "encoding_unicode_url");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
 }

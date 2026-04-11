@@ -10,7 +10,8 @@ class RobotsTest {
     void testRobotsAllowAll() throws Exception {
         // Permissive robots.txt allows all paths
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_allow_all";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.isAllowed());
     }
 
@@ -18,7 +19,8 @@ class RobotsTest {
     void testRobotsAllowOverride() throws Exception {
         // Allow directive overrides Disallow for specific paths
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_allow_override";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.isAllowed());
     }
 
@@ -26,7 +28,8 @@ class RobotsTest {
     void testRobotsCommentsHandling() throws Exception {
         // Correctly parses robots.txt with inline and line comments
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_comments_handling";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.isAllowed());
     }
 
@@ -34,7 +37,8 @@ class RobotsTest {
     void testRobotsCrawlDelay() throws Exception {
         // Respects crawl-delay directive from robots.txt
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_crawl_delay";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(2, result.crawlDelay().orElse(""));
     }
 
@@ -42,7 +46,8 @@ class RobotsTest {
     void testRobotsDisallowPath() throws Exception {
         // Robots.txt disallows specific paths
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_disallow_path";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(false, result.isAllowed());
     }
 
@@ -50,7 +55,8 @@ class RobotsTest {
     void testRobotsMetaNofollow() throws Exception {
         // Detects nofollow meta robots tag and skips link extraction
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_meta_nofollow";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.nofollowDetected());
     }
 
@@ -58,7 +64,8 @@ class RobotsTest {
     void testRobotsMetaNoindex() throws Exception {
         // Detects noindex meta robots tag in HTML page
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_meta_noindex";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.noindexDetected());
     }
 
@@ -66,7 +73,8 @@ class RobotsTest {
     void testRobotsMissing404() throws Exception {
         // Missing robots.txt (404) allows all crawling
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_missing_404";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.isAllowed());
     }
 
@@ -74,7 +82,8 @@ class RobotsTest {
     void testRobotsMultipleUserAgents() throws Exception {
         // Picks the most specific user-agent block from robots.txt
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_multiple_user_agents";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.isAllowed());
     }
 
@@ -82,7 +91,8 @@ class RobotsTest {
     void testRobotsRequestRate() throws Exception {
         // Parses request-rate directive from robots.txt
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_request_rate";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(5, result.crawlDelay().orElse(""));
         assertEquals(true, result.isAllowed());
     }
@@ -91,7 +101,8 @@ class RobotsTest {
     void testRobotsSitemapDirective() throws Exception {
         // Discovers sitemap URL from Sitemap directive in robots.txt
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_sitemap_directive";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.isAllowed());
     }
 
@@ -99,7 +110,8 @@ class RobotsTest {
     void testRobotsUserAgentSpecific() throws Exception {
         // Matches user-agent specific rules in robots.txt
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_user_agent_specific";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(false, result.isAllowed());
     }
 
@@ -107,7 +119,8 @@ class RobotsTest {
     void testRobotsWildcardPaths() throws Exception {
         // Handles wildcard Disallow patterns in robots.txt
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_wildcard_paths";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(false, result.isAllowed());
     }
 
@@ -115,7 +128,8 @@ class RobotsTest {
     void testRobotsXRobotsTag() throws Exception {
         // Respects X-Robots-Tag HTTP header directives
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/robots_x_robots_tag";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals("noindex, nofollow", result.xRobotsTag().orElse(""));
         assertEquals(true, result.noindexDetected());
         assertEquals(true, result.nofollowDetected());

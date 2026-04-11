@@ -14,7 +14,8 @@ final class ContentTest extends TestCase
     public function test_content_204_no_content(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_204_no_content';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(204, $result->status_code);
         $this->assertEmpty($result->html);
     }
@@ -23,7 +24,8 @@ final class ContentTest extends TestCase
     public function test_content_charset_iso8859(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_charset_iso8859';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals("iso-8859-1", $result->detected_charset);
     }
 
@@ -31,7 +33,8 @@ final class ContentTest extends TestCase
     public function test_content_empty_body(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_empty_body';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
     }
 
@@ -39,7 +42,8 @@ final class ContentTest extends TestCase
     public function test_content_gzip_compressed(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_gzip_compressed';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
         $this->assertEquals(200, $result->status_code);
     }
@@ -48,7 +52,8 @@ final class ContentTest extends TestCase
     public function test_content_large_page_limit(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_large_page_limit';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertLessThan(1025, $result->body_size);
     }
 
@@ -56,7 +61,8 @@ final class ContentTest extends TestCase
     public function test_content_main_only(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_main_only';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->main_content_only);
     }
 
@@ -64,7 +70,8 @@ final class ContentTest extends TestCase
     public function test_content_pdf_no_extension(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_pdf_no_extension';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->is_pdf);
     }
 
@@ -72,7 +79,8 @@ final class ContentTest extends TestCase
     public function test_content_remove_tags(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_remove_tags';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
     }
 
@@ -80,7 +88,8 @@ final class ContentTest extends TestCase
     public function test_content_utf8_bom(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_utf8_bom';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals("utf-8", $result->detected_charset);
         $this->assertNotEmpty($result->html);
     }

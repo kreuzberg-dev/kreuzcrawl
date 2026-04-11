@@ -12,7 +12,8 @@ public class CacheTests
     {
         // Crawling with disk cache enabled succeeds without errors
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cache_basic";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
     }
 }

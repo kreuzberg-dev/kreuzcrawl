@@ -14,7 +14,8 @@ final class BatchTest extends TestCase
     public function test_scrape_batch_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_batch_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.failed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
@@ -24,7 +25,8 @@ final class BatchTest extends TestCase
     public function test_scrape_batch_partial_failure(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_batch_partial_failure';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.failed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
@@ -34,7 +36,8 @@ final class BatchTest extends TestCase
     public function test_scrape_batch_progress(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_batch_progress';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'batch.total_count' not available on result type
         // skipped: field 'batch.results' not available on result type
     }

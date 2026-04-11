@@ -5,7 +5,8 @@ defmodule E2e.MarkdownTest do
   describe "markdown_basic_conversion" do
     test "HTML is always converted to markdown alongside raw HTML" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_basic_conversion"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       assert String.trim(result.metadata.title) == "Test"
       assert result.html != ""
@@ -17,7 +18,8 @@ defmodule E2e.MarkdownTest do
   describe "markdown_crawl_all_pages" do
     test "All crawled pages have markdown field populated" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_crawl_all_pages"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
     end
   end
@@ -25,7 +27,8 @@ defmodule E2e.MarkdownTest do
   describe "markdown_fit_content" do
     test "Fit markdown removes navigation and boilerplate content" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_fit_content"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       assert result.markdown.content != ""
     end
@@ -34,7 +37,8 @@ defmodule E2e.MarkdownTest do
   describe "markdown_headings_and_paragraphs" do
     test "Markdown conversion preserves heading hierarchy and paragraph text" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_headings_and_paragraphs"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert result.markdown.content != ""
       assert String.contains?(result.markdown.content, "Main Title")
     end
@@ -43,7 +47,8 @@ defmodule E2e.MarkdownTest do
   describe "markdown_links_converted" do
     test "HTML links are converted to markdown link syntax" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_links_converted"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       assert result.html != ""
       assert result.markdown.content != ""
@@ -54,7 +59,8 @@ defmodule E2e.MarkdownTest do
   describe "markdown_with_citations" do
     test "Markdown includes citation conversion with numbered references" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_with_citations"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       assert result.markdown.content != ""
     end

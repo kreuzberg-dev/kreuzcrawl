@@ -10,7 +10,8 @@ class CookiesTest {
     void testCookiesPerDomain() throws Exception {
         // Isolates cookies per domain during crawl
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/cookies_per_domain";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'cookies.length' not available on result type
         // skipped: field 'cookies' not available on result type
     }
@@ -19,7 +20,8 @@ class CookiesTest {
     void testCookiesPersistence() throws Exception {
         // Maintains cookies across multiple crawl requests
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/cookies_persistence";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'cookies' not available on result type
     }
 
@@ -27,7 +29,8 @@ class CookiesTest {
     void testCookiesSetCookieResponse() throws Exception {
         // Respects Set-Cookie header from server responses
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/cookies_set_cookie_response";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'cookies' not available on result type
     }
 

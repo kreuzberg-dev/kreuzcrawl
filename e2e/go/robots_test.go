@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -14,7 +15,8 @@ func Test_RobotsAllowAll(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_allow_all"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -29,7 +31,8 @@ func Test_RobotsAllowOverride(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_allow_override"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -44,7 +47,8 @@ func Test_RobotsCommentsHandling(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_comments_handling"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -59,7 +63,8 @@ func Test_RobotsCrawlDelay(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_crawl_delay"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -74,7 +79,8 @@ func Test_RobotsDisallowPath(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_disallow_path"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -89,7 +95,8 @@ func Test_RobotsMetaNofollow(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_meta_nofollow"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -104,7 +111,8 @@ func Test_RobotsMetaNoindex(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_meta_noindex"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -119,7 +127,8 @@ func Test_RobotsMissing404(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_missing_404"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -134,7 +143,8 @@ func Test_RobotsMultipleUserAgents(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_multiple_user_agents"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -149,7 +159,8 @@ func Test_RobotsRequestRate(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_request_rate"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -167,7 +178,8 @@ func Test_RobotsSitemapDirective(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_sitemap_directive"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -182,7 +194,8 @@ func Test_RobotsUserAgentSpecific(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_user_agent_specific"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -197,7 +210,8 @@ func Test_RobotsWildcardPaths(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_wildcard_paths"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -212,7 +226,8 @@ func Test_RobotsXRobotsTag(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/robots_x_robots_tag"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

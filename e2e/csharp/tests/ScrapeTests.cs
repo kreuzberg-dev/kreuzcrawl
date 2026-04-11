@@ -12,7 +12,8 @@ public class ScrapeTests
     {
         // Same asset linked twice results in one download with one unique hash
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_asset_dedup";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.Equal(2, result.Assets.Count);
         Assert.NotEmpty(result.Assets[0].ContentHash);
@@ -23,7 +24,8 @@ public class ScrapeTests
     {
         // Skips assets exceeding max_asset_size limit
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_asset_max_size";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.Equal(2, result.Assets.Count);
     }
@@ -33,7 +35,8 @@ public class ScrapeTests
     {
         // Only downloads image assets when asset_types filter is set
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_asset_type_filter";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.Equal(1, result.Assets.Count);
         Assert.Contains("image", result.Assets[0].AssetCategory.ToString());
@@ -44,7 +47,8 @@ public class ScrapeTests
     {
         // Scrapes a simple HTML page and extracts title, description, and links
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_basic_html_page";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.Equal("text/html", result.ContentType.Trim());
         Assert.NotEmpty(result.Html);
@@ -62,7 +66,8 @@ public class ScrapeTests
     {
         // Classifies links by type: internal, external, anchor, document, image
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_complex_links";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.True(result.Links.Count > 9, "expected > 9");
         Assert.Contains("internal", result.Links[0].LinkType.ToString());
@@ -76,7 +81,8 @@ public class ScrapeTests
     {
         // Downloads CSS, JS, and image assets from page
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_download_assets";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.True(result.Assets.Count > 2, "expected > 2");
     }
@@ -86,7 +92,8 @@ public class ScrapeTests
     {
         // Extracts Dublin Core metadata from a page
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_dublin_core";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Metadata.DcTitle);
         Assert.Equal("Effects of Climate Change on Marine Biodiversity", result.Metadata.DcTitle.Trim());
@@ -98,7 +105,8 @@ public class ScrapeTests
     {
         // Handles an empty HTML document without errors
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_empty_page";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.True(result.Links.Count > -1, "expected > -1");
         Assert.Equal(0, result.Images.Count);
@@ -109,7 +117,8 @@ public class ScrapeTests
     {
         // Discovers RSS, Atom, and JSON feed links
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_feed_discovery";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.True(result.Feeds.Count >= 3, "expected >= 3");
     }
@@ -119,7 +128,8 @@ public class ScrapeTests
     {
         // Extracts images from img, picture, og:image, twitter:image
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_image_sources";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.True(result.Images.Count > 4, "expected > 4");
         Assert.Equal("https://example.com/images/og-hero.jpg", result.Metadata.OgImage.Trim());
@@ -130,7 +140,8 @@ public class ScrapeTests
     {
         // Handles SPA page with JavaScript-only content (no server-rendered HTML)
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_js_heavy_spa";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.NotEmpty(result.Html);
     }
 
@@ -139,7 +150,8 @@ public class ScrapeTests
     {
         // Extracts JSON-LD structured data from a page
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_json_ld";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.JsonLd);
         Assert.Equal("Recipe", result.JsonLd[0].SchemaType.Trim());
@@ -151,7 +163,8 @@ public class ScrapeTests
     {
         // Gracefully handles broken HTML without crashing
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_malformed_html";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Html);
         Assert.Contains("broken HTML", result.Metadata.Description.ToString());
@@ -162,7 +175,8 @@ public class ScrapeTests
     {
         // Extracts full Open Graph metadata from a page
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_og_metadata";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Metadata.OgTitle);
         Assert.Equal("Article Title", result.Metadata.OgTitle.Trim());
@@ -177,7 +191,8 @@ public class ScrapeTests
     {
         // Extracts Twitter Card metadata from a page
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_twitter_card";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Metadata.TwitterCard);
         Assert.Equal("summary_large_image", result.Metadata.TwitterCard.Trim());

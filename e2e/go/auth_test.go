@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"os"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -13,7 +14,8 @@ func Test_AuthBasicHttp(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/auth_basic_http"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -31,7 +33,8 @@ func Test_AuthBearerToken(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/auth_bearer_token"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -49,7 +52,8 @@ func Test_AuthCustomHeader(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/auth_custom_header"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

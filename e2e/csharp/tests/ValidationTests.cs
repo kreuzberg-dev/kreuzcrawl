@@ -12,7 +12,8 @@ public class ValidationTests
     {
         // Invalid regex in exclude_paths is rejected
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_invalid_exclude_regex";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -20,7 +21,8 @@ public class ValidationTests
     {
         // Invalid regex in include_paths is rejected
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_invalid_include_regex";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -28,7 +30,8 @@ public class ValidationTests
     {
         // Retry code outside 100-599 is rejected
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_invalid_retry_code";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -36,7 +39,8 @@ public class ValidationTests
     {
         // max_pages=0 is rejected as invalid config
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_max_pages_zero";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -44,7 +48,8 @@ public class ValidationTests
     {
         // max_redirects > 100 is rejected as invalid config
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_max_redirects_too_high";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -52,6 +57,7 @@ public class ValidationTests
     {
         // Zero request timeout is rejected as invalid config
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_timeout_zero";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 }

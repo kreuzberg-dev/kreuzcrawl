@@ -7,7 +7,7 @@ use kreuzcrawl::create_engine;
 async fn test_engine_batch_basic() {
     // CrawlEngine with defaults batch scrapes like the free function
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "engine_batch_basic");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'batch.completed_count' not available on result type
     // skipped: field 'batch.total_count' not available on result type
@@ -17,7 +17,7 @@ async fn test_engine_batch_basic() {
 async fn test_engine_crawl_basic() {
     // CrawlEngine with defaults crawls multiple pages like the free function
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "engine_crawl_basic");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'crawl.pages_crawled' not available on result type
     // skipped: field 'crawl.min_pages' not available on result type
@@ -27,7 +27,7 @@ async fn test_engine_crawl_basic() {
 async fn test_engine_map_basic() {
     // CrawlEngine with defaults discovers URLs like the free function
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "engine_map_basic");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'map.min_urls' not available on result type
 }
@@ -36,7 +36,7 @@ async fn test_engine_map_basic() {
 async fn test_engine_scrape_basic() {
     // CrawlEngine with defaults scrapes a page identically to the free function
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "engine_scrape_basic");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
     let metadata_description = result.metadata.description.as_deref().unwrap_or("");
@@ -52,7 +52,7 @@ async fn test_engine_scrape_basic() {
 async fn test_engine_stream_basic() {
     // CrawlEngine with defaults streams events like the free function
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "engine_stream_basic");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'stream.has_page_event' not available on result type
     // skipped: field 'stream.has_complete_event' not available on result type

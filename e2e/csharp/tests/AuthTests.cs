@@ -12,7 +12,8 @@ public class AuthTests
     {
         // Sends HTTP Basic authentication header
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_basic_http";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.AuthHeaderSent);
         Assert.Equal(200, result.StatusCode);
     }
@@ -22,7 +23,8 @@ public class AuthTests
     {
         // Sends Bearer token in Authorization header
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_bearer_token";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.AuthHeaderSent);
         Assert.Equal(200, result.StatusCode);
     }
@@ -32,7 +34,8 @@ public class AuthTests
     {
         // Sends authentication via custom header (X-API-Key)
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_custom_header";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.AuthHeaderSent);
         Assert.Equal(200, result.StatusCode);
     }

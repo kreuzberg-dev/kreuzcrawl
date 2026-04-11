@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"os"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -13,7 +14,8 @@ func Test_Redirect301Permanent(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_301_permanent"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -27,7 +29,8 @@ func Test_Redirect302Found(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_302_found"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -41,7 +44,8 @@ func Test_Redirect303SeeOther(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_303_see_other"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -55,7 +59,8 @@ func Test_Redirect307Temporary(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_307_temporary"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -69,7 +74,8 @@ func Test_Redirect308Permanent(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_308_permanent"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -83,7 +89,8 @@ func Test_RedirectChain(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_chain"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -97,7 +104,8 @@ func Test_RedirectCrossDomain(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_cross_domain"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -111,7 +119,8 @@ func Test_RedirectLoop(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_loop"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -124,7 +133,8 @@ func Test_RedirectMaxExceeded(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_max_exceeded"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -137,7 +147,8 @@ func Test_RedirectMetaRefresh(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_meta_refresh"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -151,7 +162,8 @@ func Test_RedirectRefreshHeader(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_refresh_header"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -165,7 +177,8 @@ func Test_RedirectTo404(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/redirect_to_404"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

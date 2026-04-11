@@ -14,7 +14,8 @@ final class MiddlewareTest extends TestCase
     public function test_middleware_engine_crawl_with_defaults(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/middleware_engine_crawl_with_defaults';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'crawl.min_pages' not available on result type
     }
@@ -23,7 +24,8 @@ final class MiddlewareTest extends TestCase
     public function test_middleware_noop_no_effect(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/middleware_noop_no_effect';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("Middleware Test", $result->metadata->title);
     }

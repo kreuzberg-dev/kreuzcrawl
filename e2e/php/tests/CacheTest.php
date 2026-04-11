@@ -14,7 +14,8 @@ final class CacheTest extends TestCase
     public function test_cache_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/cache_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
     }
 }

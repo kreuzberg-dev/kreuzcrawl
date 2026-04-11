@@ -10,7 +10,8 @@ class LinksTest {
     void testLinksAnchorFragment() throws Exception {
         // Identifies fragment-only links as anchor type
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_anchor_fragment";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().getFirst().linkType().contains("anchor"), "expected to contain: " + "anchor");
     }
 
@@ -18,7 +19,8 @@ class LinksTest {
     void testLinksBaseTag() throws Exception {
         // Resolves relative URLs using base tag href
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_base_tag";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().size() > 2, "expected > 2");
         assertTrue(result.links().getFirst().url().contains("example.com"), "expected to contain: " + "example.com");
     }
@@ -27,7 +29,8 @@ class LinksTest {
     void testLinksDocumentTypes() throws Exception {
         // Detects PDF, DOCX, XLSX links as document type
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_document_types";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().getFirst().linkType().contains("document"), "expected to contain: " + "document");
     }
 
@@ -35,7 +38,8 @@ class LinksTest {
     void testLinksEmptyHref() throws Exception {
         // Handles empty href attributes without errors
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_empty_href";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().size() > 0, "expected > 0");
         assertTrue(result.links().getFirst().url().contains("/valid"), "expected to contain: " + "/valid");
     }
@@ -44,7 +48,8 @@ class LinksTest {
     void testLinksInternalExternalClassification() throws Exception {
         // Correctly classifies internal vs external links by domain
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_internal_external_classification";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().size() > 4, "expected > 4");
         assertTrue(result.links().getFirst().linkType().contains("internal"), "expected to contain: " + "internal");
         assertTrue(result.links().getFirst().linkType().contains("external"), "expected to contain: " + "external");
@@ -54,7 +59,8 @@ class LinksTest {
     void testLinksMailtoJavascriptSkip() throws Exception {
         // Skips mailto:, javascript:, and tel: scheme links
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_mailto_javascript_skip";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().size() > 0, "expected > 0");
         assertFalse(result.links().getFirst().url().contains("mailto:"), "expected NOT to contain: " + "mailto:");
     }
@@ -63,7 +69,8 @@ class LinksTest {
     void testLinksProtocolRelative() throws Exception {
         // Handles protocol-relative URLs (//example.com) correctly
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_protocol_relative";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().size() > 1, "expected > 1");
         assertTrue(result.links().getFirst().url().contains("//"), "expected to contain: " + "//");
     }
@@ -72,7 +79,8 @@ class LinksTest {
     void testLinksRelAttributes() throws Exception {
         // Preserves rel=nofollow and rel=canonical attributes
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_rel_attributes";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().size() > 0, "expected > 0");
     }
 
@@ -80,7 +88,8 @@ class LinksTest {
     void testLinksRelativeParent() throws Exception {
         // Resolves ../ and ./ relative parent path links correctly
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_relative_parent";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertTrue(result.links().size() > 3, "expected > 3");
     }
 

@@ -14,7 +14,8 @@ final class StrategyTest extends TestCase
     public function test_strategy_best_first_seed(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_best_first_seed';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.first_page_url_contains' not available on result type
     }
@@ -23,7 +24,8 @@ final class StrategyTest extends TestCase
     public function test_strategy_bfs_default_order(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_bfs_default_order';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.crawl_order' not available on result type
     }
@@ -32,7 +34,8 @@ final class StrategyTest extends TestCase
     public function test_strategy_dfs_depth_first(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_dfs_depth_first';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.crawl_order' not available on result type
     }

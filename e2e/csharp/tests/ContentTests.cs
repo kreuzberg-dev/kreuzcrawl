@@ -12,7 +12,8 @@ public class ContentTests
     {
         // Handles 204 No Content response gracefully
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_204_no_content";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(204, result.StatusCode);
         Assert.Empty(result.Html);
     }
@@ -22,7 +23,8 @@ public class ContentTests
     {
         // Handles ISO-8859-1 encoded page correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_charset_iso8859";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal("iso-8859-1", result.DetectedCharset.Trim());
     }
 
@@ -31,7 +33,8 @@ public class ContentTests
     {
         // Handles 200 response with empty body gracefully
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_empty_body";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
     }
 
@@ -40,7 +43,8 @@ public class ContentTests
     {
         // Handles response with Accept-Encoding gzip negotiation
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_gzip_compressed";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.NotEmpty(result.Html);
         Assert.Equal(200, result.StatusCode);
     }
@@ -50,7 +54,8 @@ public class ContentTests
     {
         // Respects max body size limit and truncates or skips oversized pages
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_large_page_limit";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.True(result.BodySize < 1025, "expected < 1025");
     }
 
@@ -59,7 +64,8 @@ public class ContentTests
     {
         // Extracts only main content area, excluding nav, sidebar, footer
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_main_only";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.MainContentOnly);
     }
 
@@ -68,7 +74,8 @@ public class ContentTests
     {
         // Detects PDF content by Content-Type header when URL has no .pdf extension
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_pdf_no_extension";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.IsPdf);
     }
 
@@ -77,7 +84,8 @@ public class ContentTests
     {
         // Removes specified HTML elements by CSS selector before processing
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_remove_tags";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.NotEmpty(result.Html);
     }
 
@@ -86,7 +94,8 @@ public class ContentTests
     {
         // Handles UTF-8 content with BOM marker correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/content_utf8_bom";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal("utf-8", result.DetectedCharset.Trim());
         Assert.NotEmpty(result.Html);
     }

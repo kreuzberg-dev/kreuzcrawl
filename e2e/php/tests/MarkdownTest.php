@@ -14,7 +14,8 @@ final class MarkdownTest extends TestCase
     public function test_markdown_basic_conversion(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_basic_conversion';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("Test", $result->metadata->title);
         $this->assertNotEmpty($result->html);
@@ -26,7 +27,8 @@ final class MarkdownTest extends TestCase
     public function test_markdown_crawl_all_pages(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_crawl_all_pages';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
     }
 
@@ -34,7 +36,8 @@ final class MarkdownTest extends TestCase
     public function test_markdown_fit_content(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_fit_content';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->markdown->content);
     }
@@ -43,7 +46,8 @@ final class MarkdownTest extends TestCase
     public function test_markdown_headings_and_paragraphs(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_headings_and_paragraphs';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->markdown->content);
         $this->assertStringContainsString("Main Title", $result->markdown->content);
     }
@@ -52,7 +56,8 @@ final class MarkdownTest extends TestCase
     public function test_markdown_links_converted(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_links_converted';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->html);
         $this->assertNotEmpty($result->markdown->content);
@@ -63,7 +68,8 @@ final class MarkdownTest extends TestCase
     public function test_markdown_with_citations(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_with_citations';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->markdown->content);
     }

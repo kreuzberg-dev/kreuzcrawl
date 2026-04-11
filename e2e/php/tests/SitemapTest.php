@@ -14,7 +14,8 @@ final class SitemapTest extends TestCase
     public function test_sitemap_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }
@@ -23,7 +24,8 @@ final class SitemapTest extends TestCase
     public function test_sitemap_compressed_gzip(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_compressed_gzip';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -31,7 +33,8 @@ final class SitemapTest extends TestCase
     public function test_sitemap_empty(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_empty';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -39,7 +42,8 @@ final class SitemapTest extends TestCase
     public function test_sitemap_from_robots_txt(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_from_robots_txt';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -47,7 +51,8 @@ final class SitemapTest extends TestCase
     public function test_sitemap_index(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_index';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -55,7 +60,8 @@ final class SitemapTest extends TestCase
     public function test_sitemap_lastmod_filter(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_lastmod_filter';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }
@@ -64,7 +70,8 @@ final class SitemapTest extends TestCase
     public function test_sitemap_only_mode(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_only_mode';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -72,7 +79,8 @@ final class SitemapTest extends TestCase
     public function test_sitemap_xhtml_links(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_xhtml_links';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }

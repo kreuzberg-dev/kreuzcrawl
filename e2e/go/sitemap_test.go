@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"os"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -13,7 +14,8 @@ func Test_SitemapBasic(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_basic"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -27,7 +29,8 @@ func Test_SitemapCompressedGzip(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_compressed_gzip"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -40,7 +43,8 @@ func Test_SitemapEmpty(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_empty"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -53,7 +57,8 @@ func Test_SitemapFromRobotsTxt(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_from_robots_txt"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -66,7 +71,8 @@ func Test_SitemapIndex(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_index"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -79,7 +85,8 @@ func Test_SitemapLastmodFilter(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_lastmod_filter"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -93,7 +100,8 @@ func Test_SitemapOnlyMode(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_only_mode"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -106,7 +114,8 @@ func Test_SitemapXhtmlLinks(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_xhtml_links"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

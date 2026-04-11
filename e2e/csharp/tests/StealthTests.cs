@@ -12,7 +12,8 @@ public class StealthTests
     {
         // User-agent rotation config is accepted and crawl succeeds
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stealth_ua_rotation_config";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
     }
 }

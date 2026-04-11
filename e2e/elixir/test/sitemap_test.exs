@@ -5,7 +5,8 @@ defmodule E2e.SitemapTest do
   describe "sitemap_basic" do
     test "Parses a standard urlset sitemap" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_basic"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
       # skipped: field 'has_lastmod' not available on result type
     end
@@ -14,7 +15,8 @@ defmodule E2e.SitemapTest do
   describe "sitemap_compressed_gzip" do
     test "Parses a gzip-compressed sitemap file" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_compressed_gzip"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
     end
   end
@@ -22,7 +24,8 @@ defmodule E2e.SitemapTest do
   describe "sitemap_empty" do
     test "Handles empty sitemap gracefully" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_empty"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
     end
   end
@@ -30,7 +33,8 @@ defmodule E2e.SitemapTest do
   describe "sitemap_from_robots_txt" do
     test "Discovers sitemap via robots.txt Sitemap directive" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_from_robots_txt"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
     end
   end
@@ -38,7 +42,8 @@ defmodule E2e.SitemapTest do
   describe "sitemap_index" do
     test "Follows sitemap index to discover child sitemaps" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_index"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
     end
   end
@@ -46,7 +51,8 @@ defmodule E2e.SitemapTest do
   describe "sitemap_lastmod_filter" do
     test "Filters sitemap URLs by lastmod date" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_lastmod_filter"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
       # skipped: field 'has_lastmod' not available on result type
     end
@@ -55,7 +61,8 @@ defmodule E2e.SitemapTest do
   describe "sitemap_only_mode" do
     test "Uses sitemap URLs exclusively without following page links" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_only_mode"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
     end
   end
@@ -63,7 +70,8 @@ defmodule E2e.SitemapTest do
   describe "sitemap_xhtml_links" do
     test "Parses sitemap with XHTML namespace alternate links" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_xhtml_links"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
       # skipped: field 'has_lastmod' not available on result type
     end

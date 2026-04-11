@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"os"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -13,7 +14,8 @@ func Test_StrategyBestFirstSeed(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/strategy_best_first_seed"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -27,7 +29,8 @@ func Test_StrategyBfsDefaultOrder(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/strategy_bfs_default_order"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -41,7 +44,8 @@ func Test_StrategyDfsDepthFirst(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/strategy_dfs_depth_first"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

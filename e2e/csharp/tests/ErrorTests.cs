@@ -12,7 +12,8 @@ public class ErrorTests
     {
         // Handles 401 Unauthorized response correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_401_unauthorized";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -20,7 +21,8 @@ public class ErrorTests
     {
         // Handles 403 Forbidden response correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_403_forbidden";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -28,7 +30,8 @@ public class ErrorTests
     {
         // Handles 404 response correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_404_page";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -36,7 +39,8 @@ public class ErrorTests
     {
         // Handles 408 Request Timeout response correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_408_request_timeout";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -44,7 +48,8 @@ public class ErrorTests
     {
         // Handles 410 Gone response correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_410_gone";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -52,7 +57,8 @@ public class ErrorTests
     {
         // Handles 500 server error
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_500_server";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -60,7 +66,8 @@ public class ErrorTests
     {
         // Handles 502 Bad Gateway response correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_502_bad_gateway";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -68,7 +75,8 @@ public class ErrorTests
     {
         // Handles connection refused error gracefully
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_connection_refused";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -76,7 +84,8 @@ public class ErrorTests
     {
         // Handles DNS resolution failure gracefully
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_dns_resolution";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -84,7 +93,8 @@ public class ErrorTests
     {
         // Handles 200 with completely empty body gracefully
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_empty_response";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'html_not_empty' not available on result type
         // skipped: field 'error.is_error' not available on result type
     }
@@ -94,7 +104,8 @@ public class ErrorTests
     {
         // Proxy pointing to unreachable address causes connection error during scrape
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_invalid_proxy";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -102,7 +113,8 @@ public class ErrorTests
     {
         // Handles incomplete or truncated HTTP response
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_partial_response";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -110,7 +122,8 @@ public class ErrorTests
     {
         // Handles 429 rate limiting with Retry-After
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_rate_limited";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -118,7 +131,8 @@ public class ErrorTests
     {
         // Retries request on 503 Service Unavailable response
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_retry_503";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -126,7 +140,8 @@ public class ErrorTests
     {
         // Implements exponential backoff when retrying failed requests
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_retry_backoff";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -134,7 +149,8 @@ public class ErrorTests
     {
         // Handles SSL certificate validation error
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_ssl_invalid_cert";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -142,7 +158,8 @@ public class ErrorTests
     {
         // Handles request timeout
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_timeout";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -150,7 +167,8 @@ public class ErrorTests
     {
         // Akamai WAF detection returns WafBlocked error
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_waf_akamai";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -158,7 +176,8 @@ public class ErrorTests
     {
         // Detects WAF/bot protection false 403 (Cloudflare challenge page)
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_waf_false_403";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 
     [Fact]
@@ -166,6 +185,7 @@ public class ErrorTests
     {
         // Imperva/Incapsula WAF detection
         var engine = KreuzcrawlLib.CreateEngine(null);
-        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, ""));
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_waf_imperva";
+        await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
 }

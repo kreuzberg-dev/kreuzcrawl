@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -14,7 +15,8 @@ func Test_MiddlewareEngineCrawlWithDefaults(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/middleware_engine_crawl_with_defaults"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -28,7 +30,8 @@ func Test_MiddlewareNoopNoEffect(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	result, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/middleware_noop_no_effect"
+	result, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}

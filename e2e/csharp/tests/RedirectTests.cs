@@ -12,7 +12,8 @@ public class RedirectTests
     {
         // Follows 301 permanent redirect and returns final page content
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_301_permanent";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -22,7 +23,8 @@ public class RedirectTests
     {
         // Follows 302 Found redirect correctly
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_302_found";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -32,7 +34,8 @@ public class RedirectTests
     {
         // Follows 303 See Other redirect (method changes to GET)
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_303_see_other";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -42,7 +45,8 @@ public class RedirectTests
     {
         // Follows 307 Temporary Redirect (preserves method)
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_307_temporary";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -52,7 +56,8 @@ public class RedirectTests
     {
         // Follows 308 Permanent Redirect (preserves method)
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_308_permanent";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -62,7 +67,8 @@ public class RedirectTests
     {
         // Follows a chain of redirects (301 -> 302 -> 200)
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_chain";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -72,7 +78,8 @@ public class RedirectTests
     {
         // Reports cross-domain redirect target without following to external domain
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_cross_domain";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -82,7 +89,8 @@ public class RedirectTests
     {
         // Detects redirect loop (A -> B -> A) and returns error
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_loop";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'is_error' not available on result type
     }
 
@@ -91,7 +99,8 @@ public class RedirectTests
     {
         // Aborts when redirect count exceeds max_redirects limit
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_max_exceeded";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'is_error' not available on result type
     }
 
@@ -100,7 +109,8 @@ public class RedirectTests
     {
         // Follows HTML meta-refresh redirect to target page
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_meta_refresh";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -110,7 +120,8 @@ public class RedirectTests
     {
         // Handles HTTP Refresh header redirect
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_refresh_header";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -120,7 +131,8 @@ public class RedirectTests
     {
         // Redirect target returns 404 Not Found
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_to_404";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
         // skipped: field 'is_error' not available on result type

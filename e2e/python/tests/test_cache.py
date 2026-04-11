@@ -1,12 +1,13 @@
-"""E2e tests for category: cache.
-"""
+"""E2e tests for category: cache."""
+
+import os
+
 from kreuzcrawl import create_engine, scrape
 
 
 def test_cache_basic() -> None:
     """Crawling with disk cache enabled succeeds without errors."""
     engine = create_engine()
-    url = ""
+    url = os.environ["MOCK_SERVER_URL"] + "/fixtures/cache_basic"
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
-

@@ -5,7 +5,8 @@ defmodule E2e.MetadataTest do
   describe "metadata_article_times" do
     test "Extracts article:published_time, modified_time, author, section, and tags" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/metadata_article_times"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       # skipped: field 'article.published_time' not available on result type
       # skipped: field 'article.modified_time' not available on result type
@@ -18,7 +19,8 @@ defmodule E2e.MetadataTest do
   describe "metadata_favicons" do
     test "Extracts favicon link tags including apple-touch-icon" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/metadata_favicons"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       # skipped: field 'favicons.length' not available on result type
       # skipped: field 'favicons[].apple_touch' not available on result type
@@ -28,7 +30,8 @@ defmodule E2e.MetadataTest do
   describe "metadata_headings" do
     test "Extracts heading hierarchy (h1-h6) from HTML page" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/metadata_headings"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       # skipped: field 'headings.h1.length' not available on result type
       # skipped: field 'headings.h1[0].text' not available on result type
@@ -39,7 +42,8 @@ defmodule E2e.MetadataTest do
   describe "metadata_hreflang" do
     test "Extracts hreflang alternate link tags" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/metadata_hreflang"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       # skipped: field 'hreflang.length' not available on result type
       # skipped: field 'hreflang[].lang' not available on result type
@@ -49,7 +53,8 @@ defmodule E2e.MetadataTest do
   describe "metadata_keywords_author" do
     test "Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/metadata_keywords_author"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       assert String.trim(result.metadata.title) == "Comprehensive Metadata Test Page"
       assert result.metadata.canonical_url != ""
@@ -68,7 +73,8 @@ defmodule E2e.MetadataTest do
   describe "metadata_og_video_audio" do
     test "Extracts og:video, og:audio, and og:locale:alternate metadata" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/metadata_og_video_audio"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       assert String.trim(result.metadata.og_video) == "https://example.com/video.mp4"
       assert String.trim(result.metadata.og_audio) == "https://example.com/audio.mp3"
@@ -79,7 +85,8 @@ defmodule E2e.MetadataTest do
   describe "metadata_response_headers" do
     test "Extracts response metadata from HTTP headers (etag, server, content-language)" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/metadata_response_headers"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       # skipped: field 'response_headers.etag' not available on result type
       # skipped: field 'response_headers.last_modified' not available on result type
@@ -91,7 +98,8 @@ defmodule E2e.MetadataTest do
   describe "metadata_word_count" do
     test "Computes word count from visible page text" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/metadata_word_count"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       # skipped: field 'computed.word_count' not available on result type
       # skipped: field 'computed.word_count' not available on result type

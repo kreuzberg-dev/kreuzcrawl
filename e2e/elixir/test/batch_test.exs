@@ -5,7 +5,8 @@ defmodule E2e.BatchTest do
   describe "scrape_batch_basic" do
     test "Batch scrape of multiple URLs all succeeding" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_batch_basic"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'batch.completed_count' not available on result type
       # skipped: field 'batch.failed_count' not available on result type
       # skipped: field 'batch.total_count' not available on result type
@@ -15,7 +16,8 @@ defmodule E2e.BatchTest do
   describe "scrape_batch_partial_failure" do
     test "Batch scrape with one URL failing returns partial results" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_batch_partial_failure"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'batch.completed_count' not available on result type
       # skipped: field 'batch.failed_count' not available on result type
       # skipped: field 'batch.total_count' not available on result type
@@ -25,7 +27,8 @@ defmodule E2e.BatchTest do
   describe "scrape_batch_progress" do
     test "Batch scrape results include specific URL" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_batch_progress"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'batch.total_count' not available on result type
       # skipped: field 'batch.results' not available on result type
     end

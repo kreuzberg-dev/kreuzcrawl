@@ -10,7 +10,8 @@ class StrategyTest {
     void testStrategyBestFirstSeed() throws Exception {
         // BestFirst strategy always processes the seed URL first
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/strategy_best_first_seed";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.first_page_url_contains' not available on result type
     }
@@ -19,7 +20,8 @@ class StrategyTest {
     void testStrategyBfsDefaultOrder() throws Exception {
         // BFS strategy visits pages in breadth-first order
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/strategy_bfs_default_order";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.crawl_order' not available on result type
     }
@@ -28,7 +30,8 @@ class StrategyTest {
     void testStrategyDfsDepthFirst() throws Exception {
         // DFS strategy visits pages in depth-first order
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/strategy_dfs_depth_first";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.crawl_order' not available on result type
     }

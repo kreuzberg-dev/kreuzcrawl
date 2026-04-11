@@ -7,7 +7,7 @@ use kreuzcrawl::create_engine;
 async fn test_links_anchor_fragment() {
     // Identifies fragment-only links as anchor type
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_anchor_fragment");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links[0].link_type.to_string().contains(r#"anchor"#), "expected to contain: {}", r#"anchor"#);
 }
@@ -16,7 +16,7 @@ async fn test_links_anchor_fragment() {
 async fn test_links_base_tag() {
     // Resolves relative URLs using base tag href
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_base_tag");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 2, "expected > 2");
     assert!(result.links[0].url.to_string().contains(r#"example.com"#), "expected to contain: {}", r#"example.com"#);
@@ -26,7 +26,7 @@ async fn test_links_base_tag() {
 async fn test_links_document_types() {
     // Detects PDF, DOCX, XLSX links as document type
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_document_types");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links[0].link_type.to_string().contains(r#"document"#), "expected to contain: {}", r#"document"#);
 }
@@ -35,7 +35,7 @@ async fn test_links_document_types() {
 async fn test_links_empty_href() {
     // Handles empty href attributes without errors
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_empty_href");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 0, "expected > 0");
     assert!(result.links[0].url.to_string().contains(r#"/valid"#), "expected to contain: {}", r#"/valid"#);
@@ -45,7 +45,7 @@ async fn test_links_empty_href() {
 async fn test_links_internal_external_classification() {
     // Correctly classifies internal vs external links by domain
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_internal_external_classification");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 4, "expected > 4");
     assert!(result.links[0].link_type.to_string().contains(r#"internal"#), "expected to contain: {}", r#"internal"#);
@@ -56,7 +56,7 @@ async fn test_links_internal_external_classification() {
 async fn test_links_mailto_javascript_skip() {
     // Skips mailto:, javascript:, and tel: scheme links
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_mailto_javascript_skip");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 0, "expected > 0");
     assert!(!result.links[0].url.to_string().contains(r#"mailto:"#), "expected NOT to contain: {}", r#"mailto:"#);
@@ -66,7 +66,7 @@ async fn test_links_mailto_javascript_skip() {
 async fn test_links_protocol_relative() {
     // Handles protocol-relative URLs (//example.com) correctly
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_protocol_relative");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 1, "expected > 1");
     assert!(result.links[0].url.to_string().contains(r#"//"#), "expected to contain: {}", r#"//"#);
@@ -76,7 +76,7 @@ async fn test_links_protocol_relative() {
 async fn test_links_rel_attributes() {
     // Preserves rel=nofollow and rel=canonical attributes
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_rel_attributes");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 0, "expected > 0");
 }
@@ -85,7 +85,7 @@ async fn test_links_rel_attributes() {
 async fn test_links_relative_parent() {
     // Resolves ../ and ./ relative parent path links correctly
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_relative_parent");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 3, "expected > 3");
 }

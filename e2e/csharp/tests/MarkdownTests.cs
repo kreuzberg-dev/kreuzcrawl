@@ -12,7 +12,8 @@ public class MarkdownTests
     {
         // HTML is always converted to markdown alongside raw HTML
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/markdown_basic_conversion";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.Equal("Test", result.Metadata.Title.Trim());
         Assert.NotEmpty(result.Html);
@@ -25,7 +26,8 @@ public class MarkdownTests
     {
         // All crawled pages have markdown field populated
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/markdown_crawl_all_pages";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
     }
 
@@ -34,7 +36,8 @@ public class MarkdownTests
     {
         // Fit markdown removes navigation and boilerplate content
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/markdown_fit_content";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Markdown!.Content);
     }
@@ -44,7 +47,8 @@ public class MarkdownTests
     {
         // Markdown conversion preserves heading hierarchy and paragraph text
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/markdown_headings_and_paragraphs";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.NotEmpty(result.Markdown!.Content);
         Assert.Contains("Main Title", result.Markdown!.Content.ToString());
     }
@@ -54,7 +58,8 @@ public class MarkdownTests
     {
         // HTML links are converted to markdown link syntax
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/markdown_links_converted";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Html);
         Assert.NotEmpty(result.Markdown!.Content);
@@ -66,7 +71,8 @@ public class MarkdownTests
     {
         // Markdown includes citation conversion with numbered references
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/markdown_with_citations";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Markdown!.Content);
     }

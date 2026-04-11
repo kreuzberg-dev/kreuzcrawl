@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"os"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -13,7 +14,8 @@ func Test_Error401Unauthorized(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_401_unauthorized"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -25,7 +27,8 @@ func Test_Error403Forbidden(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_403_forbidden"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -37,7 +40,8 @@ func Test_Error404Page(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_404_page"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -49,7 +53,8 @@ func Test_Error408RequestTimeout(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_408_request_timeout"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -61,7 +66,8 @@ func Test_Error410Gone(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_410_gone"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -73,7 +79,8 @@ func Test_Error500Server(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_500_server"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -85,7 +92,8 @@ func Test_Error502BadGateway(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_502_bad_gateway"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -97,7 +105,8 @@ func Test_ErrorConnectionRefused(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_connection_refused"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -109,7 +118,8 @@ func Test_ErrorDnsResolution(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_dns_resolution"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -121,7 +131,8 @@ func Test_ErrorEmptyResponse(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_empty_response"
+	_, err := pkg.Scrape(engine, url)
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
@@ -135,7 +146,8 @@ func Test_ErrorInvalidProxy(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_invalid_proxy"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -147,7 +159,8 @@ func Test_ErrorPartialResponse(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_partial_response"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -159,7 +172,8 @@ func Test_ErrorRateLimited(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_rate_limited"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -171,7 +185,8 @@ func Test_ErrorRetry503(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_retry_503"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -183,7 +198,8 @@ func Test_ErrorRetryBackoff(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_retry_backoff"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -195,7 +211,8 @@ func Test_ErrorSslInvalidCert(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_ssl_invalid_cert"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -207,7 +224,8 @@ func Test_ErrorTimeout(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_timeout"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -219,7 +237,8 @@ func Test_ErrorWafAkamai(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_waf_akamai"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -231,7 +250,8 @@ func Test_ErrorWafFalse403(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_waf_false_403"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}
@@ -243,7 +263,8 @@ func Test_ErrorWafImperva(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/error_waf_imperva"
+	_, err := pkg.Scrape(engine, url)
 	if err == nil {
 		t.Errorf("expected an error, but call succeeded")
 	}

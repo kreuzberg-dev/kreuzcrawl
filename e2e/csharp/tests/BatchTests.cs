@@ -12,7 +12,8 @@ public class BatchTests
     {
         // Batch scrape of multiple URLs all succeeding
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_batch_basic";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.failed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
@@ -23,7 +24,8 @@ public class BatchTests
     {
         // Batch scrape with one URL failing returns partial results
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_batch_partial_failure";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.failed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
@@ -34,7 +36,8 @@ public class BatchTests
     {
         // Batch scrape results include specific URL
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_batch_progress";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'batch.total_count' not available on result type
         // skipped: field 'batch.results' not available on result type
     }

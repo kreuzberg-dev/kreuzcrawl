@@ -12,7 +12,8 @@ public class CookiesTests
     {
         // Isolates cookies per domain during crawl
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_per_domain";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'cookies.length' not available on result type
         // skipped: field 'cookies' not available on result type
     }
@@ -22,7 +23,8 @@ public class CookiesTests
     {
         // Maintains cookies across multiple crawl requests
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_persistence";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'cookies' not available on result type
     }
 
@@ -31,7 +33,8 @@ public class CookiesTests
     {
         // Respects Set-Cookie header from server responses
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_set_cookie_response";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'cookies' not available on result type
     }
 }

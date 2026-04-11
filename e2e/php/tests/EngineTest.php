@@ -14,7 +14,8 @@ final class EngineTest extends TestCase
     public function test_engine_batch_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/engine_batch_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
     }
@@ -23,7 +24,8 @@ final class EngineTest extends TestCase
     public function test_engine_crawl_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/engine_crawl_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'crawl.min_pages' not available on result type
     }
@@ -32,7 +34,8 @@ final class EngineTest extends TestCase
     public function test_engine_map_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/engine_map_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'map.min_urls' not available on result type
     }
 
@@ -40,7 +43,8 @@ final class EngineTest extends TestCase
     public function test_engine_scrape_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/engine_scrape_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("text/html", $result->content_type);
         $this->assertEquals("Engine Test", $result->metadata->title);
@@ -53,7 +57,8 @@ final class EngineTest extends TestCase
     public function test_engine_stream_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/engine_stream_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
         // skipped: field 'stream.event_count_min' not available on result type

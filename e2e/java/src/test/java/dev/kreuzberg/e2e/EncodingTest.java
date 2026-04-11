@@ -10,7 +10,8 @@ class EncodingTest {
     void testEncodingDoubleEncoded() throws Exception {
         // Handles double-encoded URL characters (%25C3%25B6)
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/encoding_double_encoded";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertFalse(result.html().isEmpty(), "expected non-empty value");
         assertTrue(result.links().size() >= 1, "expected >= 1");
     }
@@ -19,7 +20,8 @@ class EncodingTest {
     void testEncodingMixedCharsetPage() throws Exception {
         // Handles charset mismatch between HTTP header and HTML meta tag
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/encoding_mixed_charset_page";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertFalse(result.html().isEmpty(), "expected non-empty value");
     }
 
@@ -27,7 +29,8 @@ class EncodingTest {
     void testEncodingPercentEncodedPath() throws Exception {
         // Handles percent-encoded spaces and characters in URL paths
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/encoding_percent_encoded_path";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertFalse(result.html().isEmpty(), "expected non-empty value");
         assertTrue(result.links().size() >= 2, "expected >= 2");
     }
@@ -36,7 +39,8 @@ class EncodingTest {
     void testEncodingUnicodeUrl() throws Exception {
         // Handles Unicode characters in URLs (Hebrew, Japanese, Cyrillic)
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/encoding_unicode_url";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertFalse(result.html().isEmpty(), "expected non-empty value");
     }
 
