@@ -15,7 +15,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(true, $result->is_allowed);
     }
 
     /** Allow directive overrides Disallow for specific paths */
@@ -23,7 +23,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(true, $result->is_allowed);
     }
 
     /** Correctly parses robots.txt with inline and line comments */
@@ -31,7 +31,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(true, $result->is_allowed);
     }
 
     /** Respects crawl-delay directive from robots.txt */
@@ -39,7 +39,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.crawl_delay' not available on result type
+        $this->assertEquals(2, $result->crawl_delay);
     }
 
     /** Robots.txt disallows specific paths */
@@ -47,7 +47,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(false, $result->is_allowed);
     }
 
     /** Detects nofollow meta robots tag and skips link extraction */
@@ -55,7 +55,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.nofollow_detected' not available on result type
+        $this->assertEquals(true, $result->nofollow_detected);
     }
 
     /** Detects noindex meta robots tag in HTML page */
@@ -63,7 +63,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.noindex_detected' not available on result type
+        $this->assertEquals(true, $result->noindex_detected);
     }
 
     /** Missing robots.txt (404) allows all crawling */
@@ -71,7 +71,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(true, $result->is_allowed);
     }
 
     /** Picks the most specific user-agent block from robots.txt */
@@ -79,7 +79,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(true, $result->is_allowed);
     }
 
     /** Parses request-rate directive from robots.txt */
@@ -87,8 +87,8 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.crawl_delay' not available on result type
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(5, $result->crawl_delay);
+        $this->assertEquals(true, $result->is_allowed);
     }
 
     /** Discovers sitemap URL from Sitemap directive in robots.txt */
@@ -96,7 +96,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(true, $result->is_allowed);
     }
 
     /** Matches user-agent specific rules in robots.txt */
@@ -104,7 +104,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(false, $result->is_allowed);
     }
 
     /** Handles wildcard Disallow patterns in robots.txt */
@@ -112,7 +112,7 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        $this->assertEquals(false, $result->is_allowed);
     }
 
     /** Respects X-Robots-Tag HTTP header directives */
@@ -120,8 +120,8 @@ final class RobotsTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'robots.x_robots_tag' not available on result type
-        // skipped: field 'robots.noindex_detected' not available on result type
-        // skipped: field 'robots.nofollow_detected' not available on result type
+        $this->assertEquals("noindex, nofollow", $result->x_robots_tag);
+        $this->assertEquals(true, $result->noindex_detected);
+        $this->assertEquals(true, $result->nofollow_detected);
     }
 }

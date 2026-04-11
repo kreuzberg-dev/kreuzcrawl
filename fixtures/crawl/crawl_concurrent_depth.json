@@ -1,15 +1,9 @@
 {
 	"id": "crawl_concurrent_depth",
 	"description": "Concurrent crawl respects max_depth limit",
-	"tags": [
-		"crawl",
-		"concurrency"
-	],
+	"tags": ["crawl", "concurrency"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

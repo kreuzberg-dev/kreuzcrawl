@@ -6,7 +6,7 @@ defmodule E2e.RobotsTest do
     test "Permissive robots.txt allows all paths" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == true
     end
   end
 
@@ -14,7 +14,7 @@ defmodule E2e.RobotsTest do
     test "Allow directive overrides Disallow for specific paths" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == true
     end
   end
 
@@ -22,7 +22,7 @@ defmodule E2e.RobotsTest do
     test "Correctly parses robots.txt with inline and line comments" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == true
     end
   end
 
@@ -30,7 +30,7 @@ defmodule E2e.RobotsTest do
     test "Respects crawl-delay directive from robots.txt" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.crawl_delay' not available on result type
+      assert String.trim(result.crawl_delay) == 2
     end
   end
 
@@ -38,7 +38,7 @@ defmodule E2e.RobotsTest do
     test "Robots.txt disallows specific paths" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == false
     end
   end
 
@@ -46,7 +46,7 @@ defmodule E2e.RobotsTest do
     test "Detects nofollow meta robots tag and skips link extraction" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.nofollow_detected' not available on result type
+      assert String.trim(result.nofollow_detected) == true
     end
   end
 
@@ -54,7 +54,7 @@ defmodule E2e.RobotsTest do
     test "Detects noindex meta robots tag in HTML page" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.noindex_detected' not available on result type
+      assert String.trim(result.noindex_detected) == true
     end
   end
 
@@ -62,7 +62,7 @@ defmodule E2e.RobotsTest do
     test "Missing robots.txt (404) allows all crawling" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == true
     end
   end
 
@@ -70,7 +70,7 @@ defmodule E2e.RobotsTest do
     test "Picks the most specific user-agent block from robots.txt" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == true
     end
   end
 
@@ -78,8 +78,8 @@ defmodule E2e.RobotsTest do
     test "Parses request-rate directive from robots.txt" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.crawl_delay' not available on result type
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.crawl_delay) == 5
+      assert String.trim(result.is_allowed) == true
     end
   end
 
@@ -87,7 +87,7 @@ defmodule E2e.RobotsTest do
     test "Discovers sitemap URL from Sitemap directive in robots.txt" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == true
     end
   end
 
@@ -95,7 +95,7 @@ defmodule E2e.RobotsTest do
     test "Matches user-agent specific rules in robots.txt" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == false
     end
   end
 
@@ -103,7 +103,7 @@ defmodule E2e.RobotsTest do
     test "Handles wildcard Disallow patterns in robots.txt" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.is_allowed' not available on result type
+      assert String.trim(result.is_allowed) == false
     end
   end
 
@@ -111,9 +111,9 @@ defmodule E2e.RobotsTest do
     test "Respects X-Robots-Tag HTTP header directives" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'robots.x_robots_tag' not available on result type
-      # skipped: field 'robots.noindex_detected' not available on result type
-      # skipped: field 'robots.nofollow_detected' not available on result type
+      assert String.trim(result.x_robots_tag) == "noindex, nofollow"
+      assert String.trim(result.noindex_detected) == true
+      assert String.trim(result.nofollow_detected) == true
     end
   end
 end

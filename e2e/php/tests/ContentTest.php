@@ -24,7 +24,7 @@ final class ContentTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'content.detected_charset' not available on result type
+        $this->assertEquals("iso-8859-1", $result->detected_charset);
     }
 
     /** Handles 200 response with empty body gracefully */
@@ -49,7 +49,7 @@ final class ContentTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'content.body_size' not available on result type
+        $this->assertLessThan(1025, $result->body_size);
     }
 
     /** Extracts only main content area, excluding nav, sidebar, footer */
@@ -57,7 +57,7 @@ final class ContentTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'content.main_content_only' not available on result type
+        $this->assertEquals(true, $result->main_content_only);
     }
 
     /** Detects PDF content by Content-Type header when URL has no .pdf extension */
@@ -65,7 +65,7 @@ final class ContentTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'content.is_pdf' not available on result type
+        $this->assertEquals(true, $result->is_pdf);
     }
 
     /** Removes specified HTML elements by CSS selector before processing */
@@ -81,7 +81,7 @@ final class ContentTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'content.detected_charset' not available on result type
+        $this->assertEquals("utf-8", $result->detected_charset);
         $this->assertNotEmpty($result->html);
     }
 }

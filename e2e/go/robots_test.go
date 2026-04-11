@@ -2,7 +2,6 @@
 package e2e_test
 
 import (
-	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -14,11 +13,13 @@ func Test_RobotsAllowAll(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != true {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsAllowOverride(t *testing.T) {
@@ -27,11 +28,13 @@ func Test_RobotsAllowOverride(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != true {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsCommentsHandling(t *testing.T) {
@@ -40,11 +43,13 @@ func Test_RobotsCommentsHandling(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != true {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsCrawlDelay(t *testing.T) {
@@ -53,11 +58,13 @@ func Test_RobotsCrawlDelay(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.crawl_delay' not available on result type
+	if result.CrawlDelay != nil && *result.CrawlDelay != 2 {
+		t.Errorf("equals mismatch: got %v", result.CrawlDelay)
+	}
 }
 
 func Test_RobotsDisallowPath(t *testing.T) {
@@ -66,11 +73,13 @@ func Test_RobotsDisallowPath(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != false {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsMetaNofollow(t *testing.T) {
@@ -79,11 +88,13 @@ func Test_RobotsMetaNofollow(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.nofollow_detected' not available on result type
+	if result.NofollowDetected != true {
+		t.Errorf("equals mismatch: got %v", result.NofollowDetected)
+	}
 }
 
 func Test_RobotsMetaNoindex(t *testing.T) {
@@ -92,11 +103,13 @@ func Test_RobotsMetaNoindex(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.noindex_detected' not available on result type
+	if result.NoindexDetected != true {
+		t.Errorf("equals mismatch: got %v", result.NoindexDetected)
+	}
 }
 
 func Test_RobotsMissing404(t *testing.T) {
@@ -105,11 +118,13 @@ func Test_RobotsMissing404(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != true {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsMultipleUserAgents(t *testing.T) {
@@ -118,11 +133,13 @@ func Test_RobotsMultipleUserAgents(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != true {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsRequestRate(t *testing.T) {
@@ -131,12 +148,16 @@ func Test_RobotsRequestRate(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.crawl_delay' not available on result type
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.CrawlDelay != nil && *result.CrawlDelay != 5 {
+		t.Errorf("equals mismatch: got %v", result.CrawlDelay)
+	}
+	if result.IsAllowed != true {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsSitemapDirective(t *testing.T) {
@@ -145,11 +166,13 @@ func Test_RobotsSitemapDirective(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != true {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsUserAgentSpecific(t *testing.T) {
@@ -158,11 +181,13 @@ func Test_RobotsUserAgentSpecific(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != false {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsWildcardPaths(t *testing.T) {
@@ -171,11 +196,13 @@ func Test_RobotsWildcardPaths(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.is_allowed' not available on result type
+	if result.IsAllowed != false {
+		t.Errorf("equals mismatch: got %v", result.IsAllowed)
+	}
 }
 
 func Test_RobotsXRobotsTag(t *testing.T) {
@@ -184,11 +211,21 @@ func Test_RobotsXRobotsTag(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'robots.x_robots_tag' not available on result type
-	// skipped: field 'robots.noindex_detected' not available on result type
-	// skipped: field 'robots.nofollow_detected' not available on result type
+	var xRobotsTag string
+	if result.XRobotsTag != nil {
+		xRobotsTag = *result.XRobotsTag
+	}
+	if xRobotsTag != `noindex, nofollow` {
+		t.Errorf("equals mismatch: got %v", xRobotsTag)
+	}
+	if result.NoindexDetected != true {
+		t.Errorf("equals mismatch: got %v", result.NoindexDetected)
+	}
+	if result.NofollowDetected != true {
+		t.Errorf("equals mismatch: got %v", result.NofollowDetected)
+	}
 }

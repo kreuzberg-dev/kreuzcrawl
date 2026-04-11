@@ -6,7 +6,7 @@ defmodule E2e.CrawlTest do
     test "Skips image and video content types gracefully" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'content.was_skipped' not available on result type
+      assert String.trim(result.was_skipped) == true
     end
   end
 
@@ -14,7 +14,7 @@ defmodule E2e.CrawlTest do
     test "Encounters PDF link and skips or marks as document type" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      # skipped: field 'content.was_skipped' not available on result type
+      assert String.trim(result.was_skipped) == true
     end
   end
 

@@ -1,15 +1,9 @@
 {
 	"id": "robots_meta_noindex",
 	"description": "Detects noindex meta robots tag in HTML page",
-	"tags": [
-		"robots",
-		"meta"
-	],
+	"tags": ["robots", "meta"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

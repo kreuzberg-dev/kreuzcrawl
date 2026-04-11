@@ -6,13 +6,13 @@ RSpec.describe "crawl" do
   it "content_binary_skip: Skips image and video content types gracefully" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-      # skipped: field 'content.was_skipped' not available on result type
+    expect(result.was_skipped).to eq(true)
   end
 
   it "content_pdf_link_skip: Encounters PDF link and skips or marks as document type" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-      # skipped: field 'content.was_skipped' not available on result type
+    expect(result.was_skipped).to eq(true)
   end
 
   it "crawl_concurrent_depth: Concurrent crawl respects max_depth limit" do

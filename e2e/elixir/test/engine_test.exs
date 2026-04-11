@@ -37,7 +37,7 @@ defmodule E2e.EngineTest do
       assert String.trim(result.metadata.title) == "Engine Test"
       assert String.contains?(result.metadata.description, "Testing the engine")
       assert length(result.links) >= 1
-      # skipped: field 'headings.h1_text' not available on result type
+      assert length(result.metadata.headings) >= 1
     end
   end
 

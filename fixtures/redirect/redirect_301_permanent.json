@@ -1,15 +1,9 @@
 {
 	"id": "redirect_301_permanent",
 	"description": "Follows 301 permanent redirect and returns final page content",
-	"tags": [
-		"redirect",
-		"smoke"
-	],
+	"tags": ["redirect", "smoke"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

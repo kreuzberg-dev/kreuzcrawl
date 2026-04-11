@@ -31,6 +31,12 @@ target-version = "py310"
 line-length = 120
 lint.select = [ "ALL" ]
 lint.ignore = [ "ANN", "COM812", "D", "ISC001" ]
+lint.per-file-ignores."e2e/**/*.py" = [
+    "B017",
+    "PLR2004",
+    "PT011",
+    "S",
+]
 lint.per-file-ignores."scripts/**/*.py" = [
     "B023",
     "B904",
@@ -67,12 +73,6 @@ lint.per-file-ignores."scripts/**/*.py" = [
     "TRY003",
     "TRY300",
     "TRY400",
-]
-lint.per-file-ignores."e2e/**/*.py" = [
-    "B017",
-    "PLR2004",
-    "PT011",
-    "S",
 ]
 
 [tool.pyproject-fmt]

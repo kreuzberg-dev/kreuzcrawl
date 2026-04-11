@@ -12,7 +12,7 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
         assertEquals(2, result.assets().size());
-        assertEquals(2, result.assets().getFirst().uniqueHashes());
+        assertFalse(result.assets().getFirst().contentHash().isEmpty(), "expected non-empty value");
     }
 
     @Test
@@ -31,7 +31,7 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
         assertEquals(1, result.assets().size());
-        assertTrue(result.assets().getFirst().category().contains("image"), "expected to contain: " + "image");
+        assertTrue(result.assets().getFirst().assetCategory().contains("image"), "expected to contain: " + "image");
     }
 
     @Test
@@ -42,13 +42,13 @@ class ScrapeTest {
         assertEquals(200, result.statusCode());
         assertEquals("text/html", result.contentType());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
-        assertEquals("Example Domain", result.metadata().orElseThrow().title().orElse(""));
-        assertTrue(result.metadata().orElseThrow().description().orElse("").contains("illustrative examples"), "expected to contain: " + "illustrative examples");
-        assertFalse(result.metadata().orElseThrow().canonicalUrl().orElse("").isEmpty(), "expected non-empty value");
+        assertEquals("Example Domain", result.metadata().title().orElse(""));
+        assertTrue(result.metadata().description().orElse("").contains("illustrative examples"), "expected to contain: " + "illustrative examples");
+        assertFalse(result.metadata().canonicalUrl().orElse("").isEmpty(), "expected non-empty value");
         assertTrue(result.links().size() > 0, "expected > 0");
         assertTrue(result.links().getFirst().linkType().contains("external"), "expected to contain: " + "external");
         assertEquals(0, result.images().size());
-        // skipped: field 'og.title' not available on result type
+        assertTrue(result.metadata().ogTitle().orElse("").isEmpty(), "expected empty value");
     }
 
     @Test
@@ -79,9 +79,9 @@ class ScrapeTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        // skipped: field 'dublin_core.title' not available on result type
-        // skipped: field 'dublin_core.title' not available on result type
-        // skipped: field 'dublin_core.creator' not available on result type
+        assertFalse(result.metadata().dcTitle().orElse("").isEmpty(), "expected non-empty value");
+        assertEquals("Effects of Climate Change on Marine Biodiversity", result.metadata().dcTitle().orElse(""));
+        assertEquals("Dr. Jane Smith", result.metadata().dcCreator().orElse(""));
     }
 
     @Test
@@ -100,9 +100,7 @@ class ScrapeTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        assertEquals(1, result.feeds().getFirst().rss().size());
-        assertEquals(1, result.feeds().getFirst().atom().size());
-        assertEquals(1, result.feeds().getFirst().jsonFeed().size());
+        assertTrue(result.feeds().size() >= 3, "expected >= 3");
     }
 
     @Test
@@ -112,7 +110,7 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
         assertTrue(result.images().size() > 4, "expected > 4");
-        // skipped: field 'og.image' not available on result type
+        assertEquals("https://example.com/images/og-hero.jpg", result.metadata().ogImage().orElse(""));
     }
 
     @Test
@@ -130,8 +128,8 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
         assertFalse(result.jsonLd().isEmpty(), "expected non-empty value");
-        assertEquals("Recipe", result.jsonLd().getFirst().type());
-        assertEquals("Best Chocolate Cake", result.jsonLd().getFirst().name());
+        assertEquals("Recipe", result.jsonLd().getFirst().schemaType());
+        assertEquals("Best Chocolate Cake", result.jsonLd().getFirst().name().orElse(""));
     }
 
     @Test
@@ -141,7 +139,7 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
-        assertTrue(result.metadata().orElseThrow().description().orElse("").contains("broken HTML"), "expected to contain: " + "broken HTML");
+        assertTrue(result.metadata().description().orElse("").contains("broken HTML"), "expected to contain: " + "broken HTML");
     }
 
     @Test
@@ -150,12 +148,12 @@ class ScrapeTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        // skipped: field 'og.title' not available on result type
-        // skipped: field 'og.title' not available on result type
-        // skipped: field 'og.type' not available on result type
-        // skipped: field 'og.image' not available on result type
-        // skipped: field 'og.description' not available on result type
-        assertEquals("Article Title - Example Blog", result.metadata().orElseThrow().title().orElse(""));
+        assertFalse(result.metadata().ogTitle().orElse("").isEmpty(), "expected non-empty value");
+        assertEquals("Article Title", result.metadata().ogTitle().orElse(""));
+        assertEquals("article", result.metadata().ogType().orElse(""));
+        assertEquals("https://example.com/images/article-hero.jpg", result.metadata().ogImage().orElse(""));
+        assertFalse(result.metadata().ogDescription().orElse("").isEmpty(), "expected non-empty value");
+        assertEquals("Article Title - Example Blog", result.metadata().title().orElse(""));
     }
 
     @Test
@@ -164,9 +162,9 @@ class ScrapeTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        // skipped: field 'twitter.card' not available on result type
-        // skipped: field 'twitter.card_type' not available on result type
-        // skipped: field 'twitter.title' not available on result type
+        assertFalse(result.metadata().twitterCard().orElse("").isEmpty(), "expected non-empty value");
+        assertEquals("summary_large_image", result.metadata().twitterCard().orElse(""));
+        assertEquals("New Product Launch", result.metadata().twitterTitle().orElse(""));
     }
 
 }

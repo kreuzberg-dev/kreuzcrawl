@@ -1,14 +1,9 @@
 {
 	"id": "error_403_forbidden",
 	"description": "Handles 403 Forbidden response correctly",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

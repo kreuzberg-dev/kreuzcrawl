@@ -2,7 +2,6 @@
 package e2e_test
 
 import (
-	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -19,10 +18,10 @@ func Test_AuthBasicHttp(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.AuthHeaderSent != true {
-		t.Errorf("equals mismatch: got %q", result.AuthHeaderSent)
+		t.Errorf("equals mismatch: got %v", result.AuthHeaderSent)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 }
 
@@ -37,10 +36,10 @@ func Test_AuthBearerToken(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.AuthHeaderSent != true {
-		t.Errorf("equals mismatch: got %q", result.AuthHeaderSent)
+		t.Errorf("equals mismatch: got %v", result.AuthHeaderSent)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 }
 
@@ -55,9 +54,9 @@ func Test_AuthCustomHeader(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.AuthHeaderSent != true {
-		t.Errorf("equals mismatch: got %q", result.AuthHeaderSent)
+		t.Errorf("equals mismatch: got %v", result.AuthHeaderSent)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 }

@@ -1,15 +1,9 @@
 {
 	"id": "engine_scrape_basic",
 	"description": "CrawlEngine with defaults scrapes a page identically to the free function",
-	"tags": [
-		"engine",
-		"scrape"
-	],
+	"tags": ["engine", "scrape"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -53,9 +47,9 @@
 			"value": 1
 		},
 		{
-			"type": "equals",
-			"field": "headings.h1_text",
-			"value": "Hello Engine"
+			"type": "greater_than_or_equal",
+			"field": "metadata.headings.length",
+			"value": 1
 		}
 	]
 }

@@ -122,10 +122,7 @@ pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
         CrawlError::Ssl(format!("ssl: {e}"))
     } else if chain.contains("connection") || chain.contains("connect") {
         CrawlError::Connection(format!("connection: {e}"))
-    } else if chain.contains("content-length")
-        || chain.contains("truncat")
-        || chain.contains("incomplete")
-    {
+    } else if chain.contains("content-length") || chain.contains("truncat") || chain.contains("incomplete") {
         CrawlError::DataLoss(format!("data_loss: {e}"))
     } else {
         CrawlError::Other(format!("other: {e}"))

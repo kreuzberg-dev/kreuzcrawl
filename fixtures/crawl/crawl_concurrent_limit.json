@@ -1,15 +1,9 @@
 {
 	"id": "crawl_concurrent_limit",
 	"description": "Respects max concurrent requests limit during crawl",
-	"tags": [
-		"crawl",
-		"concurrency"
-	],
+	"tags": ["crawl", "concurrency"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

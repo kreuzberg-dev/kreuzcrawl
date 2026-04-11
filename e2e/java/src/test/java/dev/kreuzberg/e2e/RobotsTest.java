@@ -10,7 +10,7 @@ class RobotsTest {
         // Permissive robots.txt allows all paths
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(true, result.isAllowed());
     }
 
     @Test
@@ -18,7 +18,7 @@ class RobotsTest {
         // Allow directive overrides Disallow for specific paths
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(true, result.isAllowed());
     }
 
     @Test
@@ -26,7 +26,7 @@ class RobotsTest {
         // Correctly parses robots.txt with inline and line comments
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(true, result.isAllowed());
     }
 
     @Test
@@ -34,7 +34,7 @@ class RobotsTest {
         // Respects crawl-delay directive from robots.txt
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.crawl_delay' not available on result type
+        assertEquals(2, result.crawlDelay().orElse(""));
     }
 
     @Test
@@ -42,7 +42,7 @@ class RobotsTest {
         // Robots.txt disallows specific paths
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(false, result.isAllowed());
     }
 
     @Test
@@ -50,7 +50,7 @@ class RobotsTest {
         // Detects nofollow meta robots tag and skips link extraction
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.nofollow_detected' not available on result type
+        assertEquals(true, result.nofollowDetected());
     }
 
     @Test
@@ -58,7 +58,7 @@ class RobotsTest {
         // Detects noindex meta robots tag in HTML page
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.noindex_detected' not available on result type
+        assertEquals(true, result.noindexDetected());
     }
 
     @Test
@@ -66,7 +66,7 @@ class RobotsTest {
         // Missing robots.txt (404) allows all crawling
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(true, result.isAllowed());
     }
 
     @Test
@@ -74,7 +74,7 @@ class RobotsTest {
         // Picks the most specific user-agent block from robots.txt
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(true, result.isAllowed());
     }
 
     @Test
@@ -82,8 +82,8 @@ class RobotsTest {
         // Parses request-rate directive from robots.txt
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.crawl_delay' not available on result type
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(5, result.crawlDelay().orElse(""));
+        assertEquals(true, result.isAllowed());
     }
 
     @Test
@@ -91,7 +91,7 @@ class RobotsTest {
         // Discovers sitemap URL from Sitemap directive in robots.txt
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(true, result.isAllowed());
     }
 
     @Test
@@ -99,7 +99,7 @@ class RobotsTest {
         // Matches user-agent specific rules in robots.txt
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(false, result.isAllowed());
     }
 
     @Test
@@ -107,7 +107,7 @@ class RobotsTest {
         // Handles wildcard Disallow patterns in robots.txt
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.is_allowed' not available on result type
+        assertEquals(false, result.isAllowed());
     }
 
     @Test
@@ -115,9 +115,9 @@ class RobotsTest {
         // Respects X-Robots-Tag HTTP header directives
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'robots.x_robots_tag' not available on result type
-        // skipped: field 'robots.noindex_detected' not available on result type
-        // skipped: field 'robots.nofollow_detected' not available on result type
+        assertEquals("noindex, nofollow", result.xRobotsTag().orElse(""));
+        assertEquals(true, result.noindexDetected());
+        assertEquals(true, result.nofollowDetected());
     }
 
 }

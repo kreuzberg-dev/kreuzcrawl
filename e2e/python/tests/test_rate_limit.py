@@ -1,5 +1,5 @@
-"""E2e tests for category: rate_limit.
-"""
+"""E2e tests for category: rate_limit."""
+
 from kreuzcrawl import create_engine, scrape
 
 
@@ -7,14 +7,14 @@ def test_rate_limit_basic_delay() -> None:
     """Rate limiter adds delay between requests to the same domain."""
     engine = create_engine()
     url = ""
-    result = scrape(engine=engine, url=url)
+    _ = scrape(engine=engine, url=url)
     # skipped: field 'crawl.pages_crawled' not available on result type
     # skipped: field 'rate_limit.min_duration_ms' not available on result type
+
 
 def test_rate_limit_zero_no_delay() -> None:
     """Rate limiter with zero delay does not slow crawling."""
     engine = create_engine()
     url = ""
-    result = scrape(engine=engine, url=url)
+    _ = scrape(engine=engine, url=url)
     # skipped: field 'crawl.pages_crawled' not available on result type
-

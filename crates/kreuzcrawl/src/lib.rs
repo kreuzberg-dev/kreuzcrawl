@@ -45,10 +45,10 @@ pub use bindings::{
 #[cfg(feature = "browser")]
 pub use browser_pool::{BrowserPool, BrowserPoolConfig, PooledPage};
 pub use citations::{CitationReference, CitationResult};
-#[cfg(feature = "ai")]
-pub use defaults::LlmExtractor;
 #[cfg(not(target_arch = "wasm32"))]
 pub use defaults::DiskCache;
+#[cfg(feature = "ai")]
+pub use defaults::LlmExtractor;
 pub use defaults::{
     AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, DfsStrategy, InMemoryFrontier, NoopCache,
     NoopEmitter, NoopFilter, NoopRateLimiter, NoopStore, PerDomainThrottle,

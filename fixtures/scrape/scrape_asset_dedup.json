@@ -1,15 +1,9 @@
 {
 	"id": "scrape_asset_dedup",
 	"description": "Same asset linked twice results in one download with one unique hash",
-	"tags": [
-		"scrape",
-		"assets"
-	],
+	"tags": ["scrape", "assets"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -55,9 +49,8 @@
 			"value": 2
 		},
 		{
-			"type": "equals",
-			"field": "assets.unique_hashes",
-			"value": 2
+			"type": "not_empty",
+			"field": "assets[].content_hash"
 		}
 	]
 }

@@ -1,16 +1,9 @@
 {
 	"id": "scrape_twitter_card",
 	"description": "Extracts Twitter Card metadata from a page",
-	"tags": [
-		"scrape",
-		"metadata",
-		"twitter"
-	],
+	"tags": ["scrape", "metadata", "twitter"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

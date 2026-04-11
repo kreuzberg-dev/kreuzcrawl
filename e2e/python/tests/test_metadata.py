@@ -1,5 +1,5 @@
-"""E2e tests for category: metadata.
-"""
+"""E2e tests for category: metadata."""
+
 from kreuzcrawl import create_engine, scrape
 
 
@@ -15,6 +15,7 @@ def test_metadata_article_times() -> None:
     # skipped: field 'article.section' not available on result type
     # skipped: field 'article.tags.length' not available on result type
 
+
 def test_metadata_favicons() -> None:
     """Extracts favicon link tags including apple-touch-icon."""
     engine = create_engine()
@@ -23,6 +24,7 @@ def test_metadata_favicons() -> None:
     assert result.status_code == 200
     # skipped: field 'favicons.length' not available on result type
     # skipped: field 'favicons[].apple_touch' not available on result type
+
 
 def test_metadata_headings() -> None:
     """Extracts heading hierarchy (h1-h6) from HTML page."""
@@ -34,6 +36,7 @@ def test_metadata_headings() -> None:
     # skipped: field 'headings.h1[0].text' not available on result type
     # skipped: field 'headings.length' not available on result type
 
+
 def test_metadata_hreflang() -> None:
     """Extracts hreflang alternate link tags."""
     engine = create_engine()
@@ -43,23 +46,25 @@ def test_metadata_hreflang() -> None:
     # skipped: field 'hreflang.length' not available on result type
     # skipped: field 'hreflang[].lang' not available on result type
 
+
 def test_metadata_keywords_author() -> None:
     """Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata."""
     engine = create_engine()
     url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
-    assert result.metadata.title == "Comprehensive Metadata Test Page"
+    assert result.metadata.title.strip() == "Comprehensive Metadata Test Page"
     assert result.metadata.canonical_url
     assert result.metadata.keywords
     assert "rust" in result.metadata.keywords
-    assert result.metadata.author == "Jane Developer"
+    assert result.metadata.author.strip() == "Jane Developer"
     assert result.metadata.viewport
-    assert result.metadata.generator == "kreuzcrawl/1.0"
-    assert result.metadata.theme_color == "#ff6600"
-    assert result.metadata.robots == "index, follow"
-    assert result.metadata.lang == "en"
-    assert result.metadata.dir == "ltr"
+    assert result.metadata.generator.strip() == "kreuzcrawl/1.0"
+    assert result.metadata.theme_color.strip() == "#ff6600"
+    assert result.metadata.robots.strip() == "index, follow"
+    assert result.metadata.html_lang.strip() == "en"
+    assert result.metadata.html_dir.strip() == "ltr"
+
 
 def test_metadata_og_video_audio() -> None:
     """Extracts og:video, og:audio, and og:locale:alternate metadata."""
@@ -67,9 +72,10 @@ def test_metadata_og_video_audio() -> None:
     url = ""
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
-    # skipped: field 'og.video' not available on result type
-    # skipped: field 'og.audio' not available on result type
+    assert result.metadata.og_video.strip() == "https://example.com/video.mp4"
+    assert result.metadata.og_audio.strip() == "https://example.com/audio.mp3"
     # skipped: field 'og.locale_alternate.length' not available on result type
+
 
 def test_metadata_response_headers() -> None:
     """Extracts response metadata from HTTP headers (etag, server, content-language)."""
@@ -82,6 +88,7 @@ def test_metadata_response_headers() -> None:
     # skipped: field 'response_headers.server' not available on result type
     # skipped: field 'response_headers.content_language' not available on result type
 
+
 def test_metadata_word_count() -> None:
     """Computes word count from visible page text."""
     engine = create_engine()
@@ -90,4 +97,3 @@ def test_metadata_word_count() -> None:
     assert result.status_code == 200
     # skipped: field 'computed.word_count' not available on result type
     # skipped: field 'computed.word_count' not available on result type
-

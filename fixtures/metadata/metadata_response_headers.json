@@ -1,14 +1,9 @@
 {
 	"id": "metadata_response_headers",
 	"description": "Extracts response metadata from HTTP headers (etag, server, content-language)",
-	"tags": [
-		"metadata"
-	],
+	"tags": ["metadata"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

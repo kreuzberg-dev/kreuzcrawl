@@ -1,14 +1,9 @@
 {
 	"id": "error_404_page",
 	"description": "Handles 404 response correctly",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

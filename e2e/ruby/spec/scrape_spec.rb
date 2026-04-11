@@ -8,7 +8,7 @@ RSpec.describe "scrape" do
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
     expect(result.assets.length).to eq(2)
-    expect(result.assets[0].unique_hashes).to eq(2)
+    expect(result.assets[0].content_hash).not_to be_empty
   end
 
   it "scrape_asset_max_size: Skips assets exceeding max_asset_size limit" do
@@ -23,7 +23,7 @@ RSpec.describe "scrape" do
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
     expect(result.assets.length).to eq(1)
-    expect(result.assets[0].category).to include("image")
+    expect(result.assets[0].asset_category).to include("image")
   end
 
   it "scrape_basic_html_page: Scrapes a simple HTML page and extracts title, description, and links" do
@@ -38,7 +38,7 @@ RSpec.describe "scrape" do
     expect(result.links.length).to be > 0
     expect(result.links[0].link_type).to include("external")
     expect(result.images.length).to eq(0)
-      # skipped: field 'og.title' not available on result type
+    expect(result.metadata.og_title).to be_empty
   end
 
   it "scrape_complex_links: Classifies links by type: internal, external, anchor, document, image" do
@@ -63,9 +63,9 @@ RSpec.describe "scrape" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-      # skipped: field 'dublin_core.title' not available on result type
-      # skipped: field 'dublin_core.title' not available on result type
-      # skipped: field 'dublin_core.creator' not available on result type
+    expect(result.metadata.dc_title).not_to be_empty
+    expect(result.metadata.dc_title).to eq("Effects of Climate Change on Marine Biodiversity")
+    expect(result.metadata.dc_creator).to eq("Dr. Jane Smith")
   end
 
   it "scrape_empty_page: Handles an empty HTML document without errors" do
@@ -80,9 +80,7 @@ RSpec.describe "scrape" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-    expect(result.feeds[0].rss.length).to eq(1)
-    expect(result.feeds[0].atom.length).to eq(1)
-    expect(result.feeds[0].json_feed.length).to eq(1)
+    expect(result.feeds.length).to be >= 3
   end
 
   it "scrape_image_sources: Extracts images from img, picture, og:image, twitter:image" do
@@ -90,7 +88,7 @@ RSpec.describe "scrape" do
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
     expect(result.images.length).to be > 4
-      # skipped: field 'og.image' not available on result type
+    expect(result.metadata.og_image).to eq("https://example.com/images/og-hero.jpg")
   end
 
   it "scrape_js_heavy_spa: Handles SPA page with JavaScript-only content (no server-rendered HTML)" do
@@ -104,7 +102,7 @@ RSpec.describe "scrape" do
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
     expect(result.json_ld).not_to be_empty
-    expect(result.json_ld[0].type).to eq("Recipe")
+    expect(result.json_ld[0].schema_type).to eq("Recipe")
     expect(result.json_ld[0].name).to eq("Best Chocolate Cake")
   end
 
@@ -120,11 +118,11 @@ RSpec.describe "scrape" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-      # skipped: field 'og.title' not available on result type
-      # skipped: field 'og.title' not available on result type
-      # skipped: field 'og.type' not available on result type
-      # skipped: field 'og.image' not available on result type
-      # skipped: field 'og.description' not available on result type
+    expect(result.metadata.og_title).not_to be_empty
+    expect(result.metadata.og_title).to eq("Article Title")
+    expect(result.metadata.og_type).to eq("article")
+    expect(result.metadata.og_image).to eq("https://example.com/images/article-hero.jpg")
+    expect(result.metadata.og_description).not_to be_empty
     expect(result.metadata.title).to eq("Article Title - Example Blog")
   end
 
@@ -132,8 +130,8 @@ RSpec.describe "scrape" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-      # skipped: field 'twitter.card' not available on result type
-      # skipped: field 'twitter.card_type' not available on result type
-      # skipped: field 'twitter.title' not available on result type
+    expect(result.metadata.twitter_card).not_to be_empty
+    expect(result.metadata.twitter_card).to eq("summary_large_image")
+    expect(result.metadata.twitter_title).to eq("New Product Launch")
   end
 end

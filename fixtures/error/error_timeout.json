@@ -1,14 +1,9 @@
 {
 	"id": "error_timeout",
 	"description": "Handles request timeout",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server; Requires wiremock delay to reliably trigger timeout"
 	},
 	"input": {

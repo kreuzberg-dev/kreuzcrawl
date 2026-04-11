@@ -1,16 +1,9 @@
 {
 	"id": "scrape_og_metadata",
 	"description": "Extracts full Open Graph metadata from a page",
-	"tags": [
-		"scrape",
-		"metadata",
-		"og"
-	],
+	"tags": ["scrape", "metadata", "og"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

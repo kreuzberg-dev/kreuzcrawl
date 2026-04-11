@@ -13,7 +13,7 @@ RSpec.describe "content" do
   it "content_charset_iso8859: Handles ISO-8859-1 encoded page correctly" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-      # skipped: field 'content.detected_charset' not available on result type
+    expect(result.detected_charset).to eq("iso-8859-1")
   end
 
   it "content_empty_body: Handles 200 response with empty body gracefully" do
@@ -32,19 +32,19 @@ RSpec.describe "content" do
   it "content_large_page_limit: Respects max body size limit and truncates or skips oversized pages" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-      # skipped: field 'content.body_size' not available on result type
+    expect(result.body_size).to be < 1025
   end
 
   it "content_main_only: Extracts only main content area, excluding nav, sidebar, footer" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-      # skipped: field 'content.main_content_only' not available on result type
+    expect(result.main_content_only).to eq(true)
   end
 
   it "content_pdf_no_extension: Detects PDF content by Content-Type header when URL has no .pdf extension" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-      # skipped: field 'content.is_pdf' not available on result type
+    expect(result.is_pdf).to eq(true)
   end
 
   it "content_remove_tags: Removes specified HTML elements by CSS selector before processing" do
@@ -56,7 +56,7 @@ RSpec.describe "content" do
   it "content_utf8_bom: Handles UTF-8 content with BOM marker correctly" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
-      # skipped: field 'content.detected_charset' not available on result type
+    expect(result.detected_charset).to eq("utf-8")
     expect(result.html).not_to be_empty
   end
 end

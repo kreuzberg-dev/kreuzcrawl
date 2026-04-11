@@ -1,14 +1,9 @@
 {
 	"id": "scrape_batch_progress",
 	"description": "Batch scrape results include specific URL",
-	"tags": [
-		"batch"
-	],
+	"tags": ["batch"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -31,10 +26,7 @@
 			}
 		],
 		"config": {
-			"batch_urls": [
-				"/target",
-				"/other"
-			]
+			"batch_urls": ["/target", "/other"]
 		}
 	},
 	"assertions": [

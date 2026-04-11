@@ -1,14 +1,9 @@
 {
 	"id": "robots_disallow_path",
 	"description": "Robots.txt disallows specific paths",
-	"tags": [
-		"robots"
-	],
+	"tags": ["robots"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

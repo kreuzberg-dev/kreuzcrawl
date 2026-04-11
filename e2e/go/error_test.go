@@ -2,7 +2,6 @@
 package e2e_test
 
 import (
-	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"

@@ -1,15 +1,9 @@
 {
 	"id": "markdown_fit_content",
 	"description": "Fit markdown removes navigation and boilerplate content",
-	"tags": [
-		"markdown",
-		"fit"
-	],
+	"tags": ["markdown", "fit"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -34,7 +28,7 @@
 		},
 		{
 			"type": "not_empty",
-			"field": "markdown"
+			"field": "markdown.content"
 		}
 	]
 }

@@ -60,8 +60,8 @@ defmodule E2e.MetadataTest do
       assert String.trim(result.metadata.generator) == "kreuzcrawl/1.0"
       assert String.trim(result.metadata.theme_color) == "\#ff6600"
       assert String.trim(result.metadata.robots) == "index, follow"
-      assert String.trim(result.metadata.lang) == "en"
-      assert String.trim(result.metadata.dir) == "ltr"
+      assert String.trim(result.metadata.html_lang) == "en"
+      assert String.trim(result.metadata.html_dir) == "ltr"
     end
   end
 
@@ -70,8 +70,8 @@ defmodule E2e.MetadataTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      # skipped: field 'og.video' not available on result type
-      # skipped: field 'og.audio' not available on result type
+      assert String.trim(result.metadata.og_video) == "https://example.com/video.mp4"
+      assert String.trim(result.metadata.og_audio) == "https://example.com/audio.mp3"
       # skipped: field 'og.locale_alternate.length' not available on result type
     end
   end

@@ -107,7 +107,7 @@ fn test_error_empty_response() {
     // Handles 200 with completely empty body gracefully
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'html_not_empty' not available on result type
     // skipped: field 'error.is_error' not available on result type
 }
@@ -220,4 +220,3 @@ fn test_error_waf_imperva() {
     assert!(result.is_err(), "expected call to fail");
     // skipped: field 'error.is_waf_blocked' not available on result type
 }
-

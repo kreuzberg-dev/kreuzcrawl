@@ -18,8 +18,8 @@ final class MarkdownTest extends TestCase
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals("Test", $result->metadata->title);
         $this->assertNotEmpty($result->html);
-        $this->assertNotEmpty($result->markdown);
-        $this->assertStringContainsString("Hello World", $result->markdown);
+        $this->assertNotEmpty($result->markdown->content);
+        $this->assertStringContainsString("Hello World", $result->markdown->content);
     }
 
     /** All crawled pages have markdown field populated */
@@ -36,7 +36,7 @@ final class MarkdownTest extends TestCase
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
-        $this->assertNotEmpty($result->markdown);
+        $this->assertNotEmpty($result->markdown->content);
     }
 
     /** Markdown conversion preserves heading hierarchy and paragraph text */
@@ -44,8 +44,8 @@ final class MarkdownTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        $this->assertNotEmpty($result->markdown);
-        $this->assertStringContainsString("Main Title", $result->markdown);
+        $this->assertNotEmpty($result->markdown->content);
+        $this->assertStringContainsString("Main Title", $result->markdown->content);
     }
 
     /** HTML links are converted to markdown link syntax */
@@ -55,8 +55,8 @@ final class MarkdownTest extends TestCase
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->html);
-        $this->assertNotEmpty($result->markdown);
-        $this->assertStringContainsString("Example", $result->markdown);
+        $this->assertNotEmpty($result->markdown->content);
+        $this->assertStringContainsString("Example", $result->markdown->content);
     }
 
     /** Markdown includes citation conversion with numbered references */
@@ -65,6 +65,6 @@ final class MarkdownTest extends TestCase
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
-        $this->assertNotEmpty($result->markdown);
+        $this->assertNotEmpty($result->markdown->content);
     }
 }

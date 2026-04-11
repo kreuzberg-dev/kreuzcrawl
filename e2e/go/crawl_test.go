@@ -2,7 +2,6 @@
 package e2e_test
 
 import (
-	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -14,11 +13,13 @@ func Test_ContentBinarySkip(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'content.was_skipped' not available on result type
+	if result.WasSkipped != true {
+		t.Errorf("equals mismatch: got %v", result.WasSkipped)
+	}
 }
 
 func Test_ContentPdfLinkSkip(t *testing.T) {
@@ -27,11 +28,13 @@ func Test_ContentPdfLinkSkip(t *testing.T) {
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
-	_, err := pkg.Scrape(engine, "")
+	result, err := pkg.Scrape(engine, "")
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	// skipped: field 'content.was_skipped' not available on result type
+	if result.WasSkipped != true {
+		t.Errorf("equals mismatch: got %v", result.WasSkipped)
+	}
 }
 
 func Test_CrawlConcurrentDepth(t *testing.T) {

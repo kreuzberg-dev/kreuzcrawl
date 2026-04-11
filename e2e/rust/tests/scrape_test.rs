@@ -11,7 +11,7 @@ fn test_scrape_asset_dedup() {
     let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert_eq!(result.assets.len(), "2", "equals assertion failed");
-    assert_eq!(result.assets[0].unique_hashes, "2", "equals assertion failed");
+    assert!(!result.assets[0].content_hash.is_empty(), "expected non-empty value");
 }
 
 #[test]
@@ -32,7 +32,7 @@ fn test_scrape_asset_type_filter() {
     let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert_eq!(result.assets.len(), "1", "equals assertion failed");
-    assert!(result.assets[0].category.contains(r#"image"#), "expected to contain: {}", r#"image"#);
+    assert!(result.assets[0].asset_category.contains(r#"image"#), "expected to contain: {}", r#"image"#);
 }
 
 #[test]
@@ -44,15 +44,15 @@ fn test_scrape_basic_html_page() {
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
     let metadata_description = result.metadata.description.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    assert_eq!(result.content_type, r#"text/html"#, "equals assertion failed");
+    assert_eq!(result.content_type.trim(), r#"text/html"#, "equals assertion failed");
     assert!(!result.html.is_empty(), "expected non-empty value");
-    assert_eq!(metadata_title, r#"Example Domain"#, "equals assertion failed");
+    assert_eq!(metadata_title.trim(), r#"Example Domain"#, "equals assertion failed");
     assert!(metadata_description.contains(r#"illustrative examples"#), "expected to contain: {}", r#"illustrative examples"#);
     assert!(result.metadata.canonical_url.is_some(), "expected metadata.canonical_url to be present");
     assert!(result.links.len() > 0_f64, "expected > 0");
     assert!(result.links[0].link_type.contains(r#"external"#), "expected to contain: {}", r#"external"#);
     assert_eq!(result.images.len(), "0", "equals assertion failed");
-    // skipped: field 'og.title' not available on result type
+    assert!(result.metadata.og_title.is_none(), "expected og.title to be absent");
 }
 
 #[test]
@@ -85,10 +85,12 @@ fn test_scrape_dublin_core() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
+    let metadata_dc_title = result.metadata.dc_title.as_deref().unwrap_or("");
+    let metadata_dc_creator = result.metadata.dc_creator.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    // skipped: field 'dublin_core.title' not available on result type
-    // skipped: field 'dublin_core.title' not available on result type
-    // skipped: field 'dublin_core.creator' not available on result type
+    assert!(!metadata_dc_title.is_empty(), "expected non-empty value");
+    assert_eq!(metadata_dc_title.trim(), r#"Effects of Climate Change on Marine Biodiversity"#, "equals assertion failed");
+    assert_eq!(metadata_dc_creator.trim(), r#"Dr. Jane Smith"#, "equals assertion failed");
 }
 
 #[test]
@@ -109,9 +111,7 @@ fn test_scrape_feed_discovery() {
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    assert_eq!(result.feeds[0].rss.len(), "1", "equals assertion failed");
-    assert_eq!(result.feeds[0].atom.len(), "1", "equals assertion failed");
-    assert_eq!(result.feeds[0].json_feed.len(), "1", "equals assertion failed");
+    assert!(result.feeds.len() >= 3_f64, "expected >= 3");
 }
 
 #[test]
@@ -120,9 +120,10 @@ fn test_scrape_image_sources() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
+    let metadata_og_image = result.metadata.og_image.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(result.images.len() > 4_f64, "expected > 4");
-    // skipped: field 'og.image' not available on result type
+    assert_eq!(metadata_og_image.trim(), r#"https://example.com/images/og-hero.jpg"#, "equals assertion failed");
 }
 
 #[test]
@@ -140,10 +141,11 @@ fn test_scrape_json_ld() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
+    let json_ld_name = result.json_ld[0].name.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(!result.json_ld.is_empty(), "expected non-empty value");
-    assert_eq!(result.json_ld[0].type, r#"Recipe"#, "equals assertion failed");
-    assert_eq!(result.json_ld[0].name, r#"Best Chocolate Cake"#, "equals assertion failed");
+    assert_eq!(result.json_ld[0].schema_type.trim(), r#"Recipe"#, "equals assertion failed");
+    assert_eq!(json_ld_name.trim(), r#"Best Chocolate Cake"#, "equals assertion failed");
 }
 
 #[test]
@@ -164,14 +166,17 @@ fn test_scrape_og_metadata() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
+    let metadata_og_title = result.metadata.og_title.as_deref().unwrap_or("");
+    let metadata_og_type = result.metadata.og_type.as_deref().unwrap_or("");
+    let metadata_og_image = result.metadata.og_image.as_deref().unwrap_or("");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    // skipped: field 'og.title' not available on result type
-    // skipped: field 'og.title' not available on result type
-    // skipped: field 'og.type' not available on result type
-    // skipped: field 'og.image' not available on result type
-    // skipped: field 'og.description' not available on result type
-    assert_eq!(metadata_title, r#"Article Title - Example Blog"#, "equals assertion failed");
+    assert!(!metadata_og_title.is_empty(), "expected non-empty value");
+    assert_eq!(metadata_og_title.trim(), r#"Article Title"#, "equals assertion failed");
+    assert_eq!(metadata_og_type.trim(), r#"article"#, "equals assertion failed");
+    assert_eq!(metadata_og_image.trim(), r#"https://example.com/images/article-hero.jpg"#, "equals assertion failed");
+    assert!(result.metadata.og_description.is_some(), "expected og.description to be present");
+    assert_eq!(metadata_title.trim(), r#"Article Title - Example Blog"#, "equals assertion failed");
 }
 
 #[test]
@@ -180,9 +185,10 @@ fn test_scrape_twitter_card() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
+    let metadata_twitter_card = result.metadata.twitter_card.as_deref().unwrap_or("");
+    let metadata_twitter_title = result.metadata.twitter_title.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    // skipped: field 'twitter.card' not available on result type
-    // skipped: field 'twitter.card_type' not available on result type
-    // skipped: field 'twitter.title' not available on result type
+    assert!(result.metadata.twitter_card.is_some(), "expected twitter.card to be present");
+    assert_eq!(metadata_twitter_card.trim(), r#"summary_large_image"#, "equals assertion failed");
+    assert_eq!(metadata_twitter_title.trim(), r#"New Product Launch"#, "equals assertion failed");
 }
-

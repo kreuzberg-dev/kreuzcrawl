@@ -1,15 +1,9 @@
 {
 	"id": "crawl_mixed_content_types",
 	"description": "Crawl handles links to non-HTML content types gracefully",
-	"tags": [
-		"crawl",
-		"content"
-	],
+	"tags": ["crawl", "content"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

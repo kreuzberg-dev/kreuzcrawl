@@ -18,28 +18,28 @@ func Test_MarkdownBasicConversion(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var metadata_title string
+	var metadataTitle string
 	if result.Metadata.Title != nil {
-		metadata_title = *result.Metadata.Title
-	}
-	var markdown string
-	if result.Markdown != nil {
-		markdown = *result.Markdown
+		metadataTitle = *result.Metadata.Title
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if metadata_title != `Test` {
-		t.Errorf("equals mismatch: got %q", metadata_title)
+	if metadataTitle != `Test` {
+		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if len(markdown) == 0 {
-		t.Errorf("expected non-empty value")
+	if result.Markdown != nil {
+		if len(result.Markdown.Content) == 0 {
+			t.Errorf("expected non-empty value")
+		}
 	}
-	if !strings.Contains(markdown, `Hello World`) {
-		t.Errorf("expected to contain %s, got %q", `Hello World`, markdown)
+	if result.Markdown != nil {
+		if !strings.Contains(string(result.Markdown.Content), `Hello World`) {
+			t.Errorf("expected to contain %s, got %v", `Hello World`, result.Markdown.Content)
+		}
 	}
 }
 
@@ -66,15 +66,13 @@ func Test_MarkdownFitContent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var markdown string
-	if result.Markdown != nil {
-		markdown = *result.Markdown
-	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(markdown) == 0 {
-		t.Errorf("expected non-empty value")
+	if result.Markdown != nil {
+		if len(result.Markdown.Content) == 0 {
+			t.Errorf("expected non-empty value")
+		}
 	}
 }
 
@@ -88,15 +86,15 @@ func Test_MarkdownHeadingsAndParagraphs(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var markdown string
 	if result.Markdown != nil {
-		markdown = *result.Markdown
+		if len(result.Markdown.Content) == 0 {
+			t.Errorf("expected non-empty value")
+		}
 	}
-	if len(markdown) == 0 {
-		t.Errorf("expected non-empty value")
-	}
-	if !strings.Contains(markdown, `Main Title`) {
-		t.Errorf("expected to contain %s, got %q", `Main Title`, markdown)
+	if result.Markdown != nil {
+		if !strings.Contains(string(result.Markdown.Content), `Main Title`) {
+			t.Errorf("expected to contain %s, got %v", `Main Title`, result.Markdown.Content)
+		}
 	}
 }
 
@@ -110,21 +108,21 @@ func Test_MarkdownLinksConverted(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var markdown string
-	if result.Markdown != nil {
-		markdown = *result.Markdown
-	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if len(markdown) == 0 {
-		t.Errorf("expected non-empty value")
+	if result.Markdown != nil {
+		if len(result.Markdown.Content) == 0 {
+			t.Errorf("expected non-empty value")
+		}
 	}
-	if !strings.Contains(markdown, `Example`) {
-		t.Errorf("expected to contain %s, got %q", `Example`, markdown)
+	if result.Markdown != nil {
+		if !strings.Contains(string(result.Markdown.Content), `Example`) {
+			t.Errorf("expected to contain %s, got %v", `Example`, result.Markdown.Content)
+		}
 	}
 }
 
@@ -138,14 +136,12 @@ func Test_MarkdownWithCitations(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var markdown string
-	if result.Markdown != nil {
-		markdown = *result.Markdown
-	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(markdown) == 0 {
-		t.Errorf("expected non-empty value")
+	if result.Markdown != nil {
+		if len(result.Markdown.Content) == 0 {
+			t.Errorf("expected non-empty value")
+		}
 	}
 }

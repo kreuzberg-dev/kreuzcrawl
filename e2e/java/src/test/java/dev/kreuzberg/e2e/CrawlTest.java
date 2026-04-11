@@ -10,7 +10,7 @@ class CrawlTest {
         // Skips image and video content types gracefully
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'content.was_skipped' not available on result type
+        assertEquals(true, result.wasSkipped());
     }
 
     @Test
@@ -18,7 +18,7 @@ class CrawlTest {
         // Encounters PDF link and skips or marks as document type
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'content.was_skipped' not available on result type
+        assertEquals(true, result.wasSkipped());
     }
 
     @Test

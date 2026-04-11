@@ -1,15 +1,9 @@
 {
 	"id": "sitemap_xhtml_links",
 	"description": "Parses sitemap with XHTML namespace alternate links",
-	"tags": [
-		"sitemap",
-		"xhtml"
-	],
+	"tags": ["sitemap", "xhtml"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

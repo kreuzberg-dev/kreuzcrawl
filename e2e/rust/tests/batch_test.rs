@@ -8,7 +8,7 @@ fn test_scrape_batch_basic() {
     // Batch scrape of multiple URLs all succeeding
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'batch.completed_count' not available on result type
     // skipped: field 'batch.failed_count' not available on result type
     // skipped: field 'batch.total_count' not available on result type
@@ -19,7 +19,7 @@ fn test_scrape_batch_partial_failure() {
     // Batch scrape with one URL failing returns partial results
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'batch.completed_count' not available on result type
     // skipped: field 'batch.failed_count' not available on result type
     // skipped: field 'batch.total_count' not available on result type
@@ -30,8 +30,7 @@ fn test_scrape_batch_progress() {
     // Batch scrape results include specific URL
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'batch.total_count' not available on result type
     // skipped: field 'batch.results' not available on result type
 }
-

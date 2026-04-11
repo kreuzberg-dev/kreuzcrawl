@@ -1,15 +1,9 @@
 {
 	"id": "crawl_subdomain_inclusion",
 	"description": "Crawls subdomains when allow_subdomains is enabled",
-	"tags": [
-		"crawl",
-		"subdomain"
-	],
+	"tags": ["crawl", "subdomain"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

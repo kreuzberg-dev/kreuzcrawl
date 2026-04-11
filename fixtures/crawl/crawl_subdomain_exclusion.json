@@ -1,15 +1,9 @@
 {
 	"id": "crawl_subdomain_exclusion",
 	"description": "Stays on exact domain and skips subdomain links",
-	"tags": [
-		"crawl",
-		"subdomain"
-	],
+	"tags": ["crawl", "subdomain"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

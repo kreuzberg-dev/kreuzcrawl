@@ -9,7 +9,7 @@ fn test_robots_allow_all() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "true", "equals assertion failed");
 }
 
 #[test]
@@ -18,7 +18,7 @@ fn test_robots_allow_override() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "true", "equals assertion failed");
 }
 
 #[test]
@@ -27,7 +27,7 @@ fn test_robots_comments_handling() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "true", "equals assertion failed");
 }
 
 #[test]
@@ -36,7 +36,8 @@ fn test_robots_crawl_delay() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.crawl_delay' not available on result type
+    let crawl_delay = result.crawl_delay.as_deref().unwrap_or("");
+    assert_eq!(crawl_delay, "2", "equals assertion failed");
 }
 
 #[test]
@@ -45,7 +46,7 @@ fn test_robots_disallow_path() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "false", "equals assertion failed");
 }
 
 #[test]
@@ -54,7 +55,7 @@ fn test_robots_meta_nofollow() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.nofollow_detected' not available on result type
+    assert_eq!(result.nofollow_detected, "true", "equals assertion failed");
 }
 
 #[test]
@@ -63,7 +64,7 @@ fn test_robots_meta_noindex() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.noindex_detected' not available on result type
+    assert_eq!(result.noindex_detected, "true", "equals assertion failed");
 }
 
 #[test]
@@ -72,7 +73,7 @@ fn test_robots_missing_404() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "true", "equals assertion failed");
 }
 
 #[test]
@@ -81,7 +82,7 @@ fn test_robots_multiple_user_agents() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "true", "equals assertion failed");
 }
 
 #[test]
@@ -90,8 +91,9 @@ fn test_robots_request_rate() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.crawl_delay' not available on result type
-    // skipped: field 'robots.is_allowed' not available on result type
+    let crawl_delay = result.crawl_delay.as_deref().unwrap_or("");
+    assert_eq!(crawl_delay, "5", "equals assertion failed");
+    assert_eq!(result.is_allowed, "true", "equals assertion failed");
 }
 
 #[test]
@@ -100,7 +102,7 @@ fn test_robots_sitemap_directive() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "true", "equals assertion failed");
 }
 
 #[test]
@@ -109,7 +111,7 @@ fn test_robots_user_agent_specific() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "false", "equals assertion failed");
 }
 
 #[test]
@@ -118,7 +120,7 @@ fn test_robots_wildcard_paths() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.is_allowed' not available on result type
+    assert_eq!(result.is_allowed, "false", "equals assertion failed");
 }
 
 #[test]
@@ -127,8 +129,8 @@ fn test_robots_x_robots_tag() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    // skipped: field 'robots.x_robots_tag' not available on result type
-    // skipped: field 'robots.noindex_detected' not available on result type
-    // skipped: field 'robots.nofollow_detected' not available on result type
+    let x_robots_tag = result.x_robots_tag.as_deref().unwrap_or("");
+    assert_eq!(x_robots_tag.trim(), r#"noindex, nofollow"#, "equals assertion failed");
+    assert_eq!(result.noindex_detected, "true", "equals assertion failed");
+    assert_eq!(result.nofollow_detected, "true", "equals assertion failed");
 }
-

@@ -1,15 +1,9 @@
 {
 	"id": "crawl_concurrent_max_pages",
 	"description": "Concurrent crawl respects max_pages budget",
-	"tags": [
-		"crawl",
-		"concurrency"
-	],
+	"tags": ["crawl", "concurrency"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

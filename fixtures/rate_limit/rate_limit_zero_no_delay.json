@@ -1,14 +1,9 @@
 {
 	"id": "rate_limit_zero_no_delay",
 	"description": "Rate limiter with zero delay does not slow crawling",
-	"tags": [
-		"rate_limit"
-	],
+	"tags": ["rate_limit"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

@@ -52,16 +52,16 @@ RSpec.describe "metadata" do
     expect(result.metadata.generator).to eq("kreuzcrawl/1.0")
     expect(result.metadata.theme_color).to eq("\#ff6600")
     expect(result.metadata.robots).to eq("index, follow")
-    expect(result.metadata.lang).to eq("en")
-    expect(result.metadata.dir).to eq("ltr")
+    expect(result.metadata.html_lang).to eq("en")
+    expect(result.metadata.html_dir).to eq("ltr")
   end
 
   it "metadata_og_video_audio: Extracts og:video, og:audio, and og:locale:alternate metadata" do
     engine = Kreuzcrawl.create_engine(nil)
     result = Kreuzcrawl.scrape(engine, "")
     expect(result.status_code).to eq(200)
-      # skipped: field 'og.video' not available on result type
-      # skipped: field 'og.audio' not available on result type
+    expect(result.metadata.og_video).to eq("https://example.com/video.mp4")
+    expect(result.metadata.og_audio).to eq("https://example.com/audio.mp3")
       # skipped: field 'og.locale_alternate.length' not available on result type
   end
 

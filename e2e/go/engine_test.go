@@ -59,30 +59,36 @@ func Test_EngineScrapeBasic(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var metadata_title string
+	var metadataTitle string
 	if result.Metadata.Title != nil {
-		metadata_title = *result.Metadata.Title
+		metadataTitle = *result.Metadata.Title
 	}
-	var metadata_description string
+	var metadataDescription string
 	if result.Metadata.Description != nil {
-		metadata_description = *result.Metadata.Description
+		metadataDescription = *result.Metadata.Description
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if result.ContentType != `text/html` {
-		t.Errorf("equals mismatch: got %q", result.ContentType)
+		t.Errorf("equals mismatch: got %v", result.ContentType)
 	}
-	if metadata_title != `Engine Test` {
-		t.Errorf("equals mismatch: got %q", metadata_title)
+	if metadataTitle != `Engine Test` {
+		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
-	if !strings.Contains(metadata_description, `Testing the engine`) {
-		t.Errorf("expected to contain %s, got %q", `Testing the engine`, metadata_description)
+	if !strings.Contains(string(metadataDescription), `Testing the engine`) {
+		t.Errorf("expected to contain %s, got %v", `Testing the engine`, metadataDescription)
 	}
 	if len(result.Links) < 1 {
 		t.Errorf("expected >= 1, got %v", len(result.Links))
 	}
-	// skipped: field 'headings.h1_text' not available on result type
+	if result.Metadata.Headings != nil {
+		if result.Metadata.Headings != nil {
+			if len(*result.Metadata.Headings) < 1 {
+				t.Errorf("expected >= 1, got %v", len(*result.Metadata.Headings))
+			}
+		}
+	}
 }
 
 func Test_EngineStreamBasic(t *testing.T) {

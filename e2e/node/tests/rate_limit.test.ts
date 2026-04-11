@@ -1,17 +1,17 @@
-import { describe, it, expect } from 'vitest';
-import { scrape, createEngine } from '@kreuzberg/kreuzcrawl';
+import { describe, it, expect } from "vitest";
+import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 
-describe('rate_limit', () => {
-  it('rate_limit_basic_delay: Rate limiter adds delay between requests to the same domain', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'crawl.pages_crawled' not available on result type
-    // skipped: field 'rate_limit.min_duration_ms' not available on result type
-  });
+describe("rate_limit", () => {
+	it("rate_limit_basic_delay: Rate limiter adds delay between requests to the same domain", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'crawl.pages_crawled' not available on result type
+		// skipped: field 'rate_limit.min_duration_ms' not available on result type
+	});
 
-  it('rate_limit_zero_no_delay: Rate limiter with zero delay does not slow crawling', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'crawl.pages_crawled' not available on result type
-  });
+	it("rate_limit_zero_no_delay: Rate limiter with zero delay does not slow crawling", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'crawl.pages_crawled' not available on result type
+	});
 });

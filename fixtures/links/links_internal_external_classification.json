@@ -1,14 +1,9 @@
 {
 	"id": "links_internal_external_classification",
 	"description": "Correctly classifies internal vs external links by domain",
-	"tags": [
-		"links"
-	],
+	"tags": ["links"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -31,10 +26,7 @@
 		{
 			"type": "contains_all",
 			"field": "links[].link_type",
-			"values": [
-				"internal",
-				"external"
-			]
+			"values": ["internal", "external"]
 		}
 	]
 }

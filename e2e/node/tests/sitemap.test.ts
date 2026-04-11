@@ -1,55 +1,55 @@
-import { describe, it, expect } from 'vitest';
-import { scrape, createEngine } from '@kreuzberg/kreuzcrawl';
+import { describe, it, expect } from "vitest";
+import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 
-describe('sitemap', () => {
-  it('sitemap_basic: Parses a standard urlset sitemap', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'urls.length' not available on result type
-    // skipped: field 'has_lastmod' not available on result type
-  });
+describe("sitemap", () => {
+	it("sitemap_basic: Parses a standard urlset sitemap", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'urls.length' not available on result type
+		// skipped: field 'has_lastmod' not available on result type
+	});
 
-  it('sitemap_compressed_gzip: Parses a gzip-compressed sitemap file', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'urls.length' not available on result type
-  });
+	it("sitemap_compressed_gzip: Parses a gzip-compressed sitemap file", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'urls.length' not available on result type
+	});
 
-  it('sitemap_empty: Handles empty sitemap gracefully', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'urls.length' not available on result type
-  });
+	it("sitemap_empty: Handles empty sitemap gracefully", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'urls.length' not available on result type
+	});
 
-  it('sitemap_from_robots_txt: Discovers sitemap via robots.txt Sitemap directive', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'urls.length' not available on result type
-  });
+	it("sitemap_from_robots_txt: Discovers sitemap via robots.txt Sitemap directive", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'urls.length' not available on result type
+	});
 
-  it('sitemap_index: Follows sitemap index to discover child sitemaps', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'urls.length' not available on result type
-  });
+	it("sitemap_index: Follows sitemap index to discover child sitemaps", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'urls.length' not available on result type
+	});
 
-  it('sitemap_lastmod_filter: Filters sitemap URLs by lastmod date', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'urls.length' not available on result type
-    // skipped: field 'has_lastmod' not available on result type
-  });
+	it("sitemap_lastmod_filter: Filters sitemap URLs by lastmod date", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'urls.length' not available on result type
+		// skipped: field 'has_lastmod' not available on result type
+	});
 
-  it('sitemap_only_mode: Uses sitemap URLs exclusively without following page links', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'urls.length' not available on result type
-  });
+	it("sitemap_only_mode: Uses sitemap URLs exclusively without following page links", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'urls.length' not available on result type
+	});
 
-  it('sitemap_xhtml_links: Parses sitemap with XHTML namespace alternate links', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'urls.length' not available on result type
-    // skipped: field 'has_lastmod' not available on result type
-  });
+	it("sitemap_xhtml_links: Parses sitemap with XHTML namespace alternate links", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'urls.length' not available on result type
+		// skipped: field 'has_lastmod' not available on result type
+	});
 });
