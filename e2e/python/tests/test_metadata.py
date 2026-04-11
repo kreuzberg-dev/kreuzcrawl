@@ -2,14 +2,16 @@
 
 import os
 
+import pytest
 from kreuzcrawl import create_engine, scrape
 
 
-def test_metadata_article_times() -> None:
+@pytest.mark.asyncio
+async def test_metadata_article_times() -> None:
     """Extracts article:published_time, modified_time, author, section, and tags."""
     engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/metadata_article_times"
-    result = scrape(engine=engine, url=url)
+    result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     # skipped: field 'article.published_time' not available on result type
     # skipped: field 'article.modified_time' not available on result type
@@ -18,42 +20,46 @@ def test_metadata_article_times() -> None:
     # skipped: field 'article.tags.length' not available on result type
 
 
-def test_metadata_favicons() -> None:
+@pytest.mark.asyncio
+async def test_metadata_favicons() -> None:
     """Extracts favicon link tags including apple-touch-icon."""
     engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/metadata_favicons"
-    result = scrape(engine=engine, url=url)
+    result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     # skipped: field 'favicons.length' not available on result type
     # skipped: field 'favicons[].apple_touch' not available on result type
 
 
-def test_metadata_headings() -> None:
+@pytest.mark.asyncio
+async def test_metadata_headings() -> None:
     """Extracts heading hierarchy (h1-h6) from HTML page."""
     engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/metadata_headings"
-    result = scrape(engine=engine, url=url)
+    result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     # skipped: field 'headings.h1.length' not available on result type
     # skipped: field 'headings.h1[0].text' not available on result type
     # skipped: field 'headings.length' not available on result type
 
 
-def test_metadata_hreflang() -> None:
+@pytest.mark.asyncio
+async def test_metadata_hreflang() -> None:
     """Extracts hreflang alternate link tags."""
     engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/metadata_hreflang"
-    result = scrape(engine=engine, url=url)
+    result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     # skipped: field 'hreflang.length' not available on result type
     # skipped: field 'hreflang[].lang' not available on result type
 
 
-def test_metadata_keywords_author() -> None:
+@pytest.mark.asyncio
+async def test_metadata_keywords_author() -> None:
     """Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata."""
     engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/metadata_keywords_author"
-    result = scrape(engine=engine, url=url)
+    result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.metadata.title.strip() == "Comprehensive Metadata Test Page"
     assert result.metadata.canonical_url
@@ -68,22 +74,24 @@ def test_metadata_keywords_author() -> None:
     assert result.metadata.html_dir.strip() == "ltr"
 
 
-def test_metadata_og_video_audio() -> None:
+@pytest.mark.asyncio
+async def test_metadata_og_video_audio() -> None:
     """Extracts og:video, og:audio, and og:locale:alternate metadata."""
     engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/metadata_og_video_audio"
-    result = scrape(engine=engine, url=url)
+    result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.metadata.og_video.strip() == "https://example.com/video.mp4"
     assert result.metadata.og_audio.strip() == "https://example.com/audio.mp3"
     # skipped: field 'og.locale_alternate.length' not available on result type
 
 
-def test_metadata_response_headers() -> None:
+@pytest.mark.asyncio
+async def test_metadata_response_headers() -> None:
     """Extracts response metadata from HTTP headers (etag, server, content-language)."""
     engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/metadata_response_headers"
-    result = scrape(engine=engine, url=url)
+    result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     # skipped: field 'response_headers.etag' not available on result type
     # skipped: field 'response_headers.last_modified' not available on result type
@@ -91,11 +99,12 @@ def test_metadata_response_headers() -> None:
     # skipped: field 'response_headers.content_language' not available on result type
 
 
-def test_metadata_word_count() -> None:
+@pytest.mark.asyncio
+async def test_metadata_word_count() -> None:
     """Computes word count from visible page text."""
     engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/metadata_word_count"
-    result = scrape(engine=engine, url=url)
+    result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     # skipped: field 'computed.word_count' not available on result type
     # skipped: field 'computed.word_count' not available on result type
