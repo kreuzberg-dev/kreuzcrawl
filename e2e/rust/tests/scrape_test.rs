@@ -32,7 +32,7 @@ async fn test_scrape_asset_type_filter() {
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert_eq!(result.assets.len(), 1, "equals assertion failed");
-    assert!(result.assets[0].asset_category.to_string().contains(r#"image"#), "expected to contain: {}", r#"image"#);
+    assert!(format!("{:?}", result.assets[0].asset_category).to_lowercase().contains(r#"image"#), "expected to contain: {}", r#"image"#);
 }
 
 #[tokio::test]
@@ -47,10 +47,10 @@ async fn test_scrape_basic_html_page() {
     assert_eq!(result.content_type.trim(), r#"text/html"#, "equals assertion failed");
     assert!(!result.html.is_empty(), "expected non-empty value");
     assert_eq!(metadata_title.trim(), r#"Example Domain"#, "equals assertion failed");
-    assert!(metadata_description.to_string().contains(r#"illustrative examples"#), "expected to contain: {}", r#"illustrative examples"#);
+    assert!(format!("{:?}", metadata_description).to_lowercase().contains(r#"illustrative examples"#), "expected to contain: {}", r#"illustrative examples"#);
     assert!(result.metadata.canonical_url.is_some(), "expected metadata.canonical_url to be present");
     assert!(result.links.len() > 0, "expected > 0");
-    assert!(result.links[0].link_type.to_string().contains(r#"external"#), "expected to contain: {}", r#"external"#);
+    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"external"#), "expected to contain: {}", r#"external"#);
     assert_eq!(result.images.len(), 0, "equals assertion failed");
     assert!(result.metadata.og_title.is_none(), "expected og.title to be absent");
 }
@@ -63,10 +63,10 @@ async fn test_scrape_complex_links() {
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert!(result.links.len() > 9, "expected > 9");
-    assert!(result.links[0].link_type.to_string().contains(r#"internal"#), "expected to contain: {}", r#"internal"#);
-    assert!(result.links[0].link_type.to_string().contains(r#"external"#), "expected to contain: {}", r#"external"#);
-    assert!(result.links[0].link_type.to_string().contains(r#"anchor"#), "expected to contain: {}", r#"anchor"#);
-    assert!(result.links[0].link_type.to_string().contains(r#"document"#), "expected to contain: {}", r#"document"#);
+    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"internal"#), "expected to contain: {}", r#"internal"#);
+    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"external"#), "expected to contain: {}", r#"external"#);
+    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"anchor"#), "expected to contain: {}", r#"anchor"#);
+    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"document"#), "expected to contain: {}", r#"document"#);
 }
 
 #[tokio::test]
@@ -100,7 +100,7 @@ async fn test_scrape_empty_page() {
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_empty_page");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
-    assert!(result.links.len() > -1, "expected > -1");
+    // skipped: greater_than with negative value is always true for unsigned types
     assert_eq!(result.images.len(), 0, "equals assertion failed");
 }
 
@@ -157,7 +157,7 @@ async fn test_scrape_malformed_html() {
     let metadata_description = result.metadata.description.as_deref().unwrap_or("");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert!(!result.html.is_empty(), "expected non-empty value");
-    assert!(metadata_description.to_string().contains(r#"broken HTML"#), "expected to contain: {}", r#"broken HTML"#);
+    assert!(format!("{:?}", metadata_description).to_lowercase().contains(r#"broken HTML"#), "expected to contain: {}", r#"broken HTML"#);
 }
 
 #[tokio::test]
