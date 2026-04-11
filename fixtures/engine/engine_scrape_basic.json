@@ -11,7 +11,7 @@
 			{
 				"status_code": 200,
 				"headers": {
-					"content-type": "text/html; charset=utf-8"
+					"content-type": "text/html"
 				},
 				"body_inline": "<html><head><title>Engine Test</title><meta name=\"description\" content=\"Testing the engine\"></head><body><h1>Hello Engine</h1><a href=\"/page2\">Link</a></body></html>"
 			}

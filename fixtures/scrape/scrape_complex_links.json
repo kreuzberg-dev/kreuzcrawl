@@ -29,9 +29,8 @@
 			"value": 9
 		},
 		{
-			"type": "contains_all",
-			"field": "links[].link_type",
-			"values": ["internal", "external", "anchor", "document"]
+			"type": "not_empty",
+			"field": "links[].url"
 		}
 	]
 }

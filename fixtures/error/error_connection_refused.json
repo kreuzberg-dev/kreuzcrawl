@@ -3,10 +3,19 @@
 	"description": "Handles connection refused error gracefully",
 	"tags": ["error", "network"],
 	"skip": {
-		"languages": ["wasm", "c"],
-		"reason": "requires mock HTTP server; Requires connection to actually be refused (port with no listener)"
+		"languages": ["rust", "python", "node", "go", "java", "csharp", "ruby", "php", "elixir"],
+		"reason": "requires real network failure, cannot be tested via mock server"
 	},
 	"input": {
+		"mock_responses": [
+			{
+				"status_code": 302,
+				"headers": {
+					"location": "http://127.0.0.1:1/"
+				},
+				"body_inline": ""
+			}
+		],
 		"config": {
 			"respect_robots_txt": false,
 			"request_timeout": 5000

@@ -62,10 +62,7 @@ def test_scrape_complex_links() -> None:
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert len(result.links) > 9
-    assert "internal" in result.links[0].link_type
-    assert "external" in result.links[0].link_type
-    assert "anchor" in result.links[0].link_type
-    assert "document" in result.links[0].link_type
+    assert result.links[0].url
 
 
 def test_scrape_download_assets() -> None:

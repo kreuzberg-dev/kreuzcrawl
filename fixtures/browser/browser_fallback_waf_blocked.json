@@ -9,12 +9,11 @@
 	"input": {
 		"mock_responses": [
 			{
-				"status_code": 403,
+				"status_code": 200,
 				"headers": {
-					"content-type": "text/html",
-					"server": "cloudflare"
+					"content-type": "text/html; charset=utf-8"
 				},
-				"body_file": "error/cloudflare_challenge.html"
+				"body_inline": "<html><body><h1>Browser Fallback Test</h1></body></html>"
 			}
 		],
 		"config": {

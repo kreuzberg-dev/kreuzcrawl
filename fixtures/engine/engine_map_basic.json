@@ -9,6 +9,13 @@
 	"input": {
 		"mock_responses": [
 			{
+				"path": "/",
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>Map Root</h1></body></html>"
+			},
+			{
 				"path": "/robots.txt",
 				"headers": {
 					"content-type": "text/plain"

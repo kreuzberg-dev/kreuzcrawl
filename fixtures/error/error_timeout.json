@@ -11,9 +11,10 @@
 			{
 				"status_code": 200,
 				"headers": {
-					"content-type": "text/html"
+					"content-type": "text/html; charset=utf-8"
 				},
-				"body_inline": "<html><body>slow</body></html>"
+				"body_inline": "<html><body><h1>Delayed</h1></body></html>",
+				"delay_ms": 500
 			}
 		],
 		"config": {

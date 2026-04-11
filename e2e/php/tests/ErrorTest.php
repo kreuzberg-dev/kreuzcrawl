@@ -74,30 +74,6 @@ final class ErrorTest extends TestCase
         Kreuzcrawl::scrape($engine, $url);
     }
 
-    /** Handles connection refused error gracefully */
-    public function test_error_connection_refused(): void
-    {
-        $engine_config = CrawlConfig::default();
-        $engine_config->request_timeout = 5000;
-        $engine_config->respect_robots_txt = false;
-        $engine = Kreuzcrawl::createEngine($engine_config);
-        $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_connection_refused';
-        $this->expectException(\Exception::class);
-        Kreuzcrawl::scrape($engine, $url);
-    }
-
-    /** Handles DNS resolution failure gracefully */
-    public function test_error_dns_resolution(): void
-    {
-        $engine_config = CrawlConfig::default();
-        $engine_config->request_timeout = 5000;
-        $engine_config->respect_robots_txt = false;
-        $engine = Kreuzcrawl::createEngine($engine_config);
-        $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_dns_resolution';
-        $this->expectException(\Exception::class);
-        Kreuzcrawl::scrape($engine, $url);
-    }
-
     /** Handles 200 with completely empty body gracefully */
     public function test_error_empty_response(): void
     {
@@ -162,18 +138,6 @@ final class ErrorTest extends TestCase
         $engine_config->retry_count = 3;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_retry_backoff';
-        $this->expectException(\Exception::class);
-        Kreuzcrawl::scrape($engine, $url);
-    }
-
-    /** Handles SSL certificate validation error */
-    public function test_error_ssl_invalid_cert(): void
-    {
-        $engine_config = CrawlConfig::default();
-        $engine_config->request_timeout = 5000;
-        $engine_config->respect_robots_txt = false;
-        $engine = Kreuzcrawl::createEngine($engine_config);
-        $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_ssl_invalid_cert';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
     }

@@ -28,7 +28,7 @@ class MiddlewareTest {
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/middleware_noop_no_effect";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
-        assertEquals("Middleware Test", result.metadata().title().orElse(""));
+        assertEquals("Middleware Test", result.metadata().title().orElse("").trim());
     }
 
 }

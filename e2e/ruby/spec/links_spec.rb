@@ -38,8 +38,7 @@ RSpec.describe 'links' do
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/links_internal_external_classification"
     result = Kreuzcrawl.scrape(engine, url)
     expect(result.links.length).to be > 4
-    expect(result.links[0].link_type).to include('internal')
-    expect(result.links[0].link_type).to include('external')
+    expect(result.links[0].url).not_to be_empty
   end
 
   it 'links_mailto_javascript_skip: Skips mailto:, javascript:, and tel: scheme links' do

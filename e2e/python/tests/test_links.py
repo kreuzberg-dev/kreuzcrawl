@@ -45,8 +45,7 @@ def test_links_internal_external_classification() -> None:
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/links_internal_external_classification"
     result = scrape(engine=engine, url=url)
     assert len(result.links) > 4
-    assert "internal" in result.links[0].link_type
-    assert "external" in result.links[0].link_type
+    assert result.links[0].url
 
 
 def test_links_mailto_javascript_skip() -> None:

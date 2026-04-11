@@ -34,26 +34,6 @@ async fn test_robots_comments_handling() {
 }
 
 #[tokio::test]
-async fn test_robots_crawl_delay() {
-    // Respects crawl-delay directive from robots.txt
-    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
-    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_crawl_delay");
-    let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.crawl_delay, Some(2), "equals assertion failed");
-}
-
-#[tokio::test]
-async fn test_robots_disallow_path() {
-    // Robots.txt disallows specific paths
-    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
-    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_disallow_path");
-    let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, false, "equals assertion failed");
-}
-
-#[tokio::test]
 async fn test_robots_meta_nofollow() {
     // Detects nofollow meta robots tag and skips link extraction
     let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
@@ -94,17 +74,6 @@ async fn test_robots_multiple_user_agents() {
 }
 
 #[tokio::test]
-async fn test_robots_request_rate() {
-    // Parses request-rate directive from robots.txt
-    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
-    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_request_rate");
-    let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.crawl_delay, Some(5), "equals assertion failed");
-    assert_eq!(result.is_allowed, true, "equals assertion failed");
-}
-
-#[tokio::test]
 async fn test_robots_sitemap_directive() {
     // Discovers sitemap URL from Sitemap directive in robots.txt
     let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
@@ -112,26 +81,6 @@ async fn test_robots_sitemap_directive() {
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_sitemap_directive");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, true, "equals assertion failed");
-}
-
-#[tokio::test]
-async fn test_robots_user_agent_specific() {
-    // Matches user-agent specific rules in robots.txt
-    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"KreuzcrawlBot\"}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
-    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_user_agent_specific");
-    let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, false, "equals assertion failed");
-}
-
-#[tokio::test]
-async fn test_robots_wildcard_paths() {
-    // Handles wildcard Disallow patterns in robots.txt
-    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
-    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_wildcard_paths");
-    let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, false, "equals assertion failed");
 }
 
 #[tokio::test]

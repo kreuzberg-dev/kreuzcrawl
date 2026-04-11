@@ -96,6 +96,8 @@ pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
         || chain.contains("content-length")
         || chain.contains("truncat")
         || chain.contains("incomplete")
+        || chain.contains("decoding response body")
+        || chain.contains("error decoding")
     {
         CrawlError::DataLoss(format!("data_loss: {e}"))
     } else {

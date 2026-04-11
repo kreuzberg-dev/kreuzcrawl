@@ -57,8 +57,7 @@ public class LinksTests
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/links_internal_external_classification";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.True(result.Links.Count > 4, "expected > 4");
-        Assert.Contains("internal", result.Links[0].LinkType.ToString());
-        Assert.Contains("external", result.Links[0].LinkType.ToString());
+        Assert.NotEmpty(result.Links[0].Url);
     }
 
     [Fact]

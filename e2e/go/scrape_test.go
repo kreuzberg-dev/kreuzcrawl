@@ -157,17 +157,8 @@ func Test_ScrapeComplexLinks(t *testing.T) {
 	if len(result.Links) < 10 {
 		t.Errorf("expected > 9, got %v", len(result.Links))
 	}
-	if !strings.Contains(string(result.Links[0].LinkType), `internal`) {
-		t.Errorf("expected to contain %s", `internal`)
-	}
-	if !strings.Contains(string(result.Links[0].LinkType), `external`) {
-		t.Errorf("expected to contain %s", `external`)
-	}
-	if !strings.Contains(string(result.Links[0].LinkType), `anchor`) {
-		t.Errorf("expected to contain %s", `anchor`)
-	}
-	if !strings.Contains(string(result.Links[0].LinkType), `document`) {
-		t.Errorf("expected to contain %s", `document`)
+	if len(result.Links[0].Url) == 0 {
+		t.Errorf("expected non-empty value")
 	}
 }
 

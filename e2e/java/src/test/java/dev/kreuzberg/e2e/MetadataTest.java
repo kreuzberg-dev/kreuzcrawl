@@ -61,17 +61,17 @@ class MetadataTest {
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/metadata_keywords_author";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
-        assertEquals("Comprehensive Metadata Test Page", result.metadata().title().orElse(""));
+        assertEquals("Comprehensive Metadata Test Page", result.metadata().title().orElse("").trim());
         assertFalse(result.metadata().canonicalUrl().orElse("").isEmpty(), "expected non-empty value");
         assertFalse(result.metadata().keywords().orElse("").isEmpty(), "expected non-empty value");
         assertTrue(result.metadata().keywords().orElse("").contains("rust"), "expected to contain: " + "rust");
-        assertEquals("Jane Developer", result.metadata().author().orElse(""));
+        assertEquals("Jane Developer", result.metadata().author().orElse("").trim());
         assertFalse(result.metadata().viewport().orElse("").isEmpty(), "expected non-empty value");
-        assertEquals("kreuzcrawl/1.0", result.metadata().generator().orElse(""));
-        assertEquals("#ff6600", result.metadata().themeColor().orElse(""));
-        assertEquals("index, follow", result.metadata().robots().orElse(""));
-        assertEquals("en", result.metadata().htmlLang().orElse(""));
-        assertEquals("ltr", result.metadata().htmlDir().orElse(""));
+        assertEquals("kreuzcrawl/1.0", result.metadata().generator().orElse("").trim());
+        assertEquals("#ff6600", result.metadata().themeColor().orElse("").trim());
+        assertEquals("index, follow", result.metadata().robots().orElse("").trim());
+        assertEquals("en", result.metadata().htmlLang().orElse("").trim());
+        assertEquals("ltr", result.metadata().htmlDir().orElse("").trim());
     }
 
     @Test
@@ -81,8 +81,8 @@ class MetadataTest {
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/metadata_og_video_audio";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
-        assertEquals("https://example.com/video.mp4", result.metadata().ogVideo().orElse(""));
-        assertEquals("https://example.com/audio.mp3", result.metadata().ogAudio().orElse(""));
+        assertEquals("https://example.com/video.mp4", result.metadata().ogVideo().orElse("").trim());
+        assertEquals("https://example.com/audio.mp3", result.metadata().ogAudio().orElse("").trim());
         // skipped: field 'og.locale_alternate.length' not available on result type
     }
 

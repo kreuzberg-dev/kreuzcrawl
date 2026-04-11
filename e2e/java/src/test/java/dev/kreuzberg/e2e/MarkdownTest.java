@@ -17,7 +17,7 @@ class MarkdownTest {
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/markdown_basic_conversion";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
-        assertEquals("Test", result.metadata().title().orElse(""));
+        assertEquals("Test", result.metadata().title().orElse("").trim());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
         assertFalse(result.markdown().orElseThrow().content().isEmpty(), "expected non-empty value");
         assertTrue(result.markdown().orElseThrow().content().contains("Hello World"), "expected to contain: " + "Hello World");

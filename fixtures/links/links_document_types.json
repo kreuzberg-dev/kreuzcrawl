@@ -13,7 +13,7 @@
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
 				},
-				"body_file": "html/complex_links.html"
+				"body_inline": "<html><body><a href=\"/files/report.pdf\">PDF Report</a><a href=\"/about\">About</a></body></html>"
 			}
 		]
 	},

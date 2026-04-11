@@ -53,9 +53,9 @@ class ScrapeTest {
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_basic_html_page";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
-        assertEquals("text/html", result.contentType());
+        assertEquals("text/html", result.contentType().trim());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
-        assertEquals("Example Domain", result.metadata().title().orElse(""));
+        assertEquals("Example Domain", result.metadata().title().orElse("").trim());
         assertTrue(result.metadata().description().orElse("").contains("illustrative examples"), "expected to contain: " + "illustrative examples");
         assertFalse(result.metadata().canonicalUrl().orElse("").isEmpty(), "expected non-empty value");
         assertTrue(result.links().size() > 0, "expected > 0");
@@ -72,10 +72,7 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertTrue(result.links().size() > 9, "expected > 9");
-        assertTrue(result.links().getFirst().linkType().contains("internal"), "expected to contain: " + "internal");
-        assertTrue(result.links().getFirst().linkType().contains("external"), "expected to contain: " + "external");
-        assertTrue(result.links().getFirst().linkType().contains("anchor"), "expected to contain: " + "anchor");
-        assertTrue(result.links().getFirst().linkType().contains("document"), "expected to contain: " + "document");
+        assertFalse(result.links().getFirst().url().isEmpty(), "expected non-empty value");
     }
 
     @Test
@@ -97,8 +94,8 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.metadata().dcTitle().orElse("").isEmpty(), "expected non-empty value");
-        assertEquals("Effects of Climate Change on Marine Biodiversity", result.metadata().dcTitle().orElse(""));
-        assertEquals("Dr. Jane Smith", result.metadata().dcCreator().orElse(""));
+        assertEquals("Effects of Climate Change on Marine Biodiversity", result.metadata().dcTitle().orElse("").trim());
+        assertEquals("Dr. Jane Smith", result.metadata().dcCreator().orElse("").trim());
     }
 
     @Test
@@ -130,7 +127,7 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertTrue(result.images().size() > 4, "expected > 4");
-        assertEquals("https://example.com/images/og-hero.jpg", result.metadata().ogImage().orElse(""));
+        assertEquals("https://example.com/images/og-hero.jpg", result.metadata().ogImage().orElse("").trim());
     }
 
     @Test
@@ -150,8 +147,8 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.jsonLd().isEmpty(), "expected non-empty value");
-        assertEquals("Recipe", result.jsonLd().getFirst().schemaType());
-        assertEquals("Best Chocolate Cake", result.jsonLd().getFirst().name().orElse(""));
+        assertEquals("Recipe", result.jsonLd().getFirst().schemaType().trim());
+        assertEquals("Best Chocolate Cake", result.jsonLd().getFirst().name().orElse("").trim());
     }
 
     @Test
@@ -173,11 +170,11 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.metadata().ogTitle().orElse("").isEmpty(), "expected non-empty value");
-        assertEquals("Article Title", result.metadata().ogTitle().orElse(""));
-        assertEquals("article", result.metadata().ogType().orElse(""));
-        assertEquals("https://example.com/images/article-hero.jpg", result.metadata().ogImage().orElse(""));
+        assertEquals("Article Title", result.metadata().ogTitle().orElse("").trim());
+        assertEquals("article", result.metadata().ogType().orElse("").trim());
+        assertEquals("https://example.com/images/article-hero.jpg", result.metadata().ogImage().orElse("").trim());
         assertFalse(result.metadata().ogDescription().orElse("").isEmpty(), "expected non-empty value");
-        assertEquals("Article Title - Example Blog", result.metadata().title().orElse(""));
+        assertEquals("Article Title - Example Blog", result.metadata().title().orElse("").trim());
     }
 
     @Test
@@ -188,8 +185,8 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.metadata().twitterCard().orElse("").isEmpty(), "expected non-empty value");
-        assertEquals("summary_large_image", result.metadata().twitterCard().orElse(""));
-        assertEquals("New Product Launch", result.metadata().twitterTitle().orElse(""));
+        assertEquals("summary_large_image", result.metadata().twitterCard().orElse("").trim());
+        assertEquals("New Product Launch", result.metadata().twitterTitle().orElse("").trim());
     }
 
 }

@@ -123,7 +123,9 @@ pub(crate) async fn http_fetch(
             || chain.contains("incomplete")
             || chain.contains("end of file")
             || chain.contains("body error")
-            || chain.contains("body from connection");
+            || chain.contains("body from connection")
+            || chain.contains("decoding response body")
+            || chain.contains("error decoding");
         #[cfg(not(target_arch = "wasm32"))]
         let is_body_error = is_body_error || e.is_body();
         if is_body_error {
