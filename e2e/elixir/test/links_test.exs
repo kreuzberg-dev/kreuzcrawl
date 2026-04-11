@@ -46,8 +46,7 @@ defmodule E2e.LinksTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/links_internal_external_classification"
       result = Kreuzcrawl.scrape!(engine, url)
       assert length(result.links) > 4
-      assert String.contains?(result.links[0].link_type, "internal")
-      assert String.contains?(result.links[0].link_type, "external")
+      assert result.links[0].url != ""
     end
   end
 

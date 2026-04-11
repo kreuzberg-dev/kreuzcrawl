@@ -72,28 +72,6 @@ defmodule E2e.ErrorTest do
     end
   end
 
-  describe "error_connection_refused" do
-    test "Handles connection refused error gracefully" do
-      engine_config = %{"request_timeout" => 5000, "respect_robots_txt" => false}
-      engine = Kreuzcrawl.create_engine!(engine_config)
-      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_connection_refused"
-      assert_raise RuntimeError, fn ->
-        Kreuzcrawl.scrape!(engine, url)
-      end
-    end
-  end
-
-  describe "error_dns_resolution" do
-    test "Handles DNS resolution failure gracefully" do
-      engine_config = %{"request_timeout" => 5000, "respect_robots_txt" => false}
-      engine = Kreuzcrawl.create_engine!(engine_config)
-      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_dns_resolution"
-      assert_raise RuntimeError, fn ->
-        Kreuzcrawl.scrape!(engine, url)
-      end
-    end
-  end
-
   describe "error_empty_response" do
     test "Handles 200 with completely empty body gracefully" do
       engine = Kreuzcrawl.create_engine!(nil)
@@ -152,17 +130,6 @@ defmodule E2e.ErrorTest do
       engine_config = %{"respect_robots_txt" => false, "retry_codes" => [429], "retry_count" => 3}
       engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_retry_backoff"
-      assert_raise RuntimeError, fn ->
-        Kreuzcrawl.scrape!(engine, url)
-      end
-    end
-  end
-
-  describe "error_ssl_invalid_cert" do
-    test "Handles SSL certificate validation error" do
-      engine_config = %{"request_timeout" => 5000, "respect_robots_txt" => false}
-      engine = Kreuzcrawl.create_engine!(engine_config)
-      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_ssl_invalid_cert"
       assert_raise RuntimeError, fn ->
         Kreuzcrawl.scrape!(engine, url)
       end

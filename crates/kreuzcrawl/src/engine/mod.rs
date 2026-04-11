@@ -72,6 +72,7 @@ impl CrawlEngine {
     /// (rate limiting, UA rotation) then runs the extraction pipeline.
     /// On wasm, performs a direct HTTP fetch without the Tower stack.
     pub async fn scrape(&self, url: &str) -> Result<ScrapeResult, CrawlError> {
+        self.config.validate()?;
         let client = build_client(&self.config)?;
 
         #[cfg(not(target_arch = "wasm32"))]
@@ -136,6 +137,7 @@ impl CrawlEngine {
 
     /// Discover all pages on a website by following links and sitemaps.
     pub async fn map(&self, url: &str) -> Result<MapResult, CrawlError> {
+        self.config.validate()?;
         crate::map::map(url, &self.config).await
     }
 }

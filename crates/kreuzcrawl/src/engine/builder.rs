@@ -87,12 +87,12 @@ impl CrawlEngineBuilder {
         self
     }
 
-    /// Build the [`CrawlEngine`], validating the config and filling in defaults.
+    /// Build the [`CrawlEngine`] with the configured options.
     ///
-    /// Returns an error if the configuration is invalid.
+    /// Config validation is deferred to the first operation (scrape, crawl, etc.) so that
+    /// the engine can always be constructed and individual operations report validation errors.
     pub fn build(self) -> Result<CrawlEngine, CrawlError> {
         let config = self.config.unwrap_or_default();
-        config.validate()?;
         #[cfg(not(target_arch = "wasm32"))]
         let ua_rotation = crate::tower::UaRotationLayer::new(config.user_agents.clone());
         Ok(CrawlEngine {

@@ -14,7 +14,7 @@
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
 				},
-				"body_file": "html/page_with_assets.html"
+				"body_inline": "<html><head><meta charset=\"utf-8\"><title>Page With Assets</title><link rel=\"stylesheet\" href=\"/fixtures/scrape_asset_type_filter/assets/style.css\"><script src=\"/fixtures/scrape_asset_type_filter/assets/script.js\"></script></head><body><h1>Asset Test Page</h1><img src=\"/fixtures/scrape_asset_type_filter/assets/photo.jpg\" alt=\"Test photo\"></body></html>"
 			},
 			{
 				"path": "/assets/style.css",

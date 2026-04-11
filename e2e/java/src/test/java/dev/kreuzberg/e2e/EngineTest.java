@@ -47,8 +47,8 @@ class EngineTest {
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/engine_scrape_basic";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
-        assertEquals("text/html", result.contentType());
-        assertEquals("Engine Test", result.metadata().title().orElse(""));
+        assertEquals("text/html", result.contentType().trim());
+        assertEquals("Engine Test", result.metadata().title().orElse("").trim());
         assertTrue(result.metadata().description().orElse("").contains("Testing the engine"), "expected to contain: " + "Testing the engine");
         assertTrue(result.links().size() >= 1, "expected >= 1");
         assertTrue(result.metadata().headings().orElseThrow().size() >= 1, "expected >= 1");

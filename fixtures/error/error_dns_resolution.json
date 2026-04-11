@@ -3,10 +3,19 @@
 	"description": "Handles DNS resolution failure gracefully",
 	"tags": ["error", "network"],
 	"skip": {
-		"languages": ["wasm", "c"],
-		"reason": "requires mock HTTP server; requires network; Requires real DNS resolution to fail"
+		"languages": ["rust", "python", "node", "go", "java", "csharp", "ruby", "php", "elixir"],
+		"reason": "requires real network failure, cannot be tested via mock server"
 	},
 	"input": {
+		"mock_responses": [
+			{
+				"status_code": 302,
+				"headers": {
+					"location": "http://this-hostname-does-not-exist-kreuzcrawl-test.invalid/"
+				},
+				"body_inline": ""
+			}
+		],
 		"config": {
 			"respect_robots_txt": false,
 			"request_timeout": 5000

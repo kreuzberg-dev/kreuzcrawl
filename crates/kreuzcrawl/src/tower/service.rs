@@ -133,7 +133,26 @@ async fn do_fetch(
         _ => {}
     }
 
-    let body_bytes = resp.bytes().await.map_err(|e| classify_reqwest_error(&e))?;
+    let body_bytes = resp.bytes().await.map_err(|e| {
+        // Walk the error source chain to detect body/data-loss errors that
+        // reqwest wraps in generic errors.
+        let chain = crate::error::error_chain_string(&e);
+        let is_body_error = chain.contains("content-length")
+            || chain.contains("truncat")
+            || chain.contains("incomplete")
+            || chain.contains("end of file")
+            || chain.contains("body error")
+            || chain.contains("body from connection")
+            || chain.contains("decoding response body")
+            || chain.contains("error decoding");
+        #[cfg(not(target_arch = "wasm32"))]
+        let is_body_error = is_body_error || e.is_body();
+        if is_body_error {
+            CrawlError::DataLoss(format!("data_loss: {e}"))
+        } else {
+            classify_reqwest_error(&e)
+        }
+    })?;
 
     let body_vec = body_bytes.to_vec();
 

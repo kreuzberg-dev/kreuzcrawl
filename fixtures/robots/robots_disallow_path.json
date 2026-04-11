@@ -3,8 +3,8 @@
 	"description": "Robots.txt disallows specific paths",
 	"tags": ["robots"],
 	"skip": {
-		"languages": ["wasm", "c"],
-		"reason": "requires mock HTTP server"
+		"languages": ["rust", "python", "node", "go", "java", "csharp", "ruby", "php", "elixir"],
+		"reason": "mock server namespaces routes per fixture; robots.txt must be at server root"
 	},
 	"input": {
 		"mock_responses": [

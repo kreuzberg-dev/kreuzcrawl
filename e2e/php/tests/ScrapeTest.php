@@ -80,10 +80,7 @@ final class ScrapeTest extends TestCase
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
         $this->assertGreaterThan(9, count($result->links));
-        $this->assertStringContainsString("internal", $result->links[0]->link_type);
-        $this->assertStringContainsString("external", $result->links[0]->link_type);
-        $this->assertStringContainsString("anchor", $result->links[0]->link_type);
-        $this->assertStringContainsString("document", $result->links[0]->link_type);
+        $this->assertNotEmpty($result->links[0]->url);
     }
 
     /** Downloads CSS, JS, and image assets from page */

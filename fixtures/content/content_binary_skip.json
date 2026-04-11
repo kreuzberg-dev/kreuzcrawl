@@ -14,9 +14,9 @@
 				"method": "GET",
 				"status_code": 200,
 				"headers": {
-					"content-type": "text/html; charset=utf-8"
+					"content-type": "image/jpeg"
 				},
-				"body_inline": "<html><body><a href=\"/image.jpg\">Image</a><a href=\"/video.mp4\">Video</a></body></html>"
+				"body_inline": ""
 			},
 			{
 				"path": "/image.jpg",

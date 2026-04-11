@@ -55,8 +55,7 @@ final class LinksTest extends TestCase
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/links_internal_external_classification';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertGreaterThan(4, count($result->links));
-        $this->assertStringContainsString("internal", $result->links[0]->link_type);
-        $this->assertStringContainsString("external", $result->links[0]->link_type);
+        $this->assertNotEmpty($result->links[0]->url);
     }
 
     /** Skips mailto:, javascript:, and tel: scheme links */

@@ -39,6 +39,8 @@ struct MockRoute {
     status_code: u16,
     headers: Vec<(String, String)>,
     body: Vec<u8>,
+    /// Optional delay before sending the response (milliseconds).
+    delay_ms: Option<u64>,
 }
 
 /// All routes keyed by `"{fixture_id}{path}"`.
@@ -65,6 +67,9 @@ struct MockResponseSpec {
     body_file: Option<String>,
     #[serde(default)]
     body_inline: Option<String>,
+    /// Delay before sending the response (milliseconds).
+    #[serde(default)]
+    delay_ms: Option<u64>,
 }
 
 fn default_path() -> String {
@@ -136,6 +141,7 @@ fn load_fixtures(fixtures_dir: &std::path::Path) -> RouteMap {
                 status_code: spec.status_code,
                 headers: spec.headers.iter().map(|(k, v)| (k.clone(), v.clone())).collect(),
                 body,
+                delay_ms: spec.delay_ms,
             };
 
             routes.insert(key, mock_route);
@@ -184,19 +190,19 @@ async fn serve_fixture(Path(rest): Path<String>, State(routes): State<Arc<RouteM
 
     // Try exact match first.
     if let Some(route) = routes.get(&key) {
-        return build_response(route);
+        return build_response(route).await;
     }
 
     // Try with trailing slash.
     if let Some(route) = routes.get(&format!("{key}/")) {
-        return build_response(route);
+        return build_response(route).await;
     }
 
     // Try without trailing slash.
     if key.ends_with('/')
         && let Some(route) = routes.get(&key[..key.len() - 1])
     {
-        return build_response(route);
+        return build_response(route).await;
     }
 
     Response::builder()
@@ -205,7 +211,11 @@ async fn serve_fixture(Path(rest): Path<String>, State(routes): State<Arc<RouteM
         .unwrap()
 }
 
-fn build_response(route: &MockRoute) -> Response<Body> {
+async fn build_response(route: &MockRoute) -> Response<Body> {
+    // Apply optional delay before responding.
+    if let Some(delay_ms) = route.delay_ms {
+        tokio::time::sleep(std::time::Duration::from_millis(delay_ms)).await;
+    }
     let mut builder = Response::builder().status(route.status_code);
     for (k, v) in &route.headers {
         if let (Ok(name), Ok(val)) = (k.parse::<HeaderName>(), v.parse::<HeaderValue>()) {

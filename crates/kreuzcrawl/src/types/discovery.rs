@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::CrawlPageResult;
 
 /// The classification of a link.
-#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum LinkType {
     /// A link to the same domain.
@@ -25,6 +25,12 @@ impl std::fmt::Display for LinkType {
             Self::Anchor => write!(f, "anchor"),
             Self::Document => write!(f, "document"),
         }
+    }
+}
+
+impl std::fmt::Debug for LinkType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self, f)
     }
 }
 
@@ -158,7 +164,7 @@ pub struct DownloadedAsset {
 }
 
 /// The category of a downloaded asset.
-#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum AssetCategory {
     /// A document file (PDF, DOC, etc.).
@@ -182,6 +188,29 @@ pub enum AssetCategory {
     Data,
     /// An unrecognized asset type.
     Other,
+}
+
+impl std::fmt::Display for AssetCategory {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Document => write!(f, "document"),
+            Self::Image => write!(f, "image"),
+            Self::Audio => write!(f, "audio"),
+            Self::Video => write!(f, "video"),
+            Self::Font => write!(f, "font"),
+            Self::Stylesheet => write!(f, "stylesheet"),
+            Self::Script => write!(f, "script"),
+            Self::Archive => write!(f, "archive"),
+            Self::Data => write!(f, "data"),
+            Self::Other => write!(f, "other"),
+        }
+    }
+}
+
+impl std::fmt::Debug for AssetCategory {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self, f)
+    }
 }
 
 /// An event emitted during a streaming crawl operation.

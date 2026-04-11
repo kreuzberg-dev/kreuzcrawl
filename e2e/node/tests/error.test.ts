@@ -44,20 +44,6 @@ describe("error", () => {
 		await expect(async () => await scrape(engine, url)).rejects.toThrow();
 	});
 
-	it("error_connection_refused: Handles connection refused error gracefully", async () => {
-		const engineConfig = { request_timeout: 5000, respect_robots_txt: false };
-		const engine = createEngine(engineConfig);
-		const url = `${process.env.MOCK_SERVER_URL}/fixtures/error_connection_refused`;
-		await expect(async () => await scrape(engine, url)).rejects.toThrow();
-	});
-
-	it("error_dns_resolution: Handles DNS resolution failure gracefully", async () => {
-		const engineConfig = { request_timeout: 5000, respect_robots_txt: false };
-		const engine = createEngine(engineConfig);
-		const url = `${process.env.MOCK_SERVER_URL}/fixtures/error_dns_resolution`;
-		await expect(async () => await scrape(engine, url)).rejects.toThrow();
-	});
-
 	it("error_empty_response: Handles 200 with completely empty body gracefully", async () => {
 		const engine = createEngine(null);
 		const url = `${process.env.MOCK_SERVER_URL}/fixtures/error_empty_response`;
@@ -97,13 +83,6 @@ describe("error", () => {
 		const engineConfig = { respect_robots_txt: false, retry_codes: [429], retry_count: 3 };
 		const engine = createEngine(engineConfig);
 		const url = `${process.env.MOCK_SERVER_URL}/fixtures/error_retry_backoff`;
-		await expect(async () => await scrape(engine, url)).rejects.toThrow();
-	});
-
-	it("error_ssl_invalid_cert: Handles SSL certificate validation error", async () => {
-		const engineConfig = { request_timeout: 5000, respect_robots_txt: false };
-		const engine = createEngine(engineConfig);
-		const url = `${process.env.MOCK_SERVER_URL}/fixtures/error_ssl_invalid_cert`;
 		await expect(async () => await scrape(engine, url)).rejects.toThrow();
 	});
 

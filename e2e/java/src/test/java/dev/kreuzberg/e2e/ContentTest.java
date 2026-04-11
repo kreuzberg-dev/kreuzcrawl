@@ -27,7 +27,7 @@ class ContentTest {
         var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/content_charset_iso8859";
         var result = Kreuzcrawl.scrape(engine, url);
-        assertEquals("iso-8859-1", result.detectedCharset().orElse(""));
+        assertEquals("iso-8859-1", result.detectedCharset().orElse("").trim());
     }
 
     @Test
@@ -98,7 +98,7 @@ class ContentTest {
         var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/content_utf8_bom";
         var result = Kreuzcrawl.scrape(engine, url);
-        assertEquals("utf-8", result.detectedCharset().orElse(""));
+        assertEquals("utf-8", result.detectedCharset().orElse("").trim());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
     }
 

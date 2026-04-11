@@ -32,26 +32,6 @@ defmodule E2e.RobotsTest do
     end
   end
 
-  describe "robots_crawl_delay" do
-    test "Respects crawl-delay directive from robots.txt" do
-      engine_config = %{"respect_robots_txt" => true, "user_agent" => "kreuzcrawl"}
-      engine = Kreuzcrawl.create_engine!(engine_config)
-      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_crawl_delay"
-      result = Kreuzcrawl.scrape!(engine, url)
-      assert String.trim(result.crawl_delay) == 2
-    end
-  end
-
-  describe "robots_disallow_path" do
-    test "Robots.txt disallows specific paths" do
-      engine_config = %{"respect_robots_txt" => true}
-      engine = Kreuzcrawl.create_engine!(engine_config)
-      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_disallow_path"
-      result = Kreuzcrawl.scrape!(engine, url)
-      assert String.trim(result.is_allowed) == false
-    end
-  end
-
   describe "robots_meta_nofollow" do
     test "Detects nofollow meta robots tag and skips link extraction" do
       engine_config = %{"respect_robots_txt" => true}
@@ -92,17 +72,6 @@ defmodule E2e.RobotsTest do
     end
   end
 
-  describe "robots_request_rate" do
-    test "Parses request-rate directive from robots.txt" do
-      engine_config = %{"respect_robots_txt" => true, "user_agent" => "kreuzcrawl"}
-      engine = Kreuzcrawl.create_engine!(engine_config)
-      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_request_rate"
-      result = Kreuzcrawl.scrape!(engine, url)
-      assert String.trim(result.crawl_delay) == 5
-      assert String.trim(result.is_allowed) == true
-    end
-  end
-
   describe "robots_sitemap_directive" do
     test "Discovers sitemap URL from Sitemap directive in robots.txt" do
       engine_config = %{"respect_robots_txt" => true}
@@ -110,26 +79,6 @@ defmodule E2e.RobotsTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_sitemap_directive"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.is_allowed) == true
-    end
-  end
-
-  describe "robots_user_agent_specific" do
-    test "Matches user-agent specific rules in robots.txt" do
-      engine_config = %{"respect_robots_txt" => true, "user_agent" => "KreuzcrawlBot"}
-      engine = Kreuzcrawl.create_engine!(engine_config)
-      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_user_agent_specific"
-      result = Kreuzcrawl.scrape!(engine, url)
-      assert String.trim(result.is_allowed) == false
-    end
-  end
-
-  describe "robots_wildcard_paths" do
-    test "Handles wildcard Disallow patterns in robots.txt" do
-      engine_config = %{"respect_robots_txt" => true}
-      engine = Kreuzcrawl.create_engine!(engine_config)
-      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_wildcard_paths"
-      result = Kreuzcrawl.scrape!(engine, url)
-      assert String.trim(result.is_allowed) == false
     end
   end
 

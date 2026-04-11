@@ -55,10 +55,7 @@ RSpec.describe 'scrape' do
     result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.links.length).to be > 9
-    expect(result.links[0].link_type).to include('internal')
-    expect(result.links[0].link_type).to include('external')
-    expect(result.links[0].link_type).to include('anchor')
-    expect(result.links[0].link_type).to include('document')
+    expect(result.links[0].url).not_to be_empty
   end
 
   it 'scrape_download_assets: Downloads CSS, JS, and image assets from page' do

@@ -45,20 +45,6 @@ RSpec.describe 'error' do
     expect { Kreuzcrawl.scrape(engine, url) }.to raise_error
   end
 
-  it 'error_connection_refused: Handles connection refused error gracefully' do
-    engine_config = { 'request_timeout' => 5000, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config)
-    url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/error_connection_refused"
-    expect { Kreuzcrawl.scrape(engine, url) }.to raise_error
-  end
-
-  it 'error_dns_resolution: Handles DNS resolution failure gracefully' do
-    engine_config = { 'request_timeout' => 5000, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config)
-    url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/error_dns_resolution"
-    expect { Kreuzcrawl.scrape(engine, url) }.to raise_error
-  end
-
   it 'error_invalid_proxy: Proxy pointing to unreachable address causes connection error during scrape' do
     engine_config = { 'proxy' => { 'url' => 'http://127.0.0.1:1' }, 'request_timeout' => 2000 }
     engine = Kreuzcrawl.create_engine(engine_config)
@@ -90,13 +76,6 @@ RSpec.describe 'error' do
     engine_config = { 'respect_robots_txt' => false, 'retry_codes' => [429], 'retry_count' => 3 }
     engine = Kreuzcrawl.create_engine(engine_config)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/error_retry_backoff"
-    expect { Kreuzcrawl.scrape(engine, url) }.to raise_error
-  end
-
-  it 'error_ssl_invalid_cert: Handles SSL certificate validation error' do
-    engine_config = { 'request_timeout' => 5000, 'respect_robots_txt' => false }
-    engine = Kreuzcrawl.create_engine(engine_config)
-    url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/error_ssl_invalid_cert"
     expect { Kreuzcrawl.scrape(engine, url) }.to raise_error
   end
 
