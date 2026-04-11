@@ -4,7 +4,7 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 describe("cache", () => {
 	it("cache_basic: Crawling with disk cache enabled succeeds without errors", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/cache_basic";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/cache_basic`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 	});

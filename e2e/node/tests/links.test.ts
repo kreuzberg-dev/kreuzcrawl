@@ -4,14 +4,14 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 describe("links", () => {
 	it("links_anchor_fragment: Identifies fragment-only links as anchor type", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_anchor_fragment";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_anchor_fragment`;
 		const result = await scrape(engine, url);
 		expect(result.links[0].linkType).toContain("anchor");
 	});
 
 	it("links_base_tag: Resolves relative URLs using base tag href", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_base_tag";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_base_tag`;
 		const result = await scrape(engine, url);
 		expect(result.links.length).toBeGreaterThan(2);
 		expect(result.links[0].url).toContain("example.com");
@@ -19,14 +19,14 @@ describe("links", () => {
 
 	it("links_document_types: Detects PDF, DOCX, XLSX links as document type", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_document_types";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_document_types`;
 		const result = await scrape(engine, url);
 		expect(result.links[0].linkType).toContain("document");
 	});
 
 	it("links_empty_href: Handles empty href attributes without errors", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_empty_href";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_empty_href`;
 		const result = await scrape(engine, url);
 		expect(result.links.length).toBeGreaterThan(0);
 		expect(result.links[0].url).toContain("/valid");
@@ -34,7 +34,7 @@ describe("links", () => {
 
 	it("links_internal_external_classification: Correctly classifies internal vs external links by domain", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_internal_external_classification";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_internal_external_classification`;
 		const result = await scrape(engine, url);
 		expect(result.links.length).toBeGreaterThan(4);
 		expect(result.links[0].linkType).toContain("internal");
@@ -43,7 +43,7 @@ describe("links", () => {
 
 	it("links_mailto_javascript_skip: Skips mailto:, javascript:, and tel: scheme links", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_mailto_javascript_skip";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_mailto_javascript_skip`;
 		const result = await scrape(engine, url);
 		expect(result.links.length).toBeGreaterThan(0);
 		expect(result.links[0].url).not.toContain("mailto:");
@@ -51,7 +51,7 @@ describe("links", () => {
 
 	it("links_protocol_relative: Handles protocol-relative URLs (//example.com) correctly", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_protocol_relative";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_protocol_relative`;
 		const result = await scrape(engine, url);
 		expect(result.links.length).toBeGreaterThan(1);
 		expect(result.links[0].url).toContain("//");
@@ -59,14 +59,14 @@ describe("links", () => {
 
 	it("links_rel_attributes: Preserves rel=nofollow and rel=canonical attributes", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_rel_attributes";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_rel_attributes`;
 		const result = await scrape(engine, url);
 		expect(result.links.length).toBeGreaterThan(0);
 	});
 
 	it("links_relative_parent: Resolves ../ and ./ relative parent path links correctly", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/links_relative_parent";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/links_relative_parent`;
 		const result = await scrape(engine, url);
 		expect(result.links.length).toBeGreaterThan(3);
 	});

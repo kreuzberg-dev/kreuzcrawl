@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 	"testing"
@@ -26,7 +27,11 @@ func Test_EngineBatchBasic(t *testing.T) {
 
 func Test_EngineCrawlBasic(t *testing.T) {
 	// CrawlEngine with defaults crawls multiple pages like the free function
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -98,7 +103,11 @@ func Test_EngineScrapeBasic(t *testing.T) {
 
 func Test_EngineStreamBasic(t *testing.T) {
 	// CrawlEngine with defaults streams events like the free function
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

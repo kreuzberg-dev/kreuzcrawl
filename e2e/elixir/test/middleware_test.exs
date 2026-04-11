@@ -4,7 +4,8 @@ defmodule E2e.MiddlewareTest do
 
   describe "middleware_engine_crawl_with_defaults" do
     test "Engine crawl with default middleware chain produces correct multi-page results" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/middleware_engine_crawl_with_defaults"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type

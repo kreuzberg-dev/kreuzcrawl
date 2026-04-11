@@ -3,37 +3,42 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 
 describe("concurrent", () => {
 	it("concurrent_basic: Concurrent crawling fetches all pages with max_concurrent workers", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/concurrent_basic";
+		const engineConfig = { max_concurrent: 3, max_depth: 1 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/concurrent_basic`;
 		await scrape(engine, url);
 		// skipped: field 'pages.length' not available on result type
 		// skipped: field 'pages.length' not available on result type
 	});
 
 	it("concurrent_depth_two_fan_out: Concurrent depth=2 crawl correctly fans out and deduplicates across levels", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/concurrent_depth_two_fan_out";
+		const engineConfig = { max_concurrent: 3, max_depth: 2 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/concurrent_depth_two_fan_out`;
 		await scrape(engine, url);
 		// skipped: field 'pages.length' not available on result type
 	});
 
 	it("concurrent_max_pages_exact: Concurrent crawling does not exceed max_pages limit even with high concurrency", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/concurrent_max_pages_exact";
+		const engineConfig = { max_concurrent: 5, max_depth: 1, max_pages: 3 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/concurrent_max_pages_exact`;
 		await scrape(engine, url);
 		// skipped: field 'pages.length' not available on result type
 	});
 
 	it("concurrent_partial_errors: Concurrent crawl handles partial failures gracefully", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/concurrent_partial_errors";
+		const engineConfig = { max_concurrent: 3, max_depth: 1 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/concurrent_partial_errors`;
 		await scrape(engine, url);
 		// skipped: field 'pages.length' not available on result type
 	});
 
 	it("concurrent_respects_max_pages: Concurrent crawling respects max_pages limit", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/concurrent_respects_max_pages";
+		const engineConfig = { max_concurrent: 2, max_depth: 1, max_pages: 3 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/concurrent_respects_max_pages`;
 		await scrape(engine, url);
 		// skipped: field 'pages.length' not available on result type
 	});

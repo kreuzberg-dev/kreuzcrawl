@@ -69,7 +69,7 @@ async fn test_metadata_keywords_author() {
     assert_eq!(metadata_title.trim(), r#"Comprehensive Metadata Test Page"#, "equals assertion failed");
     assert!(result.metadata.canonical_url.is_some(), "expected metadata.canonical_url to be present");
     assert!(!metadata_keywords.is_empty(), "expected non-empty value");
-    assert!(format!("{:?}", metadata_keywords).to_lowercase().contains(r#"rust"#), "expected to contain: {}", r#"rust"#);
+    assert!(format!("{:?}", metadata_keywords).contains(r#"rust"#), "expected to contain: {}", r#"rust"#);
     assert_eq!(metadata_author.trim(), r#"Jane Developer"#, "equals assertion failed");
     assert!(result.metadata.viewport.is_some(), "expected metadata.viewport to be present");
     assert_eq!(metadata_generator.trim(), r#"kreuzcrawl/1.0"#, "equals assertion failed");

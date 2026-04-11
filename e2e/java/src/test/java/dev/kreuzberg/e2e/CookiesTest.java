@@ -3,13 +3,18 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: cookies. */
 class CookiesTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testCookiesPerDomain() throws Exception {
         // Isolates cookies per domain during crawl
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/cookies_per_domain";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'cookies.length' not available on result type
@@ -19,7 +24,8 @@ class CookiesTest {
     @Test
     void testCookiesPersistence() throws Exception {
         // Maintains cookies across multiple crawl requests
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/cookies_persistence";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'cookies' not available on result type
@@ -28,7 +34,8 @@ class CookiesTest {
     @Test
     void testCookiesSetCookieResponse() throws Exception {
         // Respects Set-Cookie header from server responses
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/cookies_set_cookie_response";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'cookies' not available on result type

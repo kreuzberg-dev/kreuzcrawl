@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -11,7 +12,8 @@ public class ScrapeTests
     public async Task Test_ScrapeAssetDedup()
     {
         // Same asset linked twice results in one download with one unique hash
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"download_assets\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_asset_dedup";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
@@ -23,7 +25,8 @@ public class ScrapeTests
     public async Task Test_ScrapeAssetMaxSize()
     {
         // Skips assets exceeding max_asset_size limit
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"download_assets\":true,\"max_asset_size\":150}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_asset_max_size";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
@@ -34,7 +37,8 @@ public class ScrapeTests
     public async Task Test_ScrapeAssetTypeFilter()
     {
         // Only downloads image assets when asset_types filter is set
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"asset_types\":[\"image\"],\"download_assets\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_asset_type_filter";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
@@ -46,7 +50,8 @@ public class ScrapeTests
     public async Task Test_ScrapeBasicHtmlPage()
     {
         // Scrapes a simple HTML page and extracts title, description, and links
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":0,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_basic_html_page";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
@@ -80,7 +85,8 @@ public class ScrapeTests
     public async Task Test_ScrapeDownloadAssets()
     {
         // Downloads CSS, JS, and image assets from page
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"download_assets\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/scrape_download_assets";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);

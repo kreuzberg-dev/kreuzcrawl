@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: strategy. */
 final class StrategyTest extends TestCase
@@ -13,7 +14,10 @@ final class StrategyTest extends TestCase
     /** BestFirst strategy always processes the seed URL first */
     public function test_strategy_best_first_seed(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 1;
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_best_first_seed';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
@@ -23,7 +27,10 @@ final class StrategyTest extends TestCase
     /** BFS strategy visits pages in breadth-first order */
     public function test_strategy_bfs_default_order(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 1;
+        $engine_config->max_depth = 2;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_bfs_default_order';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
@@ -33,7 +40,10 @@ final class StrategyTest extends TestCase
     /** DFS strategy visits pages in depth-first order */
     public function test_strategy_dfs_depth_first(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 1;
+        $engine_config->max_depth = 2;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_dfs_depth_first';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type

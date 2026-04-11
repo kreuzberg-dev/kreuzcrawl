@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -10,7 +11,11 @@ import (
 
 func Test_ConcurrentBasic(t *testing.T) {
 	// Concurrent crawling fetches all pages with max_concurrent workers
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":3,"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -25,7 +30,11 @@ func Test_ConcurrentBasic(t *testing.T) {
 
 func Test_ConcurrentDepthTwoFanOut(t *testing.T) {
 	// Concurrent depth=2 crawl correctly fans out and deduplicates across levels
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":3,"max_depth":2}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -39,7 +48,11 @@ func Test_ConcurrentDepthTwoFanOut(t *testing.T) {
 
 func Test_ConcurrentMaxPagesExact(t *testing.T) {
 	// Concurrent crawling does not exceed max_pages limit even with high concurrency
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":5,"max_depth":1,"max_pages":3}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -53,7 +66,11 @@ func Test_ConcurrentMaxPagesExact(t *testing.T) {
 
 func Test_ConcurrentPartialErrors(t *testing.T) {
 	// Concurrent crawl handles partial failures gracefully
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":3,"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -67,7 +84,11 @@ func Test_ConcurrentPartialErrors(t *testing.T) {
 
 func Test_ConcurrentRespectsMaxPages(t *testing.T) {
 	// Concurrent crawling respects max_pages limit
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":2,"max_depth":1,"max_pages":3}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

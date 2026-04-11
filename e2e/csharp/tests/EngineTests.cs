@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -22,7 +23,8 @@ public class EngineTests
     public async Task Test_EngineCrawlBasic()
     {
         // CrawlEngine with defaults crawls multiple pages like the free function
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_crawl_basic";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
@@ -58,7 +60,8 @@ public class EngineTests
     public async Task Test_EngineStreamBasic()
     {
         // CrawlEngine with defaults streams events like the free function
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_stream_basic";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'stream.has_page_event' not available on result type

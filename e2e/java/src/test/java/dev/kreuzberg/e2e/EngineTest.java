@@ -3,9 +3,13 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: engine. */
 class EngineTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testEngineBatchBasic() throws Exception {
         // CrawlEngine with defaults batch scrapes like the free function
@@ -19,7 +23,8 @@ class EngineTest {
     @Test
     void testEngineCrawlBasic() throws Exception {
         // CrawlEngine with defaults crawls multiple pages like the free function
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_depth\":1}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/engine_crawl_basic";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
@@ -52,7 +57,8 @@ class EngineTest {
     @Test
     void testEngineStreamBasic() throws Exception {
         // CrawlEngine with defaults streams events like the free function
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_depth\":1}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/engine_stream_basic";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'stream.has_page_event' not available on result type

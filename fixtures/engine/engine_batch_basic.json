@@ -23,10 +23,8 @@
 				"body_inline": "<html><head><title>Batch 2</title></head><body>Content 2</body></html>"
 			}
 		],
-		"config": {
-			"engine_mode": true,
-			"batch_urls": ["/page1", "/page2"]
-		}
+		"batch_urls": ["/page1", "/page2"],
+		"config": {}
 	},
 	"assertions": [
 		{

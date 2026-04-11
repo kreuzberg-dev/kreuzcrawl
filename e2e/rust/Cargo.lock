@@ -1211,6 +1211,7 @@ name = "kreuzcrawl-e2e-rust"
 version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
+ "serde_json",
  "tokio",
  "wiremock",
 ]

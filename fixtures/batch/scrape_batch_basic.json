@@ -33,9 +33,8 @@
 				"body_inline": "<html><body><h1>Page 3</h1></body></html>"
 			}
 		],
-		"config": {
-			"batch_urls": ["/page1", "/page2", "/page3"]
-		}
+		"batch_urls": ["/page1", "/page2", "/page3"],
+		"config": {}
 	},
 	"assertions": [
 		{

@@ -4,15 +4,16 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 describe("engine", () => {
 	it("engine_batch_basic: CrawlEngine with defaults batch scrapes like the free function", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/engine_batch_basic";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/engine_batch_basic`;
 		await scrape(engine, url);
 		// skipped: field 'batch.completed_count' not available on result type
 		// skipped: field 'batch.total_count' not available on result type
 	});
 
 	it("engine_crawl_basic: CrawlEngine with defaults crawls multiple pages like the free function", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/engine_crawl_basic";
+		const engineConfig = { max_depth: 1 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/engine_crawl_basic`;
 		await scrape(engine, url);
 		// skipped: field 'crawl.pages_crawled' not available on result type
 		// skipped: field 'crawl.min_pages' not available on result type
@@ -20,14 +21,14 @@ describe("engine", () => {
 
 	it("engine_map_basic: CrawlEngine with defaults discovers URLs like the free function", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/engine_map_basic";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/engine_map_basic`;
 		await scrape(engine, url);
 		// skipped: field 'map.min_urls' not available on result type
 	});
 
 	it("engine_scrape_basic: CrawlEngine with defaults scrapes a page identically to the free function", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/engine_scrape_basic";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/engine_scrape_basic`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.contentType.trim()).toBe("text/html");
@@ -38,8 +39,9 @@ describe("engine", () => {
 	});
 
 	it("engine_stream_basic: CrawlEngine with defaults streams events like the free function", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/engine_stream_basic";
+		const engineConfig = { max_depth: 1 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/engine_stream_basic`;
 		await scrape(engine, url);
 		// skipped: field 'stream.has_page_event' not available on result type
 		// skipped: field 'stream.has_complete_event' not available on result type

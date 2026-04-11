@@ -3,13 +3,18 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: redirect. */
 class RedirectTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testRedirect301Permanent() throws Exception {
         // Follows 301 permanent redirect and returns final page content
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_301_permanent";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -19,7 +24,8 @@ class RedirectTest {
     @Test
     void testRedirect302Found() throws Exception {
         // Follows 302 Found redirect correctly
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_302_found";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -29,7 +35,8 @@ class RedirectTest {
     @Test
     void testRedirect303SeeOther() throws Exception {
         // Follows 303 See Other redirect (method changes to GET)
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_303_see_other";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -39,7 +46,8 @@ class RedirectTest {
     @Test
     void testRedirect307Temporary() throws Exception {
         // Follows 307 Temporary Redirect (preserves method)
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_307_temporary";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -49,7 +57,8 @@ class RedirectTest {
     @Test
     void testRedirect308Permanent() throws Exception {
         // Follows 308 Permanent Redirect (preserves method)
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_308_permanent";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -59,7 +68,8 @@ class RedirectTest {
     @Test
     void testRedirectChain() throws Exception {
         // Follows a chain of redirects (301 -> 302 -> 200)
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_chain";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -69,7 +79,8 @@ class RedirectTest {
     @Test
     void testRedirectCrossDomain() throws Exception {
         // Reports cross-domain redirect target without following to external domain
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_cross_domain";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -79,7 +90,8 @@ class RedirectTest {
     @Test
     void testRedirectLoop() throws Exception {
         // Detects redirect loop (A -> B -> A) and returns error
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_loop";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'is_error' not available on result type
@@ -88,7 +100,8 @@ class RedirectTest {
     @Test
     void testRedirectMaxExceeded() throws Exception {
         // Aborts when redirect count exceeds max_redirects limit
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_redirects\":2,\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_max_exceeded";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'is_error' not available on result type
@@ -97,7 +110,8 @@ class RedirectTest {
     @Test
     void testRedirectMetaRefresh() throws Exception {
         // Follows HTML meta-refresh redirect to target page
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_meta_refresh";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -107,7 +121,8 @@ class RedirectTest {
     @Test
     void testRedirectRefreshHeader() throws Exception {
         // Handles HTTP Refresh header redirect
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_refresh_header";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -117,7 +132,8 @@ class RedirectTest {
     @Test
     void testRedirectTo404() throws Exception {
         // Redirect target returns 404 Not Found
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/redirect_to_404";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'final_url' not available on result type

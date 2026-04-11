@@ -4,7 +4,8 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_basic" do
     test "Concurrent crawling fetches all pages with max_concurrent workers" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_concurrent" => 3, "max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_basic"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'pages.length' not available on result type
@@ -14,7 +15,8 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_depth_two_fan_out" do
     test "Concurrent depth=2 crawl correctly fans out and deduplicates across levels" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_concurrent" => 3, "max_depth" => 2}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_depth_two_fan_out"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'pages.length' not available on result type
@@ -23,7 +25,8 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_max_pages_exact" do
     test "Concurrent crawling does not exceed max_pages limit even with high concurrency" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_concurrent" => 5, "max_depth" => 1, "max_pages" => 3}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_max_pages_exact"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'pages.length' not available on result type
@@ -32,7 +35,8 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_partial_errors" do
     test "Concurrent crawl handles partial failures gracefully" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_concurrent" => 3, "max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_partial_errors"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'pages.length' not available on result type
@@ -41,7 +45,8 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_respects_max_pages" do
     test "Concurrent crawling respects max_pages limit" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_concurrent" => 2, "max_depth" => 1, "max_pages" => 3}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_respects_max_pages"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'pages.length' not available on result type

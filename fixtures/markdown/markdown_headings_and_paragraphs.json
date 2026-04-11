@@ -16,9 +16,7 @@
 				"body_inline": "<html><body><h1>Main Title</h1><p>First paragraph.</p><h2>Subsection</h2><p>Second paragraph with details.</p></body></html>"
 			}
 		],
-		"config": {
-			"engine_mode": true
-		}
+		"config": {}
 	},
 	"assertions": [
 		{

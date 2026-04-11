@@ -4,7 +4,8 @@ defmodule E2e.RateLimitTest do
 
   describe "rate_limit_basic_delay" do
     test "Rate limiter adds delay between requests to the same domain" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/rate_limit_basic_delay"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
@@ -14,7 +15,8 @@ defmodule E2e.RateLimitTest do
 
   describe "rate_limit_zero_no_delay" do
     test "Rate limiter with zero delay does not slow crawling" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/rate_limit_zero_no_delay"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type

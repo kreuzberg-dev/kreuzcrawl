@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -101,7 +102,11 @@ func Test_Error502BadGateway(t *testing.T) {
 
 func Test_ErrorConnectionRefused(t *testing.T) {
 	// Handles connection refused error gracefully
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"request_timeout":5000,"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -114,7 +119,11 @@ func Test_ErrorConnectionRefused(t *testing.T) {
 
 func Test_ErrorDnsResolution(t *testing.T) {
 	// Handles DNS resolution failure gracefully
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"request_timeout":5000,"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -142,7 +151,11 @@ func Test_ErrorEmptyResponse(t *testing.T) {
 
 func Test_ErrorInvalidProxy(t *testing.T) {
 	// Proxy pointing to unreachable address causes connection error during scrape
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"proxy":{"url":"http://127.0.0.1:1"},"request_timeout":2000}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -155,7 +168,11 @@ func Test_ErrorInvalidProxy(t *testing.T) {
 
 func Test_ErrorPartialResponse(t *testing.T) {
 	// Handles incomplete or truncated HTTP response
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -181,7 +198,11 @@ func Test_ErrorRateLimited(t *testing.T) {
 
 func Test_ErrorRetry503(t *testing.T) {
 	// Retries request on 503 Service Unavailable response
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false,"retry_codes":[503],"retry_count":2}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -194,7 +215,11 @@ func Test_ErrorRetry503(t *testing.T) {
 
 func Test_ErrorRetryBackoff(t *testing.T) {
 	// Implements exponential backoff when retrying failed requests
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false,"retry_codes":[429],"retry_count":3}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -207,7 +232,11 @@ func Test_ErrorRetryBackoff(t *testing.T) {
 
 func Test_ErrorSslInvalidCert(t *testing.T) {
 	// Handles SSL certificate validation error
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"request_timeout":5000,"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -220,7 +249,11 @@ func Test_ErrorSslInvalidCert(t *testing.T) {
 
 func Test_ErrorTimeout(t *testing.T) {
 	// Handles request timeout
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"request_timeout":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

@@ -17,7 +17,6 @@
 			}
 		],
 		"config": {
-			"engine_mode": true,
 			"user_agents": ["Mozilla/5.0 (Windows NT 10.0)", "Chrome/120.0.0.0"]
 		}
 	},

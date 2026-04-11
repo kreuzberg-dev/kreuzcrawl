@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: robots. */
 final class RobotsTest extends TestCase
@@ -13,7 +14,9 @@ final class RobotsTest extends TestCase
     /** Permissive robots.txt allows all paths */
     public function test_robots_allow_all(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_allow_all';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->is_allowed);
@@ -22,7 +25,9 @@ final class RobotsTest extends TestCase
     /** Allow directive overrides Disallow for specific paths */
     public function test_robots_allow_override(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_allow_override';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->is_allowed);
@@ -31,7 +36,10 @@ final class RobotsTest extends TestCase
     /** Correctly parses robots.txt with inline and line comments */
     public function test_robots_comments_handling(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine_config->user_agent = "kreuzcrawl";
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_comments_handling';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->is_allowed);
@@ -40,7 +48,10 @@ final class RobotsTest extends TestCase
     /** Respects crawl-delay directive from robots.txt */
     public function test_robots_crawl_delay(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine_config->user_agent = "kreuzcrawl";
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_crawl_delay';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(2, $result->crawl_delay);
@@ -49,7 +60,9 @@ final class RobotsTest extends TestCase
     /** Robots.txt disallows specific paths */
     public function test_robots_disallow_path(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_disallow_path';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(false, $result->is_allowed);
@@ -58,7 +71,9 @@ final class RobotsTest extends TestCase
     /** Detects nofollow meta robots tag and skips link extraction */
     public function test_robots_meta_nofollow(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_meta_nofollow';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->nofollow_detected);
@@ -67,7 +82,9 @@ final class RobotsTest extends TestCase
     /** Detects noindex meta robots tag in HTML page */
     public function test_robots_meta_noindex(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_meta_noindex';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->noindex_detected);
@@ -76,7 +93,9 @@ final class RobotsTest extends TestCase
     /** Missing robots.txt (404) allows all crawling */
     public function test_robots_missing_404(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_missing_404';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->is_allowed);
@@ -85,7 +104,10 @@ final class RobotsTest extends TestCase
     /** Picks the most specific user-agent block from robots.txt */
     public function test_robots_multiple_user_agents(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine_config->user_agent = "SpecificBot";
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_multiple_user_agents';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->is_allowed);
@@ -94,7 +116,10 @@ final class RobotsTest extends TestCase
     /** Parses request-rate directive from robots.txt */
     public function test_robots_request_rate(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine_config->user_agent = "kreuzcrawl";
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_request_rate';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(5, $result->crawl_delay);
@@ -104,7 +129,9 @@ final class RobotsTest extends TestCase
     /** Discovers sitemap URL from Sitemap directive in robots.txt */
     public function test_robots_sitemap_directive(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_sitemap_directive';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->is_allowed);
@@ -113,7 +140,10 @@ final class RobotsTest extends TestCase
     /** Matches user-agent specific rules in robots.txt */
     public function test_robots_user_agent_specific(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine_config->user_agent = "KreuzcrawlBot";
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_user_agent_specific';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(false, $result->is_allowed);
@@ -122,7 +152,9 @@ final class RobotsTest extends TestCase
     /** Handles wildcard Disallow patterns in robots.txt */
     public function test_robots_wildcard_paths(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_wildcard_paths';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(false, $result->is_allowed);
@@ -131,7 +163,9 @@ final class RobotsTest extends TestCase
     /** Respects X-Robots-Tag HTTP header directives */
     public function test_robots_x_robots_tag(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/robots_x_robots_tag';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals("noindex, nofollow", $result->x_robots_tag);

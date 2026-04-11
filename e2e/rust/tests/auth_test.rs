@@ -6,7 +6,8 @@ use kreuzcrawl::create_engine;
 #[tokio::test]
 async fn test_auth_basic_http() {
     // Sends HTTP Basic authentication header
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"auth\":{\"password\":\"testpass\",\"type\":\"basic\",\"username\":\"testuser\"},\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "auth_basic_http");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.auth_header_sent, true, "equals assertion failed");
@@ -16,7 +17,8 @@ async fn test_auth_basic_http() {
 #[tokio::test]
 async fn test_auth_bearer_token() {
     // Sends Bearer token in Authorization header
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"auth\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test\",\"type\":\"bearer\"},\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "auth_bearer_token");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.auth_header_sent, true, "equals assertion failed");
@@ -26,7 +28,8 @@ async fn test_auth_bearer_token() {
 #[tokio::test]
 async fn test_auth_custom_header() {
     // Sends authentication via custom header (X-API-Key)
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"auth\":{\"name\":\"X-API-Key\",\"type\":\"header\",\"value\":\"sk-test-key-12345\"},\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "auth_custom_header");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.auth_header_sent, true, "equals assertion failed");

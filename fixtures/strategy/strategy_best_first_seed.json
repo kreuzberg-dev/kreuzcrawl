@@ -30,10 +30,10 @@
 				"body_inline": "<html><body><h1>Page 2</h1></body></html>"
 			}
 		],
+		"crawl_strategy": "best_first",
 		"config": {
 			"max_depth": 1,
-			"max_concurrent": 1,
-			"crawl_strategy": "best_first"
+			"max_concurrent": 1
 		}
 	},
 	"assertions": [

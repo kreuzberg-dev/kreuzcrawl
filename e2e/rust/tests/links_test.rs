@@ -9,7 +9,7 @@ async fn test_links_anchor_fragment() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_anchor_fragment");
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"anchor"#), "expected to contain: {}", r#"anchor"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"anchor"#), "expected to contain: {}", r#"anchor"#);
 }
 
 #[tokio::test]
@@ -19,7 +19,7 @@ async fn test_links_base_tag() {
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_base_tag");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 2, "expected > 2");
-    assert!(format!("{:?}", result.links[0].url).to_lowercase().contains(r#"example.com"#), "expected to contain: {}", r#"example.com"#);
+    assert!(format!("{:?}", result.links[0].url).contains(r#"example.com"#), "expected to contain: {}", r#"example.com"#);
 }
 
 #[tokio::test]
@@ -28,7 +28,7 @@ async fn test_links_document_types() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_document_types");
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"document"#), "expected to contain: {}", r#"document"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"document"#), "expected to contain: {}", r#"document"#);
 }
 
 #[tokio::test]
@@ -38,7 +38,7 @@ async fn test_links_empty_href() {
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_empty_href");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 0, "expected > 0");
-    assert!(format!("{:?}", result.links[0].url).to_lowercase().contains(r#"/valid"#), "expected to contain: {}", r#"/valid"#);
+    assert!(format!("{:?}", result.links[0].url).contains(r#"/valid"#), "expected to contain: {}", r#"/valid"#);
 }
 
 #[tokio::test]
@@ -48,8 +48,8 @@ async fn test_links_internal_external_classification() {
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_internal_external_classification");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 4, "expected > 4");
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"internal"#), "expected to contain: {}", r#"internal"#);
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"external"#), "expected to contain: {}", r#"external"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"internal"#), "expected to contain: {}", r#"internal"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"external"#), "expected to contain: {}", r#"external"#);
 }
 
 #[tokio::test]
@@ -59,7 +59,7 @@ async fn test_links_mailto_javascript_skip() {
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_mailto_javascript_skip");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 0, "expected > 0");
-    assert!(!format!("{:?}", result.links[0].url).to_lowercase().contains(r#"mailto:"#), "expected NOT to contain: {}", r#"mailto:"#);
+    assert!(!format!("{:?}", result.links[0].url).contains(r#"mailto:"#), "expected NOT to contain: {}", r#"mailto:"#);
 }
 
 #[tokio::test]
@@ -69,7 +69,7 @@ async fn test_links_protocol_relative() {
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "links_protocol_relative");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.links.len() > 1, "expected > 1");
-    assert!(format!("{:?}", result.links[0].url).to_lowercase().contains(r#"//"#), "expected to contain: {}", r#"//"#);
+    assert!(format!("{:?}", result.links[0].url).contains(r#"//"#), "expected to contain: {}", r#"//"#);
 }
 
 #[tokio::test]

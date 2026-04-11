@@ -3,13 +3,18 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: stealth. */
 class StealthTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testStealthUaRotationConfig() throws Exception {
         // User-agent rotation config is accepted and crawl succeeds
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"user_agents\":[\"Mozilla/5.0 (Windows NT 10.0)\",\"Chrome/120.0.0.0\"]}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/stealth_ua_rotation_config";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());

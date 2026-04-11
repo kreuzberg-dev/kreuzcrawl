@@ -16,9 +16,7 @@
 				"body_inline": "<html><head><title>Middleware Test</title></head><body><h1>Hello</h1></body></html>"
 			}
 		],
-		"config": {
-			"engine_mode": true
-		}
+		"config": {}
 	},
 	"assertions": [
 		{

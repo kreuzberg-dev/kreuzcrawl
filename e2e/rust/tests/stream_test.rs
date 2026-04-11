@@ -6,7 +6,8 @@ use kreuzcrawl::create_engine;
 #[tokio::test]
 async fn test_crawl_stream_events() {
     // Crawl stream produces page and complete events
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_depth\":1,\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "crawl_stream_events");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'stream.event_count_min' not available on result type
@@ -17,7 +18,8 @@ async fn test_crawl_stream_events() {
 #[tokio::test]
 async fn test_stream_depth_crawl() {
     // Stream produces events for multi-depth crawl with link following
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_concurrent\":1,\"max_depth\":2}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "stream_depth_crawl");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'stream.event_count_min' not available on result type
@@ -28,7 +30,8 @@ async fn test_stream_depth_crawl() {
 #[tokio::test]
 async fn test_stream_with_error_event() {
     // Stream emits page and complete events even when some pages fail
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_concurrent\":1,\"max_depth\":1}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "stream_with_error_event");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'stream.has_page_event' not available on result type

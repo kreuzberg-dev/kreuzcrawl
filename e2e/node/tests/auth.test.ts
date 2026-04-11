@@ -3,24 +3,36 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 
 describe("auth", () => {
 	it("auth_basic_http: Sends HTTP Basic authentication header", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/auth_basic_http";
+		const engineConfig = {
+			auth: { password: "testpass", type: "basic", username: "testuser" },
+			respect_robots_txt: false,
+		};
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/auth_basic_http`;
 		const result = await scrape(engine, url);
 		expect(result.authHeaderSent).toBe(true);
 		expect(result.statusCode).toBe(200);
 	});
 
 	it("auth_bearer_token: Sends Bearer token in Authorization header", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/auth_bearer_token";
+		const engineConfig = {
+			auth: { token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test", type: "bearer" },
+			respect_robots_txt: false,
+		};
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/auth_bearer_token`;
 		const result = await scrape(engine, url);
 		expect(result.authHeaderSent).toBe(true);
 		expect(result.statusCode).toBe(200);
 	});
 
 	it("auth_custom_header: Sends authentication via custom header (X-API-Key)", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/auth_custom_header";
+		const engineConfig = {
+			auth: { name: "X-API-Key", type: "header", value: "sk-test-key-12345" },
+			respect_robots_txt: false,
+		};
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/auth_custom_header`;
 		const result = await scrape(engine, url);
 		expect(result.authHeaderSent).toBe(true);
 		expect(result.statusCode).toBe(200);

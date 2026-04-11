@@ -17,7 +17,8 @@ defmodule E2e.MarkdownTest do
 
   describe "markdown_crawl_all_pages" do
     test "All crawled pages have markdown field populated" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_crawl_all_pages"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type

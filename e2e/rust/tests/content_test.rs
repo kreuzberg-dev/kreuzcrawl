@@ -16,7 +16,8 @@ async fn test_content_204_no_content() {
 #[tokio::test]
 async fn test_content_charset_iso8859() {
     // Handles ISO-8859-1 encoded page correctly
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "content_charset_iso8859");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let detected_charset = result.detected_charset.as_deref().unwrap_or("");
@@ -26,7 +27,8 @@ async fn test_content_charset_iso8859() {
 #[tokio::test]
 async fn test_content_empty_body() {
     // Handles 200 response with empty body gracefully
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "content_empty_body");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -35,7 +37,8 @@ async fn test_content_empty_body() {
 #[tokio::test]
 async fn test_content_gzip_compressed() {
     // Handles response with Accept-Encoding gzip negotiation
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "content_gzip_compressed");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
@@ -45,7 +48,8 @@ async fn test_content_gzip_compressed() {
 #[tokio::test]
 async fn test_content_large_page_limit() {
     // Respects max body size limit and truncates or skips oversized pages
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_body_size\":1024,\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "content_large_page_limit");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(result.body_size < 1025, "expected < 1025");
@@ -54,7 +58,8 @@ async fn test_content_large_page_limit() {
 #[tokio::test]
 async fn test_content_main_only() {
     // Extracts only main content area, excluding nav, sidebar, footer
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"main_content_only\":true,\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "content_main_only");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.main_content_only, true, "equals assertion failed");
@@ -63,7 +68,8 @@ async fn test_content_main_only() {
 #[tokio::test]
 async fn test_content_pdf_no_extension() {
     // Detects PDF content by Content-Type header when URL has no .pdf extension
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "content_pdf_no_extension");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_pdf, true, "equals assertion failed");
@@ -72,7 +78,8 @@ async fn test_content_pdf_no_extension() {
 #[tokio::test]
 async fn test_content_remove_tags() {
     // Removes specified HTML elements by CSS selector before processing
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"remove_tags\":[\"nav\",\"aside\",\"footer\"],\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "content_remove_tags");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
@@ -81,7 +88,8 @@ async fn test_content_remove_tags() {
 #[tokio::test]
 async fn test_content_utf8_bom() {
     // Handles UTF-8 content with BOM marker correctly
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "content_utf8_bom");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let detected_charset = result.detected_charset.as_deref().unwrap_or("");

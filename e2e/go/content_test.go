@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 	"testing"
@@ -30,7 +31,11 @@ func Test_Content204NoContent(t *testing.T) {
 
 func Test_ContentCharsetIso8859(t *testing.T) {
 	// Handles ISO-8859-1 encoded page correctly
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -50,7 +55,11 @@ func Test_ContentCharsetIso8859(t *testing.T) {
 
 func Test_ContentEmptyBody(t *testing.T) {
 	// Handles 200 response with empty body gracefully
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -66,7 +75,11 @@ func Test_ContentEmptyBody(t *testing.T) {
 
 func Test_ContentGzipCompressed(t *testing.T) {
 	// Handles response with Accept-Encoding gzip negotiation
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -85,7 +98,11 @@ func Test_ContentGzipCompressed(t *testing.T) {
 
 func Test_ContentLargePageLimit(t *testing.T) {
 	// Respects max body size limit and truncates or skips oversized pages
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_body_size":1024,"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -101,7 +118,11 @@ func Test_ContentLargePageLimit(t *testing.T) {
 
 func Test_ContentMainOnly(t *testing.T) {
 	// Extracts only main content area, excluding nav, sidebar, footer
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"main_content_only":true,"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -117,7 +138,11 @@ func Test_ContentMainOnly(t *testing.T) {
 
 func Test_ContentPdfNoExtension(t *testing.T) {
 	// Detects PDF content by Content-Type header when URL has no .pdf extension
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -133,7 +158,11 @@ func Test_ContentPdfNoExtension(t *testing.T) {
 
 func Test_ContentRemoveTags(t *testing.T) {
 	// Removes specified HTML elements by CSS selector before processing
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"remove_tags":["nav","aside","footer"],"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -149,7 +178,11 @@ func Test_ContentRemoveTags(t *testing.T) {
 
 func Test_ContentUtf8Bom(t *testing.T) {
 	// Handles UTF-8 content with BOM marker correctly
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

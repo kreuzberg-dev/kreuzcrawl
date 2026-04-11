@@ -3,8 +3,9 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 
 describe("scrape", () => {
 	it("scrape_asset_dedup: Same asset linked twice results in one download with one unique hash", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_asset_dedup";
+		const engineConfig = { download_assets: true };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_asset_dedup`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.assets.length).toBe(2);
@@ -12,16 +13,18 @@ describe("scrape", () => {
 	});
 
 	it("scrape_asset_max_size: Skips assets exceeding max_asset_size limit", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_asset_max_size";
+		const engineConfig = { download_assets: true, max_asset_size: 150 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_asset_max_size`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.assets.length).toBe(2);
 	});
 
 	it("scrape_asset_type_filter: Only downloads image assets when asset_types filter is set", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_asset_type_filter";
+		const engineConfig = { asset_types: ["image"], download_assets: true };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_asset_type_filter`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.assets.length).toBe(1);
@@ -29,8 +32,9 @@ describe("scrape", () => {
 	});
 
 	it("scrape_basic_html_page: Scrapes a simple HTML page and extracts title, description, and links", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_basic_html_page";
+		const engineConfig = { max_depth: 0, respect_robots_txt: false };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_basic_html_page`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.contentType.trim()).toBe("text/html");
@@ -46,7 +50,7 @@ describe("scrape", () => {
 
 	it("scrape_complex_links: Classifies links by type: internal, external, anchor, document, image", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_complex_links";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_complex_links`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.links.length).toBeGreaterThan(9);
@@ -57,8 +61,9 @@ describe("scrape", () => {
 	});
 
 	it("scrape_download_assets: Downloads CSS, JS, and image assets from page", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_download_assets";
+		const engineConfig = { download_assets: true };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_download_assets`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.assets.length).toBeGreaterThan(2);
@@ -66,7 +71,7 @@ describe("scrape", () => {
 
 	it("scrape_dublin_core: Extracts Dublin Core metadata from a page", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_dublin_core";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_dublin_core`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.metadata.dcTitle.length).toBeGreaterThan(0);
@@ -76,7 +81,7 @@ describe("scrape", () => {
 
 	it("scrape_empty_page: Handles an empty HTML document without errors", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_empty_page";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_empty_page`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.links.length).toBeGreaterThan(-1);
@@ -85,7 +90,7 @@ describe("scrape", () => {
 
 	it("scrape_feed_discovery: Discovers RSS, Atom, and JSON feed links", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_feed_discovery";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_feed_discovery`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.feeds.length).toBeGreaterThanOrEqual(3);
@@ -93,7 +98,7 @@ describe("scrape", () => {
 
 	it("scrape_image_sources: Extracts images from img, picture, og:image, twitter:image", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_image_sources";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_image_sources`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.images.length).toBeGreaterThan(4);
@@ -102,14 +107,14 @@ describe("scrape", () => {
 
 	it("scrape_js_heavy_spa: Handles SPA page with JavaScript-only content (no server-rendered HTML)", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_js_heavy_spa";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_js_heavy_spa`;
 		const result = await scrape(engine, url);
 		expect(result.html.length).toBeGreaterThan(0);
 	});
 
 	it("scrape_json_ld: Extracts JSON-LD structured data from a page", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_json_ld";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_json_ld`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.jsonLd.length).toBeGreaterThan(0);
@@ -119,7 +124,7 @@ describe("scrape", () => {
 
 	it("scrape_malformed_html: Gracefully handles broken HTML without crashing", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_malformed_html";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_malformed_html`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.html.length).toBeGreaterThan(0);
@@ -128,7 +133,7 @@ describe("scrape", () => {
 
 	it("scrape_og_metadata: Extracts full Open Graph metadata from a page", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_og_metadata";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_og_metadata`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.metadata.ogTitle.length).toBeGreaterThan(0);
@@ -141,7 +146,7 @@ describe("scrape", () => {
 
 	it("scrape_twitter_card: Extracts Twitter Card metadata from a page", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/scrape_twitter_card";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/scrape_twitter_card`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.metadata.twitterCard.length).toBeGreaterThan(0);

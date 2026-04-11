@@ -4,7 +4,8 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_asset_dedup" do
     test "Same asset linked twice results in one download with one unique hash" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"download_assets" => true}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_asset_dedup"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
@@ -15,7 +16,8 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_asset_max_size" do
     test "Skips assets exceeding max_asset_size limit" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"download_assets" => true, "max_asset_size" => 150}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_asset_max_size"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
@@ -25,7 +27,8 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_asset_type_filter" do
     test "Only downloads image assets when asset_types filter is set" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"asset_types" => ["image"], "download_assets" => true}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_asset_type_filter"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
@@ -36,7 +39,8 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_basic_html_page" do
     test "Scrapes a simple HTML page and extracts title, description, and links" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_depth" => 0, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_basic_html_page"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
@@ -68,7 +72,8 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_download_assets" do
     test "Downloads CSS, JS, and image assets from page" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"download_assets" => true}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_download_assets"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200

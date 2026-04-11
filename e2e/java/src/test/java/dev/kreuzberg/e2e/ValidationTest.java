@@ -3,13 +3,18 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: validation. */
 class ValidationTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testValidationInvalidExcludeRegex() throws Exception {
         // Invalid regex in exclude_paths is rejected
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"exclude_paths\":[\"(unclosed\"]}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/validation_invalid_exclude_regex";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -17,7 +22,8 @@ class ValidationTest {
     @Test
     void testValidationInvalidIncludeRegex() throws Exception {
         // Invalid regex in include_paths is rejected
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"include_paths\":[\"[invalid\"]}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/validation_invalid_include_regex";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -25,7 +31,8 @@ class ValidationTest {
     @Test
     void testValidationInvalidRetryCode() throws Exception {
         // Retry code outside 100-599 is rejected
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"retry_codes\":[999]}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/validation_invalid_retry_code";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -33,7 +40,8 @@ class ValidationTest {
     @Test
     void testValidationMaxPagesZero() throws Exception {
         // max_pages=0 is rejected as invalid config
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_pages\":0}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/validation_max_pages_zero";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -41,7 +49,8 @@ class ValidationTest {
     @Test
     void testValidationMaxRedirectsTooHigh() throws Exception {
         // max_redirects > 100 is rejected as invalid config
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_redirects\":200}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/validation_max_redirects_too_high";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -49,7 +58,8 @@ class ValidationTest {
     @Test
     void testValidationTimeoutZero() throws Exception {
         // Zero request timeout is rejected as invalid config
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"request_timeout\":0}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/validation_timeout_zero";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }

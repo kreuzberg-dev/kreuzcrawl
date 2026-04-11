@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: error. */
 final class ErrorTest extends TestCase
@@ -76,7 +77,10 @@ final class ErrorTest extends TestCase
     /** Handles connection refused error gracefully */
     public function test_error_connection_refused(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->request_timeout = 5000;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_connection_refused';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -85,7 +89,10 @@ final class ErrorTest extends TestCase
     /** Handles DNS resolution failure gracefully */
     public function test_error_dns_resolution(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->request_timeout = 5000;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_dns_resolution';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -104,7 +111,10 @@ final class ErrorTest extends TestCase
     /** Proxy pointing to unreachable address causes connection error during scrape */
     public function test_error_invalid_proxy(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->proxy = ["url" => "http://127.0.0.1:1"];
+        $engine_config->request_timeout = 2000;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_invalid_proxy';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -113,7 +123,9 @@ final class ErrorTest extends TestCase
     /** Handles incomplete or truncated HTTP response */
     public function test_error_partial_response(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_partial_response';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -131,7 +143,11 @@ final class ErrorTest extends TestCase
     /** Retries request on 503 Service Unavailable response */
     public function test_error_retry_503(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine_config->retry_codes = [503];
+        $engine_config->retry_count = 2;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_retry_503';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -140,7 +156,11 @@ final class ErrorTest extends TestCase
     /** Implements exponential backoff when retrying failed requests */
     public function test_error_retry_backoff(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine_config->retry_codes = [429];
+        $engine_config->retry_count = 3;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_retry_backoff';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -149,7 +169,10 @@ final class ErrorTest extends TestCase
     /** Handles SSL certificate validation error */
     public function test_error_ssl_invalid_cert(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->request_timeout = 5000;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_ssl_invalid_cert';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -158,7 +181,9 @@ final class ErrorTest extends TestCase
     /** Handles request timeout */
     public function test_error_timeout(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->request_timeout = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_timeout';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);

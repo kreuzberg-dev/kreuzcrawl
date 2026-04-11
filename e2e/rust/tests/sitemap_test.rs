@@ -16,7 +16,8 @@ async fn test_sitemap_basic() {
 #[tokio::test]
 async fn test_sitemap_compressed_gzip() {
     // Parses a gzip-compressed sitemap file
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "sitemap_compressed_gzip");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'urls.length' not available on result type
@@ -34,7 +35,8 @@ async fn test_sitemap_empty() {
 #[tokio::test]
 async fn test_sitemap_from_robots_txt() {
     // Discovers sitemap via robots.txt Sitemap directive
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "sitemap_from_robots_txt");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'urls.length' not available on result type
@@ -52,7 +54,8 @@ async fn test_sitemap_index() {
 #[tokio::test]
 async fn test_sitemap_lastmod_filter() {
     // Filters sitemap URLs by lastmod date
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "sitemap_lastmod_filter");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'urls.length' not available on result type
@@ -62,7 +65,8 @@ async fn test_sitemap_lastmod_filter() {
 #[tokio::test]
 async fn test_sitemap_only_mode() {
     // Uses sitemap URLs exclusively without following page links
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "sitemap_only_mode");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'urls.length' not available on result type
@@ -71,7 +75,8 @@ async fn test_sitemap_only_mode() {
 #[tokio::test]
 async fn test_sitemap_xhtml_links() {
     // Parses sitemap with XHTML namespace alternate links
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "sitemap_xhtml_links");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'urls.length' not available on result type

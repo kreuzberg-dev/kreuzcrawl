@@ -18,7 +18,9 @@
 			}
 		],
 		"config": {
-			"browser_mode": "auto"
+			"browser": {
+				"mode": "auto"
+			}
 		}
 	},
 	"assertions": [

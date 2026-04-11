@@ -6,7 +6,8 @@ use kreuzcrawl::create_engine;
 #[tokio::test]
 async fn test_browser_config_auto_no_feature() {
     // Browser mode 'auto' without browser feature enabled does not use browser
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"browser\":{\"mode\":\"auto\"}}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "browser_config_auto_no_feature");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -17,7 +18,8 @@ async fn test_browser_config_auto_no_feature() {
 #[tokio::test]
 async fn test_browser_config_never_mode() {
     // Browser mode 'never' prevents browser fallback even for SPA shell content
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"browser\":{\"mode\":\"never\"}}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "browser_config_never_mode");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -107,7 +109,8 @@ async fn test_browser_detect_vue_shell() {
 #[tokio::test]
 async fn test_browser_fallback_spa_render() {
     // Browser auto re-fetches SPA shell when JS rendering is detected
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"browser\":{\"mode\":\"auto\"}}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "browser_fallback_spa_render");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'browser.js_render_hint' not available on result type
@@ -117,7 +120,8 @@ async fn test_browser_fallback_spa_render() {
 #[tokio::test]
 async fn test_browser_fallback_waf_blocked() {
     // Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"browser\":{\"mode\":\"auto\"}}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "browser_fallback_waf_blocked");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'browser.browser_used' not available on result type
@@ -126,7 +130,8 @@ async fn test_browser_fallback_waf_blocked() {
 #[tokio::test]
 async fn test_browser_mode_always() {
     // Browser mode 'always' uses browser even for normal server-rendered pages
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"browser\":{\"mode\":\"always\"}}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "browser_mode_always");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'browser.browser_used' not available on result type

@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: map. */
 final class MapTest extends TestCase
@@ -13,7 +14,10 @@ final class MapTest extends TestCase
     /** Discovers all URLs on a site without fetching full content */
     public function test_map_discover_urls(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 0;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_discover_urls';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -22,7 +26,11 @@ final class MapTest extends TestCase
     /** Excludes URLs matching patterns from URL map */
     public function test_map_exclude_patterns(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->exclude_paths = ["/private/.*", "/api/.*"];
+        $engine_config->max_depth = 0;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_exclude_patterns';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -31,7 +39,11 @@ final class MapTest extends TestCase
     /** Includes subdomain URLs in URL map discovery */
     public function test_map_include_subdomains(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->allow_subdomains = true;
+        $engine_config->max_depth = 0;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_include_subdomains';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -41,7 +53,9 @@ final class MapTest extends TestCase
     /** Handles large sitemap with 100+ URLs */
     public function test_map_large_sitemap(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_large_sitemap';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -50,7 +64,11 @@ final class MapTest extends TestCase
     /** Limits map result count to specified maximum */
     public function test_map_limit_pagination(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->map_limit = 5;
+        $engine_config->max_depth = 0;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_limit_pagination';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -59,7 +77,11 @@ final class MapTest extends TestCase
     /** Filters map results by search keyword */
     public function test_map_search_filter(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->map_search = "blog";
+        $engine_config->max_depth = 0;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_search_filter';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type

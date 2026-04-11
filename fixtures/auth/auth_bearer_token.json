@@ -17,7 +17,10 @@
 			}
 		],
 		"config": {
-			"auth_bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test",
+			"auth": {
+				"type": "bearer",
+				"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test"
+			},
 			"respect_robots_txt": false
 		}
 	},

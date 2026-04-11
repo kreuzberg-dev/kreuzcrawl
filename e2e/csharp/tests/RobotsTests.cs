@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -11,7 +12,8 @@ public class RobotsTests
     public async Task Test_RobotsAllowAll()
     {
         // Permissive robots.txt allows all paths
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_allow_all";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.IsAllowed);
@@ -21,7 +23,8 @@ public class RobotsTests
     public async Task Test_RobotsAllowOverride()
     {
         // Allow directive overrides Disallow for specific paths
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_allow_override";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.IsAllowed);
@@ -31,7 +34,8 @@ public class RobotsTests
     public async Task Test_RobotsCommentsHandling()
     {
         // Correctly parses robots.txt with inline and line comments
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_comments_handling";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.IsAllowed);
@@ -41,7 +45,8 @@ public class RobotsTests
     public async Task Test_RobotsCrawlDelay()
     {
         // Respects crawl-delay directive from robots.txt
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_crawl_delay";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal((object?)2, (object?)result.CrawlDelay);
@@ -51,7 +56,8 @@ public class RobotsTests
     public async Task Test_RobotsDisallowPath()
     {
         // Robots.txt disallows specific paths
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_disallow_path";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(false, result.IsAllowed);
@@ -61,7 +67,8 @@ public class RobotsTests
     public async Task Test_RobotsMetaNofollow()
     {
         // Detects nofollow meta robots tag and skips link extraction
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_meta_nofollow";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.NofollowDetected);
@@ -71,7 +78,8 @@ public class RobotsTests
     public async Task Test_RobotsMetaNoindex()
     {
         // Detects noindex meta robots tag in HTML page
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_meta_noindex";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.NoindexDetected);
@@ -81,7 +89,8 @@ public class RobotsTests
     public async Task Test_RobotsMissing404()
     {
         // Missing robots.txt (404) allows all crawling
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_missing_404";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.IsAllowed);
@@ -91,7 +100,8 @@ public class RobotsTests
     public async Task Test_RobotsMultipleUserAgents()
     {
         // Picks the most specific user-agent block from robots.txt
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"SpecificBot\"}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_multiple_user_agents";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.IsAllowed);
@@ -101,7 +111,8 @@ public class RobotsTests
     public async Task Test_RobotsRequestRate()
     {
         // Parses request-rate directive from robots.txt
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_request_rate";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal((object?)5, (object?)result.CrawlDelay);
@@ -112,7 +123,8 @@ public class RobotsTests
     public async Task Test_RobotsSitemapDirective()
     {
         // Discovers sitemap URL from Sitemap directive in robots.txt
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_sitemap_directive";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.IsAllowed);
@@ -122,7 +134,8 @@ public class RobotsTests
     public async Task Test_RobotsUserAgentSpecific()
     {
         // Matches user-agent specific rules in robots.txt
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true,\"user_agent\":\"KreuzcrawlBot\"}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_user_agent_specific";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(false, result.IsAllowed);
@@ -132,7 +145,8 @@ public class RobotsTests
     public async Task Test_RobotsWildcardPaths()
     {
         // Handles wildcard Disallow patterns in robots.txt
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_wildcard_paths";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(false, result.IsAllowed);
@@ -142,7 +156,8 @@ public class RobotsTests
     public async Task Test_RobotsXRobotsTag()
     {
         // Respects X-Robots-Tag HTTP header directives
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":true}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/robots_x_robots_tag";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal("noindex, nofollow", result.XRobotsTag.Trim());

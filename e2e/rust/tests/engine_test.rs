@@ -16,7 +16,8 @@ async fn test_engine_batch_basic() {
 #[tokio::test]
 async fn test_engine_crawl_basic() {
     // CrawlEngine with defaults crawls multiple pages like the free function
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "engine_crawl_basic");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'crawl.pages_crawled' not available on result type
@@ -43,7 +44,7 @@ async fn test_engine_scrape_basic() {
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert_eq!(result.content_type.trim(), r#"text/html"#, "equals assertion failed");
     assert_eq!(metadata_title.trim(), r#"Engine Test"#, "equals assertion failed");
-    assert!(format!("{:?}", metadata_description).to_lowercase().contains(r#"Testing the engine"#), "expected to contain: {}", r#"Testing the engine"#);
+    assert!(format!("{:?}", metadata_description).contains(r#"Testing the engine"#), "expected to contain: {}", r#"Testing the engine"#);
     assert!(result.links.len() >= 1, "expected >= 1");
     assert!(result.metadata.headings.as_ref().unwrap().len() >= 1, "expected >= 1");
 }
@@ -51,7 +52,8 @@ async fn test_engine_scrape_basic() {
 #[tokio::test]
 async fn test_engine_stream_basic() {
     // CrawlEngine with defaults streams events like the free function
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "engine_stream_basic");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'stream.has_page_event' not available on result type

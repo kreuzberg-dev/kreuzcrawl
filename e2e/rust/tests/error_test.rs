@@ -83,7 +83,8 @@ async fn test_error_502_bad_gateway() {
 #[tokio::test]
 async fn test_error_connection_refused() {
     // Handles connection refused error gracefully
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"request_timeout\":5000,\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "error_connection_refused");
     let result = scrape(&engine, &url).await;
     assert!(result.is_err(), "expected call to fail");
@@ -94,7 +95,8 @@ async fn test_error_connection_refused() {
 #[tokio::test]
 async fn test_error_dns_resolution() {
     // Handles DNS resolution failure gracefully
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"request_timeout\":5000,\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "error_dns_resolution");
     let result = scrape(&engine, &url).await;
     assert!(result.is_err(), "expected call to fail");
@@ -115,7 +117,8 @@ async fn test_error_empty_response() {
 #[tokio::test]
 async fn test_error_invalid_proxy() {
     // Proxy pointing to unreachable address causes connection error during scrape
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"proxy\":{\"url\":\"http://127.0.0.1:1\"},\"request_timeout\":2000}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "error_invalid_proxy");
     let result = scrape(&engine, &url).await;
     assert!(result.is_err(), "expected call to fail");
@@ -126,7 +129,8 @@ async fn test_error_invalid_proxy() {
 #[tokio::test]
 async fn test_error_partial_response() {
     // Handles incomplete or truncated HTTP response
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "error_partial_response");
     let result = scrape(&engine, &url).await;
     assert!(result.is_err(), "expected call to fail");
@@ -148,7 +152,8 @@ async fn test_error_rate_limited() {
 #[tokio::test]
 async fn test_error_retry_503() {
     // Retries request on 503 Service Unavailable response
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false,\"retry_codes\":[503],\"retry_count\":2}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "error_retry_503");
     let result = scrape(&engine, &url).await;
     assert!(result.is_err(), "expected call to fail");
@@ -159,7 +164,8 @@ async fn test_error_retry_503() {
 #[tokio::test]
 async fn test_error_retry_backoff() {
     // Implements exponential backoff when retrying failed requests
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false,\"retry_codes\":[429],\"retry_count\":3}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "error_retry_backoff");
     let result = scrape(&engine, &url).await;
     assert!(result.is_err(), "expected call to fail");
@@ -170,7 +176,8 @@ async fn test_error_retry_backoff() {
 #[tokio::test]
 async fn test_error_ssl_invalid_cert() {
     // Handles SSL certificate validation error
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"request_timeout\":5000,\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "error_ssl_invalid_cert");
     let result = scrape(&engine, &url).await;
     assert!(result.is_err(), "expected call to fail");
@@ -181,7 +188,8 @@ async fn test_error_ssl_invalid_cert() {
 #[tokio::test]
 async fn test_error_timeout() {
     // Handles request timeout
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"request_timeout\":1}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "error_timeout");
     let result = scrape(&engine, &url).await;
     assert!(result.is_err(), "expected call to fail");
