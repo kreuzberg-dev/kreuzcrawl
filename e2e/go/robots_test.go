@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -219,7 +220,7 @@ func Test_RobotsXRobotsTag(t *testing.T) {
 	if result.XRobotsTag != nil {
 		xRobotsTag = *result.XRobotsTag
 	}
-	if xRobotsTag != `noindex, nofollow` {
+	if strings.TrimSpace(xRobotsTag) != `noindex, nofollow` {
 		t.Errorf("equals mismatch: got %v", xRobotsTag)
 	}
 	if result.NoindexDetected != true {

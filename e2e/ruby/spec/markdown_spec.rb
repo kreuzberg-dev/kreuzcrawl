@@ -1,50 +1,44 @@
 # frozen_string_literal: true
 
-require "kreuzcrawl"
+require 'kreuzcrawl'
 
-RSpec.describe "markdown" do
-  it "markdown_basic_conversion: HTML is always converted to markdown alongside raw HTML" do
+RSpec.describe 'markdown' do
+  it 'markdown_basic_conversion: HTML is always converted to markdown alongside raw HTML' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, "")
+    result = Kreuzcrawl.scrape(engine, '')
     expect(result.status_code).to eq(200)
-    expect(result.metadata.title).to eq("Test")
+    expect(result.metadata.title).to eq('Test')
     expect(result.html).not_to be_empty
     expect(result.markdown.content).not_to be_empty
-    expect(result.markdown.content).to include("Hello World")
+    expect(result.markdown.content).to include('Hello World')
   end
 
-  it "markdown_crawl_all_pages: All crawled pages have markdown field populated" do
+  it 'markdown_fit_content: Fit markdown removes navigation and boilerplate content' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, "")
-      # skipped: field 'crawl.pages_crawled' not available on result type
-  end
-
-  it "markdown_fit_content: Fit markdown removes navigation and boilerplate content" do
-    engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, "")
+    result = Kreuzcrawl.scrape(engine, '')
     expect(result.status_code).to eq(200)
     expect(result.markdown.content).not_to be_empty
   end
 
-  it "markdown_headings_and_paragraphs: Markdown conversion preserves heading hierarchy and paragraph text" do
+  it 'markdown_headings_and_paragraphs: Markdown conversion preserves heading hierarchy and paragraph text' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, "")
+    result = Kreuzcrawl.scrape(engine, '')
     expect(result.markdown.content).not_to be_empty
-    expect(result.markdown.content).to include("Main Title")
+    expect(result.markdown.content).to include('Main Title')
   end
 
-  it "markdown_links_converted: HTML links are converted to markdown link syntax" do
+  it 'markdown_links_converted: HTML links are converted to markdown link syntax' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, "")
+    result = Kreuzcrawl.scrape(engine, '')
     expect(result.status_code).to eq(200)
     expect(result.html).not_to be_empty
     expect(result.markdown.content).not_to be_empty
-    expect(result.markdown.content).to include("Example")
+    expect(result.markdown.content).to include('Example')
   end
 
-  it "markdown_with_citations: Markdown includes citation conversion with numbered references" do
+  it 'markdown_with_citations: Markdown includes citation conversion with numbered references' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, "")
+    result = Kreuzcrawl.scrape(engine, '')
     expect(result.status_code).to eq(200)
     expect(result.markdown.content).not_to be_empty
   end
