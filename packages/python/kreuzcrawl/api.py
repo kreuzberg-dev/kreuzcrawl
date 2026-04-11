@@ -37,45 +37,71 @@ def _to_rust_proxy_config(value: ProxyConfig | None) -> _rust.ProxyConfig | None
 
 
 def _to_rust_crawl_config(value: CrawlConfig | None) -> _rust.CrawlConfig | None:
-    """Convert Python CrawlConfig to Rust binding type."""
+    """Convert Python CrawlConfig to Rust binding type.
+
+    Passes simple scalar/list/dict fields directly. Complex nested types
+    (auth, browser, proxy) are passed as-is and rely on PyO3 from_py_object
+    or are skipped when the Rust binding can't accept them yet.
+    """
     if value is None:
         return None
-    return _rust.CrawlConfig(
-        max_depth=value.max_depth,
-        max_pages=value.max_pages,
-        max_concurrent=value.max_concurrent,
-        respect_robots_txt=value.respect_robots_txt,
-        user_agent=value.user_agent,
-        stay_on_domain=value.stay_on_domain,
-        allow_subdomains=value.allow_subdomains,
-        include_paths=value.include_paths,
-        exclude_paths=value.exclude_paths,
-        custom_headers=value.custom_headers,
-        request_timeout=value.request_timeout,
-        max_redirects=value.max_redirects,
-        retry_count=value.retry_count,
-        retry_codes=value.retry_codes,
-        cookies_enabled=value.cookies_enabled,
-        auth=_rust.AuthConfig(value.auth) if value.auth is not None else None,
-        max_body_size=value.max_body_size,
-        main_content_only=value.main_content_only,
-        remove_tags=value.remove_tags,
-        map_limit=value.map_limit,
-        map_search=value.map_search,
-        download_assets=value.download_assets,
-        asset_types=[_rust.AssetCategory(v) for v in value.asset_types],
-        max_asset_size=value.max_asset_size,
-        browser=_to_rust_browser_config(value.browser),  # type: ignore[arg-type]
-        proxy=_to_rust_proxy_config(value.proxy),
-        user_agents=value.user_agents,
-        capture_screenshot=value.capture_screenshot,
-        download_documents=value.download_documents,
-        document_max_size=value.document_max_size,
-        document_mime_types=value.document_mime_types,
-        warc_output=value.warc_output,
-        browser_profile=value.browser_profile,
-        save_browser_profile=value.save_browser_profile,
-    )
+
+    # Build kwargs, skipping None values and fields the Rust type doesn't accept yet.
+    kwargs: dict = {}
+    # Simple scalar fields — pass directly.
+    for field in (
+        "max_depth",
+        "max_pages",
+        "max_concurrent",
+        "respect_robots_txt",
+        "user_agent",
+        "stay_on_domain",
+        "allow_subdomains",
+        "include_paths",
+        "exclude_paths",
+        "custom_headers",
+        "request_timeout",
+        "max_redirects",
+        "retry_count",
+        "retry_codes",
+        "cookies_enabled",
+        "max_body_size",
+        "main_content_only",
+        "remove_tags",
+        "map_limit",
+        "map_search",
+        "download_assets",
+        "max_asset_size",
+        "user_agents",
+        "capture_screenshot",
+        "download_documents",
+        "document_max_size",
+        "document_mime_types",
+        "warc_output",
+        "browser_profile",
+        "save_browser_profile",
+    ):
+        val = getattr(value, field, None)
+        if val is not None:
+            kwargs[field] = val
+
+    # Auth — pass the dict/object directly; PyO3 handles conversion via serde.
+    if value.auth is not None:
+        kwargs["auth"] = value.auth
+
+    # Asset types — pass as list of strings.
+    if value.asset_types:
+        kwargs["asset_types"] = list(value.asset_types)
+
+    # Browser config — convert if present.
+    if value.browser is not None:
+        kwargs["browser"] = _to_rust_browser_config(value.browser)
+
+    # Proxy config — convert if present.
+    if value.proxy is not None:
+        kwargs["proxy"] = _to_rust_proxy_config(value.proxy)
+
+    return _rust.CrawlConfig(**kwargs)
 
 
 def create_engine(config: CrawlConfig | None = None) -> _rust.CrawlEngineHandle:

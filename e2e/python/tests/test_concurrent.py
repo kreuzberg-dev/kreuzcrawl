@@ -2,12 +2,12 @@
 
 import os
 
-from kreuzcrawl import create_engine, scrape
+from kreuzcrawl import CrawlConfig, create_engine, scrape
 
 
 def test_concurrent_basic() -> None:
     """Concurrent crawling fetches all pages with max_concurrent workers."""
-    engine_config = {"max_concurrent": 3, "max_depth": 1}
+    engine_config = CrawlConfig(max_concurrent=3, max_depth=1)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/concurrent_basic"
     _ = scrape(engine=engine, url=url)
@@ -17,7 +17,7 @@ def test_concurrent_basic() -> None:
 
 def test_concurrent_depth_two_fan_out() -> None:
     """Concurrent depth=2 crawl correctly fans out and deduplicates across levels."""
-    engine_config = {"max_concurrent": 3, "max_depth": 2}
+    engine_config = CrawlConfig(max_concurrent=3, max_depth=2)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/concurrent_depth_two_fan_out"
     _ = scrape(engine=engine, url=url)
@@ -26,7 +26,7 @@ def test_concurrent_depth_two_fan_out() -> None:
 
 def test_concurrent_max_pages_exact() -> None:
     """Concurrent crawling does not exceed max_pages limit even with high concurrency."""
-    engine_config = {"max_concurrent": 5, "max_depth": 1, "max_pages": 3}
+    engine_config = CrawlConfig(max_concurrent=5, max_depth=1, max_pages=3)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/concurrent_max_pages_exact"
     _ = scrape(engine=engine, url=url)
@@ -35,7 +35,7 @@ def test_concurrent_max_pages_exact() -> None:
 
 def test_concurrent_partial_errors() -> None:
     """Concurrent crawl handles partial failures gracefully."""
-    engine_config = {"max_concurrent": 3, "max_depth": 1}
+    engine_config = CrawlConfig(max_concurrent=3, max_depth=1)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/concurrent_partial_errors"
     _ = scrape(engine=engine, url=url)
@@ -44,7 +44,7 @@ def test_concurrent_partial_errors() -> None:
 
 def test_concurrent_respects_max_pages() -> None:
     """Concurrent crawling respects max_pages limit."""
-    engine_config = {"max_concurrent": 2, "max_depth": 1, "max_pages": 3}
+    engine_config = CrawlConfig(max_concurrent=2, max_depth=1, max_pages=3)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/concurrent_respects_max_pages"
     _ = scrape(engine=engine, url=url)

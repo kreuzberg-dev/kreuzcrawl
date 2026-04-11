@@ -2,7 +2,7 @@
 
 import os
 
-from kreuzcrawl import create_engine, scrape
+from kreuzcrawl import CrawlConfig, create_engine, scrape
 
 
 def test_markdown_basic_conversion() -> None:
@@ -19,7 +19,7 @@ def test_markdown_basic_conversion() -> None:
 
 def test_markdown_crawl_all_pages() -> None:
     """All crawled pages have markdown field populated."""
-    engine_config = {"max_depth": 1}
+    engine_config = CrawlConfig(max_depth=1)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/markdown_crawl_all_pages"
     _ = scrape(engine=engine, url=url)

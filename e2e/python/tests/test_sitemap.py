@@ -2,7 +2,7 @@
 
 import os
 
-from kreuzcrawl import create_engine, scrape
+from kreuzcrawl import CrawlConfig, create_engine, scrape
 
 
 def test_sitemap_basic() -> None:
@@ -16,7 +16,7 @@ def test_sitemap_basic() -> None:
 
 def test_sitemap_compressed_gzip() -> None:
     """Parses a gzip-compressed sitemap file."""
-    engine_config = {"respect_robots_txt": False}
+    engine_config = CrawlConfig(respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_compressed_gzip"
     _ = scrape(engine=engine, url=url)
@@ -33,7 +33,7 @@ def test_sitemap_empty() -> None:
 
 def test_sitemap_from_robots_txt() -> None:
     """Discovers sitemap via robots.txt Sitemap directive."""
-    engine_config = {"respect_robots_txt": True}
+    engine_config = CrawlConfig(respect_robots_txt=True)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_from_robots_txt"
     _ = scrape(engine=engine, url=url)
@@ -50,7 +50,7 @@ def test_sitemap_index() -> None:
 
 def test_sitemap_lastmod_filter() -> None:
     """Filters sitemap URLs by lastmod date."""
-    engine_config = {"respect_robots_txt": False}
+    engine_config = CrawlConfig(respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_lastmod_filter"
     _ = scrape(engine=engine, url=url)
@@ -60,7 +60,7 @@ def test_sitemap_lastmod_filter() -> None:
 
 def test_sitemap_only_mode() -> None:
     """Uses sitemap URLs exclusively without following page links."""
-    engine_config = {"respect_robots_txt": False}
+    engine_config = CrawlConfig(respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_only_mode"
     _ = scrape(engine=engine, url=url)
@@ -69,7 +69,7 @@ def test_sitemap_only_mode() -> None:
 
 def test_sitemap_xhtml_links() -> None:
     """Parses sitemap with XHTML namespace alternate links."""
-    engine_config = {"respect_robots_txt": False}
+    engine_config = CrawlConfig(respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_xhtml_links"
     _ = scrape(engine=engine, url=url)

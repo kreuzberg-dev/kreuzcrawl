@@ -2,12 +2,12 @@
 
 import os
 
-from kreuzcrawl import create_engine, scrape
+from kreuzcrawl import CrawlConfig, create_engine, scrape
 
 
 def test_middleware_engine_crawl_with_defaults() -> None:
     """Engine crawl with default middleware chain produces correct multi-page results."""
-    engine_config = {"max_depth": 1}
+    engine_config = CrawlConfig(max_depth=1)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/middleware_engine_crawl_with_defaults"
     _ = scrape(engine=engine, url=url)

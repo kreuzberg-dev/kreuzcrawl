@@ -2,12 +2,12 @@
 
 import os
 
-from kreuzcrawl import create_engine, scrape
+from kreuzcrawl import CrawlConfig, create_engine, scrape
 
 
 def test_scrape_asset_dedup() -> None:
     """Same asset linked twice results in one download with one unique hash."""
-    engine_config = {"download_assets": True}
+    engine_config = CrawlConfig(download_assets=True)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/scrape_asset_dedup"
     result = scrape(engine=engine, url=url)
@@ -18,7 +18,7 @@ def test_scrape_asset_dedup() -> None:
 
 def test_scrape_asset_max_size() -> None:
     """Skips assets exceeding max_asset_size limit."""
-    engine_config = {"download_assets": True, "max_asset_size": 150}
+    engine_config = CrawlConfig(download_assets=True, max_asset_size=150)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/scrape_asset_max_size"
     result = scrape(engine=engine, url=url)
@@ -28,7 +28,7 @@ def test_scrape_asset_max_size() -> None:
 
 def test_scrape_asset_type_filter() -> None:
     """Only downloads image assets when asset_types filter is set."""
-    engine_config = {"asset_types": ["image"], "download_assets": True}
+    engine_config = CrawlConfig(asset_types=["image"], download_assets=True)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/scrape_asset_type_filter"
     result = scrape(engine=engine, url=url)
@@ -39,7 +39,7 @@ def test_scrape_asset_type_filter() -> None:
 
 def test_scrape_basic_html_page() -> None:
     """Scrapes a simple HTML page and extracts title, description, and links."""
-    engine_config = {"max_depth": 0, "respect_robots_txt": False}
+    engine_config = CrawlConfig(max_depth=0, respect_robots_txt=False)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/scrape_basic_html_page"
     result = scrape(engine=engine, url=url)
@@ -67,7 +67,7 @@ def test_scrape_complex_links() -> None:
 
 def test_scrape_download_assets() -> None:
     """Downloads CSS, JS, and image assets from page."""
-    engine_config = {"download_assets": True}
+    engine_config = CrawlConfig(download_assets=True)
     engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/scrape_download_assets"
     result = scrape(engine=engine, url=url)
