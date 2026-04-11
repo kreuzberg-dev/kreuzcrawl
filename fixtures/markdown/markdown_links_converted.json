@@ -16,9 +16,7 @@
 				"body_inline": "<html><body><p>Visit <a href=\"https://example.com\">Example</a> for more.</p></body></html>"
 			}
 		],
-		"config": {
-			"engine_mode": true
-		}
+		"config": {}
 	},
 	"assertions": [
 		{

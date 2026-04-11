@@ -6,7 +6,8 @@ use kreuzcrawl::create_engine;
 #[tokio::test]
 async fn test_middleware_engine_crawl_with_defaults() {
     // Engine crawl with default middleware chain produces correct multi-page results
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "middleware_engine_crawl_with_defaults");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'crawl.pages_crawled' not available on result type

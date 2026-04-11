@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: rate_limit. */
 final class RateLimitTest extends TestCase
@@ -13,7 +14,9 @@ final class RateLimitTest extends TestCase
     /** Rate limiter adds delay between requests to the same domain */
     public function test_rate_limit_basic_delay(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/rate_limit_basic_delay';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
@@ -23,7 +26,9 @@ final class RateLimitTest extends TestCase
     /** Rate limiter with zero delay does not slow crawling */
     public function test_rate_limit_zero_no_delay(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/rate_limit_zero_no_delay';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type

@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 	"testing"
@@ -11,7 +12,11 @@ import (
 
 func Test_MiddlewareEngineCrawlWithDefaults(t *testing.T) {
 	// Engine crawl with default middleware chain produces correct multi-page results
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

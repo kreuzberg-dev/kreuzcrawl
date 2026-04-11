@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 	"testing"
@@ -11,7 +12,11 @@ import (
 
 func Test_ScrapeAssetDedup(t *testing.T) {
 	// Same asset linked twice results in one download with one unique hash
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"download_assets":true}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -33,7 +38,11 @@ func Test_ScrapeAssetDedup(t *testing.T) {
 
 func Test_ScrapeAssetMaxSize(t *testing.T) {
 	// Skips assets exceeding max_asset_size limit
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"download_assets":true,"max_asset_size":150}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -52,7 +61,11 @@ func Test_ScrapeAssetMaxSize(t *testing.T) {
 
 func Test_ScrapeAssetTypeFilter(t *testing.T) {
 	// Only downloads image assets when asset_types filter is set
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"asset_types":["image"],"download_assets":true}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -74,7 +87,11 @@ func Test_ScrapeAssetTypeFilter(t *testing.T) {
 
 func Test_ScrapeBasicHtmlPage(t *testing.T) {
 	// Scrapes a simple HTML page and extracts title, description, and links
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":0,"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -156,7 +173,11 @@ func Test_ScrapeComplexLinks(t *testing.T) {
 
 func Test_ScrapeDownloadAssets(t *testing.T) {
 	// Downloads CSS, JS, and image assets from page
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"download_assets":true}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 	"testing"
@@ -47,7 +48,11 @@ func Test_MarkdownBasicConversion(t *testing.T) {
 
 func Test_MarkdownCrawlAllPages(t *testing.T) {
 	// All crawled pages have markdown field populated
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

@@ -3,8 +3,9 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 
 describe("middleware", () => {
 	it("middleware_engine_crawl_with_defaults: Engine crawl with default middleware chain produces correct multi-page results", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/middleware_engine_crawl_with_defaults";
+		const engineConfig = { max_depth: 1 };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/middleware_engine_crawl_with_defaults`;
 		await scrape(engine, url);
 		// skipped: field 'crawl.pages_crawled' not available on result type
 		// skipped: field 'crawl.min_pages' not available on result type
@@ -12,7 +13,7 @@ describe("middleware", () => {
 
 	it("middleware_noop_no_effect: Default middleware chain does not affect normal scraping", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/middleware_noop_no_effect";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/middleware_noop_no_effect`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.metadata.title.trim()).toBe("Middleware Test");

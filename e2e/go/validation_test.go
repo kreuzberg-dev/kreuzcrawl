@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -10,7 +11,11 @@ import (
 
 func Test_ValidationInvalidExcludeRegex(t *testing.T) {
 	// Invalid regex in exclude_paths is rejected
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"exclude_paths":["(unclosed"]}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -23,7 +28,11 @@ func Test_ValidationInvalidExcludeRegex(t *testing.T) {
 
 func Test_ValidationInvalidIncludeRegex(t *testing.T) {
 	// Invalid regex in include_paths is rejected
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"include_paths":["[invalid"]}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -36,7 +45,11 @@ func Test_ValidationInvalidIncludeRegex(t *testing.T) {
 
 func Test_ValidationInvalidRetryCode(t *testing.T) {
 	// Retry code outside 100-599 is rejected
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"retry_codes":[999]}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -49,7 +62,11 @@ func Test_ValidationInvalidRetryCode(t *testing.T) {
 
 func Test_ValidationMaxPagesZero(t *testing.T) {
 	// max_pages=0 is rejected as invalid config
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_pages":0}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -62,7 +79,11 @@ func Test_ValidationMaxPagesZero(t *testing.T) {
 
 func Test_ValidationMaxRedirectsTooHigh(t *testing.T) {
 	// max_redirects > 100 is rejected as invalid config
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_redirects":200}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -75,7 +96,11 @@ func Test_ValidationMaxRedirectsTooHigh(t *testing.T) {
 
 func Test_ValidationTimeoutZero(t *testing.T) {
 	// Zero request timeout is rejected as invalid config
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"request_timeout":0}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

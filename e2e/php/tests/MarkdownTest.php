@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: markdown. */
 final class MarkdownTest extends TestCase
@@ -26,7 +27,9 @@ final class MarkdownTest extends TestCase
     /** All crawled pages have markdown field populated */
     public function test_markdown_crawl_all_pages(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/markdown_crawl_all_pages';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type

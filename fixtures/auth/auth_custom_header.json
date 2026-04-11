@@ -17,7 +17,8 @@
 			}
 		],
 		"config": {
-			"auth_header": {
+			"auth": {
+				"type": "header",
 				"name": "X-API-Key",
 				"value": "sk-test-key-12345"
 			},

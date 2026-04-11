@@ -17,7 +17,7 @@
 			}
 		],
 		"config": {
-			"request_timeout_ms": 1
+			"request_timeout": 1
 		}
 	},
 	"assertions": [

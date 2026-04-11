@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -11,7 +12,8 @@ public class AuthTests
     public async Task Test_AuthBasicHttp()
     {
         // Sends HTTP Basic authentication header
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"auth\":{\"password\":\"testpass\",\"type\":\"basic\",\"username\":\"testuser\"},\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_basic_http";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.AuthHeaderSent);
@@ -22,7 +24,8 @@ public class AuthTests
     public async Task Test_AuthBearerToken()
     {
         // Sends Bearer token in Authorization header
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"auth\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test\",\"type\":\"bearer\"},\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_bearer_token";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.AuthHeaderSent);
@@ -33,7 +36,8 @@ public class AuthTests
     public async Task Test_AuthCustomHeader()
     {
         // Sends authentication via custom header (X-API-Key)
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"auth\":{\"name\":\"X-API-Key\",\"type\":\"header\",\"value\":\"sk-test-key-12345\"},\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/auth_custom_header";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(true, result.AuthHeaderSent);

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -11,7 +12,8 @@ public class RedirectTests
     public async Task Test_Redirect301Permanent()
     {
         // Follows 301 permanent redirect and returns final page content
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_301_permanent";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -22,7 +24,8 @@ public class RedirectTests
     public async Task Test_Redirect302Found()
     {
         // Follows 302 Found redirect correctly
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_302_found";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -33,7 +36,8 @@ public class RedirectTests
     public async Task Test_Redirect303SeeOther()
     {
         // Follows 303 See Other redirect (method changes to GET)
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_303_see_other";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -44,7 +48,8 @@ public class RedirectTests
     public async Task Test_Redirect307Temporary()
     {
         // Follows 307 Temporary Redirect (preserves method)
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_307_temporary";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -55,7 +60,8 @@ public class RedirectTests
     public async Task Test_Redirect308Permanent()
     {
         // Follows 308 Permanent Redirect (preserves method)
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_308_permanent";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -66,7 +72,8 @@ public class RedirectTests
     public async Task Test_RedirectChain()
     {
         // Follows a chain of redirects (301 -> 302 -> 200)
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_chain";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -77,7 +84,8 @@ public class RedirectTests
     public async Task Test_RedirectCrossDomain()
     {
         // Reports cross-domain redirect target without following to external domain
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_cross_domain";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -88,7 +96,8 @@ public class RedirectTests
     public async Task Test_RedirectLoop()
     {
         // Detects redirect loop (A -> B -> A) and returns error
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_loop";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'is_error' not available on result type
@@ -98,7 +107,8 @@ public class RedirectTests
     public async Task Test_RedirectMaxExceeded()
     {
         // Aborts when redirect count exceeds max_redirects limit
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_redirects\":2,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_max_exceeded";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'is_error' not available on result type
@@ -108,7 +118,8 @@ public class RedirectTests
     public async Task Test_RedirectMetaRefresh()
     {
         // Follows HTML meta-refresh redirect to target page
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_meta_refresh";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -119,7 +130,8 @@ public class RedirectTests
     public async Task Test_RedirectRefreshHeader()
     {
         // Handles HTTP Refresh header redirect
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_refresh_header";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type
@@ -130,7 +142,8 @@ public class RedirectTests
     public async Task Test_RedirectTo404()
     {
         // Redirect target returns 404 Not Found
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/redirect_to_404";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'final_url' not available on result type

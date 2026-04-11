@@ -44,10 +44,10 @@
 				"body_inline": "<html><body><h1>B1</h1></body></html>"
 			}
 		],
+		"crawl_strategy": "bfs",
 		"config": {
 			"max_depth": 2,
-			"max_concurrent": 1,
-			"crawl_strategy": "bfs"
+			"max_concurrent": 1
 		}
 	},
 	"assertions": [

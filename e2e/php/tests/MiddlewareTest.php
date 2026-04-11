@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: middleware. */
 final class MiddlewareTest extends TestCase
@@ -13,7 +14,9 @@ final class MiddlewareTest extends TestCase
     /** Engine crawl with default middleware chain produces correct multi-page results */
     public function test_middleware_engine_crawl_with_defaults(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/middleware_engine_crawl_with_defaults';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type

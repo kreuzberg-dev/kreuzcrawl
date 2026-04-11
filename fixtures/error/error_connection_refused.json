@@ -9,7 +9,7 @@
 	"input": {
 		"config": {
 			"respect_robots_txt": false,
-			"request_timeout_ms": 5000
+			"request_timeout": 5000
 		}
 	},
 	"assertions": [

@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: concurrent. */
 final class ConcurrentTest extends TestCase
@@ -13,7 +14,10 @@ final class ConcurrentTest extends TestCase
     /** Concurrent crawling fetches all pages with max_concurrent workers */
     public function test_concurrent_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 3;
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_basic';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
@@ -23,7 +27,10 @@ final class ConcurrentTest extends TestCase
     /** Concurrent depth=2 crawl correctly fans out and deduplicates across levels */
     public function test_concurrent_depth_two_fan_out(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 3;
+        $engine_config->max_depth = 2;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_depth_two_fan_out';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
@@ -32,7 +39,11 @@ final class ConcurrentTest extends TestCase
     /** Concurrent crawling does not exceed max_pages limit even with high concurrency */
     public function test_concurrent_max_pages_exact(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 5;
+        $engine_config->max_depth = 1;
+        $engine_config->max_pages = 3;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_max_pages_exact';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
@@ -41,7 +52,10 @@ final class ConcurrentTest extends TestCase
     /** Concurrent crawl handles partial failures gracefully */
     public function test_concurrent_partial_errors(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 3;
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_partial_errors';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
@@ -50,7 +64,11 @@ final class ConcurrentTest extends TestCase
     /** Concurrent crawling respects max_pages limit */
     public function test_concurrent_respects_max_pages(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 2;
+        $engine_config->max_depth = 1;
+        $engine_config->max_pages = 3;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_respects_max_pages';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type

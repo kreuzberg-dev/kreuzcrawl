@@ -3,13 +3,18 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: scrape. */
 class ScrapeTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testScrapeAssetDedup() throws Exception {
         // Same asset linked twice results in one download with one unique hash
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"download_assets\":true}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_asset_dedup";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
@@ -20,7 +25,8 @@ class ScrapeTest {
     @Test
     void testScrapeAssetMaxSize() throws Exception {
         // Skips assets exceeding max_asset_size limit
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"download_assets\":true,\"max_asset_size\":150}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_asset_max_size";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
@@ -30,7 +36,8 @@ class ScrapeTest {
     @Test
     void testScrapeAssetTypeFilter() throws Exception {
         // Only downloads image assets when asset_types filter is set
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"asset_types\":[\"image\"],\"download_assets\":true}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_asset_type_filter";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
@@ -41,7 +48,8 @@ class ScrapeTest {
     @Test
     void testScrapeBasicHtmlPage() throws Exception {
         // Scrapes a simple HTML page and extracts title, description, and links
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_depth\":0,\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_basic_html_page";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
@@ -73,7 +81,8 @@ class ScrapeTest {
     @Test
     void testScrapeDownloadAssets() throws Exception {
         // Downloads CSS, JS, and image assets from page
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"download_assets\":true}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_download_assets";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());

@@ -31,7 +31,6 @@
 			}
 		],
 		"config": {
-			"engine_mode": true,
 			"max_depth": 2,
 			"max_concurrent": 1
 		}

@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: browser. */
 final class BrowserTest extends TestCase
@@ -13,7 +14,9 @@ final class BrowserTest extends TestCase
     /** Browser mode 'auto' without browser feature enabled does not use browser */
     public function test_browser_config_auto_no_feature(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->browser = ["mode" => "auto"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_config_auto_no_feature';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
@@ -24,7 +27,9 @@ final class BrowserTest extends TestCase
     /** Browser mode 'never' prevents browser fallback even for SPA shell content */
     public function test_browser_config_never_mode(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->browser = ["mode" => "never"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_config_never_mode';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
@@ -114,7 +119,9 @@ final class BrowserTest extends TestCase
     /** Browser auto re-fetches SPA shell when JS rendering is detected */
     public function test_browser_fallback_spa_render(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->browser = ["mode" => "auto"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_fallback_spa_render';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'browser.js_render_hint' not available on result type
@@ -124,7 +131,9 @@ final class BrowserTest extends TestCase
     /** Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403) */
     public function test_browser_fallback_waf_blocked(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->browser = ["mode" => "auto"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_fallback_waf_blocked';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'browser.browser_used' not available on result type
@@ -133,7 +142,9 @@ final class BrowserTest extends TestCase
     /** Browser mode 'always' uses browser even for normal server-rendered pages */
     public function test_browser_mode_always(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->browser = ["mode" => "always"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_mode_always';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'browser.browser_used' not available on result type

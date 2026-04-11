@@ -14,7 +14,8 @@ defmodule E2e.EngineTest do
 
   describe "engine_crawl_basic" do
     test "CrawlEngine with defaults crawls multiple pages like the free function" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/engine_crawl_basic"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
@@ -47,7 +48,8 @@ defmodule E2e.EngineTest do
 
   describe "engine_stream_basic" do
     test "CrawlEngine with defaults streams events like the free function" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/engine_stream_basic"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'stream.has_page_event' not available on result type

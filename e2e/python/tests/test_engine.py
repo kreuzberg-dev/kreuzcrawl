@@ -7,7 +7,7 @@ from kreuzcrawl import create_engine, scrape
 
 def test_engine_batch_basic() -> None:
     """CrawlEngine with defaults batch scrapes like the free function."""
-    engine = create_engine()
+    engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/engine_batch_basic"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'batch.completed_count' not available on result type
@@ -16,7 +16,8 @@ def test_engine_batch_basic() -> None:
 
 def test_engine_crawl_basic() -> None:
     """CrawlEngine with defaults crawls multiple pages like the free function."""
-    engine = create_engine()
+    engine_config = {"max_depth": 1}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/engine_crawl_basic"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'crawl.pages_crawled' not available on result type
@@ -25,7 +26,7 @@ def test_engine_crawl_basic() -> None:
 
 def test_engine_map_basic() -> None:
     """CrawlEngine with defaults discovers URLs like the free function."""
-    engine = create_engine()
+    engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/engine_map_basic"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'map.min_urls' not available on result type
@@ -33,7 +34,7 @@ def test_engine_map_basic() -> None:
 
 def test_engine_scrape_basic() -> None:
     """CrawlEngine with defaults scrapes a page identically to the free function."""
-    engine = create_engine()
+    engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/engine_scrape_basic"
     result = scrape(engine=engine, url=url)
     assert result.status_code == 200
@@ -46,7 +47,8 @@ def test_engine_scrape_basic() -> None:
 
 def test_engine_stream_basic() -> None:
     """CrawlEngine with defaults streams events like the free function."""
-    engine = create_engine()
+    engine_config = {"max_depth": 1}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/engine_stream_basic"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'stream.has_page_event' not available on result type

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -74,7 +75,8 @@ public class ErrorTests
     public async Task Test_ErrorConnectionRefused()
     {
         // Handles connection refused error gracefully
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"request_timeout\":5000,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_connection_refused";
         await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
@@ -83,7 +85,8 @@ public class ErrorTests
     public async Task Test_ErrorDnsResolution()
     {
         // Handles DNS resolution failure gracefully
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"request_timeout\":5000,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_dns_resolution";
         await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
@@ -103,7 +106,8 @@ public class ErrorTests
     public async Task Test_ErrorInvalidProxy()
     {
         // Proxy pointing to unreachable address causes connection error during scrape
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"proxy\":{\"url\":\"http://127.0.0.1:1\"},\"request_timeout\":2000}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_invalid_proxy";
         await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
@@ -112,7 +116,8 @@ public class ErrorTests
     public async Task Test_ErrorPartialResponse()
     {
         // Handles incomplete or truncated HTTP response
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_partial_response";
         await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
@@ -130,7 +135,8 @@ public class ErrorTests
     public async Task Test_ErrorRetry503()
     {
         // Retries request on 503 Service Unavailable response
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false,\"retry_codes\":[503],\"retry_count\":2}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_retry_503";
         await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
@@ -139,7 +145,8 @@ public class ErrorTests
     public async Task Test_ErrorRetryBackoff()
     {
         // Implements exponential backoff when retrying failed requests
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"respect_robots_txt\":false,\"retry_codes\":[429],\"retry_count\":3}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_retry_backoff";
         await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
@@ -148,7 +155,8 @@ public class ErrorTests
     public async Task Test_ErrorSslInvalidCert()
     {
         // Handles SSL certificate validation error
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"request_timeout\":5000,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_ssl_invalid_cert";
         await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }
@@ -157,7 +165,8 @@ public class ErrorTests
     public async Task Test_ErrorTimeout()
     {
         // Handles request timeout
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"request_timeout\":1}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/error_timeout";
         await Assert.ThrowsAsync<Exception>(() => KreuzcrawlLib.Scrape(engine, url));
     }

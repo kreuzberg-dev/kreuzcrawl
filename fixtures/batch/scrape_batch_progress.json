@@ -25,9 +25,8 @@
 				"body_inline": "<html><body><h1>Other Page</h1></body></html>"
 			}
 		],
-		"config": {
-			"batch_urls": ["/target", "/other"]
-		}
+		"batch_urls": ["/target", "/other"],
+		"config": {}
 	},
 	"assertions": [
 		{

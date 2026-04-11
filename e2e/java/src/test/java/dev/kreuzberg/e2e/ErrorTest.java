@@ -3,9 +3,13 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: error. */
 class ErrorTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testError401Unauthorized() throws Exception {
         // Handles 401 Unauthorized response correctly
@@ -65,7 +69,8 @@ class ErrorTest {
     @Test
     void testErrorConnectionRefused() throws Exception {
         // Handles connection refused error gracefully
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"request_timeout\":5000,\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/error_connection_refused";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -73,7 +78,8 @@ class ErrorTest {
     @Test
     void testErrorDnsResolution() throws Exception {
         // Handles DNS resolution failure gracefully
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"request_timeout\":5000,\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/error_dns_resolution";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -91,7 +97,8 @@ class ErrorTest {
     @Test
     void testErrorInvalidProxy() throws Exception {
         // Proxy pointing to unreachable address causes connection error during scrape
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"proxy\":{\"url\":\"http://127.0.0.1:1\"},\"request_timeout\":2000}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/error_invalid_proxy";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -99,7 +106,8 @@ class ErrorTest {
     @Test
     void testErrorPartialResponse() throws Exception {
         // Handles incomplete or truncated HTTP response
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/error_partial_response";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -115,7 +123,8 @@ class ErrorTest {
     @Test
     void testErrorRetry503() throws Exception {
         // Retries request on 503 Service Unavailable response
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false,\"retry_codes\":[503],\"retry_count\":2}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/error_retry_503";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -123,7 +132,8 @@ class ErrorTest {
     @Test
     void testErrorRetryBackoff() throws Exception {
         // Implements exponential backoff when retrying failed requests
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false,\"retry_codes\":[429],\"retry_count\":3}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/error_retry_backoff";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -131,7 +141,8 @@ class ErrorTest {
     @Test
     void testErrorSslInvalidCert() throws Exception {
         // Handles SSL certificate validation error
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"request_timeout\":5000,\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/error_ssl_invalid_cert";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }
@@ -139,7 +150,8 @@ class ErrorTest {
     @Test
     void testErrorTimeout() throws Exception {
         // Handles request timeout
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"request_timeout\":1}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/error_timeout";
         assertThrows(Exception.class, () -> Kreuzcrawl.scrape(engine, url));
     }

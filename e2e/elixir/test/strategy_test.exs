@@ -4,7 +4,8 @@ defmodule E2e.StrategyTest do
 
   describe "strategy_best_first_seed" do
     test "BestFirst strategy always processes the seed URL first" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_concurrent" => 1, "max_depth" => 1}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/strategy_best_first_seed"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
@@ -14,7 +15,8 @@ defmodule E2e.StrategyTest do
 
   describe "strategy_bfs_default_order" do
     test "BFS strategy visits pages in breadth-first order" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_concurrent" => 1, "max_depth" => 2}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/strategy_bfs_default_order"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
@@ -24,7 +26,8 @@ defmodule E2e.StrategyTest do
 
   describe "strategy_dfs_depth_first" do
     test "DFS strategy visits pages in depth-first order" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_concurrent" => 1, "max_depth" => 2}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/strategy_dfs_depth_first"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type

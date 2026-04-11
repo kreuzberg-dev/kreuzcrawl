@@ -24,7 +24,6 @@
 			}
 		],
 		"config": {
-			"engine_mode": true,
 			"max_depth": 0
 		}
 	},

@@ -7,7 +7,7 @@ from kreuzcrawl import create_engine, scrape
 
 def test_sitemap_basic() -> None:
     """Parses a standard urlset sitemap."""
-    engine = create_engine()
+    engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_basic"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'urls.length' not available on result type
@@ -16,7 +16,8 @@ def test_sitemap_basic() -> None:
 
 def test_sitemap_compressed_gzip() -> None:
     """Parses a gzip-compressed sitemap file."""
-    engine = create_engine()
+    engine_config = {"respect_robots_txt": False}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_compressed_gzip"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'urls.length' not available on result type
@@ -24,7 +25,7 @@ def test_sitemap_compressed_gzip() -> None:
 
 def test_sitemap_empty() -> None:
     """Handles empty sitemap gracefully."""
-    engine = create_engine()
+    engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_empty"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'urls.length' not available on result type
@@ -32,7 +33,8 @@ def test_sitemap_empty() -> None:
 
 def test_sitemap_from_robots_txt() -> None:
     """Discovers sitemap via robots.txt Sitemap directive."""
-    engine = create_engine()
+    engine_config = {"respect_robots_txt": True}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_from_robots_txt"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'urls.length' not available on result type
@@ -40,7 +42,7 @@ def test_sitemap_from_robots_txt() -> None:
 
 def test_sitemap_index() -> None:
     """Follows sitemap index to discover child sitemaps."""
-    engine = create_engine()
+    engine = create_engine(None)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_index"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'urls.length' not available on result type
@@ -48,7 +50,8 @@ def test_sitemap_index() -> None:
 
 def test_sitemap_lastmod_filter() -> None:
     """Filters sitemap URLs by lastmod date."""
-    engine = create_engine()
+    engine_config = {"respect_robots_txt": False}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_lastmod_filter"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'urls.length' not available on result type
@@ -57,7 +60,8 @@ def test_sitemap_lastmod_filter() -> None:
 
 def test_sitemap_only_mode() -> None:
     """Uses sitemap URLs exclusively without following page links."""
-    engine = create_engine()
+    engine_config = {"respect_robots_txt": False}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_only_mode"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'urls.length' not available on result type
@@ -65,7 +69,8 @@ def test_sitemap_only_mode() -> None:
 
 def test_sitemap_xhtml_links() -> None:
     """Parses sitemap with XHTML namespace alternate links."""
-    engine = create_engine()
+    engine_config = {"respect_robots_txt": False}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/sitemap_xhtml_links"
     _ = scrape(engine=engine, url=url)
     # skipped: field 'urls.length' not available on result type

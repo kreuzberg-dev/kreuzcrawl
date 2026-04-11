@@ -3,13 +3,18 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: middleware. */
 class MiddlewareTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testMiddlewareEngineCrawlWithDefaults() throws Exception {
         // Engine crawl with default middleware chain produces correct multi-page results
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_depth\":1}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/middleware_engine_crawl_with_defaults";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type

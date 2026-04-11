@@ -4,7 +4,8 @@ defmodule E2e.BrowserTest do
 
   describe "browser_config_auto_no_feature" do
     test "Browser mode 'auto' without browser feature enabled does not use browser" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"browser" => %{"mode" => "auto"}}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_config_auto_no_feature"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
@@ -15,7 +16,8 @@ defmodule E2e.BrowserTest do
 
   describe "browser_config_never_mode" do
     test "Browser mode 'never' prevents browser fallback even for SPA shell content" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"browser" => %{"mode" => "never"}}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_config_never_mode"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
@@ -105,7 +107,8 @@ defmodule E2e.BrowserTest do
 
   describe "browser_fallback_spa_render" do
     test "Browser auto re-fetches SPA shell when JS rendering is detected" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"browser" => %{"mode" => "auto"}}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_fallback_spa_render"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'browser.js_render_hint' not available on result type
@@ -115,7 +118,8 @@ defmodule E2e.BrowserTest do
 
   describe "browser_fallback_waf_blocked" do
     test "Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"browser" => %{"mode" => "auto"}}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_fallback_waf_blocked"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'browser.browser_used' not available on result type
@@ -124,7 +128,8 @@ defmodule E2e.BrowserTest do
 
   describe "browser_mode_always" do
     test "Browser mode 'always' uses browser even for normal server-rendered pages" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"browser" => %{"mode" => "always"}}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_mode_always"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'browser.browser_used' not available on result type

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -25,7 +26,8 @@ public class MarkdownTests
     public async Task Test_MarkdownCrawlAllPages()
     {
         // All crawled pages have markdown field populated
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/markdown_crawl_all_pages";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type

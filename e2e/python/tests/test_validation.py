@@ -8,7 +8,8 @@ from kreuzcrawl import create_engine, scrape
 
 def test_validation_invalid_exclude_regex() -> None:
     """Invalid regex in exclude_paths is rejected."""
-    engine = create_engine()
+    engine_config = {"exclude_paths": ["(unclosed"]}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/validation_invalid_exclude_regex"
     with pytest.raises(Exception) as exc_info:
         scrape(engine=engine, url=url)
@@ -17,7 +18,8 @@ def test_validation_invalid_exclude_regex() -> None:
 
 def test_validation_invalid_include_regex() -> None:
     """Invalid regex in include_paths is rejected."""
-    engine = create_engine()
+    engine_config = {"include_paths": ["[invalid"]}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/validation_invalid_include_regex"
     with pytest.raises(Exception) as exc_info:
         scrape(engine=engine, url=url)
@@ -26,7 +28,8 @@ def test_validation_invalid_include_regex() -> None:
 
 def test_validation_invalid_retry_code() -> None:
     """Retry code outside 100-599 is rejected."""
-    engine = create_engine()
+    engine_config = {"retry_codes": [999]}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/validation_invalid_retry_code"
     with pytest.raises(Exception) as exc_info:
         scrape(engine=engine, url=url)
@@ -35,7 +38,8 @@ def test_validation_invalid_retry_code() -> None:
 
 def test_validation_max_pages_zero() -> None:
     """max_pages=0 is rejected as invalid config."""
-    engine = create_engine()
+    engine_config = {"max_pages": 0}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/validation_max_pages_zero"
     with pytest.raises(Exception) as exc_info:
         scrape(engine=engine, url=url)
@@ -44,7 +48,8 @@ def test_validation_max_pages_zero() -> None:
 
 def test_validation_max_redirects_too_high() -> None:
     """max_redirects > 100 is rejected as invalid config."""
-    engine = create_engine()
+    engine_config = {"max_redirects": 200}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/validation_max_redirects_too_high"
     with pytest.raises(Exception) as exc_info:
         scrape(engine=engine, url=url)
@@ -53,7 +58,8 @@ def test_validation_max_redirects_too_high() -> None:
 
 def test_validation_timeout_zero() -> None:
     """Zero request timeout is rejected as invalid config."""
-    engine = create_engine()
+    engine_config = {"request_timeout": 0}
+    engine = create_engine(engine_config)
     url = os.environ["MOCK_SERVER_URL"] + "/fixtures/validation_timeout_zero"
     with pytest.raises(Exception) as exc_info:
         scrape(engine=engine, url=url)

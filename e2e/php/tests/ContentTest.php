@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: content. */
 final class ContentTest extends TestCase
@@ -23,7 +24,9 @@ final class ContentTest extends TestCase
     /** Handles ISO-8859-1 encoded page correctly */
     public function test_content_charset_iso8859(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_charset_iso8859';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals("iso-8859-1", $result->detected_charset);
@@ -32,7 +35,9 @@ final class ContentTest extends TestCase
     /** Handles 200 response with empty body gracefully */
     public function test_content_empty_body(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_empty_body';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
@@ -41,7 +46,9 @@ final class ContentTest extends TestCase
     /** Handles response with Accept-Encoding gzip negotiation */
     public function test_content_gzip_compressed(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_gzip_compressed';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
@@ -51,7 +58,10 @@ final class ContentTest extends TestCase
     /** Respects max body size limit and truncates or skips oversized pages */
     public function test_content_large_page_limit(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_body_size = 1024;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_large_page_limit';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertLessThan(1025, $result->body_size);
@@ -60,7 +70,10 @@ final class ContentTest extends TestCase
     /** Extracts only main content area, excluding nav, sidebar, footer */
     public function test_content_main_only(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->main_content_only = true;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_main_only';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->main_content_only);
@@ -69,7 +82,9 @@ final class ContentTest extends TestCase
     /** Detects PDF content by Content-Type header when URL has no .pdf extension */
     public function test_content_pdf_no_extension(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_pdf_no_extension';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->is_pdf);
@@ -78,7 +93,10 @@ final class ContentTest extends TestCase
     /** Removes specified HTML elements by CSS selector before processing */
     public function test_content_remove_tags(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->remove_tags = ["nav", "aside", "footer"];
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_remove_tags';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
@@ -87,7 +105,9 @@ final class ContentTest extends TestCase
     /** Handles UTF-8 content with BOM marker correctly */
     public function test_content_utf8_bom(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_utf8_bom';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals("utf-8", $result->detected_charset);

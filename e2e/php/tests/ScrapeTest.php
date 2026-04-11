@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: scrape. */
 final class ScrapeTest extends TestCase
@@ -13,7 +14,9 @@ final class ScrapeTest extends TestCase
     /** Same asset linked twice results in one download with one unique hash */
     public function test_scrape_asset_dedup(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->download_assets = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_asset_dedup';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
@@ -24,7 +27,10 @@ final class ScrapeTest extends TestCase
     /** Skips assets exceeding max_asset_size limit */
     public function test_scrape_asset_max_size(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->download_assets = true;
+        $engine_config->max_asset_size = 150;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_asset_max_size';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
@@ -34,7 +40,10 @@ final class ScrapeTest extends TestCase
     /** Only downloads image assets when asset_types filter is set */
     public function test_scrape_asset_type_filter(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->asset_types = ["image"];
+        $engine_config->download_assets = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_asset_type_filter';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
@@ -45,7 +54,10 @@ final class ScrapeTest extends TestCase
     /** Scrapes a simple HTML page and extracts title, description, and links */
     public function test_scrape_basic_html_page(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 0;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_basic_html_page';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
@@ -77,7 +89,9 @@ final class ScrapeTest extends TestCase
     /** Downloads CSS, JS, and image assets from page */
     public function test_scrape_download_assets(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->download_assets = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_download_assets';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);

@@ -6,7 +6,8 @@ use kreuzcrawl::create_engine;
 #[tokio::test]
 async fn test_scrape_asset_dedup() {
     // Same asset linked twice results in one download with one unique hash
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"download_assets\":true}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_asset_dedup");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -17,7 +18,8 @@ async fn test_scrape_asset_dedup() {
 #[tokio::test]
 async fn test_scrape_asset_max_size() {
     // Skips assets exceeding max_asset_size limit
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"download_assets\":true,\"max_asset_size\":150}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_asset_max_size");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -27,18 +29,20 @@ async fn test_scrape_asset_max_size() {
 #[tokio::test]
 async fn test_scrape_asset_type_filter() {
     // Only downloads image assets when asset_types filter is set
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"asset_types\":[\"image\"],\"download_assets\":true}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_asset_type_filter");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert_eq!(result.assets.len(), 1, "equals assertion failed");
-    assert!(format!("{:?}", result.assets[0].asset_category).to_lowercase().contains(r#"image"#), "expected to contain: {}", r#"image"#);
+    assert!(format!("{:?}", result.assets[0].asset_category).contains(r#"image"#), "expected to contain: {}", r#"image"#);
 }
 
 #[tokio::test]
 async fn test_scrape_basic_html_page() {
     // Scrapes a simple HTML page and extracts title, description, and links
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_depth\":0,\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_basic_html_page");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
@@ -47,10 +51,10 @@ async fn test_scrape_basic_html_page() {
     assert_eq!(result.content_type.trim(), r#"text/html"#, "equals assertion failed");
     assert!(!result.html.is_empty(), "expected non-empty value");
     assert_eq!(metadata_title.trim(), r#"Example Domain"#, "equals assertion failed");
-    assert!(format!("{:?}", metadata_description).to_lowercase().contains(r#"illustrative examples"#), "expected to contain: {}", r#"illustrative examples"#);
+    assert!(format!("{:?}", metadata_description).contains(r#"illustrative examples"#), "expected to contain: {}", r#"illustrative examples"#);
     assert!(result.metadata.canonical_url.is_some(), "expected metadata.canonical_url to be present");
     assert!(result.links.len() > 0, "expected > 0");
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"external"#), "expected to contain: {}", r#"external"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"external"#), "expected to contain: {}", r#"external"#);
     assert_eq!(result.images.len(), 0, "equals assertion failed");
     assert!(result.metadata.og_title.is_none(), "expected og.title to be absent");
 }
@@ -63,16 +67,17 @@ async fn test_scrape_complex_links() {
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert!(result.links.len() > 9, "expected > 9");
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"internal"#), "expected to contain: {}", r#"internal"#);
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"external"#), "expected to contain: {}", r#"external"#);
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"anchor"#), "expected to contain: {}", r#"anchor"#);
-    assert!(format!("{:?}", result.links[0].link_type).to_lowercase().contains(r#"document"#), "expected to contain: {}", r#"document"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"internal"#), "expected to contain: {}", r#"internal"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"external"#), "expected to contain: {}", r#"external"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"anchor"#), "expected to contain: {}", r#"anchor"#);
+    assert!(format!("{:?}", result.links[0].link_type).contains(r#"document"#), "expected to contain: {}", r#"document"#);
 }
 
 #[tokio::test]
 async fn test_scrape_download_assets() {
     // Downloads CSS, JS, and image assets from page
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"download_assets\":true}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_download_assets");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -157,7 +162,7 @@ async fn test_scrape_malformed_html() {
     let metadata_description = result.metadata.description.as_deref().unwrap_or("");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert!(!result.html.is_empty(), "expected non-empty value");
-    assert!(format!("{:?}", metadata_description).to_lowercase().contains(r#"broken HTML"#), "expected to contain: {}", r#"broken HTML"#);
+    assert!(format!("{:?}", metadata_description).contains(r#"broken HTML"#), "expected to contain: {}", r#"broken HTML"#);
 }
 
 #[tokio::test]

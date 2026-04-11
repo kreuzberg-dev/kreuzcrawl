@@ -6,7 +6,8 @@ use kreuzcrawl::create_engine;
 #[tokio::test]
 async fn test_redirect_301_permanent() {
     // Follows 301 permanent redirect and returns final page content
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_301_permanent");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -16,7 +17,8 @@ async fn test_redirect_301_permanent() {
 #[tokio::test]
 async fn test_redirect_302_found() {
     // Follows 302 Found redirect correctly
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_302_found");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -26,7 +28,8 @@ async fn test_redirect_302_found() {
 #[tokio::test]
 async fn test_redirect_303_see_other() {
     // Follows 303 See Other redirect (method changes to GET)
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_303_see_other");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -36,7 +39,8 @@ async fn test_redirect_303_see_other() {
 #[tokio::test]
 async fn test_redirect_307_temporary() {
     // Follows 307 Temporary Redirect (preserves method)
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_307_temporary");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -46,7 +50,8 @@ async fn test_redirect_307_temporary() {
 #[tokio::test]
 async fn test_redirect_308_permanent() {
     // Follows 308 Permanent Redirect (preserves method)
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_308_permanent");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -56,7 +61,8 @@ async fn test_redirect_308_permanent() {
 #[tokio::test]
 async fn test_redirect_chain() {
     // Follows a chain of redirects (301 -> 302 -> 200)
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_chain");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -66,7 +72,8 @@ async fn test_redirect_chain() {
 #[tokio::test]
 async fn test_redirect_cross_domain() {
     // Reports cross-domain redirect target without following to external domain
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_cross_domain");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -76,7 +83,8 @@ async fn test_redirect_cross_domain() {
 #[tokio::test]
 async fn test_redirect_loop() {
     // Detects redirect loop (A -> B -> A) and returns error
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_loop");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'is_error' not available on result type
@@ -85,7 +93,8 @@ async fn test_redirect_loop() {
 #[tokio::test]
 async fn test_redirect_max_exceeded() {
     // Aborts when redirect count exceeds max_redirects limit
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_redirects\":2,\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_max_exceeded");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'is_error' not available on result type
@@ -94,7 +103,8 @@ async fn test_redirect_max_exceeded() {
 #[tokio::test]
 async fn test_redirect_meta_refresh() {
     // Follows HTML meta-refresh redirect to target page
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_meta_refresh");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -104,7 +114,8 @@ async fn test_redirect_meta_refresh() {
 #[tokio::test]
 async fn test_redirect_refresh_header() {
     // Handles HTTP Refresh header redirect
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_refresh_header");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type
@@ -114,7 +125,8 @@ async fn test_redirect_refresh_header() {
 #[tokio::test]
 async fn test_redirect_to_404() {
     // Redirect target returns 404 Not Found
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"respect_robots_txt\":false}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "redirect_to_404");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'final_url' not available on result type

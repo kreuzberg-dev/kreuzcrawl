@@ -17,7 +17,8 @@
 			}
 		],
 		"config": {
-			"auth_basic": {
+			"auth": {
+				"type": "basic",
 				"username": "testuser",
 				"password": "testpass"
 			},

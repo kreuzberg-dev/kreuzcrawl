@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: sitemap. */
 final class SitemapTest extends TestCase
@@ -23,7 +24,9 @@ final class SitemapTest extends TestCase
     /** Parses a gzip-compressed sitemap file */
     public function test_sitemap_compressed_gzip(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_compressed_gzip';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -41,7 +44,9 @@ final class SitemapTest extends TestCase
     /** Discovers sitemap via robots.txt Sitemap directive */
     public function test_sitemap_from_robots_txt(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_from_robots_txt';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -59,7 +64,9 @@ final class SitemapTest extends TestCase
     /** Filters sitemap URLs by lastmod date */
     public function test_sitemap_lastmod_filter(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_lastmod_filter';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -69,7 +76,9 @@ final class SitemapTest extends TestCase
     /** Uses sitemap URLs exclusively without following page links */
     public function test_sitemap_only_mode(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_only_mode';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
@@ -78,7 +87,9 @@ final class SitemapTest extends TestCase
     /** Parses sitemap with XHTML namespace alternate links */
     public function test_sitemap_xhtml_links(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/sitemap_xhtml_links';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type

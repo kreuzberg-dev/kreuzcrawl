@@ -33,9 +33,8 @@
 				"body_inline": "<html><body><h1>Good 2</h1></body></html>"
 			}
 		],
-		"config": {
-			"batch_urls": ["/good1", "/bad", "/good2"]
-		}
+		"batch_urls": ["/good1", "/bad", "/good2"],
+		"config": {}
 	},
 	"assertions": [
 		{

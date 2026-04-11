@@ -4,7 +4,8 @@ defmodule E2e.CookiesTest do
 
   describe "cookies_per_domain" do
     test "Isolates cookies per domain during crawl" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"cookies_enabled" => true, "max_depth" => 1, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/cookies_per_domain"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'cookies.length' not available on result type
@@ -14,7 +15,8 @@ defmodule E2e.CookiesTest do
 
   describe "cookies_persistence" do
     test "Maintains cookies across multiple crawl requests" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"cookies_enabled" => true, "max_depth" => 1, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/cookies_persistence"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'cookies' not available on result type
@@ -23,7 +25,8 @@ defmodule E2e.CookiesTest do
 
   describe "cookies_set_cookie_response" do
     test "Respects Set-Cookie header from server responses" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"cookies_enabled" => true, "max_depth" => 1, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/cookies_set_cookie_response"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'cookies' not available on result type

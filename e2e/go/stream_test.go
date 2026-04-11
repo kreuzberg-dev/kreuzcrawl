@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -10,7 +11,11 @@ import (
 
 func Test_CrawlStreamEvents(t *testing.T) {
 	// Crawl stream produces page and complete events
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1,"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -26,7 +31,11 @@ func Test_CrawlStreamEvents(t *testing.T) {
 
 func Test_StreamDepthCrawl(t *testing.T) {
 	// Stream produces events for multi-depth crawl with link following
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":1,"max_depth":2}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -42,7 +51,11 @@ func Test_StreamDepthCrawl(t *testing.T) {
 
 func Test_StreamWithErrorEvent(t *testing.T) {
 	// Stream emits page and complete events even when some pages fail
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":1,"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

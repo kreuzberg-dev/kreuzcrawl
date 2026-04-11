@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -10,7 +11,11 @@ import (
 
 func Test_AuthBasicHttp(t *testing.T) {
 	// Sends HTTP Basic authentication header
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"auth":{"password":"testpass","type":"basic","username":"testuser"},"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -29,7 +34,11 @@ func Test_AuthBasicHttp(t *testing.T) {
 
 func Test_AuthBearerToken(t *testing.T) {
 	// Sends Bearer token in Authorization header
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"auth":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test","type":"bearer"},"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -48,7 +57,11 @@ func Test_AuthBearerToken(t *testing.T) {
 
 func Test_AuthCustomHeader(t *testing.T) {
 	// Sends authentication via custom header (X-API-Key)
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"auth":{"name":"X-API-Key","type":"header","value":"sk-test-key-12345"},"respect_robots_txt":false}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

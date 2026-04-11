@@ -3,13 +3,18 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: concurrent. */
 class ConcurrentTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testConcurrentBasic() throws Exception {
         // Concurrent crawling fetches all pages with max_concurrent workers
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_concurrent\":3,\"max_depth\":1}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/concurrent_basic";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'pages.length' not available on result type
@@ -19,7 +24,8 @@ class ConcurrentTest {
     @Test
     void testConcurrentDepthTwoFanOut() throws Exception {
         // Concurrent depth=2 crawl correctly fans out and deduplicates across levels
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_concurrent\":3,\"max_depth\":2}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/concurrent_depth_two_fan_out";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'pages.length' not available on result type
@@ -28,7 +34,8 @@ class ConcurrentTest {
     @Test
     void testConcurrentMaxPagesExact() throws Exception {
         // Concurrent crawling does not exceed max_pages limit even with high concurrency
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_concurrent\":5,\"max_depth\":1,\"max_pages\":3}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/concurrent_max_pages_exact";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'pages.length' not available on result type
@@ -37,7 +44,8 @@ class ConcurrentTest {
     @Test
     void testConcurrentPartialErrors() throws Exception {
         // Concurrent crawl handles partial failures gracefully
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_concurrent\":3,\"max_depth\":1}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/concurrent_partial_errors";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'pages.length' not available on result type
@@ -46,7 +54,8 @@ class ConcurrentTest {
     @Test
     void testConcurrentRespectsMaxPages() throws Exception {
         // Concurrent crawling respects max_pages limit
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"max_concurrent\":2,\"max_depth\":1,\"max_pages\":3}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/concurrent_respects_max_pages";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'pages.length' not available on result type

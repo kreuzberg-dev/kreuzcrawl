@@ -3,9 +3,13 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: sitemap. */
 class SitemapTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testSitemapBasic() throws Exception {
         // Parses a standard urlset sitemap
@@ -19,7 +23,8 @@ class SitemapTest {
     @Test
     void testSitemapCompressedGzip() throws Exception {
         // Parses a gzip-compressed sitemap file
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_compressed_gzip";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
@@ -37,7 +42,8 @@ class SitemapTest {
     @Test
     void testSitemapFromRobotsTxt() throws Exception {
         // Discovers sitemap via robots.txt Sitemap directive
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":true}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_from_robots_txt";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
@@ -55,7 +61,8 @@ class SitemapTest {
     @Test
     void testSitemapLastmodFilter() throws Exception {
         // Filters sitemap URLs by lastmod date
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_lastmod_filter";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
@@ -65,7 +72,8 @@ class SitemapTest {
     @Test
     void testSitemapOnlyMode() throws Exception {
         // Uses sitemap URLs exclusively without following page links
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_only_mode";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
@@ -74,7 +82,8 @@ class SitemapTest {
     @Test
     void testSitemapXhtmlLinks() throws Exception {
         // Parses sitemap with XHTML namespace alternate links
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_xhtml_links";
         var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -11,7 +12,8 @@ public class CookiesTests
     public async Task Test_CookiesPerDomain()
     {
         // Isolates cookies per domain during crawl
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_per_domain";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'cookies.length' not available on result type
@@ -22,7 +24,8 @@ public class CookiesTests
     public async Task Test_CookiesPersistence()
     {
         // Maintains cookies across multiple crawl requests
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_persistence";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'cookies' not available on result type
@@ -32,7 +35,8 @@ public class CookiesTests
     public async Task Test_CookiesSetCookieResponse()
     {
         // Respects Set-Cookie header from server responses
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/cookies_set_cookie_response";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'cookies' not available on result type

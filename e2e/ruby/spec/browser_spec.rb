@@ -4,14 +4,16 @@ require 'kreuzcrawl'
 
 RSpec.describe 'browser' do
   it 'browser_config_auto_no_feature: Browser mode \'auto\' without browser feature enabled does not use browser' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine_config = { 'browser' => { 'mode' => 'auto' } }
+    engine = Kreuzcrawl.create_engine(engine_config)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/browser_config_auto_no_feature"
     result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
   end
 
   it 'browser_config_never_mode: Browser mode \'never\' prevents browser fallback even for SPA shell content' do
-    engine = Kreuzcrawl.create_engine(nil)
+    engine_config = { 'browser' => { 'mode' => 'never' } }
+    engine = Kreuzcrawl.create_engine(engine_config)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/browser_config_never_mode"
     result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)

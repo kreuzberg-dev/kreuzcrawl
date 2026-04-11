@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: cookies. */
 final class CookiesTest extends TestCase
@@ -13,7 +14,11 @@ final class CookiesTest extends TestCase
     /** Isolates cookies per domain during crawl */
     public function test_cookies_per_domain(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->cookies_enabled = true;
+        $engine_config->max_depth = 1;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/cookies_per_domain';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'cookies.length' not available on result type
@@ -23,7 +28,11 @@ final class CookiesTest extends TestCase
     /** Maintains cookies across multiple crawl requests */
     public function test_cookies_persistence(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->cookies_enabled = true;
+        $engine_config->max_depth = 1;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/cookies_persistence';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'cookies' not available on result type
@@ -32,7 +41,11 @@ final class CookiesTest extends TestCase
     /** Respects Set-Cookie header from server responses */
     public function test_cookies_set_cookie_response(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->cookies_enabled = true;
+        $engine_config->max_depth = 1;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/cookies_set_cookie_response';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'cookies' not available on result type

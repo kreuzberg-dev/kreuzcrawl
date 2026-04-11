@@ -4,7 +4,7 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 describe("metadata", () => {
 	it("metadata_article_times: Extracts article:published_time, modified_time, author, section, and tags", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/metadata_article_times";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/metadata_article_times`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		// skipped: field 'article.published_time' not available on result type
@@ -16,7 +16,7 @@ describe("metadata", () => {
 
 	it("metadata_favicons: Extracts favicon link tags including apple-touch-icon", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/metadata_favicons";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/metadata_favicons`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		// skipped: field 'favicons.length' not available on result type
@@ -25,7 +25,7 @@ describe("metadata", () => {
 
 	it("metadata_headings: Extracts heading hierarchy (h1-h6) from HTML page", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/metadata_headings";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/metadata_headings`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		// skipped: field 'headings.h1.length' not available on result type
@@ -35,7 +35,7 @@ describe("metadata", () => {
 
 	it("metadata_hreflang: Extracts hreflang alternate link tags", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/metadata_hreflang";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/metadata_hreflang`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		// skipped: field 'hreflang.length' not available on result type
@@ -44,7 +44,7 @@ describe("metadata", () => {
 
 	it("metadata_keywords_author: Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/metadata_keywords_author";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/metadata_keywords_author`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.metadata.title.trim()).toBe("Comprehensive Metadata Test Page");
@@ -62,7 +62,7 @@ describe("metadata", () => {
 
 	it("metadata_og_video_audio: Extracts og:video, og:audio, and og:locale:alternate metadata", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/metadata_og_video_audio";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/metadata_og_video_audio`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		expect(result.metadata.ogVideo.trim()).toBe("https://example.com/video.mp4");
@@ -72,7 +72,7 @@ describe("metadata", () => {
 
 	it("metadata_response_headers: Extracts response metadata from HTTP headers (etag, server, content-language)", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/metadata_response_headers";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/metadata_response_headers`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		// skipped: field 'response_headers.etag' not available on result type
@@ -83,7 +83,7 @@ describe("metadata", () => {
 
 	it("metadata_word_count: Computes word count from visible page text", async () => {
 		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/metadata_word_count";
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/metadata_word_count`;
 		const result = await scrape(engine, url);
 		expect(result.statusCode).toBe(200);
 		// skipped: field 'computed.word_count' not available on result type

@@ -6,7 +6,8 @@ use kreuzcrawl::create_engine;
 #[tokio::test]
 async fn test_rate_limit_basic_delay() {
     // Rate limiter adds delay between requests to the same domain
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "rate_limit_basic_delay");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'crawl.pages_crawled' not available on result type
@@ -16,7 +17,8 @@ async fn test_rate_limit_basic_delay() {
 #[tokio::test]
 async fn test_rate_limit_zero_no_delay() {
     // Rate limiter with zero delay does not slow crawling
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine_config: kreuzcrawl::CrawlConfig = serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
+    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "rate_limit_zero_no_delay");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'crawl.pages_crawled' not available on result type

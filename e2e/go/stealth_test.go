@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -10,7 +11,11 @@ import (
 
 func Test_StealthUaRotationConfig(t *testing.T) {
 	// User-agent rotation config is accepted and crawl succeeds
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"user_agents":["Mozilla/5.0 (Windows NT 10.0)","Chrome/120.0.0.0"]}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

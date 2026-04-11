@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: engine. */
 final class EngineTest extends TestCase
@@ -23,7 +24,9 @@ final class EngineTest extends TestCase
     /** CrawlEngine with defaults crawls multiple pages like the free function */
     public function test_engine_crawl_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/engine_crawl_basic';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
@@ -56,7 +59,9 @@ final class EngineTest extends TestCase
     /** CrawlEngine with defaults streams events like the free function */
     public function test_engine_stream_basic(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/engine_stream_basic';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.has_page_event' not available on result type

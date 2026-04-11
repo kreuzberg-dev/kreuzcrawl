@@ -2,6 +2,7 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -10,7 +11,11 @@ import (
 
 func Test_FilterBm25CrawlIntegration(t *testing.T) {
 	// BM25 filter works during multi-page crawl, keeping relevant pages
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":1,"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -24,7 +29,11 @@ func Test_FilterBm25CrawlIntegration(t *testing.T) {
 
 func Test_FilterBm25EmptyQuery(t *testing.T) {
 	// BM25 filter with empty query passes all pages through
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -38,7 +47,11 @@ func Test_FilterBm25EmptyQuery(t *testing.T) {
 
 func Test_FilterBm25HighThreshold(t *testing.T) {
 	// BM25 filter with very high threshold filters out all pages
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -52,7 +65,11 @@ func Test_FilterBm25HighThreshold(t *testing.T) {
 
 func Test_FilterBm25RelevantPages(t *testing.T) {
 	// BM25 filter keeps only pages relevant to the query
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -66,7 +83,11 @@ func Test_FilterBm25RelevantPages(t *testing.T) {
 
 func Test_FilterBm25ThresholdZero(t *testing.T) {
 	// BM25 filter with zero threshold passes all pages
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -80,7 +101,11 @@ func Test_FilterBm25ThresholdZero(t *testing.T) {
 
 func Test_FilterNoopCrawlAllKept(t *testing.T) {
 	// NoopFilter keeps all pages during a multi-page crawl
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_concurrent":1,"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -94,7 +119,11 @@ func Test_FilterNoopCrawlAllKept(t *testing.T) {
 
 func Test_FilterNoopPassesAll(t *testing.T) {
 	// No content filter passes all crawled pages through
-	engine, createErr := pkg.CreateEngine()
+	var engineConfig pkg.CrawlConfig
+	if err := json.Unmarshal([]byte(`{"max_depth":1}`), &engineConfig); err != nil {
+		t.Fatalf("config parse failed: %v", err)
+	}
+	engine, createErr := pkg.CreateEngine(&engineConfig)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Kreuzcrawl;
@@ -11,7 +12,8 @@ public class StreamTests
     public async Task Test_CrawlStreamEvents()
     {
         // Crawl stream produces page and complete events
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_depth\":1,\"respect_robots_txt\":false}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/crawl_stream_events";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'stream.event_count_min' not available on result type
@@ -23,7 +25,8 @@ public class StreamTests
     public async Task Test_StreamDepthCrawl()
     {
         // Stream produces events for multi-depth crawl with link following
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":2}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stream_depth_crawl";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'stream.event_count_min' not available on result type
@@ -35,7 +38,8 @@ public class StreamTests
     public async Task Test_StreamWithErrorEvent()
     {
         // Stream emits page and complete events even when some pages fail
-        var engine = KreuzcrawlLib.CreateEngine(null);
+        var engineConfig = JsonSerializer.Deserialize<CrawlConfig>("{\"max_concurrent\":1,\"max_depth\":1}")!;
+        var engine = KreuzcrawlLib.CreateEngine(engineConfig);
         var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/stream_with_error_event";
         var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'stream.has_page_event' not available on result type

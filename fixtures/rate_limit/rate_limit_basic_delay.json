@@ -30,9 +30,9 @@
 				"body_inline": "<html><body><h1>Page 2</h1></body></html>"
 			}
 		],
+		"rate_limit_delay_ms": 100,
 		"config": {
-			"max_depth": 1,
-			"rate_limit_delay_ms": 100
+			"max_depth": 1
 		}
 	},
 	"assertions": [

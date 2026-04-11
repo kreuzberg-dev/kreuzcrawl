@@ -4,7 +4,8 @@ defmodule E2e.StealthTest do
 
   describe "stealth_ua_rotation_config" do
     test "User-agent rotation config is accepted and crawl succeeds" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"user_agents" => ["Mozilla/5.0 (Windows NT 10.0)", "Chrome/120.0.0.0"]}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/stealth_ua_rotation_config"
       result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200

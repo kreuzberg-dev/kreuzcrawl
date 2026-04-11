@@ -14,7 +14,8 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_compressed_gzip" do
     test "Parses a gzip-compressed sitemap file" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_compressed_gzip"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -32,7 +33,8 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_from_robots_txt" do
     test "Discovers sitemap via robots.txt Sitemap directive" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"respect_robots_txt" => true}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_from_robots_txt"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -50,7 +52,8 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_lastmod_filter" do
     test "Filters sitemap URLs by lastmod date" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_lastmod_filter"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -60,7 +63,8 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_only_mode" do
     test "Uses sitemap URLs exclusively without following page links" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_only_mode"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -69,7 +73,8 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_xhtml_links" do
     test "Parses sitemap with XHTML namespace alternate links" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_xhtml_links"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type

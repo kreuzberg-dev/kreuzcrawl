@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: stealth. */
 final class StealthTest extends TestCase
@@ -13,7 +14,9 @@ final class StealthTest extends TestCase
     /** User-agent rotation config is accepted and crawl succeeds */
     public function test_stealth_ua_rotation_config(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->user_agents = ["Mozilla/5.0 (Windows NT 10.0)", "Chrome/120.0.0.0"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/stealth_ua_rotation_config';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);

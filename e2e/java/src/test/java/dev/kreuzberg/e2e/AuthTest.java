@@ -3,13 +3,18 @@ package dev.kreuzberg.e2e;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: auth. */
 class AuthTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Test
     void testAuthBasicHttp() throws Exception {
         // Sends HTTP Basic authentication header
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"auth\":{\"password\":\"testpass\",\"type\":\"basic\",\"username\":\"testuser\"},\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/auth_basic_http";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.authHeaderSent());
@@ -19,7 +24,8 @@ class AuthTest {
     @Test
     void testAuthBearerToken() throws Exception {
         // Sends Bearer token in Authorization header
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"auth\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test\",\"type\":\"bearer\"},\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/auth_bearer_token";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.authHeaderSent());
@@ -29,7 +35,8 @@ class AuthTest {
     @Test
     void testAuthCustomHeader() throws Exception {
         // Sends authentication via custom header (X-API-Key)
-        var engine = Kreuzcrawl.createEngine(null);
+        var engineConfig = MAPPER.readValue("{\"auth\":{\"name\":\"X-API-Key\",\"type\":\"header\",\"value\":\"sk-test-key-12345\"},\"respect_robots_txt\":false}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/auth_custom_header";
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(true, result.authHeaderSent());

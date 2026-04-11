@@ -6,6 +6,7 @@ namespace Kreuzberg\E2e;
 
 use PHPUnit\Framework\TestCase;
 use Kreuzcrawl\Kreuzcrawl;
+use Kreuzcrawl\CrawlConfig;
 
 /** E2e tests for category: stream. */
 final class StreamTest extends TestCase
@@ -13,7 +14,10 @@ final class StreamTest extends TestCase
     /** Crawl stream produces page and complete events */
     public function test_crawl_stream_events(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_depth = 1;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_stream_events';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.event_count_min' not available on result type
@@ -24,7 +28,10 @@ final class StreamTest extends TestCase
     /** Stream produces events for multi-depth crawl with link following */
     public function test_stream_depth_crawl(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 1;
+        $engine_config->max_depth = 2;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/stream_depth_crawl';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.event_count_min' not available on result type
@@ -35,7 +42,10 @@ final class StreamTest extends TestCase
     /** Stream emits page and complete events even when some pages fail */
     public function test_stream_with_error_event(): void
     {
-        $engine = Kreuzcrawl::createEngine(null);
+        $engine_config = CrawlConfig::default();
+        $engine_config->max_concurrent = 1;
+        $engine_config->max_depth = 1;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/stream_with_error_event';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.has_page_event' not available on result type

@@ -3,23 +3,26 @@ import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 
 describe("cookies", () => {
 	it("cookies_per_domain: Isolates cookies per domain during crawl", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/cookies_per_domain";
+		const engineConfig = { cookies_enabled: true, max_depth: 1, respect_robots_txt: false };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/cookies_per_domain`;
 		await scrape(engine, url);
 		// skipped: field 'cookies.length' not available on result type
 		// skipped: field 'cookies' not available on result type
 	});
 
 	it("cookies_persistence: Maintains cookies across multiple crawl requests", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/cookies_persistence";
+		const engineConfig = { cookies_enabled: true, max_depth: 1, respect_robots_txt: false };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/cookies_persistence`;
 		await scrape(engine, url);
 		// skipped: field 'cookies' not available on result type
 	});
 
 	it("cookies_set_cookie_response: Respects Set-Cookie header from server responses", async () => {
-		const engine = createEngine(null);
-		const url = process.env.MOCK_SERVER_URL + "/fixtures/cookies_set_cookie_response";
+		const engineConfig = { cookies_enabled: true, max_depth: 1, respect_robots_txt: false };
+		const engine = createEngine(engineConfig);
+		const url = `${process.env.MOCK_SERVER_URL}/fixtures/cookies_set_cookie_response`;
 		await scrape(engine, url);
 		// skipped: field 'cookies' not available on result type
 	});

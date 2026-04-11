@@ -4,7 +4,8 @@ defmodule E2e.MapTest do
 
   describe "map_discover_urls" do
     test "Discovers all URLs on a site without fetching full content" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"max_depth" => 0, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_discover_urls"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -13,7 +14,8 @@ defmodule E2e.MapTest do
 
   describe "map_exclude_patterns" do
     test "Excludes URLs matching patterns from URL map" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"exclude_paths" => ["/private/.*", "/api/.*"], "max_depth" => 0, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_exclude_patterns"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -22,7 +24,8 @@ defmodule E2e.MapTest do
 
   describe "map_include_subdomains" do
     test "Includes subdomain URLs in URL map discovery" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"allow_subdomains" => true, "max_depth" => 0, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_include_subdomains"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -32,7 +35,8 @@ defmodule E2e.MapTest do
 
   describe "map_large_sitemap" do
     test "Handles large sitemap with 100+ URLs" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_large_sitemap"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -41,7 +45,8 @@ defmodule E2e.MapTest do
 
   describe "map_limit_pagination" do
     test "Limits map result count to specified maximum" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"map_limit" => 5, "max_depth" => 0, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_limit_pagination"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
@@ -50,7 +55,8 @@ defmodule E2e.MapTest do
 
   describe "map_search_filter" do
     test "Filters map results by search keyword" do
-      engine = Kreuzcrawl.create_engine!(nil)
+      engine_config = %{"map_search" => "blog", "max_depth" => 0, "respect_robots_txt" => false}
+      engine = Kreuzcrawl.create_engine!(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_search_filter"
       result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'urls.length' not available on result type
