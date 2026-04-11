@@ -1,18 +1,9 @@
 {
 	"id": "browser_mode_always",
 	"description": "Browser mode 'always' uses browser even for normal server-rendered pages",
-	"tags": [
-		"browser",
-		"config"
-	],
+	"tags": ["browser", "config"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c",
-			"go",
-			"java",
-			"csharp"
-		],
+		"languages": ["wasm", "c", "go", "java", "csharp"],
 		"reason": "requires browser feature; requires browser; Requires a running Chrome/Chromium instance"
 	},
 	"input": {

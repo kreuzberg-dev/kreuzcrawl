@@ -31,7 +31,7 @@ RSpec.describe "engine" do
     expect(result.metadata.title).to eq("Engine Test")
     expect(result.metadata.description).to include("Testing the engine")
     expect(result.links.length).to be >= 1
-      # skipped: field 'headings.h1_text' not available on result type
+    expect(result.metadata.headings.length).to be >= 1
   end
 
   it "engine_stream_basic: CrawlEngine with defaults streams events like the free function" do

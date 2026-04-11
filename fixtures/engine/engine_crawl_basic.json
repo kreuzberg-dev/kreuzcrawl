@@ -1,15 +1,9 @@
 {
 	"id": "engine_crawl_basic",
 	"description": "CrawlEngine with defaults crawls multiple pages like the free function",
-	"tags": [
-		"engine",
-		"crawl"
-	],
+	"tags": ["engine", "crawl"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

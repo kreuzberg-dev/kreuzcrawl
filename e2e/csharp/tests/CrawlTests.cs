@@ -13,7 +13,7 @@ public class CrawlTests
         // Skips image and video content types gracefully
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
-        // skipped: field 'content.was_skipped' not available on result type
+        Assert.Equal(true, result.WasSkipped);
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class CrawlTests
         // Encounters PDF link and skips or marks as document type
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
-        // skipped: field 'content.was_skipped' not available on result type
+        Assert.Equal(true, result.WasSkipped);
     }
 
     [Fact]

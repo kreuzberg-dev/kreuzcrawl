@@ -8,7 +8,7 @@ fn test_middleware_engine_crawl_with_defaults() {
     // Engine crawl with default middleware chain produces correct multi-page results
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'crawl.pages_crawled' not available on result type
     // skipped: field 'crawl.min_pages' not available on result type
 }
@@ -21,6 +21,5 @@ fn test_middleware_noop_no_effect() {
     let result = scrape(&engine, url).expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    assert_eq!(metadata_title, r#"Middleware Test"#, "equals assertion failed");
+    assert_eq!(metadata_title.trim(), r#"Middleware Test"#, "equals assertion failed");
 }
-

@@ -45,9 +45,9 @@ public class EngineTests
         Assert.Equal(200, result.StatusCode);
         Assert.Equal("text/html", result.ContentType.Trim());
         Assert.Equal("Engine Test", result.Metadata.Title.Trim());
-        Assert.Contains("Testing the engine", result.Metadata.Description);
+        Assert.Contains("Testing the engine", result.Metadata.Description.ToString());
         Assert.True(result.Links.Count >= 1, "expected >= 1");
-        // skipped: field 'headings.h1_text' not available on result type
+        Assert.True(result.Metadata.Headings!.Count >= 1, "expected >= 1");
     }
 
     [Fact]

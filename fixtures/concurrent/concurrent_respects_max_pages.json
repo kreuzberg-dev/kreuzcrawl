@@ -1,14 +1,9 @@
 {
 	"id": "concurrent_respects_max_pages",
 	"description": "Concurrent crawling respects max_pages limit",
-	"tags": [
-		"concurrent"
-	],
+	"tags": ["concurrent"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

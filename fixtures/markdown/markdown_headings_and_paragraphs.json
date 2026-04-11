@@ -1,15 +1,9 @@
 {
 	"id": "markdown_headings_and_paragraphs",
 	"description": "Markdown conversion preserves heading hierarchy and paragraph text",
-	"tags": [
-		"markdown",
-		"content"
-	],
+	"tags": ["markdown", "content"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -29,11 +23,11 @@
 	"assertions": [
 		{
 			"type": "not_empty",
-			"field": "markdown"
+			"field": "markdown.content"
 		},
 		{
 			"type": "contains",
-			"field": "markdown",
+			"field": "markdown.content",
 			"value": "Main Title"
 		}
 	]

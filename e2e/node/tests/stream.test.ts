@@ -1,28 +1,28 @@
-import { describe, it, expect } from 'vitest';
-import { scrape, createEngine } from '@kreuzberg/kreuzcrawl';
+import { describe, it, expect } from "vitest";
+import { scrape, createEngine } from "@kreuzberg/kreuzcrawl";
 
-describe('stream', () => {
-  it('crawl_stream_events: Crawl stream produces page and complete events', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'stream.event_count_min' not available on result type
-    // skipped: field 'stream.has_page_event' not available on result type
-    // skipped: field 'stream.has_complete_event' not available on result type
-  });
+describe("stream", () => {
+	it("crawl_stream_events: Crawl stream produces page and complete events", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'stream.event_count_min' not available on result type
+		// skipped: field 'stream.has_page_event' not available on result type
+		// skipped: field 'stream.has_complete_event' not available on result type
+	});
 
-  it('stream_depth_crawl: Stream produces events for multi-depth crawl with link following', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'stream.event_count_min' not available on result type
-    // skipped: field 'stream.has_page_event' not available on result type
-    // skipped: field 'stream.has_complete_event' not available on result type
-  });
+	it("stream_depth_crawl: Stream produces events for multi-depth crawl with link following", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'stream.event_count_min' not available on result type
+		// skipped: field 'stream.has_page_event' not available on result type
+		// skipped: field 'stream.has_complete_event' not available on result type
+	});
 
-  it('stream_with_error_event: Stream emits page and complete events even when some pages fail', async () => {
-    const engine = createEngine(null);
-    const result = await scrape(engine, "");
-    // skipped: field 'stream.has_page_event' not available on result type
-    // skipped: field 'stream.has_complete_event' not available on result type
-    // skipped: field 'stream.event_count_min' not available on result type
-  });
+	it("stream_with_error_event: Stream emits page and complete events even when some pages fail", async () => {
+		const engine = createEngine(null);
+		await scrape(engine, "");
+		// skipped: field 'stream.has_page_event' not available on result type
+		// skipped: field 'stream.has_complete_event' not available on result type
+		// skipped: field 'stream.event_count_min' not available on result type
+	});
 });

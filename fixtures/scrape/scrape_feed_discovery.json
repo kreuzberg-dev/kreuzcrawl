@@ -1,15 +1,9 @@
 {
 	"id": "scrape_feed_discovery",
 	"description": "Discovers RSS, Atom, and JSON feed links",
-	"tags": [
-		"scrape",
-		"feeds"
-	],
+	"tags": ["scrape", "feeds"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -30,19 +24,9 @@
 			"value": 200
 		},
 		{
-			"type": "equals",
-			"field": "feeds.rss.length",
-			"value": 1
-		},
-		{
-			"type": "equals",
-			"field": "feeds.atom.length",
-			"value": 1
-		},
-		{
-			"type": "equals",
-			"field": "feeds.json_feed.length",
-			"value": 1
+			"type": "greater_than_or_equal",
+			"field": "feeds.length",
+			"value": 3
 		}
 	]
 }

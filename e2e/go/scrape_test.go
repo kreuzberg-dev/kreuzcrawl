@@ -19,13 +19,13 @@ func Test_ScrapeAssetDedup(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if len(result.Assets) != 2 {
-		t.Errorf("equals mismatch: got %q", len(result.Assets))
+		t.Errorf("equals mismatch: got %v", len(result.Assets))
 	}
-	if result.Assets[0].UniqueHashes != 2 {
-		t.Errorf("equals mismatch: got %q", result.Assets[0].UniqueHashes)
+	if len(result.Assets[0].ContentHash) == 0 {
+		t.Errorf("expected non-empty value")
 	}
 }
 
@@ -40,10 +40,10 @@ func Test_ScrapeAssetMaxSize(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if len(result.Assets) != 2 {
-		t.Errorf("equals mismatch: got %q", len(result.Assets))
+		t.Errorf("equals mismatch: got %v", len(result.Assets))
 	}
 }
 
@@ -58,13 +58,13 @@ func Test_ScrapeAssetTypeFilter(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if len(result.Assets) != 1 {
-		t.Errorf("equals mismatch: got %q", len(result.Assets))
+		t.Errorf("equals mismatch: got %v", len(result.Assets))
 	}
-	if !strings.Contains(result.Assets[0].Category, `image`) {
-		t.Errorf("expected to contain %s, got %q", `image`, result.Assets[0].Category)
+	if !strings.Contains(string(result.Assets[0].AssetCategory), `image`) {
+		t.Errorf("expected to contain %s, got %v", `image`, result.Assets[0].AssetCategory)
 	}
 }
 
@@ -78,46 +78,44 @@ func Test_ScrapeBasicHtmlPage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var metadata_title string
+	var metadataTitle string
 	if result.Metadata.Title != nil {
-		metadata_title = *result.Metadata.Title
+		metadataTitle = *result.Metadata.Title
 	}
-	var metadata_description string
+	var metadataDescription string
 	if result.Metadata.Description != nil {
-		metadata_description = *result.Metadata.Description
-	}
-	var metadata_canonical_url string
-	if result.Metadata.CanonicalUrl != nil {
-		metadata_canonical_url = *result.Metadata.CanonicalUrl
+		metadataDescription = *result.Metadata.Description
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if result.ContentType != `text/html` {
-		t.Errorf("equals mismatch: got %q", result.ContentType)
+		t.Errorf("equals mismatch: got %v", result.ContentType)
 	}
 	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if metadata_title != `Example Domain` {
-		t.Errorf("equals mismatch: got %q", metadata_title)
+	if metadataTitle != `Example Domain` {
+		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
-	if !strings.Contains(metadata_description, `illustrative examples`) {
-		t.Errorf("expected to contain %s, got %q", `illustrative examples`, metadata_description)
+	if !strings.Contains(string(metadataDescription), `illustrative examples`) {
+		t.Errorf("expected to contain %s, got %v", `illustrative examples`, metadataDescription)
 	}
-	if len(metadata_canonical_url) == 0 {
+	if result.Metadata.CanonicalUrl == nil || len(*result.Metadata.CanonicalUrl) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if len(result.Links) <= 0 {
+	if len(result.Links) < 1 {
 		t.Errorf("expected > 0, got %v", len(result.Links))
 	}
-	if !strings.Contains(result.Links[0].LinkType, `external`) {
+	if !strings.Contains(string(result.Links[0].LinkType), `external`) {
 		t.Errorf("expected to contain %s", `external`)
 	}
 	if len(result.Images) != 0 {
-		t.Errorf("equals mismatch: got %q", len(result.Images))
+		t.Errorf("equals mismatch: got %v", len(result.Images))
 	}
-	// skipped: field 'og.title' not available on result type
+	if result.Metadata.OgTitle != nil && len(*result.Metadata.OgTitle) != 0 {
+		t.Errorf("expected empty value, got %v", result.Metadata.OgTitle)
+	}
 }
 
 func Test_ScrapeComplexLinks(t *testing.T) {
@@ -131,21 +129,21 @@ func Test_ScrapeComplexLinks(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(result.Links) <= 9 {
+	if len(result.Links) < 10 {
 		t.Errorf("expected > 9, got %v", len(result.Links))
 	}
-	if !strings.Contains(result.Links[0].LinkType, `internal`) {
+	if !strings.Contains(string(result.Links[0].LinkType), `internal`) {
 		t.Errorf("expected to contain %s", `internal`)
 	}
-	if !strings.Contains(result.Links[0].LinkType, `external`) {
+	if !strings.Contains(string(result.Links[0].LinkType), `external`) {
 		t.Errorf("expected to contain %s", `external`)
 	}
-	if !strings.Contains(result.Links[0].LinkType, `anchor`) {
+	if !strings.Contains(string(result.Links[0].LinkType), `anchor`) {
 		t.Errorf("expected to contain %s", `anchor`)
 	}
-	if !strings.Contains(result.Links[0].LinkType, `document`) {
+	if !strings.Contains(string(result.Links[0].LinkType), `document`) {
 		t.Errorf("expected to contain %s", `document`)
 	}
 }
@@ -161,9 +159,9 @@ func Test_ScrapeDownloadAssets(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(result.Assets) <= 2 {
+	if len(result.Assets) < 3 {
 		t.Errorf("expected > 2, got %v", len(result.Assets))
 	}
 }
@@ -178,12 +176,26 @@ func Test_ScrapeDublinCore(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+	var metadataDcTitle string
+	if result.Metadata.DcTitle != nil {
+		metadataDcTitle = *result.Metadata.DcTitle
 	}
-	// skipped: field 'dublin_core.title' not available on result type
-	// skipped: field 'dublin_core.title' not available on result type
-	// skipped: field 'dublin_core.creator' not available on result type
+	var metadataDcCreator string
+	if result.Metadata.DcCreator != nil {
+		metadataDcCreator = *result.Metadata.DcCreator
+	}
+	if result.StatusCode != 200 {
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
+	}
+	if len(metadataDcTitle) == 0 {
+		t.Errorf("expected non-empty value")
+	}
+	if metadataDcTitle != `Effects of Climate Change on Marine Biodiversity` {
+		t.Errorf("equals mismatch: got %v", metadataDcTitle)
+	}
+	if metadataDcCreator != `Dr. Jane Smith` {
+		t.Errorf("equals mismatch: got %v", metadataDcCreator)
+	}
 }
 
 func Test_ScrapeEmptyPage(t *testing.T) {
@@ -197,13 +209,13 @@ func Test_ScrapeEmptyPage(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if len(result.Links) <= -1 {
 		t.Errorf("expected > -1, got %v", len(result.Links))
 	}
 	if len(result.Images) != 0 {
-		t.Errorf("equals mismatch: got %q", len(result.Images))
+		t.Errorf("equals mismatch: got %v", len(result.Images))
 	}
 }
 
@@ -218,16 +230,10 @@ func Test_ScrapeFeedDiscovery(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(result.Feeds[0].Rss) != 1 {
-		t.Errorf("equals mismatch: got %q", len(result.Feeds[0].Rss))
-	}
-	if len(result.Feeds[0].Atom) != 1 {
-		t.Errorf("equals mismatch: got %q", len(result.Feeds[0].Atom))
-	}
-	if len(result.Feeds[0].JsonFeed) != 1 {
-		t.Errorf("equals mismatch: got %q", len(result.Feeds[0].JsonFeed))
+	if len(result.Feeds) < 3 {
+		t.Errorf("expected >= 3, got %v", len(result.Feeds))
 	}
 }
 
@@ -241,13 +247,19 @@ func Test_ScrapeImageSources(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+	var metadataOgImage string
+	if result.Metadata.OgImage != nil {
+		metadataOgImage = *result.Metadata.OgImage
 	}
-	if len(result.Images) <= 4 {
+	if result.StatusCode != 200 {
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
+	}
+	if len(result.Images) < 5 {
 		t.Errorf("expected > 4, got %v", len(result.Images))
 	}
-	// skipped: field 'og.image' not available on result type
+	if metadataOgImage != `https://example.com/images/og-hero.jpg` {
+		t.Errorf("equals mismatch: got %v", metadataOgImage)
+	}
 }
 
 func Test_ScrapeJsHeavySpa(t *testing.T) {
@@ -275,17 +287,21 @@ func Test_ScrapeJsonLd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
+	var jsonLdName string
+	if result.JsonLd[0].Name != nil {
+		jsonLdName = *result.JsonLd[0].Name
+	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if len(result.JsonLd) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if result.JsonLd[0].Type != `Recipe` {
-		t.Errorf("equals mismatch: got %q", result.JsonLd[0].Type)
+	if result.JsonLd[0].SchemaType != `Recipe` {
+		t.Errorf("equals mismatch: got %v", result.JsonLd[0].SchemaType)
 	}
-	if result.JsonLd[0].Name != `Best Chocolate Cake` {
-		t.Errorf("equals mismatch: got %q", result.JsonLd[0].Name)
+	if jsonLdName != `Best Chocolate Cake` {
+		t.Errorf("equals mismatch: got %v", jsonLdName)
 	}
 }
 
@@ -299,18 +315,18 @@ func Test_ScrapeMalformedHtml(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var metadata_description string
+	var metadataDescription string
 	if result.Metadata.Description != nil {
-		metadata_description = *result.Metadata.Description
+		metadataDescription = *result.Metadata.Description
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if !strings.Contains(metadata_description, `broken HTML`) {
-		t.Errorf("expected to contain %s, got %q", `broken HTML`, metadata_description)
+	if !strings.Contains(string(metadataDescription), `broken HTML`) {
+		t.Errorf("expected to contain %s, got %v", `broken HTML`, metadataDescription)
 	}
 }
 
@@ -324,20 +340,42 @@ func Test_ScrapeOgMetadata(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var metadata_title string
+	var metadataOgTitle string
+	if result.Metadata.OgTitle != nil {
+		metadataOgTitle = *result.Metadata.OgTitle
+	}
+	var metadataOgType string
+	if result.Metadata.OgType != nil {
+		metadataOgType = *result.Metadata.OgType
+	}
+	var metadataOgImage string
+	if result.Metadata.OgImage != nil {
+		metadataOgImage = *result.Metadata.OgImage
+	}
+	var metadataTitle string
 	if result.Metadata.Title != nil {
-		metadata_title = *result.Metadata.Title
+		metadataTitle = *result.Metadata.Title
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	// skipped: field 'og.title' not available on result type
-	// skipped: field 'og.title' not available on result type
-	// skipped: field 'og.type' not available on result type
-	// skipped: field 'og.image' not available on result type
-	// skipped: field 'og.description' not available on result type
-	if metadata_title != `Article Title - Example Blog` {
-		t.Errorf("equals mismatch: got %q", metadata_title)
+	if len(metadataOgTitle) == 0 {
+		t.Errorf("expected non-empty value")
+	}
+	if metadataOgTitle != `Article Title` {
+		t.Errorf("equals mismatch: got %v", metadataOgTitle)
+	}
+	if metadataOgType != `article` {
+		t.Errorf("equals mismatch: got %v", metadataOgType)
+	}
+	if metadataOgImage != `https://example.com/images/article-hero.jpg` {
+		t.Errorf("equals mismatch: got %v", metadataOgImage)
+	}
+	if result.Metadata.OgDescription == nil || len(*result.Metadata.OgDescription) == 0 {
+		t.Errorf("expected non-empty value")
+	}
+	if metadataTitle != `Article Title - Example Blog` {
+		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 }
 
@@ -351,10 +389,24 @@ func Test_ScrapeTwitterCard(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+	var metadataTwitterCard string
+	if result.Metadata.TwitterCard != nil {
+		metadataTwitterCard = *result.Metadata.TwitterCard
 	}
-	// skipped: field 'twitter.card' not available on result type
-	// skipped: field 'twitter.card_type' not available on result type
-	// skipped: field 'twitter.title' not available on result type
+	var metadataTwitterTitle string
+	if result.Metadata.TwitterTitle != nil {
+		metadataTwitterTitle = *result.Metadata.TwitterTitle
+	}
+	if result.StatusCode != 200 {
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
+	}
+	if result.Metadata.TwitterCard == nil || len(*result.Metadata.TwitterCard) == 0 {
+		t.Errorf("expected non-empty value")
+	}
+	if metadataTwitterCard != `summary_large_image` {
+		t.Errorf("equals mismatch: got %v", metadataTwitterCard)
+	}
+	if metadataTwitterTitle != `New Product Launch` {
+		t.Errorf("equals mismatch: got %v", metadataTwitterTitle)
+	}
 }

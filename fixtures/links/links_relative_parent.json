@@ -1,15 +1,9 @@
 {
 	"id": "links_relative_parent",
 	"description": "Resolves ../ and ./ relative parent path links correctly",
-	"tags": [
-		"links",
-		"resolution"
-	],
+	"tags": ["links", "resolution"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

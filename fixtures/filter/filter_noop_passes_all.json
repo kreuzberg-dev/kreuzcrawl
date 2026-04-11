@@ -1,14 +1,9 @@
 {
 	"id": "filter_noop_passes_all",
 	"description": "No content filter passes all crawled pages through",
-	"tags": [
-		"filter"
-	],
+	"tags": ["filter"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

@@ -1,15 +1,9 @@
 {
 	"id": "auth_basic_http",
 	"description": "Sends HTTP Basic authentication header",
-	"tags": [
-		"auth",
-		"basic"
-	],
+	"tags": ["auth", "basic"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

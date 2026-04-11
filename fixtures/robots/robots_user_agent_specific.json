@@ -1,15 +1,9 @@
 {
 	"id": "robots_user_agent_specific",
 	"description": "Matches user-agent specific rules in robots.txt",
-	"tags": [
-		"robots",
-		"user-agent"
-	],
+	"tags": ["robots", "user-agent"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

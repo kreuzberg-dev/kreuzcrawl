@@ -1,14 +1,9 @@
 {
 	"id": "validation_max_pages_zero",
 	"description": "max_pages=0 is rejected as invalid config",
-	"tags": [
-		"validation"
-	],
+	"tags": ["validation"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

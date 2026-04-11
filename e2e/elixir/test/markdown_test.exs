@@ -9,8 +9,8 @@ defmodule E2e.MarkdownTest do
       assert String.trim(result.status_code) == 200
       assert String.trim(result.metadata.title) == "Test"
       assert result.html != ""
-      assert result.markdown != ""
-      assert String.contains?(result.markdown, "Hello World")
+      assert result.markdown.content != ""
+      assert String.contains?(result.markdown.content, "Hello World")
     end
   end
 
@@ -27,7 +27,7 @@ defmodule E2e.MarkdownTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert result.markdown != ""
+      assert result.markdown.content != ""
     end
   end
 
@@ -35,8 +35,8 @@ defmodule E2e.MarkdownTest do
     test "Markdown conversion preserves heading hierarchy and paragraph text" do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
-      assert result.markdown != ""
-      assert String.contains?(result.markdown, "Main Title")
+      assert result.markdown.content != ""
+      assert String.contains?(result.markdown.content, "Main Title")
     end
   end
 
@@ -46,8 +46,8 @@ defmodule E2e.MarkdownTest do
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert result.html != ""
-      assert result.markdown != ""
-      assert String.contains?(result.markdown, "Example")
+      assert result.markdown.content != ""
+      assert String.contains?(result.markdown.content, "Example")
     end
   end
 
@@ -56,7 +56,7 @@ defmodule E2e.MarkdownTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert result.markdown != ""
+      assert result.markdown.content != ""
     end
   end
 end

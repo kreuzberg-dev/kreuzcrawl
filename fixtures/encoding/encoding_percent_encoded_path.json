@@ -1,14 +1,9 @@
 {
 	"id": "encoding_percent_encoded_path",
 	"description": "Handles percent-encoded spaces and characters in URL paths",
-	"tags": [
-		"encoding"
-	],
+	"tags": ["encoding"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

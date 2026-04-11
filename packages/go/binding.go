@@ -2800,4 +2800,3 @@ func BatchCrawl(engine *CrawlEngineHandle, urls []string) *[]BatchCrawlResult {
 	return &result
 }()
 }
-

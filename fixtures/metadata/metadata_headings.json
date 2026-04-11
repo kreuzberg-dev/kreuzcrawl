@@ -1,14 +1,9 @@
 {
 	"id": "metadata_headings",
 	"description": "Extracts heading hierarchy (h1-h6) from HTML page",
-	"tags": [
-		"metadata"
-	],
+	"tags": ["metadata"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

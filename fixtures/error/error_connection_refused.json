@@ -1,15 +1,9 @@
 {
 	"id": "error_connection_refused",
 	"description": "Handles connection refused error gracefully",
-	"tags": [
-		"error",
-		"network"
-	],
+	"tags": ["error", "network"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server; Requires connection to actually be refused (port with no listener)"
 	},
 	"input": {

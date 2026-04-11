@@ -9,6 +9,5 @@ publish = false
 
 [dependencies]
 kreuzcrawl = { path = "../../crates/kreuzcrawl" }
-serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 wiremock = "0.6"

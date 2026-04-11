@@ -46,7 +46,7 @@ final class EngineTest extends TestCase
         $this->assertEquals("Engine Test", $result->metadata->title);
         $this->assertStringContainsString("Testing the engine", $result->metadata->description);
         $this->assertGreaterThanOrEqual(1, count($result->links));
-        // skipped: field 'headings.h1_text' not available on result type
+        $this->assertGreaterThanOrEqual(1, count($result->metadata->headings));
     }
 
     /** CrawlEngine with defaults streams events like the free function */

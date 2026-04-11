@@ -1,14 +1,9 @@
 {
 	"id": "redirect_308_permanent",
 	"description": "Follows 308 Permanent Redirect (preserves method)",
-	"tags": [
-		"redirect"
-	],
+	"tags": ["redirect"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

@@ -1,15 +1,9 @@
 {
 	"id": "scrape_complex_links",
 	"description": "Classifies links by type: internal, external, anchor, document, image",
-	"tags": [
-		"scrape",
-		"links"
-	],
+	"tags": ["scrape", "links"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -37,12 +31,7 @@
 		{
 			"type": "contains_all",
 			"field": "links[].link_type",
-			"values": [
-				"internal",
-				"external",
-				"anchor",
-				"document"
-			]
+			"values": ["internal", "external", "anchor", "document"]
 		}
 	]
 }

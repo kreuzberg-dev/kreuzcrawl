@@ -18,7 +18,14 @@ ignored = ["base64", "getrandom", "memchr"]
 
 [features]
 default = ["native-runtime"]
-native-runtime = ["tokio/rt-multi-thread", "tokio/net", "tokio/fs", "tokio/signal", "tokio/process", "tokio/io-util"]
+native-runtime = [
+    "tokio/rt-multi-thread",
+    "tokio/net",
+    "tokio/fs",
+    "tokio/signal",
+    "tokio/process",
+    "tokio/io-util",
+]
 browser = ["dep:chromiumoxide", "dep:dirs", "native-runtime"]
 ai = ["dep:liter-llm", "dep:minijinja"]
 tracing = ["dep:tracing"]
@@ -71,7 +78,7 @@ utoipa = { workspace = true, optional = true }
 uuid = { workspace = true, optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom = { version = "0.3", features = ["wasm_js"] }
+getrandom = { version = "0.4", features = ["wasm_js"] }
 
 [dev-dependencies]
 async-trait = { workspace = true }

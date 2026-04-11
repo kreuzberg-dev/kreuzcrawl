@@ -15,7 +15,7 @@ final class CrawlTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'content.was_skipped' not available on result type
+        $this->assertEquals(true, $result->was_skipped);
     }
 
     /** Encounters PDF link and skips or marks as document type */
@@ -23,7 +23,7 @@ final class CrawlTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
-        // skipped: field 'content.was_skipped' not available on result type
+        $this->assertEquals(true, $result->was_skipped);
     }
 
     /** Concurrent crawl respects max_depth limit */

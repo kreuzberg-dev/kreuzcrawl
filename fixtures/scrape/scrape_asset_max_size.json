@@ -1,15 +1,9 @@
 {
 	"id": "scrape_asset_max_size",
 	"description": "Skips assets exceeding max_asset_size limit",
-	"tags": [
-		"scrape",
-		"assets"
-	],
+	"tags": ["scrape", "assets"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

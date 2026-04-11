@@ -118,8 +118,8 @@ impl CrawlEngine {
 
         #[cfg(target_arch = "wasm32")]
         let response = {
-            let resp = crate::http::fetch_with_retry(url, &self.config, &std::collections::HashMap::new(), &client)
-                .await?;
+            let resp =
+                crate::http::fetch_with_retry(url, &self.config, &std::collections::HashMap::new(), &client).await?;
             let mut headers = std::collections::HashMap::new();
             // fetch_with_retry returns HttpResponse; convert to CrawlResponse
             crate::tower::CrawlResponse {

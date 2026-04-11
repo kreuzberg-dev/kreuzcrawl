@@ -1,15 +1,9 @@
 {
 	"id": "robots_crawl_delay",
 	"description": "Respects crawl-delay directive from robots.txt",
-	"tags": [
-		"robots",
-		"rate-limit"
-	],
+	"tags": ["robots", "rate-limit"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

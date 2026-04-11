@@ -11,10 +11,10 @@ class MarkdownTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        assertEquals("Test", result.metadata().orElseThrow().title().orElse(""));
+        assertEquals("Test", result.metadata().title().orElse(""));
         assertFalse(result.html().isEmpty(), "expected non-empty value");
-        assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
-        assertTrue(result.markdown().orElse("").contains("Hello World"), "expected to contain: " + "Hello World");
+        assertFalse(result.markdown().orElseThrow().content().isEmpty(), "expected non-empty value");
+        assertTrue(result.markdown().orElseThrow().content().contains("Hello World"), "expected to contain: " + "Hello World");
     }
 
     @Test
@@ -31,7 +31,7 @@ class MarkdownTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
+        assertFalse(result.markdown().orElseThrow().content().isEmpty(), "expected non-empty value");
     }
 
     @Test
@@ -39,8 +39,8 @@ class MarkdownTest {
         // Markdown conversion preserves heading hierarchy and paragraph text
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
-        assertTrue(result.markdown().orElse("").contains("Main Title"), "expected to contain: " + "Main Title");
+        assertFalse(result.markdown().orElseThrow().content().isEmpty(), "expected non-empty value");
+        assertTrue(result.markdown().orElseThrow().content().contains("Main Title"), "expected to contain: " + "Main Title");
     }
 
     @Test
@@ -50,8 +50,8 @@ class MarkdownTest {
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
-        assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
-        assertTrue(result.markdown().orElse("").contains("Example"), "expected to contain: " + "Example");
+        assertFalse(result.markdown().orElseThrow().content().isEmpty(), "expected non-empty value");
+        assertTrue(result.markdown().orElseThrow().content().contains("Example"), "expected to contain: " + "Example");
     }
 
     @Test
@@ -60,7 +60,7 @@ class MarkdownTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        assertFalse(result.markdown().orElse("").isEmpty(), "expected non-empty value");
+        assertFalse(result.markdown().orElseThrow().content().isEmpty(), "expected non-empty value");
     }
 
 }

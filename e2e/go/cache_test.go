@@ -2,7 +2,6 @@
 package e2e_test
 
 import (
-	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -19,6 +18,6 @@ func Test_CacheBasic(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
 }

@@ -10,12 +10,11 @@ fn test_markdown_basic_conversion() {
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
-    let markdown = result.markdown.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    assert_eq!(metadata_title, r#"Test"#, "equals assertion failed");
+    assert_eq!(metadata_title.trim(), r#"Test"#, "equals assertion failed");
     assert!(!result.html.is_empty(), "expected non-empty value");
-    assert!(!markdown.is_empty(), "expected non-empty value");
-    assert!(markdown.contains(r#"Hello World"#), "expected to contain: {}", r#"Hello World"#);
+    assert!(!result.markdown.as_ref().unwrap().content.is_empty(), "expected non-empty value");
+    assert!(result.markdown.as_ref().unwrap().content.contains(r#"Hello World"#), "expected to contain: {}", r#"Hello World"#);
 }
 
 #[test]
@@ -23,7 +22,7 @@ fn test_markdown_crawl_all_pages() {
     // All crawled pages have markdown field populated
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'crawl.pages_crawled' not available on result type
 }
 
@@ -34,7 +33,7 @@ fn test_markdown_fit_content() {
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    assert!(result.markdown.is_some(), "expected markdown to be present");
+    assert!(!result.markdown.as_ref().unwrap().content.is_empty(), "expected non-empty value");
 }
 
 #[test]
@@ -43,9 +42,8 @@ fn test_markdown_headings_and_paragraphs() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    let markdown = result.markdown.as_deref().unwrap_or("");
-    assert!(!markdown.is_empty(), "expected non-empty value");
-    assert!(markdown.contains(r#"Main Title"#), "expected to contain: {}", r#"Main Title"#);
+    assert!(!result.markdown.as_ref().unwrap().content.is_empty(), "expected non-empty value");
+    assert!(result.markdown.as_ref().unwrap().content.contains(r#"Main Title"#), "expected to contain: {}", r#"Main Title"#);
 }
 
 #[test]
@@ -54,11 +52,10 @@ fn test_markdown_links_converted() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
-    let markdown = result.markdown.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
     assert!(!result.html.is_empty(), "expected non-empty value");
-    assert!(!markdown.is_empty(), "expected non-empty value");
-    assert!(markdown.contains(r#"Example"#), "expected to contain: {}", r#"Example"#);
+    assert!(!result.markdown.as_ref().unwrap().content.is_empty(), "expected non-empty value");
+    assert!(result.markdown.as_ref().unwrap().content.contains(r#"Example"#), "expected to contain: {}", r#"Example"#);
 }
 
 #[test]
@@ -68,6 +65,5 @@ fn test_markdown_with_citations() {
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    assert!(result.markdown.is_some(), "expected markdown to be present");
+    assert!(!result.markdown.as_ref().unwrap().content.is_empty(), "expected non-empty value");
 }
-

@@ -1,14 +1,9 @@
 {
 	"id": "links_anchor_fragment",
 	"description": "Identifies fragment-only links as anchor type",
-	"tags": [
-		"links"
-	],
+	"tags": ["links"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -26,9 +21,7 @@
 		{
 			"type": "contains_all",
 			"field": "links[].link_type",
-			"values": [
-				"anchor"
-			]
+			"values": ["anchor"]
 		}
 	]
 }

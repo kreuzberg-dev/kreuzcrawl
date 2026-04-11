@@ -2,7 +2,6 @@
 package e2e_test
 
 import (
-	"strings"
 	"testing"
 
 	pkg "github.com/kreuzberg-dev/kreuzcrawl"
@@ -32,14 +31,14 @@ func Test_MiddlewareNoopNoEffect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	var metadata_title string
+	var metadataTitle string
 	if result.Metadata.Title != nil {
-		metadata_title = *result.Metadata.Title
+		metadataTitle = *result.Metadata.Title
 	}
 	if result.StatusCode != 200 {
-		t.Errorf("equals mismatch: got %q", result.StatusCode)
+		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if metadata_title != `Middleware Test` {
-		t.Errorf("equals mismatch: got %q", metadata_title)
+	if metadataTitle != `Middleware Test` {
+		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
 }

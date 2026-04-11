@@ -109,7 +109,7 @@ fn test_browser_fallback_spa_render() {
     // Browser auto re-fetches SPA shell when JS rendering is detected
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'browser.js_render_hint' not available on result type
     // skipped: field 'browser.browser_used' not available on result type
 }
@@ -119,7 +119,7 @@ fn test_browser_fallback_waf_blocked() {
     // Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'browser.browser_used' not available on result type
 }
 
@@ -128,7 +128,6 @@ fn test_browser_mode_always() {
     // Browser mode 'always' uses browser even for normal server-rendered pages
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
-    let result = scrape(&engine, url).expect("should succeed");
+    let _ = scrape(&engine, url).expect("should succeed");
     // skipped: field 'browser.browser_used' not available on result type
 }
-

@@ -1,15 +1,9 @@
 {
 	"id": "crawl_empty_page_no_links",
 	"description": "Crawl completes when child page has no outgoing links",
-	"tags": [
-		"crawl",
-		"edge-case"
-	],
+	"tags": ["crawl", "edge-case"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

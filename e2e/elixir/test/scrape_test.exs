@@ -8,7 +8,7 @@ defmodule E2e.ScrapeTest do
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert String.trim(length(result.assets)) == 2
-      assert String.trim(result.assets[0].unique_hashes) == 2
+      assert result.assets[0].content_hash != ""
     end
   end
 
@@ -27,7 +27,7 @@ defmodule E2e.ScrapeTest do
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert String.trim(length(result.assets)) == 1
-      assert String.contains?(result.assets[0].category, "image")
+      assert String.contains?(result.assets[0].asset_category, "image")
     end
   end
 
@@ -44,7 +44,7 @@ defmodule E2e.ScrapeTest do
       assert length(result.links) > 0
       assert String.contains?(result.links[0].link_type, "external")
       assert String.trim(length(result.images)) == 0
-      # skipped: field 'og.title' not available on result type
+      assert String.trim(result.metadata.og_title) == ""
     end
   end
 
@@ -75,9 +75,9 @@ defmodule E2e.ScrapeTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      # skipped: field 'dublin_core.title' not available on result type
-      # skipped: field 'dublin_core.title' not available on result type
-      # skipped: field 'dublin_core.creator' not available on result type
+      assert result.metadata.dc_title != ""
+      assert String.trim(result.metadata.dc_title) == "Effects of Climate Change on Marine Biodiversity"
+      assert String.trim(result.metadata.dc_creator) == "Dr. Jane Smith"
     end
   end
 
@@ -96,9 +96,7 @@ defmodule E2e.ScrapeTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      assert String.trim(length(result.feeds[0].rss)) == 1
-      assert String.trim(length(result.feeds[0].atom)) == 1
-      assert String.trim(length(result.feeds[0].json_feed)) == 1
+      assert length(result.feeds) >= 3
     end
   end
 
@@ -108,7 +106,7 @@ defmodule E2e.ScrapeTest do
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert length(result.images) > 4
-      # skipped: field 'og.image' not available on result type
+      assert String.trim(result.metadata.og_image) == "https://example.com/images/og-hero.jpg"
     end
   end
 
@@ -126,7 +124,7 @@ defmodule E2e.ScrapeTest do
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
       assert result.json_ld != ""
-      assert String.trim(result.json_ld[0].type) == "Recipe"
+      assert String.trim(result.json_ld[0].schema_type) == "Recipe"
       assert String.trim(result.json_ld[0].name) == "Best Chocolate Cake"
     end
   end
@@ -146,11 +144,11 @@ defmodule E2e.ScrapeTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      # skipped: field 'og.title' not available on result type
-      # skipped: field 'og.title' not available on result type
-      # skipped: field 'og.type' not available on result type
-      # skipped: field 'og.image' not available on result type
-      # skipped: field 'og.description' not available on result type
+      assert result.metadata.og_title != ""
+      assert String.trim(result.metadata.og_title) == "Article Title"
+      assert String.trim(result.metadata.og_type) == "article"
+      assert String.trim(result.metadata.og_image) == "https://example.com/images/article-hero.jpg"
+      assert result.metadata.og_description != ""
       assert String.trim(result.metadata.title) == "Article Title - Example Blog"
     end
   end
@@ -160,9 +158,9 @@ defmodule E2e.ScrapeTest do
       engine = Kreuzcrawl.create_engine!(nil)
       result = Kreuzcrawl.scrape!(engine, "")
       assert String.trim(result.status_code) == 200
-      # skipped: field 'twitter.card' not available on result type
-      # skipped: field 'twitter.card_type' not available on result type
-      # skipped: field 'twitter.title' not available on result type
+      assert result.metadata.twitter_card != ""
+      assert String.trim(result.metadata.twitter_card) == "summary_large_image"
+      assert String.trim(result.metadata.twitter_title) == "New Product Launch"
     end
   end
 end

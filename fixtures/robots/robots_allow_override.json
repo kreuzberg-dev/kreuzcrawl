@@ -1,15 +1,9 @@
 {
 	"id": "robots_allow_override",
 	"description": "Allow directive overrides Disallow for specific paths",
-	"tags": [
-		"robots",
-		"allow"
-	],
+	"tags": ["robots", "allow"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

@@ -65,14 +65,14 @@ public class MetadataTests
         Assert.Equal("Comprehensive Metadata Test Page", result.Metadata.Title.Trim());
         Assert.NotEmpty(result.Metadata.CanonicalUrl);
         Assert.NotEmpty(result.Metadata.Keywords);
-        Assert.Contains("rust", result.Metadata.Keywords);
+        Assert.Contains("rust", result.Metadata.Keywords.ToString());
         Assert.Equal("Jane Developer", result.Metadata.Author.Trim());
         Assert.NotEmpty(result.Metadata.Viewport);
         Assert.Equal("kreuzcrawl/1.0", result.Metadata.Generator.Trim());
         Assert.Equal("#ff6600", result.Metadata.ThemeColor.Trim());
         Assert.Equal("index, follow", result.Metadata.Robots.Trim());
-        Assert.Equal("en", result.Metadata.Lang.Trim());
-        Assert.Equal("ltr", result.Metadata.Dir.Trim());
+        Assert.Equal("en", result.Metadata.HtmlLang.Trim());
+        Assert.Equal("ltr", result.Metadata.HtmlDir.Trim());
     }
 
     [Fact]
@@ -82,8 +82,8 @@ public class MetadataTests
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
-        // skipped: field 'og.video' not available on result type
-        // skipped: field 'og.audio' not available on result type
+        Assert.Equal("https://example.com/video.mp4", result.Metadata.OgVideo.Trim());
+        Assert.Equal("https://example.com/audio.mp3", result.Metadata.OgAudio.Trim());
         // skipped: field 'og.locale_alternate.length' not available on result type
     }
 

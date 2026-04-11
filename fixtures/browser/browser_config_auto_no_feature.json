@@ -1,18 +1,9 @@
 {
 	"id": "browser_config_auto_no_feature",
 	"description": "Browser mode 'auto' without browser feature enabled does not use browser",
-	"tags": [
-		"browser",
-		"config"
-	],
+	"tags": ["browser", "config"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c",
-			"go",
-			"java",
-			"csharp"
-		],
+		"languages": ["wasm", "c", "go", "java", "csharp"],
 		"reason": "requires browser feature"
 	},
 	"input": {

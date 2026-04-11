@@ -1,15 +1,9 @@
 {
 	"id": "auth_bearer_token",
 	"description": "Sends Bearer token in Authorization header",
-	"tags": [
-		"auth",
-		"bearer"
-	],
+	"tags": ["auth", "bearer"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

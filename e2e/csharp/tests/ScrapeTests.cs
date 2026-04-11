@@ -15,7 +15,7 @@ public class ScrapeTests
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
         Assert.Equal(2, result.Assets.Count);
-        Assert.Equal(2, result.Assets[0].UniqueHashes);
+        Assert.NotEmpty(result.Assets[0].ContentHash);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class ScrapeTests
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
         Assert.Equal(1, result.Assets.Count);
-        Assert.Contains("image", result.Assets[0].Category);
+        Assert.Contains("image", result.Assets[0].AssetCategory.ToString());
     }
 
     [Fact]
@@ -49,12 +49,12 @@ public class ScrapeTests
         Assert.Equal("text/html", result.ContentType.Trim());
         Assert.NotEmpty(result.Html);
         Assert.Equal("Example Domain", result.Metadata.Title.Trim());
-        Assert.Contains("illustrative examples", result.Metadata.Description);
+        Assert.Contains("illustrative examples", result.Metadata.Description.ToString());
         Assert.NotEmpty(result.Metadata.CanonicalUrl);
         Assert.True(result.Links.Count > 0, "expected > 0");
-        Assert.Contains("external", result.Links[0].LinkType);
+        Assert.Contains("external", result.Links[0].LinkType.ToString());
         Assert.Equal(0, result.Images.Count);
-        // skipped: field 'og.title' not available on result type
+        Assert.Empty(result.Metadata.OgTitle);
     }
 
     [Fact]
@@ -65,10 +65,10 @@ public class ScrapeTests
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
         Assert.True(result.Links.Count > 9, "expected > 9");
-        Assert.Contains("internal", result.Links[0].LinkType);
-        Assert.Contains("external", result.Links[0].LinkType);
-        Assert.Contains("anchor", result.Links[0].LinkType);
-        Assert.Contains("document", result.Links[0].LinkType);
+        Assert.Contains("internal", result.Links[0].LinkType.ToString());
+        Assert.Contains("external", result.Links[0].LinkType.ToString());
+        Assert.Contains("anchor", result.Links[0].LinkType.ToString());
+        Assert.Contains("document", result.Links[0].LinkType.ToString());
     }
 
     [Fact]
@@ -88,9 +88,9 @@ public class ScrapeTests
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
-        // skipped: field 'dublin_core.title' not available on result type
-        // skipped: field 'dublin_core.title' not available on result type
-        // skipped: field 'dublin_core.creator' not available on result type
+        Assert.NotEmpty(result.Metadata.DcTitle);
+        Assert.Equal("Effects of Climate Change on Marine Biodiversity", result.Metadata.DcTitle.Trim());
+        Assert.Equal("Dr. Jane Smith", result.Metadata.DcCreator.Trim());
     }
 
     [Fact]
@@ -111,9 +111,7 @@ public class ScrapeTests
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
-        Assert.Equal(1, result.Feeds[0].Rss.Count);
-        Assert.Equal(1, result.Feeds[0].Atom.Count);
-        Assert.Equal(1, result.Feeds[0].JsonFeed.Count);
+        Assert.True(result.Feeds.Count >= 3, "expected >= 3");
     }
 
     [Fact]
@@ -124,7 +122,7 @@ public class ScrapeTests
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
         Assert.True(result.Images.Count > 4, "expected > 4");
-        // skipped: field 'og.image' not available on result type
+        Assert.Equal("https://example.com/images/og-hero.jpg", result.Metadata.OgImage.Trim());
     }
 
     [Fact]
@@ -144,7 +142,7 @@ public class ScrapeTests
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.JsonLd);
-        Assert.Equal("Recipe", result.JsonLd[0].Type.Trim());
+        Assert.Equal("Recipe", result.JsonLd[0].SchemaType.Trim());
         Assert.Equal("Best Chocolate Cake", result.JsonLd[0].Name.Trim());
     }
 
@@ -156,7 +154,7 @@ public class ScrapeTests
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Html);
-        Assert.Contains("broken HTML", result.Metadata.Description);
+        Assert.Contains("broken HTML", result.Metadata.Description.ToString());
     }
 
     [Fact]
@@ -166,11 +164,11 @@ public class ScrapeTests
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
-        // skipped: field 'og.title' not available on result type
-        // skipped: field 'og.title' not available on result type
-        // skipped: field 'og.type' not available on result type
-        // skipped: field 'og.image' not available on result type
-        // skipped: field 'og.description' not available on result type
+        Assert.NotEmpty(result.Metadata.OgTitle);
+        Assert.Equal("Article Title", result.Metadata.OgTitle.Trim());
+        Assert.Equal("article", result.Metadata.OgType.Trim());
+        Assert.Equal("https://example.com/images/article-hero.jpg", result.Metadata.OgImage.Trim());
+        Assert.NotEmpty(result.Metadata.OgDescription);
         Assert.Equal("Article Title - Example Blog", result.Metadata.Title.Trim());
     }
 
@@ -181,8 +179,8 @@ public class ScrapeTests
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
-        // skipped: field 'twitter.card' not available on result type
-        // skipped: field 'twitter.card_type' not available on result type
-        // skipped: field 'twitter.title' not available on result type
+        Assert.NotEmpty(result.Metadata.TwitterCard);
+        Assert.Equal("summary_large_image", result.Metadata.TwitterCard.Trim());
+        Assert.Equal("New Product Launch", result.Metadata.TwitterTitle.Trim());
     }
 }

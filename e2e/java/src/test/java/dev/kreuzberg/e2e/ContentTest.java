@@ -19,7 +19,7 @@ class ContentTest {
         // Handles ISO-8859-1 encoded page correctly
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'content.detected_charset' not available on result type
+        assertEquals("iso-8859-1", result.detectedCharset().orElse(""));
     }
 
     @Test
@@ -44,7 +44,7 @@ class ContentTest {
         // Respects max body size limit and truncates or skips oversized pages
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'content.body_size' not available on result type
+        assertTrue(result.bodySize() < 1025, "expected < 1025");
     }
 
     @Test
@@ -52,7 +52,7 @@ class ContentTest {
         // Extracts only main content area, excluding nav, sidebar, footer
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'content.main_content_only' not available on result type
+        assertEquals(true, result.mainContentOnly());
     }
 
     @Test
@@ -60,7 +60,7 @@ class ContentTest {
         // Detects PDF content by Content-Type header when URL has no .pdf extension
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'content.is_pdf' not available on result type
+        assertEquals(true, result.isPdf());
     }
 
     @Test
@@ -76,7 +76,7 @@ class ContentTest {
         // Handles UTF-8 content with BOM marker correctly
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
-        // skipped: field 'content.detected_charset' not available on result type
+        assertEquals("utf-8", result.detectedCharset().orElse(""));
         assertFalse(result.html().isEmpty(), "expected non-empty value");
     }
 

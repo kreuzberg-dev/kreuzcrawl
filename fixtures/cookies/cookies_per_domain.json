@@ -1,15 +1,9 @@
 {
 	"id": "cookies_per_domain",
 	"description": "Isolates cookies per domain during crawl",
-	"tags": [
-		"cookies",
-		"isolation"
-	],
+	"tags": ["cookies", "isolation"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

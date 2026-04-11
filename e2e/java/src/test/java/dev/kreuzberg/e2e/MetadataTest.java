@@ -55,17 +55,17 @@ class MetadataTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        assertEquals("Comprehensive Metadata Test Page", result.metadata().orElseThrow().title().orElse(""));
-        assertFalse(result.metadata().orElseThrow().canonicalUrl().orElse("").isEmpty(), "expected non-empty value");
-        assertFalse(result.metadata().orElseThrow().keywords().isEmpty(), "expected non-empty value");
-        assertTrue(result.metadata().orElseThrow().keywords().contains("rust"), "expected to contain: " + "rust");
-        assertEquals("Jane Developer", result.metadata().orElseThrow().author());
-        assertFalse(result.metadata().orElseThrow().viewport().isEmpty(), "expected non-empty value");
-        assertEquals("kreuzcrawl/1.0", result.metadata().orElseThrow().generator());
-        assertEquals("#ff6600", result.metadata().orElseThrow().themeColor());
-        assertEquals("index, follow", result.metadata().orElseThrow().robots());
-        assertEquals("en", result.metadata().orElseThrow().lang());
-        assertEquals("ltr", result.metadata().orElseThrow().dir());
+        assertEquals("Comprehensive Metadata Test Page", result.metadata().title().orElse(""));
+        assertFalse(result.metadata().canonicalUrl().orElse("").isEmpty(), "expected non-empty value");
+        assertFalse(result.metadata().keywords().orElse("").isEmpty(), "expected non-empty value");
+        assertTrue(result.metadata().keywords().orElse("").contains("rust"), "expected to contain: " + "rust");
+        assertEquals("Jane Developer", result.metadata().author().orElse(""));
+        assertFalse(result.metadata().viewport().orElse("").isEmpty(), "expected non-empty value");
+        assertEquals("kreuzcrawl/1.0", result.metadata().generator().orElse(""));
+        assertEquals("#ff6600", result.metadata().themeColor().orElse(""));
+        assertEquals("index, follow", result.metadata().robots().orElse(""));
+        assertEquals("en", result.metadata().htmlLang().orElse(""));
+        assertEquals("ltr", result.metadata().htmlDir().orElse(""));
     }
 
     @Test
@@ -74,8 +74,8 @@ class MetadataTest {
         var engine = Kreuzcrawl.createEngine(null);
         var result = Kreuzcrawl.scrape(engine, "");
         assertEquals(200, result.statusCode());
-        // skipped: field 'og.video' not available on result type
-        // skipped: field 'og.audio' not available on result type
+        assertEquals("https://example.com/video.mp4", result.metadata().ogVideo().orElse(""));
+        assertEquals("https://example.com/audio.mp3", result.metadata().ogAudio().orElse(""));
         // skipped: field 'og.locale_alternate.length' not available on result type
     }
 

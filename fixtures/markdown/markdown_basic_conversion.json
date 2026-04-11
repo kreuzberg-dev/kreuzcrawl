@@ -1,14 +1,9 @@
 {
 	"id": "markdown_basic_conversion",
 	"description": "HTML is always converted to markdown alongside raw HTML",
-	"tags": [
-		"markdown"
-	],
+	"tags": ["markdown"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {
@@ -42,11 +37,11 @@
 		},
 		{
 			"type": "not_empty",
-			"field": "markdown"
+			"field": "markdown.content"
 		},
 		{
 			"type": "contains",
-			"field": "markdown",
+			"field": "markdown.content",
 			"value": "Hello World"
 		}
 	]

@@ -17,7 +17,7 @@ final class ScrapeTest extends TestCase
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(2, count($result->assets));
-        $this->assertEquals(2, $result->assets[0]->unique_hashes);
+        $this->assertNotEmpty($result->assets[0]->content_hash);
     }
 
     /** Skips assets exceeding max_asset_size limit */
@@ -36,7 +36,7 @@ final class ScrapeTest extends TestCase
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertEquals(1, count($result->assets));
-        $this->assertStringContainsString("image", $result->assets[0]->category);
+        $this->assertStringContainsString("image", $result->assets[0]->asset_category);
     }
 
     /** Scrapes a simple HTML page and extracts title, description, and links */
@@ -53,7 +53,7 @@ final class ScrapeTest extends TestCase
         $this->assertGreaterThan(0, count($result->links));
         $this->assertStringContainsString("external", $result->links[0]->link_type);
         $this->assertEquals(0, count($result->images));
-        // skipped: field 'og.title' not available on result type
+        $this->assertEmpty($result->metadata->og_title);
     }
 
     /** Classifies links by type: internal, external, anchor, document, image */
@@ -84,9 +84,9 @@ final class ScrapeTest extends TestCase
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
-        // skipped: field 'dublin_core.title' not available on result type
-        // skipped: field 'dublin_core.title' not available on result type
-        // skipped: field 'dublin_core.creator' not available on result type
+        $this->assertNotEmpty($result->metadata->dc_title);
+        $this->assertEquals("Effects of Climate Change on Marine Biodiversity", $result->metadata->dc_title);
+        $this->assertEquals("Dr. Jane Smith", $result->metadata->dc_creator);
     }
 
     /** Handles an empty HTML document without errors */
@@ -105,9 +105,7 @@ final class ScrapeTest extends TestCase
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
-        $this->assertEquals(1, count($result->feeds[0]->rss));
-        $this->assertEquals(1, count($result->feeds[0]->atom));
-        $this->assertEquals(1, count($result->feeds[0]->json_feed));
+        $this->assertGreaterThanOrEqual(3, count($result->feeds));
     }
 
     /** Extracts images from img, picture, og:image, twitter:image */
@@ -117,7 +115,7 @@ final class ScrapeTest extends TestCase
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertGreaterThan(4, count($result->images));
-        // skipped: field 'og.image' not available on result type
+        $this->assertEquals("https://example.com/images/og-hero.jpg", $result->metadata->og_image);
     }
 
     /** Handles SPA page with JavaScript-only content (no server-rendered HTML) */
@@ -135,7 +133,7 @@ final class ScrapeTest extends TestCase
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
         $this->assertNotEmpty($result->json_ld);
-        $this->assertEquals("Recipe", $result->json_ld[0]->type);
+        $this->assertEquals("Recipe", $result->json_ld[0]->schema_type);
         $this->assertEquals("Best Chocolate Cake", $result->json_ld[0]->name);
     }
 
@@ -155,11 +153,11 @@ final class ScrapeTest extends TestCase
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
-        // skipped: field 'og.title' not available on result type
-        // skipped: field 'og.title' not available on result type
-        // skipped: field 'og.type' not available on result type
-        // skipped: field 'og.image' not available on result type
-        // skipped: field 'og.description' not available on result type
+        $this->assertNotEmpty($result->metadata->og_title);
+        $this->assertEquals("Article Title", $result->metadata->og_title);
+        $this->assertEquals("article", $result->metadata->og_type);
+        $this->assertEquals("https://example.com/images/article-hero.jpg", $result->metadata->og_image);
+        $this->assertNotEmpty($result->metadata->og_description);
         $this->assertEquals("Article Title - Example Blog", $result->metadata->title);
     }
 
@@ -169,8 +167,8 @@ final class ScrapeTest extends TestCase
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
-        // skipped: field 'twitter.card' not available on result type
-        // skipped: field 'twitter.card_type' not available on result type
-        // skipped: field 'twitter.title' not available on result type
+        $this->assertNotEmpty($result->metadata->twitter_card);
+        $this->assertEquals("summary_large_image", $result->metadata->twitter_card);
+        $this->assertEquals("New Product Launch", $result->metadata->twitter_title);
     }
 }

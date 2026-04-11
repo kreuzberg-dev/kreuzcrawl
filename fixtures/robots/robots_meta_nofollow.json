@@ -1,15 +1,9 @@
 {
 	"id": "robots_meta_nofollow",
 	"description": "Detects nofollow meta robots tag and skips link extraction",
-	"tags": [
-		"robots",
-		"meta"
-	],
+	"tags": ["robots", "meta"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

@@ -1,15 +1,9 @@
 {
 	"id": "map_discover_urls",
 	"description": "Discovers all URLs on a site without fetching full content",
-	"tags": [
-		"map",
-		"discovery"
-	],
+	"tags": ["map", "discovery"],
 	"skip": {
-		"languages": [
-			"wasm",
-			"c"
-		],
+		"languages": ["wasm", "c"],
 		"reason": "requires mock HTTP server"
 	},
 	"input": {

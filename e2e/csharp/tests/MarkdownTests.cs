@@ -16,8 +16,8 @@ public class MarkdownTests
         Assert.Equal(200, result.StatusCode);
         Assert.Equal("Test", result.Metadata.Title.Trim());
         Assert.NotEmpty(result.Html);
-        Assert.NotEmpty(result.Markdown);
-        Assert.Contains("Hello World", result.Markdown);
+        Assert.NotEmpty(result.Markdown!.Content);
+        Assert.Contains("Hello World", result.Markdown!.Content.ToString());
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class MarkdownTests
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
-        Assert.NotEmpty(result.Markdown);
+        Assert.NotEmpty(result.Markdown!.Content);
     }
 
     [Fact]
@@ -45,8 +45,8 @@ public class MarkdownTests
         // Markdown conversion preserves heading hierarchy and paragraph text
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
-        Assert.NotEmpty(result.Markdown);
-        Assert.Contains("Main Title", result.Markdown);
+        Assert.NotEmpty(result.Markdown!.Content);
+        Assert.Contains("Main Title", result.Markdown!.Content.ToString());
     }
 
     [Fact]
@@ -57,8 +57,8 @@ public class MarkdownTests
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
         Assert.NotEmpty(result.Html);
-        Assert.NotEmpty(result.Markdown);
-        Assert.Contains("Example", result.Markdown);
+        Assert.NotEmpty(result.Markdown!.Content);
+        Assert.Contains("Example", result.Markdown!.Content.ToString());
     }
 
     [Fact]
@@ -68,6 +68,6 @@ public class MarkdownTests
         var engine = KreuzcrawlLib.CreateEngine(null);
         var result = await KreuzcrawlLib.Scrape(engine, "");
         Assert.Equal(200, result.StatusCode);
-        Assert.NotEmpty(result.Markdown);
+        Assert.NotEmpty(result.Markdown!.Content);
     }
 }

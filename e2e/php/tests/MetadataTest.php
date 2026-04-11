@@ -69,8 +69,8 @@ final class MetadataTest extends TestCase
         $this->assertEquals("kreuzcrawl/1.0", $result->metadata->generator);
         $this->assertEquals("#ff6600", $result->metadata->theme_color);
         $this->assertEquals("index, follow", $result->metadata->robots);
-        $this->assertEquals("en", $result->metadata->lang);
-        $this->assertEquals("ltr", $result->metadata->dir);
+        $this->assertEquals("en", $result->metadata->html_lang);
+        $this->assertEquals("ltr", $result->metadata->html_dir);
     }
 
     /** Extracts og:video, og:audio, and og:locale:alternate metadata */
@@ -79,8 +79,8 @@ final class MetadataTest extends TestCase
         $engine = Kreuzcrawl::createEngine(null);
         $result = Kreuzcrawl::scrape($engine, "");
         $this->assertEquals(200, $result->status_code);
-        // skipped: field 'og.video' not available on result type
-        // skipped: field 'og.audio' not available on result type
+        $this->assertEquals("https://example.com/video.mp4", $result->metadata->og_video);
+        $this->assertEquals("https://example.com/audio.mp3", $result->metadata->og_audio);
         // skipped: field 'og.locale_alternate.length' not available on result type
     }
 

@@ -58,18 +58,25 @@ fn test_metadata_keywords_author() {
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
+    let metadata_keywords = result.metadata.keywords.as_deref().unwrap_or("");
+    let metadata_author = result.metadata.author.as_deref().unwrap_or("");
+    let metadata_generator = result.metadata.generator.as_deref().unwrap_or("");
+    let metadata_theme_color = result.metadata.theme_color.as_deref().unwrap_or("");
+    let metadata_robots = result.metadata.robots.as_deref().unwrap_or("");
+    let metadata_html_lang = result.metadata.html_lang.as_deref().unwrap_or("");
+    let metadata_html_dir = result.metadata.html_dir.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    assert_eq!(metadata_title, r#"Comprehensive Metadata Test Page"#, "equals assertion failed");
+    assert_eq!(metadata_title.trim(), r#"Comprehensive Metadata Test Page"#, "equals assertion failed");
     assert!(result.metadata.canonical_url.is_some(), "expected metadata.canonical_url to be present");
-    assert!(!result.metadata.keywords.is_empty(), "expected non-empty value");
-    assert!(result.metadata.keywords.contains(r#"rust"#), "expected to contain: {}", r#"rust"#);
-    assert_eq!(result.metadata.author, r#"Jane Developer"#, "equals assertion failed");
-    assert!(!result.metadata.viewport.is_empty(), "expected non-empty value");
-    assert_eq!(result.metadata.generator, r#"kreuzcrawl/1.0"#, "equals assertion failed");
-    assert_eq!(result.metadata.theme_color, r#"#ff6600"#, "equals assertion failed");
-    assert_eq!(result.metadata.robots, r#"index, follow"#, "equals assertion failed");
-    assert_eq!(result.metadata.lang, r#"en"#, "equals assertion failed");
-    assert_eq!(result.metadata.dir, r#"ltr"#, "equals assertion failed");
+    assert!(!metadata_keywords.is_empty(), "expected non-empty value");
+    assert!(metadata_keywords.contains(r#"rust"#), "expected to contain: {}", r#"rust"#);
+    assert_eq!(metadata_author.trim(), r#"Jane Developer"#, "equals assertion failed");
+    assert!(result.metadata.viewport.is_some(), "expected metadata.viewport to be present");
+    assert_eq!(metadata_generator.trim(), r#"kreuzcrawl/1.0"#, "equals assertion failed");
+    assert_eq!(metadata_theme_color.trim(), r#"#ff6600"#, "equals assertion failed");
+    assert_eq!(metadata_robots.trim(), r#"index, follow"#, "equals assertion failed");
+    assert_eq!(metadata_html_lang.trim(), r#"en"#, "equals assertion failed");
+    assert_eq!(metadata_html_dir.trim(), r#"ltr"#, "equals assertion failed");
 }
 
 #[test]
@@ -78,9 +85,11 @@ fn test_metadata_og_video_audio() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = String::new();
     let result = scrape(&engine, url).expect("should succeed");
+    let metadata_og_video = result.metadata.og_video.as_deref().unwrap_or("");
+    let metadata_og_audio = result.metadata.og_audio.as_deref().unwrap_or("");
     assert_eq!(result.status_code, "200", "equals assertion failed");
-    // skipped: field 'og.video' not available on result type
-    // skipped: field 'og.audio' not available on result type
+    assert_eq!(metadata_og_video.trim(), r#"https://example.com/video.mp4"#, "equals assertion failed");
+    assert_eq!(metadata_og_audio.trim(), r#"https://example.com/audio.mp3"#, "equals assertion failed");
     // skipped: field 'og.locale_alternate.length' not available on result type
 }
 
@@ -107,4 +116,3 @@ fn test_metadata_word_count() {
     // skipped: field 'computed.word_count' not available on result type
     // skipped: field 'computed.word_count' not available on result type
 }
-
