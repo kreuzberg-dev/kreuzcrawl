@@ -7,7 +7,7 @@ use kreuzcrawl::create_engine;
 async fn test_robots_allow_all() {
     // Permissive robots.txt allows all paths
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_allow_all");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
@@ -16,7 +16,7 @@ async fn test_robots_allow_all() {
 async fn test_robots_allow_override() {
     // Allow directive overrides Disallow for specific paths
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_allow_override");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
@@ -25,7 +25,7 @@ async fn test_robots_allow_override() {
 async fn test_robots_comments_handling() {
     // Correctly parses robots.txt with inline and line comments
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_comments_handling");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
@@ -34,7 +34,7 @@ async fn test_robots_comments_handling() {
 async fn test_robots_crawl_delay() {
     // Respects crawl-delay directive from robots.txt
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_crawl_delay");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let crawl_delay = result.crawl_delay.as_deref().unwrap_or("");
     assert_eq!(crawl_delay, 2, "equals assertion failed");
@@ -44,7 +44,7 @@ async fn test_robots_crawl_delay() {
 async fn test_robots_disallow_path() {
     // Robots.txt disallows specific paths
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_disallow_path");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, false, "equals assertion failed");
 }
@@ -53,7 +53,7 @@ async fn test_robots_disallow_path() {
 async fn test_robots_meta_nofollow() {
     // Detects nofollow meta robots tag and skips link extraction
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_meta_nofollow");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.nofollow_detected, true, "equals assertion failed");
 }
@@ -62,7 +62,7 @@ async fn test_robots_meta_nofollow() {
 async fn test_robots_meta_noindex() {
     // Detects noindex meta robots tag in HTML page
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_meta_noindex");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.noindex_detected, true, "equals assertion failed");
 }
@@ -71,7 +71,7 @@ async fn test_robots_meta_noindex() {
 async fn test_robots_missing_404() {
     // Missing robots.txt (404) allows all crawling
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_missing_404");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
@@ -80,7 +80,7 @@ async fn test_robots_missing_404() {
 async fn test_robots_multiple_user_agents() {
     // Picks the most specific user-agent block from robots.txt
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_multiple_user_agents");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
@@ -89,7 +89,7 @@ async fn test_robots_multiple_user_agents() {
 async fn test_robots_request_rate() {
     // Parses request-rate directive from robots.txt
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_request_rate");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let crawl_delay = result.crawl_delay.as_deref().unwrap_or("");
     assert_eq!(crawl_delay, 5, "equals assertion failed");
@@ -100,7 +100,7 @@ async fn test_robots_request_rate() {
 async fn test_robots_sitemap_directive() {
     // Discovers sitemap URL from Sitemap directive in robots.txt
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_sitemap_directive");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
@@ -109,7 +109,7 @@ async fn test_robots_sitemap_directive() {
 async fn test_robots_user_agent_specific() {
     // Matches user-agent specific rules in robots.txt
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_user_agent_specific");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, false, "equals assertion failed");
 }
@@ -118,7 +118,7 @@ async fn test_robots_user_agent_specific() {
 async fn test_robots_wildcard_paths() {
     // Handles wildcard Disallow patterns in robots.txt
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_wildcard_paths");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.is_allowed, false, "equals assertion failed");
 }
@@ -127,7 +127,7 @@ async fn test_robots_wildcard_paths() {
 async fn test_robots_x_robots_tag() {
     // Respects X-Robots-Tag HTTP header directives
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_x_robots_tag");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let x_robots_tag = result.x_robots_tag.as_deref().unwrap_or("");
     assert_eq!(x_robots_tag.trim(), r#"noindex, nofollow"#, "equals assertion failed");

@@ -10,7 +10,8 @@ class StreamTest {
     void testCrawlStreamEvents() throws Exception {
         // Crawl stream produces page and complete events
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/crawl_stream_events";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'stream.event_count_min' not available on result type
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
@@ -20,7 +21,8 @@ class StreamTest {
     void testStreamDepthCrawl() throws Exception {
         // Stream produces events for multi-depth crawl with link following
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/stream_depth_crawl";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'stream.event_count_min' not available on result type
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
@@ -30,7 +32,8 @@ class StreamTest {
     void testStreamWithErrorEvent() throws Exception {
         // Stream emits page and complete events even when some pages fail
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/stream_with_error_event";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
         // skipped: field 'stream.event_count_min' not available on result type

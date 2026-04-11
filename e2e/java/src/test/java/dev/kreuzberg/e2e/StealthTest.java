@@ -10,7 +10,8 @@ class StealthTest {
     void testStealthUaRotationConfig() throws Exception {
         // User-agent rotation config is accepted and crawl succeeds
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/stealth_ua_rotation_config";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
     }
 

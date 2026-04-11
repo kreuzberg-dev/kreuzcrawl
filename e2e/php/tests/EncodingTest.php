@@ -14,7 +14,8 @@ final class EncodingTest extends TestCase
     public function test_encoding_double_encoded(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/encoding_double_encoded';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
         $this->assertGreaterThanOrEqual(1, count($result->links));
     }
@@ -23,7 +24,8 @@ final class EncodingTest extends TestCase
     public function test_encoding_mixed_charset_page(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/encoding_mixed_charset_page';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
     }
 
@@ -31,7 +33,8 @@ final class EncodingTest extends TestCase
     public function test_encoding_percent_encoded_path(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/encoding_percent_encoded_path';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
         $this->assertGreaterThanOrEqual(2, count($result->links));
     }
@@ -40,7 +43,8 @@ final class EncodingTest extends TestCase
     public function test_encoding_unicode_url(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/encoding_unicode_url';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
     }
 }

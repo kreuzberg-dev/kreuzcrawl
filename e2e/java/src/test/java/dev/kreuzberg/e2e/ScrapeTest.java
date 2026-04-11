@@ -10,7 +10,8 @@ class ScrapeTest {
     void testScrapeAssetDedup() throws Exception {
         // Same asset linked twice results in one download with one unique hash
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_asset_dedup";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertEquals(2, result.assets().size());
         assertFalse(result.assets().getFirst().contentHash().isEmpty(), "expected non-empty value");
@@ -20,7 +21,8 @@ class ScrapeTest {
     void testScrapeAssetMaxSize() throws Exception {
         // Skips assets exceeding max_asset_size limit
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_asset_max_size";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertEquals(2, result.assets().size());
     }
@@ -29,7 +31,8 @@ class ScrapeTest {
     void testScrapeAssetTypeFilter() throws Exception {
         // Only downloads image assets when asset_types filter is set
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_asset_type_filter";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertEquals(1, result.assets().size());
         assertTrue(result.assets().getFirst().assetCategory().contains("image"), "expected to contain: " + "image");
@@ -39,7 +42,8 @@ class ScrapeTest {
     void testScrapeBasicHtmlPage() throws Exception {
         // Scrapes a simple HTML page and extracts title, description, and links
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_basic_html_page";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertEquals("text/html", result.contentType());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
@@ -56,7 +60,8 @@ class ScrapeTest {
     void testScrapeComplexLinks() throws Exception {
         // Classifies links by type: internal, external, anchor, document, image
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_complex_links";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertTrue(result.links().size() > 9, "expected > 9");
         assertTrue(result.links().getFirst().linkType().contains("internal"), "expected to contain: " + "internal");
@@ -69,7 +74,8 @@ class ScrapeTest {
     void testScrapeDownloadAssets() throws Exception {
         // Downloads CSS, JS, and image assets from page
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_download_assets";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertTrue(result.assets().size() > 2, "expected > 2");
     }
@@ -78,7 +84,8 @@ class ScrapeTest {
     void testScrapeDublinCore() throws Exception {
         // Extracts Dublin Core metadata from a page
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_dublin_core";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.metadata().dcTitle().orElse("").isEmpty(), "expected non-empty value");
         assertEquals("Effects of Climate Change on Marine Biodiversity", result.metadata().dcTitle().orElse(""));
@@ -89,7 +96,8 @@ class ScrapeTest {
     void testScrapeEmptyPage() throws Exception {
         // Handles an empty HTML document without errors
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_empty_page";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertTrue(result.links().size() > -1, "expected > -1");
         assertEquals(0, result.images().size());
@@ -99,7 +107,8 @@ class ScrapeTest {
     void testScrapeFeedDiscovery() throws Exception {
         // Discovers RSS, Atom, and JSON feed links
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_feed_discovery";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertTrue(result.feeds().size() >= 3, "expected >= 3");
     }
@@ -108,7 +117,8 @@ class ScrapeTest {
     void testScrapeImageSources() throws Exception {
         // Extracts images from img, picture, og:image, twitter:image
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_image_sources";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertTrue(result.images().size() > 4, "expected > 4");
         assertEquals("https://example.com/images/og-hero.jpg", result.metadata().ogImage().orElse(""));
@@ -118,7 +128,8 @@ class ScrapeTest {
     void testScrapeJsHeavySpa() throws Exception {
         // Handles SPA page with JavaScript-only content (no server-rendered HTML)
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_js_heavy_spa";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertFalse(result.html().isEmpty(), "expected non-empty value");
     }
 
@@ -126,7 +137,8 @@ class ScrapeTest {
     void testScrapeJsonLd() throws Exception {
         // Extracts JSON-LD structured data from a page
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_json_ld";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.jsonLd().isEmpty(), "expected non-empty value");
         assertEquals("Recipe", result.jsonLd().getFirst().schemaType());
@@ -137,7 +149,8 @@ class ScrapeTest {
     void testScrapeMalformedHtml() throws Exception {
         // Gracefully handles broken HTML without crashing
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_malformed_html";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.html().isEmpty(), "expected non-empty value");
         assertTrue(result.metadata().description().orElse("").contains("broken HTML"), "expected to contain: " + "broken HTML");
@@ -147,7 +160,8 @@ class ScrapeTest {
     void testScrapeOgMetadata() throws Exception {
         // Extracts full Open Graph metadata from a page
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_og_metadata";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.metadata().ogTitle().orElse("").isEmpty(), "expected non-empty value");
         assertEquals("Article Title", result.metadata().ogTitle().orElse(""));
@@ -161,7 +175,8 @@ class ScrapeTest {
     void testScrapeTwitterCard() throws Exception {
         // Extracts Twitter Card metadata from a page
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_twitter_card";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertFalse(result.metadata().twitterCard().orElse("").isEmpty(), "expected non-empty value");
         assertEquals("summary_large_image", result.metadata().twitterCard().orElse(""));

@@ -5,7 +5,8 @@ require 'kreuzcrawl'
 RSpec.describe 'scrape' do
   it 'scrape_asset_dedup: Same asset linked twice results in one download with one unique hash' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_asset_dedup"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.assets.length).to eq(2)
     expect(result.assets[0].content_hash).not_to be_empty
@@ -13,14 +14,16 @@ RSpec.describe 'scrape' do
 
   it 'scrape_asset_max_size: Skips assets exceeding max_asset_size limit' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_asset_max_size"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.assets.length).to eq(2)
   end
 
   it 'scrape_asset_type_filter: Only downloads image assets when asset_types filter is set' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_asset_type_filter"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.assets.length).to eq(1)
     expect(result.assets[0].asset_category).to include('image')
@@ -28,7 +31,8 @@ RSpec.describe 'scrape' do
 
   it 'scrape_basic_html_page: Scrapes a simple HTML page and extracts title, description, and links' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_basic_html_page"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.content_type).to eq('text/html')
     expect(result.html).not_to be_empty
@@ -43,7 +47,8 @@ RSpec.describe 'scrape' do
 
   it 'scrape_complex_links: Classifies links by type: internal, external, anchor, document, image' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_complex_links"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.links.length).to be > 9
     expect(result.links[0].link_type).to include('internal')
@@ -54,14 +59,16 @@ RSpec.describe 'scrape' do
 
   it 'scrape_download_assets: Downloads CSS, JS, and image assets from page' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_download_assets"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.assets.length).to be > 2
   end
 
   it 'scrape_dublin_core: Extracts Dublin Core metadata from a page' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_dublin_core"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.metadata.dc_title).not_to be_empty
     expect(result.metadata.dc_title).to eq('Effects of Climate Change on Marine Biodiversity')
@@ -70,7 +77,8 @@ RSpec.describe 'scrape' do
 
   it 'scrape_empty_page: Handles an empty HTML document without errors' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_empty_page"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.links.length).to be > -1
     expect(result.images.length).to eq(0)
@@ -78,14 +86,16 @@ RSpec.describe 'scrape' do
 
   it 'scrape_feed_discovery: Discovers RSS, Atom, and JSON feed links' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_feed_discovery"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.feeds.length).to be >= 3
   end
 
   it 'scrape_image_sources: Extracts images from img, picture, og:image, twitter:image' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_image_sources"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.images.length).to be > 4
     expect(result.metadata.og_image).to eq('https://example.com/images/og-hero.jpg')
@@ -93,13 +103,15 @@ RSpec.describe 'scrape' do
 
   it 'scrape_js_heavy_spa: Handles SPA page with JavaScript-only content (no server-rendered HTML)' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_js_heavy_spa"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.html).not_to be_empty
   end
 
   it 'scrape_json_ld: Extracts JSON-LD structured data from a page' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_json_ld"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.json_ld).not_to be_empty
     expect(result.json_ld[0].schema_type).to eq('Recipe')
@@ -108,7 +120,8 @@ RSpec.describe 'scrape' do
 
   it 'scrape_malformed_html: Gracefully handles broken HTML without crashing' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_malformed_html"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.html).not_to be_empty
     expect(result.metadata.description).to include('broken HTML')
@@ -116,7 +129,8 @@ RSpec.describe 'scrape' do
 
   it 'scrape_og_metadata: Extracts full Open Graph metadata from a page' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_og_metadata"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.metadata.og_title).not_to be_empty
     expect(result.metadata.og_title).to eq('Article Title')
@@ -128,7 +142,8 @@ RSpec.describe 'scrape' do
 
   it 'scrape_twitter_card: Extracts Twitter Card metadata from a page' do
     engine = Kreuzcrawl.create_engine(nil)
-    result = Kreuzcrawl.scrape(engine, '')
+    url = "#{ENV.fetch('MOCK_SERVER_URL', nil)}/fixtures/scrape_twitter_card"
+    result = Kreuzcrawl.scrape(engine, url)
     expect(result.status_code).to eq(200)
     expect(result.metadata.twitter_card).not_to be_empty
     expect(result.metadata.twitter_card).to eq('summary_large_image')

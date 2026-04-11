@@ -12,7 +12,8 @@ public class EngineTests
     {
         // CrawlEngine with defaults batch scrapes like the free function
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_batch_basic";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
     }
@@ -22,7 +23,8 @@ public class EngineTests
     {
         // CrawlEngine with defaults crawls multiple pages like the free function
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_crawl_basic";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'crawl.min_pages' not available on result type
     }
@@ -32,7 +34,8 @@ public class EngineTests
     {
         // CrawlEngine with defaults discovers URLs like the free function
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_map_basic";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'map.min_urls' not available on result type
     }
 
@@ -41,7 +44,8 @@ public class EngineTests
     {
         // CrawlEngine with defaults scrapes a page identically to the free function
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_scrape_basic";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         Assert.Equal(200, result.StatusCode);
         Assert.Equal("text/html", result.ContentType.Trim());
         Assert.Equal("Engine Test", result.Metadata.Title.Trim());
@@ -55,7 +59,8 @@ public class EngineTests
     {
         // CrawlEngine with defaults streams events like the free function
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/engine_stream_basic";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
         // skipped: field 'stream.event_count_min' not available on result type

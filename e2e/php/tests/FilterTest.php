@@ -14,7 +14,8 @@ final class FilterTest extends TestCase
     public function test_filter_bm25_crawl_integration(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/filter_bm25_crawl_integration';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'filter.remaining_contain_keyword' not available on result type
     }
 
@@ -22,7 +23,8 @@ final class FilterTest extends TestCase
     public function test_filter_bm25_empty_query(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/filter_bm25_empty_query';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
     }
 
@@ -30,7 +32,8 @@ final class FilterTest extends TestCase
     public function test_filter_bm25_high_threshold(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/filter_bm25_high_threshold';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'filter.pages_after_filter' not available on result type
     }
 
@@ -38,7 +41,8 @@ final class FilterTest extends TestCase
     public function test_filter_bm25_relevant_pages(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/filter_bm25_relevant_pages';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'filter.remaining_contain_keyword' not available on result type
     }
 
@@ -46,7 +50,8 @@ final class FilterTest extends TestCase
     public function test_filter_bm25_threshold_zero(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/filter_bm25_threshold_zero';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
     }
 
@@ -54,7 +59,8 @@ final class FilterTest extends TestCase
     public function test_filter_noop_crawl_all_kept(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/filter_noop_crawl_all_kept';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'filter.pages_after_filter' not available on result type
     }
 
@@ -62,7 +68,8 @@ final class FilterTest extends TestCase
     public function test_filter_noop_passes_all(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/filter_noop_passes_all';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
     }
 }

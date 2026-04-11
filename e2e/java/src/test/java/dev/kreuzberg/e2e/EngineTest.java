@@ -10,7 +10,8 @@ class EngineTest {
     void testEngineBatchBasic() throws Exception {
         // CrawlEngine with defaults batch scrapes like the free function
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/engine_batch_basic";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
     }
@@ -19,7 +20,8 @@ class EngineTest {
     void testEngineCrawlBasic() throws Exception {
         // CrawlEngine with defaults crawls multiple pages like the free function
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/engine_crawl_basic";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'crawl.min_pages' not available on result type
     }
@@ -28,7 +30,8 @@ class EngineTest {
     void testEngineMapBasic() throws Exception {
         // CrawlEngine with defaults discovers URLs like the free function
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/engine_map_basic";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'map.min_urls' not available on result type
     }
 
@@ -36,7 +39,8 @@ class EngineTest {
     void testEngineScrapeBasic() throws Exception {
         // CrawlEngine with defaults scrapes a page identically to the free function
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/engine_scrape_basic";
+        var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertEquals("text/html", result.contentType());
         assertEquals("Engine Test", result.metadata().title().orElse(""));
@@ -49,7 +53,8 @@ class EngineTest {
     void testEngineStreamBasic() throws Exception {
         // CrawlEngine with defaults streams events like the free function
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/engine_stream_basic";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
         // skipped: field 'stream.event_count_min' not available on result type

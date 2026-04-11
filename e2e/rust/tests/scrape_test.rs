@@ -7,7 +7,7 @@ use kreuzcrawl::create_engine;
 async fn test_scrape_asset_dedup() {
     // Same asset linked twice results in one download with one unique hash
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_asset_dedup");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert_eq!(result.assets.len(), 2, "equals assertion failed");
@@ -18,7 +18,7 @@ async fn test_scrape_asset_dedup() {
 async fn test_scrape_asset_max_size() {
     // Skips assets exceeding max_asset_size limit
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_asset_max_size");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert_eq!(result.assets.len(), 2, "equals assertion failed");
@@ -28,7 +28,7 @@ async fn test_scrape_asset_max_size() {
 async fn test_scrape_asset_type_filter() {
     // Only downloads image assets when asset_types filter is set
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_asset_type_filter");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert_eq!(result.assets.len(), 1, "equals assertion failed");
@@ -39,7 +39,7 @@ async fn test_scrape_asset_type_filter() {
 async fn test_scrape_basic_html_page() {
     // Scrapes a simple HTML page and extracts title, description, and links
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_basic_html_page");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
     let metadata_description = result.metadata.description.as_deref().unwrap_or("");
@@ -59,7 +59,7 @@ async fn test_scrape_basic_html_page() {
 async fn test_scrape_complex_links() {
     // Classifies links by type: internal, external, anchor, document, image
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_complex_links");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert!(result.links.len() > 9, "expected > 9");
@@ -73,7 +73,7 @@ async fn test_scrape_complex_links() {
 async fn test_scrape_download_assets() {
     // Downloads CSS, JS, and image assets from page
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_download_assets");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert!(result.assets.len() > 2, "expected > 2");
@@ -83,7 +83,7 @@ async fn test_scrape_download_assets() {
 async fn test_scrape_dublin_core() {
     // Extracts Dublin Core metadata from a page
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_dublin_core");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_dc_title = result.metadata.dc_title.as_deref().unwrap_or("");
     let metadata_dc_creator = result.metadata.dc_creator.as_deref().unwrap_or("");
@@ -97,7 +97,7 @@ async fn test_scrape_dublin_core() {
 async fn test_scrape_empty_page() {
     // Handles an empty HTML document without errors
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_empty_page");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert!(result.links.len() > -1, "expected > -1");
@@ -108,7 +108,7 @@ async fn test_scrape_empty_page() {
 async fn test_scrape_feed_discovery() {
     // Discovers RSS, Atom, and JSON feed links
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_feed_discovery");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert!(result.feeds.len() >= 3, "expected >= 3");
@@ -118,7 +118,7 @@ async fn test_scrape_feed_discovery() {
 async fn test_scrape_image_sources() {
     // Extracts images from img, picture, og:image, twitter:image
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_image_sources");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_og_image = result.metadata.og_image.as_deref().unwrap_or("");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -130,7 +130,7 @@ async fn test_scrape_image_sources() {
 async fn test_scrape_js_heavy_spa() {
     // Handles SPA page with JavaScript-only content (no server-rendered HTML)
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_js_heavy_spa");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
 }
@@ -139,7 +139,7 @@ async fn test_scrape_js_heavy_spa() {
 async fn test_scrape_json_ld() {
     // Extracts JSON-LD structured data from a page
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_json_ld");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let json_ld_name = result.json_ld[0].name.as_deref().unwrap_or("");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -152,7 +152,7 @@ async fn test_scrape_json_ld() {
 async fn test_scrape_malformed_html() {
     // Gracefully handles broken HTML without crashing
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_malformed_html");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_description = result.metadata.description.as_deref().unwrap_or("");
     assert_eq!(result.status_code, 200, "equals assertion failed");
@@ -164,7 +164,7 @@ async fn test_scrape_malformed_html() {
 async fn test_scrape_og_metadata() {
     // Extracts full Open Graph metadata from a page
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_og_metadata");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_og_title = result.metadata.og_title.as_deref().unwrap_or("");
     let metadata_og_type = result.metadata.og_type.as_deref().unwrap_or("");
@@ -183,7 +183,7 @@ async fn test_scrape_og_metadata() {
 async fn test_scrape_twitter_card() {
     // Extracts Twitter Card metadata from a page
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_twitter_card");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_twitter_card = result.metadata.twitter_card.as_deref().unwrap_or("");
     let metadata_twitter_title = result.metadata.twitter_title.as_deref().unwrap_or("");

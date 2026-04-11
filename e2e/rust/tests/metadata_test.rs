@@ -7,7 +7,7 @@ use kreuzcrawl::create_engine;
 async fn test_metadata_article_times() {
     // Extracts article:published_time, modified_time, author, section, and tags
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "metadata_article_times");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     // skipped: field 'article.published_time' not available on result type
@@ -21,7 +21,7 @@ async fn test_metadata_article_times() {
 async fn test_metadata_favicons() {
     // Extracts favicon link tags including apple-touch-icon
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "metadata_favicons");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     // skipped: field 'favicons.length' not available on result type
@@ -32,7 +32,7 @@ async fn test_metadata_favicons() {
 async fn test_metadata_headings() {
     // Extracts heading hierarchy (h1-h6) from HTML page
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "metadata_headings");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     // skipped: field 'headings.h1.length' not available on result type
@@ -44,7 +44,7 @@ async fn test_metadata_headings() {
 async fn test_metadata_hreflang() {
     // Extracts hreflang alternate link tags
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "metadata_hreflang");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     // skipped: field 'hreflang.length' not available on result type
@@ -55,7 +55,7 @@ async fn test_metadata_hreflang() {
 async fn test_metadata_keywords_author() {
     // Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "metadata_keywords_author");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_title = result.metadata.title.as_deref().unwrap_or("");
     let metadata_keywords = result.metadata.keywords.as_deref().unwrap_or("");
@@ -83,7 +83,7 @@ async fn test_metadata_keywords_author() {
 async fn test_metadata_og_video_audio() {
     // Extracts og:video, og:audio, and og:locale:alternate metadata
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "metadata_og_video_audio");
     let result = scrape(&engine, &url).await.expect("should succeed");
     let metadata_og_video = result.metadata.og_video.as_deref().unwrap_or("");
     let metadata_og_audio = result.metadata.og_audio.as_deref().unwrap_or("");
@@ -97,7 +97,7 @@ async fn test_metadata_og_video_audio() {
 async fn test_metadata_response_headers() {
     // Extracts response metadata from HTTP headers (etag, server, content-language)
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "metadata_response_headers");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     // skipped: field 'response_headers.etag' not available on result type
@@ -110,7 +110,7 @@ async fn test_metadata_response_headers() {
 async fn test_metadata_word_count() {
     // Computes word count from visible page text
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "metadata_word_count");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
     // skipped: field 'computed.word_count' not available on result type

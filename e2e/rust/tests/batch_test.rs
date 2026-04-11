@@ -7,7 +7,7 @@ use kreuzcrawl::create_engine;
 async fn test_scrape_batch_basic() {
     // Batch scrape of multiple URLs all succeeding
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_batch_basic");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'batch.completed_count' not available on result type
     // skipped: field 'batch.failed_count' not available on result type
@@ -18,7 +18,7 @@ async fn test_scrape_batch_basic() {
 async fn test_scrape_batch_partial_failure() {
     // Batch scrape with one URL failing returns partial results
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_batch_partial_failure");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'batch.completed_count' not available on result type
     // skipped: field 'batch.failed_count' not available on result type
@@ -29,7 +29,7 @@ async fn test_scrape_batch_partial_failure() {
 async fn test_scrape_batch_progress() {
     // Batch scrape results include specific URL
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "scrape_batch_progress");
     let _ = scrape(&engine, &url).await.expect("should succeed");
     // skipped: field 'batch.total_count' not available on result type
     // skipped: field 'batch.results' not available on result type

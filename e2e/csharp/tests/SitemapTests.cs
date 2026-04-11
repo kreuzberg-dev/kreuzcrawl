@@ -12,7 +12,8 @@ public class SitemapTests
     {
         // Parses a standard urlset sitemap
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_basic";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }
@@ -22,7 +23,8 @@ public class SitemapTests
     {
         // Parses a gzip-compressed sitemap file
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_compressed_gzip";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -31,7 +33,8 @@ public class SitemapTests
     {
         // Handles empty sitemap gracefully
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_empty";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -40,7 +43,8 @@ public class SitemapTests
     {
         // Discovers sitemap via robots.txt Sitemap directive
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_from_robots_txt";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -49,7 +53,8 @@ public class SitemapTests
     {
         // Follows sitemap index to discover child sitemaps
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_index";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -58,7 +63,8 @@ public class SitemapTests
     {
         // Filters sitemap URLs by lastmod date
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_lastmod_filter";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }
@@ -68,7 +74,8 @@ public class SitemapTests
     {
         // Uses sitemap URLs exclusively without following page links
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_only_mode";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -77,7 +84,8 @@ public class SitemapTests
     {
         // Parses sitemap with XHTML namespace alternate links
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/sitemap_xhtml_links";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }

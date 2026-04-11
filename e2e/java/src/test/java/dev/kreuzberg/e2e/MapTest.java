@@ -10,7 +10,8 @@ class MapTest {
     void testMapDiscoverUrls() throws Exception {
         // Discovers all URLs on a site without fetching full content
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/map_discover_urls";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -18,7 +19,8 @@ class MapTest {
     void testMapExcludePatterns() throws Exception {
         // Excludes URLs matching patterns from URL map
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/map_exclude_patterns";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -26,7 +28,8 @@ class MapTest {
     void testMapIncludeSubdomains() throws Exception {
         // Includes subdomain URLs in URL map discovery
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/map_include_subdomains";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'urls' not available on result type
     }
@@ -35,7 +38,8 @@ class MapTest {
     void testMapLargeSitemap() throws Exception {
         // Handles large sitemap with 100+ URLs
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/map_large_sitemap";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -43,7 +47,8 @@ class MapTest {
     void testMapLimitPagination() throws Exception {
         // Limits map result count to specified maximum
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/map_limit_pagination";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -51,7 +56,8 @@ class MapTest {
     void testMapSearchFilter() throws Exception {
         // Filters map results by search keyword
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/map_search_filter";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'urls' not available on result type
     }

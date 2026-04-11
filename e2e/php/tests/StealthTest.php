@@ -14,7 +14,8 @@ final class StealthTest extends TestCase
     public function test_stealth_ua_rotation_config(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/stealth_ua_rotation_config';
+        $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);
     }
 }

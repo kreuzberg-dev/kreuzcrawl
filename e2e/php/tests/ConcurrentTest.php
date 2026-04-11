@@ -14,7 +14,8 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_basic(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_basic';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
         // skipped: field 'pages.length' not available on result type
     }
@@ -23,7 +24,8 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_depth_two_fan_out(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_depth_two_fan_out';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
 
@@ -31,7 +33,8 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_max_pages_exact(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_max_pages_exact';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
 
@@ -39,7 +42,8 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_partial_errors(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_partial_errors';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
 
@@ -47,7 +51,8 @@ final class ConcurrentTest extends TestCase
     public function test_concurrent_respects_max_pages(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/concurrent_respects_max_pages';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
 }

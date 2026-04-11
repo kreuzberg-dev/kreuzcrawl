@@ -5,7 +5,8 @@ defmodule E2e.MiddlewareTest do
   describe "middleware_engine_crawl_with_defaults" do
     test "Engine crawl with default middleware chain produces correct multi-page results" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/middleware_engine_crawl_with_defaults"
+      result = Kreuzcrawl.scrape!(engine, url)
       # skipped: field 'crawl.pages_crawled' not available on result type
       # skipped: field 'crawl.min_pages' not available on result type
     end
@@ -14,7 +15,8 @@ defmodule E2e.MiddlewareTest do
   describe "middleware_noop_no_effect" do
     test "Default middleware chain does not affect normal scraping" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/middleware_noop_no_effect"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
       assert String.trim(result.metadata.title) == "Middleware Test"
     end

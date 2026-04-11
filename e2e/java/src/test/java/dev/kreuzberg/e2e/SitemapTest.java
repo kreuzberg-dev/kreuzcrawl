@@ -10,7 +10,8 @@ class SitemapTest {
     void testSitemapBasic() throws Exception {
         // Parses a standard urlset sitemap
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_basic";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }
@@ -19,7 +20,8 @@ class SitemapTest {
     void testSitemapCompressedGzip() throws Exception {
         // Parses a gzip-compressed sitemap file
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_compressed_gzip";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -27,7 +29,8 @@ class SitemapTest {
     void testSitemapEmpty() throws Exception {
         // Handles empty sitemap gracefully
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_empty";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -35,7 +38,8 @@ class SitemapTest {
     void testSitemapFromRobotsTxt() throws Exception {
         // Discovers sitemap via robots.txt Sitemap directive
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_from_robots_txt";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -43,7 +47,8 @@ class SitemapTest {
     void testSitemapIndex() throws Exception {
         // Follows sitemap index to discover child sitemaps
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_index";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -51,7 +56,8 @@ class SitemapTest {
     void testSitemapLastmodFilter() throws Exception {
         // Filters sitemap URLs by lastmod date
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_lastmod_filter";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }
@@ -60,7 +66,8 @@ class SitemapTest {
     void testSitemapOnlyMode() throws Exception {
         // Uses sitemap URLs exclusively without following page links
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_only_mode";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
     }
 
@@ -68,7 +75,8 @@ class SitemapTest {
     void testSitemapXhtmlLinks() throws Exception {
         // Parses sitemap with XHTML namespace alternate links
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/sitemap_xhtml_links";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'has_lastmod' not available on result type
     }

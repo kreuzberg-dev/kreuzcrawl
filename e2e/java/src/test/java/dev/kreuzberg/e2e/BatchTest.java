@@ -10,7 +10,8 @@ class BatchTest {
     void testScrapeBatchBasic() throws Exception {
         // Batch scrape of multiple URLs all succeeding
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_batch_basic";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.failed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
@@ -20,7 +21,8 @@ class BatchTest {
     void testScrapeBatchPartialFailure() throws Exception {
         // Batch scrape with one URL failing returns partial results
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_batch_partial_failure";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'batch.completed_count' not available on result type
         // skipped: field 'batch.failed_count' not available on result type
         // skipped: field 'batch.total_count' not available on result type
@@ -30,7 +32,8 @@ class BatchTest {
     void testScrapeBatchProgress() throws Exception {
         // Batch scrape results include specific URL
         var engine = Kreuzcrawl.createEngine(null);
-        var result = Kreuzcrawl.scrape(engine, "");
+        String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/scrape_batch_progress";
+        var result = Kreuzcrawl.scrape(engine, url);
         // skipped: field 'batch.total_count' not available on result type
         // skipped: field 'batch.results' not available on result type
     }

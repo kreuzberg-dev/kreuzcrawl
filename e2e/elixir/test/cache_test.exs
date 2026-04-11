@@ -5,7 +5,8 @@ defmodule E2e.CacheTest do
   describe "cache_basic" do
     test "Crawling with disk cache enabled succeeds without errors" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/cache_basic"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.status_code) == 200
     end
   end

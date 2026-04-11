@@ -12,7 +12,8 @@ public class StrategyTests
     {
         // BestFirst strategy always processes the seed URL first
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/strategy_best_first_seed";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.first_page_url_contains' not available on result type
     }
@@ -22,7 +23,8 @@ public class StrategyTests
     {
         // BFS strategy visits pages in breadth-first order
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/strategy_bfs_default_order";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.crawl_order' not available on result type
     }
@@ -32,7 +34,8 @@ public class StrategyTests
     {
         // DFS strategy visits pages in depth-first order
         var engine = KreuzcrawlLib.CreateEngine(null);
-        var result = await KreuzcrawlLib.Scrape(engine, "");
+        var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/strategy_dfs_depth_first";
+        var result = await KreuzcrawlLib.Scrape(engine, url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.crawl_order' not available on result type
     }

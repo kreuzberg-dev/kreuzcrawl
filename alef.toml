@@ -243,7 +243,7 @@ optional = false
 [[e2e.call.args]]
 name = "url"
 field = "url"
-type = "string"
+type = "mock_url"
 optional = false
 
 [e2e.call.overrides.python]

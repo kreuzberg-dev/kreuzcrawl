@@ -14,7 +14,8 @@ final class StreamTest extends TestCase
     public function test_crawl_stream_events(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_stream_events';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.event_count_min' not available on result type
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
@@ -24,7 +25,8 @@ final class StreamTest extends TestCase
     public function test_stream_depth_crawl(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/stream_depth_crawl';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.event_count_min' not available on result type
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
@@ -34,7 +36,8 @@ final class StreamTest extends TestCase
     public function test_stream_with_error_event(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/stream_with_error_event';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type
         // skipped: field 'stream.event_count_min' not available on result type

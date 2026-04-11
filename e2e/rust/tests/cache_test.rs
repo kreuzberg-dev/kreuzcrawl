@@ -7,7 +7,7 @@ use kreuzcrawl::create_engine;
 async fn test_cache_basic() {
     // Crawling with disk cache enabled succeeds without errors
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
-    let url = String::new();
+    let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "cache_basic");
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
 }

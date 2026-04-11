@@ -14,7 +14,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_301_permanent(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_301_permanent';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -23,7 +24,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_302_found(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_302_found';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -32,7 +34,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_303_see_other(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_303_see_other';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -41,7 +44,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_307_temporary(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_307_temporary';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -50,7 +54,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_308_permanent(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_308_permanent';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -59,7 +64,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_chain(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_chain';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -68,7 +74,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_cross_domain(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_cross_domain';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -77,7 +84,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_loop(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_loop';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'is_error' not available on result type
     }
 
@@ -85,7 +93,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_max_exceeded(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_max_exceeded';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'is_error' not available on result type
     }
 
@@ -93,7 +102,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_meta_refresh(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_meta_refresh';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -102,7 +112,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_refresh_header(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_refresh_header';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
     }
@@ -111,7 +122,8 @@ final class RedirectTest extends TestCase
     public function test_redirect_to_404(): void
     {
         $engine = Kreuzcrawl::createEngine(null);
-        $result = Kreuzcrawl::scrape($engine, "");
+        $url = getenv('MOCK_SERVER_URL') . '/fixtures/redirect_to_404';
+        $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'final_url' not available on result type
         // skipped: field 'redirect_count' not available on result type
         // skipped: field 'is_error' not available on result type

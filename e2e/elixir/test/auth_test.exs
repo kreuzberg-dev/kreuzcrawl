@@ -5,7 +5,8 @@ defmodule E2e.AuthTest do
   describe "auth_basic_http" do
     test "Sends HTTP Basic authentication header" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/auth_basic_http"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.auth_header_sent) == true
       assert String.trim(result.status_code) == 200
     end
@@ -14,7 +15,8 @@ defmodule E2e.AuthTest do
   describe "auth_bearer_token" do
     test "Sends Bearer token in Authorization header" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/auth_bearer_token"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.auth_header_sent) == true
       assert String.trim(result.status_code) == 200
     end
@@ -23,7 +25,8 @@ defmodule E2e.AuthTest do
   describe "auth_custom_header" do
     test "Sends authentication via custom header (X-API-Key)" do
       engine = Kreuzcrawl.create_engine!(nil)
-      result = Kreuzcrawl.scrape!(engine, "")
+      url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/auth_custom_header"
+      result = Kreuzcrawl.scrape!(engine, url)
       assert String.trim(result.auth_header_sent) == true
       assert String.trim(result.status_code) == 200
     end
