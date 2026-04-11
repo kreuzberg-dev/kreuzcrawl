@@ -36,8 +36,7 @@ async fn test_robots_crawl_delay() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_crawl_delay");
     let result = scrape(&engine, &url).await.expect("should succeed");
-    let crawl_delay = result.crawl_delay.as_deref().unwrap_or("");
-    assert_eq!(crawl_delay, 2, "equals assertion failed");
+    assert_eq!(result.crawl_delay, Some(2), "equals assertion failed");
 }
 
 #[tokio::test]
@@ -91,8 +90,7 @@ async fn test_robots_request_rate() {
     let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
     let url = format!("{}/fixtures/{}", std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"), "robots_request_rate");
     let result = scrape(&engine, &url).await.expect("should succeed");
-    let crawl_delay = result.crawl_delay.as_deref().unwrap_or("");
-    assert_eq!(crawl_delay, 5, "equals assertion failed");
+    assert_eq!(result.crawl_delay, Some(5), "equals assertion failed");
     assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
 

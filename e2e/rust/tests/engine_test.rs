@@ -43,7 +43,7 @@ async fn test_engine_scrape_basic() {
     assert_eq!(result.status_code, 200, "equals assertion failed");
     assert_eq!(result.content_type.trim(), r#"text/html"#, "equals assertion failed");
     assert_eq!(metadata_title.trim(), r#"Engine Test"#, "equals assertion failed");
-    assert!(metadata_description.to_string().contains(r#"Testing the engine"#), "expected to contain: {}", r#"Testing the engine"#);
+    assert!(format!("{:?}", metadata_description).to_lowercase().contains(r#"Testing the engine"#), "expected to contain: {}", r#"Testing the engine"#);
     assert!(result.links.len() >= 1, "expected >= 1");
     assert!(result.metadata.headings.as_ref().unwrap().len() >= 1, "expected >= 1");
 }
