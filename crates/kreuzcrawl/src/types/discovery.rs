@@ -231,3 +231,9 @@ pub enum CrawlEvent {
         pages_crawled: usize,
     },
 }
+
+impl Default for CrawlEvent {
+    fn default() -> Self {
+        Self::Complete { pages_crawled: 0 }
+    }
+}

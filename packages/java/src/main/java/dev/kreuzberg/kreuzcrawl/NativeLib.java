@@ -54,39 +54,48 @@ final class NativeLib {
         FunctionDescriptor.of(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KCRAWL_CRAWL_ENGINE_HANDLE_CONTENT = LINKER.downcallHandle(
-        LIB.find("kcrawl_crawl_engine_handle_content").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
     static final MethodHandle KCRAWL_CRAWL_ENGINE_HANDLE_FREE = LINKER.downcallHandle(
         LIB.find("kcrawl_crawl_engine_handle_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KCRAWL_SCRAPE_RESULT_CONTENT = LINKER.downcallHandle(
-        LIB.find("kcrawl_scrape_result_content").orElseThrow(),
+    static final MethodHandle KCRAWL_SCRAPE_RESULT_TO_JSON = LINKER.downcallHandle(
+        LIB.find("kcrawl_scrape_result_to_json").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
+
     static final MethodHandle KCRAWL_SCRAPE_RESULT_FREE = LINKER.downcallHandle(
         LIB.find("kcrawl_scrape_result_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KCRAWL_CRAWL_RESULT_CONTENT = LINKER.downcallHandle(
-        LIB.find("kcrawl_crawl_result_content").orElseThrow(),
+    static final MethodHandle KCRAWL_CRAWL_RESULT_TO_JSON = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl_result_to_json").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
+
     static final MethodHandle KCRAWL_CRAWL_RESULT_FREE = LINKER.downcallHandle(
         LIB.find("kcrawl_crawl_result_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KCRAWL_MAP_RESULT_CONTENT = LINKER.downcallHandle(
-        LIB.find("kcrawl_map_result_content").orElseThrow(),
+    static final MethodHandle KCRAWL_MAP_RESULT_TO_JSON = LINKER.downcallHandle(
+        LIB.find("kcrawl_map_result_to_json").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
+
     static final MethodHandle KCRAWL_MAP_RESULT_FREE = LINKER.downcallHandle(
         LIB.find("kcrawl_map_result_free").orElseThrow(),
+        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
+    );
+
+    static final MethodHandle KCRAWL_CRAWL_CONFIG_FROM_JSON = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl_config_from_json").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+
+    static final MethodHandle KCRAWL_CRAWL_CONFIG_FREE = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl_config_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 }

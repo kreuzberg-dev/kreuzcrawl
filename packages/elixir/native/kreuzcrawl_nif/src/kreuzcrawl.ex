@@ -38,4 +38,16 @@ defmodule Kreuzcrawl do
     Kreuzcrawl.Native.batch_crawl(engine, urls)
   end
 
+  @doc "Method"
+  @spec browserconfig_default() :: map()
+  def browserconfig_default() do
+    Kreuzcrawl.Native.browserconfig_default()
+  end
+
+  @doc "Method"
+  @spec crawlconfig_default() :: map()
+  def crawlconfig_default() do
+    Kreuzcrawl.Native.crawlconfig_default()
+  end
+
 end

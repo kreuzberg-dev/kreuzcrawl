@@ -3,11 +3,12 @@ package dev.kreuzberg.kreuzcrawl;
 
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record InteractionResult(
-    List<ActionResult> actionResults,
-    String finalHtml,
-    String finalUrl,
+    @JsonProperty("action_results") List<ActionResult> actionResults,
+    @JsonProperty("final_html") String finalHtml,
+    @JsonProperty("final_url") String finalUrl,
     Optional<byte[]> screenshot
 ) {
     public static InteractionResultBuilder builder() {

@@ -3,6 +3,7 @@
 Version: 0.1.0
 """
 
+from ._kreuzcrawl import AuthConfig
 from .api import batch_crawl, batch_scrape, crawl, create_engine, map_urls, scrape
 from .exceptions import (
     BadGatewayError,
@@ -28,7 +29,6 @@ from .options import (
     ActionResult,
     ArticleMetadata,
     AssetCategory,
-    AuthConfig,
     BatchCrawlResult,
     BatchScrapeResult,
     BrowserConfig,

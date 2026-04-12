@@ -13,8 +13,11 @@ public final class KreuzcrawlRs {
 
     public static CrawlEngineHandle createEngine(CrawlConfig config) throws KreuzcrawlRsException {
         try (var arena = Arena.ofConfined()) {
-            var cconfig = MemorySegment.NULL;
+            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
+            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
+            var cconfig = cconfigJson != null ? (MemorySegment) NativeLib.KCRAWL_CRAWL_CONFIG_FROM_JSON.invoke(cconfigJsonSeg) : MemorySegment.NULL;
             var resultPtr = (MemorySegment) NativeLib.KCRAWL_CREATE_ENGINE.invoke(cconfig);
+            if (!cconfig.equals(MemorySegment.NULL)) { NativeLib.KCRAWL_CRAWL_CONFIG_FREE.invoke(cconfig); }
             if (resultPtr.equals(MemorySegment.NULL)) {
                 return null;
             }
@@ -32,11 +35,14 @@ public final class KreuzcrawlRs {
             if (resultPtr.equals(MemorySegment.NULL)) {
                 return null;
             }
-            var contentPtr = (MemorySegment) NativeLib.KCRAWL_SCRAPE_RESULT_CONTENT.invoke(resultPtr);
-            String content = contentPtr.equals(MemorySegment.NULL) ? null :
-                contentPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            var jsonPtr = (MemorySegment) NativeLib.KCRAWL_SCRAPE_RESULT_TO_JSON.invoke(resultPtr);
             NativeLib.KCRAWL_SCRAPE_RESULT_FREE.invoke(resultPtr);
-            return new ObjectMapper().readValue(content, ScrapeResult.class);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, ScrapeResult.class);
         } catch (Throwable e) {
             throw new KreuzcrawlRsException("FFI call failed", e);
         }
@@ -60,11 +66,14 @@ public final class KreuzcrawlRs {
             if (resultPtr.equals(MemorySegment.NULL)) {
                 return null;
             }
-            var contentPtr = (MemorySegment) NativeLib.KCRAWL_CRAWL_RESULT_CONTENT.invoke(resultPtr);
-            String content = contentPtr.equals(MemorySegment.NULL) ? null :
-                contentPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            var jsonPtr = (MemorySegment) NativeLib.KCRAWL_CRAWL_RESULT_TO_JSON.invoke(resultPtr);
             NativeLib.KCRAWL_CRAWL_RESULT_FREE.invoke(resultPtr);
-            return new ObjectMapper().readValue(content, CrawlResult.class);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, CrawlResult.class);
         } catch (Throwable e) {
             throw new KreuzcrawlRsException("FFI call failed", e);
         }
@@ -88,11 +97,14 @@ public final class KreuzcrawlRs {
             if (resultPtr.equals(MemorySegment.NULL)) {
                 return null;
             }
-            var contentPtr = (MemorySegment) NativeLib.KCRAWL_MAP_RESULT_CONTENT.invoke(resultPtr);
-            String content = contentPtr.equals(MemorySegment.NULL) ? null :
-                contentPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            var jsonPtr = (MemorySegment) NativeLib.KCRAWL_MAP_RESULT_TO_JSON.invoke(resultPtr);
             NativeLib.KCRAWL_MAP_RESULT_FREE.invoke(resultPtr);
-            return new ObjectMapper().readValue(content, MapResult.class);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, MapResult.class);
         } catch (Throwable e) {
             throw new KreuzcrawlRsException("FFI call failed", e);
         }
@@ -117,7 +129,7 @@ public final class KreuzcrawlRs {
             }
             String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KCRAWL_FREE_STRING.invoke(resultPtr);
-            return new ObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<BatchScrapeResult>>() { });
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<BatchScrapeResult>>() { });
         } catch (Throwable e) {
             throw new KreuzcrawlRsException("FFI call failed", e);
         }
@@ -142,7 +154,7 @@ public final class KreuzcrawlRs {
             }
             String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KCRAWL_FREE_STRING.invoke(resultPtr);
-            return new ObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<BatchCrawlResult>>() { });
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<BatchCrawlResult>>() { });
         } catch (Throwable e) {
             throw new KreuzcrawlRsException("FFI call failed", e);
         }
@@ -156,6 +168,16 @@ public final class KreuzcrawlRs {
                 throw new CompletionException(e);
             }
         });
+    }
+
+    // Helper methods for FFI marshalling
+
+    private static com.fasterxml.jackson.databind.ObjectMapper createObjectMapper() {
+        return new com.fasterxml.jackson.databind.ObjectMapper()
+            .findAndRegisterModules()
+            .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+            .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT)
+            .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
     }
 
 }

@@ -2,15 +2,16 @@
 package dev.kreuzberg.kreuzcrawl;
 
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record CachedPage(
     String url,
-    short statusCode,
-    String contentType,
+    @JsonProperty("status_code") short statusCode,
+    @JsonProperty("content_type") String contentType,
     String body,
     Optional<String> etag,
-    Optional<String> lastModified,
-    long cachedAt
+    @JsonProperty("last_modified") Optional<String> lastModified,
+    @JsonProperty("cached_at") long cachedAt
 ) {
     public static CachedPageBuilder builder() {
         return new CachedPageBuilder();

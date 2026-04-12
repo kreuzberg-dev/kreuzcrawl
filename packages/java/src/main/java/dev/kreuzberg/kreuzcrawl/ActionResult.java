@@ -2,10 +2,11 @@
 package dev.kreuzberg.kreuzcrawl;
 
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ActionResult(
-    long actionIndex,
-    String actionType,
+    @JsonProperty("action_index") long actionIndex,
+    @JsonProperty("action_type") String actionType,
     boolean success,
     Optional<String> data,
     Optional<String> error

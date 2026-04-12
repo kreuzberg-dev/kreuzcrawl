@@ -3,14 +3,15 @@ package dev.kreuzberg.kreuzcrawl;
 
 import java.util.Map;
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record DownloadedDocument(
     String url,
-    String mimeType,
+    @JsonProperty("mime_type") String mimeType,
     byte[] content,
     long size,
     Optional<String> filename,
-    String contentHash,
+    @JsonProperty("content_hash") String contentHash,
     Map<String, String> headers
 ) {
     public static DownloadedDocumentBuilder builder() {

@@ -103,6 +103,15 @@ pub enum AuthConfig {
     Header { name: String, value: String },
 }
 
+impl Default for AuthConfig {
+    fn default() -> Self {
+        Self::Basic {
+            username: String::new(),
+            password: String::new(),
+        }
+    }
+}
+
 /// Browser fallback configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields, default)]
