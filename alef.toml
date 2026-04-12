@@ -197,6 +197,7 @@ fields_optional = [
     "assets.html_tag",
 ]
 fields_array = ["links", "images", "feeds", "json_ld", "assets"]
+fields_enum = ["links[].link_type", "browser.js_render_hint", "browser.browser_used"]
 result_fields = [
     "status_code",
     "content_type",
@@ -249,6 +250,12 @@ optional = false
 [e2e.call.overrides.python]
 module = "kreuzcrawl"
 function = "scrape"
+handle_dict_types = ["auth"]
+
+[e2e.call.overrides.python.handle_nested_types]
+browser = "BrowserConfig"
+proxy = "ProxyConfig"
+auth = "AuthConfig"
 
 [e2e.call.overrides.node]
 module = "@kreuzberg/kreuzcrawl"
@@ -263,6 +270,10 @@ class = "dev.kreuzberg.kreuzcrawl.Kreuzcrawl"
 
 [e2e.call.overrides.rust]
 crate_name = "kreuzcrawl"
+
+[e2e.call.overrides.elixir]
+handle_struct_type = "CrawlConfig"
+handle_atom_list_fields = ["asset_types"]
 
 [e2e.fields]
 # Existing
