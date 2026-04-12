@@ -1357,7 +1357,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
             headers: val
                 .headers
                 .into_iter()
-                .map(|(k, v)| (k.to_string(), v.to_string()))
+                .map(|(k, v)| (format!("{k:?}"), format!("{v:?}")))
                 .collect(),
         }
     }

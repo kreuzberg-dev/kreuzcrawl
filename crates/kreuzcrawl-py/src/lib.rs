@@ -6,7 +6,7 @@ use pyo3::prelude::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractionMeta {
     /// Estimated cost of the LLM call in USD.
@@ -48,7 +48,7 @@ impl ExtractionMeta {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ProxyConfig {
     /// Proxy URL (e.g. "<http://proxy:8080>", "<socks5://proxy:1080>").
@@ -76,7 +76,7 @@ impl ProxyConfig {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct BrowserConfig {
     /// When to use the headless browser fallback.
@@ -87,7 +87,7 @@ pub struct BrowserConfig {
     pub endpoint: Option<String>,
     /// Timeout for browser page load and rendering (in milliseconds when serialized).
     #[pyo3(get)]
-    pub timeout: u64,
+    pub timeout: Option<u64>,
     /// Wait strategy after browser navigation.
     #[pyo3(get)]
     pub wait: BrowserWait,
@@ -115,7 +115,7 @@ impl BrowserConfig {
         Self {
             mode: mode.unwrap_or_default(),
             endpoint,
-            timeout: timeout.unwrap_or_default(),
+            timeout,
             wait: wait.unwrap_or_default(),
             wait_selector,
             extra_wait,
@@ -131,7 +131,7 @@ impl BrowserConfig {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct CrawlConfig {
@@ -167,7 +167,7 @@ pub struct CrawlConfig {
     pub custom_headers: HashMap<String, String>,
     /// Timeout for individual HTTP requests (in milliseconds when serialized).
     #[pyo3(get)]
-    pub request_timeout: u64,
+    pub request_timeout: Option<u64>,
     /// Maximum number of redirects to follow.
     #[pyo3(get)]
     pub max_redirects: usize,
@@ -292,7 +292,7 @@ impl CrawlConfig {
             include_paths: include_paths.unwrap_or_default(),
             exclude_paths: exclude_paths.unwrap_or_default(),
             custom_headers: custom_headers.unwrap_or_default(),
-            request_timeout: request_timeout.unwrap_or_default(),
+            request_timeout,
             max_redirects: max_redirects.unwrap_or(10),
             retry_count: retry_count.unwrap_or(0),
             retry_codes: retry_codes.unwrap_or_default(),
@@ -328,7 +328,7 @@ impl CrawlConfig {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DownloadedDocument {
     /// The URL the document was fetched from.
@@ -380,7 +380,7 @@ impl DownloadedDocument {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct InteractionResult {
     /// Results from each executed action.
@@ -417,7 +417,7 @@ impl InteractionResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ActionResult {
     /// Zero-based index of the action in the sequence.
@@ -459,7 +459,7 @@ impl ActionResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
@@ -617,7 +617,7 @@ impl ScrapeResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CrawlPageResult {
     /// The original URL of the page.
@@ -735,7 +735,7 @@ impl CrawlPageResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CrawlResult {
     /// The list of crawled pages.
@@ -787,7 +787,7 @@ impl CrawlResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct SitemapUrl {
     /// The URL.
@@ -824,7 +824,7 @@ impl SitemapUrl {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct MapResult {
     /// The list of discovered URLs.
@@ -844,7 +844,7 @@ impl MapResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct MarkdownResult {
     /// Converted markdown text.
@@ -891,7 +891,7 @@ impl MarkdownResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CachedPage {
     #[pyo3(get)]
@@ -936,7 +936,7 @@ impl CachedPage {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct LinkInfo {
@@ -979,7 +979,7 @@ impl LinkInfo {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ImageInfo {
     /// The image URL.
@@ -1021,7 +1021,7 @@ impl ImageInfo {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct FeedInfo {
     /// The feed URL.
@@ -1049,7 +1049,7 @@ impl FeedInfo {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct JsonLdEntry {
     /// The `@type` value from the JSON-LD object.
@@ -1077,7 +1077,7 @@ impl JsonLdEntry {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CookieInfo {
     /// The cookie name.
@@ -1109,7 +1109,7 @@ impl CookieInfo {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DownloadedAsset {
     /// The original URL of the asset.
@@ -1156,7 +1156,7 @@ impl DownloadedAsset {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ArticleMetadata {
     /// The article publication time.
@@ -1198,7 +1198,7 @@ impl ArticleMetadata {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HreflangEntry {
     /// The language code (e.g., "en", "fr", "x-default").
@@ -1222,7 +1222,7 @@ impl HreflangEntry {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct FaviconInfo {
@@ -1255,7 +1255,7 @@ impl FaviconInfo {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HeadingInfo {
     /// The heading level (1-6).
@@ -1279,7 +1279,7 @@ impl HeadingInfo {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ResponseMeta {
     /// The `ETag` header value.
@@ -1331,7 +1331,7 @@ impl ResponseMeta {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct PageMetadata {
@@ -1565,7 +1565,7 @@ impl PageMetadata {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CitationResult {
     /// Markdown with links replaced by numbered citations.
@@ -1589,7 +1589,7 @@ impl CitationResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CitationReference {
     #[pyo3(get)]
@@ -1620,7 +1620,7 @@ pub struct CrawlEngineHandle {
     inner: Arc<kreuzcrawl::CrawlEngineHandle>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct BatchScrapeResult {
     /// The URL that was scraped.
@@ -1648,7 +1648,7 @@ impl BatchScrapeResult {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct BatchCrawlResult {
     /// The seed URL that was crawled.
@@ -1676,7 +1676,7 @@ impl BatchCrawlResult {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, serde::Serialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum BrowserMode {
     Auto = 0,
@@ -1691,7 +1691,7 @@ impl Default for BrowserMode {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, serde::Serialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum BrowserWait {
     NetworkIdle = 0,
@@ -1706,22 +1706,44 @@ impl Default for BrowserWait {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum AuthConfig {
-    Basic = 0,
-    Bearer = 1,
-    Header = 2,
+#[derive(Clone)]
+#[pyclass(frozen)]
+#[derive(Default)]
+pub struct AuthConfig {
+    pub(crate) inner: kreuzcrawl::AuthConfig,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for AuthConfig {
-    fn default() -> Self {
-        Self::Basic
+#[pymethods]
+impl AuthConfig {
+    #[new]
+    fn new(py: Python<'_>, value: &Bound<'_, pyo3::types::PyDict>) -> PyResult<Self> {
+        let json_mod = py.import("json")?;
+        let json_str: String = json_mod.call_method1("dumps", (value,))?.extract()?;
+        let inner: kreuzcrawl::AuthConfig = serde_json::from_str(&json_str)
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Invalid AuthConfig: {e}")))?;
+        Ok(Self { inner })
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+impl From<AuthConfig> for kreuzcrawl::AuthConfig {
+    fn from(val: AuthConfig) -> Self {
+        val.inner
+    }
+}
+
+impl From<kreuzcrawl::AuthConfig> for AuthConfig {
+    fn from(val: kreuzcrawl::AuthConfig) -> Self {
+        Self { inner: val }
+    }
+}
+
+impl serde::Serialize for AuthConfig {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        self.inner.serialize(serializer)
+    }
+}
+
+#[derive(Clone, PartialEq, Eq, serde::Serialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum LinkType {
     Internal = 0,
@@ -1737,7 +1759,7 @@ impl Default for LinkType {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, serde::Serialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ImageSource {
     Img = 0,
@@ -1753,7 +1775,7 @@ impl Default for ImageSource {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, serde::Serialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum FeedType {
     Rss = 0,
@@ -1768,7 +1790,7 @@ impl Default for FeedType {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, serde::Serialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum AssetCategory {
     Document = 0,
@@ -1790,18 +1812,40 @@ impl Default for AssetCategory {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum CrawlEvent {
-    Page = 0,
-    Error = 1,
-    Complete = 2,
+#[derive(Clone)]
+#[pyclass(frozen)]
+#[derive(Default)]
+pub struct CrawlEvent {
+    pub(crate) inner: kreuzcrawl::CrawlEvent,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for CrawlEvent {
-    fn default() -> Self {
-        Self::Page
+#[pymethods]
+impl CrawlEvent {
+    #[new]
+    fn new(py: Python<'_>, value: &Bound<'_, pyo3::types::PyDict>) -> PyResult<Self> {
+        let json_mod = py.import("json")?;
+        let json_str: String = json_mod.call_method1("dumps", (value,))?.extract()?;
+        let inner: kreuzcrawl::CrawlEvent = serde_json::from_str(&json_str)
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Invalid CrawlEvent: {e}")))?;
+        Ok(Self { inner })
+    }
+}
+
+impl From<CrawlEvent> for kreuzcrawl::CrawlEvent {
+    fn from(val: CrawlEvent) -> Self {
+        val.inner
+    }
+}
+
+impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
+    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
+        Self { inner: val }
+    }
+}
+
+impl serde::Serialize for CrawlEvent {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        self.inner.serialize(serializer)
     }
 }
 
@@ -1961,14 +2005,16 @@ impl From<kreuzcrawl::ProxyConfig> for ProxyConfig {
 
 impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: BrowserConfig) -> Self {
-        Self {
-            mode: val.mode.into(),
-            endpoint: val.endpoint,
-            timeout: std::time::Duration::from_secs(val.timeout),
-            wait: val.wait.into(),
-            wait_selector: val.wait_selector,
-            extra_wait: val.extra_wait.map(std::time::Duration::from_secs),
+        let mut __result = Self::default();
+        __result.mode = val.mode.into();
+        __result.endpoint = val.endpoint;
+        if let Some(__v) = val.timeout {
+            __result.timeout = std::time::Duration::from_secs(__v);
         }
+        __result.wait = val.wait.into();
+        __result.wait_selector = val.wait_selector;
+        __result.extra_wait = val.extra_wait.map(std::time::Duration::from_secs);
+        __result
     }
 }
 
@@ -1977,7 +2023,7 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
         Self {
             mode: val.mode.into(),
             endpoint: val.endpoint,
-            timeout: val.timeout.as_secs(),
+            timeout: Some(val.timeout.as_secs()),
             wait: val.wait.into(),
             wait_selector: val.wait_selector,
             extra_wait: val.extra_wait.map(|d| d.as_secs()),
@@ -1988,43 +2034,44 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
 #[allow(clippy::needless_update)]
 impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
     fn from(val: CrawlConfig) -> Self {
-        Self {
-            max_depth: val.max_depth,
-            max_pages: val.max_pages,
-            max_concurrent: val.max_concurrent,
-            respect_robots_txt: val.respect_robots_txt,
-            user_agent: val.user_agent,
-            stay_on_domain: val.stay_on_domain,
-            allow_subdomains: val.allow_subdomains,
-            include_paths: val.include_paths,
-            exclude_paths: val.exclude_paths,
-            custom_headers: val.custom_headers.into_iter().collect(),
-            request_timeout: std::time::Duration::from_secs(val.request_timeout),
-            max_redirects: val.max_redirects,
-            retry_count: val.retry_count,
-            retry_codes: val.retry_codes,
-            cookies_enabled: val.cookies_enabled,
-            auth: val.auth.map(Into::into),
-            max_body_size: val.max_body_size,
-            main_content_only: val.main_content_only,
-            remove_tags: val.remove_tags,
-            map_limit: val.map_limit,
-            map_search: val.map_search,
-            download_assets: val.download_assets,
-            asset_types: val.asset_types.into_iter().map(Into::into).collect(),
-            max_asset_size: val.max_asset_size,
-            browser: val.browser.into(),
-            proxy: val.proxy.map(Into::into),
-            user_agents: val.user_agents,
-            capture_screenshot: val.capture_screenshot,
-            download_documents: val.download_documents,
-            document_max_size: val.document_max_size,
-            document_mime_types: val.document_mime_types,
-            warc_output: val.warc_output.map(Into::into),
-            browser_profile: val.browser_profile,
-            save_browser_profile: val.save_browser_profile,
-            ..Default::default()
+        let mut __result = Self::default();
+        __result.max_depth = val.max_depth;
+        __result.max_pages = val.max_pages;
+        __result.max_concurrent = val.max_concurrent;
+        __result.respect_robots_txt = val.respect_robots_txt;
+        __result.user_agent = val.user_agent;
+        __result.stay_on_domain = val.stay_on_domain;
+        __result.allow_subdomains = val.allow_subdomains;
+        __result.include_paths = val.include_paths;
+        __result.exclude_paths = val.exclude_paths;
+        __result.custom_headers = val.custom_headers.into_iter().collect();
+        if let Some(__v) = val.request_timeout {
+            __result.request_timeout = std::time::Duration::from_secs(__v);
         }
+        __result.max_redirects = val.max_redirects;
+        __result.retry_count = val.retry_count;
+        __result.retry_codes = val.retry_codes;
+        __result.cookies_enabled = val.cookies_enabled;
+        __result.auth = val.auth.map(Into::into);
+        __result.max_body_size = val.max_body_size;
+        __result.main_content_only = val.main_content_only;
+        __result.remove_tags = val.remove_tags;
+        __result.map_limit = val.map_limit;
+        __result.map_search = val.map_search;
+        __result.download_assets = val.download_assets;
+        __result.asset_types = val.asset_types.into_iter().map(Into::into).collect();
+        __result.max_asset_size = val.max_asset_size;
+        __result.browser = val.browser.into();
+        __result.proxy = val.proxy.map(Into::into);
+        __result.user_agents = val.user_agents;
+        __result.capture_screenshot = val.capture_screenshot;
+        __result.download_documents = val.download_documents;
+        __result.document_max_size = val.document_max_size;
+        __result.document_mime_types = val.document_mime_types;
+        __result.warc_output = val.warc_output.map(Into::into);
+        __result.browser_profile = val.browser_profile;
+        __result.save_browser_profile = val.save_browser_profile;
+        __result
     }
 }
 
@@ -2041,7 +2088,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
             custom_headers: val.custom_headers.into_iter().collect(),
-            request_timeout: val.request_timeout.as_secs(),
+            request_timeout: Some(val.request_timeout.as_secs()),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
             retry_codes: val.retry_codes,
@@ -2095,7 +2142,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
             headers: val
                 .headers
                 .into_iter()
-                .map(|(k, v)| (k.to_string(), v.to_string()))
+                .map(|(k, v)| (format!("{k:?}"), format!("{v:?}")))
                 .collect(),
         }
     }
@@ -2862,34 +2909,6 @@ impl From<kreuzcrawl::BrowserWait> for BrowserWait {
     }
 }
 
-impl From<AuthConfig> for kreuzcrawl::AuthConfig {
-    fn from(val: AuthConfig) -> Self {
-        match val {
-            AuthConfig::Basic => Self::Basic {
-                username: Default::default(),
-                password: Default::default(),
-            },
-            AuthConfig::Bearer => Self::Bearer {
-                token: Default::default(),
-            },
-            AuthConfig::Header => Self::Header {
-                name: Default::default(),
-                value: Default::default(),
-            },
-        }
-    }
-}
-
-impl From<kreuzcrawl::AuthConfig> for AuthConfig {
-    fn from(val: kreuzcrawl::AuthConfig) -> Self {
-        match val {
-            kreuzcrawl::AuthConfig::Basic { .. } => Self::Basic,
-            kreuzcrawl::AuthConfig::Bearer { .. } => Self::Bearer,
-            kreuzcrawl::AuthConfig::Header { .. } => Self::Header,
-        }
-    }
-}
-
 impl From<LinkType> for kreuzcrawl::LinkType {
     fn from(val: LinkType) -> Self {
         match val {
@@ -2984,16 +3003,6 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
             kreuzcrawl::AssetCategory::Archive => Self::Archive,
             kreuzcrawl::AssetCategory::Data => Self::Data,
             kreuzcrawl::AssetCategory::Other => Self::Other,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
-    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
-        match val {
-            kreuzcrawl::CrawlEvent::Page(..) => Self::Page,
-            kreuzcrawl::CrawlEvent::Error { .. } => Self::Error,
-            kreuzcrawl::CrawlEvent::Complete { .. } => Self::Complete,
         }
     }
 }

@@ -3,36 +3,37 @@ package dev.kreuzberg.kreuzcrawl;
 
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ScrapeResult(
-    short statusCode,
-    String contentType,
+    @JsonProperty("status_code") short statusCode,
+    @JsonProperty("content_type") String contentType,
     String html,
-    long bodySize,
+    @JsonProperty("body_size") long bodySize,
     PageMetadata metadata,
     List<LinkInfo> links,
     List<ImageInfo> images,
     List<FeedInfo> feeds,
-    List<JsonLdEntry> jsonLd,
-    boolean isAllowed,
-    Optional<Long> crawlDelay,
-    boolean noindexDetected,
-    boolean nofollowDetected,
-    Optional<String> xRobotsTag,
-    boolean isPdf,
-    boolean wasSkipped,
-    Optional<String> detectedCharset,
-    boolean mainContentOnly,
-    boolean authHeaderSent,
-    Optional<ResponseMeta> responseMeta,
+    @JsonProperty("json_ld") List<JsonLdEntry> jsonLd,
+    @JsonProperty("is_allowed") boolean isAllowed,
+    @JsonProperty("crawl_delay") Optional<Long> crawlDelay,
+    @JsonProperty("noindex_detected") boolean noindexDetected,
+    @JsonProperty("nofollow_detected") boolean nofollowDetected,
+    @JsonProperty("x_robots_tag") Optional<String> xRobotsTag,
+    @JsonProperty("is_pdf") boolean isPdf,
+    @JsonProperty("was_skipped") boolean wasSkipped,
+    @JsonProperty("detected_charset") Optional<String> detectedCharset,
+    @JsonProperty("main_content_only") boolean mainContentOnly,
+    @JsonProperty("auth_header_sent") boolean authHeaderSent,
+    @JsonProperty("response_meta") Optional<ResponseMeta> responseMeta,
     List<DownloadedAsset> assets,
-    boolean jsRenderHint,
-    boolean browserUsed,
+    @JsonProperty("js_render_hint") boolean jsRenderHint,
+    @JsonProperty("browser_used") boolean browserUsed,
     Optional<MarkdownResult> markdown,
-    Optional<String> extractedData,
-    Optional<ExtractionMeta> extractionMeta,
+    @JsonProperty("extracted_data") Optional<String> extractedData,
+    @JsonProperty("extraction_meta") Optional<ExtractionMeta> extractionMeta,
     Optional<byte[]> screenshot,
-    Optional<DownloadedDocument> downloadedDocument
+    @JsonProperty("downloaded_document") Optional<DownloadedDocument> downloadedDocument
 ) {
     public static ScrapeResultBuilder builder() {
         return new ScrapeResultBuilder();

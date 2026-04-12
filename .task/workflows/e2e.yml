@@ -49,12 +49,24 @@ tasks:
       - task: c:e2e:generate
 
   test:all:
-    desc: Run all E2E tests across all supported languages
+    desc: Run all E2E tests across all supported languages (builds bindings, starts mock server)
     deps: [mock-server:start]
     env:
       MOCK_SERVER_URL:
         sh: cat .mock-server.env 2>/dev/null | grep MOCK_SERVER_URL | cut -d= -f2
     cmds:
+      # Build bindings before testing.
+      - task: rust:build
+      - task: python:build:dev
+      - task: node:build:dev
+      - task: rust:ffi:build
+      - task: go:build
+      - task: java:build
+      - task: csharp:build
+      - task: ruby:build
+      - task: php:build
+      - task: elixir:build
+      # Run e2e tests.
       - task: rust:e2e:test
       - task: python:e2e:test
       - task: node:e2e:test
@@ -64,6 +76,16 @@ tasks:
       - task: ruby:e2e:test
       - task: php:e2e:test
       - task: elixir:e2e:test
+      - defer: { task: mock-server:stop }
+
+  test:quick:
+    desc: Quick E2E test (Rust only — fastest feedback)
+    deps: [mock-server:start, rust:build]
+    env:
+      MOCK_SERVER_URL:
+        sh: cat .mock-server.env 2>/dev/null | grep MOCK_SERVER_URL | cut -d= -f2
+    cmds:
+      - task: rust:e2e:test
       - defer: { task: mock-server:stop }
 
   verify:all:

@@ -1347,7 +1347,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
             headers: val
                 .headers
                 .into_iter()
-                .map(|(k, v)| (k.to_string(), v.to_string()))
+                .map(|(k, v)| (format!("{:?}", k), format!("{:?}", v)))
                 .collect(),
         }
     }
@@ -2240,6 +2240,21 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
     }
 }
 
+impl From<CrawlEvent> for kreuzcrawl::CrawlEvent {
+    fn from(val: CrawlEvent) -> Self {
+        match val {
+            CrawlEvent::Page => Self::Page(Default::default()),
+            CrawlEvent::Error => Self::Error {
+                url: Default::default(),
+                error: Default::default(),
+            },
+            CrawlEvent::Complete => Self::Complete {
+                pages_crawled: Default::default(),
+            },
+        }
+    }
+}
+
 impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
     fn from(val: kreuzcrawl::CrawlEvent) -> Self {
         match val {
@@ -2256,4 +2271,4 @@ fn crawl_error_to_rustler_err(e: kreuzcrawl::CrawlError) -> String {
     e.to_string()
 }
 
-rustler::init!("Elixir.Kreuzcrawl");
+rustler::init!("Elixir.Kreuzcrawl.Native");

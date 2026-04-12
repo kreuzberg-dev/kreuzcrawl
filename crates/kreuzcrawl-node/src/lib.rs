@@ -907,7 +907,7 @@ impl From<kreuzcrawl::DownloadedDocument> for JsDownloadedDocument {
             headers: Some(
                 val.headers
                     .into_iter()
-                    .map(|(k, v)| (k.to_string(), v.to_string()))
+                    .map(|(k, v)| (format!("{k:?}"), format!("{v:?}")))
                     .collect(),
             ),
         }
@@ -1838,6 +1838,21 @@ impl From<kreuzcrawl::AssetCategory> for JsAssetCategory {
             kreuzcrawl::AssetCategory::Archive => Self::Archive,
             kreuzcrawl::AssetCategory::Data => Self::Data,
             kreuzcrawl::AssetCategory::Other => Self::Other,
+        }
+    }
+}
+
+impl From<JsCrawlEvent> for kreuzcrawl::CrawlEvent {
+    fn from(val: JsCrawlEvent) -> Self {
+        match val {
+            JsCrawlEvent::Page => Self::Page(Default::default()),
+            JsCrawlEvent::Error => Self::Error {
+                url: Default::default(),
+                error: Default::default(),
+            },
+            JsCrawlEvent::Complete => Self::Complete {
+                pages_crawled: Default::default(),
+            },
         }
     }
 }

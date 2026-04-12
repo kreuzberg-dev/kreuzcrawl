@@ -3,28 +3,29 @@ package dev.kreuzberg.kreuzcrawl;
 
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record CrawlPageResult(
     String url,
-    String normalizedUrl,
-    short statusCode,
-    String contentType,
+    @JsonProperty("normalized_url") String normalizedUrl,
+    @JsonProperty("status_code") short statusCode,
+    @JsonProperty("content_type") String contentType,
     String html,
-    long bodySize,
+    @JsonProperty("body_size") long bodySize,
     PageMetadata metadata,
     List<LinkInfo> links,
     List<ImageInfo> images,
     List<FeedInfo> feeds,
-    List<JsonLdEntry> jsonLd,
+    @JsonProperty("json_ld") List<JsonLdEntry> jsonLd,
     long depth,
-    boolean stayedOnDomain,
-    boolean wasSkipped,
-    boolean isPdf,
-    Optional<String> detectedCharset,
+    @JsonProperty("stayed_on_domain") boolean stayedOnDomain,
+    @JsonProperty("was_skipped") boolean wasSkipped,
+    @JsonProperty("is_pdf") boolean isPdf,
+    @JsonProperty("detected_charset") Optional<String> detectedCharset,
     Optional<MarkdownResult> markdown,
-    Optional<String> extractedData,
-    Optional<ExtractionMeta> extractionMeta,
-    Optional<DownloadedDocument> downloadedDocument
+    @JsonProperty("extracted_data") Optional<String> extractedData,
+    @JsonProperty("extraction_meta") Optional<ExtractionMeta> extractionMeta,
+    @JsonProperty("downloaded_document") Optional<DownloadedDocument> downloadedDocument
 ) {
     public static CrawlPageResultBuilder builder() {
         return new CrawlPageResultBuilder();

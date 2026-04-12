@@ -23,14 +23,6 @@ class BrowserWait(str, Enum):
     FIXED = "fixed"
 
 
-class AuthConfig(str, Enum):
-    """Authentication configuration."""
-
-    BASIC = "basic"
-    BEARER = "bearer"
-    HEADER = "header"
-
-
 class LinkType(str, Enum):
     """The classification of a link."""
 
@@ -76,16 +68,16 @@ class AssetCategory(str, Enum):
 class ExtractionMeta:
     """Metadata about an LLM extraction pass."""
 
-    cost: float | None = 0.0
+    cost: float | None = None
     """Estimated cost of the LLM call in USD."""
 
-    prompt_tokens: int | None = 0
+    prompt_tokens: int | None = None
     """Number of prompt (input) tokens consumed."""
 
-    completion_tokens: int | None = 0
+    completion_tokens: int | None = None
     """Number of completion (output) tokens generated."""
 
-    model: str | None = ""
+    model: str | None = None
     """The model identifier used for extraction."""
 
     chunks_processed: int = 0
@@ -99,10 +91,10 @@ class ProxyConfig:
     url: str = ""
     """Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080")."""
 
-    username: str | None = ""
+    username: str | None = None
     """Optional username for proxy authentication."""
 
-    password: str | None = ""
+    password: str | None = None
     """Optional password for proxy authentication."""
 
 
@@ -113,19 +105,19 @@ class BrowserConfig:
     mode: str = "auto"
     """When to use the headless browser fallback."""
 
-    endpoint: str | None = ""
+    endpoint: str | None = None
     """CDP WebSocket endpoint for connecting to an external browser instance."""
 
-    timeout: int = 0
+    timeout: int | None = None
     """Timeout for browser page load and rendering (in milliseconds when serialized)."""
 
     wait: str = "network_idle"
     """Wait strategy after browser navigation."""
 
-    wait_selector: str | None = ""
+    wait_selector: str | None = None
     """CSS selector to wait for when `wait` is `Selector`."""
 
-    extra_wait: int | None = 0
+    extra_wait: int | None = None
     """Extra time to wait after the wait condition is met."""
 
 
@@ -133,19 +125,19 @@ class BrowserConfig:
 class CrawlConfig:
     """Configuration for crawl, scrape, and map operations."""
 
-    max_depth: int | None = 0
+    max_depth: int | None = None
     """Maximum crawl depth (number of link hops from the start URL)."""
 
-    max_pages: int | None = 0
+    max_pages: int | None = None
     """Maximum number of pages to crawl."""
 
-    max_concurrent: int | None = 0
+    max_concurrent: int | None = None
     """Maximum number of concurrent requests."""
 
     respect_robots_txt: bool = False
     """Whether to respect robots.txt directives."""
 
-    user_agent: str | None = ""
+    user_agent: str | None = None
     """Custom user-agent string."""
 
     stay_on_domain: bool = False
@@ -163,7 +155,7 @@ class CrawlConfig:
     custom_headers: dict[str, str] = field(default_factory=dict)
     """Custom HTTP headers to send with each request."""
 
-    request_timeout: int = 0
+    request_timeout: int | None = None
     """Timeout for individual HTTP requests (in milliseconds when serialized)."""
 
     max_redirects: int = 10
@@ -178,10 +170,10 @@ class CrawlConfig:
     cookies_enabled: bool = False
     """Whether to enable cookie handling."""
 
-    auth: str | None = "basic"
+    auth: dict | None = None
     """Authentication configuration."""
 
-    max_body_size: int | None = 0
+    max_body_size: int | None = None
     """Maximum response body size in bytes."""
 
     main_content_only: bool = False
@@ -190,10 +182,10 @@ class CrawlConfig:
     remove_tags: list[str] = field(default_factory=list)
     """CSS selectors for tags to remove from HTML before processing."""
 
-    map_limit: int | None = 0
+    map_limit: int | None = None
     """Maximum number of URLs to return from a map operation."""
 
-    map_search: str | None = ""
+    map_search: str | None = None
     """Search filter for map results (case-insensitive substring match on URLs)."""
 
     download_assets: bool = False
@@ -202,10 +194,10 @@ class CrawlConfig:
     asset_types: list[str] = field(default_factory=list)
     """Filter for asset categories to download."""
 
-    max_asset_size: int | None = 0
+    max_asset_size: int | None = None
     """Maximum size in bytes for individual asset downloads."""
 
-    browser: Any = None
+    browser: Any | None = None
     """Browser configuration."""
 
     proxy: Any | None = None
@@ -220,16 +212,16 @@ class CrawlConfig:
     download_documents: bool = True
     """Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them."""
 
-    document_max_size: int | None = 0
+    document_max_size: int | None = None
     """Maximum size in bytes for document downloads. Defaults to 50 MB."""
 
     document_mime_types: list[str] = field(default_factory=list)
     """Allowlist of MIME types to download. If empty, uses built-in defaults."""
 
-    warc_output: str | None = ""
+    warc_output: str | None = None
     """Path to write WARC output. If `None`, WARC output is disabled."""
 
-    browser_profile: str | None = ""
+    browser_profile: str | None = None
     """Named browser profile for persistent sessions (cookies, localStorage)."""
 
     save_browser_profile: bool = False
@@ -252,7 +244,7 @@ class DownloadedDocument:
     size: int = 0
     """Size of the document in bytes."""
 
-    filename: str | None = ""
+    filename: str | None = None
     """Filename extracted from Content-Disposition or URL path."""
 
     content_hash: str = ""
@@ -275,7 +267,7 @@ class InteractionResult:
     final_url: str = ""
     """Final page URL (may have changed due to navigation)."""
 
-    screenshot: bytes | None = b""
+    screenshot: bytes | None = None
     """Screenshot taken after all actions, if requested."""
 
 
@@ -292,10 +284,10 @@ class ActionResult:
     success: bool = False
     """Whether the action completed successfully."""
 
-    data: str | None = ""
+    data: str | None = None
     """Action-specific return data (screenshot bytes, JS return value, scraped HTML)."""
 
-    error: str | None = ""
+    error: str | None = None
     """Error message if the action failed."""
 
 
@@ -315,7 +307,7 @@ class ScrapeResult:
     body_size: int = 0
     """The size of the response body in bytes."""
 
-    metadata: Any = None
+    metadata: Any | None = None
     """Extracted metadata from the page."""
 
     links: list[Any] = field(default_factory=list)
@@ -333,7 +325,7 @@ class ScrapeResult:
     is_allowed: bool = False
     """Whether the URL is allowed by robots.txt."""
 
-    crawl_delay: int | None = 0
+    crawl_delay: int | None = None
     """The crawl delay from robots.txt, in seconds."""
 
     noindex_detected: bool = False
@@ -342,7 +334,7 @@ class ScrapeResult:
     nofollow_detected: bool = False
     """Whether a nofollow directive was detected."""
 
-    x_robots_tag: str | None = ""
+    x_robots_tag: str | None = None
     """The X-Robots-Tag header value, if present."""
 
     is_pdf: bool = False
@@ -351,7 +343,7 @@ class ScrapeResult:
     was_skipped: bool = False
     """Whether the page was skipped (binary or PDF content)."""
 
-    detected_charset: str | None = ""
+    detected_charset: str | None = None
     """The detected character set encoding."""
 
     main_content_only: bool = False
@@ -375,13 +367,13 @@ class ScrapeResult:
     markdown: Any | None = None
     """Markdown conversion of the page content."""
 
-    extracted_data: str | None = ""
+    extracted_data: str | None = None
     """Structured data extracted by LLM. Populated when using LlmExtractor."""
 
     extraction_meta: Any | None = None
     """Metadata about the LLM extraction pass (cost, tokens, model)."""
 
-    screenshot: bytes | None = b""
+    screenshot: bytes | None = None
     """Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled."""
 
     downloaded_document: Any | None = None
@@ -410,7 +402,7 @@ class CrawlPageResult:
     body_size: int = 0
     """The size of the response body in bytes."""
 
-    metadata: Any = None
+    metadata: Any | None = None
     """Extracted metadata from the page."""
 
     links: list[Any] = field(default_factory=list)
@@ -437,13 +429,13 @@ class CrawlPageResult:
     is_pdf: bool = False
     """Whether the content is a PDF."""
 
-    detected_charset: str | None = ""
+    detected_charset: str | None = None
     """The detected character set encoding."""
 
     markdown: Any | None = None
     """Markdown conversion of the page content."""
 
-    extracted_data: str | None = ""
+    extracted_data: str | None = None
     """Structured data extracted by LLM. Populated when using LlmExtractor."""
 
     extraction_meta: Any | None = None
@@ -469,7 +461,7 @@ class CrawlResult:
     was_skipped: bool = False
     """Whether any page was skipped during crawling."""
 
-    error: str | None = ""
+    error: str | None = None
     """An error message, if the crawl encountered an issue."""
 
     cookies: list[Any] = field(default_factory=list)
@@ -486,13 +478,13 @@ class SitemapUrl:
     url: str = ""
     """The URL."""
 
-    lastmod: str | None = ""
+    lastmod: str | None = None
     """The last modification date, if present."""
 
-    changefreq: str | None = ""
+    changefreq: str | None = None
     """The change frequency, if present."""
 
-    priority: str | None = ""
+    priority: str | None = None
     """The priority, if present."""
 
 
@@ -511,7 +503,7 @@ class MarkdownResult:
     content: str = ""
     """Converted markdown text."""
 
-    document_structure: str | None = ""
+    document_structure: str | None = None
     """Structured document tree with semantic nodes."""
 
     tables: list[str] = field(default_factory=list)
@@ -523,7 +515,7 @@ class MarkdownResult:
     citations: Any | None = None
     """Content with links replaced by numbered citations."""
 
-    fit_content: str | None = ""
+    fit_content: str | None = None
     """Content-filtered markdown optimized for LLM consumption."""
 
 
@@ -535,8 +527,8 @@ class CachedPage:
     status_code: int = 0
     content_type: str = ""
     body: str = ""
-    etag: str | None = ""
-    last_modified: str | None = ""
+    etag: str | None = None
+    last_modified: str | None = None
     cached_at: int = 0
 
 
@@ -553,7 +545,7 @@ class LinkInfo:
     link_type: str = "internal"
     """The classification of the link."""
 
-    rel: str | None = ""
+    rel: str | None = None
     """The `rel` attribute value, if present."""
 
     nofollow: bool = False
@@ -567,13 +559,13 @@ class ImageInfo:
     url: str = ""
     """The image URL."""
 
-    alt: str | None = ""
+    alt: str | None = None
     """The alt text, if present."""
 
-    width: int | None = 0
+    width: int | None = None
     """The width attribute, if present and parseable."""
 
-    height: int | None = 0
+    height: int | None = None
     """The height attribute, if present and parseable."""
 
     source: str = "img"
@@ -587,7 +579,7 @@ class FeedInfo:
     url: str = ""
     """The feed URL."""
 
-    title: str | None = ""
+    title: str | None = None
     """The feed title, if present."""
 
     feed_type: str = "rss"
@@ -601,7 +593,7 @@ class JsonLdEntry:
     schema_type: str = ""
     """The `@type` value from the JSON-LD object."""
 
-    name: str | None = ""
+    name: str | None = None
     """The `name` value, if present."""
 
     raw: str = ""
@@ -618,10 +610,10 @@ class CookieInfo:
     value: str = ""
     """The cookie value."""
 
-    domain: str | None = ""
+    domain: str | None = None
     """The cookie domain, if specified."""
 
-    path: str | None = ""
+    path: str | None = None
     """The cookie path, if specified."""
 
 
@@ -635,7 +627,7 @@ class DownloadedAsset:
     content_hash: str = ""
     """The SHA-256 content hash of the asset."""
 
-    mime_type: str | None = ""
+    mime_type: str | None = None
     """The MIME type from the Content-Type header."""
 
     size: int = 0
@@ -644,7 +636,7 @@ class DownloadedAsset:
     asset_category: str = "image"
     """The category of the asset."""
 
-    html_tag: str | None = ""
+    html_tag: str | None = None
     """The HTML tag that referenced this asset (e.g., "link", "script", "img")."""
 
 
@@ -652,16 +644,16 @@ class DownloadedAsset:
 class ArticleMetadata:
     """Article metadata extracted from `article:*` Open Graph tags."""
 
-    published_time: str | None = ""
+    published_time: str | None = None
     """The article publication time."""
 
-    modified_time: str | None = ""
+    modified_time: str | None = None
     """The article modification time."""
 
-    author: str | None = ""
+    author: str | None = None
     """The article author."""
 
-    section: str | None = ""
+    section: str | None = None
     """The article section."""
 
     tags: list[str] = field(default_factory=list)
@@ -689,10 +681,10 @@ class FaviconInfo:
     rel: str = ""
     """The `rel` attribute (e.g., "icon", "apple-touch-icon")."""
 
-    sizes: str | None = ""
+    sizes: str | None = None
     """The `sizes` attribute, if present."""
 
-    mime_type: str | None = ""
+    mime_type: str | None = None
     """The MIME type, if present."""
 
 
@@ -711,25 +703,25 @@ class HeadingInfo:
 class ResponseMeta:
     """Response metadata extracted from HTTP headers."""
 
-    etag: str | None = ""
+    etag: str | None = None
     """The ETag header value."""
 
-    last_modified: str | None = ""
+    last_modified: str | None = None
     """The Last-Modified header value."""
 
-    cache_control: str | None = ""
+    cache_control: str | None = None
     """The Cache-Control header value."""
 
-    server: str | None = ""
+    server: str | None = None
     """The Server header value."""
 
-    x_powered_by: str | None = ""
+    x_powered_by: str | None = None
     """The X-Powered-By header value."""
 
-    content_language: str | None = ""
+    content_language: str | None = None
     """The Content-Language header value."""
 
-    content_encoding: str | None = ""
+    content_encoding: str | None = None
     """The Content-Encoding header value."""
 
 
@@ -737,133 +729,133 @@ class ResponseMeta:
 class PageMetadata:
     """Metadata extracted from an HTML page's `<meta>` tags and `<title>` element."""
 
-    title: str | None = ""
+    title: str | None = None
     """The page title from the `<title>` element."""
 
-    description: str | None = ""
+    description: str | None = None
     """The meta description."""
 
-    canonical_url: str | None = ""
+    canonical_url: str | None = None
     """The canonical URL from `<link rel="canonical">`."""
 
-    keywords: str | None = ""
+    keywords: str | None = None
     """Keywords from `<meta name="keywords">`."""
 
-    author: str | None = ""
+    author: str | None = None
     """Author from `<meta name="author">`."""
 
-    viewport: str | None = ""
+    viewport: str | None = None
     """Viewport content from `<meta name="viewport">`."""
 
-    theme_color: str | None = ""
+    theme_color: str | None = None
     """Theme color from `<meta name="theme-color">`."""
 
-    generator: str | None = ""
+    generator: str | None = None
     """Generator from `<meta name="generator">`."""
 
-    robots: str | None = ""
+    robots: str | None = None
     """Robots content from `<meta name="robots">`."""
 
-    html_lang: str | None = ""
+    html_lang: str | None = None
     """The `lang` attribute from the `<html>` element."""
 
-    html_dir: str | None = ""
+    html_dir: str | None = None
     """The `dir` attribute from the `<html>` element."""
 
-    og_title: str | None = ""
+    og_title: str | None = None
     """Open Graph title."""
 
-    og_type: str | None = ""
+    og_type: str | None = None
     """Open Graph type."""
 
-    og_image: str | None = ""
+    og_image: str | None = None
     """Open Graph image URL."""
 
-    og_description: str | None = ""
+    og_description: str | None = None
     """Open Graph description."""
 
-    og_url: str | None = ""
+    og_url: str | None = None
     """Open Graph URL."""
 
-    og_site_name: str | None = ""
+    og_site_name: str | None = None
     """Open Graph site name."""
 
-    og_locale: str | None = ""
+    og_locale: str | None = None
     """Open Graph locale."""
 
-    og_video: str | None = ""
+    og_video: str | None = None
     """Open Graph video URL."""
 
-    og_audio: str | None = ""
+    og_audio: str | None = None
     """Open Graph audio URL."""
 
-    og_locale_alternates: list[str] | None = field(default_factory=list)
+    og_locale_alternates: list[str] | None = None
     """Open Graph locale alternates."""
 
-    twitter_card: str | None = ""
+    twitter_card: str | None = None
     """Twitter card type."""
 
-    twitter_title: str | None = ""
+    twitter_title: str | None = None
     """Twitter title."""
 
-    twitter_description: str | None = ""
+    twitter_description: str | None = None
     """Twitter description."""
 
-    twitter_image: str | None = ""
+    twitter_image: str | None = None
     """Twitter image URL."""
 
-    twitter_site: str | None = ""
+    twitter_site: str | None = None
     """Twitter site handle."""
 
-    twitter_creator: str | None = ""
+    twitter_creator: str | None = None
     """Twitter creator handle."""
 
-    dc_title: str | None = ""
+    dc_title: str | None = None
     """Dublin Core title."""
 
-    dc_creator: str | None = ""
+    dc_creator: str | None = None
     """Dublin Core creator."""
 
-    dc_subject: str | None = ""
+    dc_subject: str | None = None
     """Dublin Core subject."""
 
-    dc_description: str | None = ""
+    dc_description: str | None = None
     """Dublin Core description."""
 
-    dc_publisher: str | None = ""
+    dc_publisher: str | None = None
     """Dublin Core publisher."""
 
-    dc_date: str | None = ""
+    dc_date: str | None = None
     """Dublin Core date."""
 
-    dc_type: str | None = ""
+    dc_type: str | None = None
     """Dublin Core type."""
 
-    dc_format: str | None = ""
+    dc_format: str | None = None
     """Dublin Core format."""
 
-    dc_identifier: str | None = ""
+    dc_identifier: str | None = None
     """Dublin Core identifier."""
 
-    dc_language: str | None = ""
+    dc_language: str | None = None
     """Dublin Core language."""
 
-    dc_rights: str | None = ""
+    dc_rights: str | None = None
     """Dublin Core rights."""
 
     article: Any | None = None
     """Article metadata from `article:*` Open Graph tags."""
 
-    hreflangs: list[Any] | None = field(default_factory=list)
+    hreflangs: list[Any] | None = None
     """Hreflang alternate links."""
 
-    favicons: list[Any] | None = field(default_factory=list)
+    favicons: list[Any] | None = None
     """Favicon and icon links."""
 
-    headings: list[Any] | None = field(default_factory=list)
+    headings: list[Any] | None = None
     """Heading elements (h1-h6)."""
 
-    word_count: int | None = 0
+    word_count: int | None = None
     """Computed word count of the page body text."""
 
 
@@ -895,7 +887,7 @@ class BatchScrapeResult:
     result: Any | None = None
     """The scrape result, if successful."""
 
-    error: str | None = ""
+    error: str | None = None
     """The error message, if the scrape failed."""
 
 
@@ -909,5 +901,5 @@ class BatchCrawlResult:
     result: Any | None = None
     """The crawl result, if successful."""
 
-    error: str | None = ""
+    error: str | None = None
     """The error message, if the crawl failed."""

@@ -3,14 +3,15 @@ package dev.kreuzberg.kreuzcrawl;
 
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record MarkdownResult(
     String content,
-    Optional<String> documentStructure,
+    @JsonProperty("document_structure") Optional<String> documentStructure,
     List<String> tables,
     List<String> warnings,
     Optional<CitationResult> citations,
-    Optional<String> fitContent
+    @JsonProperty("fit_content") Optional<String> fitContent
 ) {
     public static MarkdownResultBuilder builder() {
         return new MarkdownResultBuilder();

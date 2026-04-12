@@ -4786,6 +4786,21 @@ impl From<kreuzcrawl::AssetCategory> for JsAssetCategory {
     }
 }
 
+impl From<JsCrawlEvent> for kreuzcrawl::CrawlEvent {
+    fn from(val: JsCrawlEvent) -> Self {
+        match val {
+            JsCrawlEvent::Page => Self::Page(Default::default()),
+            JsCrawlEvent::Error => Self::Error {
+                url: Default::default(),
+                error: Default::default(),
+            },
+            JsCrawlEvent::Complete => Self::Complete {
+                pages_crawled: Default::default(),
+            },
+        }
+    }
+}
+
 impl From<kreuzcrawl::CrawlEvent> for JsCrawlEvent {
     fn from(val: kreuzcrawl::CrawlEvent) -> Self {
         match val {

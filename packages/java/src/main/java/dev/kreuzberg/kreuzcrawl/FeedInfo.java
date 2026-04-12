@@ -2,8 +2,13 @@
 package dev.kreuzberg.kreuzcrawl;
 
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record FeedInfo(String url, Optional<String> title, FeedType feedType) {
+public record FeedInfo(
+    String url,
+    Optional<String> title,
+    @JsonProperty("feed_type") FeedType feedType
+) {
     public static FeedInfoBuilder builder() {
         return new FeedInfoBuilder();
     }

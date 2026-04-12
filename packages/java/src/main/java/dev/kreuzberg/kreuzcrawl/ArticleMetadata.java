@@ -3,10 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ArticleMetadata(
-    Optional<String> publishedTime,
-    Optional<String> modifiedTime,
+    @JsonProperty("published_time") Optional<String> publishedTime,
+    @JsonProperty("modified_time") Optional<String> modifiedTime,
     Optional<String> author,
     Optional<String> section,
     List<String> tags

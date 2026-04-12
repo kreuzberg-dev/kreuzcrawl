@@ -3402,7 +3402,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
             size: val.size,
             filename: val.filename.as_ref().map(|v| format!("{:?}", v)),
             content_hash: format!("{:?}", val.content_hash),
-            headers: val.headers.into_iter().map(|(k, v)| (k.to_string(), v.to_string())).collect(),
+            headers: val.headers.into_iter().map(|(k, v)| (format!("{:?}", k), format!("{:?}", v))).collect(),
         }
     }
 }
@@ -4275,6 +4275,16 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
             kreuzcrawl::AssetCategory::Archive => Self::Archive,
             kreuzcrawl::AssetCategory::Data => Self::Data,
             kreuzcrawl::AssetCategory::Other => Self::Other,
+        }
+    }
+}
+
+impl From<CrawlEvent> for kreuzcrawl::CrawlEvent {
+    fn from(val: CrawlEvent) -> Self {
+        match val {
+            CrawlEvent::Page => Self::Page(Default::default()),
+            CrawlEvent::Error => Self::Error { url: Default::default(), error: Default::default() },
+            CrawlEvent::Complete => Self::Complete { pages_crawled: Default::default() },
         }
     }
 }

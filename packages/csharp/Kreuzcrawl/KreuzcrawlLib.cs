@@ -10,6 +10,12 @@ namespace Kreuzcrawl;
 
 public static class KreuzcrawlLib
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) },
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
     /// <summary>
     /// Create a new crawl engine with the given configuration.
     ///
@@ -19,12 +25,18 @@ public static class KreuzcrawlLib
     /// <param name="config">Optional.</param>
     public static CrawlEngineHandle CreateEngine(CrawlConfig? config)
     {
+        var configJson = config != null ? JsonSerializer.Serialize(config, JsonOptions) : "null";
+        var configHandle = NativeMethods.CrawlConfigFromJson(configJson);
         var result = NativeMethods.CreateEngine(
-            config!
+            configHandle
         );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        return JsonSerializer.Deserialize<CrawlEngineHandle>(json ?? "null")!;
+        var jsonPtr = NativeMethods.CrawlEngineHandleToJson(result);
+        var json = Marshal.PtrToStringUTF8(jsonPtr);
+        NativeMethods.FreeString(jsonPtr);
+        NativeMethods.CrawlEngineHandleFree(result);
+        var returnValue = JsonSerializer.Deserialize<CrawlEngineHandle>(json ?? "null", JsonOptions)!;
+        NativeMethods.CrawlConfigFree(configHandle);
+        return returnValue;
     }
 
     /// <summary>
@@ -36,15 +48,21 @@ public static class KreuzcrawlLib
     {
         ArgumentNullException.ThrowIfNull(engine);
         ArgumentNullException.ThrowIfNull(url);
+        var engineJson = JsonSerializer.Serialize(engine, JsonOptions);
+        var engineHandle = NativeMethods.CrawlEngineHandleFromJson(engineJson);
         return await Task.Run(() =>
         {
             var result = NativeMethods.Scrape(
-                engine,
+                engineHandle,
                 url
             );
-            var json = Marshal.PtrToStringUTF8(result);
-            NativeMethods.FreeString(result);
-            return JsonSerializer.Deserialize<ScrapeResult>(json ?? "null")!;
+            var jsonPtr = NativeMethods.ScrapeResultToJson(result);
+            var json = Marshal.PtrToStringUTF8(jsonPtr);
+            NativeMethods.FreeString(jsonPtr);
+            NativeMethods.ScrapeResultFree(result);
+            var returnValue = JsonSerializer.Deserialize<ScrapeResult>(json ?? "null", JsonOptions)!;
+            NativeMethods.CrawlEngineHandleFree(engineHandle);
+            return returnValue;
         });
     }
 
@@ -57,15 +75,21 @@ public static class KreuzcrawlLib
     {
         ArgumentNullException.ThrowIfNull(engine);
         ArgumentNullException.ThrowIfNull(url);
+        var engineJson = JsonSerializer.Serialize(engine, JsonOptions);
+        var engineHandle = NativeMethods.CrawlEngineHandleFromJson(engineJson);
         return await Task.Run(() =>
         {
             var result = NativeMethods.Crawl(
-                engine,
+                engineHandle,
                 url
             );
-            var json = Marshal.PtrToStringUTF8(result);
-            NativeMethods.FreeString(result);
-            return JsonSerializer.Deserialize<CrawlResult>(json ?? "null")!;
+            var jsonPtr = NativeMethods.CrawlResultToJson(result);
+            var json = Marshal.PtrToStringUTF8(jsonPtr);
+            NativeMethods.FreeString(jsonPtr);
+            NativeMethods.CrawlResultFree(result);
+            var returnValue = JsonSerializer.Deserialize<CrawlResult>(json ?? "null", JsonOptions)!;
+            NativeMethods.CrawlEngineHandleFree(engineHandle);
+            return returnValue;
         });
     }
 
@@ -78,15 +102,21 @@ public static class KreuzcrawlLib
     {
         ArgumentNullException.ThrowIfNull(engine);
         ArgumentNullException.ThrowIfNull(url);
+        var engineJson = JsonSerializer.Serialize(engine, JsonOptions);
+        var engineHandle = NativeMethods.CrawlEngineHandleFromJson(engineJson);
         return await Task.Run(() =>
         {
             var result = NativeMethods.MapUrls(
-                engine,
+                engineHandle,
                 url
             );
-            var json = Marshal.PtrToStringUTF8(result);
-            NativeMethods.FreeString(result);
-            return JsonSerializer.Deserialize<MapResult>(json ?? "null")!;
+            var jsonPtr = NativeMethods.MapResultToJson(result);
+            var json = Marshal.PtrToStringUTF8(jsonPtr);
+            NativeMethods.FreeString(jsonPtr);
+            NativeMethods.MapResultFree(result);
+            var returnValue = JsonSerializer.Deserialize<MapResult>(json ?? "null", JsonOptions)!;
+            NativeMethods.CrawlEngineHandleFree(engineHandle);
+            return returnValue;
         });
     }
 
@@ -98,15 +128,19 @@ public static class KreuzcrawlLib
     public static async Task<List<BatchScrapeResult>> BatchScrape(CrawlEngineHandle engine, List<string> urls)
     {
         ArgumentNullException.ThrowIfNull(engine);
+        var engineJson = JsonSerializer.Serialize(engine, JsonOptions);
+        var engineHandle = NativeMethods.CrawlEngineHandleFromJson(engineJson);
         return await Task.Run(() =>
         {
             var result = NativeMethods.BatchScrape(
-                engine,
+                engineHandle,
                 urls
             );
             var json = Marshal.PtrToStringUTF8(result);
             NativeMethods.FreeString(result);
-            return JsonSerializer.Deserialize<List<BatchScrapeResult>>(json ?? "null")!;
+            var returnValue = JsonSerializer.Deserialize<List<BatchScrapeResult>>(json ?? "null", JsonOptions)!;
+            NativeMethods.CrawlEngineHandleFree(engineHandle);
+            return returnValue;
         });
     }
 
@@ -118,32 +152,42 @@ public static class KreuzcrawlLib
     public static async Task<List<BatchCrawlResult>> BatchCrawl(CrawlEngineHandle engine, List<string> urls)
     {
         ArgumentNullException.ThrowIfNull(engine);
+        var engineJson = JsonSerializer.Serialize(engine, JsonOptions);
+        var engineHandle = NativeMethods.CrawlEngineHandleFromJson(engineJson);
         return await Task.Run(() =>
         {
             var result = NativeMethods.BatchCrawl(
-                engine,
+                engineHandle,
                 urls
             );
             var json = Marshal.PtrToStringUTF8(result);
             NativeMethods.FreeString(result);
-            return JsonSerializer.Deserialize<List<BatchCrawlResult>>(json ?? "null")!;
+            var returnValue = JsonSerializer.Deserialize<List<BatchCrawlResult>>(json ?? "null", JsonOptions)!;
+            NativeMethods.CrawlEngineHandleFree(engineHandle);
+            return returnValue;
         });
     }
 
     public static BrowserConfig BrowserConfigDefault()
     {
         var result = NativeMethods.Default();
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        return JsonSerializer.Deserialize<BrowserConfig>(json ?? "null")!;
+        var jsonPtr = NativeMethods.BrowserConfigToJson(result);
+        var json = Marshal.PtrToStringUTF8(jsonPtr);
+        NativeMethods.FreeString(jsonPtr);
+        NativeMethods.BrowserConfigFree(result);
+        var returnValue = JsonSerializer.Deserialize<BrowserConfig>(json ?? "null", JsonOptions)!;
+        return returnValue;
     }
 
     public static CrawlConfig CrawlConfigDefault()
     {
         var result = NativeMethods.Default();
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        return JsonSerializer.Deserialize<CrawlConfig>(json ?? "null")!;
+        var jsonPtr = NativeMethods.CrawlConfigToJson(result);
+        var json = Marshal.PtrToStringUTF8(jsonPtr);
+        NativeMethods.FreeString(jsonPtr);
+        NativeMethods.CrawlConfigFree(result);
+        var returnValue = JsonSerializer.Deserialize<CrawlConfig>(json ?? "null", JsonOptions)!;
+        return returnValue;
     }
 
     private static KreuzcrawlException GetLastError()
