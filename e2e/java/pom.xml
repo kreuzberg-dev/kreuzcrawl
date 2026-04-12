@@ -15,13 +15,13 @@
         <junit.version>5.11.4</junit.version>
     </properties>
 
-    <!-- The Java package JAR must be pre-installed in the local Maven repo.
-         Run: mvn install -f ../../packages/java/pom.xml -DskipTests before testing. -->
     <dependencies>
         <dependency>
             <groupId>dev.kreuzberg.kreuzcrawl</groupId>
             <artifactId>kreuzcrawl</artifactId>
             <version>0.1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../../packages/java/target/kreuzcrawl-0.1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

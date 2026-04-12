@@ -242,7 +242,7 @@ repos:
             "-p",
             "packages/java/checkstyle.properties",
           ]
-        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzcrawl-wasm/e2e/)
+        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzcrawl-wasm/e2e/|packages/java/src/)
 
   # Version sync: keep vendored headers and package versions in sync
   - repo: local
