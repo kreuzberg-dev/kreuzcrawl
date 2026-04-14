@@ -949,22 +949,23 @@ namespace Kreuzcrawl {
 
     class KreuzcrawlApi
     {
-        public static function create_engine(?\Kreuzcrawl\CrawlConfig $config = null): \Kreuzcrawl\CrawlEngineHandle {}
-        public static function scrape_async(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\ScrapeResult {}
-        public static function crawl_async(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\CrawlResult {}
-        public static function map_urls_async(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\MapResult {}
+        public static function createEngine(?\Kreuzcrawl\CrawlConfig $config = null): \Kreuzcrawl\CrawlEngineHandle {}
+        public static function scrapeAsync(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\ScrapeResult {}
+        public static function crawlAsync(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\CrawlResult {}
+        public static function mapUrlsAsync(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\MapResult {}
         /**
          * @param \Kreuzcrawl\CrawlEngineHandle $engine
          * @param array<string> $urls
          * @return array<\Kreuzcrawl\BatchScrapeResult>
          */
-        public static function batch_scrape_async(\Kreuzcrawl\CrawlEngineHandle $engine, array $urls): array {}
+        public static function batchScrapeAsync(\Kreuzcrawl\CrawlEngineHandle $engine, array $urls): array {}
         /**
          * @param \Kreuzcrawl\CrawlEngineHandle $engine
          * @param array<string> $urls
          * @return array<\Kreuzcrawl\BatchCrawlResult>
          */
-        public static function batch_crawl_async(\Kreuzcrawl\CrawlEngineHandle $engine, array $urls): array {}
+        public static function batchCrawlAsync(\Kreuzcrawl\CrawlEngineHandle $engine, array $urls): array {}
+        public static function createEngineFromJson(?string $json = null): \Kreuzcrawl\CrawlEngineHandle {}
     }
 
 } // end namespace
