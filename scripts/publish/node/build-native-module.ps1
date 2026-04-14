@@ -4,4 +4,4 @@ $args = @("--platform", "--release", "--target", $env:TARGET, "--output-dir", ".
 if ($env:USE_NAPI_CROSS -eq "true") { $args += "--use-napi-cross" }
 if ($env:USE_CROSS -eq "true") { $args += "--use-cross" }
 
-pnpm --filter @kreuzcrawl/node exec napi build @args
+pnpm --filter @kreuzberg/kreuzcrawl exec napi build @args

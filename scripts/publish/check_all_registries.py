@@ -34,8 +34,8 @@ RESET = "\033[0m"
 CHECKS: list[tuple[str, str, str, dict[str, str]]] = [
     # (registry, package, label, kwargs)
     ("pypi", "kreuzcrawl", "PyPI", {}),
-    ("npm", "@kreuzcrawl/node", "npm (@kreuzcrawl/node)", {}),
-    ("npm", "@kreuzcrawl/wasm", "npm (WASM)", {}),
+    ("npm", "@kreuzberg/kreuzcrawl", "npm (@kreuzberg/kreuzcrawl)", {}),
+    ("npm", "@kreuzberg/kreuzcrawl-wasm", "npm (WASM)", {}),
     ("rubygems", "kreuzcrawl", "RubyGems", {}),
     ("cratesio", "kreuzcrawl", "crates.io (kreuzcrawl)", {}),
     ("cratesio", "kreuzcrawl-cli", "crates.io (cli)", {}),
@@ -54,7 +54,7 @@ GH_ASSET_CHECKS: list[tuple[str, str, dict[str, str]]] = [
     ("CLI binaries", "", {"asset_prefix": "kreuzcrawl-cli-"}),
     ("Go FFI", "", {"asset_prefix": "go-ffi-"}),
     ("C FFI", "", {"asset_prefix": "c-ffi-"}),
-    ("Elixir NIF", "", {"asset_prefix": "libkreuzcrawl_rustler-"}),
+    ("Elixir NIF", "", {"asset_prefix": "libkreuzcrawl_nif-"}),
     ("Homebrew bottles", "", {"asset_prefix": "kreuzcrawl-"}),
 ]
 

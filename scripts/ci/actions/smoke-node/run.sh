@@ -36,7 +36,7 @@ node -e "
   fs.writeFileSync('kreuzcrawl-node-pkg/package.json', JSON.stringify(pkg, null, 2) + '\n');
   const smokePkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   smokePkg.dependencies ||= {};
-  smokePkg.dependencies['@kreuzcrawl/node'] = 'file:./kreuzcrawl-node-pkg';
+  smokePkg.dependencies['@kreuzberg/kreuzcrawl'] = 'file:./kreuzcrawl-node-pkg';
   fs.writeFileSync('package.json', JSON.stringify(smokePkg, null, 2) + '\n');
 "
 

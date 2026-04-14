@@ -4,7 +4,7 @@ defmodule Kreuzcrawl.Native do
 
   use Rustler,
     otp_app: :kreuzcrawl,
-    crate: "kreuzcrawl_rustler"
+    crate: "kreuzcrawl_nif"
 
   def create_engine(_config), do: :erlang.nif_error(:nif_not_loaded)
   def scrape_async(_engine, _url), do: :erlang.nif_error(:nif_not_loaded)

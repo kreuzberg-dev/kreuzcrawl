@@ -186,7 +186,7 @@ jobs:
         uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: npm
-          package: "@kreuzcrawl/node"
+          package: "@kreuzberg/kreuzcrawl"
           version: ${{ needs.prepare.outputs.version }}
 
   check-wasm:
@@ -202,7 +202,7 @@ jobs:
         uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: npm
-          package: "@kreuzcrawl/wasm"
+          package: "@kreuzberg/kreuzcrawl-wasm"
           version: ${{ needs.prepare.outputs.version }}
 
   check-rubygems:
@@ -376,7 +376,7 @@ jobs:
           package: kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
           tag: ${{ needs.prepare.outputs.tag }}
-          asset-prefix: libkreuzcrawl_rustler-
+          asset-prefix: libkreuzcrawl_nif-
 
   check-cratesio:
     name: Check if Rust crate exists on crates.io
@@ -782,7 +782,7 @@ jobs:
         run: Remove-Item -Recurse -Force crates/kreuzcrawl-node\npm -ErrorAction SilentlyContinue
 
       - name: Create npm package structure
-        run: pnpm --filter @kreuzcrawl/node exec napi create-npm-dirs
+        run: pnpm --filter @kreuzberg/kreuzcrawl exec napi create-npm-dirs
 
       - name: Build native module
         if: runner.os != 'Windows'
@@ -2288,7 +2288,7 @@ jobs:
           prefix: elixir
 
       - name: Build Elixir native library
-        working-directory: packages/elixir/native/kreuzcrawl_rustler
+        working-directory: packages/elixir/native/kreuzcrawl_nif
         env:
           CARGO_BUILD_TARGET: ${{ matrix.settings.target }}
         run: cargo build --release --target ${{ matrix.settings.target }}
@@ -2301,7 +2301,7 @@ jobs:
           echo "=== Runner OS: ${{ runner.os }} ==="
           echo ""
           echo "=== All library files in workspace target ==="
-          find target -type f \( -name "*.so" -o -name "*.dylib" -o -name "*.dll" -o -name "libkreuzcrawl*" -o -name "kreuzcrawl_rustler*" \) 2>/dev/null | head -30 || echo "No libraries found"
+          find target -type f \( -name "*.so" -o -name "*.dylib" -o -name "*.dll" -o -name "libkreuzcrawl*" -o -name "kreuzcrawl_nif*" \) 2>/dev/null | head -30 || echo "No libraries found"
           echo ""
           echo "=== Expected location: target/${TARGET}/release/ ==="
           for f in target/"${TARGET}"/release/*kreuzcrawl*; do
@@ -2324,17 +2324,17 @@ jobs:
           # ARCHIVE_EXT is the extension used in tarball naming (rustler_precompiled expects .so for Unix)
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             ARCHIVE_EXT="dll"
-            LIB_NAME="kreuzcrawl_rustler.dll"
+            LIB_NAME="kreuzcrawl_nif.dll"
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
             ARCHIVE_EXT="so"  # rustler_precompiled expects .so for all Unix platforms
-            LIB_NAME="libkreuzcrawl_rustler.dylib"
+            LIB_NAME="libkreuzcrawl_nif.dylib"
           else
             ARCHIVE_EXT="so"
-            LIB_NAME="libkreuzcrawl_rustler.so"
+            LIB_NAME="libkreuzcrawl_nif.so"
           fi
 
           mkdir -p dist/elixir
-          ARTIFACT_NAME="libkreuzcrawl_rustler-v${VERSION}-nif-${NIF_VERSION}-${TARGET}.${ARCHIVE_EXT}"
+          ARTIFACT_NAME="libkreuzcrawl_nif-v${VERSION}-nif-${NIF_VERSION}-${TARGET}.${ARCHIVE_EXT}"
           TARBALL="${ARTIFACT_NAME}.tar.gz"
 
           # Try expected location first (workspace target dir), fallback to root release dir
@@ -2369,16 +2369,16 @@ jobs:
           # ARCHIVE_EXT is the extension used in tarball naming (rustler_precompiled expects .so for Unix)
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             ARCHIVE_EXT="dll"
-            LIB_NAME="kreuzcrawl_rustler.dll"
+            LIB_NAME="kreuzcrawl_nif.dll"
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
             ARCHIVE_EXT="so"  # rustler_precompiled expects .so for all Unix platforms
-            LIB_NAME="libkreuzcrawl_rustler.dylib"
+            LIB_NAME="libkreuzcrawl_nif.dylib"
           else
             ARCHIVE_EXT="so"
-            LIB_NAME="libkreuzcrawl_rustler.so"
+            LIB_NAME="libkreuzcrawl_nif.so"
           fi
 
-          ARTIFACT_NAME="libkreuzcrawl_rustler-v${VERSION}-nif-${NIF_VERSION}-${TARGET}.${ARCHIVE_EXT}"
+          ARTIFACT_NAME="libkreuzcrawl_nif-v${VERSION}-nif-${NIF_VERSION}-${TARGET}.${ARCHIVE_EXT}"
           TARBALL="${ARTIFACT_NAME}.tar.gz"
 
           # Try expected location first (workspace target dir), fallback to root release dir
@@ -2449,7 +2449,7 @@ jobs:
 
       - name: Verify musl library
         run: |
-          file dist/libkreuzcrawl_rustler.so
+          file dist/libkreuzcrawl_nif.so
           echo "Library built successfully for musl"
 
       - name: Package native libraries (NIF 2.16)
@@ -2461,10 +2461,10 @@ jobs:
           ARCHIVE_EXT="so"
 
           mkdir -p dist/elixir
-          ARTIFACT_NAME="libkreuzcrawl_rustler-v${VERSION}-nif-${NIF_VERSION}-${TARGET}.${ARCHIVE_EXT}"
+          ARTIFACT_NAME="libkreuzcrawl_nif-v${VERSION}-nif-${NIF_VERSION}-${TARGET}.${ARCHIVE_EXT}"
           TARBALL="${ARTIFACT_NAME}.tar.gz"
 
-          cp dist/libkreuzcrawl_rustler.so "${ARTIFACT_NAME}"
+          cp dist/libkreuzcrawl_nif.so "${ARTIFACT_NAME}"
           tar -czf "dist/elixir/${TARBALL}" "${ARTIFACT_NAME}"
           echo "Created: dist/elixir/${TARBALL}"
 
@@ -2476,10 +2476,10 @@ jobs:
           NIF_VERSION="2.17"
           ARCHIVE_EXT="so"
 
-          ARTIFACT_NAME="libkreuzcrawl_rustler-v${VERSION}-nif-${NIF_VERSION}-${TARGET}.${ARCHIVE_EXT}"
+          ARTIFACT_NAME="libkreuzcrawl_nif-v${VERSION}-nif-${NIF_VERSION}-${TARGET}.${ARCHIVE_EXT}"
           TARBALL="${ARTIFACT_NAME}.tar.gz"
 
-          cp dist/libkreuzcrawl_rustler.so "${ARTIFACT_NAME}"
+          cp dist/libkreuzcrawl_nif.so "${ARTIFACT_NAME}"
           tar -czf "dist/elixir/${TARBALL}" "${ARTIFACT_NAME}"
           echo "Created: dist/elixir/${TARBALL}"
 
@@ -2842,7 +2842,7 @@ jobs:
         uses: kreuzberg-dev/actions/check-registry@v1
         with:
           registry: npm
-          package: "@kreuzcrawl/node"
+          package: "@kreuzberg/kreuzcrawl"
           version: ${{ needs.prepare.outputs.version }}
 
       - name: Publish native binary packages
@@ -2860,7 +2860,7 @@ jobs:
         uses: kreuzberg-dev/actions/wait-for-package@v1
         with:
           registry: npm
-          package: "@kreuzcrawl/node-linux-x64-gnu"
+          package: "@kreuzberg/kreuzcrawl-linux-x64-gnu"
           version: ${{ needs.prepare.outputs.version }}
           max-attempts: "25"
 
@@ -2869,7 +2869,7 @@ jobs:
         uses: kreuzberg-dev/actions/wait-for-package@v1
         with:
           registry: npm
-          package: "@kreuzcrawl/node-linux-arm64-gnu"
+          package: "@kreuzberg/kreuzcrawl-linux-arm64-gnu"
           version: ${{ needs.prepare.outputs.version }}
           max-attempts: "25"
 
@@ -2889,7 +2889,7 @@ jobs:
 
       - name: npm already published summary
         if: ${{ steps.recheck.outputs.exists == 'true' }}
-        run: echo "Node package @kreuzcrawl/node@${{ needs.prepare.outputs.version }} already published on npm — skipped." >> "$GITHUB_STEP_SUMMARY"
+        run: echo "Node package @kreuzberg/kreuzcrawl@${{ needs.prepare.outputs.version }} already published on npm — skipped." >> "$GITHUB_STEP_SUMMARY"
 
   publish-wasm:
     name: Publish WASM package
@@ -2954,13 +2954,18 @@ jobs:
 
       - name: Extract version from package.json
         id: version
-        run: echo "version=$(jq -r '.version' crates/kreuzcrawl-wasm/package.json)" >> "$GITHUB_OUTPUT"
+        run: |
+          if [ -f crates/kreuzcrawl-wasm/package.json ]; then
+            echo "version=$(jq -r '.version' crates/kreuzcrawl-wasm/package.json)" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=$(grep '^version' crates/kreuzcrawl-wasm/Cargo.toml | head -1 | cut -d'\"' -f2)" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Check if version already published to npm
         id: npm_check
         env:
           VERSION: ${{ steps.version.outputs.version }}
-        run: scripts/publish/check-npm-version.sh "$VERSION" "@kreuzcrawl/wasm" >> "$GITHUB_OUTPUT"
+        run: scripts/publish/check-npm-version.sh "$VERSION" "@kreuzberg/kreuzcrawl-wasm" >> "$GITHUB_OUTPUT"
 
       - name: Publish to npm
         if: ${{ steps.npm_check.outputs.exists != 'true' }}
@@ -2977,7 +2982,7 @@ jobs:
         uses: kreuzberg-dev/actions/wait-for-package@v1
         with:
           registry: npm
-          package: "@kreuzcrawl/wasm"
+          package: "@kreuzberg/kreuzcrawl-wasm"
           version: ${{ needs.prepare.outputs.version }}
           max-attempts: "25"
 

@@ -19,8 +19,8 @@ if [ "$use_cross" = "true" ]; then
   args+=(--use-cross)
 fi
 
-echo "Running: pnpm --filter @kreuzcrawl/node exec napi build ${args[*]}"
-pnpm --filter @kreuzcrawl/node exec napi build "${args[@]}"
+echo "Running: pnpm --filter @kreuzberg/kreuzcrawl exec napi build ${args[*]}"
+pnpm --filter @kreuzberg/kreuzcrawl exec napi build "${args[@]}"
 
 artifacts_dir="crates/kreuzcrawl-node/artifacts"
 echo ""
