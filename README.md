@@ -45,6 +45,8 @@
   </a>
 </div>
 
+<img width="3384" height="573" alt="Kreuzcrawl" src="https://github.com/user-attachments/assets/1b6c6ad7-3b6d-4171-b1c9-f2026cc9deb8" />
+
 <div align="center" style="margin-top: 20px;">
   <a href="https://discord.gg/xt9WY3GnKR">
       <img height="22" src="https://img.shields.io/badge/Discord-Join%20our%20community-7289da?logo=discord&logoColor=white" alt="Discord">
@@ -73,41 +75,25 @@ High-performance Rust web crawling engine for structured data extraction. Scrape
 
 ## Installation
 
-### Scripting Languages
-
 | Language | Package | Install |
 |----------|---------|---------|
 | **[Python](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/python)** | [kreuzcrawl](https://pypi.org/project/kreuzcrawl/) | `pip install kreuzcrawl` |
+| **[Node.js](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/typescript)** | [@kreuzberg/kreuzcrawl](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl) | `npm install @kreuzberg/kreuzcrawl` |
+| **[Rust](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl)** | [kreuzcrawl](https://crates.io/crates/kreuzcrawl) | `cargo add kreuzcrawl` |
+| **[Go](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/go)** | [pkg.go.dev](https://pkg.go.dev/github.com/kreuzberg-dev/kreuzcrawl/packages/go) | `go get github.com/kreuzberg-dev/kreuzcrawl/packages/go` |
+| **[Java](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java)** | [Maven Central](https://central.sonatype.com/artifact/dev.kreuzberg.kreuzcrawl/kreuzcrawl) | See [README](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java) |
+| **[C#](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/csharp)** | [NuGet](https://www.nuget.org/packages/Kreuzcrawl/) | `dotnet add package Kreuzcrawl` |
 | **[Ruby](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/ruby)** | [kreuzcrawl](https://rubygems.org/gems/kreuzcrawl) | `gem install kreuzcrawl` |
 | **[PHP](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/php)** | [kreuzberg-dev/kreuzcrawl](https://packagist.org/packages/kreuzberg-dev/kreuzcrawl) | `composer require kreuzberg-dev/kreuzcrawl` |
 | **[Elixir](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/elixir)** | [kreuzcrawl](https://hex.pm/packages/kreuzcrawl) | `{:kreuzcrawl, "~> 0.1"}` |
-
-### JavaScript / TypeScript
-
-| Package | Registry | Install |
-|---------|----------|---------|
-| **[Node.js](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/typescript)** — NAPI-RS native bindings | [npm](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl) | `npm install @kreuzberg/kreuzcrawl` |
-| **[WASM](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/wasm)** — browsers, Deno, Workers | [npm](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-wasm) | `npm install @kreuzberg/kreuzcrawl-wasm` |
-
-### Compiled Languages
-
-| Language | Package | Install |
-|----------|---------|---------|
-| **[Go](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/go)** | [pkg.go.dev](https://pkg.go.dev/github.com/kreuzberg-dev/kreuzcrawl/packages/go) | `go get github.com/kreuzberg-dev/kreuzcrawl/packages/go` |
-| **[Java](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java)** | [Maven Central](https://central.sonatype.com/artifact/dev.kreuzberg.kreuzcrawl/kreuzcrawl) | See [package README](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java) |
-| **[C#](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/csharp)** | [NuGet](https://www.nuget.org/packages/Kreuzcrawl/) | `dotnet add package Kreuzcrawl` |
-
-### Native / System
-
-| Package | Description |
-|---------|-------------|
-| **[Rust](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl)** | Core library — `cargo add kreuzcrawl` |
-| **[C FFI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-ffi)** | C header + shared library for any FFI-capable language |
-| **[CLI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-cli)** | Cross-platform binary — `cargo install kreuzcrawl-cli` |
+| **[WASM](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/wasm)** | [@kreuzberg/kreuzcrawl-wasm](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-wasm) | `npm install @kreuzberg/kreuzcrawl-wasm` |
+| **[C FFI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-ffi)** | [GitHub Releases](https://github.com/kreuzberg-dev/kreuzcrawl/releases) | C header + shared library |
+| **[CLI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-cli)** | [crates.io](https://crates.io/crates/kreuzcrawl-cli) | `cargo install kreuzcrawl-cli` |
 
 ## Quick Start
 
-### Python
+<details>
+<summary><strong>Python</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/python">Full docs</a></summary>
 
 ```python
 from kreuzcrawl import create_engine, scrape
@@ -120,7 +106,10 @@ print(result.markdown.content)
 print(len(result.links))
 ```
 
-### Node.js
+</details>
+
+<details>
+<summary><strong>Node.js / TypeScript</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/typescript">Full docs</a></summary>
 
 ```typescript
 import { createEngine, scrape } from "@kreuzberg/kreuzcrawl";
@@ -133,7 +122,10 @@ console.log(result.markdown.content);
 console.log(result.links.length);
 ```
 
-### Rust
+</details>
+
+<details>
+<summary><strong>Rust</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl">Full docs</a></summary>
 
 ```rust
 let engine = kreuzcrawl::create_engine(None)?;
@@ -144,7 +136,10 @@ println!("{}", result.markdown.content);
 println!("{}", result.links.len());
 ```
 
-### Go
+</details>
+
+<details>
+<summary><strong>Go</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/go">Full docs</a></summary>
 
 ```go
 engine, _ := kcrawl.CreateEngine()
@@ -155,7 +150,77 @@ fmt.Println(result.Markdown.Content)
 fmt.Println(len(result.Links))
 ```
 
-See each language's README for complete documentation, configuration options, and advanced examples.
+</details>
+
+<details>
+<summary><strong>Java</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java">Full docs</a></summary>
+
+```java
+var engine = Kreuzcrawl.createEngine(null);
+var result = Kreuzcrawl.scrape(engine, "https://example.com");
+
+System.out.println(result.metadata().title());
+System.out.println(result.markdown().content());
+System.out.println(result.links().size());
+```
+
+</details>
+
+<details>
+<summary><strong>C#</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/csharp">Full docs</a></summary>
+
+```csharp
+var engine = KreuzcrawlLib.CreateEngine(null);
+var result = await KreuzcrawlLib.Scrape(engine, "https://example.com");
+
+Console.WriteLine(result.Metadata.Title);
+Console.WriteLine(result.Markdown.Content);
+Console.WriteLine(result.Links.Count);
+```
+
+</details>
+
+<details>
+<summary><strong>Ruby</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/ruby">Full docs</a></summary>
+
+```ruby
+engine = Kreuzcrawl.create_engine(nil)
+result = Kreuzcrawl.scrape(engine, "https://example.com")
+
+puts result.metadata.title
+puts result.markdown.content
+puts result.links.length
+```
+
+</details>
+
+<details>
+<summary><strong>PHP</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/php">Full docs</a></summary>
+
+```php
+$engine = Kreuzcrawl::createEngine(null);
+$result = Kreuzcrawl::scrape($engine, "https://example.com");
+
+echo $result->metadata->title;
+echo $result->markdown->content;
+echo count($result->links);
+```
+
+</details>
+
+<details>
+<summary><strong>Elixir</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/elixir">Full docs</a></summary>
+
+```elixir
+{:ok, engine} = Kreuzcrawl.create_engine(nil)
+{:ok, result} = Kreuzcrawl.scrape(engine, "https://example.com")
+
+IO.puts(result.metadata.title)
+IO.puts(result.markdown.content)
+IO.puts(length(result.links))
+```
+
+</details>
 
 ## Platform Support
 

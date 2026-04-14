@@ -45,6 +45,14 @@
   </a>
 </div>
 
+<img width="3384" height="573" alt="Kreuzcrawl" src="https://github.com/user-attachments/assets/1b6c6ad7-3b6d-4171-b1c9-f2026cc9deb8" />
+
+<div align="center" style="margin-top: 20px;">
+  <a href="https://discord.gg/xt9WY3GnKR">
+      <img height="22" src="https://img.shields.io/badge/Discord-Join%20our%20community-7289da?logo=discord&logoColor=white" alt="Discord">
+  </a>
+</div>
+
 Python bindings for **kreuzcrawl** — a high-performance Rust web crawling engine for structured
 data extraction. Powered by PyO3, with async support, full metadata extraction, and Markdown
 conversion. Wheels published for Linux, macOS, and Windows.
