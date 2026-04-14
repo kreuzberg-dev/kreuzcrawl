@@ -211,7 +211,7 @@ class CrawlConfig:
     """Whether to capture a screenshot when using the browser."""
 
     download_documents: bool = True
-    """Whether to download non-HTML documents instead of skipping them."""
+    """Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them."""
 
     document_max_size: int | None = None
     """Maximum size in bytes for document downloads. Defaults to 50 MB."""
@@ -375,7 +375,7 @@ class ScrapeResult:
     """Metadata about the LLM extraction pass (cost, tokens, model)."""
 
     screenshot: bytes | None = None
-    """Screenshot of the page as PNG bytes (when capture_screenshot is enabled)."""
+    """Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled."""
 
     downloaded_document: Any | None = None
     """Downloaded non-HTML document (PDF, DOCX, image, code, etc.)."""

@@ -3746,6 +3746,7 @@ impl From<kreuzcrawl::ProxyConfig> for JsProxyConfig {
     }
 }
 
+#[allow(clippy::field_reassign_with_default)]
 impl From<JsBrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: JsBrowserConfig) -> Self {
         let mut __result = kreuzcrawl::BrowserConfig::default();
@@ -3775,6 +3776,7 @@ impl From<kreuzcrawl::BrowserConfig> for JsBrowserConfig {
 }
 
 #[allow(clippy::needless_update)]
+#[allow(clippy::field_reassign_with_default)]
 impl From<JsCrawlConfig> for kreuzcrawl::CrawlConfig {
     fn from(val: JsCrawlConfig) -> Self {
         let mut __result = kreuzcrawl::CrawlConfig::default();
