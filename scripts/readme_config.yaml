@@ -41,8 +41,8 @@ languages:
       - npm
       - pnpm
       - yarn
-    package_name: "@kreuzcrawl/node"
-    badge_url: https://img.shields.io/npm/v/@kreuzcrawl/node?label=TypeScript&color=007ec6
+    package_name: "@kreuzberg/kreuzcrawl"
+    badge_url: https://img.shields.io/npm/v/@kreuzberg/kreuzcrawl?label=TypeScript&color=007ec6
     docs_url: https://kreuzcrawl.dev/
     description: |
       Extract text, tables, images, and metadata from 91+ file formats and 248 programming languages including PDF, Office documents, and images. Native NAPI-RS bindings for Node.js with superior performance, async/await support, and TypeScript type definitions.
@@ -254,8 +254,8 @@ languages:
       - npm
       - pnpm
       - yarn
-    package_name: "@kreuzcrawl/wasm"
-    badge_url: https://img.shields.io/npm/v/@kreuzcrawl/wasm?label=WASM&color=007ec6
+    package_name: "@kreuzberg/kreuzcrawl-wasm"
+    badge_url: https://img.shields.io/npm/v/@kreuzberg/kreuzcrawl-wasm?label=WASM&color=007ec6
     docs_url: https://kreuzcrawl.dev/
     description: |
       Extract text, tables, images, and metadata from 91+ file formats and 248 programming languages including PDF, Office documents, and images. WebAssembly bindings for browsers, Deno, and Cloudflare Workers with portable deployment and multi-threading support.

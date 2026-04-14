@@ -6,7 +6,7 @@
 set -euo pipefail
 
 version="${1:?VERSION argument required}"
-package="${2:-@kreuzcrawl/node}"
+package="${2:-@kreuzberg/kreuzcrawl}"
 
 if npm view "${package}@${version}" version >/dev/null 2>&1; then
   echo "exists=true"

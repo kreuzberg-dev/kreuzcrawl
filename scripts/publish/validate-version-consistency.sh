@@ -30,12 +30,21 @@ echo "package.json (root): $root_version"
   errors=$((errors + 1))
 }
 
-wasm_version="$(jq -r '.version' crates/kreuzcrawl-wasm/package.json)"
-echo "crates/kreuzcrawl-wasm/package.json: $wasm_version"
-[ "$wasm_version" = "$expected" ] || {
-  echo "❌ WASM package.json mismatch"
-  errors=$((errors + 1))
-}
+if [ -f crates/kreuzcrawl-wasm/package.json ]; then
+  wasm_version="$(jq -r '.version' crates/kreuzcrawl-wasm/package.json)"
+  echo "crates/kreuzcrawl-wasm/package.json: $wasm_version"
+  [ "$wasm_version" = "$expected" ] || {
+    echo "❌ WASM package.json mismatch"
+    errors=$((errors + 1))
+  }
+else
+  wasm_version="$(grep '^version' crates/kreuzcrawl-wasm/Cargo.toml | head -1 | cut -d'"' -f2 || true)"
+  echo "crates/kreuzcrawl-wasm/Cargo.toml: $wasm_version"
+  [ "$wasm_version" = "$expected" ] || {
+    echo "❌ WASM Cargo.toml mismatch"
+    errors=$((errors + 1))
+  }
+fi
 
 node_version="$(jq -r '.version' crates/kreuzcrawl-node/package.json)"
 echo "crates/kreuzcrawl-node/package.json: $node_version"
