@@ -4,7 +4,7 @@ defmodule Kreuzcrawl.MixProject do
   def project do
     [
       app: :kreuzcrawl,
-      version: "0.1.0",
+      version: "0.1.0-rc.1",
       elixir: "~> 1.14",
       description: "High-performance web crawling engine",
       package: package(),

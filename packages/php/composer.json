@@ -15,5 +15,5 @@
 		"ext-name": "kreuzcrawl"
 	},
 	"keywords": ["crawl", "scrape", "web", "spider"],
-	"version": "0.1.0"
+	"version": "0.1.0-rc.1"
 }

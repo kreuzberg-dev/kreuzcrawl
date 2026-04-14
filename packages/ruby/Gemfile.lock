@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kreuzcrawl (0.1.0)
+    kreuzcrawl (0.1.0.pre.rc.1)
       rb_sys (~> 0.9)
 
 GEM

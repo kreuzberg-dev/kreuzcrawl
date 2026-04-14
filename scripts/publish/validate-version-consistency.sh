@@ -9,7 +9,11 @@ fi
 
 errors=0
 
-echo "Expected version: $expected"
+# Convert semver pre-release to PEP 440 for Python comparison
+# e.g., "0.1.0-rc.1" → "0.1.0rc1", "0.1.0-alpha.2" → "0.1.0a2"
+expected_pep440="$(echo "$expected" | sed -E 's/-alpha\.?/a/; s/-beta\.?/b/; s/-rc\.?/rc/; s/\.([0-9]+)$/\1/')"
+
+echo "Expected version: $expected (PEP 440: $expected_pep440)"
 echo "----------------------------------------"
 
 cargo_version="$(grep '^version' Cargo.toml | head -1 | cut -d'"' -f2 || true)"
@@ -42,8 +46,8 @@ echo "crates/kreuzcrawl-node/package.json: $node_version"
 
 python_version="$(grep '^version' packages/python/pyproject.toml | head -1 | cut -d'"' -f2 || true)"
 echo "packages/python/pyproject.toml: $python_version"
-[ "$python_version" = "$expected" ] || {
-  echo "❌ Python pyproject.toml mismatch"
+[ "$python_version" = "$expected_pep440" ] || {
+  echo "❌ Python pyproject.toml mismatch (expected PEP 440: $expected_pep440)"
   errors=$((errors + 1))
 }
 
