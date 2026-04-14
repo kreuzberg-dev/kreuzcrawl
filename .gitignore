@@ -52,6 +52,8 @@ crates/kreuzcrawl-node/index.js
 # Ruby
 packages/ruby/.bundle/
 packages/ruby/vendor/
+packages/ruby/tmp/
+packages/ruby/ext/src_rb/
 *.Cache
 
 # PHP

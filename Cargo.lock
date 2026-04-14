@@ -2071,7 +2071,6 @@ version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
  "rustler",
- "serde",
  "serde_json",
  "tokio",
 ]
