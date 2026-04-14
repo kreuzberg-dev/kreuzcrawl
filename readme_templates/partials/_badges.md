@@ -35,7 +35,7 @@
   </a>
 
   <!-- Project Info -->
-  <a href="https://docs.kreuzcrawl.dev">
+  <a href="https://docs.kreuzcrawl.kreuzberg.dev">
     <img src="https://img.shields.io/badge/Docs-kreuzcrawl.dev-007ec6" alt="Documentation">
   </a>
   <a href="https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/LICENSE">

@@ -7,6 +7,8 @@ on:
       - 'docs/**'
       - 'pyproject.toml'
       - 'zensical.toml'
+      - '.typos.toml'
+      - '.lychee.toml'
       - '.textlintrc.json'
       - '.github/workflows/docs.yaml'
       - 'scripts/ci/docs/**'
@@ -16,6 +18,8 @@ on:
       - 'docs/**'
       - 'pyproject.toml'
       - 'zensical.toml'
+      - '.typos.toml'
+      - '.lychee.toml'
       - '.textlintrc.json'
       - '.github/workflows/docs.yaml'
       - 'scripts/ci/docs/**'
@@ -48,14 +52,15 @@ jobs:
   validate-snippets:
     name: "Validate: Documentation Snippets"
     if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - name: Setup Rust
+        uses: kreuzberg-dev/actions/setup-rust@v1
         with:
-          cache-on-failure: true
+          cache-key-prefix: validate-snippets
+          use-sccache: "true"
       - name: Build and run snippet validation
         run: cargo run --release -p snippet-runner -- validate --snippets docs/snippets --reference docs/reference --level syntax --timeout 120
 

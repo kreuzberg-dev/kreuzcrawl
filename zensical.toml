@@ -1,7 +1,7 @@
 [project]
 site_name = "Kreuzcrawl"
 site_description = "High-performance Rust web crawling engine for structured data extraction"
-site_url = "https://docs.kreuzcrawl.dev"
+site_url = "https://docs.kreuzcrawl.kreuzberg.dev"
 site_author = "kreuzcrawl.dev"
 repo_name = "kreuzcrawl-dev/kreuzcrawl"
 repo_url = "https://github.com/kreuzcrawl-dev/kreuzcrawl"
