@@ -8,7 +8,7 @@ defmodule E2e.LinksTest do
       {:ok, engine} = Kreuzcrawl.create_engine(nil)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/links_anchor_fragment"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
-      assert String.contains?(result.links[0].link_type, "anchor")
+      assert String.contains?(to_string(Enum.at(result.links, 0).link_type), "anchor")
     end
   end
 
@@ -18,7 +18,7 @@ defmodule E2e.LinksTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/links_base_tag"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert length(result.links) > 2
-      assert String.contains?(result.links[0].url, "example.com")
+      assert String.contains?(to_string(Enum.at(result.links, 0).url), "example.com")
     end
   end
 
@@ -27,7 +27,7 @@ defmodule E2e.LinksTest do
       {:ok, engine} = Kreuzcrawl.create_engine(nil)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/links_document_types"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
-      assert String.contains?(result.links[0].link_type, "document")
+      assert String.contains?(to_string(Enum.at(result.links, 0).link_type), "document")
     end
   end
 
@@ -37,7 +37,7 @@ defmodule E2e.LinksTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/links_empty_href"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert length(result.links) > 0
-      assert String.contains?(result.links[0].url, "/valid")
+      assert String.contains?(to_string(Enum.at(result.links, 0).url), "/valid")
     end
   end
 
@@ -47,7 +47,7 @@ defmodule E2e.LinksTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/links_internal_external_classification"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert length(result.links) > 4
-      assert result.links[0].url != ""
+      assert Enum.at(result.links, 0).url != ""
     end
   end
 
@@ -57,7 +57,7 @@ defmodule E2e.LinksTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/links_mailto_javascript_skip"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert length(result.links) > 0
-      refute String.contains?(result.links[0].url, "mailto:")
+      refute String.contains?(to_string(Enum.at(result.links, 0).url), "mailto:")
     end
   end
 
@@ -67,7 +67,7 @@ defmodule E2e.LinksTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/links_protocol_relative"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert length(result.links) > 1
-      assert String.contains?(result.links[0].url, "//")
+      assert String.contains?(to_string(Enum.at(result.links, 0).url), "//")
     end
   end
 

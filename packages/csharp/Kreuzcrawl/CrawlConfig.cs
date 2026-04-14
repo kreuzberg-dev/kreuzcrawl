@@ -75,7 +75,7 @@ public sealed class CrawlConfig
     /// Timeout for individual HTTP requests (in milliseconds when serialized).
     /// </summary>
     [JsonPropertyName("request_timeout")]
-    public ulong RequestTimeout { get; set; } = default!;
+    public ulong? RequestTimeout { get; set; } = null;
 
     /// <summary>
     /// Maximum number of redirects to follow.
@@ -104,6 +104,7 @@ public sealed class CrawlConfig
     /// <summary>
     /// Authentication configuration.
     /// </summary>
+    [JsonConverter(typeof(AuthConfigJsonConverter))]
     [JsonPropertyName("auth")]
     public AuthConfig? Auth { get; set; } = null;
 

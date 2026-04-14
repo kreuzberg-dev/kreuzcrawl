@@ -5,7 +5,7 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_basic" do
     test "Concurrent crawling fetches all pages with max_concurrent workers" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_concurrent: 3, max_depth: 1}
+      engine_config = "{\"max_concurrent\":3,\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_basic"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -16,7 +16,7 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_depth_two_fan_out" do
     test "Concurrent depth=2 crawl correctly fans out and deduplicates across levels" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_concurrent: 3, max_depth: 2}
+      engine_config = "{\"max_concurrent\":3,\"max_depth\":2}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_depth_two_fan_out"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -26,7 +26,7 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_max_pages_exact" do
     test "Concurrent crawling does not exceed max_pages limit even with high concurrency" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_concurrent: 5, max_depth: 1, max_pages: 3}
+      engine_config = "{\"max_concurrent\":5,\"max_depth\":1,\"max_pages\":3}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_max_pages_exact"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -36,7 +36,7 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_partial_errors" do
     test "Concurrent crawl handles partial failures gracefully" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_concurrent: 3, max_depth: 1}
+      engine_config = "{\"max_concurrent\":3,\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_partial_errors"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -46,7 +46,7 @@ defmodule E2e.ConcurrentTest do
 
   describe "concurrent_respects_max_pages" do
     test "Concurrent crawling respects max_pages limit" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_concurrent: 2, max_depth: 1, max_pages: 3}
+      engine_config = "{\"max_concurrent\":2,\"max_depth\":1,\"max_pages\":3}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/concurrent_respects_max_pages"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

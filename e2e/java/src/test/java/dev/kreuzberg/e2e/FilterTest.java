@@ -5,12 +5,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: filter. */
 class FilterTest {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new Jdk8Module());
     @Test
     void testFilterBm25CrawlIntegration() throws Exception {
         // BM25 filter works during multi-page crawl, keeping relevant pages

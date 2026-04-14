@@ -36,7 +36,7 @@ repos:
 
   # TOML formatting
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: "v2.21.0"
+    rev: "v2.21.1"
     hooks:
       - id: pyproject-fmt
 
@@ -61,7 +61,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.20.0
+    rev: v1.20.1
     hooks:
       - id: mypy
         exclude: "e2e/|scripts/|test_apps/|benchmarks/"
@@ -131,7 +131,7 @@ repos:
       - id: cargo-machete
 
   - repo: https://github.com/EmbarkStudios/cargo-deny
-    rev: 0.19.1
+    rev: 0.19.2
     hooks:
       - id: cargo-deny
         args: ["check"]
@@ -145,7 +145,7 @@ repos:
       - id: biome-lint
 
   - repo: https://github.com/oxc-project/mirrors-oxlint
-    rev: v1.59.0
+    rev: v1.60.0
     hooks:
       - id: oxlint
         args: ["--fix"]
@@ -200,7 +200,7 @@ repos:
 
   # Markdown: linting
   - repo: https://github.com/rvben/rumdl-pre-commit
-    rev: "v0.1.69"
+    rev: "v0.1.71"
     hooks:
       - id: rumdl-fmt
         exclude: '^(test_apps/|tools/benchmark-harness/vendored/|docs/index\.md|docs/getting-started/installation\.md)'
@@ -217,7 +217,7 @@ repos:
 
   # Spelling: fast Rust-based spell checker
   - repo: https://github.com/crate-ci/typos
-    rev: v1.45.0
+    rev: v1.45.1
     hooks:
       - id: typos
         args: [--force-exclude]

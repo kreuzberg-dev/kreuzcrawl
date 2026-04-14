@@ -5,7 +5,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_301_permanent" do
     test "Follows 301 permanent redirect and returns final page content" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_301_permanent"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -16,7 +16,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_302_found" do
     test "Follows 302 Found redirect correctly" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_302_found"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -27,7 +27,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_303_see_other" do
     test "Follows 303 See Other redirect (method changes to GET)" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_303_see_other"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -38,7 +38,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_307_temporary" do
     test "Follows 307 Temporary Redirect (preserves method)" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_307_temporary"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -49,7 +49,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_308_permanent" do
     test "Follows 308 Permanent Redirect (preserves method)" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_308_permanent"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -60,7 +60,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_chain" do
     test "Follows a chain of redirects (301 -> 302 -> 200)" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_chain"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -71,7 +71,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_cross_domain" do
     test "Reports cross-domain redirect target without following to external domain" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_cross_domain"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -82,7 +82,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_loop" do
     test "Detects redirect loop (A -> B -> A) and returns error" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_loop"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -92,7 +92,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_max_exceeded" do
     test "Aborts when redirect count exceeds max_redirects limit" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_redirects: 2, respect_robots_txt: false}
+      engine_config = "{\"max_redirects\":2,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_max_exceeded"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -102,7 +102,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_meta_refresh" do
     test "Follows HTML meta-refresh redirect to target page" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_meta_refresh"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -113,7 +113,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_refresh_header" do
     test "Handles HTTP Refresh header redirect" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_refresh_header"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -124,7 +124,7 @@ defmodule E2e.RedirectTest do
 
   describe "redirect_to_404" do
     test "Redirect target returns 404 Not Found" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/redirect_to_404"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

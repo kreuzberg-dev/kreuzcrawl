@@ -28,7 +28,7 @@ cd "${REPO_ROOT}/e2e/csharp"
 results_dir="${REPO_ROOT}/target/test-results/csharp-e2e"
 mkdir -p "$results_dir"
 
-dotnet test Kreuzcrawl.E2E.csproj \
+dotnet test E2eTests.csproj \
   -c Release \
   --logger "console;verbosity=diagnostic" \
   --logger "trx;LogFileName=csharp-e2e.trx" \

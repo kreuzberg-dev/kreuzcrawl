@@ -5,7 +5,7 @@ defmodule E2e.BrowserTest do
 
   describe "browser_config_auto_no_feature" do
     test "Browser mode 'auto' without browser feature enabled does not use browser" do
-      engine_config = %Kreuzcrawl.CrawlConfig{browser: %{"mode" => "auto"}}
+      engine_config = "{\"browser\":{\"mode\":\"auto\"}}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_config_auto_no_feature"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -17,7 +17,7 @@ defmodule E2e.BrowserTest do
 
   describe "browser_config_never_mode" do
     test "Browser mode 'never' prevents browser fallback even for SPA shell content" do
-      engine_config = %Kreuzcrawl.CrawlConfig{browser: %{"mode" => "never"}}
+      engine_config = "{\"browser\":{\"mode\":\"never\"}}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_config_never_mode"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -108,7 +108,7 @@ defmodule E2e.BrowserTest do
 
   describe "browser_fallback_spa_render" do
     test "Browser auto re-fetches SPA shell when JS rendering is detected" do
-      engine_config = %Kreuzcrawl.CrawlConfig{browser: %{"mode" => "auto"}}
+      engine_config = "{\"browser\":{\"mode\":\"auto\"}}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_fallback_spa_render"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -119,7 +119,7 @@ defmodule E2e.BrowserTest do
 
   describe "browser_fallback_waf_blocked" do
     test "Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)" do
-      engine_config = %Kreuzcrawl.CrawlConfig{browser: %{"mode" => "auto"}}
+      engine_config = "{\"browser\":{\"mode\":\"auto\"}}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_fallback_waf_blocked"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -129,7 +129,7 @@ defmodule E2e.BrowserTest do
 
   describe "browser_mode_always" do
     test "Browser mode 'always' uses browser even for normal server-rendered pages" do
-      engine_config = %Kreuzcrawl.CrawlConfig{browser: %{"mode" => "always"}}
+      engine_config = "{\"browser\":{\"mode\":\"always\"}}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/browser_mode_always"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

@@ -5,7 +5,7 @@ defmodule E2e.StreamTest do
 
   describe "crawl_stream_events" do
     test "Crawl stream produces page and complete events" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 1, respect_robots_txt: false}
+      engine_config = "{\"max_depth\":1,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/crawl_stream_events"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -17,7 +17,7 @@ defmodule E2e.StreamTest do
 
   describe "stream_depth_crawl" do
     test "Stream produces events for multi-depth crawl with link following" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_concurrent: 1, max_depth: 2}
+      engine_config = "{\"max_concurrent\":1,\"max_depth\":2}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/stream_depth_crawl"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -29,7 +29,7 @@ defmodule E2e.StreamTest do
 
   describe "stream_with_error_event" do
     test "Stream emits page and complete events even when some pages fail" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_concurrent: 1, max_depth: 1}
+      engine_config = "{\"max_concurrent\":1,\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/stream_with_error_event"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

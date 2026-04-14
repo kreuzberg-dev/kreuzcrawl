@@ -1,343 +1,209 @@
-# kreuzcrawl
+# Kreuzcrawl
 
-A high-performance Rust web crawling engine for extracting structured data from websites.
+<div align="center" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 20px 0;">
+  <!-- Language Bindings -->
+  <a href="https://crates.io/crates/kreuzcrawl">
+    <img src="https://img.shields.io/crates/v/kreuzcrawl?label=Rust&color=007ec6" alt="Rust">
+  </a>
+  <a href="https://pypi.org/project/kreuzcrawl/">
+    <img src="https://img.shields.io/pypi/v/kreuzcrawl?label=Python&color=007ec6" alt="Python">
+  </a>
+  <a href="https://www.npmjs.com/package/@kreuzberg/kreuzcrawl">
+    <img src="https://img.shields.io/npm/v/@kreuzberg/kreuzcrawl?label=Node.js&color=007ec6" alt="Node.js">
+  </a>
+  <a href="https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-wasm">
+    <img src="https://img.shields.io/npm/v/@kreuzberg/kreuzcrawl-wasm?label=WASM&color=007ec6" alt="WASM">
+  </a>
+  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.kreuzcrawl/kreuzcrawl">
+    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.kreuzcrawl/kreuzcrawl?label=Java&color=007ec6" alt="Java">
+  </a>
+  <a href="https://pkg.go.dev/github.com/kreuzberg-dev/kreuzcrawl/packages/go">
+    <img src="https://img.shields.io/github/v/tag/kreuzberg-dev/kreuzcrawl?label=Go&color=007ec6" alt="Go">
+  </a>
+  <a href="https://www.nuget.org/packages/Kreuzcrawl/">
+    <img src="https://img.shields.io/nuget/v/Kreuzcrawl?label=C%23&color=007ec6" alt="C#">
+  </a>
+  <a href="https://packagist.org/packages/kreuzberg-dev/kreuzcrawl">
+    <img src="https://img.shields.io/packagist/v/kreuzberg-dev/kreuzcrawl?label=PHP&color=007ec6" alt="PHP">
+  </a>
+  <a href="https://rubygems.org/gems/kreuzcrawl">
+    <img src="https://img.shields.io/gem/v/kreuzcrawl?label=Ruby&color=007ec6" alt="Ruby">
+  </a>
+  <a href="https://hex.pm/packages/kreuzcrawl">
+    <img src="https://img.shields.io/hexpm/v/kreuzcrawl?label=Elixir&color=007ec6" alt="Elixir">
+  </a>
+  <a href="https://github.com/kreuzberg-dev/kreuzcrawl/releases">
+    <img src="https://img.shields.io/badge/C-FFI-007ec6" alt="C">
+  </a>
+
+  <!-- Project Info -->
+  <a href="https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-Elastic--2.0-blue.svg" alt="License">
+  </a>
+  <a href="https://docs.kreuzcrawl.dev">
+    <img src="https://img.shields.io/badge/docs-kreuzcrawl.dev-007ec6" alt="Documentation">
+  </a>
+</div>
+
+<div align="center" style="margin-top: 20px;">
+  <a href="https://discord.gg/xt9WY3GnKR">
+      <img height="22" src="https://img.shields.io/badge/Discord-Join%20our%20community-7289da?logo=discord&logoColor=white" alt="Discord">
+  </a>
+</div>
+
+High-performance Rust web crawling engine for structured data extraction. Scrape, crawl, and map websites with native bindings for 10 languages — same engine, identical results across every runtime.
+
+## Key Features
+
+- **Structured extraction** — Text, metadata, links, images, assets, JSON-LD, Open Graph, hreflang, favicons, headings, and response headers
+- **Markdown conversion** — Clean Markdown output with citations, document structure, and fit-content mode
+- **Concurrent crawling** — Depth-first, breadth-first, or best-first traversal with configurable depth, page limits, and concurrency
+- **10 language bindings** — Rust, Python, Node.js, Ruby, Go, Java, C#, PHP, Elixir, and WebAssembly
+- **Smart filtering** — BM25 relevance scoring, URL include/exclude patterns, robots.txt compliance, and sitemap discovery
+- **Browser rendering** — Optional headless browser for JavaScript-heavy SPAs with WAF detection and bypass
+- **Batch operations** — Scrape or crawl hundreds of URLs concurrently with partial failure handling
+- **Streaming** — Real-time crawl events via async streams for progress tracking
+- **Authentication** — HTTP Basic, Bearer token, and custom header auth with persistent cookie jars
+- **Rate limiting** — Per-domain request throttling with configurable delays
+- **Asset download** — Download, deduplicate, and filter images, documents, and other linked assets
+- **MCP server** — Model Context Protocol integration for AI agents
+- **REST API** — HTTP server with OpenAPI spec
+
+**[Documentation](https://docs.kreuzcrawl.dev)** | **[API Reference](https://docs.kreuzcrawl.dev/reference/)**
+
+## Installation
+
+### Scripting Languages
+
+| Language | Package | Install |
+|----------|---------|---------|
+| **[Python](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/python)** | [kreuzcrawl](https://pypi.org/project/kreuzcrawl/) | `pip install kreuzcrawl` |
+| **[Ruby](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/ruby)** | [kreuzcrawl](https://rubygems.org/gems/kreuzcrawl) | `gem install kreuzcrawl` |
+| **[PHP](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/php)** | [kreuzberg-dev/kreuzcrawl](https://packagist.org/packages/kreuzberg-dev/kreuzcrawl) | `composer require kreuzberg-dev/kreuzcrawl` |
+| **[Elixir](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/elixir)** | [kreuzcrawl](https://hex.pm/packages/kreuzcrawl) | `{:kreuzcrawl, "~> 0.1"}` |
+
+### JavaScript / TypeScript
+
+| Package | Registry | Install |
+|---------|----------|---------|
+| **[Node.js](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/typescript)** — NAPI-RS native bindings | [npm](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl) | `npm install @kreuzberg/kreuzcrawl` |
+| **[WASM](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/wasm)** — browsers, Deno, Workers | [npm](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-wasm) | `npm install @kreuzberg/kreuzcrawl-wasm` |
+
+### Compiled Languages
+
+| Language | Package | Install |
+|----------|---------|---------|
+| **[Go](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/go)** | [pkg.go.dev](https://pkg.go.dev/github.com/kreuzberg-dev/kreuzcrawl/packages/go) | `go get github.com/kreuzberg-dev/kreuzcrawl/packages/go` |
+| **[Java](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java)** | [Maven Central](https://central.sonatype.com/artifact/dev.kreuzberg.kreuzcrawl/kreuzcrawl) | See [package README](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java) |
+| **[C#](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/csharp)** | [NuGet](https://www.nuget.org/packages/Kreuzcrawl/) | `dotnet add package Kreuzcrawl` |
+
+### Native / System
+
+| Package | Description |
+|---------|-------------|
+| **[Rust](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl)** | Core library — `cargo add kreuzcrawl` |
+| **[C FFI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-ffi)** | C header + shared library for any FFI-capable language |
+| **[CLI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-cli)** | Cross-platform binary — `cargo install kreuzcrawl-cli` |
 
 ## Quick Start
 
-Add to `Cargo.toml`:
+### Python
 
-```toml
-[dependencies]
-kreuzcrawl = { version = "0.1", features = ["ai", "browser"] }
-tokio = { version = "1", features = ["full"] }
+```python
+from kreuzcrawl import create_engine, scrape
+
+engine = create_engine()
+result = scrape(engine, "https://example.com")
+
+print(result.metadata.title)
+print(result.markdown.content)
+print(len(result.links))
 ```
 
-Basic usage:
+### Node.js
+
+```typescript
+import { createEngine, scrape } from "@kreuzberg/kreuzcrawl";
+
+const engine = createEngine();
+const result = await scrape(engine, "https://example.com");
+
+console.log(result.metadata.title);
+console.log(result.markdown.content);
+console.log(result.links.length);
+```
+
+### Rust
 
 ```rust
-use kreuzcrawl::{CrawlConfig, CrawlEngine};
+let engine = kreuzcrawl::create_engine(None)?;
+let result = kreuzcrawl::scrape(&engine, "https://example.com").await?;
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let config = CrawlConfig {
-        max_depth: Some(2),
-        max_pages: Some(100),
-        ..Default::default()
-    };
-
-    let engine = CrawlEngine::builder()
-        .config(config)
-        .build()?;
-
-    let result = engine.crawl("https://example.com").await?;
-
-    for page in &result.pages {
-        println!("{}: {}", page.url, page.metadata.title.as_deref().unwrap_or(""));
-        if let Some(ref md) = page.markdown {
-            println!("  Markdown: {} chars", md.content.len());
-            if let Some(ref citations) = md.citations {
-                println!("  Citations: {} references", citations.references.len());
-            }
-        }
-    }
-
-    Ok(())
-}
+println!("{}", result.metadata.title);
+println!("{}", result.markdown.content);
+println!("{}", result.links.len());
 ```
 
-## Features
+### Go
 
-### Core Crawling
+```go
+engine, _ := kcrawl.CreateEngine()
+result, _ := kcrawl.Scrape(engine, "https://example.com")
 
-- **CrawlEngine** — Builder pattern with validated configuration
-- **Concurrent fetching** — JoinSet + Semaphore for parallel requests
-- **Multiple strategies** — BFS, DFS, BestFirst, Adaptive traversal
-- **Batch crawling** — Multi-seed `batch_crawl()` + `batch_crawl_stream()`
-- **Streaming** — Real-time event streaming via `crawl_stream()`
-- **URL discovery** — Sitemap parsing + link extraction
-
-### Metadata Extraction
-
-- **40+ metadata fields** — Open Graph, Twitter Card, Dublin Core, Article, JSON-LD
-- **Link extraction** — 4 types: Internal, External, Anchor, Document
-- **Images** — All sources (img tags, picture, og:image, srcset)
-- **Feed discovery** — RSS, Atom, JSON Feed detection
-- **Favicons** — Extraction and canonicalization
-- **hreflang** — Language/region variant links
-- **Headings** — H1-H6 extraction with hierarchy
-
-### Markdown Conversion
-
-- **Always-on HTML→Markdown** — Automatic conversion with document structure preservation
-- **Markdown result** — MarkdownResult with content, tables, code blocks
-- **Link-to-citations** — Numbered reference conversion
-- **Fit markdown** — Content pruning and LLM-optimized output via heuristic content pruning
-
-### AI & LLM (feature-gated: `ai`)
-
-- **LlmExtractor** — Via liter-llm (multi-provider support)
-- **JSON schema extraction** — Structured extraction with custom schemas
-- **Cost tracking** — Estimated costs and token usage counters
-- **ExtractionMeta** — Full metadata on LLM results
-
-### Anti-Bot & Browser Automation
-
-- **WAF detection** — 8 vendors: Cloudflare, Akamai, AWS WAF, Imperva, DataDome, PerimeterX, Sucuri, F5
-- **Browser fallback** — Headless Chrome via chromiumoxide (feature-gated: `browser`)
-- **BrowserPool** — Multi-browser management with health checks and crash recovery
-- **JavaScript rendering** — Heuristic-based detection
-
-### Network & Caching
-
-- **Per-domain rate limiting** — PerDomainRateLimitLayer with configurable delays
-- **Proxy support** — HTTP, HTTPS, SOCKS5
-- **Proxy rotation** — Removed for security (credentials leaked as HTTP headers)
-- **User-Agent rotation** — UaRotationLayer for UA header diversity
-- **HTTP caching** — ETag/Last-Modified conditional requests (CrawlCacheLayer)
-- **Disk cache** — blake3-hashed storage with TTL and automatic eviction
-
-### Content Filtering & Relevance
-
-- **BM25 scoring** — Adaptive relevance evaluation
-- **Adaptive crawling** — Term saturation detection for early termination
-- **Content pruning** — Intelligent truncation for LLM consumption
-
-### Compliance & Standards
-
-- **robots.txt** — RFC 9309 user-agent prefix matching
-- **Sitemap parsing** — XML, gzip, and index files
-- **Config validation** — serde with `deny_unknown_fields`
-- **Redirect handling** — HTTP 3xx, Refresh header, meta refresh
-- **Cookie tracking** — Deduplication and persistence
-- **Authentication** — Basic, Bearer, custom headers
-- **Charset detection** — Automatic encoding detection
-- **Binary/PDF skipping** — Content-type aware filtering
-
-### Extensibility
-
-**7 pluggable traits** for deep customization:
-
-- `Frontier` — Custom URL queue implementations
-- `RateLimiter` — Custom rate limiting strategies
-- `CrawlStore` — Custom storage backends
-- `EventEmitter` — Custom event handling
-- `CrawlStrategy` — Custom traversal algorithms
-- `ContentFilter` — Custom content evaluation
-- `CrawlCache` — Custom caching backends
-
-### CLI
-
-Command-line tools for common operations:
-
-```bash
-# Scrape single page with metadata
-kreuzcrawl scrape https://example.com
-
-# Crawl with depth limiting and markdown output
-kreuzcrawl crawl https://example.com --depth 2 --max-pages 50 --format markdown
-
-# Discover all URLs via sitemap + crawling
-kreuzcrawl map https://example.com --respect-robots-txt
+fmt.Println(result.Metadata.Title)
+fmt.Println(result.Markdown.Content)
+fmt.Println(len(result.Links))
 ```
 
-## Competitive Landscape
+See each language's README for complete documentation, configuration options, and advanced examples.
 
-### Overview
+## Platform Support
 
-| | kreuzcrawl | spider | firecrawl | crawl4ai | webclaw | ScrapeGraphAI | CRW |
-|---|---|---|---|---|---|---|---|
-| **Language** | Rust | Rust | TypeScript | Python | Rust | Python | Rust |
-| **License** | Elastic-2.0 | MIT | AGPL-3.0 | Apache-2.0 | AGPL-3.0 | MIT | AGPL-3.0 |
-| **Distribution** | Library + CLI | Library + CLI + SaaS | SaaS + Self-hosted | Library + CLI + API | Library + CLI + MCP | Library + SaaS API | CLI + MCP + API |
-| **Headless browser** | chromiumoxide | chromey / WebDriver | Playwright | Playwright | None (TLS fingerprint) | Playwright | LightPanda / Chrome |
-
-### Crawling
-
-| | kreuzcrawl | spider | firecrawl | crawl4ai | webclaw | ScrapeGraphAI | CRW |
-|---|---|---|---|---|---|---|---|
-| **Traversal strategies** | BFS, DFS, BestFirst, Adaptive | BFS | BFS | BFS, DFS, BestFirst | BFS | LLM-driven graph | BFS |
-| **Concurrent fetching** | JoinSet + Semaphore | Tokio multi-thread + AIMD | Bull queue workers | asyncio browser pool | Tokio | asyncio | Tokio |
-| **Streaming events** | ✅ Real-time | ✅ Subscriber channels | ✅ SSE / polling | ✅ | — | — | — |
-| **Batch operations** | ✅ `batch_crawl()` | — | ✅ Async API | ✅ Deep crawl | ✅ | — | ✅ |
-| **Sitemap parsing** | ✅ XML, gzip, index | ✅ | ✅ | — | ✅ | — | ✅ |
-| **robots.txt** | ✅ RFC 9309 | ✅ With caching | ✅ | ✅ Basic | ✅ | — | ✅ |
-
-### Extraction & Content
-
-| | kreuzcrawl | spider | firecrawl | crawl4ai | webclaw | ScrapeGraphAI | CRW |
-|---|---|---|---|---|---|---|---|
-| **Markdown conversion** | ✅ Always-on + structure | ✅ | ✅ Primary output | ✅ | ✅ | ✅ | ✅ |
-| **Fit markdown (LLM-pruned)** | ✅ BM25 + heuristic | — | — | ✅ BM25/LLM-based | ✅ Token-optimized | — | — |
-| **Metadata fields** | ✅ 40+ (OG, DC, Twitter, Article, JSON-LD) | ✅ Basic | ✅ Basic | ✅ Basic | ✅ Moderate | — | ✅ Basic |
-| **JSON-LD extraction** | ✅ Full | — | — | — | ✅ Data islands | — | — |
-| **Feed discovery** | ✅ RSS, Atom, JSON Feed | — | — | — | — | — | — |
-| **Link-to-citations** | ✅ Numbered refs | — | — | ✅ | — | — | — |
-| **LLM extraction** | ✅ Multi-provider (liter-llm) | ✅ OpenAI, Gemini | ✅ 10+ providers | ✅ litellm | ✅ Ollama (local) | ✅ LangChain (core) | ✅ Claude, OpenAI |
-| **Cost tracking** | ✅ USD + tokens | — | ✅ | ✅ | — | ✅ Token counting | — |
-| **PDF extraction** | — | — | ✅ FirePDF | ✅ | ✅ | ✅ | ✅ |
-
-### Browser & Anti-Bot
-
-| | kreuzcrawl | spider | firecrawl | crawl4ai | webclaw | ScrapeGraphAI | CRW |
-|---|---|---|---|---|---|---|---|
-| **WAF detection** | ✅ 8 vendors | ✅ Smart mode (auto-escalate) | Cloud only | ✅ 3-tier detection | — | — | — |
-| **Stealth / anti-detect** | ✅ UA rotation | ✅ ua_generator | ✅ Stealth injection | ✅ Playwright Stealth | ✅ TLS fingerprinting | ✅ Undetected Playwright | ✅ Stealth injection |
-| **Proxy support** | ✅ HTTP/HTTPS/SOCKS5 | ✅ + SOCKS + Cloud | ✅ Rotating proxies | ✅ With escalation | ✅ | Via Playwright | ✅ HTTP/SOCKS5 |
-| **User-Agent rotation** | ✅ Tower layer | ✅ | — | ✅ | — | — | ✅ |
-| **Screenshot capture** | Stub | ✅ | ✅ | ✅ | — | ✅ | — |
-| **Page interaction** | — | ✅ Agent automation | ✅ Click, scroll, type | ✅ JS execution | — | — | — |
-
-### Infrastructure & Integration
-
-| | kreuzcrawl | spider | firecrawl | crawl4ai | webclaw | ScrapeGraphAI | CRW |
-|---|---|---|---|---|---|---|---|
-| **REST API server** | — | — | ✅ (primary) | ✅ FastAPI | — | ✅ SaaS API | ✅ Firecrawl-compatible |
-| **MCP server** | — | ✅ | ✅ | ✅ | ✅ | ✅ Via Toolhouse | ✅ |
-| **CLI** | ✅ scrape/crawl/map | ✅ | — | ✅ `crwl` | ✅ | — | ✅ |
-| **Language SDKs** | Rust only | Rust, Python, Node.js | Python, JS, Go, Java, Elixir, Rust | Python | Rust | Python, Node.js | Rust |
-| **Disk cache** | ✅ blake3 + TTL | ✅ SQLite | ✅ Redis | ✅ SQLite | — | — | — |
-| **Per-domain rate limiting** | ✅ Tower layer | ✅ Token bucket + auto-throttle | ✅ Global RPS | ✅ Adaptive | — | — | ✅ Global RPS |
-| **HTTP caching (ETag)** | ✅ | ✅ | — | — | — | — | — |
-
-### Architecture & Extensibility
-
-| | kreuzcrawl | spider | firecrawl | crawl4ai | webclaw | ScrapeGraphAI | CRW |
-|---|---|---|---|---|---|---|---|
-| **Pluggable traits** | ✅ 7 traits | — | — | ✅ Partial (strategies) | — | ✅ Graph nodes | — |
-| **Middleware stack** | ✅ Tower services | — | — | — | — | — | — |
-| **Config validation** | ✅ serde strict | — | — | — | — | — | — |
-| **BM25 relevance scoring** | ✅ | — | — | ✅ | — | — | — |
-| **Adaptive crawling** | ✅ Term saturation | — | — | ✅ Pattern learning | — | — | — |
-| **Asset download + dedup** | ✅ SHA-256 | — | — | — | — | — | — |
-| **Search integration** | — | ✅ Serper, Brave, Bing, Tavily | ✅ | ✅ Google | ✅ API key | ✅ DuckDuckGo | ✅ API key |
-| **WARC output** | — | ✅ | — | — | — | — | — |
-
-### License Details
-
-| License | Tools | Commercial use | Hosting restriction |
-|---------|-------|---------------|---------------------|
-| **Elastic-2.0** | kreuzcrawl | ✅ Yes | Cannot provide as managed service |
-| **MIT** | spider, ScrapeGraphAI | ✅ Yes | None |
-| **Apache-2.0** | crawl4ai | ✅ Yes | None |
-| **AGPL-3.0** | firecrawl, webclaw, CRW | ✅ Yes | Must open-source modifications if hosting |
+| Language | Linux x86_64 | Linux aarch64 | macOS ARM64 | Windows x64 |
+|----------|:------------:|:-------------:|:-----------:|:-----------:|
+| Python | ✅ | ✅ | ✅ | ✅ |
+| Node.js | ✅ | ✅ | ✅ | ✅ |
+| WASM | ✅ | ✅ | ✅ | ✅ |
+| Ruby | ✅ | ✅ | ✅ | — |
+| Elixir | ✅ | ✅ | ✅ | ✅ |
+| Go | ✅ | ✅ | ✅ | ✅ |
+| Java | ✅ | ✅ | ✅ | ✅ |
+| C# | ✅ | ✅ | ✅ | ✅ |
+| PHP | ✅ | ✅ | ✅ | ✅ |
+| Rust | ✅ | ✅ | ✅ | ✅ |
+| C (FFI) | ✅ | ✅ | ✅ | ✅ |
+| CLI | ✅ | ✅ | ✅ | ✅ |
 
 ## Architecture
 
-kreuzcrawl uses a **trait-based engine** with pluggable components:
-
-### Core Traits
-
-1. **Frontier** — URL queue management (default: VecDeque + HashSet)
-2. **RateLimiter** — Request throttling (default: per-domain with backoff)
-3. **CrawlStore** — Result storage (default: in-memory Vec)
-4. **CrawlMiddleware** — Request/response interceptors (proxy rotation, UA rotation, caching)
-5. **EventEmitter** — Event callbacks (default: no-op)
-6. **CrawlStrategy** — Traversal algorithm (BFS, DFS, BestFirst, Adaptive)
-7. **ContentFilter** — Relevance evaluation (BM25 scoring, adaptive saturation)
-8. **CrawlCache** — Response caching (CachingMiddleware, DiskCache)
-
-### Tower Service Stack
-
-The crawl request/response flow uses the **Tower** service abstraction with composable layers:
-
 ```text
-CrawlEngine::crawl()
-    ↓
-CrawlStrategy (BFS/DFS/BestFirst/Adaptive)
-    ↓
-Frontier (URL queue)
-    ↓
-CrawlTracingLayer (feature-gated, OpenTelemetry)
-    ↓
-UaRotationLayer (rotate User-Agent headers)
-    ↓
-CrawlCacheLayer (check cache, store responses)
-    ↓
-PerDomainRateLimitLayer (acquire permits, record responses)
-    ↓
-HttpFetchService (innermost, wraps reqwest + retry)
-    ↓
-HTML extraction (40+ fields, links, markdown)
-    ↓
-ContentFilter (BM25 relevance)
-    ↓
-CrawlStore (accumulate results)
-    ↓
-EventEmitter (stream events)
+Your Application (Python, Node.js, Ruby, Java, Go, C#, PHP, Elixir, ...)
+    │
+Language Bindings (PyO3, NAPI-RS, Magnus, ext-php-rs, Rustler, cgo, Panama, P/Invoke)
+    │
+Rust Core Engine (async, concurrent, SIMD-optimized)
+    │
+    ├── HTTP Client (reqwest + tower middleware stack)
+    ├── HTML Parser (html5ever + lol_html)
+    ├── Markdown Converter (html-to-markdown-rs)
+    ├── Content Extraction (metadata, JSON-LD, Open Graph, readability)
+    ├── Link Discovery (robots.txt, sitemaps, anchor analysis)
+    └── Browser Rendering (optional headless Chrome/Firefox)
 ```
 
-**Tower Layers** (from outermost to innermost):
+## Contributing
 
-- `CrawlTracingLayer` — OpenTelemetry span/event recording (optional)
-- `UaRotationLayer` — Rotates User-Agent headers across requests
-- `CrawlCacheLayer` — Cache hits return stored responses; misses forward to inner service
-- `PerDomainRateLimitLayer` — Rate-limit enforcement per domain
-- `HttpFetchService` — Core HTTP fetching with reqwest + retry logic
-
-## Configuration
-
-`CrawlConfig` provides fine-grained control:
-
-```rust
-pub struct CrawlConfig {
-    pub max_depth: Option<usize>,
-    pub max_pages: Option<usize>,
-    pub max_concurrent: Option<usize>,
-    pub respect_robots_txt: bool,
-    pub user_agent: Option<String>,
-    pub stay_on_domain: bool,
-    pub allow_subdomains: bool,
-    pub include_paths: Vec<String>,
-    pub exclude_paths: Vec<String>,
-    pub custom_headers: HashMap<String, String>,
-    pub request_timeout: Duration,
-    pub max_redirects: usize,
-    pub retry_count: usize,
-    pub retry_codes: Vec<u16>,
-    pub cookies_enabled: bool,
-    pub auth: Option<AuthConfig>,
-    pub max_body_size: Option<usize>,
-    pub main_content_only: bool,
-    pub remove_tags: Vec<String>,
-    pub map_limit: Option<usize>,
-    pub map_search: Option<String>,
-    pub download_assets: bool,
-    pub asset_types: Vec<AssetCategory>,
-    pub max_asset_size: Option<usize>,
-    pub browser: BrowserConfig,
-    pub proxy: Option<ProxyConfig>,
-    pub user_agents: Vec<String>,
-    pub capture_screenshot: bool,
-}
-```
-
-**All validation** is performed in `CrawlEngine::builder().build()` — invalid configs fail fast.
-
-## CLI
-
-### Commands
-
-```bash
-# Scrape a single page
-kreuzcrawl scrape <URL>
-
-# Crawl with traversal
-kreuzcrawl crawl <URL> \
-  --depth <N> \
-  --max-pages <N> \
-  --format <markdown|json> \
-  --respect-robots-txt
-
-# Discover URLs (sitemap + crawl)
-kreuzcrawl map <URL> \
-  --respect-robots-txt
-```
-
-### Output Formats
-
-- **markdown** — MarkdownResult with citations and fit markdown
-- **json** — Full CrawlResult with all metadata
+Contributions are welcome! See our [Contributing Guide](https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/CONTRIBUTING.md).
 
 ## License
 
-Elastic License 2.0 (ELv2) — see [LICENSE](LICENSE).
+[Elastic License 2.0](https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/LICENSE)
+
+## Links
+
+- [Documentation](https://docs.kreuzcrawl.dev)
+- [API Reference](https://docs.kreuzcrawl.dev/reference/)
+- [GitHub](https://github.com/kreuzberg-dev/kreuzcrawl)
+- [Issues](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
+- [Discussions](https://github.com/kreuzberg-dev/kreuzcrawl/discussions)
+- [Discord](https://discord.gg/xt9WY3GnKR)

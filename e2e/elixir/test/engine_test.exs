@@ -15,7 +15,7 @@ defmodule E2e.EngineTest do
 
   describe "engine_crawl_basic" do
     test "CrawlEngine with defaults crawls multiple pages like the free function" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 1}
+      engine_config = "{\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/engine_crawl_basic"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -41,7 +41,7 @@ defmodule E2e.EngineTest do
       assert result.status_code == 200
       assert String.trim(result.content_type) == "text/html"
       assert String.trim(result.metadata.title) == "Engine Test"
-      assert String.contains?(result.metadata.description, "Testing the engine")
+      assert String.contains?(to_string(result.metadata.description), "Testing the engine")
       assert length(result.links) >= 1
       assert length(result.metadata.headings) >= 1
     end
@@ -49,7 +49,7 @@ defmodule E2e.EngineTest do
 
   describe "engine_stream_basic" do
     test "CrawlEngine with defaults streams events like the free function" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 1}
+      engine_config = "{\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/engine_stream_basic"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

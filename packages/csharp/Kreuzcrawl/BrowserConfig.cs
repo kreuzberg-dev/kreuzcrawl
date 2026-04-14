@@ -27,7 +27,7 @@ public sealed class BrowserConfig
     /// Timeout for browser page load and rendering (in milliseconds when serialized).
     /// </summary>
     [JsonPropertyName("timeout")]
-    public ulong Timeout { get; set; } = default!;
+    public ulong? Timeout { get; set; } = null;
 
     /// <summary>
     /// Wait strategy after browser navigation.

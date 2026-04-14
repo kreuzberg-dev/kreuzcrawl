@@ -5,7 +5,7 @@ defmodule E2e.RateLimitTest do
 
   describe "rate_limit_basic_delay" do
     test "Rate limiter adds delay between requests to the same domain" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 1}
+      engine_config = "{\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/rate_limit_basic_delay"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -16,7 +16,7 @@ defmodule E2e.RateLimitTest do
 
   describe "rate_limit_zero_no_delay" do
     test "Rate limiter with zero delay does not slow crawling" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 1}
+      engine_config = "{\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/rate_limit_zero_no_delay"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

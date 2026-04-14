@@ -159,7 +159,7 @@ public sealed class ScrapeResult
     /// Structured data extracted by LLM. Populated when using LlmExtractor.
     /// </summary>
     [JsonPropertyName("extracted_data")]
-    public string? ExtractedData { get; set; } = null;
+    public object? ExtractedData { get; set; } = null;
 
     /// <summary>
     /// Metadata about the LLM extraction pass (cost, tokens, model).

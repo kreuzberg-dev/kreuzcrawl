@@ -21,13 +21,13 @@ public sealed class MarkdownResult
     /// Structured document tree with semantic nodes.
     /// </summary>
     [JsonPropertyName("document_structure")]
-    public string? DocumentStructure { get; set; } = null;
+    public object? DocumentStructure { get; set; } = null;
 
     /// <summary>
     /// Extracted tables with structured cell data.
     /// </summary>
     [JsonPropertyName("tables")]
-    public List<string> Tables { get; set; } = [];
+    public List<object> Tables { get; set; } = [];
 
     /// <summary>
     /// Non-fatal processing warnings.

@@ -60,7 +60,7 @@ defmodule E2e.MetadataTest do
       assert String.trim(result.metadata.title) == "Comprehensive Metadata Test Page"
       assert result.metadata.canonical_url != ""
       assert result.metadata.keywords != ""
-      assert String.contains?(result.metadata.keywords, "rust")
+      assert String.contains?(to_string(result.metadata.keywords), "rust")
       assert String.trim(result.metadata.author) == "Jane Developer"
       assert result.metadata.viewport != ""
       assert String.trim(result.metadata.generator) == "kreuzcrawl/1.0"

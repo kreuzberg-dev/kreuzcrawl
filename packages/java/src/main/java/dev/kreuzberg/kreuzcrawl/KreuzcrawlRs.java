@@ -6,178 +6,249 @@ import java.lang.foreign.MemorySegment;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class KreuzcrawlRs {
-    private KreuzcrawlRs() { }
+  private KreuzcrawlRs() {}
 
-    public static CrawlEngineHandle createEngine(CrawlConfig config) throws KreuzcrawlRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
-            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
-            var cconfig = cconfigJson != null ? (MemorySegment) NativeLib.KCRAWL_CRAWL_CONFIG_FROM_JSON.invoke(cconfigJsonSeg) : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KCRAWL_CREATE_ENGINE.invoke(cconfig);
-            if (!cconfig.equals(MemorySegment.NULL)) { NativeLib.KCRAWL_CRAWL_CONFIG_FREE.invoke(cconfig); }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                return null;
-            }
-            return new CrawlEngineHandle(resultPtr);
-        } catch (Throwable e) {
-            throw new KreuzcrawlRsException("FFI call failed", e);
+  public static CrawlEngineHandle createEngine(CrawlConfig config) throws KreuzcrawlRsException {
+    try (var arena = Arena.ofConfined()) {
+      var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
+      var cconfigJsonSeg =
+          cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
+      var cconfig =
+          cconfigJson != null
+              ? (MemorySegment) NativeLib.KCRAWL_CRAWL_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
+              : MemorySegment.NULL;
+      var resultPtr = (MemorySegment) NativeLib.KCRAWL_CREATE_ENGINE.invoke(cconfig);
+      if (!cconfig.equals(MemorySegment.NULL)) {
+        NativeLib.KCRAWL_CRAWL_CONFIG_FREE.invoke(cconfig);
+      }
+      if (resultPtr.equals(MemorySegment.NULL)) {
+        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
+        if (errCode != 0) {
+          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
+          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
+          throw new KreuzcrawlRsException(errCode, msg);
         }
+        return null;
+      }
+      return new CrawlEngineHandle(resultPtr);
+    } catch (Throwable e) {
+      throw new KreuzcrawlRsException("FFI call failed", e);
     }
+  }
 
-    public static ScrapeResult scrape(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cengine = engine.handle();
-            var curl = arena.allocateFrom(url);
-            var resultPtr = (MemorySegment) NativeLib.KCRAWL_SCRAPE.invoke(cengine, curl);
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                return null;
-            }
-            var jsonPtr = (MemorySegment) NativeLib.KCRAWL_SCRAPE_RESULT_TO_JSON.invoke(resultPtr);
-            NativeLib.KCRAWL_SCRAPE_RESULT_FREE.invoke(resultPtr);
-            if (jsonPtr.equals(MemorySegment.NULL)) {
-                return null;
-            }
-            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
-            return createObjectMapper().readValue(json, ScrapeResult.class);
-        } catch (Throwable e) {
-            throw new KreuzcrawlRsException("FFI call failed", e);
+  public static ScrapeResult scrape(CrawlEngineHandle engine, String url)
+      throws KreuzcrawlRsException {
+    try (var arena = Arena.ofConfined()) {
+      var cengine = engine.handle();
+      var curl = arena.allocateFrom(url);
+      var resultPtr = (MemorySegment) NativeLib.KCRAWL_SCRAPE.invoke(cengine, curl);
+      if (resultPtr.equals(MemorySegment.NULL)) {
+        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
+        if (errCode != 0) {
+          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
+          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
+          throw new KreuzcrawlRsException(errCode, msg);
         }
+        return null;
+      }
+      var jsonPtr = (MemorySegment) NativeLib.KCRAWL_SCRAPE_RESULT_TO_JSON.invoke(resultPtr);
+      NativeLib.KCRAWL_SCRAPE_RESULT_FREE.invoke(resultPtr);
+      if (jsonPtr.equals(MemorySegment.NULL)) {
+        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
+        if (errCode != 0) {
+          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
+          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
+          throw new KreuzcrawlRsException(errCode, msg);
+        }
+        return null;
+      }
+      String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+      NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
+      return createObjectMapper().readValue(json, ScrapeResult.class);
+    } catch (Throwable e) {
+      throw new KreuzcrawlRsException("FFI call failed", e);
     }
+  }
 
-    public static CompletableFuture<ScrapeResult> scrapeAsync(CrawlEngineHandle engine, String url) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return scrape(engine, url);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
+  public static CompletableFuture<ScrapeResult> scrapeAsync(CrawlEngineHandle engine, String url) {
+    return CompletableFuture.supplyAsync(
+        () -> {
+          try {
+            return scrape(engine, url);
+          } catch (Throwable e) {
+            throw new CompletionException(e);
+          }
         });
-    }
+  }
 
-    public static CrawlResult crawl(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cengine = engine.handle();
-            var curl = arena.allocateFrom(url);
-            var resultPtr = (MemorySegment) NativeLib.KCRAWL_CRAWL.invoke(cengine, curl);
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                return null;
-            }
-            var jsonPtr = (MemorySegment) NativeLib.KCRAWL_CRAWL_RESULT_TO_JSON.invoke(resultPtr);
-            NativeLib.KCRAWL_CRAWL_RESULT_FREE.invoke(resultPtr);
-            if (jsonPtr.equals(MemorySegment.NULL)) {
-                return null;
-            }
-            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
-            return createObjectMapper().readValue(json, CrawlResult.class);
-        } catch (Throwable e) {
-            throw new KreuzcrawlRsException("FFI call failed", e);
+  public static CrawlResult crawl(CrawlEngineHandle engine, String url)
+      throws KreuzcrawlRsException {
+    try (var arena = Arena.ofConfined()) {
+      var cengine = engine.handle();
+      var curl = arena.allocateFrom(url);
+      var resultPtr = (MemorySegment) NativeLib.KCRAWL_CRAWL.invoke(cengine, curl);
+      if (resultPtr.equals(MemorySegment.NULL)) {
+        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
+        if (errCode != 0) {
+          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
+          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
+          throw new KreuzcrawlRsException(errCode, msg);
         }
-    }
-
-    public static CompletableFuture<CrawlResult> crawlAsync(CrawlEngineHandle engine, String url) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return crawl(engine, url);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
-        });
-    }
-
-    public static MapResult mapUrls(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cengine = engine.handle();
-            var curl = arena.allocateFrom(url);
-            var resultPtr = (MemorySegment) NativeLib.KCRAWL_MAP_URLS.invoke(cengine, curl);
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                return null;
-            }
-            var jsonPtr = (MemorySegment) NativeLib.KCRAWL_MAP_RESULT_TO_JSON.invoke(resultPtr);
-            NativeLib.KCRAWL_MAP_RESULT_FREE.invoke(resultPtr);
-            if (jsonPtr.equals(MemorySegment.NULL)) {
-                return null;
-            }
-            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
-            return createObjectMapper().readValue(json, MapResult.class);
-        } catch (Throwable e) {
-            throw new KreuzcrawlRsException("FFI call failed", e);
+        return null;
+      }
+      var jsonPtr = (MemorySegment) NativeLib.KCRAWL_CRAWL_RESULT_TO_JSON.invoke(resultPtr);
+      NativeLib.KCRAWL_CRAWL_RESULT_FREE.invoke(resultPtr);
+      if (jsonPtr.equals(MemorySegment.NULL)) {
+        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
+        if (errCode != 0) {
+          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
+          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
+          throw new KreuzcrawlRsException(errCode, msg);
         }
+        return null;
+      }
+      String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+      NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
+      return createObjectMapper().readValue(json, CrawlResult.class);
+    } catch (Throwable e) {
+      throw new KreuzcrawlRsException("FFI call failed", e);
     }
+  }
 
-    public static CompletableFuture<MapResult> mapUrlsAsync(CrawlEngineHandle engine, String url) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return mapUrls(engine, url);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
+  public static CompletableFuture<CrawlResult> crawlAsync(CrawlEngineHandle engine, String url) {
+    return CompletableFuture.supplyAsync(
+        () -> {
+          try {
+            return crawl(engine, url);
+          } catch (Throwable e) {
+            throw new CompletionException(e);
+          }
         });
-    }
+  }
 
-    public static List<BatchScrapeResult> batchScrape(CrawlEngineHandle engine, List<String> urls) throws KreuzcrawlRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cengine = engine.handle();
-            var resultPtr = (MemorySegment) NativeLib.KCRAWL_BATCH_SCRAPE.invoke(cengine, urls);
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                return java.util.List.of();
-            }
-            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KCRAWL_FREE_STRING.invoke(resultPtr);
-            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<BatchScrapeResult>>() { });
-        } catch (Throwable e) {
-            throw new KreuzcrawlRsException("FFI call failed", e);
+  public static MapResult mapUrls(CrawlEngineHandle engine, String url)
+      throws KreuzcrawlRsException {
+    try (var arena = Arena.ofConfined()) {
+      var cengine = engine.handle();
+      var curl = arena.allocateFrom(url);
+      var resultPtr = (MemorySegment) NativeLib.KCRAWL_MAP_URLS.invoke(cengine, curl);
+      if (resultPtr.equals(MemorySegment.NULL)) {
+        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
+        if (errCode != 0) {
+          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
+          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
+          throw new KreuzcrawlRsException(errCode, msg);
         }
-    }
-
-    public static CompletableFuture<List<BatchScrapeResult>> batchScrapeAsync(CrawlEngineHandle engine, List<String> urls) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return batchScrape(engine, urls);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
-        });
-    }
-
-    public static List<BatchCrawlResult> batchCrawl(CrawlEngineHandle engine, List<String> urls) throws KreuzcrawlRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cengine = engine.handle();
-            var resultPtr = (MemorySegment) NativeLib.KCRAWL_BATCH_CRAWL.invoke(cengine, urls);
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                return java.util.List.of();
-            }
-            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KCRAWL_FREE_STRING.invoke(resultPtr);
-            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<BatchCrawlResult>>() { });
-        } catch (Throwable e) {
-            throw new KreuzcrawlRsException("FFI call failed", e);
+        return null;
+      }
+      var jsonPtr = (MemorySegment) NativeLib.KCRAWL_MAP_RESULT_TO_JSON.invoke(resultPtr);
+      NativeLib.KCRAWL_MAP_RESULT_FREE.invoke(resultPtr);
+      if (jsonPtr.equals(MemorySegment.NULL)) {
+        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
+        if (errCode != 0) {
+          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
+          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
+          throw new KreuzcrawlRsException(errCode, msg);
         }
+        return null;
+      }
+      String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+      NativeLib.KCRAWL_FREE_STRING.invoke(jsonPtr);
+      return createObjectMapper().readValue(json, MapResult.class);
+    } catch (Throwable e) {
+      throw new KreuzcrawlRsException("FFI call failed", e);
     }
+  }
 
-    public static CompletableFuture<List<BatchCrawlResult>> batchCrawlAsync(CrawlEngineHandle engine, List<String> urls) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return batchCrawl(engine, urls);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
+  public static CompletableFuture<MapResult> mapUrlsAsync(CrawlEngineHandle engine, String url) {
+    return CompletableFuture.supplyAsync(
+        () -> {
+          try {
+            return mapUrls(engine, url);
+          } catch (Throwable e) {
+            throw new CompletionException(e);
+          }
         });
+  }
+
+  public static List<BatchScrapeResult> batchScrape(CrawlEngineHandle engine, List<String> urls)
+      throws KreuzcrawlRsException {
+    try (var arena = Arena.ofConfined()) {
+      var cengine = engine.handle();
+      var curlsJson = createObjectMapper().writeValueAsString(urls);
+      var curls = arena.allocateFrom(curlsJson);
+      var resultPtr = (MemorySegment) NativeLib.KCRAWL_BATCH_SCRAPE.invoke(cengine, curls);
+      if (resultPtr.equals(MemorySegment.NULL)) {
+        return java.util.List.of();
+      }
+      String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+      NativeLib.KCRAWL_FREE_STRING.invoke(resultPtr);
+      return createObjectMapper()
+          .readValue(
+              json,
+              new com.fasterxml.jackson.core.type.TypeReference<
+                  java.util.List<BatchScrapeResult>>() {});
+    } catch (Throwable e) {
+      throw new KreuzcrawlRsException("FFI call failed", e);
     }
+  }
 
-    // Helper methods for FFI marshalling
+  public static CompletableFuture<List<BatchScrapeResult>> batchScrapeAsync(
+      CrawlEngineHandle engine, List<String> urls) {
+    return CompletableFuture.supplyAsync(
+        () -> {
+          try {
+            return batchScrape(engine, urls);
+          } catch (Throwable e) {
+            throw new CompletionException(e);
+          }
+        });
+  }
 
-    private static com.fasterxml.jackson.databind.ObjectMapper createObjectMapper() {
-        return new com.fasterxml.jackson.databind.ObjectMapper()
-            .findAndRegisterModules()
-            .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-            .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT)
-            .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+  public static List<BatchCrawlResult> batchCrawl(CrawlEngineHandle engine, List<String> urls)
+      throws KreuzcrawlRsException {
+    try (var arena = Arena.ofConfined()) {
+      var cengine = engine.handle();
+      var curlsJson = createObjectMapper().writeValueAsString(urls);
+      var curls = arena.allocateFrom(curlsJson);
+      var resultPtr = (MemorySegment) NativeLib.KCRAWL_BATCH_CRAWL.invoke(cengine, curls);
+      if (resultPtr.equals(MemorySegment.NULL)) {
+        return java.util.List.of();
+      }
+      String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+      NativeLib.KCRAWL_FREE_STRING.invoke(resultPtr);
+      return createObjectMapper()
+          .readValue(
+              json,
+              new com.fasterxml.jackson.core.type.TypeReference<
+                  java.util.List<BatchCrawlResult>>() {});
+    } catch (Throwable e) {
+      throw new KreuzcrawlRsException("FFI call failed", e);
     }
+  }
 
+  public static CompletableFuture<List<BatchCrawlResult>> batchCrawlAsync(
+      CrawlEngineHandle engine, List<String> urls) {
+    return CompletableFuture.supplyAsync(
+        () -> {
+          try {
+            return batchCrawl(engine, urls);
+          } catch (Throwable e) {
+            throw new CompletionException(e);
+          }
+        });
+  }
+
+  // Helper methods for FFI marshalling
+
+  private static com.fasterxml.jackson.databind.ObjectMapper createObjectMapper() {
+    return new com.fasterxml.jackson.databind.ObjectMapper()
+        .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
+        .findAndRegisterModules()
+        .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+        .configure(
+            com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+  }
 }

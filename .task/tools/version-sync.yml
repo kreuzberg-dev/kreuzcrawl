@@ -1,12 +1,30 @@
 version: "3"
 
-includes:
-  _cfg:
-    taskfile: ../config/vars.yml
-    internal: true
-
 tasks:
   sync:
     desc: Sync version from Cargo.toml to all package manifests
     cmds:
-      - uv run --no-project python scripts/sync_versions.py
+      - alef sync-versions
+      - alef readme
+      - alef docs
+      - alef generate --clean
+      - alef stubs
+      - alef e2e generate
+
+  bump:major:
+    desc: Bump major version and sync all packages
+    cmds:
+      - alef sync-versions --bump major
+      - task: sync
+
+  bump:minor:
+    desc: Bump minor version and sync all packages
+    cmds:
+      - alef sync-versions --bump minor
+      - task: sync
+
+  bump:patch:
+    desc: Bump patch version and sync all packages
+    cmds:
+      - alef sync-versions --bump patch
+      - task: sync

@@ -12,13 +12,13 @@ defmodule E2e.MarkdownTest do
       assert String.trim(result.metadata.title) == "Test"
       assert result.html != ""
       assert result.markdown.content != ""
-      assert String.contains?(result.markdown.content, "Hello World")
+      assert String.contains?(to_string(result.markdown.content), "Hello World")
     end
   end
 
   describe "markdown_crawl_all_pages" do
     test "All crawled pages have markdown field populated" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 1}
+      engine_config = "{\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_crawl_all_pages"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -42,7 +42,7 @@ defmodule E2e.MarkdownTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/markdown_headings_and_paragraphs"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert result.markdown.content != ""
-      assert String.contains?(result.markdown.content, "Main Title")
+      assert String.contains?(to_string(result.markdown.content), "Main Title")
     end
   end
 
@@ -54,7 +54,7 @@ defmodule E2e.MarkdownTest do
       assert result.status_code == 200
       assert result.html != ""
       assert result.markdown.content != ""
-      assert String.contains?(result.markdown.content, "Example")
+      assert String.contains?(to_string(result.markdown.content), "Example")
     end
   end
 

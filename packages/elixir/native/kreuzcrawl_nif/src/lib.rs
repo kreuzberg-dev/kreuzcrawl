@@ -5,8 +5,7 @@ use rustler::ResourceArc;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.ExtractionMeta"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct ExtractionMeta {
     pub cost: Option<f64>,
     pub prompt_tokens: Option<u64>,
@@ -30,8 +29,7 @@ impl ExtractionMeta {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.ProxyConfig"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct ProxyConfig {
     pub url: String,
     pub username: Option<String>,
@@ -48,8 +46,7 @@ impl ProxyConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.BrowserConfig"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct BrowserConfig {
     pub mode: BrowserMode,
     pub endpoint: Option<String>,
@@ -75,8 +72,7 @@ impl BrowserConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.CrawlConfig"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct CrawlConfig {
     pub max_depth: Option<usize>,
     pub max_pages: Option<usize>,
@@ -209,8 +205,7 @@ impl CrawlConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.DownloadedDocument"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct DownloadedDocument {
     pub url: String,
     pub mime_type: String,
@@ -238,8 +233,7 @@ impl DownloadedDocument {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.InteractionResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct InteractionResult {
     pub action_results: Vec<ActionResult>,
     pub final_html: String,
@@ -261,8 +255,7 @@ impl InteractionResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.ActionResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct ActionResult {
     pub action_index: usize,
     pub action_type: String,
@@ -289,8 +282,7 @@ impl ActionResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.ScrapeResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct ScrapeResult {
     pub status_code: u16,
     pub content_type: String,
@@ -384,8 +376,7 @@ impl ScrapeResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.CrawlPageResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct CrawlPageResult {
     pub url: String,
     pub normalized_url: String,
@@ -451,8 +442,7 @@ impl CrawlPageResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.CrawlResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct CrawlResult {
     pub pages: Vec<CrawlPageResult>,
     pub final_url: String,
@@ -486,8 +476,7 @@ impl CrawlResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.SitemapUrl"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct SitemapUrl {
     pub url: String,
     pub lastmod: Option<String>,
@@ -506,8 +495,7 @@ impl SitemapUrl {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.MapResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct MapResult {
     pub urls: Vec<SitemapUrl>,
 }
@@ -520,8 +508,7 @@ impl MapResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.MarkdownResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct MarkdownResult {
     pub content: String,
     pub document_structure: Option<String>,
@@ -544,8 +531,7 @@ impl MarkdownResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.CachedPage"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct CachedPage {
     pub url: String,
     pub status_code: u16,
@@ -576,8 +562,7 @@ impl CachedPage {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.LinkInfo"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct LinkInfo {
     pub url: String,
     pub text: String,
@@ -598,8 +583,7 @@ impl LinkInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.ImageInfo"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct ImageInfo {
     pub url: String,
     pub alt: Option<String>,
@@ -620,8 +604,7 @@ impl ImageInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.FeedInfo"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct FeedInfo {
     pub url: String,
     pub title: Option<String>,
@@ -638,8 +621,7 @@ impl FeedInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.JsonLdEntry"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct JsonLdEntry {
     pub schema_type: String,
     pub name: Option<String>,
@@ -659,8 +641,7 @@ impl JsonLdEntry {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.CookieInfo"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct CookieInfo {
     pub name: String,
     pub value: String,
@@ -679,8 +660,7 @@ impl CookieInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.DownloadedAsset"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct DownloadedAsset {
     pub url: String,
     pub content_hash: String,
@@ -709,8 +689,7 @@ impl DownloadedAsset {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.ArticleMetadata"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct ArticleMetadata {
     pub published_time: Option<String>,
     pub modified_time: Option<String>,
@@ -731,8 +710,7 @@ impl ArticleMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.HreflangEntry"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct HreflangEntry {
     pub lang: String,
     pub url: String,
@@ -747,8 +725,7 @@ impl HreflangEntry {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.FaviconInfo"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct FaviconInfo {
     pub url: String,
     pub rel: String,
@@ -767,8 +744,7 @@ impl FaviconInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.HeadingInfo"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct HeadingInfo {
     pub level: u8,
     pub text: String,
@@ -783,8 +759,7 @@ impl HeadingInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.ResponseMeta"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct ResponseMeta {
     pub etag: Option<String>,
     pub last_modified: Option<String>,
@@ -809,8 +784,7 @@ impl ResponseMeta {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.PageMetadata"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct PageMetadata {
     pub title: Option<String>,
     pub description: Option<String>,
@@ -907,8 +881,7 @@ impl PageMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.CitationResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct CitationResult {
     pub content: String,
     pub references: Vec<CitationReference>,
@@ -923,8 +896,7 @@ impl CitationResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.CitationReference"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct CitationReference {
     pub index: usize,
     pub url: String,
@@ -951,8 +923,7 @@ impl std::panic::RefUnwindSafe for CrawlEngineHandle {}
 
 impl rustler::Resource for CrawlEngineHandle {}
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.BatchScrapeResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct BatchScrapeResult {
     pub url: String,
     pub result: Option<ScrapeResult>,
@@ -969,8 +940,7 @@ impl BatchScrapeResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifStruct)]
-#[module = "Kreuzcrawl.BatchCrawlResult"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct BatchCrawlResult {
     pub url: String,
     pub result: Option<CrawlResult>,
@@ -1109,8 +1079,12 @@ impl Default for CrawlEvent {
 }
 
 #[rustler::nif]
-pub fn create_engine(config: Option<CrawlConfig>) -> Result<ResourceArc<CrawlEngineHandle>, String> {
-    let result = kreuzcrawl::create_engine(config.map(Into::into)).map_err(|e| e.to_string())?;
+pub fn create_engine(config: Option<String>) -> Result<ResourceArc<CrawlEngineHandle>, String> {
+    let config_core: Option<kreuzcrawl::CrawlConfig> = config
+        .map(|s| serde_json::from_str::<kreuzcrawl::CrawlConfig>(&s))
+        .transpose()
+        .map_err(|e| e.to_string())?;
+    let result = kreuzcrawl::create_engine(Some(config_core.unwrap_or_default())).map_err(|e| e.to_string())?;
     Ok(ResourceArc::new(CrawlEngineHandle {
         inner: Arc::new(result),
     }))
@@ -1144,17 +1118,23 @@ pub fn map_urls_async(engine: ResourceArc<CrawlEngineHandle>, url: String) -> Re
 }
 
 #[rustler::nif(schedule = "DirtyCpu")]
-pub fn batch_scrape_async(engine: ResourceArc<CrawlEngineHandle>, urls: Vec<String>) -> Vec<BatchScrapeResult> {
-    let rt = tokio::runtime::Runtime::new().unwrap();
+pub fn batch_scrape_async(
+    engine: ResourceArc<CrawlEngineHandle>,
+    urls: Vec<String>,
+) -> Result<Vec<BatchScrapeResult>, String> {
+    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
     let result = rt.block_on(async { kreuzcrawl::batch_scrape(&engine.inner, urls).await });
-    result.into_iter().map(Into::into).collect()
+    Ok(result.into_iter().map(Into::into).collect())
 }
 
 #[rustler::nif(schedule = "DirtyCpu")]
-pub fn batch_crawl_async(engine: ResourceArc<CrawlEngineHandle>, urls: Vec<String>) -> Vec<BatchCrawlResult> {
-    let rt = tokio::runtime::Runtime::new().unwrap();
+pub fn batch_crawl_async(
+    engine: ResourceArc<CrawlEngineHandle>,
+    urls: Vec<String>,
+) -> Result<Vec<BatchCrawlResult>, String> {
+    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
     let result = rt.block_on(async { kreuzcrawl::batch_crawl(&engine.inner, urls).await });
-    result.into_iter().map(Into::into).collect()
+    Ok(result.into_iter().map(Into::into).collect())
 }
 
 #[rustler::nif]
@@ -1216,10 +1196,10 @@ impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
         Self {
             mode: val.mode.into(),
             endpoint: val.endpoint,
-            timeout: std::time::Duration::from_secs(val.timeout),
+            timeout: std::time::Duration::from_millis(val.timeout),
             wait: val.wait.into(),
             wait_selector: val.wait_selector,
-            extra_wait: val.extra_wait.map(std::time::Duration::from_secs),
+            extra_wait: val.extra_wait.map(std::time::Duration::from_millis),
         }
     }
 }
@@ -1229,10 +1209,10 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
         Self {
             mode: val.mode.into(),
             endpoint: val.endpoint,
-            timeout: val.timeout.as_secs(),
+            timeout: val.timeout.as_millis() as u64,
             wait: val.wait.into(),
             wait_selector: val.wait_selector,
-            extra_wait: val.extra_wait.map(|d| d.as_secs()),
+            extra_wait: val.extra_wait.map(|d| d.as_millis() as u64),
         }
     }
 }
@@ -1251,7 +1231,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
             custom_headers: val.custom_headers.into_iter().collect(),
-            request_timeout: std::time::Duration::from_secs(val.request_timeout),
+            request_timeout: std::time::Duration::from_millis(val.request_timeout),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
             retry_codes: val.retry_codes,
@@ -1293,7 +1273,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
             custom_headers: val.custom_headers.into_iter().collect(),
-            request_timeout: val.request_timeout.as_secs(),
+            request_timeout: val.request_timeout.as_millis() as u64,
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
             retry_codes: val.retry_codes,
@@ -2271,4 +2251,10 @@ fn crawl_error_to_rustler_err(e: kreuzcrawl::CrawlError) -> String {
     e.to_string()
 }
 
-rustler::init!("Elixir.Kreuzcrawl.Native");
+fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
+    env.register::<CrawlEngineHandle>()
+        .expect("Failed to register resource type CrawlEngineHandle");
+    true
+}
+
+rustler::init!("Elixir.Kreuzcrawl.Native", load = on_load);

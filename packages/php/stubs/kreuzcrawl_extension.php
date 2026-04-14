@@ -29,11 +29,11 @@ namespace Kreuzcrawl {
     class ExtractionMeta
     {
         public function __construct(
+            int $chunks_processed,
             ?float $cost = null,
             ?int $prompt_tokens = null,
             ?int $completion_tokens = null,
-            ?string $model = null,
-            int $chunks_processed
+            ?string $model = null
         ) {}
 
         public function getCost(): ?float {}
@@ -66,9 +66,9 @@ namespace Kreuzcrawl {
     {
         public function __construct(
             BrowserMode $mode,
-            ?string $endpoint = null,
             float $timeout,
             BrowserWait $wait,
+            ?string $endpoint = null,
             ?string $wait_selector = null,
             ?float $extra_wait = null
         ) {}
@@ -86,12 +86,18 @@ namespace Kreuzcrawl {
      */
     class CrawlConfig
     {
+        /**
+         * @param array<string> $include_paths
+         * @param array<string> $exclude_paths
+         * @param array<string, string> $custom_headers
+         * @param array<int> $retry_codes
+         * @param array<string> $remove_tags
+         * @param array<AssetCategory> $asset_types
+         * @param array<string> $user_agents
+         * @param array<string> $document_mime_types
+         */
         public function __construct(
-            ?int $max_depth = null,
-            ?int $max_pages = null,
-            ?int $max_concurrent = null,
             bool $respect_robots_txt,
-            ?string $user_agent = null,
             bool $stay_on_domain,
             bool $allow_subdomains,
             array $include_paths,
@@ -102,25 +108,29 @@ namespace Kreuzcrawl {
             int $retry_count,
             array $retry_codes,
             bool $cookies_enabled,
-            ?AuthConfig $auth = null,
-            ?int $max_body_size = null,
             bool $main_content_only,
             array $remove_tags,
-            ?int $map_limit = null,
-            ?string $map_search = null,
             bool $download_assets,
             array $asset_types,
-            ?int $max_asset_size = null,
             BrowserConfig $browser,
-            ?ProxyConfig $proxy = null,
             array $user_agents,
             bool $capture_screenshot,
             bool $download_documents,
-            ?int $document_max_size = null,
             array $document_mime_types,
+            bool $save_browser_profile,
+            ?int $max_depth = null,
+            ?int $max_pages = null,
+            ?int $max_concurrent = null,
+            ?string $user_agent = null,
+            ?AuthConfig $auth = null,
+            ?int $max_body_size = null,
+            ?int $map_limit = null,
+            ?string $map_search = null,
+            ?int $max_asset_size = null,
+            ?ProxyConfig $proxy = null,
+            ?int $document_max_size = null,
             ?string $warc_output = null,
-            ?string $browser_profile = null,
-            bool $save_browser_profile
+            ?string $browser_profile = null
         ) {}
 
         public function getMaxDepth(): ?int {}
@@ -130,29 +140,37 @@ namespace Kreuzcrawl {
         public function getUserAgent(): ?string {}
         public function getStayOnDomain(): bool {}
         public function getAllowSubdomains(): bool {}
+        /** @return array<string> */
         public function getIncludePaths(): array {}
+        /** @return array<string> */
         public function getExcludePaths(): array {}
+        /** @return array<string, string> */
         public function getCustomHeaders(): array {}
         public function getRequestTimeout(): float {}
         public function getMaxRedirects(): int {}
         public function getRetryCount(): int {}
+        /** @return array<int> */
         public function getRetryCodes(): array {}
         public function getCookiesEnabled(): bool {}
         public function getAuth(): ?AuthConfig {}
         public function getMaxBodySize(): ?int {}
         public function getMainContentOnly(): bool {}
+        /** @return array<string> */
         public function getRemoveTags(): array {}
         public function getMapLimit(): ?int {}
         public function getMapSearch(): ?string {}
         public function getDownloadAssets(): bool {}
+        /** @return array<AssetCategory> */
         public function getAssetTypes(): array {}
         public function getMaxAssetSize(): ?int {}
         public function getBrowser(): BrowserConfig {}
         public function getProxy(): ?ProxyConfig {}
+        /** @return array<string> */
         public function getUserAgents(): array {}
         public function getCaptureScreenshot(): bool {}
         public function getDownloadDocuments(): bool {}
         public function getDocumentMaxSize(): ?int {}
+        /** @return array<string> */
         public function getDocumentMimeTypes(): array {}
         public function getWarcOutput(): ?string {}
         public function getBrowserProfile(): ?string {}
@@ -168,14 +186,17 @@ namespace Kreuzcrawl {
      */
     class DownloadedDocument
     {
+        /**
+         * @param array<string, string> $headers
+         */
         public function __construct(
             string $url,
             string $mime_type,
             string $content,
             int $size,
-            ?string $filename = null,
             string $content_hash,
-            array $headers
+            array $headers,
+            ?string $filename = null
         ) {}
 
         public function getUrl(): string {}
@@ -184,6 +205,7 @@ namespace Kreuzcrawl {
         public function getSize(): int {}
         public function getFilename(): ?string {}
         public function getContentHash(): string {}
+        /** @return array<string, string> */
         public function getHeaders(): array {}
     }
 
@@ -192,6 +214,9 @@ namespace Kreuzcrawl {
      */
     class InteractionResult
     {
+        /**
+         * @param array<ActionResult> $action_results
+         */
         public function __construct(
             array $action_results,
             string $final_html,
@@ -199,6 +224,7 @@ namespace Kreuzcrawl {
             ?string $screenshot = null
         ) {}
 
+        /** @return array<ActionResult> */
         public function getActionResults(): array {}
         public function getFinalHtml(): string {}
         public function getFinalUrl(): string {}
@@ -230,6 +256,13 @@ namespace Kreuzcrawl {
      */
     class ScrapeResult
     {
+        /**
+         * @param array<LinkInfo> $links
+         * @param array<ImageInfo> $images
+         * @param array<FeedInfo> $feeds
+         * @param array<JsonLdEntry> $json_ld
+         * @param array<DownloadedAsset> $assets
+         */
         public function __construct(
             int $status_code,
             string $content_type,
@@ -241,19 +274,19 @@ namespace Kreuzcrawl {
             array $feeds,
             array $json_ld,
             bool $is_allowed,
-            ?int $crawl_delay = null,
             bool $noindex_detected,
             bool $nofollow_detected,
-            ?string $x_robots_tag = null,
             bool $is_pdf,
             bool $was_skipped,
-            ?string $detected_charset = null,
             bool $main_content_only,
             bool $auth_header_sent,
-            ?ResponseMeta $response_meta = null,
             array $assets,
             bool $js_render_hint,
             bool $browser_used,
+            ?int $crawl_delay = null,
+            ?string $x_robots_tag = null,
+            ?string $detected_charset = null,
+            ?ResponseMeta $response_meta = null,
             ?MarkdownResult $markdown = null,
             ?string $extracted_data = null,
             ?ExtractionMeta $extraction_meta = null,
@@ -266,9 +299,13 @@ namespace Kreuzcrawl {
         public function getHtml(): string {}
         public function getBodySize(): int {}
         public function getMetadata(): PageMetadata {}
+        /** @return array<LinkInfo> */
         public function getLinks(): array {}
+        /** @return array<ImageInfo> */
         public function getImages(): array {}
+        /** @return array<FeedInfo> */
         public function getFeeds(): array {}
+        /** @return array<JsonLdEntry> */
         public function getJsonLd(): array {}
         public function getIsAllowed(): bool {}
         public function getCrawlDelay(): ?int {}
@@ -281,6 +318,7 @@ namespace Kreuzcrawl {
         public function getMainContentOnly(): bool {}
         public function getAuthHeaderSent(): bool {}
         public function getResponseMeta(): ?ResponseMeta {}
+        /** @return array<DownloadedAsset> */
         public function getAssets(): array {}
         public function getJsRenderHint(): bool {}
         public function getBrowserUsed(): bool {}
@@ -296,6 +334,12 @@ namespace Kreuzcrawl {
      */
     class CrawlPageResult
     {
+        /**
+         * @param array<LinkInfo> $links
+         * @param array<ImageInfo> $images
+         * @param array<FeedInfo> $feeds
+         * @param array<JsonLdEntry> $json_ld
+         */
         public function __construct(
             string $url,
             string $normalized_url,
@@ -326,9 +370,13 @@ namespace Kreuzcrawl {
         public function getHtml(): string {}
         public function getBodySize(): int {}
         public function getMetadata(): PageMetadata {}
+        /** @return array<LinkInfo> */
         public function getLinks(): array {}
+        /** @return array<ImageInfo> */
         public function getImages(): array {}
+        /** @return array<FeedInfo> */
         public function getFeeds(): array {}
+        /** @return array<JsonLdEntry> */
         public function getJsonLd(): array {}
         public function getDepth(): int {}
         public function getStayedOnDomain(): bool {}
@@ -346,22 +394,30 @@ namespace Kreuzcrawl {
      */
     class CrawlResult
     {
+        /**
+         * @param array<CrawlPageResult> $pages
+         * @param array<CookieInfo> $cookies
+         * @param array<string> $normalized_urls
+         */
         public function __construct(
             array $pages,
             string $final_url,
             int $redirect_count,
             bool $was_skipped,
-            ?string $error = null,
             array $cookies,
-            array $normalized_urls
+            array $normalized_urls,
+            ?string $error = null
         ) {}
 
+        /** @return array<CrawlPageResult> */
         public function getPages(): array {}
         public function getFinalUrl(): string {}
         public function getRedirectCount(): int {}
         public function getWasSkipped(): bool {}
         public function getError(): ?string {}
+        /** @return array<CookieInfo> */
         public function getCookies(): array {}
+        /** @return array<string> */
         public function getNormalizedUrls(): array {}
     }
 
@@ -388,10 +444,14 @@ namespace Kreuzcrawl {
      */
     class MapResult
     {
+        /**
+         * @param array<SitemapUrl> $urls
+         */
         public function __construct(
             array $urls
         ) {}
 
+        /** @return array<SitemapUrl> */
         public function getUrls(): array {}
     }
 
@@ -400,18 +460,24 @@ namespace Kreuzcrawl {
      */
     class MarkdownResult
     {
+        /**
+         * @param array<string> $tables
+         * @param array<string> $warnings
+         */
         public function __construct(
             string $content,
-            ?string $document_structure = null,
             array $tables,
             array $warnings,
+            ?string $document_structure = null,
             ?CitationResult $citations = null,
             ?string $fit_content = null
         ) {}
 
         public function getContent(): string {}
         public function getDocumentStructure(): ?string {}
+        /** @return array<string> */
         public function getTables(): array {}
+        /** @return array<string> */
         public function getWarnings(): array {}
         public function getCitations(): ?CitationResult {}
         public function getFitContent(): ?string {}
@@ -427,9 +493,9 @@ namespace Kreuzcrawl {
             int $status_code,
             string $content_type,
             string $body,
+            int $cached_at,
             ?string $etag = null,
-            ?string $last_modified = null,
-            int $cached_at
+            ?string $last_modified = null
         ) {}
 
         public function getUrl(): string {}
@@ -450,8 +516,8 @@ namespace Kreuzcrawl {
             string $url,
             string $text,
             LinkType $link_type,
-            ?string $rel = null,
-            bool $nofollow
+            bool $nofollow,
+            ?string $rel = null
         ) {}
 
         public function getUrl(): string {}
@@ -468,10 +534,10 @@ namespace Kreuzcrawl {
     {
         public function __construct(
             string $url,
+            ImageSource $source,
             ?string $alt = null,
             ?int $width = null,
-            ?int $height = null,
-            ImageSource $source
+            ?int $height = null
         ) {}
 
         public function getUrl(): string {}
@@ -488,8 +554,8 @@ namespace Kreuzcrawl {
     {
         public function __construct(
             string $url,
-            ?string $title = null,
-            FeedType $feed_type
+            FeedType $feed_type,
+            ?string $title = null
         ) {}
 
         public function getUrl(): string {}
@@ -504,8 +570,8 @@ namespace Kreuzcrawl {
     {
         public function __construct(
             string $schema_type,
-            ?string $name = null,
-            string $raw
+            string $raw,
+            ?string $name = null
         ) {}
 
         public function getSchemaType(): string {}
@@ -539,9 +605,9 @@ namespace Kreuzcrawl {
         public function __construct(
             string $url,
             string $content_hash,
-            ?string $mime_type = null,
             int $size,
             AssetCategory $asset_category,
+            ?string $mime_type = null,
             ?string $html_tag = null
         ) {}
 
@@ -558,18 +624,22 @@ namespace Kreuzcrawl {
      */
     class ArticleMetadata
     {
+        /**
+         * @param array<string> $tags
+         */
         public function __construct(
+            array $tags,
             ?string $published_time = null,
             ?string $modified_time = null,
             ?string $author = null,
-            ?string $section = null,
-            array $tags
+            ?string $section = null
         ) {}
 
         public function getPublishedTime(): ?string {}
         public function getModifiedTime(): ?string {}
         public function getAuthor(): ?string {}
         public function getSection(): ?string {}
+        /** @return array<string> */
         public function getTags(): array {}
     }
 
@@ -648,6 +718,12 @@ namespace Kreuzcrawl {
      */
     class PageMetadata
     {
+        /**
+         * @param ?array<string> $og_locale_alternates
+         * @param ?array<HreflangEntry> $hreflangs
+         * @param ?array<FaviconInfo> $favicons
+         * @param ?array<HeadingInfo> $headings
+         */
         public function __construct(
             ?string $title = null,
             ?string $description = null,
@@ -714,6 +790,7 @@ namespace Kreuzcrawl {
         public function getOgLocale(): ?string {}
         public function getOgVideo(): ?string {}
         public function getOgAudio(): ?string {}
+        /** @return ?array<string> */
         public function getOgLocaleAlternates(): ?array {}
         public function getTwitterCard(): ?string {}
         public function getTwitterTitle(): ?string {}
@@ -733,8 +810,11 @@ namespace Kreuzcrawl {
         public function getDcLanguage(): ?string {}
         public function getDcRights(): ?string {}
         public function getArticle(): ?ArticleMetadata {}
+        /** @return ?array<HreflangEntry> */
         public function getHreflangs(): ?array {}
+        /** @return ?array<FaviconInfo> */
         public function getFavicons(): ?array {}
+        /** @return ?array<HeadingInfo> */
         public function getHeadings(): ?array {}
         public function getWordCount(): ?int {}
     }
@@ -744,12 +824,16 @@ namespace Kreuzcrawl {
      */
     class CitationResult
     {
+        /**
+         * @param array<CitationReference> $references
+         */
         public function __construct(
             string $content,
             array $references
         ) {}
 
         public function getContent(): string {}
+        /** @return array<CitationReference> */
         public function getReferences(): array {}
     }
 
@@ -863,49 +947,24 @@ namespace Kreuzcrawl {
         case Complete = 'Complete';
     }
 
+    class KreuzcrawlApi
+    {
+        public static function create_engine(?\Kreuzcrawl\CrawlConfig $config = null): \Kreuzcrawl\CrawlEngineHandle {}
+        public static function scrape_async(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\ScrapeResult {}
+        public static function crawl_async(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\CrawlResult {}
+        public static function map_urls_async(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\MapResult {}
+        /**
+         * @param \Kreuzcrawl\CrawlEngineHandle $engine
+         * @param array<string> $urls
+         * @return array<\Kreuzcrawl\BatchScrapeResult>
+         */
+        public static function batch_scrape_async(\Kreuzcrawl\CrawlEngineHandle $engine, array $urls): array {}
+        /**
+         * @param \Kreuzcrawl\CrawlEngineHandle $engine
+         * @param array<string> $urls
+         * @return array<\Kreuzcrawl\BatchCrawlResult>
+         */
+        public static function batch_crawl_async(\Kreuzcrawl\CrawlEngineHandle $engine, array $urls): array {}
+    }
+
 } // end namespace
-
-namespace {
-
-    /**
-     * @param ?\Kreuzcrawl\CrawlConfig $config
-     * @return \Kreuzcrawl\CrawlEngineHandle
-     */
-    function create_engine(?\Kreuzcrawl\CrawlConfig $config = null): \Kreuzcrawl\CrawlEngineHandle {}
-
-    /**
-     * @param \Kreuzcrawl\CrawlEngineHandle $engine
-     * @param string $url
-     * @return \Kreuzcrawl\ScrapeResult
-     */
-    function scrape(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\ScrapeResult {}
-
-    /**
-     * @param \Kreuzcrawl\CrawlEngineHandle $engine
-     * @param string $url
-     * @return \Kreuzcrawl\CrawlResult
-     */
-    function crawl(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\CrawlResult {}
-
-    /**
-     * @param \Kreuzcrawl\CrawlEngineHandle $engine
-     * @param string $url
-     * @return \Kreuzcrawl\MapResult
-     */
-    function map_urls(\Kreuzcrawl\CrawlEngineHandle $engine, string $url): \Kreuzcrawl\MapResult {}
-
-    /**
-     * @param \Kreuzcrawl\CrawlEngineHandle $engine
-     * @param array<string> $urls
-     * @return array<\Kreuzcrawl\BatchScrapeResult>
-     */
-    function batch_scrape(\Kreuzcrawl\CrawlEngineHandle $engine, array $urls): array {}
-
-    /**
-     * @param \Kreuzcrawl\CrawlEngineHandle $engine
-     * @param array<string> $urls
-     * @return array<\Kreuzcrawl\BatchCrawlResult>
-     */
-    function batch_crawl(\Kreuzcrawl\CrawlEngineHandle $engine, array $urls): array {}
-
-}

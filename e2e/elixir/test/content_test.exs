@@ -9,13 +9,13 @@ defmodule E2e.ContentTest do
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_204_no_content"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert result.status_code == 204
-      assert String.trim(result.html) == ""
+      assert is_nil(result.html) or String.trim(result.html) == ""
     end
   end
 
   describe "content_charset_iso8859" do
     test "Handles ISO-8859-1 encoded page correctly" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_charset_iso8859"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -25,7 +25,7 @@ defmodule E2e.ContentTest do
 
   describe "content_empty_body" do
     test "Handles 200 response with empty body gracefully" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_empty_body"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -35,7 +35,7 @@ defmodule E2e.ContentTest do
 
   describe "content_gzip_compressed" do
     test "Handles response with Accept-Encoding gzip negotiation" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_gzip_compressed"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -46,7 +46,7 @@ defmodule E2e.ContentTest do
 
   describe "content_large_page_limit" do
     test "Respects max body size limit and truncates or skips oversized pages" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_body_size: 1024, respect_robots_txt: false}
+      engine_config = "{\"max_body_size\":1024,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_large_page_limit"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -56,7 +56,7 @@ defmodule E2e.ContentTest do
 
   describe "content_main_only" do
     test "Extracts only main content area, excluding nav, sidebar, footer" do
-      engine_config = %Kreuzcrawl.CrawlConfig{main_content_only: true, respect_robots_txt: false}
+      engine_config = "{\"main_content_only\":true,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_main_only"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -66,7 +66,7 @@ defmodule E2e.ContentTest do
 
   describe "content_pdf_no_extension" do
     test "Detects PDF content by Content-Type header when URL has no .pdf extension" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_pdf_no_extension"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -76,7 +76,7 @@ defmodule E2e.ContentTest do
 
   describe "content_remove_tags" do
     test "Removes specified HTML elements by CSS selector before processing" do
-      engine_config = %Kreuzcrawl.CrawlConfig{remove_tags: ["nav", "aside", "footer"], respect_robots_txt: false}
+      engine_config = "{\"remove_tags\":[\"nav\",\"aside\",\"footer\"],\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_remove_tags"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -86,7 +86,7 @@ defmodule E2e.ContentTest do
 
   describe "content_utf8_bom" do
     test "Handles UTF-8 content with BOM marker correctly" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/content_utf8_bom"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

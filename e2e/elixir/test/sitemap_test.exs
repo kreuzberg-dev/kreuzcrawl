@@ -15,7 +15,7 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_compressed_gzip" do
     test "Parses a gzip-compressed sitemap file" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_compressed_gzip"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -34,7 +34,7 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_from_robots_txt" do
     test "Discovers sitemap via robots.txt Sitemap directive" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true}
+      engine_config = "{\"respect_robots_txt\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_from_robots_txt"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -53,7 +53,7 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_lastmod_filter" do
     test "Filters sitemap URLs by lastmod date" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_lastmod_filter"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -64,7 +64,7 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_only_mode" do
     test "Uses sitemap URLs exclusively without following page links" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_only_mode"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -74,7 +74,7 @@ defmodule E2e.SitemapTest do
 
   describe "sitemap_xhtml_links" do
     test "Parses sitemap with XHTML namespace alternate links" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/sitemap_xhtml_links"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

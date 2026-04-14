@@ -6,51 +6,44 @@ import java.util.Optional;
 
 public class MarkdownResultBuilder {
 
-    private String content = "";
-    private Optional<String> documentStructure = Optional.empty();
-    private List<String> tables = List.of();
-    private List<String> warnings = List.of();
-    private Optional<CitationResult> citations = Optional.empty();
-    private Optional<String> fitContent = Optional.empty();
+  private String content = "";
+  private Optional<Object> documentStructure = Optional.empty();
+  private List<Object> tables = List.of();
+  private List<String> warnings = List.of();
+  private Optional<CitationResult> citations = Optional.empty();
+  private Optional<String> fitContent = Optional.empty();
 
-    public MarkdownResultBuilder withContent(String value) {
-        this.content = value;
-        return this;
-    }
+  public MarkdownResultBuilder withContent(String value) {
+    this.content = value;
+    return this;
+  }
 
-    public MarkdownResultBuilder withDocumentStructure(Optional<String> value) {
-        this.documentStructure = value;
-        return this;
-    }
+  public MarkdownResultBuilder withDocumentStructure(Optional<Object> value) {
+    this.documentStructure = value;
+    return this;
+  }
 
-    public MarkdownResultBuilder withTables(List<String> value) {
-        this.tables = value;
-        return this;
-    }
+  public MarkdownResultBuilder withTables(List<Object> value) {
+    this.tables = value;
+    return this;
+  }
 
-    public MarkdownResultBuilder withWarnings(List<String> value) {
-        this.warnings = value;
-        return this;
-    }
+  public MarkdownResultBuilder withWarnings(List<String> value) {
+    this.warnings = value;
+    return this;
+  }
 
-    public MarkdownResultBuilder withCitations(Optional<CitationResult> value) {
-        this.citations = value;
-        return this;
-    }
+  public MarkdownResultBuilder withCitations(Optional<CitationResult> value) {
+    this.citations = value;
+    return this;
+  }
 
-    public MarkdownResultBuilder withFitContent(Optional<String> value) {
-        this.fitContent = value;
-        return this;
-    }
+  public MarkdownResultBuilder withFitContent(Optional<String> value) {
+    this.fitContent = value;
+    return this;
+  }
 
-    public MarkdownResult build() {
-        return new MarkdownResult(
-            content,
-            documentStructure,
-            tables,
-            warnings,
-            citations,
-            fitContent
-        );
-    }
+  public MarkdownResult build() {
+    return new MarkdownResult(content, documentStructure, tables, warnings, citations, fitContent);
+  }
 }

@@ -16,8 +16,7 @@ async fn test_sitemap_compressed_gzip() {
         .parent()
         .unwrap()
         .join("fixtures/responses/xml/sitemap_gzip.xml.gz");
-    let gz_bytes = std::fs::read(&gz_path)
-        .unwrap_or_else(|e| panic!("failed to read {}: {e}", gz_path.display()));
+    let gz_bytes = std::fs::read(&gz_path).unwrap_or_else(|e| panic!("failed to read {}: {e}", gz_path.display()));
 
     let response = ResponseTemplate::new(200)
         .set_body_bytes(gz_bytes)

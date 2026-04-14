@@ -13,7 +13,7 @@ class LinksTest {
         var engine = Kreuzcrawl.createEngine(null);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_anchor_fragment";
         var result = Kreuzcrawl.scrape(engine, url);
-        assertTrue(result.links().getFirst().linkType().name().toLowerCase().contains("anchor"), "expected to contain: " + "anchor");
+        assertTrue(result.links().getFirst().linkType().getValue().contains("anchor"), "expected to contain: " + "anchor");
     }
 
     @Test
@@ -32,7 +32,7 @@ class LinksTest {
         var engine = Kreuzcrawl.createEngine(null);
         String url = System.getenv("MOCK_SERVER_URL") + "/fixtures/links_document_types";
         var result = Kreuzcrawl.scrape(engine, url);
-        assertTrue(result.links().getFirst().linkType().name().toLowerCase().contains("document"), "expected to contain: " + "document");
+        assertTrue(result.links().getFirst().linkType().getValue().contains("document"), "expected to contain: " + "document");
     }
 
     @Test

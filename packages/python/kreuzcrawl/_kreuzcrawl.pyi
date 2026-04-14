@@ -22,7 +22,12 @@ class ProxyConfig:
     url: str
     username: str | None
     password: str | None
-    def __init__(self, url: str, username: str | None = None, password: str | None = None) -> None: ...
+    def __init__(
+        self,
+        url: str,
+        username: str | None = None,
+        password: str | None = None,
+    ) -> None: ...
 
 class BrowserConfig:
     mode: BrowserMode
@@ -105,7 +110,7 @@ class CrawlConfig:
         max_pages: int | None = None,
         max_concurrent: int | None = None,
         user_agent: str | None = None,
-        auth: AuthConfig | dict | None = None,
+        auth: AuthConfig | dict[str, Any] | None = None,
         max_body_size: int | None = None,
         map_limit: int | None = None,
         map_search: str | None = None,
@@ -390,7 +395,13 @@ class CookieInfo:
     value: str
     domain: str | None
     path: str | None
-    def __init__(self, name: str, value: str, domain: str | None = None, path: str | None = None) -> None: ...
+    def __init__(
+        self,
+        name: str,
+        value: str,
+        domain: str | None = None,
+        path: str | None = None,
+    ) -> None: ...
 
 class DownloadedAsset:
     url: str
@@ -434,7 +445,13 @@ class FaviconInfo:
     rel: str
     sizes: str | None
     mime_type: str | None
-    def __init__(self, url: str, rel: str, sizes: str | None = None, mime_type: str | None = None) -> None: ...
+    def __init__(
+        self,
+        url: str,
+        rel: str,
+        sizes: str | None = None,
+        mime_type: str | None = None,
+    ) -> None: ...
 
 class HeadingInfo:
     level: int
@@ -568,13 +585,23 @@ class BatchScrapeResult:
     url: str
     result: ScrapeResult | None
     error: str | None
-    def __init__(self, url: str, result: ScrapeResult | None = None, error: str | None = None) -> None: ...
+    def __init__(
+        self,
+        url: str,
+        result: ScrapeResult | None = None,
+        error: str | None = None,
+    ) -> None: ...
 
 class BatchCrawlResult:
     url: str
     result: CrawlResult | None
     error: str | None
-    def __init__(self, url: str, result: CrawlResult | None = None, error: str | None = None) -> None: ...
+    def __init__(
+        self,
+        url: str,
+        result: CrawlResult | None = None,
+        error: str | None = None,
+    ) -> None: ...
 
 class BrowserMode:
     Auto: BrowserMode = ...
@@ -589,7 +616,7 @@ class BrowserWait:
     def __init__(self, value: int | str) -> None: ...
 
 class AuthConfig:
-    def __init__(self, value: dict) -> None: ...
+    def __init__(self, value: dict[str, Any]) -> None: ...
 
 class LinkType:
     Internal: LinkType = ...
@@ -625,7 +652,7 @@ class AssetCategory:
     def __init__(self, value: int | str) -> None: ...
 
 class CrawlEvent:
-    def __init__(self, value: dict) -> None: ...
+    def __init__(self, value: dict[str, Any]) -> None: ...
 
 def create_engine(config: CrawlConfig | None = None) -> CrawlEngineHandle: ...
 def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult: ...

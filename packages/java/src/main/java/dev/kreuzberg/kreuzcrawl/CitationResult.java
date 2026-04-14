@@ -4,7 +4,7 @@ package dev.kreuzberg.kreuzcrawl;
 import java.util.List;
 
 public record CitationResult(String content, List<CitationReference> references) {
-    public static CitationResultBuilder builder() {
-        return new CitationResultBuilder();
-    }
+  public static CitationResultBuilder builder() {
+    return new CitationResultBuilder();
+  }
 }

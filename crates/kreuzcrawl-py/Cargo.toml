@@ -1,42 +1,17 @@
 [package]
 name = "kreuzcrawl-py"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
-license.workspace = true
-repository.workspace = true
-homepage.workspace = true
-documentation.workspace = true
-readme.workspace = true
-rust-version.workspace = true
-description = "Python bindings for kreuzcrawl"
-keywords = ["crawl", "scrape", "python", "pyo3", "web"]
-categories = ["api-bindings"]
+version = "0.1.0"
+edition = "2024"
+license = "Elastic-2.0"
 
 [lib]
 name = "_kreuzcrawl"
-crate-type = ["cdylib", "rlib"]
-doctest = false
-
-[features]
-default = []
-extension-module = ["pyo3/extension-module"]
+crate-type = ["cdylib"]
 
 [dependencies]
-kreuzcrawl = { path = "../kreuzcrawl", features = ["native-runtime"] }
-pyo3 = { workspace = true }
-pyo3-async-runtimes = { workspace = true }
-serde = { workspace = true }
-serde_json = { workspace = true }
-
-[lints.rust]
-unsafe_code = "allow"
-missing_docs = "warn"
-unused_must_use = "deny"
-
-[lints.clippy]
-all = { level = "deny", priority = -1 }
-cargo = { level = "warn", priority = -1 }
-pedantic = { level = "warn", priority = -1 }
-nursery = { level = "warn", priority = -1 }
-multiple_crate_versions = { level = "allow", priority = 1 }
+kreuzcrawl = { path = "../kreuzcrawl" }
+pyo3 = { version = "0.28", features = ["extension-module"] }
+pyo3-async-runtimes = { version = "0.28", features = ["tokio-runtime"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }

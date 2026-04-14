@@ -7,247 +7,246 @@ import java.util.Optional;
 
 public class CrawlConfigBuilder {
 
-    private Optional<Long> maxDepth = Optional.empty();
-    private Optional<Long> maxPages = Optional.empty();
-    private Optional<Long> maxConcurrent = Optional.empty();
-    private boolean respectRobotsTxt = false;
-    private Optional<String> userAgent = Optional.empty();
-    private boolean stayOnDomain = false;
-    private boolean allowSubdomains = false;
-    private List<String> includePaths = List.of();
-    private List<String> excludePaths = List.of();
-    private Map<String, String> customHeaders = Map.of();
-    private Long requestTimeout = null;
-    private long maxRedirects = 0;
-    private long retryCount = 0;
-    private List<Short> retryCodes = List.of();
-    private boolean cookiesEnabled = false;
-    private Optional<AuthConfig> auth = Optional.empty();
-    private Optional<Long> maxBodySize = Optional.empty();
-    private boolean mainContentOnly = false;
-    private List<String> removeTags = List.of();
-    private Optional<Long> mapLimit = Optional.empty();
-    private Optional<String> mapSearch = Optional.empty();
-    private boolean downloadAssets = false;
-    private List<AssetCategory> assetTypes = List.of();
-    private Optional<Long> maxAssetSize = Optional.empty();
-    private BrowserConfig browser = null;
-    private Optional<ProxyConfig> proxy = Optional.empty();
-    private List<String> userAgents = List.of();
-    private boolean captureScreenshot = false;
-    private boolean downloadDocuments = false;
-    private Optional<Long> documentMaxSize = Optional.empty();
-    private List<String> documentMimeTypes = List.of();
-    private Optional<java.nio.file.Path> warcOutput = Optional.empty();
-    private Optional<String> browserProfile = Optional.empty();
-    private boolean saveBrowserProfile = false;
+  private Optional<Long> maxDepth = Optional.empty();
+  private Optional<Long> maxPages = Optional.empty();
+  private Optional<Long> maxConcurrent = Optional.empty();
+  private boolean respectRobotsTxt = false;
+  private Optional<String> userAgent = Optional.empty();
+  private boolean stayOnDomain = false;
+  private boolean allowSubdomains = false;
+  private List<String> includePaths = List.of();
+  private List<String> excludePaths = List.of();
+  private Map<String, String> customHeaders = Map.of();
+  private Long requestTimeout = null;
+  private long maxRedirects = 0;
+  private long retryCount = 0;
+  private List<Short> retryCodes = List.of();
+  private boolean cookiesEnabled = false;
+  private Optional<AuthConfig> auth = Optional.empty();
+  private Optional<Long> maxBodySize = Optional.empty();
+  private boolean mainContentOnly = false;
+  private List<String> removeTags = List.of();
+  private Optional<Long> mapLimit = Optional.empty();
+  private Optional<String> mapSearch = Optional.empty();
+  private boolean downloadAssets = false;
+  private List<AssetCategory> assetTypes = List.of();
+  private Optional<Long> maxAssetSize = Optional.empty();
+  private BrowserConfig browser = null;
+  private Optional<ProxyConfig> proxy = Optional.empty();
+  private List<String> userAgents = List.of();
+  private boolean captureScreenshot = false;
+  private boolean downloadDocuments = false;
+  private Optional<Long> documentMaxSize = Optional.empty();
+  private List<String> documentMimeTypes = List.of();
+  private Optional<java.nio.file.Path> warcOutput = Optional.empty();
+  private Optional<String> browserProfile = Optional.empty();
+  private boolean saveBrowserProfile = false;
 
-    public CrawlConfigBuilder withMaxDepth(Optional<Long> value) {
-        this.maxDepth = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMaxDepth(Optional<Long> value) {
+    this.maxDepth = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withMaxPages(Optional<Long> value) {
-        this.maxPages = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMaxPages(Optional<Long> value) {
+    this.maxPages = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withMaxConcurrent(Optional<Long> value) {
-        this.maxConcurrent = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMaxConcurrent(Optional<Long> value) {
+    this.maxConcurrent = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withRespectRobotsTxt(boolean value) {
-        this.respectRobotsTxt = value;
-        return this;
-    }
+  public CrawlConfigBuilder withRespectRobotsTxt(boolean value) {
+    this.respectRobotsTxt = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withUserAgent(Optional<String> value) {
-        this.userAgent = value;
-        return this;
-    }
+  public CrawlConfigBuilder withUserAgent(Optional<String> value) {
+    this.userAgent = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withStayOnDomain(boolean value) {
-        this.stayOnDomain = value;
-        return this;
-    }
+  public CrawlConfigBuilder withStayOnDomain(boolean value) {
+    this.stayOnDomain = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withAllowSubdomains(boolean value) {
-        this.allowSubdomains = value;
-        return this;
-    }
+  public CrawlConfigBuilder withAllowSubdomains(boolean value) {
+    this.allowSubdomains = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withIncludePaths(List<String> value) {
-        this.includePaths = value;
-        return this;
-    }
+  public CrawlConfigBuilder withIncludePaths(List<String> value) {
+    this.includePaths = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withExcludePaths(List<String> value) {
-        this.excludePaths = value;
-        return this;
-    }
+  public CrawlConfigBuilder withExcludePaths(List<String> value) {
+    this.excludePaths = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withCustomHeaders(Map<String, String> value) {
-        this.customHeaders = value;
-        return this;
-    }
+  public CrawlConfigBuilder withCustomHeaders(Map<String, String> value) {
+    this.customHeaders = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withRequestTimeout(Long value) {
-        this.requestTimeout = value;
-        return this;
-    }
+  public CrawlConfigBuilder withRequestTimeout(Long value) {
+    this.requestTimeout = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withMaxRedirects(long value) {
-        this.maxRedirects = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMaxRedirects(long value) {
+    this.maxRedirects = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withRetryCount(long value) {
-        this.retryCount = value;
-        return this;
-    }
+  public CrawlConfigBuilder withRetryCount(long value) {
+    this.retryCount = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withRetryCodes(List<Short> value) {
-        this.retryCodes = value;
-        return this;
-    }
+  public CrawlConfigBuilder withRetryCodes(List<Short> value) {
+    this.retryCodes = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withCookiesEnabled(boolean value) {
-        this.cookiesEnabled = value;
-        return this;
-    }
+  public CrawlConfigBuilder withCookiesEnabled(boolean value) {
+    this.cookiesEnabled = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withAuth(Optional<AuthConfig> value) {
-        this.auth = value;
-        return this;
-    }
+  public CrawlConfigBuilder withAuth(Optional<AuthConfig> value) {
+    this.auth = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withMaxBodySize(Optional<Long> value) {
-        this.maxBodySize = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMaxBodySize(Optional<Long> value) {
+    this.maxBodySize = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withMainContentOnly(boolean value) {
-        this.mainContentOnly = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMainContentOnly(boolean value) {
+    this.mainContentOnly = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withRemoveTags(List<String> value) {
-        this.removeTags = value;
-        return this;
-    }
+  public CrawlConfigBuilder withRemoveTags(List<String> value) {
+    this.removeTags = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withMapLimit(Optional<Long> value) {
-        this.mapLimit = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMapLimit(Optional<Long> value) {
+    this.mapLimit = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withMapSearch(Optional<String> value) {
-        this.mapSearch = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMapSearch(Optional<String> value) {
+    this.mapSearch = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withDownloadAssets(boolean value) {
-        this.downloadAssets = value;
-        return this;
-    }
+  public CrawlConfigBuilder withDownloadAssets(boolean value) {
+    this.downloadAssets = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withAssetTypes(List<AssetCategory> value) {
-        this.assetTypes = value;
-        return this;
-    }
+  public CrawlConfigBuilder withAssetTypes(List<AssetCategory> value) {
+    this.assetTypes = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withMaxAssetSize(Optional<Long> value) {
-        this.maxAssetSize = value;
-        return this;
-    }
+  public CrawlConfigBuilder withMaxAssetSize(Optional<Long> value) {
+    this.maxAssetSize = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withBrowser(BrowserConfig value) {
-        this.browser = value;
-        return this;
-    }
+  public CrawlConfigBuilder withBrowser(BrowserConfig value) {
+    this.browser = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withProxy(Optional<ProxyConfig> value) {
-        this.proxy = value;
-        return this;
-    }
+  public CrawlConfigBuilder withProxy(Optional<ProxyConfig> value) {
+    this.proxy = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withUserAgents(List<String> value) {
-        this.userAgents = value;
-        return this;
-    }
+  public CrawlConfigBuilder withUserAgents(List<String> value) {
+    this.userAgents = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withCaptureScreenshot(boolean value) {
-        this.captureScreenshot = value;
-        return this;
-    }
+  public CrawlConfigBuilder withCaptureScreenshot(boolean value) {
+    this.captureScreenshot = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withDownloadDocuments(boolean value) {
-        this.downloadDocuments = value;
-        return this;
-    }
+  public CrawlConfigBuilder withDownloadDocuments(boolean value) {
+    this.downloadDocuments = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withDocumentMaxSize(Optional<Long> value) {
-        this.documentMaxSize = value;
-        return this;
-    }
+  public CrawlConfigBuilder withDocumentMaxSize(Optional<Long> value) {
+    this.documentMaxSize = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withDocumentMimeTypes(List<String> value) {
-        this.documentMimeTypes = value;
-        return this;
-    }
+  public CrawlConfigBuilder withDocumentMimeTypes(List<String> value) {
+    this.documentMimeTypes = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withWarcOutput(Optional<java.nio.file.Path> value) {
-        this.warcOutput = value;
-        return this;
-    }
+  public CrawlConfigBuilder withWarcOutput(Optional<java.nio.file.Path> value) {
+    this.warcOutput = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withBrowserProfile(Optional<String> value) {
-        this.browserProfile = value;
-        return this;
-    }
+  public CrawlConfigBuilder withBrowserProfile(Optional<String> value) {
+    this.browserProfile = value;
+    return this;
+  }
 
-    public CrawlConfigBuilder withSaveBrowserProfile(boolean value) {
-        this.saveBrowserProfile = value;
-        return this;
-    }
+  public CrawlConfigBuilder withSaveBrowserProfile(boolean value) {
+    this.saveBrowserProfile = value;
+    return this;
+  }
 
-    public CrawlConfig build() {
-        return new CrawlConfig(
-            maxDepth,
-            maxPages,
-            maxConcurrent,
-            respectRobotsTxt,
-            userAgent,
-            stayOnDomain,
-            allowSubdomains,
-            includePaths,
-            excludePaths,
-            customHeaders,
-            requestTimeout,
-            maxRedirects,
-            retryCount,
-            retryCodes,
-            cookiesEnabled,
-            auth,
-            maxBodySize,
-            mainContentOnly,
-            removeTags,
-            mapLimit,
-            mapSearch,
-            downloadAssets,
-            assetTypes,
-            maxAssetSize,
-            browser,
-            proxy,
-            userAgents,
-            captureScreenshot,
-            downloadDocuments,
-            documentMaxSize,
-            documentMimeTypes,
-            warcOutput,
-            browserProfile,
-            saveBrowserProfile
-        );
-    }
+  public CrawlConfig build() {
+    return new CrawlConfig(
+        maxDepth,
+        maxPages,
+        maxConcurrent,
+        respectRobotsTxt,
+        userAgent,
+        stayOnDomain,
+        allowSubdomains,
+        includePaths,
+        excludePaths,
+        customHeaders,
+        requestTimeout,
+        maxRedirects,
+        retryCount,
+        retryCodes,
+        cookiesEnabled,
+        auth,
+        maxBodySize,
+        mainContentOnly,
+        removeTags,
+        mapLimit,
+        mapSearch,
+        downloadAssets,
+        assetTypes,
+        maxAssetSize,
+        browser,
+        proxy,
+        userAgents,
+        captureScreenshot,
+        downloadDocuments,
+        documentMaxSize,
+        documentMimeTypes,
+        warcOutput,
+        browserProfile,
+        saveBrowserProfile);
+  }
 }
