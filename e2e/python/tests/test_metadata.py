@@ -65,7 +65,8 @@ async def test_metadata_keywords_author() -> None:
     assert result.metadata.title.strip() == "Comprehensive Metadata Test Page"
     assert result.metadata.canonical_url
     assert result.metadata.keywords
-    assert result.metadata.keywords is not None and "rust" in result.metadata.keywords
+    assert result.metadata.keywords is not None
+    assert "rust" in result.metadata.keywords
     assert result.metadata.author.strip() == "Jane Developer"
     assert result.metadata.viewport
     assert result.metadata.generator.strip() == "kreuzcrawl/1.0"

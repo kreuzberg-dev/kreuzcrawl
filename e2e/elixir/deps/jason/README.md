@@ -71,10 +71,10 @@ forward "/api",
 ## Benchmarks
 
 Detailed benchmarks (including memory measurements):
-https://gist.github.com/michalmuskala/4d64a5a7696ca84ac7c169a0206640d5
+<https://gist.github.com/michalmuskala/4d64a5a7696ca84ac7c169a0206640d5>
 
 HTML reports for the benchmark (only performance measurements):
-http://michal.muskala.eu/jason/decode.html and http://michal.muskala.eu/jason/encode.html
+<http://michal.muskala.eu/jason/decode.html> and <http://michal.muskala.eu/jason/encode.html>
 
 ### Running
 
@@ -87,14 +87,14 @@ A HTML report of the benchmarks (after their execution) can be found in
 
 Jason has a couple feature differences compared to Poison.
 
-  * Jason follows the JSON spec more strictly, for example it does not allow
-    unescaped newline characters in JSON strings - e.g. `"\"\n\""` will
-    produce a decoding error.
-  * no support for decoding into data structures (the `as:` option).
-  * no built-in encoders for `MapSet`, `Range` and `Stream`.
-  * no support for encoding arbitrary structs - explicit implementation
-    of the `Jason.Encoder` protocol is always required.
-  * different pretty-printing customisation options (default `pretty: true` works the same)
+* Jason follows the JSON spec more strictly, for example it does not allow
+  unescaped newline characters in JSON strings - e.g. `"\"\n\""` will
+  produce a decoding error.
+* no support for decoding into data structures (the `as:` option).
+* no built-in encoders for `MapSet`, `Range` and `Stream`.
+* no support for encoding arbitrary structs - explicit implementation
+  of the `Jason.Encoder` protocol is always required.
+* different pretty-printing customisation options (default `pretty: true` works the same)
 
 ### Encoders
 

@@ -1748,7 +1748,6 @@ impl serde::Serialize for AuthConfig {
     }
 }
 
-
 #[derive(Clone, PartialEq, serde::Serialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum LinkType {
@@ -1854,7 +1853,6 @@ impl serde::Serialize for CrawlEvent {
         self.inner.serialize(serializer)
     }
 }
-
 
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]

@@ -52,6 +52,7 @@ Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 ## Installation
 
 
+
 ```bash
 <dependency>
     <groupId>dev.kreuzberg.kreuzcrawl</groupId>
@@ -60,6 +61,7 @@ Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 </dependency>
 
 ```
+
 
 
 ## Quick Start
@@ -85,6 +87,7 @@ System.out.println("Links: " + result.links().size());
 Full API documentation is available at [docs.kreuzcrawl.dev](https://docs.kreuzcrawl.dev).
 
 Key functions:
+
 - `create_engine(config?)` — Create a crawl engine with optional configuration
 - `scrape(engine, url)` — Scrape a single URL
 - `crawl(engine, url)` — Crawl a website following links

@@ -52,9 +52,11 @@ P/Invoke with the C FFI layer, supporting .NET 8+ with async/await and nullable 
 ## Installation
 
 
+
 ```bash
 dotnet add package Kreuzcrawl
 ```
+
 
 
 ## Quick Start
@@ -79,6 +81,7 @@ Console.WriteLine($"Links: {result.Links.Count}");
 Full API documentation is available at [docs.kreuzcrawl.dev](https://docs.kreuzcrawl.dev).
 
 Key functions:
+
 - `create_engine(config?)` — Create a crawl engine with optional configuration
 - `scrape(engine, url)` — Scrape a single URL
 - `crawl(engine, url)` — Crawl a website following links

@@ -52,9 +52,11 @@ the C FFI layer for native performance with idiomatic Go error handling.
 ## Installation
 
 
+
 ```bash
 go get github.com/kreuzberg-dev/kreuzcrawl/packages/go
 ```
+
 
 
 ## Quick Start
@@ -92,6 +94,7 @@ func main() {
 Full API documentation is available at [docs.kreuzcrawl.dev](https://docs.kreuzcrawl.dev).
 
 Key functions:
+
 - `create_engine(config?)` — Create a crawl engine with optional configuration
 - `scrape(engine, url)` — Scrape a single URL
 - `crawl(engine, url)` — Crawl a website following links
