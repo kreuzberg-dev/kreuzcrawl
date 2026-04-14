@@ -139,7 +139,7 @@ impl JsProxyConfig {
 pub struct JsBrowserConfig {
     mode: JsBrowserMode,
     endpoint: Option<String>,
-    timeout: u64,
+    timeout: Option<u64>,
     wait: JsBrowserWait,
     wait_selector: Option<String>,
     extra_wait: Option<u64>,
@@ -159,7 +159,7 @@ impl JsBrowserConfig {
         JsBrowserConfig {
             mode: mode.unwrap_or_default(),
             endpoint,
-            timeout: timeout.unwrap_or_default(),
+            timeout,
             wait: wait.unwrap_or_default(),
             wait_selector,
             extra_wait,
@@ -187,12 +187,12 @@ impl JsBrowserConfig {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn timeout(&self) -> u64 {
+    pub fn timeout(&self) -> Option<u64> {
         self.timeout
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_timeout(&mut self, value: u64) {
+    pub fn set_timeout(&mut self, value: Option<u64>) {
         self.timeout = value;
     }
 
@@ -246,7 +246,7 @@ pub struct JsCrawlConfig {
     include_paths: Vec<String>,
     exclude_paths: Vec<String>,
     custom_headers: JsValue,
-    request_timeout: u64,
+    request_timeout: Option<u64>,
     max_redirects: usize,
     retry_count: usize,
     retry_codes: Vec<u16>,
@@ -323,7 +323,7 @@ impl JsCrawlConfig {
             include_paths: include_paths.unwrap_or_default(),
             exclude_paths: exclude_paths.unwrap_or_default(),
             custom_headers: custom_headers.unwrap_or_default(),
-            request_timeout: request_timeout.unwrap_or_default(),
+            request_timeout,
             max_redirects: max_redirects.unwrap_or(10),
             retry_count: retry_count.unwrap_or(0),
             retry_codes: retry_codes.unwrap_or_default(),
@@ -451,12 +451,12 @@ impl JsCrawlConfig {
     }
 
     #[wasm_bindgen(getter, js_name = "requestTimeout")]
-    pub fn request_timeout(&self) -> u64 {
+    pub fn request_timeout(&self) -> Option<u64> {
         self.request_timeout
     }
 
     #[wasm_bindgen(setter, js_name = "requestTimeout")]
-    pub fn set_request_timeout(&mut self, value: u64) {
+    pub fn set_request_timeout(&mut self, value: Option<u64>) {
         self.request_timeout = value;
     }
 

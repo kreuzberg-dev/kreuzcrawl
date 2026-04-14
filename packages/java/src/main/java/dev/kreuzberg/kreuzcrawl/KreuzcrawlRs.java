@@ -24,12 +24,7 @@ public final class KreuzcrawlRs {
         NativeLib.KCRAWL_CRAWL_CONFIG_FREE.invoke(cconfig);
       }
       if (resultPtr.equals(MemorySegment.NULL)) {
-        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
-        if (errCode != 0) {
-          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
-          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
-          throw new KreuzcrawlRsException(errCode, msg);
-        }
+        checkLastError();
         return null;
       }
       return new CrawlEngineHandle(resultPtr);
@@ -45,23 +40,13 @@ public final class KreuzcrawlRs {
       var curl = arena.allocateFrom(url);
       var resultPtr = (MemorySegment) NativeLib.KCRAWL_SCRAPE.invoke(cengine, curl);
       if (resultPtr.equals(MemorySegment.NULL)) {
-        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
-        if (errCode != 0) {
-          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
-          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
-          throw new KreuzcrawlRsException(errCode, msg);
-        }
+        checkLastError();
         return null;
       }
       var jsonPtr = (MemorySegment) NativeLib.KCRAWL_SCRAPE_RESULT_TO_JSON.invoke(resultPtr);
       NativeLib.KCRAWL_SCRAPE_RESULT_FREE.invoke(resultPtr);
       if (jsonPtr.equals(MemorySegment.NULL)) {
-        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
-        if (errCode != 0) {
-          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
-          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
-          throw new KreuzcrawlRsException(errCode, msg);
-        }
+        checkLastError();
         return null;
       }
       String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
@@ -90,23 +75,13 @@ public final class KreuzcrawlRs {
       var curl = arena.allocateFrom(url);
       var resultPtr = (MemorySegment) NativeLib.KCRAWL_CRAWL.invoke(cengine, curl);
       if (resultPtr.equals(MemorySegment.NULL)) {
-        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
-        if (errCode != 0) {
-          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
-          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
-          throw new KreuzcrawlRsException(errCode, msg);
-        }
+        checkLastError();
         return null;
       }
       var jsonPtr = (MemorySegment) NativeLib.KCRAWL_CRAWL_RESULT_TO_JSON.invoke(resultPtr);
       NativeLib.KCRAWL_CRAWL_RESULT_FREE.invoke(resultPtr);
       if (jsonPtr.equals(MemorySegment.NULL)) {
-        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
-        if (errCode != 0) {
-          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
-          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
-          throw new KreuzcrawlRsException(errCode, msg);
-        }
+        checkLastError();
         return null;
       }
       String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
@@ -135,23 +110,13 @@ public final class KreuzcrawlRs {
       var curl = arena.allocateFrom(url);
       var resultPtr = (MemorySegment) NativeLib.KCRAWL_MAP_URLS.invoke(cengine, curl);
       if (resultPtr.equals(MemorySegment.NULL)) {
-        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
-        if (errCode != 0) {
-          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
-          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
-          throw new KreuzcrawlRsException(errCode, msg);
-        }
+        checkLastError();
         return null;
       }
       var jsonPtr = (MemorySegment) NativeLib.KCRAWL_MAP_RESULT_TO_JSON.invoke(resultPtr);
       NativeLib.KCRAWL_MAP_RESULT_FREE.invoke(resultPtr);
       if (jsonPtr.equals(MemorySegment.NULL)) {
-        int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
-        if (errCode != 0) {
-          var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
-          String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
-          throw new KreuzcrawlRsException(errCode, msg);
-        }
+        checkLastError();
         return null;
       }
       String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
@@ -242,6 +207,15 @@ public final class KreuzcrawlRs {
   }
 
   // Helper methods for FFI marshalling
+
+  private static void checkLastError() throws Throwable {
+    int errCode = (int) NativeLib.KCRAWL_LAST_ERROR_CODE.invoke();
+    if (errCode != 0) {
+      var ctxPtr = (MemorySegment) NativeLib.KCRAWL_LAST_ERROR_CONTEXT.invoke();
+      String msg = ctxPtr.reinterpret(Long.MAX_VALUE).getString(0);
+      throw new KreuzcrawlRsException(errCode, msg);
+    }
+  }
 
   private static com.fasterxml.jackson.databind.ObjectMapper createObjectMapper() {
     return new com.fasterxml.jackson.databind.ObjectMapper()
