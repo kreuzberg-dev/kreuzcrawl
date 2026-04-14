@@ -24,8 +24,3 @@ urls.repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 module-name = "kreuzcrawl._kreuzcrawl"
 manifest-path = "../../crates/kreuzcrawl-py/Cargo.toml"
 features = [ "pyo3/extension-module" ]
-
-[tool.ruff]
-target-version = "py39"
-line-length = 100
-lint.select = [ "E", "F", "W" ]
