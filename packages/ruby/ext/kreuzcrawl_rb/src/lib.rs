@@ -3396,26 +3396,30 @@ fn map_urls_async(engine: CrawlEngineHandle, url: String) -> Result<MapResult, E
     Ok(result.into())
 }
 
-fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, magnus::Error> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, Error> {
+    let rt = tokio::runtime::Runtime::new()
+        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
     let result = rt.block_on(async { kreuzcrawl::batch_scrape(&engine.inner, urls).await });
     Ok(result.into_iter().map(Into::into).collect())
 }
 
-fn batch_scrape_async(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, magnus::Error> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+fn batch_scrape_async(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, Error> {
+    let rt = tokio::runtime::Runtime::new()
+        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
     let result = rt.block_on(async { kreuzcrawl::batch_scrape(&engine.inner, urls).await });
     Ok(result.into_iter().map(Into::into).collect())
 }
 
-fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, magnus::Error> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, Error> {
+    let rt = tokio::runtime::Runtime::new()
+        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
     let result = rt.block_on(async { kreuzcrawl::batch_crawl(&engine.inner, urls).await });
     Ok(result.into_iter().map(Into::into).collect())
 }
 
-fn batch_crawl_async(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, magnus::Error> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+fn batch_crawl_async(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, Error> {
+    let rt = tokio::runtime::Runtime::new()
+        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
     let result = rt.block_on(async { kreuzcrawl::batch_crawl(&engine.inner, urls).await });
     Ok(result.into_iter().map(Into::into).collect())
 }

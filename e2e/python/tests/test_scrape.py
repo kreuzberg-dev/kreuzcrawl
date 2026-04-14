@@ -53,7 +53,8 @@ async def test_scrape_basic_html_page() -> None:
     assert result.content_type.strip() == "text/html"
     assert result.html
     assert result.metadata.title.strip() == "Example Domain"
-    assert result.metadata.description is not None and "illustrative examples" in result.metadata.description
+    assert result.metadata.description is not None
+    assert "illustrative examples" in result.metadata.description
     assert result.metadata.canonical_url
     assert len(result.links) > 0
     assert "external" in str(result.links[0].link_type).lower()
@@ -156,7 +157,8 @@ async def test_scrape_malformed_html() -> None:
     result = await scrape(engine=engine, url=url)
     assert result.status_code == 200
     assert result.html
-    assert result.metadata.description is not None and "broken HTML" in result.metadata.description
+    assert result.metadata.description is not None
+    assert "broken HTML" in result.metadata.description
 
 
 @pytest.mark.asyncio

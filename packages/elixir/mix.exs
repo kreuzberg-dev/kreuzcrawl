@@ -21,7 +21,8 @@ defmodule Kreuzcrawl.MixProject do
 
   defp deps do
     [
-      {:rustler, "~> 0.34"}
+      {:rustler, "~> 0.34"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 end

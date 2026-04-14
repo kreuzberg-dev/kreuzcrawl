@@ -163,7 +163,7 @@ public static class KreuzcrawlLib
 
     public static BrowserConfig BrowserConfigDefault()
     {
-        var result = NativeMethods.Default();
+        var result = NativeMethods.BrowserConfigDefault();
         var jsonPtr = NativeMethods.BrowserConfigToJson(result);
         var json = Marshal.PtrToStringUTF8(jsonPtr);
         NativeMethods.FreeString(jsonPtr);
@@ -174,7 +174,7 @@ public static class KreuzcrawlLib
 
     public static CrawlConfig CrawlConfigDefault()
     {
-        var result = NativeMethods.Default();
+        var result = NativeMethods.CrawlConfigDefault();
         var jsonPtr = NativeMethods.CrawlConfigToJson(result);
         var json = Marshal.PtrToStringUTF8(jsonPtr);
         NativeMethods.FreeString(jsonPtr);

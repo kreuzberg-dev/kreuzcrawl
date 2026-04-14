@@ -46,7 +46,8 @@ async def test_engine_scrape_basic() -> None:
     assert result.status_code == 200
     assert result.content_type.strip() == "text/html"
     assert result.metadata.title.strip() == "Engine Test"
-    assert result.metadata.description is not None and "Testing the engine" in result.metadata.description
+    assert result.metadata.description is not None
+    assert "Testing the engine" in result.metadata.description
     assert len(result.links) >= 1
     assert len(result.metadata.headings) >= 1
 
