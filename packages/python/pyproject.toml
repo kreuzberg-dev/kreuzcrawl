@@ -1,42 +1,31 @@
 [build-system]
 build-backend = "maturin"
-requires = [ "maturin>=1.7,<2" ]
+requires = [ "maturin>=1,<2" ]
 
 [project]
 name = "kreuzcrawl"
 version = "0.1.0"
 description = "High-performance web crawling engine"
-readme = "README.md"
-keywords = [ "crawl", "rust", "scrape", "spider", "web" ]
+keywords = [ "crawl", "scrape", "spider", "web" ]
 license = "Elastic-2.0"
-authors = [ { name = "Na'aman Hirschfeld", email = "naaman@kreuzberg.dev" } ]
+authors = [ { name = "Kreuzberg Team" } ]
 requires-python = ">=3.10"
 classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Intended Audience :: Developers",
-  "Intended Audience :: Information Technology",
-  "License :: Other/Proprietary License",
-  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Rust",
-  "Topic :: Internet :: WWW/HTTP",
-  "Topic :: Software Development :: Libraries :: Python Modules",
-  "Typing :: Typed",
 ]
-urls.Documentation = "https://kreuzberg.dev"
-urls.Homepage = "https://kreuzberg.dev"
-urls.Issues = "https://github.com/kreuzberg-dev/kreuzcrawl/issues"
-urls.Repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
-urls.Source = "https://github.com/kreuzberg-dev/kreuzcrawl"
+urls.repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 
 [tool.maturin]
-features = [ "pyo3/extension-module" ]
 module-name = "kreuzcrawl._kreuzcrawl"
 manifest-path = "../../crates/kreuzcrawl-py/Cargo.toml"
-python-source = "."
+features = [ "pyo3/extension-module" ]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+lint.select = [ "E", "F", "W" ]

@@ -5,7 +5,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_allow_all" do
     test "Permissive robots.txt allows all paths" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true}
+      engine_config = "{\"respect_robots_txt\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_allow_all"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -15,7 +15,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_allow_override" do
     test "Allow directive overrides Disallow for specific paths" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true}
+      engine_config = "{\"respect_robots_txt\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_allow_override"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -25,7 +25,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_comments_handling" do
     test "Correctly parses robots.txt with inline and line comments" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true, user_agent: "kreuzcrawl"}
+      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_comments_handling"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -35,7 +35,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_meta_nofollow" do
     test "Detects nofollow meta robots tag and skips link extraction" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true}
+      engine_config = "{\"respect_robots_txt\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_meta_nofollow"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -45,7 +45,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_meta_noindex" do
     test "Detects noindex meta robots tag in HTML page" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true}
+      engine_config = "{\"respect_robots_txt\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_meta_noindex"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -55,7 +55,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_missing_404" do
     test "Missing robots.txt (404) allows all crawling" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true}
+      engine_config = "{\"respect_robots_txt\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_missing_404"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -65,7 +65,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_multiple_user_agents" do
     test "Picks the most specific user-agent block from robots.txt" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true, user_agent: "SpecificBot"}
+      engine_config = "{\"respect_robots_txt\":true,\"user_agent\":\"SpecificBot\"}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_multiple_user_agents"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -75,7 +75,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_sitemap_directive" do
     test "Discovers sitemap URL from Sitemap directive in robots.txt" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true}
+      engine_config = "{\"respect_robots_txt\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_sitemap_directive"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -85,7 +85,7 @@ defmodule E2e.RobotsTest do
 
   describe "robots_x_robots_tag" do
     test "Respects X-Robots-Tag HTTP header directives" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: true}
+      engine_config = "{\"respect_robots_txt\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/robots_x_robots_tag"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

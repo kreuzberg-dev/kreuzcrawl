@@ -1,0 +1,15 @@
+{
+  "name": "@kreuzberg/kreuzcrawl",
+  "version": "0.1.0",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "napi": {
+    "name": "kreuzcrawl",
+    "triples": {
+      "defaults": true
+    }
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.6.1"
+  }
+}

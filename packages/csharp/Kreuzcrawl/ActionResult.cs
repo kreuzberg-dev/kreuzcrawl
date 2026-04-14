@@ -33,7 +33,7 @@ public sealed class ActionResult
     /// Action-specific return data (screenshot bytes, JS return value, scraped HTML).
     /// </summary>
     [JsonPropertyName("data")]
-    public string? Data { get; set; } = null;
+    public object? Data { get; set; } = null;
 
     /// <summary>
     /// Error message if the action failed.

@@ -11,7 +11,7 @@ mod browser_detect;
 mod browser_pool;
 #[cfg(feature = "browser")]
 pub mod browser_profile;
-mod citations;
+pub mod citations;
 
 pub mod defaults;
 pub mod engine;

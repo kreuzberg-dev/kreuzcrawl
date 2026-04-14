@@ -2,7 +2,7 @@
 // Re-generate with: alef generate
 
 use std::cell::RefCell;
-use std::ffi::{CStr, CString, c_char};
+use std::ffi::{c_char, CStr, CString};
 
 thread_local! {
     static LAST_ERROR_CODE: RefCell<i32> = const { RefCell::new(0) };
@@ -428,7 +428,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_timeout(ptr: *const kreuzcrawl::B
         return 0;
     }
     let obj = unsafe { &*ptr };
-    obj.timeout.as_secs()
+    obj.timeout.as_millis() as u64
 }
 
 /// Get the `wait` field from a `BrowserConfig`.
@@ -475,7 +475,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_extra_wait(ptr: *const kreuzcrawl
     }
     let obj = unsafe { &*ptr };
     match &obj.extra_wait {
-        Some(val) => val.as_secs(),
+        Some(val) => val.as_millis() as u64,
         None => 0,
     }
 }
@@ -724,7 +724,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_request_timeout(ptr: *const kreuzcr
         return 0;
     }
     let obj = unsafe { &*ptr };
-    obj.request_timeout.as_secs()
+    obj.request_timeout.as_millis() as u64
 }
 
 /// Get the `max_redirects` field from a `CrawlConfig`.

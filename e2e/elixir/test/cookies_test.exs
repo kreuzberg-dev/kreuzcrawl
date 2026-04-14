@@ -5,7 +5,7 @@ defmodule E2e.CookiesTest do
 
   describe "cookies_per_domain" do
     test "Isolates cookies per domain during crawl" do
-      engine_config = %Kreuzcrawl.CrawlConfig{cookies_enabled: true, max_depth: 1, respect_robots_txt: false}
+      engine_config = "{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/cookies_per_domain"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -16,7 +16,7 @@ defmodule E2e.CookiesTest do
 
   describe "cookies_persistence" do
     test "Maintains cookies across multiple crawl requests" do
-      engine_config = %Kreuzcrawl.CrawlConfig{cookies_enabled: true, max_depth: 1, respect_robots_txt: false}
+      engine_config = "{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/cookies_persistence"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -26,7 +26,7 @@ defmodule E2e.CookiesTest do
 
   describe "cookies_set_cookie_response" do
     test "Respects Set-Cookie header from server responses" do
-      engine_config = %Kreuzcrawl.CrawlConfig{cookies_enabled: true, max_depth: 1, respect_robots_txt: false}
+      engine_config = "{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/cookies_set_cookie_response"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

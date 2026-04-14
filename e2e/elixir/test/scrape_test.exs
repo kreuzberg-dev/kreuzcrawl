@@ -5,19 +5,19 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_asset_dedup" do
     test "Same asset linked twice results in one download with one unique hash" do
-      engine_config = %Kreuzcrawl.CrawlConfig{download_assets: true}
+      engine_config = "{\"download_assets\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_asset_dedup"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.assets) == 2
-      assert result.assets[0].content_hash != ""
+      assert Enum.at(result.assets, 0).content_hash != ""
     end
   end
 
   describe "scrape_asset_max_size" do
     test "Skips assets exceeding max_asset_size limit" do
-      engine_config = %Kreuzcrawl.CrawlConfig{download_assets: true, max_asset_size: 150}
+      engine_config = "{\"download_assets\":true,\"max_asset_size\":150}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_asset_max_size"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -28,19 +28,19 @@ defmodule E2e.ScrapeTest do
 
   describe "scrape_asset_type_filter" do
     test "Only downloads image assets when asset_types filter is set" do
-      engine_config = %Kreuzcrawl.CrawlConfig{asset_types: [:image], download_assets: true}
+      engine_config = "{\"asset_types\":[\"image\"],\"download_assets\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_asset_type_filter"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.assets) == 1
-      assert String.contains?(result.assets[0].asset_category, "image")
+      assert String.contains?(to_string(Enum.at(result.assets, 0).asset_category), "image")
     end
   end
 
   describe "scrape_basic_html_page" do
     test "Scrapes a simple HTML page and extracts title, description, and links" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 0, respect_robots_txt: false}
+      engine_config = "{\"max_depth\":0,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_basic_html_page"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -48,12 +48,12 @@ defmodule E2e.ScrapeTest do
       assert String.trim(result.content_type) == "text/html"
       assert result.html != ""
       assert String.trim(result.metadata.title) == "Example Domain"
-      assert String.contains?(result.metadata.description, "illustrative examples")
+      assert String.contains?(to_string(result.metadata.description), "illustrative examples")
       assert result.metadata.canonical_url != ""
       assert length(result.links) > 0
-      assert String.contains?(result.links[0].link_type, "external")
+      assert String.contains?(to_string(Enum.at(result.links, 0).link_type), "external")
       assert length(result.images) == 0
-      assert String.trim(result.metadata.og_title) == ""
+      assert is_nil(result.metadata.og_title) or String.trim(result.metadata.og_title) == ""
     end
   end
 
@@ -64,13 +64,13 @@ defmodule E2e.ScrapeTest do
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert result.status_code == 200
       assert length(result.links) > 9
-      assert result.links[0].url != ""
+      assert Enum.at(result.links, 0).url != ""
     end
   end
 
   describe "scrape_download_assets" do
     test "Downloads CSS, JS, and image assets from page" do
-      engine_config = %Kreuzcrawl.CrawlConfig{download_assets: true}
+      engine_config = "{\"download_assets\":true}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/scrape_download_assets"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -139,8 +139,8 @@ defmodule E2e.ScrapeTest do
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.json_ld != ""
-      assert String.trim(result.json_ld[0].schema_type) == "Recipe"
-      assert String.trim(result.json_ld[0].name) == "Best Chocolate Cake"
+      assert String.trim(Enum.at(result.json_ld, 0).schema_type) == "Recipe"
+      assert String.trim(Enum.at(result.json_ld, 0).name) == "Best Chocolate Cake"
     end
   end
 
@@ -151,7 +151,7 @@ defmodule E2e.ScrapeTest do
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
       assert result.status_code == 200
       assert result.html != ""
-      assert String.contains?(result.metadata.description, "broken HTML")
+      assert String.contains?(to_string(result.metadata.description), "broken HTML")
     end
   end
 

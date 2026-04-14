@@ -8,9 +8,8 @@ public record ImageInfo(
     Optional<String> alt,
     Optional<Integer> width,
     Optional<Integer> height,
-    ImageSource source
-) {
-    public static ImageInfoBuilder builder() {
-        return new ImageInfoBuilder();
-    }
+    ImageSource source) {
+  public static ImageInfoBuilder builder() {
+    return new ImageInfoBuilder();
+  }
 }

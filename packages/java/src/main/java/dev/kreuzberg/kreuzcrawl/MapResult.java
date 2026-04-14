@@ -4,7 +4,7 @@ package dev.kreuzberg.kreuzcrawl;
 import java.util.List;
 
 public record MapResult(List<SitemapUrl> urls) {
-    public static MapResultBuilder builder() {
-        return new MapResultBuilder();
-    }
+  public static MapResultBuilder builder() {
+    return new MapResultBuilder();
+  }
 }

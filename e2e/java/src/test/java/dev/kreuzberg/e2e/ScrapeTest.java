@@ -5,12 +5,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import dev.kreuzberg.kreuzcrawl.CrawlConfig;
 
 /** E2e tests for category: scrape. */
 class ScrapeTest {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new Jdk8Module());
     @Test
     void testScrapeAssetDedup() throws Exception {
         // Same asset linked twice results in one download with one unique hash
@@ -43,7 +44,7 @@ class ScrapeTest {
         var result = Kreuzcrawl.scrape(engine, url);
         assertEquals(200, result.statusCode());
         assertEquals(1, result.assets().size());
-        assertTrue(result.assets().getFirst().assetCategory().contains("image"), "expected to contain: " + "image");
+        assertTrue(result.assets().getFirst().assetCategory().getValue().contains("image"), "expected to contain: " + "image");
     }
 
     @Test
@@ -60,7 +61,7 @@ class ScrapeTest {
         assertTrue(result.metadata().description().orElse("").contains("illustrative examples"), "expected to contain: " + "illustrative examples");
         assertFalse(result.metadata().canonicalUrl().orElse("").isEmpty(), "expected non-empty value");
         assertTrue(result.links().size() > 0, "expected > 0");
-        assertTrue(result.links().getFirst().linkType().name().toLowerCase().contains("external"), "expected to contain: " + "external");
+        assertTrue(result.links().getFirst().linkType().getValue().contains("external"), "expected to contain: " + "external");
         assertEquals(0, result.images().size());
         assertTrue(result.metadata().ogTitle().orElse("").isEmpty(), "expected empty value");
     }

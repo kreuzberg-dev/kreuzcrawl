@@ -5,7 +5,7 @@ defmodule E2e.MiddlewareTest do
 
   describe "middleware_engine_crawl_with_defaults" do
     test "Engine crawl with default middleware chain produces correct multi-page results" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 1}
+      engine_config = "{\"max_depth\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/middleware_engine_crawl_with_defaults"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

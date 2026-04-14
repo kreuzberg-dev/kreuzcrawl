@@ -5,7 +5,7 @@ defmodule E2e.MapTest do
 
   describe "map_discover_urls" do
     test "Discovers all URLs on a site without fetching full content" do
-      engine_config = %Kreuzcrawl.CrawlConfig{max_depth: 0, respect_robots_txt: false}
+      engine_config = "{\"max_depth\":0,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_discover_urls"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -15,7 +15,7 @@ defmodule E2e.MapTest do
 
   describe "map_exclude_patterns" do
     test "Excludes URLs matching patterns from URL map" do
-      engine_config = %Kreuzcrawl.CrawlConfig{exclude_paths: ["/private/.*", "/api/.*"], max_depth: 0, respect_robots_txt: false}
+      engine_config = "{\"exclude_paths\":[\"/private/.*\",\"/api/.*\"],\"max_depth\":0,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_exclude_patterns"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -25,7 +25,7 @@ defmodule E2e.MapTest do
 
   describe "map_include_subdomains" do
     test "Includes subdomain URLs in URL map discovery" do
-      engine_config = %Kreuzcrawl.CrawlConfig{allow_subdomains: true, max_depth: 0, respect_robots_txt: false}
+      engine_config = "{\"allow_subdomains\":true,\"max_depth\":0,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_include_subdomains"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -36,7 +36,7 @@ defmodule E2e.MapTest do
 
   describe "map_large_sitemap" do
     test "Handles large sitemap with 100+ URLs" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_large_sitemap"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -46,7 +46,7 @@ defmodule E2e.MapTest do
 
   describe "map_limit_pagination" do
     test "Limits map result count to specified maximum" do
-      engine_config = %Kreuzcrawl.CrawlConfig{map_limit: 5, max_depth: 0, respect_robots_txt: false}
+      engine_config = "{\"map_limit\":5,\"max_depth\":0,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_limit_pagination"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)
@@ -56,7 +56,7 @@ defmodule E2e.MapTest do
 
   describe "map_search_filter" do
     test "Filters map results by search keyword" do
-      engine_config = %Kreuzcrawl.CrawlConfig{map_search: "blog", max_depth: 0, respect_robots_txt: false}
+      engine_config = "{\"map_search\":\"blog\",\"max_depth\":0,\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/map_search_filter"
       {:ok, result} = Kreuzcrawl.scrape_async(engine, url)

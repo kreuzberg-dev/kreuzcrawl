@@ -197,7 +197,12 @@ fields_optional = [
     "assets.html_tag",
 ]
 fields_array = ["links", "images", "feeds", "json_ld", "assets"]
-fields_enum = ["links[].link_type", "browser.js_render_hint", "browser.browser_used"]
+fields_enum = [
+    "links[].link_type",
+    "browser.js_render_hint",
+    "browser.browser_used",
+    "assets[].category",
+]
 result_fields = [
     "status_code",
     "content_type",
@@ -390,3 +395,147 @@ e2e = "cd e2e/rust && cargo test"
 
 [test.c]
 e2e = "cd e2e/c && make clean && make && DYLD_LIBRARY_PATH=../../target/release ./test_runner"
+
+# ---------------------------------------------------------------------------
+# README Generation
+# ---------------------------------------------------------------------------
+[readme]
+template_dir = "readme_templates"
+snippets_dir = "docs/snippets"
+
+[readme.languages.python]
+name = "Python"
+template = "language_package.md"
+output_path = "packages/python/README.md"
+package_manager = ["pip"]
+package_name = "kreuzcrawl"
+install_command = "pip install kreuzcrawl"
+description = """
+Python bindings for **kreuzcrawl** — a high-performance Rust web crawling engine for structured
+data extraction. Powered by PyO3, with async support, full metadata extraction, and Markdown
+conversion. Wheels published for Linux, macOS, and Windows.
+"""
+
+[readme.languages.python.snippets]
+basic_usage = "getting-started/basic_usage.md"
+
+[readme.languages.typescript]
+name = "TypeScript (Node.js)"
+template = "language_package.md"
+output_path = "packages/typescript/README.md"
+package_manager = ["npm"]
+package_name = "@kreuzberg/kreuzcrawl"
+install_command = "npm install @kreuzberg/kreuzcrawl"
+description = """
+Node.js bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Powered by
+NAPI-RS with full TypeScript types, async/await support, and native performance.
+"""
+
+[readme.languages.typescript.snippets]
+basic_usage = "getting-started/basic_usage.md"
+
+[readme.languages.ruby]
+name = "Ruby"
+template = "language_package.md"
+output_path = "packages/ruby/README.md"
+package_manager = ["gem"]
+package_name = "kreuzcrawl"
+install_command = "gem install kreuzcrawl"
+description = """
+Ruby bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Powered by
+Magnus with native Ruby objects, full metadata extraction, and Markdown conversion.
+"""
+
+[readme.languages.ruby.snippets]
+basic_usage = "getting-started/basic_usage.md"
+
+[readme.languages.go]
+name = "Go"
+template = "language_package.md"
+output_path = "packages/go/README.md"
+package_manager = ["go"]
+package_name = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+install_command = "go get github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+description = """
+Go bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses cgo with
+the C FFI layer for native performance with idiomatic Go error handling.
+"""
+
+[readme.languages.go.snippets]
+basic_usage = "getting-started/basic_usage.md"
+
+[readme.languages.java]
+name = "Java"
+template = "language_package.md"
+output_path = "packages/java/README.md"
+package_manager = ["maven"]
+package_name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
+install_command = """
+<dependency>
+    <groupId>dev.kreuzberg.kreuzcrawl</groupId>
+    <artifactId>kreuzcrawl</artifactId>
+    <version>{{ version }}</version>
+</dependency>
+"""
+description = """
+Java bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses the
+Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
+"""
+
+[readme.languages.java.snippets]
+basic_usage = "getting-started/basic_usage.md"
+
+[readme.languages.csharp]
+name = "C#"
+template = "language_package.md"
+output_path = "packages/csharp/README.md"
+package_manager = ["nuget"]
+package_name = "Kreuzcrawl"
+install_command = "dotnet add package Kreuzcrawl"
+description = """
+C# / .NET bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses
+P/Invoke with the C FFI layer, supporting .NET 8+ with async/await and nullable reference types.
+"""
+
+[readme.languages.csharp.snippets]
+basic_usage = "getting-started/basic_usage.md"
+
+[readme.languages.php]
+name = "PHP"
+template = "language_package.md"
+output_path = "packages/php/README.md"
+package_manager = ["composer"]
+package_name = "kreuzberg-dev/kreuzcrawl"
+install_command = "composer require kreuzberg-dev/kreuzcrawl"
+description = """
+PHP bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Native PHP
+extension via ext-php-rs with typed properties, PHP 8.2+ support, and PHPStan type stubs.
+"""
+
+[readme.languages.php.snippets]
+basic_usage = "getting-started/basic_usage.md"
+
+[readme.languages.elixir]
+name = "Elixir"
+template = "language_package.md"
+output_path = "packages/elixir/README.md"
+package_manager = ["hex"]
+package_name = "kreuzcrawl"
+install_command = """
+def deps do
+  [{:kreuzcrawl, "~> {{ version }}"}]
+end
+"""
+description = """
+Elixir bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses Rustler
+NIFs for native BEAM integration with OTP-compatible error tuples and ResourceArc handles.
+"""
+
+[readme.languages.elixir.snippets]
+basic_usage = "getting-started/basic_usage.md"
+
+# ---------------------------------------------------------------------------
+# Version Sync
+# ---------------------------------------------------------------------------
+[sync]
+extra_paths = []

@@ -16,9 +16,10 @@ tasks:
     deps: [mock-server:build]
     cmds:
       - |
-        ./target/release/mock-server --fixtures ./fixtures --port 0 > .mock-server.env &
+        ./target/release/mock-server --fixtures ./fixtures --port 0 > .mock-server.out &
         echo $! > .mock-server.pid
         sleep 1
+        grep MOCK_SERVER_URL .mock-server.out > .mock-server.env
         cat .mock-server.env
     generates:
       - .mock-server.pid
@@ -51,9 +52,6 @@ tasks:
   test:all:
     desc: Run all E2E tests across all supported languages (builds bindings, starts mock server)
     deps: [mock-server:start]
-    env:
-      MOCK_SERVER_URL:
-        sh: cat .mock-server.env 2>/dev/null | grep MOCK_SERVER_URL | cut -d= -f2
     cmds:
       # Build bindings before testing.
       - task: rust:build
@@ -66,16 +64,19 @@ tasks:
       - task: ruby:build
       - task: php:build
       - task: elixir:build
-      # Run e2e tests.
-      - task: rust:e2e:test
-      - task: python:e2e:test
-      - task: node:e2e:test
-      - task: go:e2e:test
-      - task: java:e2e:test
-      - task: csharp:e2e:test
-      - task: ruby:e2e:test
-      - task: php:e2e:test
-      - task: elixir:e2e:test
+      # Run e2e tests (source mock server URL and pass to each task).
+      - cmd: |
+          eval "$(cat .mock-server.env 2>/dev/null)"
+          export MOCK_SERVER_URL
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task rust:e2e:test
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task python:e2e:test
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task node:e2e:test
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task go:e2e:test
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task java:e2e:test
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task csharp:e2e:test
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task ruby:e2e:test
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task php:e2e:test
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task elixir:e2e:test
       - defer: { task: mock-server:stop }
 
   test:quick:

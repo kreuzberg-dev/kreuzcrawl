@@ -4,44 +4,36 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.kreuzberg</groupId>
+    <groupId>dev.kreuzberg.kreuzcrawl</groupId>
     <artifactId>kreuzcrawl</artifactId>
     <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>kreuzcrawl</name>
     <description>High-performance web crawling engine</description>
-    <url>https://kreuzberg.dev</url>
+    <url>https://github.com/kreuzberg-dev/kreuzcrawl</url>
 
     <licenses>
         <license>
-            <name>Elastic License 2.0 (ELv2)</name>
-            <url>https://www.elastic.co/licensing/elastic-license</url>
+            <name>Elastic-2.0</name>
         </license>
     </licenses>
 
-    <developers>
-        <developer>
-            <name>Na'aman Hirschfeld</name>
-            <email>naaman@kreuzberg.dev</email>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git://github.com/kreuzberg-dev/kreuzcrawl.git</connection>
-        <developerConnection>scm:git:ssh://github.com:kreuzberg-dev/kreuzcrawl.git</developerConnection>
-        <url>https://github.com/kreuzberg-dev/kreuzcrawl</url>
-    </scm>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>25</maven.compiler.release>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>2.21.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
             <version>2.21.2</version>
         </dependency>
         <dependency>
@@ -59,10 +51,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <release>25</release>
-                    <compilerArgs>
-                        <arg>--enable-preview</arg>
-                    </compilerArgs>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -70,9 +60,28 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <argLine>--enable-preview --enable-native-access=ALL-UNNAMED -Djava.library.path=${project.basedir}/../../target/release</argLine>
-                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                    <argLine>--enable-native-access=ALL-UNNAMED -Djava.library.path=${project.basedir}/../../target/release</argLine>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <java>
+                        <googleJavaFormat>
+                            <version>1.35.0</version>
+                        </googleJavaFormat>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -38,6 +38,7 @@ public sealed class ImageInfo
     /// <summary>
     /// The source of the image reference.
     /// </summary>
+    [JsonConverter(typeof(ImageSourceJsonConverter))]
     [JsonPropertyName("source")]
     public ImageSource Source { get; set; } = default;
 

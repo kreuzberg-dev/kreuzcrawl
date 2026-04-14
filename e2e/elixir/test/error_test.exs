@@ -71,7 +71,7 @@ defmodule E2e.ErrorTest do
 
   describe "error_invalid_proxy" do
     test "Proxy pointing to unreachable address causes connection error during scrape" do
-      engine_config = %Kreuzcrawl.CrawlConfig{proxy: %{"url" => "http://127.0.0.1:1"}, request_timeout: 2000}
+      engine_config = "{\"proxy\":{\"url\":\"http://127.0.0.1:1\"},\"request_timeout\":2000}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_invalid_proxy"
       assert {:error, _} = Kreuzcrawl.scrape_async(engine, url)
@@ -80,7 +80,7 @@ defmodule E2e.ErrorTest do
 
   describe "error_partial_response" do
     test "Handles incomplete or truncated HTTP response" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false}
+      engine_config = "{\"respect_robots_txt\":false}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_partial_response"
       assert {:error, _} = Kreuzcrawl.scrape_async(engine, url)
@@ -97,7 +97,7 @@ defmodule E2e.ErrorTest do
 
   describe "error_retry_503" do
     test "Retries request on 503 Service Unavailable response" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false, retry_codes: [503], retry_count: 2}
+      engine_config = "{\"respect_robots_txt\":false,\"retry_codes\":[503],\"retry_count\":2}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_retry_503"
       assert {:error, _} = Kreuzcrawl.scrape_async(engine, url)
@@ -106,7 +106,7 @@ defmodule E2e.ErrorTest do
 
   describe "error_retry_backoff" do
     test "Implements exponential backoff when retrying failed requests" do
-      engine_config = %Kreuzcrawl.CrawlConfig{respect_robots_txt: false, retry_codes: [429], retry_count: 3}
+      engine_config = "{\"respect_robots_txt\":false,\"retry_codes\":[429],\"retry_count\":3}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_retry_backoff"
       assert {:error, _} = Kreuzcrawl.scrape_async(engine, url)
@@ -115,7 +115,7 @@ defmodule E2e.ErrorTest do
 
   describe "error_timeout" do
     test "Handles request timeout" do
-      engine_config = %Kreuzcrawl.CrawlConfig{request_timeout: 1}
+      engine_config = "{\"request_timeout\":1}"
       {:ok, engine} = Kreuzcrawl.create_engine(engine_config)
       url = System.get_env("MOCK_SERVER_URL") <> "/fixtures/error_timeout"
       assert {:error, _} = Kreuzcrawl.scrape_async(engine, url)

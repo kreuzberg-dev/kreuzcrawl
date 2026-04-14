@@ -3749,14 +3749,16 @@ impl From<kreuzcrawl::ProxyConfig> for JsProxyConfig {
 
 impl From<JsBrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: JsBrowserConfig) -> Self {
-        Self {
-            mode: val.mode.into(),
-            endpoint: val.endpoint,
-            timeout: std::time::Duration::from_secs(val.timeout),
-            wait: val.wait.into(),
-            wait_selector: val.wait_selector,
-            extra_wait: val.extra_wait.map(std::time::Duration::from_secs),
+        let mut __result = kreuzcrawl::BrowserConfig::default();
+        __result.mode = val.mode.into();
+        __result.endpoint = val.endpoint;
+        if let Some(__v) = val.timeout {
+            __result.timeout = std::time::Duration::from_millis(__v);
         }
+        __result.wait = val.wait.into();
+        __result.wait_selector = val.wait_selector;
+        __result.extra_wait = val.extra_wait.map(std::time::Duration::from_millis);
+        __result
     }
 }
 
@@ -3765,10 +3767,10 @@ impl From<kreuzcrawl::BrowserConfig> for JsBrowserConfig {
         Self {
             mode: val.mode.into(),
             endpoint: val.endpoint,
-            timeout: val.timeout.as_secs(),
+            timeout: Some(val.timeout.as_millis() as u64),
             wait: val.wait.into(),
             wait_selector: val.wait_selector,
-            extra_wait: val.extra_wait.map(|d| d.as_secs()),
+            extra_wait: val.extra_wait.map(|d| d.as_millis() as u64),
         }
     }
 }
@@ -3776,43 +3778,44 @@ impl From<kreuzcrawl::BrowserConfig> for JsBrowserConfig {
 #[allow(clippy::needless_update)]
 impl From<JsCrawlConfig> for kreuzcrawl::CrawlConfig {
     fn from(val: JsCrawlConfig) -> Self {
-        Self {
-            max_depth: val.max_depth,
-            max_pages: val.max_pages,
-            max_concurrent: val.max_concurrent,
-            respect_robots_txt: val.respect_robots_txt,
-            user_agent: val.user_agent,
-            stay_on_domain: val.stay_on_domain,
-            allow_subdomains: val.allow_subdomains,
-            include_paths: val.include_paths,
-            exclude_paths: val.exclude_paths,
-            custom_headers: serde_wasm_bindgen::from_value(val.custom_headers.clone()).unwrap_or_default(),
-            request_timeout: std::time::Duration::from_secs(val.request_timeout),
-            max_redirects: val.max_redirects,
-            retry_count: val.retry_count,
-            retry_codes: val.retry_codes,
-            cookies_enabled: val.cookies_enabled,
-            auth: val.auth.map(Into::into),
-            max_body_size: val.max_body_size,
-            main_content_only: val.main_content_only,
-            remove_tags: val.remove_tags,
-            map_limit: val.map_limit,
-            map_search: val.map_search,
-            download_assets: val.download_assets,
-            asset_types: val.asset_types.into_iter().map(Into::into).collect(),
-            max_asset_size: val.max_asset_size,
-            browser: val.browser.into(),
-            proxy: val.proxy.map(Into::into),
-            user_agents: val.user_agents,
-            capture_screenshot: val.capture_screenshot,
-            download_documents: val.download_documents,
-            document_max_size: val.document_max_size,
-            document_mime_types: val.document_mime_types,
-            warc_output: val.warc_output.map(Into::into),
-            browser_profile: val.browser_profile,
-            save_browser_profile: val.save_browser_profile,
-            ..Default::default()
+        let mut __result = kreuzcrawl::CrawlConfig::default();
+        __result.max_depth = val.max_depth;
+        __result.max_pages = val.max_pages;
+        __result.max_concurrent = val.max_concurrent;
+        __result.respect_robots_txt = val.respect_robots_txt;
+        __result.user_agent = val.user_agent;
+        __result.stay_on_domain = val.stay_on_domain;
+        __result.allow_subdomains = val.allow_subdomains;
+        __result.include_paths = val.include_paths;
+        __result.exclude_paths = val.exclude_paths;
+        __result.custom_headers = serde_wasm_bindgen::from_value(val.custom_headers.clone()).unwrap_or_default();
+        if let Some(__v) = val.request_timeout {
+            __result.request_timeout = std::time::Duration::from_millis(__v);
         }
+        __result.max_redirects = val.max_redirects;
+        __result.retry_count = val.retry_count;
+        __result.retry_codes = val.retry_codes;
+        __result.cookies_enabled = val.cookies_enabled;
+        __result.auth = val.auth.map(Into::into);
+        __result.max_body_size = val.max_body_size;
+        __result.main_content_only = val.main_content_only;
+        __result.remove_tags = val.remove_tags;
+        __result.map_limit = val.map_limit;
+        __result.map_search = val.map_search;
+        __result.download_assets = val.download_assets;
+        __result.asset_types = val.asset_types.into_iter().map(Into::into).collect();
+        __result.max_asset_size = val.max_asset_size;
+        __result.browser = val.browser.into();
+        __result.proxy = val.proxy.map(Into::into);
+        __result.user_agents = val.user_agents;
+        __result.capture_screenshot = val.capture_screenshot;
+        __result.download_documents = val.download_documents;
+        __result.document_max_size = val.document_max_size;
+        __result.document_mime_types = val.document_mime_types;
+        __result.warc_output = val.warc_output.map(Into::into);
+        __result.browser_profile = val.browser_profile;
+        __result.save_browser_profile = val.save_browser_profile;
+        __result
     }
 }
 
@@ -3829,7 +3832,7 @@ impl From<kreuzcrawl::CrawlConfig> for JsCrawlConfig {
             include_paths: val.include_paths,
             exclude_paths: val.exclude_paths,
             custom_headers: serde_wasm_bindgen::to_value(&val.custom_headers).unwrap_or(JsValue::NULL),
-            request_timeout: val.request_timeout.as_secs(),
+            request_timeout: Some(val.request_timeout.as_millis() as u64),
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
             retry_codes: val.retry_codes,

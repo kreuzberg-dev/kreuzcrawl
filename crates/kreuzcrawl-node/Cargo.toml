@@ -1,44 +1,18 @@
 [package]
 name = "kreuzcrawl-node"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
-license.workspace = true
-repository.workspace = true
-homepage.workspace = true
-documentation.workspace = true
-readme.workspace = true
-rust-version.workspace = true
-description = "Node.js bindings for kreuzcrawl"
-keywords = ["crawl", "scrape", "nodejs", "napi", "web"]
-categories = ["api-bindings"]
-
-[package.metadata.napi]
-package-json-name = "@kreuzberg/kreuzcrawl"
+version = "0.1.0"
+edition = "2024"
+license = "Elastic-2.0"
 
 [lib]
 crate-type = ["cdylib"]
 
-[features]
-default = []
-
 [dependencies]
-kreuzcrawl = { path = "../kreuzcrawl", features = ["native-runtime"] }
-napi = { workspace = true }
-napi-derive = { workspace = true }
-serde_json = { workspace = true }
+kreuzcrawl = { path = "../kreuzcrawl" }
+napi = { version = "3", features = ["async"] }
+napi-derive = "3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 [build-dependencies]
-napi-build = "2.3"
-
-[lints.rust]
-unsafe_code = "allow"
-missing_docs = "warn"
-unused_must_use = "deny"
-
-[lints.clippy]
-all = { level = "deny", priority = -1 }
-cargo = { level = "warn", priority = -1 }
-pedantic = { level = "warn", priority = -1 }
-nursery = { level = "warn", priority = -1 }
-multiple_crate_versions = { level = "allow", priority = 1 }
+napi-build = "2"

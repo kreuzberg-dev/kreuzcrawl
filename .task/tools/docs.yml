@@ -1,33 +1,40 @@
 version: "3"
 
-includes:
-  _cfg:
-    taskfile: ../config/vars.yml
-    internal: true
-
 tasks:
   build:
-    desc: Build documentation
+    desc: Build documentation site
     cmds:
       - uv run --group doc zensical build --clean
 
   serve:
-    desc: Serve documentation locally
+    desc: Serve documentation site locally
     cmds:
       - uv run --group doc zensical serve
 
   generate-readme:
-    desc: Generate and format language package READMEs from templates
+    desc: Generate language package READMEs from templates via alef
     cmds:
-      - python3 scripts/generate_readme.py
-      - rumdl fmt packages/python/README.md packages/go/v4/README.md packages/java/README.md packages/php/README.md packages/ruby/README.md packages/csharp/README.md packages/elixir/README.md crates/kreuzcrawl-node/README.md crates/kreuzcrawl-wasm/README.md
+      - alef readme
 
   generate-readme:check:
     desc: Validate READMEs match templates (CI mode)
     cmds:
-      - python3 scripts/generate_readme.py --validate
+      - alef readme
+      - git diff --exit-code -- packages/*/README.md crates/*/README.md
 
-  generate-readme:dry-run:
-    desc: Preview README generation without writing files
+  generate-docs:
+    desc: Generate API reference documentation via alef
     cmds:
-      - python3 scripts/generate_readme.py --dry-run
+      - alef docs
+
+  generate-docs:check:
+    desc: Validate API docs are up to date (CI mode)
+    cmds:
+      - alef docs
+      - git diff --exit-code -- docs/reference/
+
+  generate:all:
+    desc: Generate all documentation (READMEs + API reference)
+    cmds:
+      - alef readme
+      - alef docs

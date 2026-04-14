@@ -19,7 +19,7 @@ final class Kreuzcrawl
      */
     public static function createEngine(?CrawlConfig $config = null): CrawlEngineHandle
     {
-        return \create_engine($config); // delegate to extension function
+        return \Kreuzcrawl\KreuzcrawlApi::createEngine($config); // delegate to native extension class
     }
 
     /**
@@ -32,7 +32,7 @@ final class Kreuzcrawl
      */
     public static function scrape(CrawlEngineHandle $engine, string $url): ScrapeResult
     {
-        return \scrape($engine, $url); // delegate to extension function
+        return \Kreuzcrawl\KreuzcrawlApi::scrapeAsync($engine, $url); // delegate to native extension class
     }
 
     /**
@@ -45,7 +45,7 @@ final class Kreuzcrawl
      */
     public static function crawl(CrawlEngineHandle $engine, string $url): CrawlResult
     {
-        return \crawl($engine, $url); // delegate to extension function
+        return \Kreuzcrawl\KreuzcrawlApi::crawlAsync($engine, $url); // delegate to native extension class
     }
 
     /**
@@ -58,7 +58,7 @@ final class Kreuzcrawl
      */
     public static function mapUrls(CrawlEngineHandle $engine, string $url): MapResult
     {
-        return \map_urls($engine, $url); // delegate to extension function
+        return \Kreuzcrawl\KreuzcrawlApi::mapUrlsAsync($engine, $url); // delegate to native extension class
     }
 
     /**
@@ -70,7 +70,7 @@ final class Kreuzcrawl
      */
     public static function batchScrape(CrawlEngineHandle $engine, array $urls): array
     {
-        return \batch_scrape($engine, $urls); // delegate to extension function
+        return \Kreuzcrawl\KreuzcrawlApi::batchScrapeAsync($engine, $urls); // delegate to native extension class
     }
 
     /**
@@ -82,7 +82,18 @@ final class Kreuzcrawl
      */
     public static function batchCrawl(CrawlEngineHandle $engine, array $urls): array
     {
-        return \batch_crawl($engine, $urls); // delegate to extension function
+        return \Kreuzcrawl\KreuzcrawlApi::batchCrawlAsync($engine, $urls); // delegate to native extension class
+    }
+
+    /**
+     * Create engine from JSON config string (handles complex nested config).
+     *
+     * @param ?string $json
+     * @return CrawlEngineHandle
+     */
+    public static function createEngineFromJson(?string $json = null): CrawlEngineHandle
+    {
+        return \Kreuzcrawl\KreuzcrawlApi::createEngineFromJson($json);
     }
 
 }
