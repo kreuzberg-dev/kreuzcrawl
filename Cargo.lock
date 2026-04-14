@@ -2062,6 +2062,7 @@ dependencies = [
  "kreuzcrawl",
  "serde-wasm-bindgen",
  "wasm-bindgen",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]

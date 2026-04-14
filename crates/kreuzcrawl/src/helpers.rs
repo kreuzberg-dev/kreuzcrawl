@@ -18,16 +18,12 @@ pub(crate) fn find_ascii_case_insensitive(haystack: &str, needle: &str) -> Optio
     if needle_bytes.len() > haystack_bytes.len() {
         return None;
     }
-    for i in 0..=(haystack_bytes.len() - needle_bytes.len()) {
-        if haystack_bytes[i..i + needle_bytes.len()]
+    (0..=(haystack_bytes.len() - needle_bytes.len())).find(|&i| {
+        haystack_bytes[i..i + needle_bytes.len()]
             .iter()
             .zip(needle_bytes.iter())
             .all(|(h, n)| h.to_ascii_lowercase() == *n)
-        {
-            return Some(i);
-        }
-    }
-    None
+    })
 }
 
 /// Compile a slice of regex pattern strings, returning an error if any pattern is invalid.

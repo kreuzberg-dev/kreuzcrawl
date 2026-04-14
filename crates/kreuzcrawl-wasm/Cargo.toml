@@ -6,6 +6,9 @@ description = "High-performance web crawling engine"
 license = "Elastic-2.0"
 repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 
+[package.metadata.cargo-machete]
+ignored = ["wasm-bindgen-futures"]
+
 [lib]
 crate-type = ["cdylib"]
 
@@ -13,3 +16,4 @@ crate-type = ["cdylib"]
 kreuzcrawl = { path = "../kreuzcrawl" }
 serde-wasm-bindgen = "0.6"
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
