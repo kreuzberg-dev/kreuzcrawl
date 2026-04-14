@@ -40,7 +40,7 @@
   <a href="https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-Elastic--2.0-blue.svg" alt="License">
   </a>
-  <a href="https://docs.kreuzcrawl.dev">
+  <a href="https://docs.kreuzcrawl.kreuzberg.dev">
     <img src="https://img.shields.io/badge/docs-kreuzcrawl.dev-007ec6" alt="Documentation">
   </a>
 </div>
@@ -71,7 +71,7 @@ High-performance Rust web crawling engine for structured data extraction. Scrape
 - **MCP server** — Model Context Protocol integration for AI agents
 - **REST API** — HTTP server with OpenAPI spec
 
-**[Documentation](https://docs.kreuzcrawl.dev)** | **[API Reference](https://docs.kreuzcrawl.dev/reference/)**
+**[Documentation](https://docs.kreuzcrawl.kreuzberg.dev)** | **[API Reference](https://docs.kreuzcrawl.kreuzberg.dev/reference/)**
 
 ## Installation
 
@@ -266,8 +266,8 @@ Contributions are welcome! See our [Contributing Guide](https://github.com/kreuz
 
 ## Links
 
-- [Documentation](https://docs.kreuzcrawl.dev)
-- [API Reference](https://docs.kreuzcrawl.dev/reference/)
+- [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
+- [API Reference](https://docs.kreuzcrawl.kreuzberg.dev/reference/)
 - [GitHub](https://github.com/kreuzberg-dev/kreuzcrawl)
 - [Issues](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
 - [Discussions](https://github.com/kreuzberg-dev/kreuzcrawl/discussions)

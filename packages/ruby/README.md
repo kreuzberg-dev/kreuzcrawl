@@ -37,7 +37,7 @@
   </a>
 
   <!-- Project Info -->
-  <a href="https://docs.kreuzcrawl.dev">
+  <a href="https://docs.kreuzcrawl.kreuzberg.dev">
     <img src="https://img.shields.io/badge/Docs-kreuzcrawl.dev-007ec6" alt="Documentation">
   </a>
   <a href="https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/LICENSE">
@@ -86,7 +86,7 @@ puts "Links: #{result.links.length}"
 
 ## API Reference
 
-Full API documentation is available at [docs.kreuzcrawl.dev](https://docs.kreuzcrawl.dev).
+Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).
 
 Key functions:
 
@@ -107,7 +107,7 @@ This project is licensed under [Elastic License 2.0](https://github.com/kreuzber
 
 ## Links
 
-- [Documentation](https://docs.kreuzcrawl.dev)
+- [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
 - [GitHub Repository](https://github.com/kreuzberg-dev/kreuzcrawl)
 - [Issue Tracker](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
 - [Discussions](https://github.com/kreuzberg-dev/kreuzcrawl/discussions)
