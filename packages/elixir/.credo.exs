@@ -7,7 +7,11 @@
         excluded: [~r"/_build/", ~r"/deps/"]
       },
       strict: false,
-      color: true
+      color: true,
+      checks: [
+        # Generated structs mirror Rust core types and may have many fields
+        {Credo.Check.Warning.StructFieldAmount, false}
+      ]
     }
   ]
 }
