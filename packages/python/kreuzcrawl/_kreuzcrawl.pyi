@@ -32,16 +32,16 @@ class ProxyConfig:
 class BrowserConfig:
     mode: BrowserMode
     endpoint: str | None
-    timeout: int
+    timeout: int | None
     wait: BrowserWait
     wait_selector: str | None
     extra_wait: int | None
     def __init__(
         self,
         mode: BrowserMode | str,
-        timeout: int,
         wait: BrowserWait | str,
         endpoint: str | None = None,
+        timeout: int | None = None,
         wait_selector: str | None = None,
         extra_wait: int | None = None,
     ) -> None: ...
@@ -59,7 +59,7 @@ class CrawlConfig:
     include_paths: list[str]
     exclude_paths: list[str]
     custom_headers: dict[str, str]
-    request_timeout: int
+    request_timeout: int | None
     max_redirects: int
     retry_count: int
     retry_codes: list[int]
@@ -91,7 +91,6 @@ class CrawlConfig:
         include_paths: list[str],
         exclude_paths: list[str],
         custom_headers: dict[str, str],
-        request_timeout: int,
         max_redirects: int,
         retry_count: int,
         retry_codes: list[int],
@@ -110,6 +109,7 @@ class CrawlConfig:
         max_pages: int | None = None,
         max_concurrent: int | None = None,
         user_agent: str | None = None,
+        request_timeout: int | None = None,
         auth: AuthConfig | dict[str, Any] | None = None,
         max_body_size: int | None = None,
         map_limit: int | None = None,
