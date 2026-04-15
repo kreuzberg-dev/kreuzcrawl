@@ -85,7 +85,7 @@ async fn test_scrape_basic_html_page() {
         result.metadata.canonical_url.is_some(),
         "expected metadata.canonical_url to be present"
     );
-    assert!(!result.links.is_empty(), "expected > 0");
+    assert!(!result.links.len().is_empty(), "expected > 0");
     assert!(
         format!("{:?}", result.links[0].link_type).contains(r#"external"#),
         "expected to contain: {}",

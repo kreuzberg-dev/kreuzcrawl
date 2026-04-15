@@ -16,7 +16,7 @@ async fn test_auth_basic_http() {
         "auth_basic_http"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.auth_header_sent, true, "equals assertion failed");
+    assert!(result.auth_header_sent, "equals assertion failed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
 }
 
@@ -31,7 +31,7 @@ async fn test_auth_bearer_token() {
         "auth_bearer_token"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.auth_header_sent, true, "equals assertion failed");
+    assert!(result.auth_header_sent, "equals assertion failed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
 }
 
@@ -46,6 +46,6 @@ async fn test_auth_custom_header() {
         "auth_custom_header"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.auth_header_sent, true, "equals assertion failed");
+    assert!(result.auth_header_sent, "equals assertion failed");
     assert_eq!(result.status_code, 200, "equals assertion failed");
 }
