@@ -17,7 +17,7 @@ async fn test_content_binary_skip() {
         "content_binary_skip"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.was_skipped, "equals assertion failed");
+    assert_eq!(result.was_skipped, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -32,7 +32,7 @@ async fn test_content_pdf_link_skip() {
         "content_pdf_link_skip"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.was_skipped, "equals assertion failed");
+    assert_eq!(result.was_skipped, true, "equals assertion failed");
 }
 
 #[tokio::test]

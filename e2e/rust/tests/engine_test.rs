@@ -67,8 +67,8 @@ async fn test_engine_scrape_basic() {
         "expected to contain: {}",
         r#"Testing the engine"#
     );
-    assert!(!result.links.is_empty(), "expected >= 1");
-    assert!(!result.metadata.headings.as_ref().unwrap().is_empty(), "expected >= 1");
+    assert!(result.links.len() >= 1, "expected >= 1");
+    assert!(result.metadata.headings.as_ref().unwrap().len() >= 1, "expected >= 1");
 }
 
 #[tokio::test]
