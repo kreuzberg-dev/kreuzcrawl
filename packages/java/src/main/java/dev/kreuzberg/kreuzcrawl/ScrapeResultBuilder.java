@@ -6,205 +6,204 @@ import java.util.Optional;
 
 public class ScrapeResultBuilder {
 
-    private short statusCode = 0;
-    private String contentType = "";
-    private String html = "";
-    private long bodySize = 0;
-    private PageMetadata metadata = null;
-    private List<LinkInfo> links = List.of();
-    private List<ImageInfo> images = List.of();
-    private List<FeedInfo> feeds = List.of();
-    private List<JsonLdEntry> jsonLd = List.of();
-    private boolean isAllowed = false;
-    private Optional<Long> crawlDelay = Optional.empty();
-    private boolean noindexDetected = false;
-    private boolean nofollowDetected = false;
-    private Optional<String> xRobotsTag = Optional.empty();
-    private boolean isPdf = false;
-    private boolean wasSkipped = false;
-    private Optional<String> detectedCharset = Optional.empty();
-    private boolean mainContentOnly = false;
-    private boolean authHeaderSent = false;
-    private Optional<ResponseMeta> responseMeta = Optional.empty();
-    private List<DownloadedAsset> assets = List.of();
-    private boolean jsRenderHint = false;
-    private boolean browserUsed = false;
-    private Optional<MarkdownResult> markdown = Optional.empty();
-    private Optional<Object> extractedData = Optional.empty();
-    private Optional<ExtractionMeta> extractionMeta = Optional.empty();
-    private Optional<byte[]> screenshot = Optional.empty();
-    private Optional<DownloadedDocument> downloadedDocument = Optional.empty();
+  private short statusCode = 0;
+  private String contentType = "";
+  private String html = "";
+  private long bodySize = 0;
+  private PageMetadata metadata = null;
+  private List<LinkInfo> links = List.of();
+  private List<ImageInfo> images = List.of();
+  private List<FeedInfo> feeds = List.of();
+  private List<JsonLdEntry> jsonLd = List.of();
+  private boolean isAllowed = false;
+  private Optional<Long> crawlDelay = Optional.empty();
+  private boolean noindexDetected = false;
+  private boolean nofollowDetected = false;
+  private Optional<String> xRobotsTag = Optional.empty();
+  private boolean isPdf = false;
+  private boolean wasSkipped = false;
+  private Optional<String> detectedCharset = Optional.empty();
+  private boolean mainContentOnly = false;
+  private boolean authHeaderSent = false;
+  private Optional<ResponseMeta> responseMeta = Optional.empty();
+  private List<DownloadedAsset> assets = List.of();
+  private boolean jsRenderHint = false;
+  private boolean browserUsed = false;
+  private Optional<MarkdownResult> markdown = Optional.empty();
+  private Optional<Object> extractedData = Optional.empty();
+  private Optional<ExtractionMeta> extractionMeta = Optional.empty();
+  private Optional<byte[]> screenshot = Optional.empty();
+  private Optional<DownloadedDocument> downloadedDocument = Optional.empty();
 
-    public ScrapeResultBuilder withStatusCode(short value) {
-        this.statusCode = value;
-        return this;
-    }
+  public ScrapeResultBuilder withStatusCode(short value) {
+    this.statusCode = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withContentType(String value) {
-        this.contentType = value;
-        return this;
-    }
+  public ScrapeResultBuilder withContentType(String value) {
+    this.contentType = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withHtml(String value) {
-        this.html = value;
-        return this;
-    }
+  public ScrapeResultBuilder withHtml(String value) {
+    this.html = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withBodySize(long value) {
-        this.bodySize = value;
-        return this;
-    }
+  public ScrapeResultBuilder withBodySize(long value) {
+    this.bodySize = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withMetadata(PageMetadata value) {
-        this.metadata = value;
-        return this;
-    }
+  public ScrapeResultBuilder withMetadata(PageMetadata value) {
+    this.metadata = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withLinks(List<LinkInfo> value) {
-        this.links = value;
-        return this;
-    }
+  public ScrapeResultBuilder withLinks(List<LinkInfo> value) {
+    this.links = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withImages(List<ImageInfo> value) {
-        this.images = value;
-        return this;
-    }
+  public ScrapeResultBuilder withImages(List<ImageInfo> value) {
+    this.images = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withFeeds(List<FeedInfo> value) {
-        this.feeds = value;
-        return this;
-    }
+  public ScrapeResultBuilder withFeeds(List<FeedInfo> value) {
+    this.feeds = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withJsonLd(List<JsonLdEntry> value) {
-        this.jsonLd = value;
-        return this;
-    }
+  public ScrapeResultBuilder withJsonLd(List<JsonLdEntry> value) {
+    this.jsonLd = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withIsAllowed(boolean value) {
-        this.isAllowed = value;
-        return this;
-    }
+  public ScrapeResultBuilder withIsAllowed(boolean value) {
+    this.isAllowed = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withCrawlDelay(Optional<Long> value) {
-        this.crawlDelay = value;
-        return this;
-    }
+  public ScrapeResultBuilder withCrawlDelay(Optional<Long> value) {
+    this.crawlDelay = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withNoindexDetected(boolean value) {
-        this.noindexDetected = value;
-        return this;
-    }
+  public ScrapeResultBuilder withNoindexDetected(boolean value) {
+    this.noindexDetected = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withNofollowDetected(boolean value) {
-        this.nofollowDetected = value;
-        return this;
-    }
+  public ScrapeResultBuilder withNofollowDetected(boolean value) {
+    this.nofollowDetected = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withXRobotsTag(Optional<String> value) {
-        this.xRobotsTag = value;
-        return this;
-    }
+  public ScrapeResultBuilder withXRobotsTag(Optional<String> value) {
+    this.xRobotsTag = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withIsPdf(boolean value) {
-        this.isPdf = value;
-        return this;
-    }
+  public ScrapeResultBuilder withIsPdf(boolean value) {
+    this.isPdf = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withWasSkipped(boolean value) {
-        this.wasSkipped = value;
-        return this;
-    }
+  public ScrapeResultBuilder withWasSkipped(boolean value) {
+    this.wasSkipped = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withDetectedCharset(Optional<String> value) {
-        this.detectedCharset = value;
-        return this;
-    }
+  public ScrapeResultBuilder withDetectedCharset(Optional<String> value) {
+    this.detectedCharset = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withMainContentOnly(boolean value) {
-        this.mainContentOnly = value;
-        return this;
-    }
+  public ScrapeResultBuilder withMainContentOnly(boolean value) {
+    this.mainContentOnly = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withAuthHeaderSent(boolean value) {
-        this.authHeaderSent = value;
-        return this;
-    }
+  public ScrapeResultBuilder withAuthHeaderSent(boolean value) {
+    this.authHeaderSent = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withResponseMeta(Optional<ResponseMeta> value) {
-        this.responseMeta = value;
-        return this;
-    }
+  public ScrapeResultBuilder withResponseMeta(Optional<ResponseMeta> value) {
+    this.responseMeta = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withAssets(List<DownloadedAsset> value) {
-        this.assets = value;
-        return this;
-    }
+  public ScrapeResultBuilder withAssets(List<DownloadedAsset> value) {
+    this.assets = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withJsRenderHint(boolean value) {
-        this.jsRenderHint = value;
-        return this;
-    }
+  public ScrapeResultBuilder withJsRenderHint(boolean value) {
+    this.jsRenderHint = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withBrowserUsed(boolean value) {
-        this.browserUsed = value;
-        return this;
-    }
+  public ScrapeResultBuilder withBrowserUsed(boolean value) {
+    this.browserUsed = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withMarkdown(Optional<MarkdownResult> value) {
-        this.markdown = value;
-        return this;
-    }
+  public ScrapeResultBuilder withMarkdown(Optional<MarkdownResult> value) {
+    this.markdown = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withExtractedData(Optional<Object> value) {
-        this.extractedData = value;
-        return this;
-    }
+  public ScrapeResultBuilder withExtractedData(Optional<Object> value) {
+    this.extractedData = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withExtractionMeta(Optional<ExtractionMeta> value) {
-        this.extractionMeta = value;
-        return this;
-    }
+  public ScrapeResultBuilder withExtractionMeta(Optional<ExtractionMeta> value) {
+    this.extractionMeta = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withScreenshot(Optional<byte[]> value) {
-        this.screenshot = value;
-        return this;
-    }
+  public ScrapeResultBuilder withScreenshot(Optional<byte[]> value) {
+    this.screenshot = value;
+    return this;
+  }
 
-    public ScrapeResultBuilder withDownloadedDocument(Optional<DownloadedDocument> value) {
-        this.downloadedDocument = value;
-        return this;
-    }
+  public ScrapeResultBuilder withDownloadedDocument(Optional<DownloadedDocument> value) {
+    this.downloadedDocument = value;
+    return this;
+  }
 
-    public ScrapeResult build() {
-        return new ScrapeResult(
-            statusCode,
-            contentType,
-            html,
-            bodySize,
-            metadata,
-            links,
-            images,
-            feeds,
-            jsonLd,
-            isAllowed,
-            crawlDelay,
-            noindexDetected,
-            nofollowDetected,
-            xRobotsTag,
-            isPdf,
-            wasSkipped,
-            detectedCharset,
-            mainContentOnly,
-            authHeaderSent,
-            responseMeta,
-            assets,
-            jsRenderHint,
-            browserUsed,
-            markdown,
-            extractedData,
-            extractionMeta,
-            screenshot,
-            downloadedDocument
-        );
-    }
+  public ScrapeResult build() {
+    return new ScrapeResult(
+        statusCode,
+        contentType,
+        html,
+        bodySize,
+        metadata,
+        links,
+        images,
+        feeds,
+        jsonLd,
+        isAllowed,
+        crawlDelay,
+        noindexDetected,
+        nofollowDetected,
+        xRobotsTag,
+        isPdf,
+        wasSkipped,
+        detectedCharset,
+        mainContentOnly,
+        authHeaderSent,
+        responseMeta,
+        assets,
+        jsRenderHint,
+        browserUsed,
+        markdown,
+        extractedData,
+        extractionMeta,
+        screenshot,
+        downloadedDocument);
+  }
 }

@@ -1,44 +1,49 @@
 {
-  "name": "@kreuzberg/kreuzcrawl",
-  "version": "0.1.0-rc.1",
-  "description": "High-performance web crawling engine",
-  "license": "Elastic-2.0",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "repository": "https://github.com/kreuzberg-dev/kreuzcrawl",
-  "author": "Kreuzberg Team",
-  "keywords": ["crawl", "scrape", "web", "spider"],
-  "files": [
-    "index.js",
-    "index.d.ts",
-    "**/*.node"
-  ],
-  "scripts": {
-    "build": "napi build --release",
-    "build:debug": "napi build",
-    "test": "node -e \"console.log('Add test command')\""
-  },
-  "napi": {
-    "name": "kreuzcrawl",
-    "triples": [
-      "x86_64-unknown-linux-gnu",
-      "x86_64-apple-darwin",
-      "aarch64-apple-darwin",
-      "x86_64-pc-windows-msvc"
-    ]
-  },
-  "devDependencies": {
-    "@napi-rs/cli": "^3.0.0"
-  },
-  "optionalDependencies": {
-    "@kreuzberg/kreuzcrawl-darwin-arm64": "0.1.0-rc.1",
-    "@kreuzberg/kreuzcrawl-darwin-x64": "0.1.0-rc.1",
-    "@kreuzberg/kreuzcrawl-linux-arm64-gnu": "0.1.0-rc.1",
-    "@kreuzberg/kreuzcrawl-linux-arm64-musl": "0.1.0-rc.1",
-    "@kreuzberg/kreuzcrawl-linux-x64-gnu": "0.1.0-rc.1",
-    "@kreuzberg/kreuzcrawl-linux-x64-musl": "0.1.0-rc.1",
-    "@kreuzberg/kreuzcrawl-linux-arm-gnueabihf": "0.1.0-rc.1",
-    "@kreuzberg/kreuzcrawl-win32-x64-msvc": "0.1.0-rc.1",
-    "@kreuzberg/kreuzcrawl-win32-arm64-msvc": "0.1.0-rc.1"
-  }
+	"name": "@kreuzberg/kreuzcrawl",
+	"version": "0.1.0-rc.1",
+	"description": "High-performance web crawling engine",
+	"license": "Elastic-2.0",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"repository": "https://github.com/kreuzberg-dev/kreuzcrawl",
+	"author": "Kreuzberg Team",
+	"keywords": [
+		"crawl",
+		"scrape",
+		"web",
+		"spider"
+	],
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"**/*.node"
+	],
+	"scripts": {
+		"build": "napi build --release",
+		"build:debug": "napi build",
+		"test": "node -e \"console.log('Add test command')\""
+	},
+	"napi": {
+		"name": "kreuzcrawl",
+		"triples": [
+			"x86_64-unknown-linux-gnu",
+			"x86_64-apple-darwin",
+			"aarch64-apple-darwin",
+			"x86_64-pc-windows-msvc"
+		]
+	},
+	"devDependencies": {
+		"@napi-rs/cli": "^3.0.0"
+	},
+	"optionalDependencies": {
+		"@kreuzberg/kreuzcrawl-darwin-arm64": "0.1.0-rc.1",
+		"@kreuzberg/kreuzcrawl-darwin-x64": "0.1.0-rc.1",
+		"@kreuzberg/kreuzcrawl-linux-arm64-gnu": "0.1.0-rc.1",
+		"@kreuzberg/kreuzcrawl-linux-arm64-musl": "0.1.0-rc.1",
+		"@kreuzberg/kreuzcrawl-linux-x64-gnu": "0.1.0-rc.1",
+		"@kreuzberg/kreuzcrawl-linux-x64-musl": "0.1.0-rc.1",
+		"@kreuzberg/kreuzcrawl-linux-arm-gnueabihf": "0.1.0-rc.1",
+		"@kreuzberg/kreuzcrawl-win32-x64-msvc": "0.1.0-rc.1",
+		"@kreuzberg/kreuzcrawl-win32-arm64-msvc": "0.1.0-rc.1"
+	}
 }

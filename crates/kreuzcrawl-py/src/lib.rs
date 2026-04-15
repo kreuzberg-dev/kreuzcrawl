@@ -1714,6 +1714,7 @@ impl Default for BrowserWait {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
+#[derive(Default)]
 pub struct AuthConfig {
     pub(crate) inner: kreuzcrawl::AuthConfig,
 }
@@ -1745,14 +1746,6 @@ impl From<kreuzcrawl::AuthConfig> for AuthConfig {
 impl serde::Serialize for AuthConfig {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         self.inner.serialize(serializer)
-    }
-}
-
-impl Default for AuthConfig {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
     }
 }
 
@@ -1827,6 +1820,7 @@ impl Default for AssetCategory {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
+#[derive(Default)]
 pub struct CrawlEvent {
     pub(crate) inner: kreuzcrawl::CrawlEvent,
 }
@@ -1858,14 +1852,6 @@ impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
 impl serde::Serialize for CrawlEvent {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         self.inner.serialize(serializer)
-    }
-}
-
-impl Default for CrawlEvent {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
     }
 }
 

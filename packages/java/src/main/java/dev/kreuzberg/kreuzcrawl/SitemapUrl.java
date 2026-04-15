@@ -4,12 +4,8 @@ package dev.kreuzberg.kreuzcrawl;
 import java.util.Optional;
 
 public record SitemapUrl(
-    String url,
-    Optional<String> lastmod,
-    Optional<String> changefreq,
-    Optional<String> priority
-) {
-    public static SitemapUrlBuilder builder() {
-        return new SitemapUrlBuilder();
-    }
+    String url, Optional<String> lastmod, Optional<String> changefreq, Optional<String> priority) {
+  public static SitemapUrlBuilder builder() {
+    return new SitemapUrlBuilder();
+  }
 }

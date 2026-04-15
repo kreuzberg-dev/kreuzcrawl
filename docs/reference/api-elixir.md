@@ -2,11 +2,11 @@
 title: "Elixir API Reference"
 ---
 
-# Elixir API Reference <span class="version-badge">v0.1.0-rc.1</span>
+## Elixir API Reference <span class="version-badge">v0.1.0-rc.1</span>
 
-## Functions
+### Functions
 
-### generate_citations()
+#### generate_citations()
 
 Convert markdown links to numbered citations.
 
@@ -32,7 +32,7 @@ def generate_citations(markdown)
 
 ---
 
-### create_engine()
+#### create_engine()
 
 Create a new crawl engine with the given configuration.
 
@@ -59,7 +59,7 @@ def create_engine(config)
 
 ---
 
-### scrape()
+#### scrape()
 
 Scrape a single URL, returning extracted page data.
 
@@ -84,7 +84,7 @@ def scrape(engine, url)
 
 ---
 
-### crawl()
+#### crawl()
 
 Crawl a website starting from `url`, following links up to the configured depth.
 
@@ -109,7 +109,7 @@ def crawl(engine, url)
 
 ---
 
-### map_urls()
+#### map_urls()
 
 Discover all pages on a website by following links and sitemaps.
 
@@ -134,7 +134,7 @@ def map_urls(engine, url)
 
 ---
 
-### batch_scrape()
+#### batch_scrape()
 
 Scrape multiple URLs concurrently.
 
@@ -157,7 +157,7 @@ def batch_scrape(engine, urls)
 
 ---
 
-### batch_crawl()
+#### batch_crawl()
 
 Crawl multiple seed URLs concurrently, each following links to configured depth.
 
@@ -180,9 +180,9 @@ def batch_crawl(engine, urls)
 
 ---
 
-## Types
+### Types
 
-### ActionResult
+#### ActionResult
 
 Result from a single page action execution.
 
@@ -197,7 +197,7 @@ Result from a single page action execution.
 
 ---
 
-### ArticleMetadata
+#### ArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
 
@@ -212,7 +212,7 @@ Article metadata extracted from `article:*` Open Graph tags.
 
 ---
 
-### BatchCrawlResult
+#### BatchCrawlResult
 
 Result from a single URL in a batch crawl operation.
 
@@ -225,7 +225,7 @@ Result from a single URL in a batch crawl operation.
 
 ---
 
-### BatchScrapeResult
+#### BatchScrapeResult
 
 Result from a single URL in a batch scrape operation.
 
@@ -238,7 +238,7 @@ Result from a single URL in a batch scrape operation.
 
 ---
 
-### BrowserConfig
+#### BrowserConfig
 
 Browser fallback configuration.
 
@@ -251,9 +251,9 @@ Browser fallback configuration.
 | `wait_selector` | `String.t() | nil` | `nil` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `integer() | nil` | `0ms` | Extra time to wait after the wait condition is met. |
 
-#### Functions
+##### Functions
 
-##### default()
+###### default()
 
 **Signature:**
 
@@ -264,7 +264,7 @@ def default()
 
 ---
 
-### CachedPage
+#### CachedPage
 
 Cached page data for HTTP response caching.
 
@@ -281,7 +281,7 @@ Cached page data for HTTP response caching.
 
 ---
 
-### CitationReference
+#### CitationReference
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -292,7 +292,7 @@ Cached page data for HTTP response caching.
 
 ---
 
-### CitationResult
+#### CitationResult
 
 Result of citation conversion.
 
@@ -304,7 +304,7 @@ Result of citation conversion.
 
 ---
 
-### CookieInfo
+#### CookieInfo
 
 Information about an HTTP cookie received from a response.
 
@@ -318,7 +318,7 @@ Information about an HTTP cookie received from a response.
 
 ---
 
-### CrawlConfig
+#### CrawlConfig
 
 Configuration for crawl, scrape, and map operations.
 
@@ -359,9 +359,9 @@ Configuration for crawl, scrape, and map operations.
 | `browser_profile` | `String.t() | nil` | `nil` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `boolean()` | `false` | Whether to save changes back to the browser profile on exit. |
 
-#### Functions
+##### Functions
 
-##### default()
+###### default()
 
 **Signature:**
 
@@ -369,7 +369,7 @@ Configuration for crawl, scrape, and map operations.
 def default()
 ```
 
-##### validate()
+###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -382,7 +382,7 @@ def validate()
 
 ---
 
-### CrawlEngineHandle
+#### CrawlEngineHandle
 
 Opaque handle to a configured crawl engine.
 
@@ -393,7 +393,7 @@ per-domain throttle, etc.) are used internally.
 
 ---
 
-### CrawlPageResult
+#### CrawlPageResult
 
 The result of crawling a single page during a crawl operation.
 
@@ -423,7 +423,7 @@ The result of crawling a single page during a crawl operation.
 
 ---
 
-### CrawlResult
+#### CrawlResult
 
 The result of a multi-page crawl operation.
 
@@ -437,9 +437,9 @@ The result of a multi-page crawl operation.
 | `cookies` | `list(CookieInfo)` | `[]` | Cookies collected during the crawl. |
 | `normalized_urls` | `list(String.t())` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-#### Functions
+##### Functions
 
-##### unique_normalized_urls()
+###### unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -452,7 +452,7 @@ def unique_normalized_urls()
 
 ---
 
-### DownloadedAsset
+#### DownloadedAsset
 
 A downloaded asset from a page.
 
@@ -468,7 +468,7 @@ A downloaded asset from a page.
 
 ---
 
-### DownloadedDocument
+#### DownloadedDocument
 
 A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 
@@ -489,7 +489,7 @@ skipping the resource.
 
 ---
 
-### ExtractionMeta
+#### ExtractionMeta
 
 Metadata about an LLM extraction pass.
 
@@ -504,7 +504,7 @@ Metadata about an LLM extraction pass.
 
 ---
 
-### FaviconInfo
+#### FaviconInfo
 
 Information about a favicon or icon link.
 
@@ -518,7 +518,7 @@ Information about a favicon or icon link.
 
 ---
 
-### FeedInfo
+#### FeedInfo
 
 Information about a feed link found on a page.
 
@@ -531,7 +531,7 @@ Information about a feed link found on a page.
 
 ---
 
-### HeadingInfo
+#### HeadingInfo
 
 A heading element extracted from the page.
 
@@ -543,7 +543,7 @@ A heading element extracted from the page.
 
 ---
 
-### HreflangEntry
+#### HreflangEntry
 
 An hreflang alternate link entry.
 
@@ -555,7 +555,7 @@ An hreflang alternate link entry.
 
 ---
 
-### ImageInfo
+#### ImageInfo
 
 Information about an image found on a page.
 
@@ -570,7 +570,7 @@ Information about an image found on a page.
 
 ---
 
-### InteractionResult
+#### InteractionResult
 
 Result of executing a sequence of page interaction actions.
 
@@ -584,7 +584,7 @@ Result of executing a sequence of page interaction actions.
 
 ---
 
-### JsonLdEntry
+#### JsonLdEntry
 
 A JSON-LD structured data entry found on a page.
 
@@ -597,7 +597,7 @@ A JSON-LD structured data entry found on a page.
 
 ---
 
-### LinkInfo
+#### LinkInfo
 
 Information about a link found on a page.
 
@@ -612,7 +612,7 @@ Information about a link found on a page.
 
 ---
 
-### MapResult
+#### MapResult
 
 The result of a map operation, containing discovered URLs.
 
@@ -623,7 +623,7 @@ The result of a map operation, containing discovered URLs.
 
 ---
 
-### MarkdownResult
+#### MarkdownResult
 
 Rich markdown conversion result from HTML processing.
 
@@ -639,7 +639,7 @@ Rich markdown conversion result from HTML processing.
 
 ---
 
-### PageMetadata
+#### PageMetadata
 
 Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
@@ -692,20 +692,20 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
 ---
 
-### ProxyConfig
+#### ProxyConfig
 
 Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | — | Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080"). |
+| `url` | `String.t()` | — | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
 | `username` | `String.t() | nil` | `nil` | Optional username for proxy authentication. |
 | `password` | `String.t() | nil` | `nil` | Optional password for proxy authentication. |
 
 
 ---
 
-### ResponseMeta
+#### ResponseMeta
 
 Response metadata extracted from HTTP headers.
 
@@ -722,7 +722,7 @@ Response metadata extracted from HTTP headers.
 
 ---
 
-### ScrapeResult
+#### ScrapeResult
 
 The result of a single-page scrape operation.
 
@@ -760,7 +760,7 @@ The result of a single-page scrape operation.
 
 ---
 
-### SitemapUrl
+#### SitemapUrl
 
 A URL entry from a sitemap.
 
@@ -774,9 +774,9 @@ A URL entry from a sitemap.
 
 ---
 
-## Enums
+### Enums
 
-### BrowserMode
+#### BrowserMode
 
 When to use the headless browser fallback.
 
@@ -789,7 +789,7 @@ When to use the headless browser fallback.
 
 ---
 
-### BrowserWait
+#### BrowserWait
 
 Wait strategy for browser page rendering.
 
@@ -802,7 +802,7 @@ Wait strategy for browser page rendering.
 
 ---
 
-### AuthConfig
+#### AuthConfig
 
 Authentication configuration.
 
@@ -815,7 +815,7 @@ Authentication configuration.
 
 ---
 
-### LinkType
+#### LinkType
 
 The classification of a link.
 
@@ -829,7 +829,7 @@ The classification of a link.
 
 ---
 
-### ImageSource
+#### ImageSource
 
 The source of an image reference.
 
@@ -843,7 +843,7 @@ The source of an image reference.
 
 ---
 
-### FeedType
+#### FeedType
 
 The type of a feed (RSS, Atom, or JSON Feed).
 
@@ -856,7 +856,7 @@ The type of a feed (RSS, Atom, or JSON Feed).
 
 ---
 
-### AssetCategory
+#### AssetCategory
 
 The category of a downloaded asset.
 
@@ -876,7 +876,7 @@ The category of a downloaded asset.
 
 ---
 
-### CrawlEvent
+#### CrawlEvent
 
 An event emitted during a streaming crawl operation.
 
@@ -889,9 +889,9 @@ An event emitted during a streaming crawl operation.
 
 ---
 
-## Errors
+### Errors
 
-### CrawlError
+#### CrawlError
 
 Errors that can occur during crawling, scraping, or mapping operations.
 
@@ -917,4 +917,3 @@ Errors that can occur during crawling, scraping, or mapping operations.
 
 
 ---
-

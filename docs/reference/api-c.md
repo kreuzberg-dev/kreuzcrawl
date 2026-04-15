@@ -2,11 +2,11 @@
 title: "C API Reference"
 ---
 
-# C API Reference <span class="version-badge">v0.1.0-rc.1</span>
+## C API Reference <span class="version-badge">v0.1.0-rc.1</span>
 
-## Functions
+### Functions
 
-### kcrawl_generate_citations()
+#### kcrawl_generate_citations()
 
 Convert markdown links to numbered citations.
 
@@ -31,7 +31,7 @@ KcrawlCitationResult* kcrawl_generate_citations(const char* markdown);
 
 ---
 
-### kcrawl_create_engine()
+#### kcrawl_create_engine()
 
 Create a new crawl engine with the given configuration.
 
@@ -57,7 +57,7 @@ KcrawlCrawlEngineHandle* kcrawl_create_engine(KcrawlCrawlConfig config);
 
 ---
 
-### kcrawl_scrape()
+#### kcrawl_scrape()
 
 Scrape a single URL, returning extracted page data.
 
@@ -81,7 +81,7 @@ KcrawlScrapeResult* kcrawl_scrape(KcrawlCrawlEngineHandle engine, const char* ur
 
 ---
 
-### kcrawl_crawl()
+#### kcrawl_crawl()
 
 Crawl a website starting from `url`, following links up to the configured depth.
 
@@ -105,7 +105,7 @@ KcrawlCrawlResult* kcrawl_crawl(KcrawlCrawlEngineHandle engine, const char* url)
 
 ---
 
-### kcrawl_map_urls()
+#### kcrawl_map_urls()
 
 Discover all pages on a website by following links and sitemaps.
 
@@ -129,7 +129,7 @@ KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url
 
 ---
 
-### kcrawl_batch_scrape()
+#### kcrawl_batch_scrape()
 
 Scrape multiple URLs concurrently.
 
@@ -151,7 +151,7 @@ KcrawlBatchScrapeResult* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, con
 
 ---
 
-### kcrawl_batch_crawl()
+#### kcrawl_batch_crawl()
 
 Crawl multiple seed URLs concurrently, each following links to configured depth.
 
@@ -173,9 +173,9 @@ KcrawlBatchCrawlResult* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const
 
 ---
 
-## Types
+### Types
 
-### KcrawlActionResult
+#### KcrawlActionResult
 
 Result from a single page action execution.
 
@@ -190,7 +190,7 @@ Result from a single page action execution.
 
 ---
 
-### KcrawlArticleMetadata
+#### KcrawlArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
 
@@ -205,7 +205,7 @@ Article metadata extracted from `article:*` Open Graph tags.
 
 ---
 
-### KcrawlBatchCrawlResult
+#### KcrawlBatchCrawlResult
 
 Result from a single URL in a batch crawl operation.
 
@@ -218,7 +218,7 @@ Result from a single URL in a batch crawl operation.
 
 ---
 
-### KcrawlBatchScrapeResult
+#### KcrawlBatchScrapeResult
 
 Result from a single URL in a batch scrape operation.
 
@@ -231,7 +231,7 @@ Result from a single URL in a batch scrape operation.
 
 ---
 
-### KcrawlBrowserConfig
+#### KcrawlBrowserConfig
 
 Browser fallback configuration.
 
@@ -244,9 +244,9 @@ Browser fallback configuration.
 | `wait_selector` | `const char**` | `NULL` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `uint64_t*` | `0ms` | Extra time to wait after the wait condition is met. |
 
-#### Methods
+##### Methods
 
-##### kcrawl_default()
+###### kcrawl_default()
 
 **Signature:**
 
@@ -257,7 +257,7 @@ KcrawlBrowserConfig kcrawl_default();
 
 ---
 
-### KcrawlCachedPage
+#### KcrawlCachedPage
 
 Cached page data for HTTP response caching.
 
@@ -274,7 +274,7 @@ Cached page data for HTTP response caching.
 
 ---
 
-### KcrawlCitationReference
+#### KcrawlCitationReference
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -285,7 +285,7 @@ Cached page data for HTTP response caching.
 
 ---
 
-### KcrawlCitationResult
+#### KcrawlCitationResult
 
 Result of citation conversion.
 
@@ -297,7 +297,7 @@ Result of citation conversion.
 
 ---
 
-### KcrawlCookieInfo
+#### KcrawlCookieInfo
 
 Information about an HTTP cookie received from a response.
 
@@ -311,7 +311,7 @@ Information about an HTTP cookie received from a response.
 
 ---
 
-### KcrawlCrawlConfig
+#### KcrawlCrawlConfig
 
 Configuration for crawl, scrape, and map operations.
 
@@ -352,9 +352,9 @@ Configuration for crawl, scrape, and map operations.
 | `browser_profile` | `const char**` | `NULL` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
 
-#### Methods
+##### Methods
 
-##### kcrawl_default()
+###### kcrawl_default()
 
 **Signature:**
 
@@ -362,7 +362,7 @@ Configuration for crawl, scrape, and map operations.
 KcrawlCrawlConfig kcrawl_default();
 ```
 
-##### kcrawl_validate()
+###### kcrawl_validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -375,7 +375,7 @@ void kcrawl_validate();
 
 ---
 
-### KcrawlCrawlEngineHandle
+#### KcrawlCrawlEngineHandle
 
 Opaque handle to a configured crawl engine.
 
@@ -386,7 +386,7 @@ per-domain throttle, etc.) are used internally.
 
 ---
 
-### KcrawlCrawlPageResult
+#### KcrawlCrawlPageResult
 
 The result of crawling a single page during a crawl operation.
 
@@ -416,7 +416,7 @@ The result of crawling a single page during a crawl operation.
 
 ---
 
-### KcrawlCrawlResult
+#### KcrawlCrawlResult
 
 The result of a multi-page crawl operation.
 
@@ -430,9 +430,9 @@ The result of a multi-page crawl operation.
 | `cookies` | `KcrawlCookieInfo*` | `NULL` | Cookies collected during the crawl. |
 | `normalized_urls` | `const char**` | `NULL` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-#### Methods
+##### Methods
 
-##### kcrawl_unique_normalized_urls()
+###### kcrawl_unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -445,7 +445,7 @@ uintptr_t kcrawl_unique_normalized_urls();
 
 ---
 
-### KcrawlDownloadedAsset
+#### KcrawlDownloadedAsset
 
 A downloaded asset from a page.
 
@@ -461,7 +461,7 @@ A downloaded asset from a page.
 
 ---
 
-### KcrawlDownloadedDocument
+#### KcrawlDownloadedDocument
 
 A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 
@@ -482,7 +482,7 @@ skipping the resource.
 
 ---
 
-### KcrawlExtractionMeta
+#### KcrawlExtractionMeta
 
 Metadata about an LLM extraction pass.
 
@@ -497,7 +497,7 @@ Metadata about an LLM extraction pass.
 
 ---
 
-### KcrawlFaviconInfo
+#### KcrawlFaviconInfo
 
 Information about a favicon or icon link.
 
@@ -511,7 +511,7 @@ Information about a favicon or icon link.
 
 ---
 
-### KcrawlFeedInfo
+#### KcrawlFeedInfo
 
 Information about a feed link found on a page.
 
@@ -524,7 +524,7 @@ Information about a feed link found on a page.
 
 ---
 
-### KcrawlHeadingInfo
+#### KcrawlHeadingInfo
 
 A heading element extracted from the page.
 
@@ -536,7 +536,7 @@ A heading element extracted from the page.
 
 ---
 
-### KcrawlHreflangEntry
+#### KcrawlHreflangEntry
 
 An hreflang alternate link entry.
 
@@ -548,7 +548,7 @@ An hreflang alternate link entry.
 
 ---
 
-### KcrawlImageInfo
+#### KcrawlImageInfo
 
 Information about an image found on a page.
 
@@ -563,7 +563,7 @@ Information about an image found on a page.
 
 ---
 
-### KcrawlInteractionResult
+#### KcrawlInteractionResult
 
 Result of executing a sequence of page interaction actions.
 
@@ -577,7 +577,7 @@ Result of executing a sequence of page interaction actions.
 
 ---
 
-### KcrawlJsonLdEntry
+#### KcrawlJsonLdEntry
 
 A JSON-LD structured data entry found on a page.
 
@@ -590,7 +590,7 @@ A JSON-LD structured data entry found on a page.
 
 ---
 
-### KcrawlLinkInfo
+#### KcrawlLinkInfo
 
 Information about a link found on a page.
 
@@ -605,7 +605,7 @@ Information about a link found on a page.
 
 ---
 
-### KcrawlMapResult
+#### KcrawlMapResult
 
 The result of a map operation, containing discovered URLs.
 
@@ -616,7 +616,7 @@ The result of a map operation, containing discovered URLs.
 
 ---
 
-### KcrawlMarkdownResult
+#### KcrawlMarkdownResult
 
 Rich markdown conversion result from HTML processing.
 
@@ -632,7 +632,7 @@ Rich markdown conversion result from HTML processing.
 
 ---
 
-### KcrawlPageMetadata
+#### KcrawlPageMetadata
 
 Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
@@ -685,20 +685,20 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
 ---
 
-### KcrawlProxyConfig
+#### KcrawlProxyConfig
 
 Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | — | Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080"). |
+| `url` | `const char*` | — | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
 | `username` | `const char**` | `NULL` | Optional username for proxy authentication. |
 | `password` | `const char**` | `NULL` | Optional password for proxy authentication. |
 
 
 ---
 
-### KcrawlResponseMeta
+#### KcrawlResponseMeta
 
 Response metadata extracted from HTTP headers.
 
@@ -715,7 +715,7 @@ Response metadata extracted from HTTP headers.
 
 ---
 
-### KcrawlScrapeResult
+#### KcrawlScrapeResult
 
 The result of a single-page scrape operation.
 
@@ -753,7 +753,7 @@ The result of a single-page scrape operation.
 
 ---
 
-### KcrawlSitemapUrl
+#### KcrawlSitemapUrl
 
 A URL entry from a sitemap.
 
@@ -767,9 +767,9 @@ A URL entry from a sitemap.
 
 ---
 
-## Enums
+### Enums
 
-### KcrawlBrowserMode
+#### KcrawlBrowserMode
 
 When to use the headless browser fallback.
 
@@ -782,7 +782,7 @@ When to use the headless browser fallback.
 
 ---
 
-### KcrawlBrowserWait
+#### KcrawlBrowserWait
 
 Wait strategy for browser page rendering.
 
@@ -795,7 +795,7 @@ Wait strategy for browser page rendering.
 
 ---
 
-### KcrawlAuthConfig
+#### KcrawlAuthConfig
 
 Authentication configuration.
 
@@ -808,7 +808,7 @@ Authentication configuration.
 
 ---
 
-### KcrawlLinkType
+#### KcrawlLinkType
 
 The classification of a link.
 
@@ -822,7 +822,7 @@ The classification of a link.
 
 ---
 
-### KcrawlImageSource
+#### KcrawlImageSource
 
 The source of an image reference.
 
@@ -836,7 +836,7 @@ The source of an image reference.
 
 ---
 
-### KcrawlFeedType
+#### KcrawlFeedType
 
 The type of a feed (RSS, Atom, or JSON Feed).
 
@@ -849,7 +849,7 @@ The type of a feed (RSS, Atom, or JSON Feed).
 
 ---
 
-### KcrawlAssetCategory
+#### KcrawlAssetCategory
 
 The category of a downloaded asset.
 
@@ -869,7 +869,7 @@ The category of a downloaded asset.
 
 ---
 
-### KcrawlCrawlEvent
+#### KcrawlCrawlEvent
 
 An event emitted during a streaming crawl operation.
 
@@ -882,9 +882,9 @@ An event emitted during a streaming crawl operation.
 
 ---
 
-## Errors
+### Errors
 
-### KcrawlCrawlError
+#### KcrawlCrawlError
 
 Errors that can occur during crawling, scraping, or mapping operations.
 
@@ -910,4 +910,3 @@ Errors that can occur during crawling, scraping, or mapping operations.
 
 
 ---
-
