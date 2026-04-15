@@ -15,6 +15,9 @@ path = "src/main.rs"
 default = []
 api = ["kreuzcrawl/api"]
 mcp = ["kreuzcrawl/mcp"]
+warc = ["kreuzcrawl/warc"]
+ai = ["kreuzcrawl/ai"]
+tracing = ["kreuzcrawl/tracing"]
 
 [dependencies]
 clap = { workspace = true }

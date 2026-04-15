@@ -9,6 +9,9 @@ repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 [lib]
 crate-type = ["cdylib", "staticlib"]
 
+[features]
+default = []
+
 [dependencies]
 kreuzcrawl = { path = "../kreuzcrawl" }
 serde_json = "1"

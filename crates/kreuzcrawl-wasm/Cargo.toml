@@ -16,7 +16,8 @@ ignored = ["wasm-bindgen-futures"]
 crate-type = ["cdylib"]
 
 [dependencies]
-kreuzcrawl = { path = "../kreuzcrawl" }
+getrandom = { version = "0.3", features = ["wasm_js"] }
+kreuzcrawl = { path = "../kreuzcrawl", default-features = false }
 serde-wasm-bindgen = "0.6"
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"

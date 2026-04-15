@@ -2052,6 +2052,7 @@ dependencies = [
 name = "kreuzcrawl-wasm"
 version = "0.1.0-rc.1"
 dependencies = [
+ "getrandom 0.3.4",
  "kreuzcrawl",
  "serde-wasm-bindgen",
  "wasm-bindgen",

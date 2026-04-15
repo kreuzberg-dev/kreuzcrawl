@@ -42,6 +42,7 @@ pub(crate) fn normalize_url(raw: &str) -> String {
 ///
 /// Strips query parameters and fragments, removes trailing slashes (except root),
 /// and fixes double slashes in the path.
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn normalize_url_for_dedup(raw: &str) -> String {
     if let Ok(mut u) = Url::parse(raw) {
         u.set_fragment(None);

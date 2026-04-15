@@ -16,6 +16,7 @@ pub mod citations;
 pub mod defaults;
 pub mod engine;
 mod error;
+#[cfg(not(target_arch = "wasm32"))]
 mod helpers;
 mod html;
 mod http;

@@ -5,7 +5,9 @@ use std::time::Duration;
 use reqwest::header::{CONTENT_TYPE, HeaderMap, USER_AGENT};
 
 use crate::error::{CrawlError, classify_reqwest_error, error_chain_string};
-use crate::types::{AuthConfig, CookieInfo, CrawlConfig, ResponseMeta};
+#[cfg(not(target_arch = "wasm32"))]
+use crate::types::CookieInfo;
+use crate::types::{AuthConfig, CrawlConfig, ResponseMeta};
 
 /// An HTTP response with status, headers, and body content.
 pub(crate) struct HttpResponse {
@@ -157,6 +159,7 @@ pub(crate) async fn http_fetch(
 }
 
 /// Build a `reqwest::Client` with the given configuration (redirect policy, timeout, cookies, proxy).
+#[cfg_attr(target_arch = "wasm32", allow(unused_variables, unused_mut))]
 pub(crate) fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, CrawlError> {
     let mut builder = reqwest::Client::builder();
 
@@ -230,6 +233,7 @@ pub(crate) async fn fetch_with_retry(
 ///
 /// Looks for the `"set-cookie"` key and parses each value as an individual
 /// Set-Cookie header, preserving all cookies from the response.
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn extract_cookies_from_hashmap(
     headers: &std::collections::HashMap<String, Vec<String>>,
 ) -> Vec<CookieInfo> {
@@ -309,6 +313,7 @@ fn is_waf_blocked_headermap(server_lower: &str, body: &str, headers: &HeaderMap)
         || headers.keys().any(|k| k.as_str().starts_with("x-px-"))
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn is_waf_blocked(
     server: &str,
     body: &str,

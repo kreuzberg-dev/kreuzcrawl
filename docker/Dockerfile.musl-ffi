@@ -1,0 +1,8 @@
+FROM rust:1-alpine AS builder
+RUN apk add --no-cache musl-dev openssl-dev openssl-libs-static pkgconfig perl make
+WORKDIR /src
+COPY . .
+RUN cargo build --release --package kreuzcrawl-ffi
+
+FROM scratch
+COPY --from=builder /src/target/release/libkreuzcrawl_ffi.so /libkreuzcrawl_ffi.so

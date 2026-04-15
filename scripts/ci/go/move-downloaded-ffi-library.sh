@@ -39,8 +39,8 @@ if [ -f "ffi-download/kreuzcrawl.h" ]; then
   cp ffi-download/kreuzcrawl.h packages/go/v4/internal/ffi/
   echo "✓ Copied kreuzcrawl.h to packages/go/v4/internal/ffi/"
   HEADER_FOUND=true
-elif [ -f "ffi-download/crates/kreuzcrawl-ffi/kreuzcrawl.h" ]; then
-  cp ffi-download/crates/kreuzcrawl-ffi/kreuzcrawl.h packages/go/v4/internal/ffi/
+elif [ -f "ffi-download/crates/kreuzcrawl-ffi/include/kreuzcrawl.h" ]; then
+  cp ffi-download/crates/kreuzcrawl-ffi/include/kreuzcrawl.h packages/go/v4/internal/ffi/
   echo "✓ Copied kreuzcrawl.h to packages/go/v4/internal/ffi/"
   HEADER_FOUND=true
 fi
