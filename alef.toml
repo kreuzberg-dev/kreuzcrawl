@@ -1,5 +1,8 @@
 languages = ["python", "node", "ruby", "php", "ffi", "go", "java", "csharp", "elixir", "wasm"]
 
+[generate]
+reverse_conversions = false
+
 [crate]
 name = "kreuzcrawl"
 core_import = "kreuzcrawl"

@@ -6,6 +6,31 @@ title: "C# API Reference"
 
 ## Functions
 
+### GenerateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: https://example.com` in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```csharp
+public static CitationResult GenerateCitations(string markdown)
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Markdown` | `string` | Yes |  |
+
+**Returns:** `CitationResult`
+
+
+---
+
 ### CreateEngine()
 
 Create a new crawl engine with the given configuration.
@@ -157,7 +182,7 @@ Result from a single page action execution.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `ActionIndex` | `nuint` | `null` | Zero-based index of the action in the sequence. |
-| `ActionType` | `string` | `null` | The type of action that was executed. |
+| `ActionType` | `Str` | `null` | The type of action that was executed. |
 | `Success` | `bool` | `null` | Whether the action completed successfully. |
 | `Data` | `object?` | `null` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `Error` | `string?` | `null` | Error message if the action failed. |
@@ -337,6 +362,16 @@ Configuration for crawl, scrape, and map operations.
 public CrawlConfig CreateDefault()
 ```
 
+##### Validate()
+
+Validate the configuration, returning an error if any values are invalid.
+
+**Signature:**
+
+```csharp
+public void Validate()
+```
+
 
 ---
 
@@ -395,6 +430,18 @@ The result of a multi-page crawl operation.
 | `Cookies` | `List<CookieInfo>` | `new List<CookieInfo>()` | Cookies collected during the crawl. |
 | `NormalizedUrls` | `List<string>` | `new List<string>()` | Normalized URLs encountered during crawling (for deduplication counting). |
 
+#### Methods
+
+##### UniqueNormalizedUrls()
+
+Returns the count of unique normalized URLs encountered during crawling.
+
+**Signature:**
+
+```csharp
+public nuint UniqueNormalizedUrls()
+```
+
 
 ---
 
@@ -425,12 +472,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `Url` | `string` | `null` | The URL the document was fetched from. |
-| `MimeType` | `string` | `null` | The MIME type from the Content-Type header. |
+| `MimeType` | `Str` | `null` | The MIME type from the Content-Type header. |
 | `Content` | `byte[]` | `null` | Raw document bytes. Skipped during JSON serialization. |
 | `Size` | `nuint` | `null` | Size of the document in bytes. |
-| `Filename` | `string?` | `null` | Filename extracted from Content-Disposition or URL path. |
-| `ContentHash` | `string` | `null` | SHA-256 hex digest of the content. |
-| `Headers` | `Dictionary<string, string>` | `new Dictionary<string, string>()` | Selected response headers. |
+| `Filename` | `Str?` | `null` | Filename extracted from Content-Disposition or URL path. |
+| `ContentHash` | `Str` | `null` | SHA-256 hex digest of the content. |
+| `Headers` | `Dictionary<Str, Str>` | `new Dictionary<Str, Str>()` | Selected response headers. |
 
 
 ---

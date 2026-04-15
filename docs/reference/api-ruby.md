@@ -6,6 +6,31 @@ title: "Ruby API Reference"
 
 ## Functions
 
+### generate_citations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: https://example.com` in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```ruby
+def self.generate_citations(markdown)
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `String` | Yes |  |
+
+**Returns:** `CitationResult`
+
+
+---
+
 ### create_engine()
 
 Create a new crawl engine with the given configuration.
@@ -157,7 +182,7 @@ Result from a single page action execution.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `action_index` | `Integer` | `nil` | Zero-based index of the action in the sequence. |
-| `action_type` | `String` | `nil` | The type of action that was executed. |
+| `action_type` | `Str` | `nil` | The type of action that was executed. |
 | `success` | `Boolean` | `nil` | Whether the action completed successfully. |
 | `data` | `Object?` | `nil` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `String?` | `nil` | Error message if the action failed. |
@@ -337,6 +362,16 @@ Configuration for crawl, scrape, and map operations.
 def self.default()
 ```
 
+##### validate()
+
+Validate the configuration, returning an error if any values are invalid.
+
+**Signature:**
+
+```ruby
+def validate()
+```
+
 
 ---
 
@@ -395,6 +430,18 @@ The result of a multi-page crawl operation.
 | `cookies` | `Array<CookieInfo>` | `[]` | Cookies collected during the crawl. |
 | `normalized_urls` | `Array<String>` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
+#### Methods
+
+##### unique_normalized_urls()
+
+Returns the count of unique normalized URLs encountered during crawling.
+
+**Signature:**
+
+```ruby
+def unique_normalized_urls()
+```
+
 
 ---
 
@@ -425,12 +472,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `String` | `nil` | The URL the document was fetched from. |
-| `mime_type` | `String` | `nil` | The MIME type from the Content-Type header. |
+| `mime_type` | `Str` | `nil` | The MIME type from the Content-Type header. |
 | `content` | `String` | `nil` | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `Integer` | `nil` | Size of the document in bytes. |
-| `filename` | `String?` | `nil` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `String` | `nil` | SHA-256 hex digest of the content. |
-| `headers` | `Hash{String=>String}` | `{}` | Selected response headers. |
+| `filename` | `Str?` | `nil` | Filename extracted from Content-Disposition or URL path. |
+| `content_hash` | `Str` | `nil` | SHA-256 hex digest of the content. |
+| `headers` | `Hash{Str=>Str}` | `{}` | Selected response headers. |
 
 
 ---

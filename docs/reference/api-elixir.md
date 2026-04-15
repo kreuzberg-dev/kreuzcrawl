@@ -6,6 +6,32 @@ title: "Elixir API Reference"
 
 ## Functions
 
+### generate_citations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: https://example.com` in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```elixir
+@spec generate_citations(markdown) :: {:ok, term()} | {:error, term()}
+def generate_citations(markdown)
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `String.t()` | Yes |  |
+
+**Returns:** `CitationResult`
+
+
+---
+
 ### create_engine()
 
 Create a new crawl engine with the given configuration.
@@ -163,7 +189,7 @@ Result from a single page action execution.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `action_index` | `integer()` | `nil` | Zero-based index of the action in the sequence. |
-| `action_type` | `String.t()` | `nil` | The type of action that was executed. |
+| `action_type` | `Str` | `nil` | The type of action that was executed. |
 | `success` | `boolean()` | `nil` | Whether the action completed successfully. |
 | `data` | `term() | nil` | `nil` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `String.t() | nil` | `nil` | Error message if the action failed. |
@@ -343,6 +369,16 @@ Configuration for crawl, scrape, and map operations.
 def default()
 ```
 
+##### validate()
+
+Validate the configuration, returning an error if any values are invalid.
+
+**Signature:**
+
+```elixir
+def validate()
+```
+
 
 ---
 
@@ -401,6 +437,18 @@ The result of a multi-page crawl operation.
 | `cookies` | `list(CookieInfo)` | `[]` | Cookies collected during the crawl. |
 | `normalized_urls` | `list(String.t())` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
+#### Functions
+
+##### unique_normalized_urls()
+
+Returns the count of unique normalized URLs encountered during crawling.
+
+**Signature:**
+
+```elixir
+def unique_normalized_urls()
+```
+
 
 ---
 
@@ -431,11 +479,11 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `String.t()` | `nil` | The URL the document was fetched from. |
-| `mime_type` | `String.t()` | `nil` | The MIME type from the Content-Type header. |
+| `mime_type` | `Str` | `nil` | The MIME type from the Content-Type header. |
 | `content` | `binary()` | `nil` | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `integer()` | `nil` | Size of the document in bytes. |
-| `filename` | `String.t() | nil` | `nil` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `String.t()` | `nil` | SHA-256 hex digest of the content. |
+| `filename` | `Str | nil` | `nil` | Filename extracted from Content-Disposition or URL path. |
+| `content_hash` | `Str` | `nil` | SHA-256 hex digest of the content. |
 | `headers` | `map()` | `%{}` | Selected response headers. |
 
 

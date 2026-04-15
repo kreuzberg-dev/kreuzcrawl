@@ -6,6 +6,31 @@ title: "Go API Reference"
 
 ## Functions
 
+### GenerateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: https://example.com` in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```go
+func GenerateCitations(markdown string) CitationResult
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Markdown` | `string` | Yes |  |
+
+**Returns:** `CitationResult`
+
+
+---
+
 ### CreateEngine()
 
 Create a new crawl engine with the given configuration.
@@ -157,7 +182,7 @@ Result from a single page action execution.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `ActionIndex` | `int` | `nil` | Zero-based index of the action in the sequence. |
-| `ActionType` | `string` | `nil` | The type of action that was executed. |
+| `ActionType` | `Str` | `nil` | The type of action that was executed. |
 | `Success` | `bool` | `nil` | Whether the action completed successfully. |
 | `Data` | `*interface{}` | `nil` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `Error` | `*string` | `nil` | Error message if the action failed. |
@@ -337,6 +362,16 @@ Configuration for crawl, scrape, and map operations.
 func (o *CrawlConfig) Default() CrawlConfig
 ```
 
+##### Validate()
+
+Validate the configuration, returning an error if any values are invalid.
+
+**Signature:**
+
+```go
+func (o *CrawlConfig) Validate() (, error)
+```
+
 
 ---
 
@@ -395,6 +430,18 @@ The result of a multi-page crawl operation.
 | `Cookies` | `[]CookieInfo` | `nil` | Cookies collected during the crawl. |
 | `NormalizedUrls` | `[]string` | `nil` | Normalized URLs encountered during crawling (for deduplication counting). |
 
+#### Methods
+
+##### UniqueNormalizedUrls()
+
+Returns the count of unique normalized URLs encountered during crawling.
+
+**Signature:**
+
+```go
+func (o *CrawlResult) UniqueNormalizedUrls() int
+```
+
 
 ---
 
@@ -425,12 +472,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `Url` | `string` | `nil` | The URL the document was fetched from. |
-| `MimeType` | `string` | `nil` | The MIME type from the Content-Type header. |
+| `MimeType` | `Str` | `nil` | The MIME type from the Content-Type header. |
 | `Content` | `[]byte` | `nil` | Raw document bytes. Skipped during JSON serialization. |
 | `Size` | `int` | `nil` | Size of the document in bytes. |
-| `Filename` | `*string` | `nil` | Filename extracted from Content-Disposition or URL path. |
-| `ContentHash` | `string` | `nil` | SHA-256 hex digest of the content. |
-| `Headers` | `map[string]string` | `nil` | Selected response headers. |
+| `Filename` | `*Str` | `nil` | Filename extracted from Content-Disposition or URL path. |
+| `ContentHash` | `Str` | `nil` | SHA-256 hex digest of the content. |
+| `Headers` | `map[Str]Str` | `nil` | Selected response headers. |
 
 
 ---

@@ -6,6 +6,31 @@ title: "Python API Reference"
 
 ## Functions
 
+### generate_citations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: https://example.com` in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```python
+def generate_citations(markdown: str) -> CitationResult
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `str` | Yes |  |
+
+**Returns:** `CitationResult`
+
+
+---
+
 ### create_engine()
 
 Create a new crawl engine with the given configuration.
@@ -157,7 +182,7 @@ Result from a single page action execution.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `action_index` | `int` | `None` | Zero-based index of the action in the sequence. |
-| `action_type` | `str` | `None` | The type of action that was executed. |
+| `action_type` | `Str` | `None` | The type of action that was executed. |
 | `success` | `bool` | `None` | Whether the action completed successfully. |
 | `data` | `Any | None` | `None` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `str | None` | `None` | Error message if the action failed. |
@@ -339,6 +364,16 @@ Configuration for crawl, scrape, and map operations.
 def default() -> CrawlConfig
 ```
 
+##### validate()
+
+Validate the configuration, returning an error if any values are invalid.
+
+**Signature:**
+
+```python
+def validate(self) -> None
+```
+
 
 ---
 
@@ -397,6 +432,18 @@ The result of a multi-page crawl operation.
 | `cookies` | `list[CookieInfo]` | `[]` | Cookies collected during the crawl. |
 | `normalized_urls` | `list[str]` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
+#### Methods
+
+##### unique_normalized_urls()
+
+Returns the count of unique normalized URLs encountered during crawling.
+
+**Signature:**
+
+```python
+def unique_normalized_urls(self) -> int
+```
+
 
 ---
 
@@ -427,12 +474,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `str` | `None` | The URL the document was fetched from. |
-| `mime_type` | `str` | `None` | The MIME type from the Content-Type header. |
+| `mime_type` | `Str` | `None` | The MIME type from the Content-Type header. |
 | `content` | `bytes` | `None` | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `int` | `None` | Size of the document in bytes. |
-| `filename` | `str | None` | `None` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `str` | `None` | SHA-256 hex digest of the content. |
-| `headers` | `dict[str, str]` | `{}` | Selected response headers. |
+| `filename` | `Str | None` | `None` | Filename extracted from Content-Disposition or URL path. |
+| `content_hash` | `Str` | `None` | SHA-256 hex digest of the content. |
+| `headers` | `dict[Str, Str]` | `{}` | Selected response headers. |
 
 
 ---
