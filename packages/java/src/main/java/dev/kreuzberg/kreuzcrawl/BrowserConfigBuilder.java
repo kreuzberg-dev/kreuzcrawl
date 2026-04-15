@@ -5,44 +5,51 @@ import java.util.Optional;
 
 public class BrowserConfigBuilder {
 
-  private BrowserMode mode = null;
-  private Optional<String> endpoint = Optional.empty();
-  private Long timeout = null;
-  private BrowserWait waitValue = null;
-  private Optional<String> waitSelector = Optional.empty();
-  private Optional<Long> extraWait = Optional.empty();
+    private BrowserMode mode = null;
+    private Optional<String> endpoint = Optional.empty();
+    private Long timeout = null;
+    private BrowserWait waitValue = null;
+    private Optional<String> waitSelector = Optional.empty();
+    private Optional<Long> extraWait = Optional.empty();
 
-  public BrowserConfigBuilder withMode(BrowserMode value) {
-    this.mode = value;
-    return this;
-  }
+    public BrowserConfigBuilder withMode(BrowserMode value) {
+        this.mode = value;
+        return this;
+    }
 
-  public BrowserConfigBuilder withEndpoint(Optional<String> value) {
-    this.endpoint = value;
-    return this;
-  }
+    public BrowserConfigBuilder withEndpoint(Optional<String> value) {
+        this.endpoint = value;
+        return this;
+    }
 
-  public BrowserConfigBuilder withTimeout(Long value) {
-    this.timeout = value;
-    return this;
-  }
+    public BrowserConfigBuilder withTimeout(Long value) {
+        this.timeout = value;
+        return this;
+    }
 
-  public BrowserConfigBuilder withWait(BrowserWait value) {
-    this.waitValue = value;
-    return this;
-  }
+    public BrowserConfigBuilder withWait(BrowserWait value) {
+        this.waitValue = value;
+        return this;
+    }
 
-  public BrowserConfigBuilder withWaitSelector(Optional<String> value) {
-    this.waitSelector = value;
-    return this;
-  }
+    public BrowserConfigBuilder withWaitSelector(Optional<String> value) {
+        this.waitSelector = value;
+        return this;
+    }
 
-  public BrowserConfigBuilder withExtraWait(Optional<Long> value) {
-    this.extraWait = value;
-    return this;
-  }
+    public BrowserConfigBuilder withExtraWait(Optional<Long> value) {
+        this.extraWait = value;
+        return this;
+    }
 
-  public BrowserConfig build() {
-    return new BrowserConfig(mode, endpoint, timeout, waitValue, waitSelector, extraWait);
-  }
+    public BrowserConfig build() {
+        return new BrowserConfig(
+            mode,
+            endpoint,
+            timeout,
+            waitValue,
+            waitSelector,
+            extraWait
+        );
+    }
 }

@@ -3,11 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). */
 public class WafBlockedException extends CrawlErrorException {
-  public WafBlockedException(String message) {
-    super(message);
-  }
+    public WafBlockedException(String message) {
+        super(message);
+    }
 
-  public WafBlockedException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public WafBlockedException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

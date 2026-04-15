@@ -65,7 +65,7 @@ impl BrowserConfig {
                 .and_then(|t| t.decode().ok())
                 .unwrap_or(BrowserMode::Auto),
             endpoint: opts.get("endpoint").and_then(|t| t.decode().ok()),
-            timeout: opts.get("timeout").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            timeout: opts.get("timeout").and_then(|t| t.decode().ok()).unwrap_or(30000),
             wait: opts.get("wait").and_then(|t| t.decode().ok()).unwrap_or_default(),
             wait_selector: opts.get("wait_selector").and_then(|t| t.decode().ok()),
             extra_wait: opts.get("extra_wait").and_then(|t| t.decode().ok()),
@@ -145,7 +145,7 @@ impl CrawlConfig {
             request_timeout: opts
                 .get("request_timeout")
                 .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
+                .unwrap_or(30000),
             max_redirects: opts.get("max_redirects").and_then(|t| t.decode().ok()).unwrap_or(10),
             retry_count: opts.get("retry_count").and_then(|t| t.decode().ok()).unwrap_or(0),
             retry_codes: opts

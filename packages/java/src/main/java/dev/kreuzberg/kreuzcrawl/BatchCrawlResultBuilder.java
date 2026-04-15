@@ -5,26 +5,30 @@ import java.util.Optional;
 
 public class BatchCrawlResultBuilder {
 
-  private String url = "";
-  private Optional<CrawlResult> result = Optional.empty();
-  private Optional<String> error = Optional.empty();
+    private String url = "";
+    private Optional<CrawlResult> result = Optional.empty();
+    private Optional<String> error = Optional.empty();
 
-  public BatchCrawlResultBuilder withUrl(String value) {
-    this.url = value;
-    return this;
-  }
+    public BatchCrawlResultBuilder withUrl(String value) {
+        this.url = value;
+        return this;
+    }
 
-  public BatchCrawlResultBuilder withResult(Optional<CrawlResult> value) {
-    this.result = value;
-    return this;
-  }
+    public BatchCrawlResultBuilder withResult(Optional<CrawlResult> value) {
+        this.result = value;
+        return this;
+    }
 
-  public BatchCrawlResultBuilder withError(Optional<String> value) {
-    this.error = value;
-    return this;
-  }
+    public BatchCrawlResultBuilder withError(Optional<String> value) {
+        this.error = value;
+        return this;
+    }
 
-  public BatchCrawlResult build() {
-    return new BatchCrawlResult(url, result, error);
-  }
+    public BatchCrawlResult build() {
+        return new BatchCrawlResult(
+            url,
+            result,
+            error
+        );
+    }
 }

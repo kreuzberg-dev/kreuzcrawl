@@ -2,7 +2,7 @@
 title: "Ruby API Reference"
 ---
 
-## Ruby API Reference <span class="version-badge">v0.1.0-rc.1</span>
+# Ruby API Reference <span class="version-badge">v0.1.0-rc.1</span>
 
 ## Functions
 
@@ -181,9 +181,9 @@ Result from a single page action execution.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `action_index` | `Integer` | `nil` | Zero-based index of the action in the sequence. |
-| `action_type` | `Str` | `nil` | The type of action that was executed. |
-| `success` | `Boolean` | `nil` | Whether the action completed successfully. |
+| `action_index` | `Integer` | — | Zero-based index of the action in the sequence. |
+| `action_type` | `Str` | — | The type of action that was executed. |
+| `success` | `Boolean` | — | Whether the action completed successfully. |
 | `data` | `Object?` | `nil` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `String?` | `nil` | Error message if the action failed. |
 
@@ -211,7 +211,7 @@ Result from a single URL in a batch crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The seed URL that was crawled. |
+| `url` | `String` | — | The seed URL that was crawled. |
 | `result` | `CrawlResult?` | `nil` | The crawl result, if successful. |
 | `error` | `String?` | `nil` | The error message, if the crawl failed. |
 
@@ -224,7 +224,7 @@ Result from a single URL in a batch scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The URL that was scraped. |
+| `url` | `String` | — | The URL that was scraped. |
 | `result` | `ScrapeResult?` | `nil` | The scrape result, if successful. |
 | `error` | `String?` | `nil` | The error message, if the scrape failed. |
 
@@ -239,10 +239,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `:auto` | When to use the headless browser fallback. |
 | `endpoint` | `String?` | `nil` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `Float` | `nil` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `Float` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `:network_idle` | Wait strategy after browser navigation. |
 | `wait_selector` | `String?` | `nil` | CSS selector to wait for when `wait` is `Selector`. |
-| `extra_wait` | `Float?` | `nil` | Extra time to wait after the wait condition is met. |
+| `extra_wait` | `Float?` | `0ms` | Extra time to wait after the wait condition is met. |
 
 #### Methods
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | Url |
-| `status_code` | `Integer` | `nil` | Status code |
-| `content_type` | `String` | `nil` | Content type |
-| `body` | `String` | `nil` | Body |
+| `url` | `String` | — | Url |
+| `status_code` | `Integer` | — | Status code |
+| `content_type` | `String` | — | Content type |
+| `body` | `String` | — | Body |
 | `etag` | `String?` | `nil` | Etag |
 | `last_modified` | `String?` | `nil` | Last modified |
-| `cached_at` | `Integer` | `nil` | Cached at |
+| `cached_at` | `Integer` | — | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `Integer` | `nil` | Index |
-| `url` | `String` | `nil` | Url |
-| `text` | `String` | `nil` | Text |
+| `index` | `Integer` | — | Index |
+| `url` | `String` | — | Url |
+| `text` | `String` | — | Text |
 
 
 ---
@@ -291,7 +291,7 @@ Result of citation conversion.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `String` | `nil` | Markdown with links replaced by numbered citations. |
+| `content` | `String` | — | Markdown with links replaced by numbered citations. |
 | `references` | `Array<CitationReference>` | `[]` | Numbered reference list: (index, url, text). |
 
 
@@ -303,8 +303,8 @@ Information about an HTTP cookie received from a response.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `String` | `nil` | The cookie name. |
-| `value` | `String` | `nil` | The cookie value. |
+| `name` | `String` | — | The cookie name. |
+| `value` | `String` | — | The cookie value. |
 | `domain` | `String?` | `nil` | The cookie domain, if specified. |
 | `path` | `String?` | `nil` | The cookie path, if specified. |
 
@@ -327,12 +327,12 @@ Configuration for crawl, scrape, and map operations.
 | `include_paths` | `Array<String>` | `[]` | Regex patterns for paths to include during crawling. |
 | `exclude_paths` | `Array<String>` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `Hash{String=>String}` | `{}` | Custom HTTP headers to send with each request. |
-| `request_timeout` | `Float` | `nil` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `request_timeout` | `Float` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `max_redirects` | `Integer` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `Integer` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `Array<Integer>` | `[]` | HTTP status codes that should trigger a retry. |
 | `cookies_enabled` | `Boolean` | `false` | Whether to enable cookie handling. |
-| `auth` | `AuthConfig?` | `:basic` | Authentication configuration. |
+| `auth` | `AuthConfig?` | `nil` | Authentication configuration. |
 | `max_body_size` | `Integer?` | `nil` | Maximum response body size in bytes. |
 | `main_content_only` | `Boolean` | `false` | Whether to extract only the main content from HTML pages. |
 | `remove_tags` | `Array<String>` | `[]` | CSS selectors for tags to remove from HTML before processing. |
@@ -341,7 +341,7 @@ Configuration for crawl, scrape, and map operations.
 | `download_assets` | `Boolean` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
 | `asset_types` | `Array<AssetCategory>` | `[]` | Filter for asset categories to download. |
 | `max_asset_size` | `Integer?` | `nil` | Maximum size in bytes for individual asset downloads. |
-| `browser` | `BrowserConfig` | `nil` | Browser configuration. |
+| `browser` | `BrowserConfig` | — | Browser configuration. |
 | `proxy` | `ProxyConfig?` | `nil` | Proxy configuration for HTTP requests. |
 | `user_agents` | `Array<String>` | `[]` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `capture_screenshot` | `Boolean` | `false` | Whether to capture a screenshot when using the browser. |
@@ -392,21 +392,21 @@ The result of crawling a single page during a crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The original URL of the page. |
-| `normalized_url` | `String` | `nil` | The normalized URL of the page. |
-| `status_code` | `Integer` | `nil` | The HTTP status code of the response. |
-| `content_type` | `String` | `nil` | The Content-Type header value. |
-| `html` | `String` | `nil` | The HTML body of the response. |
-| `body_size` | `Integer` | `nil` | The size of the response body in bytes. |
-| `metadata` | `PageMetadata` | `nil` | Extracted metadata from the page. |
+| `url` | `String` | — | The original URL of the page. |
+| `normalized_url` | `String` | — | The normalized URL of the page. |
+| `status_code` | `Integer` | — | The HTTP status code of the response. |
+| `content_type` | `String` | — | The Content-Type header value. |
+| `html` | `String` | — | The HTML body of the response. |
+| `body_size` | `Integer` | — | The size of the response body in bytes. |
+| `metadata` | `PageMetadata` | — | Extracted metadata from the page. |
 | `links` | `Array<LinkInfo>` | `[]` | Links found on the page. |
 | `images` | `Array<ImageInfo>` | `[]` | Images found on the page. |
 | `feeds` | `Array<FeedInfo>` | `[]` | Feed links found on the page. |
 | `json_ld` | `Array<JsonLdEntry>` | `[]` | JSON-LD entries found on the page. |
-| `depth` | `Integer` | `nil` | The depth of this page from the start URL. |
-| `stayed_on_domain` | `Boolean` | `nil` | Whether this page is on the same domain as the start URL. |
-| `was_skipped` | `Boolean` | `nil` | Whether this page was skipped (binary or PDF content). |
-| `is_pdf` | `Boolean` | `nil` | Whether the content is a PDF. |
+| `depth` | `Integer` | — | The depth of this page from the start URL. |
+| `stayed_on_domain` | `Boolean` | — | Whether this page is on the same domain as the start URL. |
+| `was_skipped` | `Boolean` | — | Whether this page was skipped (binary or PDF content). |
+| `is_pdf` | `Boolean` | — | Whether the content is a PDF. |
 | `detected_charset` | `String?` | `nil` | The detected character set encoding. |
 | `markdown` | `MarkdownResult?` | `nil` | Markdown conversion of the page content. |
 | `extracted_data` | `Object?` | `nil` | Structured data extracted by LLM. Populated when using LlmExtractor. |
@@ -423,9 +423,9 @@ The result of a multi-page crawl operation.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `pages` | `Array<CrawlPageResult>` | `[]` | The list of crawled pages. |
-| `final_url` | `String` | `nil` | The final URL after following redirects. |
-| `redirect_count` | `Integer` | `nil` | The number of redirects followed. |
-| `was_skipped` | `Boolean` | `nil` | Whether any page was skipped during crawling. |
+| `final_url` | `String` | — | The final URL after following redirects. |
+| `redirect_count` | `Integer` | — | The number of redirects followed. |
+| `was_skipped` | `Boolean` | — | Whether any page was skipped during crawling. |
 | `error` | `String?` | `nil` | An error message, if the crawl encountered an issue. |
 | `cookies` | `Array<CookieInfo>` | `[]` | Cookies collected during the crawl. |
 | `normalized_urls` | `Array<String>` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
@@ -451,10 +451,10 @@ A downloaded asset from a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The original URL of the asset. |
-| `content_hash` | `String` | `nil` | The SHA-256 content hash of the asset. |
+| `url` | `String` | — | The original URL of the asset. |
+| `content_hash` | `String` | — | The SHA-256 content hash of the asset. |
 | `mime_type` | `String?` | `nil` | The MIME type from the Content-Type header. |
-| `size` | `Integer` | `nil` | The size of the asset in bytes. |
+| `size` | `Integer` | — | The size of the asset in bytes. |
 | `asset_category` | `AssetCategory` | `:image` | The category of the asset. |
 | `html_tag` | `String?` | `nil` | The HTML tag that referenced this asset (e.g., "link", "script", "img"). |
 
@@ -471,12 +471,12 @@ skipping the resource.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The URL the document was fetched from. |
-| `mime_type` | `Str` | `nil` | The MIME type from the Content-Type header. |
-| `content` | `String` | `nil` | Raw document bytes. Skipped during JSON serialization. |
-| `size` | `Integer` | `nil` | Size of the document in bytes. |
+| `url` | `String` | — | The URL the document was fetched from. |
+| `mime_type` | `Str` | — | The MIME type from the Content-Type header. |
+| `content` | `String` | — | Raw document bytes. Skipped during JSON serialization. |
+| `size` | `Integer` | — | Size of the document in bytes. |
 | `filename` | `Str?` | `nil` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `Str` | `nil` | SHA-256 hex digest of the content. |
+| `content_hash` | `Str` | — | SHA-256 hex digest of the content. |
 | `headers` | `Hash{Str=>Str}` | `{}` | Selected response headers. |
 
 
@@ -492,7 +492,7 @@ Metadata about an LLM extraction pass.
 | `prompt_tokens` | `Integer?` | `nil` | Number of prompt (input) tokens consumed. |
 | `completion_tokens` | `Integer?` | `nil` | Number of completion (output) tokens generated. |
 | `model` | `String?` | `nil` | The model identifier used for extraction. |
-| `chunks_processed` | `Integer` | `nil` | Number of content chunks sent to the LLM. |
+| `chunks_processed` | `Integer` | — | Number of content chunks sent to the LLM. |
 
 
 ---
@@ -503,8 +503,8 @@ Information about a favicon or icon link.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The icon URL. |
-| `rel` | `String` | `nil` | The `rel` attribute (e.g., "icon", "apple-touch-icon"). |
+| `url` | `String` | — | The icon URL. |
+| `rel` | `String` | — | The `rel` attribute (e.g., "icon", "apple-touch-icon"). |
 | `sizes` | `String?` | `nil` | The `sizes` attribute, if present. |
 | `mime_type` | `String?` | `nil` | The MIME type, if present. |
 
@@ -517,7 +517,7 @@ Information about a feed link found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The feed URL. |
+| `url` | `String` | — | The feed URL. |
 | `title` | `String?` | `nil` | The feed title, if present. |
 | `feed_type` | `FeedType` | `:rss` | The type of feed. |
 
@@ -530,8 +530,8 @@ A heading element extracted from the page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `level` | `Integer` | `nil` | The heading level (1-6). |
-| `text` | `String` | `nil` | The heading text content. |
+| `level` | `Integer` | — | The heading level (1-6). |
+| `text` | `String` | — | The heading text content. |
 
 
 ---
@@ -542,8 +542,8 @@ An hreflang alternate link entry.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `lang` | `String` | `nil` | The language code (e.g., "en", "fr", "x-default"). |
-| `url` | `String` | `nil` | The URL for this language variant. |
+| `lang` | `String` | — | The language code (e.g., "en", "fr", "x-default"). |
+| `url` | `String` | — | The URL for this language variant. |
 
 
 ---
@@ -554,7 +554,7 @@ Information about an image found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The image URL. |
+| `url` | `String` | — | The image URL. |
 | `alt` | `String?` | `nil` | The alt text, if present. |
 | `width` | `Integer?` | `nil` | The width attribute, if present and parseable. |
 | `height` | `Integer?` | `nil` | The height attribute, if present and parseable. |
@@ -570,8 +570,8 @@ Result of executing a sequence of page interaction actions.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `action_results` | `Array<ActionResult>` | `[]` | Results from each executed action. |
-| `final_html` | `String` | `nil` | Final page HTML after all actions completed. |
-| `final_url` | `String` | `nil` | Final page URL (may have changed due to navigation). |
+| `final_html` | `String` | — | Final page HTML after all actions completed. |
+| `final_url` | `String` | — | Final page URL (may have changed due to navigation). |
 | `screenshot` | `String?` | `nil` | Screenshot taken after all actions, if requested. |
 
 
@@ -583,9 +583,9 @@ A JSON-LD structured data entry found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `schema_type` | `String` | `nil` | The `@type` value from the JSON-LD object. |
+| `schema_type` | `String` | — | The `@type` value from the JSON-LD object. |
 | `name` | `String?` | `nil` | The `name` value, if present. |
-| `raw` | `String` | `nil` | The raw JSON-LD string. |
+| `raw` | `String` | — | The raw JSON-LD string. |
 
 
 ---
@@ -596,11 +596,11 @@ Information about a link found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The resolved URL of the link. |
-| `text` | `String` | `nil` | The visible text of the link. |
+| `url` | `String` | — | The resolved URL of the link. |
+| `text` | `String` | — | The visible text of the link. |
 | `link_type` | `LinkType` | `:internal` | The classification of the link. |
 | `rel` | `String?` | `nil` | The `rel` attribute value, if present. |
-| `nofollow` | `Boolean` | `nil` | Whether the link has `rel="nofollow"`. |
+| `nofollow` | `Boolean` | — | Whether the link has `rel="nofollow"`. |
 
 
 ---
@@ -622,7 +622,7 @@ Rich markdown conversion result from HTML processing.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `String` | `nil` | Converted markdown text. |
+| `content` | `String` | — | Converted markdown text. |
 | `document_structure` | `Object?` | `nil` | Structured document tree with semantic nodes. |
 | `tables` | `Array<Object>` | `[]` | Extracted tables with structured cell data. |
 | `warnings` | `Array<String>` | `[]` | Non-fatal processing warnings. |
@@ -691,7 +691,7 @@ Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
+| `url` | `String` | — | Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080"). |
 | `username` | `String?` | `nil` | Optional username for proxy authentication. |
 | `password` | `String?` | `nil` | Optional password for proxy authentication. |
 
@@ -721,29 +721,29 @@ The result of a single-page scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `status_code` | `Integer` | `nil` | The HTTP status code of the response. |
-| `content_type` | `String` | `nil` | The Content-Type header value. |
-| `html` | `String` | `nil` | The HTML body of the response. |
-| `body_size` | `Integer` | `nil` | The size of the response body in bytes. |
-| `metadata` | `PageMetadata` | `nil` | Extracted metadata from the page. |
+| `status_code` | `Integer` | — | The HTTP status code of the response. |
+| `content_type` | `String` | — | The Content-Type header value. |
+| `html` | `String` | — | The HTML body of the response. |
+| `body_size` | `Integer` | — | The size of the response body in bytes. |
+| `metadata` | `PageMetadata` | — | Extracted metadata from the page. |
 | `links` | `Array<LinkInfo>` | `[]` | Links found on the page. |
 | `images` | `Array<ImageInfo>` | `[]` | Images found on the page. |
 | `feeds` | `Array<FeedInfo>` | `[]` | Feed links found on the page. |
 | `json_ld` | `Array<JsonLdEntry>` | `[]` | JSON-LD entries found on the page. |
-| `is_allowed` | `Boolean` | `nil` | Whether the URL is allowed by robots.txt. |
+| `is_allowed` | `Boolean` | — | Whether the URL is allowed by robots.txt. |
 | `crawl_delay` | `Integer?` | `nil` | The crawl delay from robots.txt, in seconds. |
-| `noindex_detected` | `Boolean` | `nil` | Whether a noindex directive was detected. |
-| `nofollow_detected` | `Boolean` | `nil` | Whether a nofollow directive was detected. |
+| `noindex_detected` | `Boolean` | — | Whether a noindex directive was detected. |
+| `nofollow_detected` | `Boolean` | — | Whether a nofollow directive was detected. |
 | `x_robots_tag` | `String?` | `nil` | The X-Robots-Tag header value, if present. |
-| `is_pdf` | `Boolean` | `nil` | Whether the content is a PDF. |
-| `was_skipped` | `Boolean` | `nil` | Whether the page was skipped (binary or PDF content). |
+| `is_pdf` | `Boolean` | — | Whether the content is a PDF. |
+| `was_skipped` | `Boolean` | — | Whether the page was skipped (binary or PDF content). |
 | `detected_charset` | `String?` | `nil` | The detected character set encoding. |
-| `main_content_only` | `Boolean` | `nil` | Whether main_content_only was active during extraction. |
-| `auth_header_sent` | `Boolean` | `nil` | Whether an authentication header was sent with the request. |
+| `main_content_only` | `Boolean` | — | Whether main_content_only was active during extraction. |
+| `auth_header_sent` | `Boolean` | — | Whether an authentication header was sent with the request. |
 | `response_meta` | `ResponseMeta?` | `nil` | Response metadata extracted from HTTP headers. |
 | `assets` | `Array<DownloadedAsset>` | `[]` | Downloaded assets from the page. |
-| `js_render_hint` | `Boolean` | `nil` | Whether the page content suggests JavaScript rendering is needed. |
-| `browser_used` | `Boolean` | `nil` | Whether the browser fallback was used to fetch this page. |
+| `js_render_hint` | `Boolean` | — | Whether the page content suggests JavaScript rendering is needed. |
+| `browser_used` | `Boolean` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `MarkdownResult?` | `nil` | Markdown conversion of the page content. |
 | `extracted_data` | `Object?` | `nil` | Structured data extracted by LLM. Populated when using LlmExtractor. |
 | `extraction_meta` | `ExtractionMeta?` | `nil` | Metadata about the LLM extraction pass (cost, tokens, model). |
@@ -759,7 +759,7 @@ A URL entry from a sitemap.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` | The URL. |
+| `url` | `String` | — | The URL. |
 | `lastmod` | `String?` | `nil` | The last modification date, if present. |
 | `changefreq` | `String?` | `nil` | The change frequency, if present. |
 | `priority` | `String?` | `nil` | The priority, if present. |
@@ -801,9 +801,9 @@ Authentication configuration.
 
 | Value | Description |
 |-------|-------------|
-| `basic` | HTTP Basic authentication. |
-| `bearer` | Bearer token authentication. |
-| `header` | Custom authentication header. |
+| `basic` | HTTP Basic authentication. — Fields: `username`: `String`, `password`: `String` |
+| `bearer` | Bearer token authentication. — Fields: `token`: `String` |
+| `header` | Custom authentication header. — Fields: `name`: `String`, `value`: `String` |
 
 
 ---
@@ -875,9 +875,9 @@ An event emitted during a streaming crawl operation.
 
 | Value | Description |
 |-------|-------------|
-| `page` | A single page has been crawled. |
-| `error` | An error occurred while crawling a URL. |
-| `complete` | The crawl has completed. |
+| `page` | A single page has been crawled. — Fields: `0`: `CrawlPageResult` |
+| `error` | An error occurred while crawling a URL. — Fields: `url`: `String`, `error`: `String` |
+| `complete` | The crawl has completed. — Fields: `pages_crawled`: `Integer` |
 
 
 ---
@@ -910,3 +910,4 @@ Errors that can occur during crawling, scraping, or mapping operations.
 
 
 ---
+

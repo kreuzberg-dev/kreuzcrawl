@@ -5,32 +5,37 @@ import java.util.Optional;
 
 public class SitemapUrlBuilder {
 
-  private String url = "";
-  private Optional<String> lastmod = Optional.empty();
-  private Optional<String> changefreq = Optional.empty();
-  private Optional<String> priority = Optional.empty();
+    private String url = "";
+    private Optional<String> lastmod = Optional.empty();
+    private Optional<String> changefreq = Optional.empty();
+    private Optional<String> priority = Optional.empty();
 
-  public SitemapUrlBuilder withUrl(String value) {
-    this.url = value;
-    return this;
-  }
+    public SitemapUrlBuilder withUrl(String value) {
+        this.url = value;
+        return this;
+    }
 
-  public SitemapUrlBuilder withLastmod(Optional<String> value) {
-    this.lastmod = value;
-    return this;
-  }
+    public SitemapUrlBuilder withLastmod(Optional<String> value) {
+        this.lastmod = value;
+        return this;
+    }
 
-  public SitemapUrlBuilder withChangefreq(Optional<String> value) {
-    this.changefreq = value;
-    return this;
-  }
+    public SitemapUrlBuilder withChangefreq(Optional<String> value) {
+        this.changefreq = value;
+        return this;
+    }
 
-  public SitemapUrlBuilder withPriority(Optional<String> value) {
-    this.priority = value;
-    return this;
-  }
+    public SitemapUrlBuilder withPriority(Optional<String> value) {
+        this.priority = value;
+        return this;
+    }
 
-  public SitemapUrl build() {
-    return new SitemapUrl(url, lastmod, changefreq, priority);
-  }
+    public SitemapUrl build() {
+        return new SitemapUrl(
+            url,
+            lastmod,
+            changefreq,
+            priority
+        );
+    }
 }

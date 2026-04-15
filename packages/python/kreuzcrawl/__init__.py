@@ -4,7 +4,6 @@
 Version: 0.1.0-rc.1
 """
 
-from ._kreuzcrawl import AuthConfig
 from .api import batch_crawl, batch_scrape, crawl, create_engine, map_urls, scrape
 from .exceptions import (
     BadGatewayError,
@@ -26,6 +25,7 @@ from .exceptions import (
     UnauthorizedError,
     WafBlockedError,
 )
+from ._kreuzcrawl import AuthConfig
 from .options import (
     ActionResult,
     ArticleMetadata,

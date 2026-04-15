@@ -2,7 +2,7 @@
 title: "Elixir API Reference"
 ---
 
-## Elixir API Reference <span class="version-badge">v0.1.0-rc.1</span>
+# Elixir API Reference <span class="version-badge">v0.1.0-rc.1</span>
 
 ## Functions
 
@@ -188,9 +188,9 @@ Result from a single page action execution.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `action_index` | `integer()` | `nil` | Zero-based index of the action in the sequence. |
-| `action_type` | `Str` | `nil` | The type of action that was executed. |
-| `success` | `boolean()` | `nil` | Whether the action completed successfully. |
+| `action_index` | `integer()` | — | Zero-based index of the action in the sequence. |
+| `action_type` | `Str` | — | The type of action that was executed. |
+| `success` | `boolean()` | — | Whether the action completed successfully. |
 | `data` | `term() | nil` | `nil` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `String.t() | nil` | `nil` | Error message if the action failed. |
 
@@ -218,7 +218,7 @@ Result from a single URL in a batch crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The seed URL that was crawled. |
+| `url` | `String.t()` | — | The seed URL that was crawled. |
 | `result` | `CrawlResult | nil` | `nil` | The crawl result, if successful. |
 | `error` | `String.t() | nil` | `nil` | The error message, if the crawl failed. |
 
@@ -231,7 +231,7 @@ Result from a single URL in a batch scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The URL that was scraped. |
+| `url` | `String.t()` | — | The URL that was scraped. |
 | `result` | `ScrapeResult | nil` | `nil` | The scrape result, if successful. |
 | `error` | `String.t() | nil` | `nil` | The error message, if the scrape failed. |
 
@@ -246,10 +246,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `:auto` | When to use the headless browser fallback. |
 | `endpoint` | `String.t() | nil` | `nil` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `integer()` | `nil` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `integer()` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `:network_idle` | Wait strategy after browser navigation. |
 | `wait_selector` | `String.t() | nil` | `nil` | CSS selector to wait for when `wait` is `Selector`. |
-| `extra_wait` | `integer() | nil` | `nil` | Extra time to wait after the wait condition is met. |
+| `extra_wait` | `integer() | nil` | `0ms` | Extra time to wait after the wait condition is met. |
 
 #### Functions
 
@@ -270,13 +270,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | Url |
-| `status_code` | `integer()` | `nil` | Status code |
-| `content_type` | `String.t()` | `nil` | Content type |
-| `body` | `String.t()` | `nil` | Body |
+| `url` | `String.t()` | — | Url |
+| `status_code` | `integer()` | — | Status code |
+| `content_type` | `String.t()` | — | Content type |
+| `body` | `String.t()` | — | Body |
 | `etag` | `String.t() | nil` | `nil` | Etag |
 | `last_modified` | `String.t() | nil` | `nil` | Last modified |
-| `cached_at` | `integer()` | `nil` | Cached at |
+| `cached_at` | `integer()` | — | Cached at |
 
 
 ---
@@ -285,9 +285,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `integer()` | `nil` | Index |
-| `url` | `String.t()` | `nil` | Url |
-| `text` | `String.t()` | `nil` | Text |
+| `index` | `integer()` | — | Index |
+| `url` | `String.t()` | — | Url |
+| `text` | `String.t()` | — | Text |
 
 
 ---
@@ -298,7 +298,7 @@ Result of citation conversion.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `String.t()` | `nil` | Markdown with links replaced by numbered citations. |
+| `content` | `String.t()` | — | Markdown with links replaced by numbered citations. |
 | `references` | `list(CitationReference)` | `[]` | Numbered reference list: (index, url, text). |
 
 
@@ -310,8 +310,8 @@ Information about an HTTP cookie received from a response.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `String.t()` | `nil` | The cookie name. |
-| `value` | `String.t()` | `nil` | The cookie value. |
+| `name` | `String.t()` | — | The cookie name. |
+| `value` | `String.t()` | — | The cookie value. |
 | `domain` | `String.t() | nil` | `nil` | The cookie domain, if specified. |
 | `path` | `String.t() | nil` | `nil` | The cookie path, if specified. |
 
@@ -334,12 +334,12 @@ Configuration for crawl, scrape, and map operations.
 | `include_paths` | `list(String.t())` | `[]` | Regex patterns for paths to include during crawling. |
 | `exclude_paths` | `list(String.t())` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `map()` | `%{}` | Custom HTTP headers to send with each request. |
-| `request_timeout` | `integer()` | `nil` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `request_timeout` | `integer()` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `max_redirects` | `integer()` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `integer()` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `list(integer())` | `[]` | HTTP status codes that should trigger a retry. |
 | `cookies_enabled` | `boolean()` | `false` | Whether to enable cookie handling. |
-| `auth` | `AuthConfig | nil` | `:basic` | Authentication configuration. |
+| `auth` | `AuthConfig | nil` | `nil` | Authentication configuration. |
 | `max_body_size` | `integer() | nil` | `nil` | Maximum response body size in bytes. |
 | `main_content_only` | `boolean()` | `false` | Whether to extract only the main content from HTML pages. |
 | `remove_tags` | `list(String.t())` | `[]` | CSS selectors for tags to remove from HTML before processing. |
@@ -348,7 +348,7 @@ Configuration for crawl, scrape, and map operations.
 | `download_assets` | `boolean()` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
 | `asset_types` | `list(AssetCategory)` | `[]` | Filter for asset categories to download. |
 | `max_asset_size` | `integer() | nil` | `nil` | Maximum size in bytes for individual asset downloads. |
-| `browser` | `BrowserConfig` | `nil` | Browser configuration. |
+| `browser` | `BrowserConfig` | — | Browser configuration. |
 | `proxy` | `ProxyConfig | nil` | `nil` | Proxy configuration for HTTP requests. |
 | `user_agents` | `list(String.t())` | `[]` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `capture_screenshot` | `boolean()` | `false` | Whether to capture a screenshot when using the browser. |
@@ -399,21 +399,21 @@ The result of crawling a single page during a crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The original URL of the page. |
-| `normalized_url` | `String.t()` | `nil` | The normalized URL of the page. |
-| `status_code` | `integer()` | `nil` | The HTTP status code of the response. |
-| `content_type` | `String.t()` | `nil` | The Content-Type header value. |
-| `html` | `String.t()` | `nil` | The HTML body of the response. |
-| `body_size` | `integer()` | `nil` | The size of the response body in bytes. |
-| `metadata` | `PageMetadata` | `nil` | Extracted metadata from the page. |
+| `url` | `String.t()` | — | The original URL of the page. |
+| `normalized_url` | `String.t()` | — | The normalized URL of the page. |
+| `status_code` | `integer()` | — | The HTTP status code of the response. |
+| `content_type` | `String.t()` | — | The Content-Type header value. |
+| `html` | `String.t()` | — | The HTML body of the response. |
+| `body_size` | `integer()` | — | The size of the response body in bytes. |
+| `metadata` | `PageMetadata` | — | Extracted metadata from the page. |
 | `links` | `list(LinkInfo)` | `[]` | Links found on the page. |
 | `images` | `list(ImageInfo)` | `[]` | Images found on the page. |
 | `feeds` | `list(FeedInfo)` | `[]` | Feed links found on the page. |
 | `json_ld` | `list(JsonLdEntry)` | `[]` | JSON-LD entries found on the page. |
-| `depth` | `integer()` | `nil` | The depth of this page from the start URL. |
-| `stayed_on_domain` | `boolean()` | `nil` | Whether this page is on the same domain as the start URL. |
-| `was_skipped` | `boolean()` | `nil` | Whether this page was skipped (binary or PDF content). |
-| `is_pdf` | `boolean()` | `nil` | Whether the content is a PDF. |
+| `depth` | `integer()` | — | The depth of this page from the start URL. |
+| `stayed_on_domain` | `boolean()` | — | Whether this page is on the same domain as the start URL. |
+| `was_skipped` | `boolean()` | — | Whether this page was skipped (binary or PDF content). |
+| `is_pdf` | `boolean()` | — | Whether the content is a PDF. |
 | `detected_charset` | `String.t() | nil` | `nil` | The detected character set encoding. |
 | `markdown` | `MarkdownResult | nil` | `nil` | Markdown conversion of the page content. |
 | `extracted_data` | `term() | nil` | `nil` | Structured data extracted by LLM. Populated when using LlmExtractor. |
@@ -430,9 +430,9 @@ The result of a multi-page crawl operation.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `pages` | `list(CrawlPageResult)` | `[]` | The list of crawled pages. |
-| `final_url` | `String.t()` | `nil` | The final URL after following redirects. |
-| `redirect_count` | `integer()` | `nil` | The number of redirects followed. |
-| `was_skipped` | `boolean()` | `nil` | Whether any page was skipped during crawling. |
+| `final_url` | `String.t()` | — | The final URL after following redirects. |
+| `redirect_count` | `integer()` | — | The number of redirects followed. |
+| `was_skipped` | `boolean()` | — | Whether any page was skipped during crawling. |
 | `error` | `String.t() | nil` | `nil` | An error message, if the crawl encountered an issue. |
 | `cookies` | `list(CookieInfo)` | `[]` | Cookies collected during the crawl. |
 | `normalized_urls` | `list(String.t())` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
@@ -458,10 +458,10 @@ A downloaded asset from a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The original URL of the asset. |
-| `content_hash` | `String.t()` | `nil` | The SHA-256 content hash of the asset. |
+| `url` | `String.t()` | — | The original URL of the asset. |
+| `content_hash` | `String.t()` | — | The SHA-256 content hash of the asset. |
 | `mime_type` | `String.t() | nil` | `nil` | The MIME type from the Content-Type header. |
-| `size` | `integer()` | `nil` | The size of the asset in bytes. |
+| `size` | `integer()` | — | The size of the asset in bytes. |
 | `asset_category` | `AssetCategory` | `:image` | The category of the asset. |
 | `html_tag` | `String.t() | nil` | `nil` | The HTML tag that referenced this asset (e.g., "link", "script", "img"). |
 
@@ -478,12 +478,12 @@ skipping the resource.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The URL the document was fetched from. |
-| `mime_type` | `Str` | `nil` | The MIME type from the Content-Type header. |
-| `content` | `binary()` | `nil` | Raw document bytes. Skipped during JSON serialization. |
-| `size` | `integer()` | `nil` | Size of the document in bytes. |
+| `url` | `String.t()` | — | The URL the document was fetched from. |
+| `mime_type` | `Str` | — | The MIME type from the Content-Type header. |
+| `content` | `binary()` | — | Raw document bytes. Skipped during JSON serialization. |
+| `size` | `integer()` | — | Size of the document in bytes. |
 | `filename` | `Str | nil` | `nil` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `Str` | `nil` | SHA-256 hex digest of the content. |
+| `content_hash` | `Str` | — | SHA-256 hex digest of the content. |
 | `headers` | `map()` | `%{}` | Selected response headers. |
 
 
@@ -499,7 +499,7 @@ Metadata about an LLM extraction pass.
 | `prompt_tokens` | `integer() | nil` | `nil` | Number of prompt (input) tokens consumed. |
 | `completion_tokens` | `integer() | nil` | `nil` | Number of completion (output) tokens generated. |
 | `model` | `String.t() | nil` | `nil` | The model identifier used for extraction. |
-| `chunks_processed` | `integer()` | `nil` | Number of content chunks sent to the LLM. |
+| `chunks_processed` | `integer()` | — | Number of content chunks sent to the LLM. |
 
 
 ---
@@ -510,8 +510,8 @@ Information about a favicon or icon link.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The icon URL. |
-| `rel` | `String.t()` | `nil` | The `rel` attribute (e.g., "icon", "apple-touch-icon"). |
+| `url` | `String.t()` | — | The icon URL. |
+| `rel` | `String.t()` | — | The `rel` attribute (e.g., "icon", "apple-touch-icon"). |
 | `sizes` | `String.t() | nil` | `nil` | The `sizes` attribute, if present. |
 | `mime_type` | `String.t() | nil` | `nil` | The MIME type, if present. |
 
@@ -524,7 +524,7 @@ Information about a feed link found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The feed URL. |
+| `url` | `String.t()` | — | The feed URL. |
 | `title` | `String.t() | nil` | `nil` | The feed title, if present. |
 | `feed_type` | `FeedType` | `:rss` | The type of feed. |
 
@@ -537,8 +537,8 @@ A heading element extracted from the page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `level` | `integer()` | `nil` | The heading level (1-6). |
-| `text` | `String.t()` | `nil` | The heading text content. |
+| `level` | `integer()` | — | The heading level (1-6). |
+| `text` | `String.t()` | — | The heading text content. |
 
 
 ---
@@ -549,8 +549,8 @@ An hreflang alternate link entry.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `lang` | `String.t()` | `nil` | The language code (e.g., "en", "fr", "x-default"). |
-| `url` | `String.t()` | `nil` | The URL for this language variant. |
+| `lang` | `String.t()` | — | The language code (e.g., "en", "fr", "x-default"). |
+| `url` | `String.t()` | — | The URL for this language variant. |
 
 
 ---
@@ -561,7 +561,7 @@ Information about an image found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The image URL. |
+| `url` | `String.t()` | — | The image URL. |
 | `alt` | `String.t() | nil` | `nil` | The alt text, if present. |
 | `width` | `integer() | nil` | `nil` | The width attribute, if present and parseable. |
 | `height` | `integer() | nil` | `nil` | The height attribute, if present and parseable. |
@@ -577,8 +577,8 @@ Result of executing a sequence of page interaction actions.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `action_results` | `list(ActionResult)` | `[]` | Results from each executed action. |
-| `final_html` | `String.t()` | `nil` | Final page HTML after all actions completed. |
-| `final_url` | `String.t()` | `nil` | Final page URL (may have changed due to navigation). |
+| `final_html` | `String.t()` | — | Final page HTML after all actions completed. |
+| `final_url` | `String.t()` | — | Final page URL (may have changed due to navigation). |
 | `screenshot` | `binary() | nil` | `nil` | Screenshot taken after all actions, if requested. |
 
 
@@ -590,9 +590,9 @@ A JSON-LD structured data entry found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `schema_type` | `String.t()` | `nil` | The `@type` value from the JSON-LD object. |
+| `schema_type` | `String.t()` | — | The `@type` value from the JSON-LD object. |
 | `name` | `String.t() | nil` | `nil` | The `name` value, if present. |
-| `raw` | `String.t()` | `nil` | The raw JSON-LD string. |
+| `raw` | `String.t()` | — | The raw JSON-LD string. |
 
 
 ---
@@ -603,11 +603,11 @@ Information about a link found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The resolved URL of the link. |
-| `text` | `String.t()` | `nil` | The visible text of the link. |
+| `url` | `String.t()` | — | The resolved URL of the link. |
+| `text` | `String.t()` | — | The visible text of the link. |
 | `link_type` | `LinkType` | `:internal` | The classification of the link. |
 | `rel` | `String.t() | nil` | `nil` | The `rel` attribute value, if present. |
-| `nofollow` | `boolean()` | `nil` | Whether the link has `rel="nofollow"`. |
+| `nofollow` | `boolean()` | — | Whether the link has `rel="nofollow"`. |
 
 
 ---
@@ -629,7 +629,7 @@ Rich markdown conversion result from HTML processing.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `String.t()` | `nil` | Converted markdown text. |
+| `content` | `String.t()` | — | Converted markdown text. |
 | `document_structure` | `term() | nil` | `nil` | Structured document tree with semantic nodes. |
 | `tables` | `list(term())` | `[]` | Extracted tables with structured cell data. |
 | `warnings` | `list(String.t())` | `[]` | Non-fatal processing warnings. |
@@ -698,7 +698,7 @@ Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
+| `url` | `String.t()` | — | Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080"). |
 | `username` | `String.t() | nil` | `nil` | Optional username for proxy authentication. |
 | `password` | `String.t() | nil` | `nil` | Optional password for proxy authentication. |
 
@@ -728,29 +728,29 @@ The result of a single-page scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `status_code` | `integer()` | `nil` | The HTTP status code of the response. |
-| `content_type` | `String.t()` | `nil` | The Content-Type header value. |
-| `html` | `String.t()` | `nil` | The HTML body of the response. |
-| `body_size` | `integer()` | `nil` | The size of the response body in bytes. |
-| `metadata` | `PageMetadata` | `nil` | Extracted metadata from the page. |
+| `status_code` | `integer()` | — | The HTTP status code of the response. |
+| `content_type` | `String.t()` | — | The Content-Type header value. |
+| `html` | `String.t()` | — | The HTML body of the response. |
+| `body_size` | `integer()` | — | The size of the response body in bytes. |
+| `metadata` | `PageMetadata` | — | Extracted metadata from the page. |
 | `links` | `list(LinkInfo)` | `[]` | Links found on the page. |
 | `images` | `list(ImageInfo)` | `[]` | Images found on the page. |
 | `feeds` | `list(FeedInfo)` | `[]` | Feed links found on the page. |
 | `json_ld` | `list(JsonLdEntry)` | `[]` | JSON-LD entries found on the page. |
-| `is_allowed` | `boolean()` | `nil` | Whether the URL is allowed by robots.txt. |
+| `is_allowed` | `boolean()` | — | Whether the URL is allowed by robots.txt. |
 | `crawl_delay` | `integer() | nil` | `nil` | The crawl delay from robots.txt, in seconds. |
-| `noindex_detected` | `boolean()` | `nil` | Whether a noindex directive was detected. |
-| `nofollow_detected` | `boolean()` | `nil` | Whether a nofollow directive was detected. |
+| `noindex_detected` | `boolean()` | — | Whether a noindex directive was detected. |
+| `nofollow_detected` | `boolean()` | — | Whether a nofollow directive was detected. |
 | `x_robots_tag` | `String.t() | nil` | `nil` | The X-Robots-Tag header value, if present. |
-| `is_pdf` | `boolean()` | `nil` | Whether the content is a PDF. |
-| `was_skipped` | `boolean()` | `nil` | Whether the page was skipped (binary or PDF content). |
+| `is_pdf` | `boolean()` | — | Whether the content is a PDF. |
+| `was_skipped` | `boolean()` | — | Whether the page was skipped (binary or PDF content). |
 | `detected_charset` | `String.t() | nil` | `nil` | The detected character set encoding. |
-| `main_content_only` | `boolean()` | `nil` | Whether main_content_only was active during extraction. |
-| `auth_header_sent` | `boolean()` | `nil` | Whether an authentication header was sent with the request. |
+| `main_content_only` | `boolean()` | — | Whether main_content_only was active during extraction. |
+| `auth_header_sent` | `boolean()` | — | Whether an authentication header was sent with the request. |
 | `response_meta` | `ResponseMeta | nil` | `nil` | Response metadata extracted from HTTP headers. |
 | `assets` | `list(DownloadedAsset)` | `[]` | Downloaded assets from the page. |
-| `js_render_hint` | `boolean()` | `nil` | Whether the page content suggests JavaScript rendering is needed. |
-| `browser_used` | `boolean()` | `nil` | Whether the browser fallback was used to fetch this page. |
+| `js_render_hint` | `boolean()` | — | Whether the page content suggests JavaScript rendering is needed. |
+| `browser_used` | `boolean()` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `MarkdownResult | nil` | `nil` | Markdown conversion of the page content. |
 | `extracted_data` | `term() | nil` | `nil` | Structured data extracted by LLM. Populated when using LlmExtractor. |
 | `extraction_meta` | `ExtractionMeta | nil` | `nil` | Metadata about the LLM extraction pass (cost, tokens, model). |
@@ -766,7 +766,7 @@ A URL entry from a sitemap.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` | The URL. |
+| `url` | `String.t()` | — | The URL. |
 | `lastmod` | `String.t() | nil` | `nil` | The last modification date, if present. |
 | `changefreq` | `String.t() | nil` | `nil` | The change frequency, if present. |
 | `priority` | `String.t() | nil` | `nil` | The priority, if present. |
@@ -808,9 +808,9 @@ Authentication configuration.
 
 | Value | Description |
 |-------|-------------|
-| `basic` | HTTP Basic authentication. |
-| `bearer` | Bearer token authentication. |
-| `header` | Custom authentication header. |
+| `basic` | HTTP Basic authentication. — Fields: `username`: `String.t()`, `password`: `String.t()` |
+| `bearer` | Bearer token authentication. — Fields: `token`: `String.t()` |
+| `header` | Custom authentication header. — Fields: `name`: `String.t()`, `value`: `String.t()` |
 
 
 ---
@@ -882,9 +882,9 @@ An event emitted during a streaming crawl operation.
 
 | Value | Description |
 |-------|-------------|
-| `page` | A single page has been crawled. |
-| `error` | An error occurred while crawling a URL. |
-| `complete` | The crawl has completed. |
+| `page` | A single page has been crawled. — Fields: `0`: `CrawlPageResult` |
+| `error` | An error occurred while crawling a URL. — Fields: `url`: `String.t()`, `error`: `String.t()` |
+| `complete` | The crawl has completed. — Fields: `pages_crawled`: `integer()` |
 
 
 ---
@@ -917,3 +917,4 @@ Errors that can occur during crawling, scraping, or mapping operations.
 
 
 ---
+

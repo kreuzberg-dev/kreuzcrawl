@@ -209,7 +209,7 @@ impl BrowserConfig {
         Self {
             mode: mode.unwrap_or(BrowserMode::Auto),
             endpoint,
-            timeout: timeout.unwrap_or_default(),
+            timeout: timeout.unwrap_or(30000),
             wait: wait.unwrap_or_default(),
             wait_selector,
             extra_wait,
@@ -375,7 +375,7 @@ impl CrawlConfig {
             request_timeout: kwargs
                 .get(ruby.to_symbol("request_timeout"))
                 .and_then(|v| u64::try_convert(v).ok())
-                .unwrap_or_default(),
+                .unwrap_or(30000),
             max_redirects: kwargs
                 .get(ruby.to_symbol("max_redirects"))
                 .and_then(|v| usize::try_convert(v).ok())

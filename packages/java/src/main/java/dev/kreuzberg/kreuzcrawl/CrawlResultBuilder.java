@@ -6,51 +6,58 @@ import java.util.Optional;
 
 public class CrawlResultBuilder {
 
-  private List<CrawlPageResult> pages = List.of();
-  private String finalUrl = "";
-  private long redirectCount = 0;
-  private boolean wasSkipped = false;
-  private Optional<String> error = Optional.empty();
-  private List<CookieInfo> cookies = List.of();
-  private List<String> normalizedUrls = List.of();
+    private List<CrawlPageResult> pages = List.of();
+    private String finalUrl = "";
+    private long redirectCount = 0;
+    private boolean wasSkipped = false;
+    private Optional<String> error = Optional.empty();
+    private List<CookieInfo> cookies = List.of();
+    private List<String> normalizedUrls = List.of();
 
-  public CrawlResultBuilder withPages(List<CrawlPageResult> value) {
-    this.pages = value;
-    return this;
-  }
+    public CrawlResultBuilder withPages(List<CrawlPageResult> value) {
+        this.pages = value;
+        return this;
+    }
 
-  public CrawlResultBuilder withFinalUrl(String value) {
-    this.finalUrl = value;
-    return this;
-  }
+    public CrawlResultBuilder withFinalUrl(String value) {
+        this.finalUrl = value;
+        return this;
+    }
 
-  public CrawlResultBuilder withRedirectCount(long value) {
-    this.redirectCount = value;
-    return this;
-  }
+    public CrawlResultBuilder withRedirectCount(long value) {
+        this.redirectCount = value;
+        return this;
+    }
 
-  public CrawlResultBuilder withWasSkipped(boolean value) {
-    this.wasSkipped = value;
-    return this;
-  }
+    public CrawlResultBuilder withWasSkipped(boolean value) {
+        this.wasSkipped = value;
+        return this;
+    }
 
-  public CrawlResultBuilder withError(Optional<String> value) {
-    this.error = value;
-    return this;
-  }
+    public CrawlResultBuilder withError(Optional<String> value) {
+        this.error = value;
+        return this;
+    }
 
-  public CrawlResultBuilder withCookies(List<CookieInfo> value) {
-    this.cookies = value;
-    return this;
-  }
+    public CrawlResultBuilder withCookies(List<CookieInfo> value) {
+        this.cookies = value;
+        return this;
+    }
 
-  public CrawlResultBuilder withNormalizedUrls(List<String> value) {
-    this.normalizedUrls = value;
-    return this;
-  }
+    public CrawlResultBuilder withNormalizedUrls(List<String> value) {
+        this.normalizedUrls = value;
+        return this;
+    }
 
-  public CrawlResult build() {
-    return new CrawlResult(
-        pages, finalUrl, redirectCount, wasSkipped, error, cookies, normalizedUrls);
-  }
+    public CrawlResult build() {
+        return new CrawlResult(
+            pages,
+            finalUrl,
+            redirectCount,
+            wasSkipped,
+            error,
+            cookies,
+            normalizedUrls
+        );
+    }
 }

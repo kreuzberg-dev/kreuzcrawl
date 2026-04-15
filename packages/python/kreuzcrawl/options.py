@@ -109,7 +109,7 @@ class BrowserConfig:
     endpoint: str | None = None
     """CDP WebSocket endpoint for connecting to an external browser instance."""
 
-    timeout: int | None = None
+    timeout: int = 30000
     """Timeout for browser page load and rendering (in milliseconds when serialized)."""
 
     wait: str = "network_idle"
@@ -156,7 +156,7 @@ class CrawlConfig:
     custom_headers: dict[str, str] = field(default_factory=dict)
     """Custom HTTP headers to send with each request."""
 
-    request_timeout: int | None = None
+    request_timeout: int = 30000
     """Timeout for individual HTTP requests (in milliseconds when serialized)."""
 
     max_redirects: int = 10
@@ -532,7 +532,6 @@ class CachedPage:
     last_modified: str | None = None
     cached_at: int = 0
 
-
 @dataclass
 class LinkInfo:
     """Information about a link found on a page."""
@@ -877,7 +876,6 @@ class CitationReference:
     url: str = ""
     text: str = ""
 
-
 @dataclass
 class BatchScrapeResult:
     """Result from a single URL in a batch scrape operation."""
@@ -904,3 +902,5 @@ class BatchCrawlResult:
 
     error: str | None = None
     """The error message, if the crawl failed."""
+
+
