@@ -8,94 +8,94 @@ import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 
 final class NativeLib {
-  private static final Linker LINKER = Linker.nativeLinker();
-  private static final SymbolLookup LIB;
+    private static final Linker LINKER = Linker.nativeLinker();
+    private static final SymbolLookup LIB;
 
-  static {
-    System.loadLibrary("kreuzcrawl_ffi");
-    LIB = SymbolLookup.loaderLookup();
-  }
+    static {
+        System.loadLibrary("kreuzcrawl_ffi");
+        LIB = SymbolLookup.loaderLookup();
+    }
 
-  static final MethodHandle KCRAWL_CREATE_ENGINE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_create_engine").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS));
-  static final MethodHandle KCRAWL_SCRAPE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_scrape").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
-  static final MethodHandle KCRAWL_CRAWL =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_crawl").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
-  static final MethodHandle KCRAWL_MAP_URLS =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_map_urls").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
-  static final MethodHandle KCRAWL_BATCH_SCRAPE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_batch_scrape").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
-  static final MethodHandle KCRAWL_BATCH_CRAWL =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_batch_crawl").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_CREATE_ENGINE = LINKER.downcallHandle(
+        LIB.find("kcrawl_create_engine").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_SCRAPE = LINKER.downcallHandle(
+        LIB.find("kcrawl_scrape").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_CRAWL = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_MAP_URLS = LINKER.downcallHandle(
+        LIB.find("kcrawl_map_urls").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_BATCH_SCRAPE = LINKER.downcallHandle(
+        LIB.find("kcrawl_batch_scrape").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_BATCH_CRAWL = LINKER.downcallHandle(
+        LIB.find("kcrawl_batch_crawl").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_FREE_STRING =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_free_string").orElseThrow(),
-          FunctionDescriptor.ofVoid(ValueLayout.ADDRESS));
-  static final MethodHandle KCRAWL_LAST_ERROR_CODE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_last_error_code").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.JAVA_INT));
-  static final MethodHandle KCRAWL_LAST_ERROR_CONTEXT =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_last_error_context").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_FREE_STRING = LINKER.downcallHandle(
+        LIB.find("kcrawl_free_string").orElseThrow(),
+        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
+    );
+    static final MethodHandle KCRAWL_LAST_ERROR_CODE = LINKER.downcallHandle(
+        LIB.find("kcrawl_last_error_code").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.JAVA_INT)
+    );
+    static final MethodHandle KCRAWL_LAST_ERROR_CONTEXT = LINKER.downcallHandle(
+        LIB.find("kcrawl_last_error_context").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_CRAWL_ENGINE_HANDLE_FREE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_crawl_engine_handle_free").orElseThrow(),
-          FunctionDescriptor.ofVoid(ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_CRAWL_ENGINE_HANDLE_FREE = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl_engine_handle_free").orElseThrow(),
+        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_SCRAPE_RESULT_TO_JSON =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_scrape_result_to_json").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_SCRAPE_RESULT_TO_JSON = LINKER.downcallHandle(
+        LIB.find("kcrawl_scrape_result_to_json").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_SCRAPE_RESULT_FREE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_scrape_result_free").orElseThrow(),
-          FunctionDescriptor.ofVoid(ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_SCRAPE_RESULT_FREE = LINKER.downcallHandle(
+        LIB.find("kcrawl_scrape_result_free").orElseThrow(),
+        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_CRAWL_RESULT_TO_JSON =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_crawl_result_to_json").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_CRAWL_RESULT_TO_JSON = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl_result_to_json").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_CRAWL_RESULT_FREE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_crawl_result_free").orElseThrow(),
-          FunctionDescriptor.ofVoid(ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_CRAWL_RESULT_FREE = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl_result_free").orElseThrow(),
+        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_MAP_RESULT_TO_JSON =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_map_result_to_json").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_MAP_RESULT_TO_JSON = LINKER.downcallHandle(
+        LIB.find("kcrawl_map_result_to_json").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_MAP_RESULT_FREE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_map_result_free").orElseThrow(),
-          FunctionDescriptor.ofVoid(ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_MAP_RESULT_FREE = LINKER.downcallHandle(
+        LIB.find("kcrawl_map_result_free").orElseThrow(),
+        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_CRAWL_CONFIG_FROM_JSON =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_crawl_config_from_json").orElseThrow(),
-          FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_CRAWL_CONFIG_FROM_JSON = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl_config_from_json").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
 
-  static final MethodHandle KCRAWL_CRAWL_CONFIG_FREE =
-      LINKER.downcallHandle(
-          LIB.find("kcrawl_crawl_config_free").orElseThrow(),
-          FunctionDescriptor.ofVoid(ValueLayout.ADDRESS));
+    static final MethodHandle KCRAWL_CRAWL_CONFIG_FREE = LINKER.downcallHandle(
+        LIB.find("kcrawl_crawl_config_free").orElseThrow(),
+        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
+    );
 }

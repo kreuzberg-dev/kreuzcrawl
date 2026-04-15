@@ -3,11 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** The request timed out. */
 public class TimeoutException extends CrawlErrorException {
-  public TimeoutException(String message) {
-    super(message);
-  }
+    public TimeoutException(String message) {
+        super(message);
+    }
 
-  public TimeoutException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public TimeoutException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

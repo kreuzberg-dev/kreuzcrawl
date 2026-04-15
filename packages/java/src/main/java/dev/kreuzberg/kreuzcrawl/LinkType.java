@@ -5,29 +5,29 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum LinkType {
-  Internal("internal"),
-  External("external"),
-  Anchor("anchor"),
-  Document("document");
+    Internal("internal"),
+    External("external"),
+    Anchor("anchor"),
+    Document("document");
 
-  private final String value;
+    private final String value;
 
-  LinkType(String value) {
-    this.value = value;
-  }
-
-  @JsonValue
-  public String getValue() {
-    return value;
-  }
-
-  @JsonCreator
-  public static LinkType fromValue(String value) {
-    for (LinkType e : values()) {
-      if (e.value.equalsIgnoreCase(value)) {
-        return e;
-      }
+    LinkType(String value) {
+        this.value = value;
     }
-    throw new IllegalArgumentException("Unknown value: " + value);
-  }
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    @JsonCreator
+    public static LinkType fromValue(String value) {
+        for (LinkType e : values()) {
+            if (e.value.equalsIgnoreCase(value)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Unknown value: " + value);
+    }
 }

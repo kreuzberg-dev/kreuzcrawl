@@ -2,7 +2,7 @@
 title: "C API Reference"
 ---
 
-## C API Reference <span class="version-badge">v0.1.0-rc.1</span>
+# C API Reference <span class="version-badge">v0.1.0-rc.1</span>
 
 ## Functions
 
@@ -181,9 +181,9 @@ Result from a single page action execution.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `action_index` | `uintptr_t` | `NULL` | Zero-based index of the action in the sequence. |
-| `action_type` | `KcrawlStr` | `NULL` | The type of action that was executed. |
-| `success` | `bool` | `NULL` | Whether the action completed successfully. |
+| `action_index` | `uintptr_t` | — | Zero-based index of the action in the sequence. |
+| `action_type` | `KcrawlStr` | — | The type of action that was executed. |
+| `success` | `bool` | — | Whether the action completed successfully. |
 | `data` | `void**` | `NULL` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `const char**` | `NULL` | Error message if the action failed. |
 
@@ -211,7 +211,7 @@ Result from a single URL in a batch crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The seed URL that was crawled. |
+| `url` | `const char*` | — | The seed URL that was crawled. |
 | `result` | `KcrawlCrawlResult*` | `NULL` | The crawl result, if successful. |
 | `error` | `const char**` | `NULL` | The error message, if the crawl failed. |
 
@@ -224,7 +224,7 @@ Result from a single URL in a batch scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The URL that was scraped. |
+| `url` | `const char*` | — | The URL that was scraped. |
 | `result` | `KcrawlScrapeResult*` | `NULL` | The scrape result, if successful. |
 | `error` | `const char**` | `NULL` | The error message, if the scrape failed. |
 
@@ -239,10 +239,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `KcrawlBrowserMode` | `KCRAWL_KCRAWL_AUTO` | When to use the headless browser fallback. |
 | `endpoint` | `const char**` | `NULL` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `uint64_t` | `NULL` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `uint64_t` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `KcrawlBrowserWait` | `KCRAWL_KCRAWL_NETWORK_IDLE` | Wait strategy after browser navigation. |
 | `wait_selector` | `const char**` | `NULL` | CSS selector to wait for when `wait` is `Selector`. |
-| `extra_wait` | `uint64_t*` | `NULL` | Extra time to wait after the wait condition is met. |
+| `extra_wait` | `uint64_t*` | `0ms` | Extra time to wait after the wait condition is met. |
 
 #### Methods
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | Url |
-| `status_code` | `uint16_t` | `NULL` | Status code |
-| `content_type` | `const char*` | `NULL` | Content type |
-| `body` | `const char*` | `NULL` | Body |
+| `url` | `const char*` | — | Url |
+| `status_code` | `uint16_t` | — | Status code |
+| `content_type` | `const char*` | — | Content type |
+| `body` | `const char*` | — | Body |
 | `etag` | `const char**` | `NULL` | Etag |
 | `last_modified` | `const char**` | `NULL` | Last modified |
-| `cached_at` | `uint64_t` | `NULL` | Cached at |
+| `cached_at` | `uint64_t` | — | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `uintptr_t` | `NULL` | Index |
-| `url` | `const char*` | `NULL` | Url |
-| `text` | `const char*` | `NULL` | Text |
+| `index` | `uintptr_t` | — | Index |
+| `url` | `const char*` | — | Url |
+| `text` | `const char*` | — | Text |
 
 
 ---
@@ -291,7 +291,7 @@ Result of citation conversion.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `const char*` | `NULL` | Markdown with links replaced by numbered citations. |
+| `content` | `const char*` | — | Markdown with links replaced by numbered citations. |
 | `references` | `KcrawlCitationReference*` | `NULL` | Numbered reference list: (index, url, text). |
 
 
@@ -303,8 +303,8 @@ Information about an HTTP cookie received from a response.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `const char*` | `NULL` | The cookie name. |
-| `value` | `const char*` | `NULL` | The cookie value. |
+| `name` | `const char*` | — | The cookie name. |
+| `value` | `const char*` | — | The cookie value. |
 | `domain` | `const char**` | `NULL` | The cookie domain, if specified. |
 | `path` | `const char**` | `NULL` | The cookie path, if specified. |
 
@@ -327,12 +327,12 @@ Configuration for crawl, scrape, and map operations.
 | `include_paths` | `const char**` | `NULL` | Regex patterns for paths to include during crawling. |
 | `exclude_paths` | `const char**` | `NULL` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `void*` | `NULL` | Custom HTTP headers to send with each request. |
-| `request_timeout` | `uint64_t` | `NULL` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `request_timeout` | `uint64_t` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `max_redirects` | `uintptr_t` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `uintptr_t` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `uint16_t*` | `NULL` | HTTP status codes that should trigger a retry. |
 | `cookies_enabled` | `bool` | `false` | Whether to enable cookie handling. |
-| `auth` | `KcrawlAuthConfig*` | `KCRAWL_KCRAWL_BASIC` | Authentication configuration. |
+| `auth` | `KcrawlAuthConfig*` | `NULL` | Authentication configuration. |
 | `max_body_size` | `uintptr_t*` | `NULL` | Maximum response body size in bytes. |
 | `main_content_only` | `bool` | `false` | Whether to extract only the main content from HTML pages. |
 | `remove_tags` | `const char**` | `NULL` | CSS selectors for tags to remove from HTML before processing. |
@@ -341,7 +341,7 @@ Configuration for crawl, scrape, and map operations.
 | `download_assets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
 | `asset_types` | `KcrawlAssetCategory*` | `NULL` | Filter for asset categories to download. |
 | `max_asset_size` | `uintptr_t*` | `NULL` | Maximum size in bytes for individual asset downloads. |
-| `browser` | `KcrawlBrowserConfig` | `NULL` | Browser configuration. |
+| `browser` | `KcrawlBrowserConfig` | — | Browser configuration. |
 | `proxy` | `KcrawlProxyConfig*` | `NULL` | Proxy configuration for HTTP requests. |
 | `user_agents` | `const char**` | `NULL` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `capture_screenshot` | `bool` | `false` | Whether to capture a screenshot when using the browser. |
@@ -392,21 +392,21 @@ The result of crawling a single page during a crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The original URL of the page. |
-| `normalized_url` | `const char*` | `NULL` | The normalized URL of the page. |
-| `status_code` | `uint16_t` | `NULL` | The HTTP status code of the response. |
-| `content_type` | `const char*` | `NULL` | The Content-Type header value. |
-| `html` | `const char*` | `NULL` | The HTML body of the response. |
-| `body_size` | `uintptr_t` | `NULL` | The size of the response body in bytes. |
-| `metadata` | `KcrawlPageMetadata` | `NULL` | Extracted metadata from the page. |
+| `url` | `const char*` | — | The original URL of the page. |
+| `normalized_url` | `const char*` | — | The normalized URL of the page. |
+| `status_code` | `uint16_t` | — | The HTTP status code of the response. |
+| `content_type` | `const char*` | — | The Content-Type header value. |
+| `html` | `const char*` | — | The HTML body of the response. |
+| `body_size` | `uintptr_t` | — | The size of the response body in bytes. |
+| `metadata` | `KcrawlPageMetadata` | — | Extracted metadata from the page. |
 | `links` | `KcrawlLinkInfo*` | `NULL` | Links found on the page. |
 | `images` | `KcrawlImageInfo*` | `NULL` | Images found on the page. |
 | `feeds` | `KcrawlFeedInfo*` | `NULL` | Feed links found on the page. |
 | `json_ld` | `KcrawlJsonLdEntry*` | `NULL` | JSON-LD entries found on the page. |
-| `depth` | `uintptr_t` | `NULL` | The depth of this page from the start URL. |
-| `stayed_on_domain` | `bool` | `NULL` | Whether this page is on the same domain as the start URL. |
-| `was_skipped` | `bool` | `NULL` | Whether this page was skipped (binary or PDF content). |
-| `is_pdf` | `bool` | `NULL` | Whether the content is a PDF. |
+| `depth` | `uintptr_t` | — | The depth of this page from the start URL. |
+| `stayed_on_domain` | `bool` | — | Whether this page is on the same domain as the start URL. |
+| `was_skipped` | `bool` | — | Whether this page was skipped (binary or PDF content). |
+| `is_pdf` | `bool` | — | Whether the content is a PDF. |
 | `detected_charset` | `const char**` | `NULL` | The detected character set encoding. |
 | `markdown` | `KcrawlMarkdownResult*` | `NULL` | Markdown conversion of the page content. |
 | `extracted_data` | `void**` | `NULL` | Structured data extracted by LLM. Populated when using LlmExtractor. |
@@ -423,9 +423,9 @@ The result of a multi-page crawl operation.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `pages` | `KcrawlCrawlPageResult*` | `NULL` | The list of crawled pages. |
-| `final_url` | `const char*` | `NULL` | The final URL after following redirects. |
-| `redirect_count` | `uintptr_t` | `NULL` | The number of redirects followed. |
-| `was_skipped` | `bool` | `NULL` | Whether any page was skipped during crawling. |
+| `final_url` | `const char*` | — | The final URL after following redirects. |
+| `redirect_count` | `uintptr_t` | — | The number of redirects followed. |
+| `was_skipped` | `bool` | — | Whether any page was skipped during crawling. |
 | `error` | `const char**` | `NULL` | An error message, if the crawl encountered an issue. |
 | `cookies` | `KcrawlCookieInfo*` | `NULL` | Cookies collected during the crawl. |
 | `normalized_urls` | `const char**` | `NULL` | Normalized URLs encountered during crawling (for deduplication counting). |
@@ -451,10 +451,10 @@ A downloaded asset from a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The original URL of the asset. |
-| `content_hash` | `const char*` | `NULL` | The SHA-256 content hash of the asset. |
+| `url` | `const char*` | — | The original URL of the asset. |
+| `content_hash` | `const char*` | — | The SHA-256 content hash of the asset. |
 | `mime_type` | `const char**` | `NULL` | The MIME type from the Content-Type header. |
-| `size` | `uintptr_t` | `NULL` | The size of the asset in bytes. |
+| `size` | `uintptr_t` | — | The size of the asset in bytes. |
 | `asset_category` | `KcrawlAssetCategory` | `KCRAWL_KCRAWL_IMAGE` | The category of the asset. |
 | `html_tag` | `const char**` | `NULL` | The HTML tag that referenced this asset (e.g., "link", "script", "img"). |
 
@@ -471,12 +471,12 @@ skipping the resource.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The URL the document was fetched from. |
-| `mime_type` | `KcrawlStr` | `NULL` | The MIME type from the Content-Type header. |
-| `content` | `const uint8_t*` | `NULL` | Raw document bytes. Skipped during JSON serialization. |
-| `size` | `uintptr_t` | `NULL` | Size of the document in bytes. |
+| `url` | `const char*` | — | The URL the document was fetched from. |
+| `mime_type` | `KcrawlStr` | — | The MIME type from the Content-Type header. |
+| `content` | `const uint8_t*` | — | Raw document bytes. Skipped during JSON serialization. |
+| `size` | `uintptr_t` | — | Size of the document in bytes. |
 | `filename` | `KcrawlStr*` | `NULL` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `KcrawlStr` | `NULL` | SHA-256 hex digest of the content. |
+| `content_hash` | `KcrawlStr` | — | SHA-256 hex digest of the content. |
 | `headers` | `void*` | `NULL` | Selected response headers. |
 
 
@@ -492,7 +492,7 @@ Metadata about an LLM extraction pass.
 | `prompt_tokens` | `uint64_t*` | `NULL` | Number of prompt (input) tokens consumed. |
 | `completion_tokens` | `uint64_t*` | `NULL` | Number of completion (output) tokens generated. |
 | `model` | `const char**` | `NULL` | The model identifier used for extraction. |
-| `chunks_processed` | `uintptr_t` | `NULL` | Number of content chunks sent to the LLM. |
+| `chunks_processed` | `uintptr_t` | — | Number of content chunks sent to the LLM. |
 
 
 ---
@@ -503,8 +503,8 @@ Information about a favicon or icon link.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The icon URL. |
-| `rel` | `const char*` | `NULL` | The `rel` attribute (e.g., "icon", "apple-touch-icon"). |
+| `url` | `const char*` | — | The icon URL. |
+| `rel` | `const char*` | — | The `rel` attribute (e.g., "icon", "apple-touch-icon"). |
 | `sizes` | `const char**` | `NULL` | The `sizes` attribute, if present. |
 | `mime_type` | `const char**` | `NULL` | The MIME type, if present. |
 
@@ -517,7 +517,7 @@ Information about a feed link found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The feed URL. |
+| `url` | `const char*` | — | The feed URL. |
 | `title` | `const char**` | `NULL` | The feed title, if present. |
 | `feed_type` | `KcrawlFeedType` | `KCRAWL_KCRAWL_RSS` | The type of feed. |
 
@@ -530,8 +530,8 @@ A heading element extracted from the page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `level` | `uint8_t` | `NULL` | The heading level (1-6). |
-| `text` | `const char*` | `NULL` | The heading text content. |
+| `level` | `uint8_t` | — | The heading level (1-6). |
+| `text` | `const char*` | — | The heading text content. |
 
 
 ---
@@ -542,8 +542,8 @@ An hreflang alternate link entry.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `lang` | `const char*` | `NULL` | The language code (e.g., "en", "fr", "x-default"). |
-| `url` | `const char*` | `NULL` | The URL for this language variant. |
+| `lang` | `const char*` | — | The language code (e.g., "en", "fr", "x-default"). |
+| `url` | `const char*` | — | The URL for this language variant. |
 
 
 ---
@@ -554,7 +554,7 @@ Information about an image found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The image URL. |
+| `url` | `const char*` | — | The image URL. |
 | `alt` | `const char**` | `NULL` | The alt text, if present. |
 | `width` | `uint32_t*` | `NULL` | The width attribute, if present and parseable. |
 | `height` | `uint32_t*` | `NULL` | The height attribute, if present and parseable. |
@@ -570,8 +570,8 @@ Result of executing a sequence of page interaction actions.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `action_results` | `KcrawlActionResult*` | `NULL` | Results from each executed action. |
-| `final_html` | `const char*` | `NULL` | Final page HTML after all actions completed. |
-| `final_url` | `const char*` | `NULL` | Final page URL (may have changed due to navigation). |
+| `final_html` | `const char*` | — | Final page HTML after all actions completed. |
+| `final_url` | `const char*` | — | Final page URL (may have changed due to navigation). |
 | `screenshot` | `const uint8_t**` | `NULL` | Screenshot taken after all actions, if requested. |
 
 
@@ -583,9 +583,9 @@ A JSON-LD structured data entry found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `schema_type` | `const char*` | `NULL` | The `@type` value from the JSON-LD object. |
+| `schema_type` | `const char*` | — | The `@type` value from the JSON-LD object. |
 | `name` | `const char**` | `NULL` | The `name` value, if present. |
-| `raw` | `const char*` | `NULL` | The raw JSON-LD string. |
+| `raw` | `const char*` | — | The raw JSON-LD string. |
 
 
 ---
@@ -596,11 +596,11 @@ Information about a link found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The resolved URL of the link. |
-| `text` | `const char*` | `NULL` | The visible text of the link. |
+| `url` | `const char*` | — | The resolved URL of the link. |
+| `text` | `const char*` | — | The visible text of the link. |
 | `link_type` | `KcrawlLinkType` | `KCRAWL_KCRAWL_INTERNAL` | The classification of the link. |
 | `rel` | `const char**` | `NULL` | The `rel` attribute value, if present. |
-| `nofollow` | `bool` | `NULL` | Whether the link has `rel="nofollow"`. |
+| `nofollow` | `bool` | — | Whether the link has `rel="nofollow"`. |
 
 
 ---
@@ -622,7 +622,7 @@ Rich markdown conversion result from HTML processing.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `const char*` | `NULL` | Converted markdown text. |
+| `content` | `const char*` | — | Converted markdown text. |
 | `document_structure` | `void**` | `NULL` | Structured document tree with semantic nodes. |
 | `tables` | `void**` | `NULL` | Extracted tables with structured cell data. |
 | `warnings` | `const char**` | `NULL` | Non-fatal processing warnings. |
@@ -691,7 +691,7 @@ Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
+| `url` | `const char*` | — | Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080"). |
 | `username` | `const char**` | `NULL` | Optional username for proxy authentication. |
 | `password` | `const char**` | `NULL` | Optional password for proxy authentication. |
 
@@ -721,29 +721,29 @@ The result of a single-page scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `status_code` | `uint16_t` | `NULL` | The HTTP status code of the response. |
-| `content_type` | `const char*` | `NULL` | The Content-Type header value. |
-| `html` | `const char*` | `NULL` | The HTML body of the response. |
-| `body_size` | `uintptr_t` | `NULL` | The size of the response body in bytes. |
-| `metadata` | `KcrawlPageMetadata` | `NULL` | Extracted metadata from the page. |
+| `status_code` | `uint16_t` | — | The HTTP status code of the response. |
+| `content_type` | `const char*` | — | The Content-Type header value. |
+| `html` | `const char*` | — | The HTML body of the response. |
+| `body_size` | `uintptr_t` | — | The size of the response body in bytes. |
+| `metadata` | `KcrawlPageMetadata` | — | Extracted metadata from the page. |
 | `links` | `KcrawlLinkInfo*` | `NULL` | Links found on the page. |
 | `images` | `KcrawlImageInfo*` | `NULL` | Images found on the page. |
 | `feeds` | `KcrawlFeedInfo*` | `NULL` | Feed links found on the page. |
 | `json_ld` | `KcrawlJsonLdEntry*` | `NULL` | JSON-LD entries found on the page. |
-| `is_allowed` | `bool` | `NULL` | Whether the URL is allowed by robots.txt. |
+| `is_allowed` | `bool` | — | Whether the URL is allowed by robots.txt. |
 | `crawl_delay` | `uint64_t*` | `NULL` | The crawl delay from robots.txt, in seconds. |
-| `noindex_detected` | `bool` | `NULL` | Whether a noindex directive was detected. |
-| `nofollow_detected` | `bool` | `NULL` | Whether a nofollow directive was detected. |
+| `noindex_detected` | `bool` | — | Whether a noindex directive was detected. |
+| `nofollow_detected` | `bool` | — | Whether a nofollow directive was detected. |
 | `x_robots_tag` | `const char**` | `NULL` | The X-Robots-Tag header value, if present. |
-| `is_pdf` | `bool` | `NULL` | Whether the content is a PDF. |
-| `was_skipped` | `bool` | `NULL` | Whether the page was skipped (binary or PDF content). |
+| `is_pdf` | `bool` | — | Whether the content is a PDF. |
+| `was_skipped` | `bool` | — | Whether the page was skipped (binary or PDF content). |
 | `detected_charset` | `const char**` | `NULL` | The detected character set encoding. |
-| `main_content_only` | `bool` | `NULL` | Whether main_content_only was active during extraction. |
-| `auth_header_sent` | `bool` | `NULL` | Whether an authentication header was sent with the request. |
+| `main_content_only` | `bool` | — | Whether main_content_only was active during extraction. |
+| `auth_header_sent` | `bool` | — | Whether an authentication header was sent with the request. |
 | `response_meta` | `KcrawlResponseMeta*` | `NULL` | Response metadata extracted from HTTP headers. |
 | `assets` | `KcrawlDownloadedAsset*` | `NULL` | Downloaded assets from the page. |
-| `js_render_hint` | `bool` | `NULL` | Whether the page content suggests JavaScript rendering is needed. |
-| `browser_used` | `bool` | `NULL` | Whether the browser fallback was used to fetch this page. |
+| `js_render_hint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
+| `browser_used` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `KcrawlMarkdownResult*` | `NULL` | Markdown conversion of the page content. |
 | `extracted_data` | `void**` | `NULL` | Structured data extracted by LLM. Populated when using LlmExtractor. |
 | `extraction_meta` | `KcrawlExtractionMeta*` | `NULL` | Metadata about the LLM extraction pass (cost, tokens, model). |
@@ -759,7 +759,7 @@ A URL entry from a sitemap.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` | The URL. |
+| `url` | `const char*` | — | The URL. |
 | `lastmod` | `const char**` | `NULL` | The last modification date, if present. |
 | `changefreq` | `const char**` | `NULL` | The change frequency, if present. |
 | `priority` | `const char**` | `NULL` | The priority, if present. |
@@ -801,9 +801,9 @@ Authentication configuration.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_BASIC` | HTTP Basic authentication. |
-| `KCRAWL_BEARER` | Bearer token authentication. |
-| `KCRAWL_HEADER` | Custom authentication header. |
+| `KCRAWL_BASIC` | HTTP Basic authentication. — Fields: `username`: `const char*`, `password`: `const char*` |
+| `KCRAWL_BEARER` | Bearer token authentication. — Fields: `token`: `const char*` |
+| `KCRAWL_HEADER` | Custom authentication header. — Fields: `name`: `const char*`, `value`: `const char*` |
 
 
 ---
@@ -875,9 +875,9 @@ An event emitted during a streaming crawl operation.
 
 | Value | Description |
 |-------|-------------|
-| `KCRAWL_PAGE` | A single page has been crawled. |
-| `KCRAWL_ERROR` | An error occurred while crawling a URL. |
-| `KCRAWL_COMPLETE` | The crawl has completed. |
+| `KCRAWL_PAGE` | A single page has been crawled. — Fields: `0`: `KcrawlCrawlPageResult` |
+| `KCRAWL_ERROR` | An error occurred while crawling a URL. — Fields: `url`: `const char*`, `error`: `const char*` |
+| `KCRAWL_COMPLETE` | The crawl has completed. — Fields: `pages_crawled`: `uintptr_t` |
 
 
 ---
@@ -910,3 +910,4 @@ Errors that can occur during crawling, scraping, or mapping operations.
 
 
 ---
+

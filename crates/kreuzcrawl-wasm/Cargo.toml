@@ -6,18 +6,17 @@ license = "Elastic-2.0"
 description = "High-performance web crawling engine"
 repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+kreuzcrawl = { path = "../kreuzcrawl" }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+serde-wasm-bindgen = "0.6"
+
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false
 
 [package.metadata.cargo-machete]
 ignored = ["wasm-bindgen-futures"]
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-getrandom = { version = "0.3", features = ["wasm_js"] }
-kreuzcrawl = { path = "../kreuzcrawl", default-features = false }
-serde-wasm-bindgen = "0.6"
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"

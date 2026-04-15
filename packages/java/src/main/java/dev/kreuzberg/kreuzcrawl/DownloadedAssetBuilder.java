@@ -5,44 +5,51 @@ import java.util.Optional;
 
 public class DownloadedAssetBuilder {
 
-  private String url = "";
-  private String contentHash = "";
-  private Optional<String> mimeType = Optional.empty();
-  private long size = 0;
-  private AssetCategory assetCategory = null;
-  private Optional<String> htmlTag = Optional.empty();
+    private String url = "";
+    private String contentHash = "";
+    private Optional<String> mimeType = Optional.empty();
+    private long size = 0;
+    private AssetCategory assetCategory = null;
+    private Optional<String> htmlTag = Optional.empty();
 
-  public DownloadedAssetBuilder withUrl(String value) {
-    this.url = value;
-    return this;
-  }
+    public DownloadedAssetBuilder withUrl(String value) {
+        this.url = value;
+        return this;
+    }
 
-  public DownloadedAssetBuilder withContentHash(String value) {
-    this.contentHash = value;
-    return this;
-  }
+    public DownloadedAssetBuilder withContentHash(String value) {
+        this.contentHash = value;
+        return this;
+    }
 
-  public DownloadedAssetBuilder withMimeType(Optional<String> value) {
-    this.mimeType = value;
-    return this;
-  }
+    public DownloadedAssetBuilder withMimeType(Optional<String> value) {
+        this.mimeType = value;
+        return this;
+    }
 
-  public DownloadedAssetBuilder withSize(long value) {
-    this.size = value;
-    return this;
-  }
+    public DownloadedAssetBuilder withSize(long value) {
+        this.size = value;
+        return this;
+    }
 
-  public DownloadedAssetBuilder withAssetCategory(AssetCategory value) {
-    this.assetCategory = value;
-    return this;
-  }
+    public DownloadedAssetBuilder withAssetCategory(AssetCategory value) {
+        this.assetCategory = value;
+        return this;
+    }
 
-  public DownloadedAssetBuilder withHtmlTag(Optional<String> value) {
-    this.htmlTag = value;
-    return this;
-  }
+    public DownloadedAssetBuilder withHtmlTag(Optional<String> value) {
+        this.htmlTag = value;
+        return this;
+    }
 
-  public DownloadedAsset build() {
-    return new DownloadedAsset(url, contentHash, mimeType, size, assetCategory, htmlTag);
-  }
+    public DownloadedAsset build() {
+        return new DownloadedAsset(
+            url,
+            contentHash,
+            mimeType,
+            size,
+            assetCategory,
+            htmlTag
+        );
+    }
 }

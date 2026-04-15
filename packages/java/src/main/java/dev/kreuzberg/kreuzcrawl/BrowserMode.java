@@ -5,28 +5,28 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum BrowserMode {
-  Auto("auto"),
-  Always("always"),
-  Never("never");
+    Auto("auto"),
+    Always("always"),
+    Never("never");
 
-  private final String value;
+    private final String value;
 
-  BrowserMode(String value) {
-    this.value = value;
-  }
-
-  @JsonValue
-  public String getValue() {
-    return value;
-  }
-
-  @JsonCreator
-  public static BrowserMode fromValue(String value) {
-    for (BrowserMode e : values()) {
-      if (e.value.equalsIgnoreCase(value)) {
-        return e;
-      }
+    BrowserMode(String value) {
+        this.value = value;
     }
-    throw new IllegalArgumentException("Unknown value: " + value);
-  }
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    @JsonCreator
+    public static BrowserMode fromValue(String value) {
+        for (BrowserMode e : values()) {
+            if (e.value.equalsIgnoreCase(value)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Unknown value: " + value);
+    }
 }

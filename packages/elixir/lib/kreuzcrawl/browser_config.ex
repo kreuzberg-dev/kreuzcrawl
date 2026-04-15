@@ -3,9 +3,9 @@ defmodule Kreuzcrawl.BrowserConfig do
   @moduledoc "Browser fallback configuration."
 
   defstruct mode: :auto,
-            endpoint: "",
-            timeout: 0,
+            endpoint: nil,
+            timeout: 30_000,
             wait: :network_idle,
-            wait_selector: "",
-            extra_wait: 0
+            wait_selector: nil,
+            extra_wait: nil
 end

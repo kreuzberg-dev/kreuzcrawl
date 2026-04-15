@@ -2,7 +2,7 @@
 title: "PHP API Reference"
 ---
 
-## PHP API Reference <span class="version-badge">v0.1.0-rc.1</span>
+# PHP API Reference <span class="version-badge">v0.1.0-rc.1</span>
 
 ## Functions
 
@@ -181,9 +181,9 @@ Result from a single page action execution.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `actionIndex` | `int` | `null` | Zero-based index of the action in the sequence. |
-| `actionType` | `Str` | `null` | The type of action that was executed. |
-| `success` | `bool` | `null` | Whether the action completed successfully. |
+| `actionIndex` | `int` | — | Zero-based index of the action in the sequence. |
+| `actionType` | `Str` | — | The type of action that was executed. |
+| `success` | `bool` | — | Whether the action completed successfully. |
 | `data` | `?mixed` | `null` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `?string` | `null` | Error message if the action failed. |
 
@@ -211,7 +211,7 @@ Result from a single URL in a batch crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The seed URL that was crawled. |
+| `url` | `string` | — | The seed URL that was crawled. |
 | `result` | `?CrawlResult` | `null` | The crawl result, if successful. |
 | `error` | `?string` | `null` | The error message, if the crawl failed. |
 
@@ -224,7 +224,7 @@ Result from a single URL in a batch scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The URL that was scraped. |
+| `url` | `string` | — | The URL that was scraped. |
 | `result` | `?ScrapeResult` | `null` | The scrape result, if successful. |
 | `error` | `?string` | `null` | The error message, if the scrape failed. |
 
@@ -239,10 +239,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode::Auto` | When to use the headless browser fallback. |
 | `endpoint` | `?string` | `null` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `float` | `null` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `float` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait::NetworkIdle` | Wait strategy after browser navigation. |
 | `waitSelector` | `?string` | `null` | CSS selector to wait for when `wait` is `Selector`. |
-| `extraWait` | `?float` | `null` | Extra time to wait after the wait condition is met. |
+| `extraWait` | `?float` | `0ms` | Extra time to wait after the wait condition is met. |
 
 #### Methods
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | Url |
-| `statusCode` | `int` | `null` | Status code |
-| `contentType` | `string` | `null` | Content type |
-| `body` | `string` | `null` | Body |
+| `url` | `string` | — | Url |
+| `statusCode` | `int` | — | Status code |
+| `contentType` | `string` | — | Content type |
+| `body` | `string` | — | Body |
 | `etag` | `?string` | `null` | Etag |
 | `lastModified` | `?string` | `null` | Last modified |
-| `cachedAt` | `int` | `null` | Cached at |
+| `cachedAt` | `int` | — | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `int` | `null` | Index |
-| `url` | `string` | `null` | Url |
-| `text` | `string` | `null` | Text |
+| `index` | `int` | — | Index |
+| `url` | `string` | — | Url |
+| `text` | `string` | — | Text |
 
 
 ---
@@ -291,7 +291,7 @@ Result of citation conversion.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | `null` | Markdown with links replaced by numbered citations. |
+| `content` | `string` | — | Markdown with links replaced by numbered citations. |
 | `references` | `array<CitationReference>` | `[]` | Numbered reference list: (index, url, text). |
 
 
@@ -303,8 +303,8 @@ Information about an HTTP cookie received from a response.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | `null` | The cookie name. |
-| `value` | `string` | `null` | The cookie value. |
+| `name` | `string` | — | The cookie name. |
+| `value` | `string` | — | The cookie value. |
 | `domain` | `?string` | `null` | The cookie domain, if specified. |
 | `path` | `?string` | `null` | The cookie path, if specified. |
 
@@ -327,12 +327,12 @@ Configuration for crawl, scrape, and map operations.
 | `includePaths` | `array<string>` | `[]` | Regex patterns for paths to include during crawling. |
 | `excludePaths` | `array<string>` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `customHeaders` | `array<string, string>` | `{}` | Custom HTTP headers to send with each request. |
-| `requestTimeout` | `float` | `null` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `requestTimeout` | `float` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `maxRedirects` | `int` | `10` | Maximum number of redirects to follow. |
 | `retryCount` | `int` | `0` | Number of retry attempts for failed requests. |
 | `retryCodes` | `array<int>` | `[]` | HTTP status codes that should trigger a retry. |
 | `cookiesEnabled` | `bool` | `false` | Whether to enable cookie handling. |
-| `auth` | `?AuthConfig` | `AuthConfig::Basic` | Authentication configuration. |
+| `auth` | `?AuthConfig` | `null` | Authentication configuration. |
 | `maxBodySize` | `?int` | `null` | Maximum response body size in bytes. |
 | `mainContentOnly` | `bool` | `false` | Whether to extract only the main content from HTML pages. |
 | `removeTags` | `array<string>` | `[]` | CSS selectors for tags to remove from HTML before processing. |
@@ -341,7 +341,7 @@ Configuration for crawl, scrape, and map operations.
 | `downloadAssets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
 | `assetTypes` | `array<AssetCategory>` | `[]` | Filter for asset categories to download. |
 | `maxAssetSize` | `?int` | `null` | Maximum size in bytes for individual asset downloads. |
-| `browser` | `BrowserConfig` | `null` | Browser configuration. |
+| `browser` | `BrowserConfig` | — | Browser configuration. |
 | `proxy` | `?ProxyConfig` | `null` | Proxy configuration for HTTP requests. |
 | `userAgents` | `array<string>` | `[]` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `captureScreenshot` | `bool` | `false` | Whether to capture a screenshot when using the browser. |
@@ -392,21 +392,21 @@ The result of crawling a single page during a crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The original URL of the page. |
-| `normalizedUrl` | `string` | `null` | The normalized URL of the page. |
-| `statusCode` | `int` | `null` | The HTTP status code of the response. |
-| `contentType` | `string` | `null` | The Content-Type header value. |
-| `html` | `string` | `null` | The HTML body of the response. |
-| `bodySize` | `int` | `null` | The size of the response body in bytes. |
-| `metadata` | `PageMetadata` | `null` | Extracted metadata from the page. |
+| `url` | `string` | — | The original URL of the page. |
+| `normalizedUrl` | `string` | — | The normalized URL of the page. |
+| `statusCode` | `int` | — | The HTTP status code of the response. |
+| `contentType` | `string` | — | The Content-Type header value. |
+| `html` | `string` | — | The HTML body of the response. |
+| `bodySize` | `int` | — | The size of the response body in bytes. |
+| `metadata` | `PageMetadata` | — | Extracted metadata from the page. |
 | `links` | `array<LinkInfo>` | `[]` | Links found on the page. |
 | `images` | `array<ImageInfo>` | `[]` | Images found on the page. |
 | `feeds` | `array<FeedInfo>` | `[]` | Feed links found on the page. |
 | `jsonLd` | `array<JsonLdEntry>` | `[]` | JSON-LD entries found on the page. |
-| `depth` | `int` | `null` | The depth of this page from the start URL. |
-| `stayedOnDomain` | `bool` | `null` | Whether this page is on the same domain as the start URL. |
-| `wasSkipped` | `bool` | `null` | Whether this page was skipped (binary or PDF content). |
-| `isPdf` | `bool` | `null` | Whether the content is a PDF. |
+| `depth` | `int` | — | The depth of this page from the start URL. |
+| `stayedOnDomain` | `bool` | — | Whether this page is on the same domain as the start URL. |
+| `wasSkipped` | `bool` | — | Whether this page was skipped (binary or PDF content). |
+| `isPdf` | `bool` | — | Whether the content is a PDF. |
 | `detectedCharset` | `?string` | `null` | The detected character set encoding. |
 | `markdown` | `?MarkdownResult` | `null` | Markdown conversion of the page content. |
 | `extractedData` | `?mixed` | `null` | Structured data extracted by LLM. Populated when using LlmExtractor. |
@@ -423,9 +423,9 @@ The result of a multi-page crawl operation.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `pages` | `array<CrawlPageResult>` | `[]` | The list of crawled pages. |
-| `finalUrl` | `string` | `null` | The final URL after following redirects. |
-| `redirectCount` | `int` | `null` | The number of redirects followed. |
-| `wasSkipped` | `bool` | `null` | Whether any page was skipped during crawling. |
+| `finalUrl` | `string` | — | The final URL after following redirects. |
+| `redirectCount` | `int` | — | The number of redirects followed. |
+| `wasSkipped` | `bool` | — | Whether any page was skipped during crawling. |
 | `error` | `?string` | `null` | An error message, if the crawl encountered an issue. |
 | `cookies` | `array<CookieInfo>` | `[]` | Cookies collected during the crawl. |
 | `normalizedUrls` | `array<string>` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
@@ -451,10 +451,10 @@ A downloaded asset from a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The original URL of the asset. |
-| `contentHash` | `string` | `null` | The SHA-256 content hash of the asset. |
+| `url` | `string` | — | The original URL of the asset. |
+| `contentHash` | `string` | — | The SHA-256 content hash of the asset. |
 | `mimeType` | `?string` | `null` | The MIME type from the Content-Type header. |
-| `size` | `int` | `null` | The size of the asset in bytes. |
+| `size` | `int` | — | The size of the asset in bytes. |
 | `assetCategory` | `AssetCategory` | `AssetCategory::Image` | The category of the asset. |
 | `htmlTag` | `?string` | `null` | The HTML tag that referenced this asset (e.g., "link", "script", "img"). |
 
@@ -471,12 +471,12 @@ skipping the resource.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The URL the document was fetched from. |
-| `mimeType` | `Str` | `null` | The MIME type from the Content-Type header. |
-| `content` | `string` | `null` | Raw document bytes. Skipped during JSON serialization. |
-| `size` | `int` | `null` | Size of the document in bytes. |
+| `url` | `string` | — | The URL the document was fetched from. |
+| `mimeType` | `Str` | — | The MIME type from the Content-Type header. |
+| `content` | `string` | — | Raw document bytes. Skipped during JSON serialization. |
+| `size` | `int` | — | Size of the document in bytes. |
 | `filename` | `?Str` | `null` | Filename extracted from Content-Disposition or URL path. |
-| `contentHash` | `Str` | `null` | SHA-256 hex digest of the content. |
+| `contentHash` | `Str` | — | SHA-256 hex digest of the content. |
 | `headers` | `array<Str, Str>` | `{}` | Selected response headers. |
 
 
@@ -492,7 +492,7 @@ Metadata about an LLM extraction pass.
 | `promptTokens` | `?int` | `null` | Number of prompt (input) tokens consumed. |
 | `completionTokens` | `?int` | `null` | Number of completion (output) tokens generated. |
 | `model` | `?string` | `null` | The model identifier used for extraction. |
-| `chunksProcessed` | `int` | `null` | Number of content chunks sent to the LLM. |
+| `chunksProcessed` | `int` | — | Number of content chunks sent to the LLM. |
 
 
 ---
@@ -503,8 +503,8 @@ Information about a favicon or icon link.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The icon URL. |
-| `rel` | `string` | `null` | The `rel` attribute (e.g., "icon", "apple-touch-icon"). |
+| `url` | `string` | — | The icon URL. |
+| `rel` | `string` | — | The `rel` attribute (e.g., "icon", "apple-touch-icon"). |
 | `sizes` | `?string` | `null` | The `sizes` attribute, if present. |
 | `mimeType` | `?string` | `null` | The MIME type, if present. |
 
@@ -517,7 +517,7 @@ Information about a feed link found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The feed URL. |
+| `url` | `string` | — | The feed URL. |
 | `title` | `?string` | `null` | The feed title, if present. |
 | `feedType` | `FeedType` | `FeedType::Rss` | The type of feed. |
 
@@ -530,8 +530,8 @@ A heading element extracted from the page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `level` | `int` | `null` | The heading level (1-6). |
-| `text` | `string` | `null` | The heading text content. |
+| `level` | `int` | — | The heading level (1-6). |
+| `text` | `string` | — | The heading text content. |
 
 
 ---
@@ -542,8 +542,8 @@ An hreflang alternate link entry.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `lang` | `string` | `null` | The language code (e.g., "en", "fr", "x-default"). |
-| `url` | `string` | `null` | The URL for this language variant. |
+| `lang` | `string` | — | The language code (e.g., "en", "fr", "x-default"). |
+| `url` | `string` | — | The URL for this language variant. |
 
 
 ---
@@ -554,7 +554,7 @@ Information about an image found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The image URL. |
+| `url` | `string` | — | The image URL. |
 | `alt` | `?string` | `null` | The alt text, if present. |
 | `width` | `?int` | `null` | The width attribute, if present and parseable. |
 | `height` | `?int` | `null` | The height attribute, if present and parseable. |
@@ -570,8 +570,8 @@ Result of executing a sequence of page interaction actions.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `actionResults` | `array<ActionResult>` | `[]` | Results from each executed action. |
-| `finalHtml` | `string` | `null` | Final page HTML after all actions completed. |
-| `finalUrl` | `string` | `null` | Final page URL (may have changed due to navigation). |
+| `finalHtml` | `string` | — | Final page HTML after all actions completed. |
+| `finalUrl` | `string` | — | Final page URL (may have changed due to navigation). |
 | `screenshot` | `?string` | `null` | Screenshot taken after all actions, if requested. |
 
 
@@ -583,9 +583,9 @@ A JSON-LD structured data entry found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `schemaType` | `string` | `null` | The `@type` value from the JSON-LD object. |
+| `schemaType` | `string` | — | The `@type` value from the JSON-LD object. |
 | `name` | `?string` | `null` | The `name` value, if present. |
-| `raw` | `string` | `null` | The raw JSON-LD string. |
+| `raw` | `string` | — | The raw JSON-LD string. |
 
 
 ---
@@ -596,11 +596,11 @@ Information about a link found on a page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The resolved URL of the link. |
-| `text` | `string` | `null` | The visible text of the link. |
+| `url` | `string` | — | The resolved URL of the link. |
+| `text` | `string` | — | The visible text of the link. |
 | `linkType` | `LinkType` | `LinkType::Internal` | The classification of the link. |
 | `rel` | `?string` | `null` | The `rel` attribute value, if present. |
-| `nofollow` | `bool` | `null` | Whether the link has `rel="nofollow"`. |
+| `nofollow` | `bool` | — | Whether the link has `rel="nofollow"`. |
 
 
 ---
@@ -622,7 +622,7 @@ Rich markdown conversion result from HTML processing.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | `null` | Converted markdown text. |
+| `content` | `string` | — | Converted markdown text. |
 | `documentStructure` | `?mixed` | `null` | Structured document tree with semantic nodes. |
 | `tables` | `array<mixed>` | `[]` | Extracted tables with structured cell data. |
 | `warnings` | `array<string>` | `[]` | Non-fatal processing warnings. |
@@ -691,7 +691,7 @@ Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
+| `url` | `string` | — | Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080"). |
 | `username` | `?string` | `null` | Optional username for proxy authentication. |
 | `password` | `?string` | `null` | Optional password for proxy authentication. |
 
@@ -721,29 +721,29 @@ The result of a single-page scrape operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `statusCode` | `int` | `null` | The HTTP status code of the response. |
-| `contentType` | `string` | `null` | The Content-Type header value. |
-| `html` | `string` | `null` | The HTML body of the response. |
-| `bodySize` | `int` | `null` | The size of the response body in bytes. |
-| `metadata` | `PageMetadata` | `null` | Extracted metadata from the page. |
+| `statusCode` | `int` | — | The HTTP status code of the response. |
+| `contentType` | `string` | — | The Content-Type header value. |
+| `html` | `string` | — | The HTML body of the response. |
+| `bodySize` | `int` | — | The size of the response body in bytes. |
+| `metadata` | `PageMetadata` | — | Extracted metadata from the page. |
 | `links` | `array<LinkInfo>` | `[]` | Links found on the page. |
 | `images` | `array<ImageInfo>` | `[]` | Images found on the page. |
 | `feeds` | `array<FeedInfo>` | `[]` | Feed links found on the page. |
 | `jsonLd` | `array<JsonLdEntry>` | `[]` | JSON-LD entries found on the page. |
-| `isAllowed` | `bool` | `null` | Whether the URL is allowed by robots.txt. |
+| `isAllowed` | `bool` | — | Whether the URL is allowed by robots.txt. |
 | `crawlDelay` | `?int` | `null` | The crawl delay from robots.txt, in seconds. |
-| `noindexDetected` | `bool` | `null` | Whether a noindex directive was detected. |
-| `nofollowDetected` | `bool` | `null` | Whether a nofollow directive was detected. |
+| `noindexDetected` | `bool` | — | Whether a noindex directive was detected. |
+| `nofollowDetected` | `bool` | — | Whether a nofollow directive was detected. |
 | `xRobotsTag` | `?string` | `null` | The X-Robots-Tag header value, if present. |
-| `isPdf` | `bool` | `null` | Whether the content is a PDF. |
-| `wasSkipped` | `bool` | `null` | Whether the page was skipped (binary or PDF content). |
+| `isPdf` | `bool` | — | Whether the content is a PDF. |
+| `wasSkipped` | `bool` | — | Whether the page was skipped (binary or PDF content). |
 | `detectedCharset` | `?string` | `null` | The detected character set encoding. |
-| `mainContentOnly` | `bool` | `null` | Whether main_content_only was active during extraction. |
-| `authHeaderSent` | `bool` | `null` | Whether an authentication header was sent with the request. |
+| `mainContentOnly` | `bool` | — | Whether main_content_only was active during extraction. |
+| `authHeaderSent` | `bool` | — | Whether an authentication header was sent with the request. |
 | `responseMeta` | `?ResponseMeta` | `null` | Response metadata extracted from HTTP headers. |
 | `assets` | `array<DownloadedAsset>` | `[]` | Downloaded assets from the page. |
-| `jsRenderHint` | `bool` | `null` | Whether the page content suggests JavaScript rendering is needed. |
-| `browserUsed` | `bool` | `null` | Whether the browser fallback was used to fetch this page. |
+| `jsRenderHint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
+| `browserUsed` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `?MarkdownResult` | `null` | Markdown conversion of the page content. |
 | `extractedData` | `?mixed` | `null` | Structured data extracted by LLM. Populated when using LlmExtractor. |
 | `extractionMeta` | `?ExtractionMeta` | `null` | Metadata about the LLM extraction pass (cost, tokens, model). |
@@ -759,7 +759,7 @@ A URL entry from a sitemap.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` | The URL. |
+| `url` | `string` | — | The URL. |
 | `lastmod` | `?string` | `null` | The last modification date, if present. |
 | `changefreq` | `?string` | `null` | The change frequency, if present. |
 | `priority` | `?string` | `null` | The priority, if present. |
@@ -801,9 +801,9 @@ Authentication configuration.
 
 | Value | Description |
 |-------|-------------|
-| `Basic` | HTTP Basic authentication. |
-| `Bearer` | Bearer token authentication. |
-| `Header` | Custom authentication header. |
+| `Basic` | HTTP Basic authentication. — Fields: `username`: `string`, `password`: `string` |
+| `Bearer` | Bearer token authentication. — Fields: `token`: `string` |
+| `Header` | Custom authentication header. — Fields: `name`: `string`, `value`: `string` |
 
 
 ---
@@ -875,9 +875,9 @@ An event emitted during a streaming crawl operation.
 
 | Value | Description |
 |-------|-------------|
-| `Page` | A single page has been crawled. |
-| `Error` | An error occurred while crawling a URL. |
-| `Complete` | The crawl has completed. |
+| `Page` | A single page has been crawled. — Fields: `0`: `CrawlPageResult` |
+| `Error` | An error occurred while crawling a URL. — Fields: `url`: `string`, `error`: `string` |
+| `Complete` | The crawl has completed. — Fields: `pagesCrawled`: `int` |
 
 
 ---
@@ -910,3 +910,4 @@ Errors that can occur during crawling, scraping, or mapping operations.
 
 
 ---
+
