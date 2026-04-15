@@ -3,13 +3,13 @@
 
 use kreuzcrawl::create_engine;
 use kreuzcrawl::scrape;
+use kreuzcrawl::CrawlConfig;
 
 #[tokio::test]
 async fn test_scrape_asset_dedup() {
     // Same asset linked twice results in one download with one unique hash
-    let engine_config: kreuzcrawl::CrawlConfig =
-        serde_json::from_str("{\"download_assets\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine_config: CrawlConfig = serde_json::from_str("{\"download_assets\":true}").expect("config should parse");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -24,9 +24,9 @@ async fn test_scrape_asset_dedup() {
 #[tokio::test]
 async fn test_scrape_asset_max_size() {
     // Skips assets exceeding max_asset_size limit
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"download_assets\":true,\"max_asset_size\":150}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -40,9 +40,9 @@ async fn test_scrape_asset_max_size() {
 #[tokio::test]
 async fn test_scrape_asset_type_filter() {
     // Only downloads image assets when asset_types filter is set
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"asset_types\":[\"image\"],\"download_assets\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -61,9 +61,9 @@ async fn test_scrape_asset_type_filter() {
 #[tokio::test]
 async fn test_scrape_basic_html_page() {
     // Scrapes a simple HTML page and extracts title, description, and links
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"max_depth\":0,\"respect_robots_txt\":false}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -85,7 +85,7 @@ async fn test_scrape_basic_html_page() {
         result.metadata.canonical_url.is_some(),
         "expected metadata.canonical_url to be present"
     );
-    assert!(result.links.len() > 0, "expected > 0");
+    assert!(!result.links.is_empty(), "expected > 0");
     assert!(
         format!("{:?}", result.links[0].link_type).contains(r#"external"#),
         "expected to contain: {}",
@@ -98,7 +98,7 @@ async fn test_scrape_basic_html_page() {
 #[tokio::test]
 async fn test_scrape_complex_links() {
     // Classifies links by type: internal, external, anchor, document, image
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -113,9 +113,8 @@ async fn test_scrape_complex_links() {
 #[tokio::test]
 async fn test_scrape_download_assets() {
     // Downloads CSS, JS, and image assets from page
-    let engine_config: kreuzcrawl::CrawlConfig =
-        serde_json::from_str("{\"download_assets\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine_config: CrawlConfig = serde_json::from_str("{\"download_assets\":true}").expect("config should parse");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -129,7 +128,7 @@ async fn test_scrape_download_assets() {
 #[tokio::test]
 async fn test_scrape_dublin_core() {
     // Extracts Dublin Core metadata from a page
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -155,7 +154,7 @@ async fn test_scrape_dublin_core() {
 #[tokio::test]
 async fn test_scrape_empty_page() {
     // Handles an empty HTML document without errors
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -170,7 +169,7 @@ async fn test_scrape_empty_page() {
 #[tokio::test]
 async fn test_scrape_feed_discovery() {
     // Discovers RSS, Atom, and JSON feed links
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -184,7 +183,7 @@ async fn test_scrape_feed_discovery() {
 #[tokio::test]
 async fn test_scrape_image_sources() {
     // Extracts images from img, picture, og:image, twitter:image
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -204,7 +203,7 @@ async fn test_scrape_image_sources() {
 #[tokio::test]
 async fn test_scrape_js_heavy_spa() {
     // Handles SPA page with JavaScript-only content (no server-rendered HTML)
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -217,7 +216,7 @@ async fn test_scrape_js_heavy_spa() {
 #[tokio::test]
 async fn test_scrape_json_ld() {
     // Extracts JSON-LD structured data from a page
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -238,7 +237,7 @@ async fn test_scrape_json_ld() {
 #[tokio::test]
 async fn test_scrape_malformed_html() {
     // Gracefully handles broken HTML without crashing
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -258,7 +257,7 @@ async fn test_scrape_malformed_html() {
 #[tokio::test]
 async fn test_scrape_og_metadata() {
     // Extracts full Open Graph metadata from a page
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -292,7 +291,7 @@ async fn test_scrape_og_metadata() {
 #[tokio::test]
 async fn test_scrape_twitter_card() {
     // Extracts Twitter Card metadata from a page
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),

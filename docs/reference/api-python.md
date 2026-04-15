@@ -24,7 +24,7 @@ def generate_citations(markdown: str) -> CitationResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `markdown` | `str` | Yes |  |
+| `markdown` | `str` | Yes | The markdown |
 
 **Returns:** `CitationResult`
 
@@ -48,7 +48,7 @@ def create_engine(config: CrawlConfig = None) -> CrawlEngineHandle
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `CrawlConfig | None` | No |  |
+| `config` | `CrawlConfig | None` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
 
@@ -71,8 +71,8 @@ async def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `str` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `str` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
 
@@ -95,8 +95,8 @@ async def crawl(engine: CrawlEngineHandle, url: str) -> CrawlResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `str` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `str` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
 
@@ -119,8 +119,8 @@ async def map_urls(engine: CrawlEngineHandle, url: str) -> MapResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `str` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `str` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
 
@@ -143,8 +143,8 @@ async def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[Batch
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `list[str]` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `list[str]` | Yes | The urls |
 
 **Returns:** `list[BatchScrapeResult]`
 
@@ -165,8 +165,8 @@ async def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchC
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `list[str]` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `list[str]` | Yes | The urls |
 
 **Returns:** `list[BatchCrawlResult]`
 
@@ -264,13 +264,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `str` | `None` |  |
-| `status_code` | `int` | `None` |  |
-| `content_type` | `str` | `None` |  |
-| `body` | `str` | `None` |  |
-| `etag` | `str | None` | `None` |  |
-| `last_modified` | `str | None` | `None` |  |
-| `cached_at` | `int` | `None` |  |
+| `url` | `str` | `None` | Url |
+| `status_code` | `int` | `None` | Status code |
+| `content_type` | `str` | `None` | Content type |
+| `body` | `str` | `None` | Body |
+| `etag` | `str | None` | `None` | Etag |
+| `last_modified` | `str | None` | `None` | Last modified |
+| `cached_at` | `int` | `None` | Cached at |
 
 
 ---
@@ -279,9 +279,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `int` | `None` |  |
-| `url` | `str` | `None` |  |
-| `text` | `str` | `None` |  |
+| `index` | `int` | `None` | Index |
+| `url` | `str` | `None` | Url |
+| `text` | `str` | `None` | Text |
 
 
 ---

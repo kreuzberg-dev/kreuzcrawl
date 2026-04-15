@@ -3,14 +3,15 @@
 
 use kreuzcrawl::create_engine;
 use kreuzcrawl::scrape;
+use kreuzcrawl::CrawlConfig;
 
 #[tokio::test]
 async fn test_cookies_per_domain() {
     // Isolates cookies per domain during crawl
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}")
             .expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -24,10 +25,10 @@ async fn test_cookies_per_domain() {
 #[tokio::test]
 async fn test_cookies_persistence() {
     // Maintains cookies across multiple crawl requests
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}")
             .expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -40,10 +41,10 @@ async fn test_cookies_persistence() {
 #[tokio::test]
 async fn test_cookies_set_cookie_response() {
     // Respects Set-Cookie header from server responses
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"cookies_enabled\":true,\"max_depth\":1,\"respect_robots_txt\":false}")
             .expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),

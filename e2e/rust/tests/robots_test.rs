@@ -3,135 +3,136 @@
 
 use kreuzcrawl::create_engine;
 use kreuzcrawl::scrape;
+use kreuzcrawl::CrawlConfig;
 
 #[tokio::test]
 async fn test_robots_allow_all() {
     // Permissive robots.txt allows all paths
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
         "robots_allow_all"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, true, "equals assertion failed");
+    assert!(result.is_allowed, "equals assertion failed");
 }
 
 #[tokio::test]
 async fn test_robots_allow_override() {
     // Allow directive overrides Disallow for specific paths
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
         "robots_allow_override"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, true, "equals assertion failed");
+    assert!(result.is_allowed, "equals assertion failed");
 }
 
 #[tokio::test]
 async fn test_robots_comments_handling() {
     // Correctly parses robots.txt with inline and line comments
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"kreuzcrawl\"}")
             .expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
         "robots_comments_handling"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, true, "equals assertion failed");
+    assert!(result.is_allowed, "equals assertion failed");
 }
 
 #[tokio::test]
 async fn test_robots_meta_nofollow() {
     // Detects nofollow meta robots tag and skips link extraction
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
         "robots_meta_nofollow"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.nofollow_detected, true, "equals assertion failed");
+    assert!(result.nofollow_detected, "equals assertion failed");
 }
 
 #[tokio::test]
 async fn test_robots_meta_noindex() {
     // Detects noindex meta robots tag in HTML page
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
         "robots_meta_noindex"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.noindex_detected, true, "equals assertion failed");
+    assert!(result.noindex_detected, "equals assertion failed");
 }
 
 #[tokio::test]
 async fn test_robots_missing_404() {
     // Missing robots.txt (404) allows all crawling
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
         "robots_missing_404"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, true, "equals assertion failed");
+    assert!(result.is_allowed, "equals assertion failed");
 }
 
 #[tokio::test]
 async fn test_robots_multiple_user_agents() {
     // Picks the most specific user-agent block from robots.txt
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true,\"user_agent\":\"SpecificBot\"}")
             .expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
         "robots_multiple_user_agents"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, true, "equals assertion failed");
+    assert!(result.is_allowed, "equals assertion failed");
 }
 
 #[tokio::test]
 async fn test_robots_sitemap_directive() {
     // Discovers sitemap URL from Sitemap directive in robots.txt
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
         "robots_sitemap_directive"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert_eq!(result.is_allowed, true, "equals assertion failed");
+    assert!(result.is_allowed, "equals assertion failed");
 }
 
 #[tokio::test]
 async fn test_robots_x_robots_tag() {
     // Respects X-Robots-Tag HTTP header directives
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"respect_robots_txt\":true}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -140,6 +141,6 @@ async fn test_robots_x_robots_tag() {
     let result = scrape(&engine, &url).await.expect("should succeed");
     let x_robots_tag = result.x_robots_tag.as_deref().unwrap_or("");
     assert_eq!(x_robots_tag.trim(), r#"noindex, nofollow"#, "equals assertion failed");
-    assert_eq!(result.noindex_detected, true, "equals assertion failed");
-    assert_eq!(result.nofollow_detected, true, "equals assertion failed");
+    assert!(result.noindex_detected, "equals assertion failed");
+    assert!(result.nofollow_detected, "equals assertion failed");
 }

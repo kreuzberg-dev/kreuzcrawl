@@ -24,7 +24,7 @@ public static CitationResult GenerateCitations(string markdown)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Markdown` | `string` | Yes |  |
+| `Markdown` | `string` | Yes | The markdown |
 
 **Returns:** `CitationResult`
 
@@ -48,7 +48,7 @@ public static CrawlEngineHandle CreateEngine(CrawlConfig? config = null)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Config` | `CrawlConfig?` | No |  |
+| `Config` | `CrawlConfig?` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
 
@@ -71,8 +71,8 @@ public static async Task<ScrapeResult> ScrapeAsync(CrawlEngineHandle engine, str
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Url` | `string` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
 
@@ -95,8 +95,8 @@ public static async Task<CrawlResult> CrawlAsync(CrawlEngineHandle engine, strin
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Url` | `string` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
 
@@ -119,8 +119,8 @@ public static async Task<MapResult> MapUrlsAsync(CrawlEngineHandle engine, strin
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Url` | `string` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
 
@@ -143,8 +143,8 @@ public static async Task<List<BatchScrapeResult>> BatchScrapeAsync(CrawlEngineHa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Urls` | `List<string>` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Urls` | `List<string>` | Yes | The urls |
 
 **Returns:** `List<BatchScrapeResult>`
 
@@ -165,8 +165,8 @@ public static async Task<List<BatchCrawlResult>> BatchCrawlAsync(CrawlEngineHand
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Urls` | `List<string>` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Urls` | `List<string>` | Yes | The urls |
 
 **Returns:** `List<BatchCrawlResult>`
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Url` | `string` | `null` |  |
-| `StatusCode` | `ushort` | `null` |  |
-| `ContentType` | `string` | `null` |  |
-| `Body` | `string` | `null` |  |
-| `Etag` | `string?` | `null` |  |
-| `LastModified` | `string?` | `null` |  |
-| `CachedAt` | `ulong` | `null` |  |
+| `Url` | `string` | `null` | Url |
+| `StatusCode` | `ushort` | `null` | Status code |
+| `ContentType` | `string` | `null` | Content type |
+| `Body` | `string` | `null` | Body |
+| `Etag` | `string?` | `null` | Etag |
+| `LastModified` | `string?` | `null` | Last modified |
+| `CachedAt` | `ulong` | `null` | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Index` | `nuint` | `null` |  |
-| `Url` | `string` | `null` |  |
-| `Text` | `string` | `null` |  |
+| `Index` | `nuint` | `null` | Index |
+| `Url` | `string` | `null` | Url |
+| `Text` | `string` | `null` | Text |
 
 
 ---

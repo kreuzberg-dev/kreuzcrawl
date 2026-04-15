@@ -24,7 +24,7 @@ func GenerateCitations(markdown string) CitationResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Markdown` | `string` | Yes |  |
+| `Markdown` | `string` | Yes | The markdown |
 
 **Returns:** `CitationResult`
 
@@ -48,7 +48,7 @@ func CreateEngine(config CrawlConfig) (CrawlEngineHandle, error)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Config` | `*CrawlConfig` | No |  |
+| `Config` | `*CrawlConfig` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
 
@@ -71,8 +71,8 @@ func Scrape(engine CrawlEngineHandle, url string) (ScrapeResult, error)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Url` | `string` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
 
@@ -95,8 +95,8 @@ func Crawl(engine CrawlEngineHandle, url string) (CrawlResult, error)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Url` | `string` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
 
@@ -119,8 +119,8 @@ func MapUrls(engine CrawlEngineHandle, url string) (MapResult, error)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Url` | `string` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
 
@@ -143,8 +143,8 @@ func BatchScrape(engine CrawlEngineHandle, urls []string) []BatchScrapeResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Urls` | `[]string` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Urls` | `[]string` | Yes | The urls |
 
 **Returns:** `[]BatchScrapeResult`
 
@@ -165,8 +165,8 @@ func BatchCrawl(engine CrawlEngineHandle, urls []string) []BatchCrawlResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Engine` | `CrawlEngineHandle` | Yes |  |
-| `Urls` | `[]string` | Yes |  |
+| `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `Urls` | `[]string` | Yes | The urls |
 
 **Returns:** `[]BatchCrawlResult`
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Url` | `string` | `nil` |  |
-| `StatusCode` | `uint16` | `nil` |  |
-| `ContentType` | `string` | `nil` |  |
-| `Body` | `string` | `nil` |  |
-| `Etag` | `*string` | `nil` |  |
-| `LastModified` | `*string` | `nil` |  |
-| `CachedAt` | `uint64` | `nil` |  |
+| `Url` | `string` | `nil` | Url |
+| `StatusCode` | `uint16` | `nil` | Status code |
+| `ContentType` | `string` | `nil` | Content type |
+| `Body` | `string` | `nil` | Body |
+| `Etag` | `*string` | `nil` | Etag |
+| `LastModified` | `*string` | `nil` | Last modified |
+| `CachedAt` | `uint64` | `nil` | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Index` | `int` | `nil` |  |
-| `Url` | `string` | `nil` |  |
-| `Text` | `string` | `nil` |  |
+| `Index` | `int` | `nil` | Index |
+| `Url` | `string` | `nil` | Url |
+| `Text` | `string` | `nil` | Text |
 
 
 ---
@@ -369,7 +369,7 @@ Validate the configuration, returning an error if any values are invalid.
 **Signature:**
 
 ```go
-func (o *CrawlConfig) Validate() (, error)
+func (o *CrawlConfig) Validate() error
 ```
 
 

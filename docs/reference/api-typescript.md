@@ -24,7 +24,7 @@ function generateCitations(markdown: string): CitationResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `markdown` | `string` | Yes |  |
+| `markdown` | `string` | Yes | The markdown |
 
 **Returns:** `CitationResult`
 
@@ -48,7 +48,7 @@ function createEngine(config?: CrawlConfig): CrawlEngineHandle
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `CrawlConfig | null` | No |  |
+| `config` | `CrawlConfig | null` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
 
@@ -71,8 +71,8 @@ function scrape(engine: CrawlEngineHandle, url: string): Promise<ScrapeResult>
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `string` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
 
@@ -95,8 +95,8 @@ function crawl(engine: CrawlEngineHandle, url: string): Promise<CrawlResult>
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `string` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
 
@@ -119,8 +119,8 @@ function mapUrls(engine: CrawlEngineHandle, url: string): Promise<MapResult>
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `string` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
 
@@ -143,8 +143,8 @@ function batchScrape(engine: CrawlEngineHandle, urls: Array<string>): Promise<Ar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `Array<string>` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `Array<string>` | Yes | The urls |
 
 **Returns:** `Array<BatchScrapeResult>`
 
@@ -165,8 +165,8 @@ function batchCrawl(engine: CrawlEngineHandle, urls: Array<string>): Promise<Arr
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `Array<string>` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `Array<string>` | Yes | The urls |
 
 **Returns:** `Array<BatchCrawlResult>`
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` |  |
-| `statusCode` | `number` | `null` |  |
-| `contentType` | `string` | `null` |  |
-| `body` | `string` | `null` |  |
-| `etag` | `string | null` | `null` |  |
-| `lastModified` | `string | null` | `null` |  |
-| `cachedAt` | `number` | `null` |  |
+| `url` | `string` | `null` | Url |
+| `statusCode` | `number` | `null` | Status code |
+| `contentType` | `string` | `null` | Content type |
+| `body` | `string` | `null` | Body |
+| `etag` | `string | null` | `null` | Etag |
+| `lastModified` | `string | null` | `null` | Last modified |
+| `cachedAt` | `number` | `null` | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `number` | `null` |  |
-| `url` | `string` | `null` |  |
-| `text` | `string` | `null` |  |
+| `index` | `number` | `null` | Index |
+| `url` | `string` | `null` | Url |
+| `text` | `string` | `null` | Text |
 
 
 ---

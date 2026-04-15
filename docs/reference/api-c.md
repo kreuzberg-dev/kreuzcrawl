@@ -24,7 +24,7 @@ KcrawlCitationResult* kcrawl_generate_citations(const char* markdown);
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `markdown` | `const char*` | Yes |  |
+| `markdown` | `const char*` | Yes | The markdown |
 
 **Returns:** `KcrawlCitationResult`
 
@@ -48,7 +48,7 @@ KcrawlCrawlEngineHandle* kcrawl_create_engine(KcrawlCrawlConfig config);
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `KcrawlCrawlConfig*` | No |  |
+| `config` | `KcrawlCrawlConfig*` | No | The configuration options |
 
 **Returns:** `KcrawlCrawlEngineHandle`
 
@@ -71,8 +71,8 @@ KcrawlScrapeResult* kcrawl_scrape(KcrawlCrawlEngineHandle engine, const char* ur
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes |  |
-| `url` | `const char*` | Yes |  |
+| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `const char*` | Yes | The URL to fetch |
 
 **Returns:** `KcrawlScrapeResult`
 
@@ -95,8 +95,8 @@ KcrawlCrawlResult* kcrawl_crawl(KcrawlCrawlEngineHandle engine, const char* url)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes |  |
-| `url` | `const char*` | Yes |  |
+| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `const char*` | Yes | The URL to fetch |
 
 **Returns:** `KcrawlCrawlResult`
 
@@ -119,8 +119,8 @@ KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes |  |
-| `url` | `const char*` | Yes |  |
+| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `const char*` | Yes | The URL to fetch |
 
 **Returns:** `KcrawlMapResult`
 
@@ -143,8 +143,8 @@ KcrawlBatchScrapeResult* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, con
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes |  |
-| `urls` | `const char**` | Yes |  |
+| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `const char**` | Yes | The urls |
 
 **Returns:** `KcrawlBatchScrapeResult*`
 
@@ -165,8 +165,8 @@ KcrawlBatchCrawlResult* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `KcrawlCrawlEngineHandle` | Yes |  |
-| `urls` | `const char**` | Yes |  |
+| `engine` | `KcrawlCrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `const char**` | Yes | The urls |
 
 **Returns:** `KcrawlBatchCrawlResult*`
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | `NULL` |  |
-| `status_code` | `uint16_t` | `NULL` |  |
-| `content_type` | `const char*` | `NULL` |  |
-| `body` | `const char*` | `NULL` |  |
-| `etag` | `const char**` | `NULL` |  |
-| `last_modified` | `const char**` | `NULL` |  |
-| `cached_at` | `uint64_t` | `NULL` |  |
+| `url` | `const char*` | `NULL` | Url |
+| `status_code` | `uint16_t` | `NULL` | Status code |
+| `content_type` | `const char*` | `NULL` | Content type |
+| `body` | `const char*` | `NULL` | Body |
+| `etag` | `const char**` | `NULL` | Etag |
+| `last_modified` | `const char**` | `NULL` | Last modified |
+| `cached_at` | `uint64_t` | `NULL` | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `uintptr_t` | `NULL` |  |
-| `url` | `const char*` | `NULL` |  |
-| `text` | `const char*` | `NULL` |  |
+| `index` | `uintptr_t` | `NULL` | Index |
+| `url` | `const char*` | `NULL` | Url |
+| `text` | `const char*` | `NULL` | Text |
 
 
 ---

@@ -3,13 +3,14 @@
 
 use kreuzcrawl::create_engine;
 use kreuzcrawl::scrape;
+use kreuzcrawl::CrawlConfig;
 
 #[tokio::test]
 async fn test_concurrent_basic() {
     // Concurrent crawling fetches all pages with max_concurrent workers
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"max_concurrent\":3,\"max_depth\":1}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -23,9 +24,9 @@ async fn test_concurrent_basic() {
 #[tokio::test]
 async fn test_concurrent_depth_two_fan_out() {
     // Concurrent depth=2 crawl correctly fans out and deduplicates across levels
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"max_concurrent\":3,\"max_depth\":2}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -38,9 +39,9 @@ async fn test_concurrent_depth_two_fan_out() {
 #[tokio::test]
 async fn test_concurrent_max_pages_exact() {
     // Concurrent crawling does not exceed max_pages limit even with high concurrency
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"max_concurrent\":5,\"max_depth\":1,\"max_pages\":3}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -53,9 +54,9 @@ async fn test_concurrent_max_pages_exact() {
 #[tokio::test]
 async fn test_concurrent_partial_errors() {
     // Concurrent crawl handles partial failures gracefully
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"max_concurrent\":3,\"max_depth\":1}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -68,9 +69,9 @@ async fn test_concurrent_partial_errors() {
 #[tokio::test]
 async fn test_concurrent_respects_max_pages() {
     // Concurrent crawling respects max_pages limit
-    let engine_config: kreuzcrawl::CrawlConfig =
+    let engine_config: CrawlConfig =
         serde_json::from_str("{\"max_concurrent\":2,\"max_depth\":1,\"max_pages\":3}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),

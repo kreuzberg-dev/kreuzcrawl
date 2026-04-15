@@ -24,7 +24,7 @@ public static CitationResult generateCitations(String markdown)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `markdown` | `String` | Yes |  |
+| `markdown` | `String` | Yes | The markdown |
 
 **Returns:** `CitationResult`
 
@@ -48,7 +48,7 @@ public static CrawlEngineHandle createEngine(CrawlConfig config) throws CrawlErr
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `Optional<CrawlConfig>` | No |  |
+| `config` | `Optional<CrawlConfig>` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
 
@@ -71,8 +71,8 @@ public static ScrapeResult scrape(CrawlEngineHandle engine, String url) throws C
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
 
@@ -95,8 +95,8 @@ public static CrawlResult crawl(CrawlEngineHandle engine, String url) throws Cra
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
 
@@ -119,8 +119,8 @@ public static MapResult mapUrls(CrawlEngineHandle engine, String url) throws Cra
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
 
@@ -143,8 +143,8 @@ public static List<BatchScrapeResult> batchScrape(CrawlEngineHandle engine, List
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `List<String>` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `List<String>` | Yes | The urls |
 
 **Returns:** `List<BatchScrapeResult>`
 
@@ -165,8 +165,8 @@ public static List<BatchCrawlResult> batchCrawl(CrawlEngineHandle engine, List<S
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `List<String>` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `List<String>` | Yes | The urls |
 
 **Returns:** `List<BatchCrawlResult>`
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `null` |  |
-| `statusCode` | `short` | `null` |  |
-| `contentType` | `String` | `null` |  |
-| `body` | `String` | `null` |  |
-| `etag` | `Optional<String>` | `null` |  |
-| `lastModified` | `Optional<String>` | `null` |  |
-| `cachedAt` | `long` | `null` |  |
+| `url` | `String` | `null` | Url |
+| `statusCode` | `short` | `null` | Status code |
+| `contentType` | `String` | `null` | Content type |
+| `body` | `String` | `null` | Body |
+| `etag` | `Optional<String>` | `null` | Etag |
+| `lastModified` | `Optional<String>` | `null` | Last modified |
+| `cachedAt` | `long` | `null` | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `long` | `null` |  |
-| `url` | `String` | `null` |  |
-| `text` | `String` | `null` |  |
+| `index` | `long` | `null` | Index |
+| `url` | `String` | `null` | Url |
+| `text` | `String` | `null` | Text |
 
 
 ---
