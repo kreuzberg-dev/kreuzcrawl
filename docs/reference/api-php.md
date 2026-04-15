@@ -6,6 +6,31 @@ title: "PHP API Reference"
 
 ## Functions
 
+### generateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: https://example.com` in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```php
+public static function generateCitations(string $markdown): CitationResult
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `string` | Yes |  |
+
+**Returns:** `CitationResult`
+
+
+---
+
 ### createEngine()
 
 Create a new crawl engine with the given configuration.
@@ -157,7 +182,7 @@ Result from a single page action execution.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `actionIndex` | `int` | `null` | Zero-based index of the action in the sequence. |
-| `actionType` | `string` | `null` | The type of action that was executed. |
+| `actionType` | `Str` | `null` | The type of action that was executed. |
 | `success` | `bool` | `null` | Whether the action completed successfully. |
 | `data` | `?mixed` | `null` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `?string` | `null` | Error message if the action failed. |
@@ -337,6 +362,16 @@ Configuration for crawl, scrape, and map operations.
 public static function default(): CrawlConfig
 ```
 
+##### validate()
+
+Validate the configuration, returning an error if any values are invalid.
+
+**Signature:**
+
+```php
+public function validate(): void
+```
+
 
 ---
 
@@ -395,6 +430,18 @@ The result of a multi-page crawl operation.
 | `cookies` | `array<CookieInfo>` | `[]` | Cookies collected during the crawl. |
 | `normalizedUrls` | `array<string>` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
+#### Methods
+
+##### uniqueNormalizedUrls()
+
+Returns the count of unique normalized URLs encountered during crawling.
+
+**Signature:**
+
+```php
+public function uniqueNormalizedUrls(): int
+```
+
 
 ---
 
@@ -425,12 +472,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `string` | `null` | The URL the document was fetched from. |
-| `mimeType` | `string` | `null` | The MIME type from the Content-Type header. |
+| `mimeType` | `Str` | `null` | The MIME type from the Content-Type header. |
 | `content` | `string` | `null` | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `int` | `null` | Size of the document in bytes. |
-| `filename` | `?string` | `null` | Filename extracted from Content-Disposition or URL path. |
-| `contentHash` | `string` | `null` | SHA-256 hex digest of the content. |
-| `headers` | `array<string, string>` | `{}` | Selected response headers. |
+| `filename` | `?Str` | `null` | Filename extracted from Content-Disposition or URL path. |
+| `contentHash` | `Str` | `null` | SHA-256 hex digest of the content. |
+| `headers` | `array<Str, Str>` | `{}` | Selected response headers. |
 
 
 ---

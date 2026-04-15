@@ -6,6 +6,31 @@ title: "Java API Reference"
 
 ## Functions
 
+### generateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: https://example.com` in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```java
+public static CitationResult generateCitations(String markdown)
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `String` | Yes |  |
+
+**Returns:** `CitationResult`
+
+
+---
+
 ### createEngine()
 
 Create a new crawl engine with the given configuration.
@@ -157,7 +182,7 @@ Result from a single page action execution.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `actionIndex` | `long` | `null` | Zero-based index of the action in the sequence. |
-| `actionType` | `String` | `null` | The type of action that was executed. |
+| `actionType` | `Str` | `null` | The type of action that was executed. |
 | `success` | `boolean` | `null` | Whether the action completed successfully. |
 | `data` | `Optional<Object>` | `null` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
 | `error` | `Optional<String>` | `null` | Error message if the action failed. |
@@ -337,6 +362,16 @@ Configuration for crawl, scrape, and map operations.
 public static CrawlConfig defaultOptions()
 ```
 
+##### validate()
+
+Validate the configuration, returning an error if any values are invalid.
+
+**Signature:**
+
+```java
+public void validate() throws CrawlError
+```
+
 
 ---
 
@@ -395,6 +430,18 @@ The result of a multi-page crawl operation.
 | `cookies` | `List<CookieInfo>` | `Collections.emptyList()` | Cookies collected during the crawl. |
 | `normalizedUrls` | `List<String>` | `Collections.emptyList()` | Normalized URLs encountered during crawling (for deduplication counting). |
 
+#### Methods
+
+##### uniqueNormalizedUrls()
+
+Returns the count of unique normalized URLs encountered during crawling.
+
+**Signature:**
+
+```java
+public long uniqueNormalizedUrls()
+```
+
 
 ---
 
@@ -425,12 +472,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `String` | `null` | The URL the document was fetched from. |
-| `mimeType` | `String` | `null` | The MIME type from the Content-Type header. |
+| `mimeType` | `Str` | `null` | The MIME type from the Content-Type header. |
 | `content` | `byte[]` | `null` | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `long` | `null` | Size of the document in bytes. |
-| `filename` | `Optional<String>` | `null` | Filename extracted from Content-Disposition or URL path. |
-| `contentHash` | `String` | `null` | SHA-256 hex digest of the content. |
-| `headers` | `Map<String, String>` | `Collections.emptyMap()` | Selected response headers. |
+| `filename` | `Optional<Str>` | `null` | Filename extracted from Content-Disposition or URL path. |
+| `contentHash` | `Str` | `null` | SHA-256 hex digest of the content. |
+| `headers` | `Map<Str, Str>` | `Collections.emptyMap()` | Selected response headers. |
 
 
 ---
