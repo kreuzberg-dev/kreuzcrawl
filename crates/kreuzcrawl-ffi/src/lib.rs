@@ -6241,7 +6241,7 @@ pub unsafe extern "C" fn kcrawl_create_engine(
     let config_rs = if config.is_null() {
         None
     } else {
-        Some(unsafe { &*(config as *const kreuzcrawl::CrawlConfig) }.clone())
+        Some(unsafe { &*config }.clone())
     };
     let result = kreuzcrawl::create_engine(config_rs);
     match result {
