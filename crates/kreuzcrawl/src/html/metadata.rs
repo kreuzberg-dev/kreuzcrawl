@@ -5,9 +5,10 @@ use tl::VDom;
 use crate::types::{ArticleMetadata, PageMetadata};
 
 use super::get_attr;
+#[cfg(not(target_arch = "wasm32"))]
+use super::selectors::SEL_META_REFRESH;
 use super::selectors::{
-    META_RE_CONTENT_NAME, META_RE_NAME_CONTENT, SEL_CANONICAL, SEL_HTML, SEL_META, SEL_META_REFRESH, SEL_ROBOTS_META,
-    SEL_TITLE,
+    META_RE_CONTENT_NAME, META_RE_NAME_CONTENT, SEL_CANONICAL, SEL_HTML, SEL_META, SEL_ROBOTS_META, SEL_TITLE,
 };
 
 /// Extract metadata name-value pairs from raw HTML using regex (fallback for malformed HTML).
@@ -184,6 +185,7 @@ pub(crate) fn detect_nofollow(dom: &VDom<'_>) -> bool {
 }
 
 /// Detect a `<meta http-equiv="refresh">` tag and return the redirect target URL.
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn detect_meta_refresh(dom: &VDom<'_>) -> Option<String> {
     let parser = dom.parser();
     if let Some(iter) = dom.query_selector(SEL_META_REFRESH) {

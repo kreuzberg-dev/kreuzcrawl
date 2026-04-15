@@ -24,6 +24,7 @@ pub(super) const SEL_META: &str = "meta";
 pub(super) const SEL_TITLE: &str = "title";
 pub(super) const SEL_CANONICAL: &str = "link[rel='canonical']";
 pub(super) const SEL_ROBOTS_META: &str = "meta[name='robots']";
+#[cfg(not(target_arch = "wasm32"))]
 pub(super) const SEL_META_REFRESH: &str = "meta[http-equiv='refresh']";
 pub(super) const SEL_A_HREF: &str = "a[href]";
 pub(super) const SEL_BASE_HREF: &str = "base[href]";

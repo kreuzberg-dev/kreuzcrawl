@@ -10,6 +10,7 @@ use std::sync::Arc;
 
 use crate::error::CrawlError;
 use crate::http::build_client;
+#[cfg(not(target_arch = "wasm32"))]
 use crate::tower::CrawlRequest;
 use crate::traits::*;
 use crate::types::*;
@@ -18,6 +19,7 @@ pub use builder::CrawlEngineBuilder;
 
 /// The main crawl engine, composed of pluggable trait implementations.
 #[derive(Clone)]
+#[cfg_attr(target_arch = "wasm32", allow(dead_code))]
 pub struct CrawlEngine {
     pub(crate) config: CrawlConfig,
     pub(crate) frontier: Arc<dyn Frontier>,
@@ -121,7 +123,7 @@ impl CrawlEngine {
         let response = {
             let resp =
                 crate::http::fetch_with_retry(url, &self.config, &std::collections::HashMap::new(), &client).await?;
-            let mut headers = std::collections::HashMap::new();
+            let headers = std::collections::HashMap::new();
             // fetch_with_retry returns HttpResponse; convert to CrawlResponse
             crate::tower::CrawlResponse {
                 status: resp.status,

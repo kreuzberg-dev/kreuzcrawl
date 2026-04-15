@@ -159,7 +159,7 @@ jobs:
       - name: Validate vendored C headers match canonical
         shell: bash
         run: |
-          CANONICAL="crates/kreuzcrawl-ffi/kreuzcrawl.h"
+          CANONICAL="crates/kreuzcrawl-ffi/include/kreuzcrawl.h"
           FAIL=0
           for VENDORED in packages/go/v4/internal/ffi/kreuzcrawl.h packages/ruby/vendor/kreuzcrawl-ffi/kreuzcrawl.h; do
             if [ -f "$VENDORED" ] && ! diff -q "$CANONICAL" "$VENDORED" > /dev/null 2>&1; then
@@ -407,7 +407,7 @@ jobs:
           path: |
             target/release/libkreuzcrawl_ffi.*
             target/release/kreuzcrawl_ffi.*
-            crates/kreuzcrawl-ffi/kreuzcrawl.h
+            crates/kreuzcrawl-ffi/include/kreuzcrawl.h
             crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc
             crates/kreuzcrawl-ffi/cmake/
             target/release/kreuzcrawl
@@ -2555,7 +2555,7 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          HEADER="crates/kreuzcrawl-ffi/kreuzcrawl.h"
+          HEADER="crates/kreuzcrawl-ffi/include/kreuzcrawl.h"
           echo "Checking version constants in $HEADER..."
           grep 'KREUZBERG_VERSION_MAJOR' "$HEADER"
           grep 'KREUZBERG_VERSION_MINOR' "$HEADER"
@@ -2575,8 +2575,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          test -f crates/kreuzcrawl-ffi/kreuzcrawl.h
-          grep 'KREUZBERG_VERSION_MAJOR' crates/kreuzcrawl-ffi/kreuzcrawl.h
+          test -f crates/kreuzcrawl-ffi/include/kreuzcrawl.h
+          grep 'KREUZBERG_VERSION_MAJOR' crates/kreuzcrawl-ffi/include/kreuzcrawl.h
           echo "Header verified on Windows."
 
   test-wasm:

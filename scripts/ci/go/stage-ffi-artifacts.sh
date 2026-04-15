@@ -41,7 +41,7 @@ fi
 shopt -u nullglob
 
 # Stage header file
-cp crates/kreuzcrawl-ffi/kreuzcrawl.h "${STAGING_DIR}/include/"
+cp crates/kreuzcrawl-ffi/include/kreuzcrawl.h "${STAGING_DIR}/include/"
 echo "✓ Staged header: kreuzcrawl.h"
 
 # Stage pkg-config file

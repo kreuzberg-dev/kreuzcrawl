@@ -59,6 +59,7 @@ pub(crate) fn is_pdf_content(ct: &str, body: &str) -> bool {
 }
 
 /// Check whether a URL has a `.pdf` extension.
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn is_pdf_url(url: &str) -> bool {
     let lower = url.to_lowercase();
     let path = lower.split('?').next().unwrap_or(&lower);
