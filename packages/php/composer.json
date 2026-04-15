@@ -14,8 +14,7 @@
 	"autoload": {
 		"psr-4": {
 			"Kreuzcrawl\\\\": "src/"
-		},
-		"files": ["src/functions.php"]
+		}
 	},
 	"scripts": {
 		"phpstan": "php -d detect_unicode=0 vendor/bin/phpstan --configuration=phpstan.neon --memory-limit=512M",
