@@ -5,44 +5,38 @@ import java.util.Optional;
 
 public class ImageInfoBuilder {
 
-    private String url = "";
-    private Optional<String> alt = Optional.empty();
-    private Optional<Integer> width = Optional.empty();
-    private Optional<Integer> height = Optional.empty();
-    private ImageSource source = null;
+  private String url = "";
+  private Optional<String> alt = Optional.empty();
+  private Optional<Integer> width = Optional.empty();
+  private Optional<Integer> height = Optional.empty();
+  private ImageSource source = null;
 
-    public ImageInfoBuilder withUrl(String value) {
-        this.url = value;
-        return this;
-    }
+  public ImageInfoBuilder withUrl(String value) {
+    this.url = value;
+    return this;
+  }
 
-    public ImageInfoBuilder withAlt(Optional<String> value) {
-        this.alt = value;
-        return this;
-    }
+  public ImageInfoBuilder withAlt(Optional<String> value) {
+    this.alt = value;
+    return this;
+  }
 
-    public ImageInfoBuilder withWidth(Optional<Integer> value) {
-        this.width = value;
-        return this;
-    }
+  public ImageInfoBuilder withWidth(Optional<Integer> value) {
+    this.width = value;
+    return this;
+  }
 
-    public ImageInfoBuilder withHeight(Optional<Integer> value) {
-        this.height = value;
-        return this;
-    }
+  public ImageInfoBuilder withHeight(Optional<Integer> value) {
+    this.height = value;
+    return this;
+  }
 
-    public ImageInfoBuilder withSource(ImageSource value) {
-        this.source = value;
-        return this;
-    }
+  public ImageInfoBuilder withSource(ImageSource value) {
+    this.source = value;
+    return this;
+  }
 
-    public ImageInfo build() {
-        return new ImageInfo(
-            url,
-            alt,
-            width,
-            height,
-            source
-        );
-    }
+  public ImageInfo build() {
+    return new ImageInfo(url, alt, width, height, source);
+  }
 }

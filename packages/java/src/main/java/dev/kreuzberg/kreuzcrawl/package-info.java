@@ -1,4 +1,2 @@
-/**
- * High-performance web crawling engine
- */
+/** High-performance web crawling engine */
 package dev.kreuzberg.kreuzcrawl;

@@ -5,28 +5,28 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum CrawlEvent {
-    Page("page"),
-    Error("error"),
-    Complete("complete");
+  Page("page"),
+  Error("error"),
+  Complete("complete");
 
-    private final String value;
+  private final String value;
 
-    CrawlEvent(String value) {
-        this.value = value;
+  CrawlEvent(String value) {
+    this.value = value;
+  }
+
+  @JsonValue
+  public String getValue() {
+    return value;
+  }
+
+  @JsonCreator
+  public static CrawlEvent fromValue(String value) {
+    for (CrawlEvent e : values()) {
+      if (e.value.equalsIgnoreCase(value)) {
+        return e;
+      }
     }
-
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
-
-    @JsonCreator
-    public static CrawlEvent fromValue(String value) {
-        for (CrawlEvent e : values()) {
-            if (e.value.equalsIgnoreCase(value)) {
-                return e;
-            }
-        }
-        throw new IllegalArgumentException("Unknown value: " + value);
-    }
+    throw new IllegalArgumentException("Unknown value: " + value);
+  }
 }

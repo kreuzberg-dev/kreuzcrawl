@@ -2,13 +2,13 @@
 title: "Types Reference"
 ---
 
-# Types Reference
+## Types Reference
 
 All types defined by the library, grouped by category. Types are shown using Rust as the canonical representation.
 
-## Result Types
+### Result Types
 
-### InteractionResult
+#### InteractionResult
 
 Result of executing a sequence of page interaction actions.
 
@@ -21,7 +21,7 @@ Result of executing a sequence of page interaction actions.
 
 ---
 
-### ActionResult
+#### ActionResult
 
 Result from a single page action execution.
 
@@ -35,7 +35,7 @@ Result from a single page action execution.
 
 ---
 
-### ScrapeResult
+#### ScrapeResult
 
 The result of a single-page scrape operation.
 
@@ -72,7 +72,7 @@ The result of a single-page scrape operation.
 
 ---
 
-### CrawlPageResult
+#### CrawlPageResult
 
 The result of crawling a single page during a crawl operation.
 
@@ -101,7 +101,7 @@ The result of crawling a single page during a crawl operation.
 
 ---
 
-### CrawlResult
+#### CrawlResult
 
 The result of a multi-page crawl operation.
 
@@ -117,7 +117,7 @@ The result of a multi-page crawl operation.
 
 ---
 
-### MapResult
+#### MapResult
 
 The result of a map operation, containing discovered URLs.
 
@@ -127,7 +127,7 @@ The result of a map operation, containing discovered URLs.
 
 ---
 
-### MarkdownResult
+#### MarkdownResult
 
 Rich markdown conversion result from HTML processing.
 
@@ -142,7 +142,7 @@ Rich markdown conversion result from HTML processing.
 
 ---
 
-### CitationResult
+#### CitationResult
 
 Result of citation conversion.
 
@@ -153,7 +153,7 @@ Result of citation conversion.
 
 ---
 
-### BatchScrapeResult
+#### BatchScrapeResult
 
 Result from a single URL in a batch scrape operation.
 
@@ -165,7 +165,7 @@ Result from a single URL in a batch scrape operation.
 
 ---
 
-### BatchCrawlResult
+#### BatchCrawlResult
 
 Result from a single URL in a batch crawl operation.
 
@@ -177,23 +177,23 @@ Result from a single URL in a batch crawl operation.
 
 ---
 
-## Configuration Types
+### Configuration Types
 
 See [Configuration Reference](configuration.md) for detailed defaults and language-specific representations.
 
-### ProxyConfig
+#### ProxyConfig
 
 Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | — | Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080"). |
+| `url` | `String` | — | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
 | `username` | `Option<String>` | `Default::default()` | Optional username for proxy authentication. |
 | `password` | `Option<String>` | `Default::default()` | Optional password for proxy authentication. |
 
 ---
 
-### BrowserConfig
+#### BrowserConfig
 
 Browser fallback configuration.
 
@@ -208,7 +208,7 @@ Browser fallback configuration.
 
 ---
 
-### CrawlConfig
+#### CrawlConfig
 
 Configuration for crawl, scrape, and map operations.
 
@@ -251,7 +251,7 @@ Configuration for crawl, scrape, and map operations.
 
 ---
 
-### DownloadedDocument
+#### DownloadedDocument
 
 A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 
@@ -271,7 +271,7 @@ skipping the resource.
 
 ---
 
-### SitemapUrl
+#### SitemapUrl
 
 A URL entry from a sitemap.
 
@@ -284,7 +284,7 @@ A URL entry from a sitemap.
 
 ---
 
-### CachedPage
+#### CachedPage
 
 Cached page data for HTTP response caching.
 
@@ -300,7 +300,7 @@ Cached page data for HTTP response caching.
 
 ---
 
-### LinkInfo
+#### LinkInfo
 
 Information about a link found on a page.
 
@@ -314,7 +314,7 @@ Information about a link found on a page.
 
 ---
 
-### ImageInfo
+#### ImageInfo
 
 Information about an image found on a page.
 
@@ -328,7 +328,7 @@ Information about an image found on a page.
 
 ---
 
-### FeedInfo
+#### FeedInfo
 
 Information about a feed link found on a page.
 
@@ -340,7 +340,7 @@ Information about a feed link found on a page.
 
 ---
 
-### JsonLdEntry
+#### JsonLdEntry
 
 A JSON-LD structured data entry found on a page.
 
@@ -352,7 +352,7 @@ A JSON-LD structured data entry found on a page.
 
 ---
 
-### CookieInfo
+#### CookieInfo
 
 Information about an HTTP cookie received from a response.
 
@@ -365,7 +365,7 @@ Information about an HTTP cookie received from a response.
 
 ---
 
-### DownloadedAsset
+#### DownloadedAsset
 
 A downloaded asset from a page.
 
@@ -380,7 +380,7 @@ A downloaded asset from a page.
 
 ---
 
-### HreflangEntry
+#### HreflangEntry
 
 An hreflang alternate link entry.
 
@@ -391,7 +391,7 @@ An hreflang alternate link entry.
 
 ---
 
-### FaviconInfo
+#### FaviconInfo
 
 Information about a favicon or icon link.
 
@@ -404,7 +404,7 @@ Information about a favicon or icon link.
 
 ---
 
-### HeadingInfo
+#### HeadingInfo
 
 A heading element extracted from the page.
 
@@ -415,7 +415,7 @@ A heading element extracted from the page.
 
 ---
 
-### CitationReference
+#### CitationReference
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -425,9 +425,9 @@ A heading element extracted from the page.
 
 ---
 
-## Metadata Types
+### Metadata Types
 
-### ExtractionMeta
+#### ExtractionMeta
 
 Metadata about an LLM extraction pass.
 
@@ -441,7 +441,7 @@ Metadata about an LLM extraction pass.
 
 ---
 
-### ArticleMetadata
+#### ArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
 
@@ -455,7 +455,7 @@ Article metadata extracted from `article:*` Open Graph tags.
 
 ---
 
-### ResponseMeta
+#### ResponseMeta
 
 Response metadata extracted from HTTP headers.
 
@@ -471,7 +471,7 @@ Response metadata extracted from HTTP headers.
 
 ---
 
-### PageMetadata
+#### PageMetadata
 
 Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
@@ -523,9 +523,9 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
 ---
 
-## Other Types
+### Other Types
 
-### CrawlEngineHandle
+#### CrawlEngineHandle
 
 Opaque handle to a configured crawl engine.
 
@@ -536,4 +536,3 @@ per-domain throttle, etc.) are used internally.
 *Opaque type — fields are not directly accessible.*
 
 ---
-

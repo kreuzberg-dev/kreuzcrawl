@@ -5,58 +5,50 @@ import java.util.Optional;
 
 public class CachedPageBuilder {
 
-    private String url = "";
-    private short statusCode = 0;
-    private String contentType = "";
-    private String body = "";
-    private Optional<String> etag = Optional.empty();
-    private Optional<String> lastModified = Optional.empty();
-    private long cachedAt = 0;
+  private String url = "";
+  private short statusCode = 0;
+  private String contentType = "";
+  private String body = "";
+  private Optional<String> etag = Optional.empty();
+  private Optional<String> lastModified = Optional.empty();
+  private long cachedAt = 0;
 
-    public CachedPageBuilder withUrl(String value) {
-        this.url = value;
-        return this;
-    }
+  public CachedPageBuilder withUrl(String value) {
+    this.url = value;
+    return this;
+  }
 
-    public CachedPageBuilder withStatusCode(short value) {
-        this.statusCode = value;
-        return this;
-    }
+  public CachedPageBuilder withStatusCode(short value) {
+    this.statusCode = value;
+    return this;
+  }
 
-    public CachedPageBuilder withContentType(String value) {
-        this.contentType = value;
-        return this;
-    }
+  public CachedPageBuilder withContentType(String value) {
+    this.contentType = value;
+    return this;
+  }
 
-    public CachedPageBuilder withBody(String value) {
-        this.body = value;
-        return this;
-    }
+  public CachedPageBuilder withBody(String value) {
+    this.body = value;
+    return this;
+  }
 
-    public CachedPageBuilder withEtag(Optional<String> value) {
-        this.etag = value;
-        return this;
-    }
+  public CachedPageBuilder withEtag(Optional<String> value) {
+    this.etag = value;
+    return this;
+  }
 
-    public CachedPageBuilder withLastModified(Optional<String> value) {
-        this.lastModified = value;
-        return this;
-    }
+  public CachedPageBuilder withLastModified(Optional<String> value) {
+    this.lastModified = value;
+    return this;
+  }
 
-    public CachedPageBuilder withCachedAt(long value) {
-        this.cachedAt = value;
-        return this;
-    }
+  public CachedPageBuilder withCachedAt(long value) {
+    this.cachedAt = value;
+    return this;
+  }
 
-    public CachedPage build() {
-        return new CachedPage(
-            url,
-            statusCode,
-            contentType,
-            body,
-            etag,
-            lastModified,
-            cachedAt
-        );
-    }
+  public CachedPage build() {
+    return new CachedPage(url, statusCode, contentType, body, etag, lastModified, cachedAt);
+  }
 }

@@ -3,11 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** The request was rate-limited (HTTP 429). */
 public class RateLimitedException extends CrawlErrorException {
-    public RateLimitedException(String message) {
-        super(message);
-    }
+  public RateLimitedException(String message) {
+    super(message);
+  }
 
-    public RateLimitedException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public RateLimitedException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

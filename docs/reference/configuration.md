@@ -2,11 +2,11 @@
 title: "Configuration Reference"
 ---
 
-# Configuration Reference
+## Configuration Reference
 
 This page documents all configuration types and their defaults across all languages.
 
-## ExtractionMeta
+### ExtractionMeta
 
 Metadata about an LLM extraction pass.
 
@@ -20,19 +20,19 @@ Metadata about an LLM extraction pass.
 
 ---
 
-## ProxyConfig
+### ProxyConfig
 
 Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `str` | — | Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080"). |
+| `url` | `str` | — | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
 | `username` | `str | None` | `None` | Optional username for proxy authentication. |
 | `password` | `str | None` | `None` | Optional password for proxy authentication. |
 
 ---
 
-## BrowserConfig
+### BrowserConfig
 
 Browser fallback configuration.
 
@@ -47,7 +47,7 @@ Browser fallback configuration.
 
 ---
 
-## CrawlConfig
+### CrawlConfig
 
 Configuration for crawl, scrape, and map operations.
 
@@ -90,7 +90,7 @@ Configuration for crawl, scrape, and map operations.
 
 ---
 
-## DownloadedDocument
+### DownloadedDocument
 
 A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 
@@ -110,7 +110,7 @@ skipping the resource.
 
 ---
 
-## InteractionResult
+### InteractionResult
 
 Result of executing a sequence of page interaction actions.
 
@@ -123,7 +123,7 @@ Result of executing a sequence of page interaction actions.
 
 ---
 
-## ActionResult
+### ActionResult
 
 Result from a single page action execution.
 
@@ -137,7 +137,7 @@ Result from a single page action execution.
 
 ---
 
-## ScrapeResult
+### ScrapeResult
 
 The result of a single-page scrape operation.
 
@@ -174,7 +174,7 @@ The result of a single-page scrape operation.
 
 ---
 
-## CrawlPageResult
+### CrawlPageResult
 
 The result of crawling a single page during a crawl operation.
 
@@ -203,7 +203,7 @@ The result of crawling a single page during a crawl operation.
 
 ---
 
-## CrawlResult
+### CrawlResult
 
 The result of a multi-page crawl operation.
 
@@ -219,7 +219,7 @@ The result of a multi-page crawl operation.
 
 ---
 
-## SitemapUrl
+### SitemapUrl
 
 A URL entry from a sitemap.
 
@@ -232,7 +232,7 @@ A URL entry from a sitemap.
 
 ---
 
-## MapResult
+### MapResult
 
 The result of a map operation, containing discovered URLs.
 
@@ -242,7 +242,7 @@ The result of a map operation, containing discovered URLs.
 
 ---
 
-## MarkdownResult
+### MarkdownResult
 
 Rich markdown conversion result from HTML processing.
 
@@ -257,7 +257,7 @@ Rich markdown conversion result from HTML processing.
 
 ---
 
-## CachedPage
+### CachedPage
 
 Cached page data for HTTP response caching.
 
@@ -273,7 +273,7 @@ Cached page data for HTTP response caching.
 
 ---
 
-## LinkInfo
+### LinkInfo
 
 Information about a link found on a page.
 
@@ -287,7 +287,7 @@ Information about a link found on a page.
 
 ---
 
-## ImageInfo
+### ImageInfo
 
 Information about an image found on a page.
 
@@ -301,7 +301,7 @@ Information about an image found on a page.
 
 ---
 
-## FeedInfo
+### FeedInfo
 
 Information about a feed link found on a page.
 
@@ -313,7 +313,7 @@ Information about a feed link found on a page.
 
 ---
 
-## JsonLdEntry
+### JsonLdEntry
 
 A JSON-LD structured data entry found on a page.
 
@@ -325,7 +325,7 @@ A JSON-LD structured data entry found on a page.
 
 ---
 
-## CookieInfo
+### CookieInfo
 
 Information about an HTTP cookie received from a response.
 
@@ -338,7 +338,7 @@ Information about an HTTP cookie received from a response.
 
 ---
 
-## DownloadedAsset
+### DownloadedAsset
 
 A downloaded asset from a page.
 
@@ -353,7 +353,7 @@ A downloaded asset from a page.
 
 ---
 
-## ArticleMetadata
+### ArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
 
@@ -367,7 +367,7 @@ Article metadata extracted from `article:*` Open Graph tags.
 
 ---
 
-## HreflangEntry
+### HreflangEntry
 
 An hreflang alternate link entry.
 
@@ -378,7 +378,7 @@ An hreflang alternate link entry.
 
 ---
 
-## FaviconInfo
+### FaviconInfo
 
 Information about a favicon or icon link.
 
@@ -391,7 +391,7 @@ Information about a favicon or icon link.
 
 ---
 
-## HeadingInfo
+### HeadingInfo
 
 A heading element extracted from the page.
 
@@ -402,7 +402,7 @@ A heading element extracted from the page.
 
 ---
 
-## ResponseMeta
+### ResponseMeta
 
 Response metadata extracted from HTTP headers.
 
@@ -418,7 +418,7 @@ Response metadata extracted from HTTP headers.
 
 ---
 
-## PageMetadata
+### PageMetadata
 
 Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
@@ -470,7 +470,7 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
 ---
 
-## CitationResult
+### CitationResult
 
 Result of citation conversion.
 
@@ -481,7 +481,7 @@ Result of citation conversion.
 
 ---
 
-## CitationReference
+### CitationReference
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -491,7 +491,7 @@ Result of citation conversion.
 
 ---
 
-## BatchScrapeResult
+### BatchScrapeResult
 
 Result from a single URL in a batch scrape operation.
 
@@ -503,7 +503,7 @@ Result from a single URL in a batch scrape operation.
 
 ---
 
-## BatchCrawlResult
+### BatchCrawlResult
 
 Result from a single URL in a batch crawl operation.
 
@@ -514,4 +514,3 @@ Result from a single URL in a batch crawl operation.
 | `error` | `str | None` | `None` | The error message, if the crawl failed. |
 
 ---
-
