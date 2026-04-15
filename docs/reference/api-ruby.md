@@ -24,7 +24,7 @@ def self.generate_citations(markdown)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `markdown` | `String` | Yes |  |
+| `markdown` | `String` | Yes | The markdown |
 
 **Returns:** `CitationResult`
 
@@ -48,7 +48,7 @@ def self.create_engine(config: nil)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `CrawlConfig?` | No |  |
+| `config` | `CrawlConfig?` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
 
@@ -71,8 +71,8 @@ def self.scrape(engine, url)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
 
@@ -95,8 +95,8 @@ def self.crawl(engine, url)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
 
@@ -119,8 +119,8 @@ def self.map_urls(engine, url)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
 
@@ -143,8 +143,8 @@ def self.batch_scrape(engine, urls)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `Array<String>` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `Array<String>` | Yes | The urls |
 
 **Returns:** `Array<BatchScrapeResult>`
 
@@ -165,8 +165,8 @@ def self.batch_crawl(engine, urls)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `Array<String>` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `Array<String>` | Yes | The urls |
 
 **Returns:** `Array<BatchCrawlResult>`
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | `nil` |  |
-| `status_code` | `Integer` | `nil` |  |
-| `content_type` | `String` | `nil` |  |
-| `body` | `String` | `nil` |  |
-| `etag` | `String?` | `nil` |  |
-| `last_modified` | `String?` | `nil` |  |
-| `cached_at` | `Integer` | `nil` |  |
+| `url` | `String` | `nil` | Url |
+| `status_code` | `Integer` | `nil` | Status code |
+| `content_type` | `String` | `nil` | Content type |
+| `body` | `String` | `nil` | Body |
+| `etag` | `String?` | `nil` | Etag |
+| `last_modified` | `String?` | `nil` | Last modified |
+| `cached_at` | `Integer` | `nil` | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `Integer` | `nil` |  |
-| `url` | `String` | `nil` |  |
-| `text` | `String` | `nil` |  |
+| `index` | `Integer` | `nil` | Index |
+| `url` | `String` | `nil` | Url |
+| `text` | `String` | `nil` | Text |
 
 
 ---

@@ -24,7 +24,7 @@ public static function generateCitations(string $markdown): CitationResult
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `markdown` | `string` | Yes |  |
+| `markdown` | `string` | Yes | The markdown |
 
 **Returns:** `CitationResult`
 
@@ -48,7 +48,7 @@ public static function createEngine(?CrawlConfig $config = null): CrawlEngineHan
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `?CrawlConfig` | No |  |
+| `config` | `?CrawlConfig` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
 
@@ -71,8 +71,8 @@ public static function scrape(CrawlEngineHandle $engine, string $url): ScrapeRes
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `string` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
 
@@ -95,8 +95,8 @@ public static function crawl(CrawlEngineHandle $engine, string $url): CrawlResul
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `string` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
 
@@ -119,8 +119,8 @@ public static function mapUrls(CrawlEngineHandle $engine, string $url): MapResul
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `string` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
 
@@ -143,8 +143,8 @@ public static function batchScrape(CrawlEngineHandle $engine, array<string> $url
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `array<string>` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `array<string>` | Yes | The urls |
 
 **Returns:** `array<BatchScrapeResult>`
 
@@ -165,8 +165,8 @@ public static function batchCrawl(CrawlEngineHandle $engine, array<string> $urls
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `array<string>` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `array<string>` | Yes | The urls |
 
 **Returns:** `array<BatchCrawlResult>`
 
@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | `null` |  |
-| `statusCode` | `int` | `null` |  |
-| `contentType` | `string` | `null` |  |
-| `body` | `string` | `null` |  |
-| `etag` | `?string` | `null` |  |
-| `lastModified` | `?string` | `null` |  |
-| `cachedAt` | `int` | `null` |  |
+| `url` | `string` | `null` | Url |
+| `statusCode` | `int` | `null` | Status code |
+| `contentType` | `string` | `null` | Content type |
+| `body` | `string` | `null` | Body |
+| `etag` | `?string` | `null` | Etag |
+| `lastModified` | `?string` | `null` | Last modified |
+| `cachedAt` | `int` | `null` | Cached at |
 
 
 ---
@@ -278,9 +278,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `int` | `null` |  |
-| `url` | `string` | `null` |  |
-| `text` | `string` | `null` |  |
+| `index` | `int` | `null` | Index |
+| `url` | `string` | `null` | Url |
+| `text` | `string` | `null` | Text |
 
 
 ---

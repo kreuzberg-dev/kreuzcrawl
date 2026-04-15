@@ -25,7 +25,7 @@ def generate_citations(markdown)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `markdown` | `String.t()` | Yes |  |
+| `markdown` | `String.t()` | Yes | The markdown |
 
 **Returns:** `CitationResult`
 
@@ -50,7 +50,7 @@ def create_engine(config)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `CrawlConfig | nil` | No |  |
+| `config` | `CrawlConfig | nil` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
 
@@ -74,8 +74,8 @@ def scrape(engine, url)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String.t()` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String.t()` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
 
@@ -99,8 +99,8 @@ def crawl(engine, url)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String.t()` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String.t()` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
 
@@ -124,8 +124,8 @@ def map_urls(engine, url)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `url` | `String.t()` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `url` | `String.t()` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
 
@@ -149,8 +149,8 @@ def batch_scrape(engine, urls)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `list(String.t())` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `list(String.t())` | Yes | The urls |
 
 **Returns:** `list(BatchScrapeResult)`
 
@@ -172,8 +172,8 @@ def batch_crawl(engine, urls)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `CrawlEngineHandle` | Yes |  |
-| `urls` | `list(String.t())` | Yes |  |
+| `engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
+| `urls` | `list(String.t())` | Yes | The urls |
 
 **Returns:** `list(BatchCrawlResult)`
 
@@ -270,13 +270,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String.t()` | `nil` |  |
-| `status_code` | `integer()` | `nil` |  |
-| `content_type` | `String.t()` | `nil` |  |
-| `body` | `String.t()` | `nil` |  |
-| `etag` | `String.t() | nil` | `nil` |  |
-| `last_modified` | `String.t() | nil` | `nil` |  |
-| `cached_at` | `integer()` | `nil` |  |
+| `url` | `String.t()` | `nil` | Url |
+| `status_code` | `integer()` | `nil` | Status code |
+| `content_type` | `String.t()` | `nil` | Content type |
+| `body` | `String.t()` | `nil` | Body |
+| `etag` | `String.t() | nil` | `nil` | Etag |
+| `last_modified` | `String.t() | nil` | `nil` | Last modified |
+| `cached_at` | `integer()` | `nil` | Cached at |
 
 
 ---
@@ -285,9 +285,9 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `integer()` | `nil` |  |
-| `url` | `String.t()` | `nil` |  |
-| `text` | `String.t()` | `nil` |  |
+| `index` | `integer()` | `nil` | Index |
+| `url` | `String.t()` | `nil` | Url |
+| `text` | `String.t()` | `nil` | Text |
 
 
 ---

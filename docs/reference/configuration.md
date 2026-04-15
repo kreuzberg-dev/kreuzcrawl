@@ -263,13 +263,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `str` | `None` |  |
-| `status_code` | `int` | `None` |  |
-| `content_type` | `str` | `None` |  |
-| `body` | `str` | `None` |  |
-| `etag` | `str | None` | `None` |  |
-| `last_modified` | `str | None` | `None` |  |
-| `cached_at` | `int` | `None` |  |
+| `url` | `str` | `None` | Url |
+| `status_code` | `int` | `None` | Status code |
+| `content_type` | `str` | `None` | Content type |
+| `body` | `str` | `None` | Body |
+| `etag` | `str | None` | `None` | Etag |
+| `last_modified` | `str | None` | `None` | Last modified |
+| `cached_at` | `int` | `None` | Cached at |
 
 ---
 
@@ -485,9 +485,9 @@ Result of citation conversion.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `int` | `None` |  |
-| `url` | `str` | `None` |  |
-| `text` | `str` | `None` |  |
+| `index` | `int` | `None` | Index |
+| `url` | `str` | `None` | Url |
+| `text` | `str` | `None` | Text |
 
 ---
 

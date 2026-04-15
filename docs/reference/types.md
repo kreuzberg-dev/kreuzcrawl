@@ -290,13 +290,13 @@ Cached page data for HTTP response caching.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | — |  |
-| `status_code` | `u16` | — |  |
-| `content_type` | `String` | — |  |
-| `body` | `String` | — |  |
-| `etag` | `Option<String>` | `None` |  |
-| `last_modified` | `Option<String>` | `None` |  |
-| `cached_at` | `u64` | — |  |
+| `url` | `String` | — | Url |
+| `status_code` | `u16` | — | Status code |
+| `content_type` | `String` | — | Content type |
+| `body` | `String` | — | Body |
+| `etag` | `Option<String>` | `None` | Etag |
+| `last_modified` | `Option<String>` | `None` | Last modified |
+| `cached_at` | `u64` | — | Cached at |
 
 ---
 
@@ -419,9 +419,9 @@ A heading element extracted from the page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `index` | `usize` | — |  |
-| `url` | `String` | — |  |
-| `text` | `String` | — |  |
+| `index` | `usize` | — | Index |
+| `url` | `String` | — | Url |
+| `text` | `String` | — | Text |
 
 ---
 

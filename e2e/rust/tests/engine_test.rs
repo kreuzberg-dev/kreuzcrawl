@@ -3,11 +3,12 @@
 
 use kreuzcrawl::create_engine;
 use kreuzcrawl::scrape;
+use kreuzcrawl::CrawlConfig;
 
 #[tokio::test]
 async fn test_engine_batch_basic() {
     // CrawlEngine with defaults batch scrapes like the free function
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -21,9 +22,8 @@ async fn test_engine_batch_basic() {
 #[tokio::test]
 async fn test_engine_crawl_basic() {
     // CrawlEngine with defaults crawls multiple pages like the free function
-    let engine_config: kreuzcrawl::CrawlConfig =
-        serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine_config: CrawlConfig = serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -37,7 +37,7 @@ async fn test_engine_crawl_basic() {
 #[tokio::test]
 async fn test_engine_map_basic() {
     // CrawlEngine with defaults discovers URLs like the free function
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -50,7 +50,7 @@ async fn test_engine_map_basic() {
 #[tokio::test]
 async fn test_engine_scrape_basic() {
     // CrawlEngine with defaults scrapes a page identically to the free function
-    let engine = kreuzcrawl::create_engine(None).expect("handle creation should succeed");
+    let engine = create_engine(None).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),
@@ -67,16 +67,15 @@ async fn test_engine_scrape_basic() {
         "expected to contain: {}",
         r#"Testing the engine"#
     );
-    assert!(result.links.len() >= 1, "expected >= 1");
-    assert!(result.metadata.headings.as_ref().unwrap().len() >= 1, "expected >= 1");
+    assert!(!result.links.is_empty(), "expected >= 1");
+    assert!(!result.metadata.headings.as_ref().unwrap().is_empty(), "expected >= 1");
 }
 
 #[tokio::test]
 async fn test_engine_stream_basic() {
     // CrawlEngine with defaults streams events like the free function
-    let engine_config: kreuzcrawl::CrawlConfig =
-        serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
-    let engine = kreuzcrawl::create_engine(Some(engine_config)).expect("handle creation should succeed");
+    let engine_config: CrawlConfig = serde_json::from_str("{\"max_depth\":1}").expect("config should parse");
+    let engine = create_engine(Some(engine_config)).expect("handle creation should succeed");
     let url = format!(
         "{}/fixtures/{}",
         std::env::var("MOCK_SERVER_URL").expect("MOCK_SERVER_URL not set"),

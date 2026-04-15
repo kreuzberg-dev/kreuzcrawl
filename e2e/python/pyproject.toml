@@ -17,6 +17,9 @@ classifiers = [
 ]
 dependencies = [ "kreuzcrawl", "pytest>=7.4", "pytest-asyncio>=0.23", "pytest-timeout>=2.1" ]
 
+[tool.setuptools]
+packages = []
+
 [tool.uv]
 sources.kreuzcrawl = { path = "../../packages/python", editable = true }
 
