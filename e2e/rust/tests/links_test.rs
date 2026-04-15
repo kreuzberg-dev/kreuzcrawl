@@ -3,7 +3,6 @@
 
 use kreuzcrawl::create_engine;
 use kreuzcrawl::scrape;
-use kreuzcrawl::CrawlConfig;
 
 #[tokio::test]
 async fn test_links_anchor_fragment() {
@@ -67,7 +66,7 @@ async fn test_links_empty_href() {
         "links_empty_href"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(!result.links.len().is_empty(), "expected > 0");
+    assert!(!result.links.is_empty(), "expected > 0");
     assert!(
         format!("{:?}", result.links[0].url).contains(r#"/valid"#),
         "expected to contain: {}",
@@ -99,7 +98,7 @@ async fn test_links_mailto_javascript_skip() {
         "links_mailto_javascript_skip"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(!result.links.len().is_empty(), "expected > 0");
+    assert!(!result.links.is_empty(), "expected > 0");
     assert!(
         !format!("{:?}", result.links[0].url).contains(r#"mailto:"#),
         "expected NOT to contain: {}",
@@ -135,7 +134,7 @@ async fn test_links_rel_attributes() {
         "links_rel_attributes"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(!result.links.len().is_empty(), "expected > 0");
+    assert!(!result.links.is_empty(), "expected > 0");
 }
 
 #[tokio::test]

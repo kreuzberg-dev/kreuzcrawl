@@ -3,7 +3,6 @@
 
 use kreuzcrawl::create_engine;
 use kreuzcrawl::scrape;
-use kreuzcrawl::CrawlConfig;
 
 #[tokio::test]
 async fn test_encoding_double_encoded() {
@@ -16,7 +15,7 @@ async fn test_encoding_double_encoded() {
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
     assert!(!result.html.is_empty(), "expected non-empty value");
-    assert!(!result.links.len().is_empty(), "expected >= 1");
+    assert!(!result.links.is_empty(), "expected >= 1");
 }
 
 #[tokio::test]
