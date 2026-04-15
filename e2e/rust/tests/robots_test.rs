@@ -17,7 +17,7 @@ async fn test_robots_allow_all() {
         "robots_allow_all"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.is_allowed, "equals assertion failed");
+    assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -32,7 +32,7 @@ async fn test_robots_allow_override() {
         "robots_allow_override"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.is_allowed, "equals assertion failed");
+    assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -48,7 +48,7 @@ async fn test_robots_comments_handling() {
         "robots_comments_handling"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.is_allowed, "equals assertion failed");
+    assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -63,7 +63,7 @@ async fn test_robots_meta_nofollow() {
         "robots_meta_nofollow"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.nofollow_detected, "equals assertion failed");
+    assert_eq!(result.nofollow_detected, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -78,7 +78,7 @@ async fn test_robots_meta_noindex() {
         "robots_meta_noindex"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.noindex_detected, "equals assertion failed");
+    assert_eq!(result.noindex_detected, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -93,7 +93,7 @@ async fn test_robots_missing_404() {
         "robots_missing_404"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.is_allowed, "equals assertion failed");
+    assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -109,7 +109,7 @@ async fn test_robots_multiple_user_agents() {
         "robots_multiple_user_agents"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.is_allowed, "equals assertion failed");
+    assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -124,7 +124,7 @@ async fn test_robots_sitemap_directive() {
         "robots_sitemap_directive"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.is_allowed, "equals assertion failed");
+    assert_eq!(result.is_allowed, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -141,6 +141,6 @@ async fn test_robots_x_robots_tag() {
     let result = scrape(&engine, &url).await.expect("should succeed");
     let x_robots_tag = result.x_robots_tag.as_deref().unwrap_or("");
     assert_eq!(x_robots_tag.trim(), r#"noindex, nofollow"#, "equals assertion failed");
-    assert!(result.noindex_detected, "equals assertion failed");
-    assert!(result.nofollow_detected, "equals assertion failed");
+    assert_eq!(result.noindex_detected, true, "equals assertion failed");
+    assert_eq!(result.nofollow_detected, true, "equals assertion failed");
 }

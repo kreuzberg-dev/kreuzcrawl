@@ -93,7 +93,7 @@ async fn test_content_main_only() {
         "content_main_only"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.main_content_only, "equals assertion failed");
+    assert_eq!(result.main_content_only, true, "equals assertion failed");
 }
 
 #[tokio::test]
@@ -108,7 +108,7 @@ async fn test_content_pdf_no_extension() {
         "content_pdf_no_extension"
     );
     let result = scrape(&engine, &url).await.expect("should succeed");
-    assert!(result.is_pdf, "equals assertion failed");
+    assert_eq!(result.is_pdf, true, "equals assertion failed");
 }
 
 #[tokio::test]
