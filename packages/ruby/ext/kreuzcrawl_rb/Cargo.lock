@@ -738,20 +738,14 @@ dependencies = [
 
 [[package]]
 name = "hashbrown"
-version = "0.16.1"
+version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100"
+checksum = "4f467dd6dccf739c208452f8014c75c18bb8301b050ad1cfb27153803edb0f51"
 dependencies = [
  "allocator-api2",
  "equivalent",
  "foldhash 0.2.0",
 ]
-
-[[package]]
-name = "hashbrown"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f467dd6dccf739c208452f8014c75c18bb8301b050ad1cfb27153803edb0f51"
 
 [[package]]
 name = "heck"
@@ -770,9 +764,9 @@ dependencies = [
 
 [[package]]
 name = "html-to-markdown-rs"
-version = "3.1.0"
+version = "3.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c116fad2be99a76c9d9bce6197e0e3271de05f26a967b30888ba07eb669bc666"
+checksum = "642b8ab7cd2f92e4e2f7c56bdc5e1985bda93df0cfb7f3aeb21ec2e73140a68f"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1180,7 +1174,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.1.0"
+version = "0.1.0-rc.2"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1206,13 +1200,12 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-rb"
-version = "0.1.0"
+version = "0.1.0-rc.2"
 dependencies = [
  "kreuzcrawl",
  "magnus",
  "serde",
  "serde_json",
- "serde_magnus",
  "tokio",
 ]
 
@@ -1273,11 +1266,11 @@ checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
 
 [[package]]
 name = "lru"
-version = "0.16.3"
+version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1dc47f592c06f33f8e3aea9591776ec7c9f9e4124778ff8a3c3b87159f7e593"
+checksum = "0e0b564323a0fb6d54b864f625ae139de9612e27edb944dda37c109f05aac531"
 dependencies = [
- "hashbrown 0.16.1",
+ "hashbrown 0.17.0",
 ]
 
 [[package]]
@@ -2003,17 +1996,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_magnus"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ff64c88ddd26acdcad5a501f18bcc339927b77b69f4a03bfaf2a6fc5ba2ac4b"
-dependencies = [
- "magnus",
- "serde",
- "tap",
-]
-
-[[package]]
 name = "sha2"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2169,12 +2151,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tap"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "55937e1799185b12863d447f42597ed69d9928686b8d88a1df17376a097d8369"
-
-[[package]]
 name = "tendril"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2298,7 +2274,6 @@ dependencies = [
  "bytes",
  "libc",
  "mio",
- "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
  "socket2",

@@ -192,9 +192,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_model(ptr: *const kreuzcrawl::Ex
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_extraction_meta_chunks_processed(
-    ptr: *const kreuzcrawl::ExtractionMeta,
-) -> usize {
+pub unsafe extern "C" fn kcrawl_extraction_meta_chunks_processed(ptr: *const kreuzcrawl::ExtractionMeta) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -605,7 +603,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_concurrent(ptr: *const kreuzcra
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_respect_robots_txt(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_respect_robots_txt(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -635,7 +633,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_user_agent(ptr: *const kreuzcrawl::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_stay_on_domain(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_stay_on_domain(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -647,7 +645,7 @@ pub const unsafe extern "C" fn kcrawl_crawl_config_stay_on_domain(ptr: *const kr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_allow_subdomains(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_allow_subdomains(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -731,7 +729,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_request_timeout(ptr: *const kreuzcr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_max_redirects(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub unsafe extern "C" fn kcrawl_crawl_config_max_redirects(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -743,7 +741,7 @@ pub const unsafe extern "C" fn kcrawl_crawl_config_max_redirects(ptr: *const kre
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_retry_count(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
+pub unsafe extern "C" fn kcrawl_crawl_config_retry_count(ptr: *const kreuzcrawl::CrawlConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -773,7 +771,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_retry_codes(ptr: *const kreuzcrawl:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_cookies_enabled(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_cookies_enabled(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -815,7 +813,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_body_size(ptr: *const kreuzcraw
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_main_content_only(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_main_content_only(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -878,7 +876,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_map_search(ptr: *const kreuzcrawl::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_download_assets(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_download_assets(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -972,7 +970,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_user_agents(ptr: *const kreuzcrawl:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_capture_screenshot(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_capture_screenshot(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -984,7 +982,7 @@ pub const unsafe extern "C" fn kcrawl_crawl_config_capture_screenshot(ptr: *cons
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_download_documents(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_download_documents(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1069,7 +1067,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_browser_profile(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_config_save_browser_profile(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_config_save_browser_profile(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1085,6 +1083,62 @@ pub unsafe extern "C" fn kcrawl_crawl_config_default() -> *mut kreuzcrawl::Crawl
     clear_last_error();
     let result = kreuzcrawl::CrawlConfig::default();
     Box::into_raw(Box::new(result))
+}
+
+/// Create a `DownloadedDocument` from a JSON string. Returns null on failure.
+/// # Safety
+/// JSON string must be valid UTF-8 and null-terminated.
+/// Returned handle must be freed with `kcrawl_downloaded_document_free`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_downloaded_document_from_json(
+    json: *const c_char,
+) -> *mut kreuzcrawl::DownloadedDocument {
+    clear_last_error();
+    if json.is_null() {
+        set_last_error(1, "Null pointer passed for JSON string");
+        return std::ptr::null_mut();
+    }
+    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
+        Ok(s) => s,
+        Err(_) => {
+            set_last_error(1, "Invalid UTF-8 in JSON string");
+            return std::ptr::null_mut();
+        }
+    };
+    match serde_json::from_str::<kreuzcrawl::DownloadedDocument>(c_str) {
+        Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `DownloadedDocument` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_downloaded_document_to_json(ptr: *const kreuzcrawl::DownloadedDocument) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
 }
 
 /// Free a `DownloadedDocument` handle.
@@ -1141,7 +1195,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_content(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_downloaded_document_size(ptr: *const kreuzcrawl::DownloadedDocument) -> usize {
+pub unsafe extern "C" fn kcrawl_downloaded_document_size(ptr: *const kreuzcrawl::DownloadedDocument) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -1286,6 +1340,60 @@ pub unsafe extern "C" fn kcrawl_interaction_result_screenshot(ptr: *const kreuzc
     }
 }
 
+/// Create a `ActionResult` from a JSON string. Returns null on failure.
+/// # Safety
+/// JSON string must be valid UTF-8 and null-terminated.
+/// Returned handle must be freed with `kcrawl_action_result_free`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_action_result_from_json(json: *const c_char) -> *mut kreuzcrawl::ActionResult {
+    clear_last_error();
+    if json.is_null() {
+        set_last_error(1, "Null pointer passed for JSON string");
+        return std::ptr::null_mut();
+    }
+    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
+        Ok(s) => s,
+        Err(_) => {
+            set_last_error(1, "Invalid UTF-8 in JSON string");
+            return std::ptr::null_mut();
+        }
+    };
+    match serde_json::from_str::<kreuzcrawl::ActionResult>(c_str) {
+        Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `ActionResult` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_action_result_to_json(ptr: *const kreuzcrawl::ActionResult) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
 /// Free a `ActionResult` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -1302,7 +1410,7 @@ pub unsafe extern "C" fn kcrawl_action_result_free(ptr: *mut kreuzcrawl::ActionR
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_action_result_action_index(ptr: *const kreuzcrawl::ActionResult) -> usize {
+pub unsafe extern "C" fn kcrawl_action_result_action_index(ptr: *const kreuzcrawl::ActionResult) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -1314,7 +1422,7 @@ pub const unsafe extern "C" fn kcrawl_action_result_action_index(ptr: *const kre
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_action_result_success(ptr: *const kreuzcrawl::ActionResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_action_result_success(ptr: *const kreuzcrawl::ActionResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1431,7 +1539,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_free(ptr: *mut kreuzcrawl::ScrapeR
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_status_code(ptr: *const kreuzcrawl::ScrapeResult) -> u16 {
+pub unsafe extern "C" fn kcrawl_scrape_result_status_code(ptr: *const kreuzcrawl::ScrapeResult) -> u16 {
     if ptr.is_null() {
         return 0;
     }
@@ -1475,7 +1583,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_html(ptr: *const kreuzcrawl::Scrap
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_body_size(ptr: *const kreuzcrawl::ScrapeResult) -> usize {
+pub unsafe extern "C" fn kcrawl_scrape_result_body_size(ptr: *const kreuzcrawl::ScrapeResult) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -1573,7 +1681,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_json_ld(ptr: *const kreuzcrawl::Sc
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_is_allowed(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_is_allowed(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1600,7 +1708,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_crawl_delay(ptr: *const kreuzcrawl
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_noindex_detected(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_noindex_detected(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1612,7 +1720,7 @@ pub const unsafe extern "C" fn kcrawl_scrape_result_noindex_detected(ptr: *const
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_nofollow_detected(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_nofollow_detected(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1644,7 +1752,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_x_robots_tag(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_is_pdf(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_is_pdf(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1656,7 +1764,7 @@ pub const unsafe extern "C" fn kcrawl_scrape_result_is_pdf(ptr: *const kreuzcraw
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_was_skipped(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_was_skipped(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1688,7 +1796,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_detected_charset(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_main_content_only(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_main_content_only(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1700,7 +1808,7 @@ pub const unsafe extern "C" fn kcrawl_scrape_result_main_content_only(ptr: *cons
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_auth_header_sent(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_auth_header_sent(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1747,7 +1855,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_assets(ptr: *const kreuzcrawl::Scr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_js_render_hint(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_js_render_hint(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1759,7 +1867,7 @@ pub const unsafe extern "C" fn kcrawl_scrape_result_js_render_hint(ptr: *const k
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_scrape_result_browser_used(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_scrape_result_browser_used(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1960,7 +2068,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_normalized_url(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_page_result_status_code(ptr: *const kreuzcrawl::CrawlPageResult) -> u16 {
+pub unsafe extern "C" fn kcrawl_crawl_page_result_status_code(ptr: *const kreuzcrawl::CrawlPageResult) -> u16 {
     if ptr.is_null() {
         return 0;
     }
@@ -2006,7 +2114,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_html(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_page_result_body_size(ptr: *const kreuzcrawl::CrawlPageResult) -> usize {
+pub unsafe extern "C" fn kcrawl_crawl_page_result_body_size(ptr: *const kreuzcrawl::CrawlPageResult) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -2112,7 +2220,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_json_ld(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_page_result_depth(ptr: *const kreuzcrawl::CrawlPageResult) -> usize {
+pub unsafe extern "C" fn kcrawl_crawl_page_result_depth(ptr: *const kreuzcrawl::CrawlPageResult) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -2124,9 +2232,7 @@ pub const unsafe extern "C" fn kcrawl_crawl_page_result_depth(ptr: *const kreuzc
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_page_result_stayed_on_domain(
-    ptr: *const kreuzcrawl::CrawlPageResult,
-) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_page_result_stayed_on_domain(ptr: *const kreuzcrawl::CrawlPageResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -2138,7 +2244,7 @@ pub const unsafe extern "C" fn kcrawl_crawl_page_result_stayed_on_domain(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_page_result_was_skipped(ptr: *const kreuzcrawl::CrawlPageResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_page_result_was_skipped(ptr: *const kreuzcrawl::CrawlPageResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -2150,7 +2256,7 @@ pub const unsafe extern "C" fn kcrawl_crawl_page_result_was_skipped(ptr: *const 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_page_result_is_pdf(ptr: *const kreuzcrawl::CrawlPageResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_page_result_is_pdf(ptr: *const kreuzcrawl::CrawlPageResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -2355,7 +2461,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_final_url(ptr: *const kreuzcrawl::C
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_result_redirect_count(ptr: *const kreuzcrawl::CrawlResult) -> usize {
+pub unsafe extern "C" fn kcrawl_crawl_result_redirect_count(ptr: *const kreuzcrawl::CrawlResult) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -2367,7 +2473,7 @@ pub const unsafe extern "C" fn kcrawl_crawl_result_redirect_count(ptr: *const kr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_crawl_result_was_skipped(ptr: *const kreuzcrawl::CrawlResult) -> i32 {
+pub unsafe extern "C" fn kcrawl_crawl_result_was_skipped(ptr: *const kreuzcrawl::CrawlResult) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -2918,7 +3024,7 @@ pub unsafe extern "C" fn kcrawl_cached_page_url(ptr: *const kreuzcrawl::CachedPa
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_cached_page_status_code(ptr: *const kreuzcrawl::CachedPage) -> u16 {
+pub unsafe extern "C" fn kcrawl_cached_page_status_code(ptr: *const kreuzcrawl::CachedPage) -> u16 {
     if ptr.is_null() {
         return 0;
     }
@@ -2996,7 +3102,7 @@ pub unsafe extern "C" fn kcrawl_cached_page_last_modified(ptr: *const kreuzcrawl
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_cached_page_cached_at(ptr: *const kreuzcrawl::CachedPage) -> u64 {
+pub unsafe extern "C" fn kcrawl_cached_page_cached_at(ptr: *const kreuzcrawl::CachedPage) -> u64 {
     if ptr.is_null() {
         return 0;
     }
@@ -3134,7 +3240,7 @@ pub unsafe extern "C" fn kcrawl_link_info_rel(ptr: *const kreuzcrawl::LinkInfo) 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_link_info_nofollow(ptr: *const kreuzcrawl::LinkInfo) -> i32 {
+pub unsafe extern "C" fn kcrawl_link_info_nofollow(ptr: *const kreuzcrawl::LinkInfo) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -3764,7 +3870,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_mime_type(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_downloaded_asset_size(ptr: *const kreuzcrawl::DownloadedAsset) -> usize {
+pub unsafe extern "C" fn kcrawl_downloaded_asset_size(ptr: *const kreuzcrawl::DownloadedAsset) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -4270,7 +4376,7 @@ pub unsafe extern "C" fn kcrawl_heading_info_free(ptr: *mut kreuzcrawl::HeadingI
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_heading_info_level(ptr: *const kreuzcrawl::HeadingInfo) -> u8 {
+pub unsafe extern "C" fn kcrawl_heading_info_level(ptr: *const kreuzcrawl::HeadingInfo) -> u8 {
     if ptr.is_null() {
         return 0;
     }
@@ -5554,7 +5660,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_free(ptr: *mut kreuzcrawl::Ci
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kcrawl_citation_reference_index(ptr: *const kreuzcrawl::CitationReference) -> usize {
+pub unsafe extern "C" fn kcrawl_citation_reference_index(ptr: *const kreuzcrawl::CitationReference) -> usize {
     if ptr.is_null() {
         return 0;
     }

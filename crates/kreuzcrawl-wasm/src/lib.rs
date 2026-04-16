@@ -7,7 +7,7 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsExtractionMeta {
+pub struct WasmExtractionMeta {
     cost: Option<f64>,
     prompt_tokens: Option<u64>,
     completion_tokens: Option<u64>,
@@ -16,7 +16,7 @@ pub struct JsExtractionMeta {
 }
 
 #[wasm_bindgen]
-impl JsExtractionMeta {
+impl WasmExtractionMeta {
     #[wasm_bindgen(constructor)]
     pub fn new(
         chunks_processed: Option<usize>,
@@ -24,8 +24,8 @@ impl JsExtractionMeta {
         prompt_tokens: Option<u64>,
         completion_tokens: Option<u64>,
         model: Option<String>,
-    ) -> JsExtractionMeta {
-        JsExtractionMeta {
+    ) -> WasmExtractionMeta {
+        WasmExtractionMeta {
             cost,
             prompt_tokens,
             completion_tokens,
@@ -87,17 +87,17 @@ impl JsExtractionMeta {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsProxyConfig {
+pub struct WasmProxyConfig {
     url: String,
     username: Option<String>,
     password: Option<String>,
 }
 
 #[wasm_bindgen]
-impl JsProxyConfig {
+impl WasmProxyConfig {
     #[wasm_bindgen(constructor)]
-    pub fn new(url: Option<String>, username: Option<String>, password: Option<String>) -> JsProxyConfig {
-        JsProxyConfig {
+    pub fn new(url: Option<String>, username: Option<String>, password: Option<String>) -> WasmProxyConfig {
+        WasmProxyConfig {
             url: url.unwrap_or_default(),
             username,
             password,
@@ -137,27 +137,27 @@ impl JsProxyConfig {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsBrowserConfig {
-    mode: JsBrowserMode,
+pub struct WasmBrowserConfig {
+    mode: WasmBrowserMode,
     endpoint: Option<String>,
     timeout: Option<u64>,
-    wait: JsBrowserWait,
+    wait: WasmBrowserWait,
     wait_selector: Option<String>,
     extra_wait: Option<u64>,
 }
 
 #[wasm_bindgen]
-impl JsBrowserConfig {
+impl WasmBrowserConfig {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        mode: Option<JsBrowserMode>,
+        mode: Option<WasmBrowserMode>,
         timeout: Option<u64>,
-        wait: Option<JsBrowserWait>,
+        wait: Option<WasmBrowserWait>,
         endpoint: Option<String>,
         wait_selector: Option<String>,
         extra_wait: Option<u64>,
-    ) -> JsBrowserConfig {
-        JsBrowserConfig {
+    ) -> WasmBrowserConfig {
+        WasmBrowserConfig {
             mode: mode.unwrap_or_default(),
             endpoint,
             timeout,
@@ -168,12 +168,12 @@ impl JsBrowserConfig {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn mode(&self) -> JsBrowserMode {
+    pub fn mode(&self) -> WasmBrowserMode {
         self.mode
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_mode(&mut self, value: JsBrowserMode) {
+    pub fn set_mode(&mut self, value: WasmBrowserMode) {
         self.mode = value;
     }
 
@@ -198,12 +198,12 @@ impl JsBrowserConfig {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn wait(&self) -> JsBrowserWait {
+    pub fn wait(&self) -> WasmBrowserWait {
         self.wait
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_wait(&mut self, value: JsBrowserWait) {
+    pub fn set_wait(&mut self, value: WasmBrowserWait) {
         self.wait = value;
     }
 
@@ -229,14 +229,14 @@ impl JsBrowserConfig {
 
     #[allow(clippy::should_implement_trait)]
     #[wasm_bindgen]
-    pub fn default() -> JsBrowserConfig {
+    pub fn default() -> WasmBrowserConfig {
         kreuzcrawl::BrowserConfig::default().into()
     }
 }
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsCrawlConfig {
+pub struct WasmCrawlConfig {
     max_depth: Option<usize>,
     max_pages: Option<usize>,
     max_concurrent: Option<usize>,
@@ -252,17 +252,17 @@ pub struct JsCrawlConfig {
     retry_count: usize,
     retry_codes: Vec<u16>,
     cookies_enabled: bool,
-    auth: Option<JsAuthConfig>,
+    auth: Option<WasmAuthConfig>,
     max_body_size: Option<usize>,
     main_content_only: bool,
     remove_tags: Vec<String>,
     map_limit: Option<usize>,
     map_search: Option<String>,
     download_assets: bool,
-    asset_types: Vec<JsAssetCategory>,
+    asset_types: Vec<WasmAssetCategory>,
     max_asset_size: Option<usize>,
-    browser: JsBrowserConfig,
-    proxy: Option<JsProxyConfig>,
+    browser: WasmBrowserConfig,
+    proxy: Option<WasmProxyConfig>,
     user_agents: Vec<String>,
     capture_screenshot: bool,
     download_documents: bool,
@@ -274,7 +274,7 @@ pub struct JsCrawlConfig {
 }
 
 #[wasm_bindgen]
-impl JsCrawlConfig {
+impl WasmCrawlConfig {
     #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
@@ -292,8 +292,8 @@ impl JsCrawlConfig {
         main_content_only: Option<bool>,
         remove_tags: Option<Vec<String>>,
         download_assets: Option<bool>,
-        asset_types: Option<Vec<JsAssetCategory>>,
-        browser: Option<JsBrowserConfig>,
+        asset_types: Option<Vec<WasmAssetCategory>>,
+        browser: Option<WasmBrowserConfig>,
         user_agents: Option<Vec<String>>,
         capture_screenshot: Option<bool>,
         download_documents: Option<bool>,
@@ -303,17 +303,17 @@ impl JsCrawlConfig {
         max_pages: Option<usize>,
         max_concurrent: Option<usize>,
         user_agent: Option<String>,
-        auth: Option<JsAuthConfig>,
+        auth: Option<WasmAuthConfig>,
         max_body_size: Option<usize>,
         map_limit: Option<usize>,
         map_search: Option<String>,
         max_asset_size: Option<usize>,
-        proxy: Option<JsProxyConfig>,
+        proxy: Option<WasmProxyConfig>,
         document_max_size: Option<usize>,
         warc_output: Option<String>,
         browser_profile: Option<String>,
-    ) -> JsCrawlConfig {
-        JsCrawlConfig {
+    ) -> WasmCrawlConfig {
+        WasmCrawlConfig {
             max_depth,
             max_pages,
             max_concurrent,
@@ -502,12 +502,12 @@ impl JsCrawlConfig {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn auth(&self) -> Option<JsAuthConfig> {
+    pub fn auth(&self) -> Option<WasmAuthConfig> {
         self.auth
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_auth(&mut self, value: Option<JsAuthConfig>) {
+    pub fn set_auth(&mut self, value: Option<WasmAuthConfig>) {
         self.auth = value;
     }
 
@@ -572,12 +572,12 @@ impl JsCrawlConfig {
     }
 
     #[wasm_bindgen(getter, js_name = "assetTypes")]
-    pub fn asset_types(&self) -> Vec<JsAssetCategory> {
+    pub fn asset_types(&self) -> Vec<WasmAssetCategory> {
         self.asset_types.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "assetTypes")]
-    pub fn set_asset_types(&mut self, value: Vec<JsAssetCategory>) {
+    pub fn set_asset_types(&mut self, value: Vec<WasmAssetCategory>) {
         self.asset_types = value;
     }
 
@@ -592,22 +592,22 @@ impl JsCrawlConfig {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn browser(&self) -> JsBrowserConfig {
+    pub fn browser(&self) -> WasmBrowserConfig {
         self.browser.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_browser(&mut self, value: JsBrowserConfig) {
+    pub fn set_browser(&mut self, value: WasmBrowserConfig) {
         self.browser = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn proxy(&self) -> Option<JsProxyConfig> {
+    pub fn proxy(&self) -> Option<WasmProxyConfig> {
         self.proxy.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_proxy(&mut self, value: Option<JsProxyConfig>) {
+    pub fn set_proxy(&mut self, value: Option<WasmProxyConfig>) {
         self.proxy = value;
     }
 
@@ -693,14 +693,14 @@ impl JsCrawlConfig {
 
     #[allow(clippy::should_implement_trait)]
     #[wasm_bindgen]
-    pub fn default() -> JsCrawlConfig {
+    pub fn default() -> WasmCrawlConfig {
         kreuzcrawl::CrawlConfig::default().into()
     }
 }
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsDownloadedDocument {
+pub struct WasmDownloadedDocument {
     url: String,
     mime_type: String,
     content: Vec<u8>,
@@ -711,7 +711,7 @@ pub struct JsDownloadedDocument {
 }
 
 #[wasm_bindgen]
-impl JsDownloadedDocument {
+impl WasmDownloadedDocument {
     #[wasm_bindgen(constructor)]
     pub fn new(
         url: Option<String>,
@@ -721,8 +721,8 @@ impl JsDownloadedDocument {
         content_hash: Option<String>,
         headers: Option<JsValue>,
         filename: Option<String>,
-    ) -> JsDownloadedDocument {
-        JsDownloadedDocument {
+    ) -> WasmDownloadedDocument {
+        WasmDownloadedDocument {
             url: url.unwrap_or_default(),
             mime_type: mime_type.unwrap_or_default(),
             content: content.unwrap_or_default(),
@@ -806,23 +806,23 @@ impl JsDownloadedDocument {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsInteractionResult {
-    action_results: Vec<JsActionResult>,
+pub struct WasmInteractionResult {
+    action_results: Vec<WasmActionResult>,
     final_html: String,
     final_url: String,
     screenshot: Option<Vec<u8>>,
 }
 
 #[wasm_bindgen]
-impl JsInteractionResult {
+impl WasmInteractionResult {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        action_results: Option<Vec<JsActionResult>>,
+        action_results: Option<Vec<WasmActionResult>>,
         final_html: Option<String>,
         final_url: Option<String>,
         screenshot: Option<Vec<u8>>,
-    ) -> JsInteractionResult {
-        JsInteractionResult {
+    ) -> WasmInteractionResult {
+        WasmInteractionResult {
             action_results: action_results.unwrap_or_default(),
             final_html: final_html.unwrap_or_default(),
             final_url: final_url.unwrap_or_default(),
@@ -831,12 +831,12 @@ impl JsInteractionResult {
     }
 
     #[wasm_bindgen(getter, js_name = "actionResults")]
-    pub fn action_results(&self) -> Vec<JsActionResult> {
+    pub fn action_results(&self) -> Vec<WasmActionResult> {
         self.action_results.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "actionResults")]
-    pub fn set_action_results(&mut self, value: Vec<JsActionResult>) {
+    pub fn set_action_results(&mut self, value: Vec<WasmActionResult>) {
         self.action_results = value;
     }
 
@@ -873,7 +873,7 @@ impl JsInteractionResult {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsActionResult {
+pub struct WasmActionResult {
     action_index: usize,
     action_type: String,
     success: bool,
@@ -882,7 +882,7 @@ pub struct JsActionResult {
 }
 
 #[wasm_bindgen]
-impl JsActionResult {
+impl WasmActionResult {
     #[wasm_bindgen(constructor)]
     pub fn new(
         action_index: Option<usize>,
@@ -890,8 +890,8 @@ impl JsActionResult {
         success: Option<bool>,
         data: Option<JsValue>,
         error: Option<String>,
-    ) -> JsActionResult {
-        JsActionResult {
+    ) -> WasmActionResult {
+        WasmActionResult {
             action_index: action_index.unwrap_or_default(),
             action_type: action_type.unwrap_or_default(),
             success: success.unwrap_or_default(),
@@ -953,16 +953,16 @@ impl JsActionResult {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsScrapeResult {
+pub struct WasmScrapeResult {
     status_code: u16,
     content_type: String,
     html: String,
     body_size: usize,
-    metadata: JsPageMetadata,
-    links: Vec<JsLinkInfo>,
-    images: Vec<JsImageInfo>,
-    feeds: Vec<JsFeedInfo>,
-    json_ld: Vec<JsJsonLdEntry>,
+    metadata: WasmPageMetadata,
+    links: Vec<WasmLinkInfo>,
+    images: Vec<WasmImageInfo>,
+    feeds: Vec<WasmFeedInfo>,
+    json_ld: Vec<WasmJsonLdEntry>,
     is_allowed: bool,
     crawl_delay: Option<u64>,
     noindex_detected: bool,
@@ -973,19 +973,19 @@ pub struct JsScrapeResult {
     detected_charset: Option<String>,
     main_content_only: bool,
     auth_header_sent: bool,
-    response_meta: Option<JsResponseMeta>,
-    assets: Vec<JsDownloadedAsset>,
+    response_meta: Option<WasmResponseMeta>,
+    assets: Vec<WasmDownloadedAsset>,
     js_render_hint: bool,
     browser_used: bool,
-    markdown: Option<JsMarkdownResult>,
+    markdown: Option<WasmMarkdownResult>,
     extracted_data: Option<JsValue>,
-    extraction_meta: Option<JsExtractionMeta>,
+    extraction_meta: Option<WasmExtractionMeta>,
     screenshot: Option<Vec<u8>>,
-    downloaded_document: Option<JsDownloadedDocument>,
+    downloaded_document: Option<WasmDownloadedDocument>,
 }
 
 #[wasm_bindgen]
-impl JsScrapeResult {
+impl WasmScrapeResult {
     #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
@@ -993,11 +993,11 @@ impl JsScrapeResult {
         content_type: Option<String>,
         html: Option<String>,
         body_size: Option<usize>,
-        metadata: Option<JsPageMetadata>,
-        links: Option<Vec<JsLinkInfo>>,
-        images: Option<Vec<JsImageInfo>>,
-        feeds: Option<Vec<JsFeedInfo>>,
-        json_ld: Option<Vec<JsJsonLdEntry>>,
+        metadata: Option<WasmPageMetadata>,
+        links: Option<Vec<WasmLinkInfo>>,
+        images: Option<Vec<WasmImageInfo>>,
+        feeds: Option<Vec<WasmFeedInfo>>,
+        json_ld: Option<Vec<WasmJsonLdEntry>>,
         is_allowed: Option<bool>,
         noindex_detected: Option<bool>,
         nofollow_detected: Option<bool>,
@@ -1005,20 +1005,20 @@ impl JsScrapeResult {
         was_skipped: Option<bool>,
         main_content_only: Option<bool>,
         auth_header_sent: Option<bool>,
-        assets: Option<Vec<JsDownloadedAsset>>,
+        assets: Option<Vec<WasmDownloadedAsset>>,
         js_render_hint: Option<bool>,
         browser_used: Option<bool>,
         crawl_delay: Option<u64>,
         x_robots_tag: Option<String>,
         detected_charset: Option<String>,
-        response_meta: Option<JsResponseMeta>,
-        markdown: Option<JsMarkdownResult>,
+        response_meta: Option<WasmResponseMeta>,
+        markdown: Option<WasmMarkdownResult>,
         extracted_data: Option<JsValue>,
-        extraction_meta: Option<JsExtractionMeta>,
+        extraction_meta: Option<WasmExtractionMeta>,
         screenshot: Option<Vec<u8>>,
-        downloaded_document: Option<JsDownloadedDocument>,
-    ) -> JsScrapeResult {
-        JsScrapeResult {
+        downloaded_document: Option<WasmDownloadedDocument>,
+    ) -> WasmScrapeResult {
+        WasmScrapeResult {
             status_code: status_code.unwrap_or_default(),
             content_type: content_type.unwrap_or_default(),
             html: html.unwrap_or_default(),
@@ -1091,52 +1091,52 @@ impl JsScrapeResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn metadata(&self) -> JsPageMetadata {
+    pub fn metadata(&self) -> WasmPageMetadata {
         self.metadata.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_metadata(&mut self, value: JsPageMetadata) {
+    pub fn set_metadata(&mut self, value: WasmPageMetadata) {
         self.metadata = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn links(&self) -> Vec<JsLinkInfo> {
+    pub fn links(&self) -> Vec<WasmLinkInfo> {
         self.links.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_links(&mut self, value: Vec<JsLinkInfo>) {
+    pub fn set_links(&mut self, value: Vec<WasmLinkInfo>) {
         self.links = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn images(&self) -> Vec<JsImageInfo> {
+    pub fn images(&self) -> Vec<WasmImageInfo> {
         self.images.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_images(&mut self, value: Vec<JsImageInfo>) {
+    pub fn set_images(&mut self, value: Vec<WasmImageInfo>) {
         self.images = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn feeds(&self) -> Vec<JsFeedInfo> {
+    pub fn feeds(&self) -> Vec<WasmFeedInfo> {
         self.feeds.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_feeds(&mut self, value: Vec<JsFeedInfo>) {
+    pub fn set_feeds(&mut self, value: Vec<WasmFeedInfo>) {
         self.feeds = value;
     }
 
     #[wasm_bindgen(getter, js_name = "jsonLd")]
-    pub fn json_ld(&self) -> Vec<JsJsonLdEntry> {
+    pub fn json_ld(&self) -> Vec<WasmJsonLdEntry> {
         self.json_ld.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "jsonLd")]
-    pub fn set_json_ld(&mut self, value: Vec<JsJsonLdEntry>) {
+    pub fn set_json_ld(&mut self, value: Vec<WasmJsonLdEntry>) {
         self.json_ld = value;
     }
 
@@ -1241,22 +1241,22 @@ impl JsScrapeResult {
     }
 
     #[wasm_bindgen(getter, js_name = "responseMeta")]
-    pub fn response_meta(&self) -> Option<JsResponseMeta> {
+    pub fn response_meta(&self) -> Option<WasmResponseMeta> {
         self.response_meta.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "responseMeta")]
-    pub fn set_response_meta(&mut self, value: Option<JsResponseMeta>) {
+    pub fn set_response_meta(&mut self, value: Option<WasmResponseMeta>) {
         self.response_meta = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn assets(&self) -> Vec<JsDownloadedAsset> {
+    pub fn assets(&self) -> Vec<WasmDownloadedAsset> {
         self.assets.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_assets(&mut self, value: Vec<JsDownloadedAsset>) {
+    pub fn set_assets(&mut self, value: Vec<WasmDownloadedAsset>) {
         self.assets = value;
     }
 
@@ -1281,12 +1281,12 @@ impl JsScrapeResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn markdown(&self) -> Option<JsMarkdownResult> {
+    pub fn markdown(&self) -> Option<WasmMarkdownResult> {
         self.markdown.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_markdown(&mut self, value: Option<JsMarkdownResult>) {
+    pub fn set_markdown(&mut self, value: Option<WasmMarkdownResult>) {
         self.markdown = value;
     }
 
@@ -1301,12 +1301,12 @@ impl JsScrapeResult {
     }
 
     #[wasm_bindgen(getter, js_name = "extractionMeta")]
-    pub fn extraction_meta(&self) -> Option<JsExtractionMeta> {
+    pub fn extraction_meta(&self) -> Option<WasmExtractionMeta> {
         self.extraction_meta.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "extractionMeta")]
-    pub fn set_extraction_meta(&mut self, value: Option<JsExtractionMeta>) {
+    pub fn set_extraction_meta(&mut self, value: Option<WasmExtractionMeta>) {
         self.extraction_meta = value;
     }
 
@@ -1321,43 +1321,43 @@ impl JsScrapeResult {
     }
 
     #[wasm_bindgen(getter, js_name = "downloadedDocument")]
-    pub fn downloaded_document(&self) -> Option<JsDownloadedDocument> {
+    pub fn downloaded_document(&self) -> Option<WasmDownloadedDocument> {
         self.downloaded_document.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "downloadedDocument")]
-    pub fn set_downloaded_document(&mut self, value: Option<JsDownloadedDocument>) {
+    pub fn set_downloaded_document(&mut self, value: Option<WasmDownloadedDocument>) {
         self.downloaded_document = value;
     }
 }
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsCrawlPageResult {
+pub struct WasmCrawlPageResult {
     url: String,
     normalized_url: String,
     status_code: u16,
     content_type: String,
     html: String,
     body_size: usize,
-    metadata: JsPageMetadata,
-    links: Vec<JsLinkInfo>,
-    images: Vec<JsImageInfo>,
-    feeds: Vec<JsFeedInfo>,
-    json_ld: Vec<JsJsonLdEntry>,
+    metadata: WasmPageMetadata,
+    links: Vec<WasmLinkInfo>,
+    images: Vec<WasmImageInfo>,
+    feeds: Vec<WasmFeedInfo>,
+    json_ld: Vec<WasmJsonLdEntry>,
     depth: usize,
     stayed_on_domain: bool,
     was_skipped: bool,
     is_pdf: bool,
     detected_charset: Option<String>,
-    markdown: Option<JsMarkdownResult>,
+    markdown: Option<WasmMarkdownResult>,
     extracted_data: Option<JsValue>,
-    extraction_meta: Option<JsExtractionMeta>,
-    downloaded_document: Option<JsDownloadedDocument>,
+    extraction_meta: Option<WasmExtractionMeta>,
+    downloaded_document: Option<WasmDownloadedDocument>,
 }
 
 #[wasm_bindgen]
-impl JsCrawlPageResult {
+impl WasmCrawlPageResult {
     #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
@@ -1367,22 +1367,22 @@ impl JsCrawlPageResult {
         content_type: Option<String>,
         html: Option<String>,
         body_size: Option<usize>,
-        metadata: Option<JsPageMetadata>,
-        links: Option<Vec<JsLinkInfo>>,
-        images: Option<Vec<JsImageInfo>>,
-        feeds: Option<Vec<JsFeedInfo>>,
-        json_ld: Option<Vec<JsJsonLdEntry>>,
+        metadata: Option<WasmPageMetadata>,
+        links: Option<Vec<WasmLinkInfo>>,
+        images: Option<Vec<WasmImageInfo>>,
+        feeds: Option<Vec<WasmFeedInfo>>,
+        json_ld: Option<Vec<WasmJsonLdEntry>>,
         depth: Option<usize>,
         stayed_on_domain: Option<bool>,
         was_skipped: Option<bool>,
         is_pdf: Option<bool>,
         detected_charset: Option<String>,
-        markdown: Option<JsMarkdownResult>,
+        markdown: Option<WasmMarkdownResult>,
         extracted_data: Option<JsValue>,
-        extraction_meta: Option<JsExtractionMeta>,
-        downloaded_document: Option<JsDownloadedDocument>,
-    ) -> JsCrawlPageResult {
-        JsCrawlPageResult {
+        extraction_meta: Option<WasmExtractionMeta>,
+        downloaded_document: Option<WasmDownloadedDocument>,
+    ) -> WasmCrawlPageResult {
+        WasmCrawlPageResult {
             url: url.unwrap_or_default(),
             normalized_url: normalized_url.unwrap_or_default(),
             status_code: status_code.unwrap_or_default(),
@@ -1467,52 +1467,52 @@ impl JsCrawlPageResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn metadata(&self) -> JsPageMetadata {
+    pub fn metadata(&self) -> WasmPageMetadata {
         self.metadata.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_metadata(&mut self, value: JsPageMetadata) {
+    pub fn set_metadata(&mut self, value: WasmPageMetadata) {
         self.metadata = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn links(&self) -> Vec<JsLinkInfo> {
+    pub fn links(&self) -> Vec<WasmLinkInfo> {
         self.links.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_links(&mut self, value: Vec<JsLinkInfo>) {
+    pub fn set_links(&mut self, value: Vec<WasmLinkInfo>) {
         self.links = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn images(&self) -> Vec<JsImageInfo> {
+    pub fn images(&self) -> Vec<WasmImageInfo> {
         self.images.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_images(&mut self, value: Vec<JsImageInfo>) {
+    pub fn set_images(&mut self, value: Vec<WasmImageInfo>) {
         self.images = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn feeds(&self) -> Vec<JsFeedInfo> {
+    pub fn feeds(&self) -> Vec<WasmFeedInfo> {
         self.feeds.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_feeds(&mut self, value: Vec<JsFeedInfo>) {
+    pub fn set_feeds(&mut self, value: Vec<WasmFeedInfo>) {
         self.feeds = value;
     }
 
     #[wasm_bindgen(getter, js_name = "jsonLd")]
-    pub fn json_ld(&self) -> Vec<JsJsonLdEntry> {
+    pub fn json_ld(&self) -> Vec<WasmJsonLdEntry> {
         self.json_ld.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "jsonLd")]
-    pub fn set_json_ld(&mut self, value: Vec<JsJsonLdEntry>) {
+    pub fn set_json_ld(&mut self, value: Vec<WasmJsonLdEntry>) {
         self.json_ld = value;
     }
 
@@ -1567,12 +1567,12 @@ impl JsCrawlPageResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn markdown(&self) -> Option<JsMarkdownResult> {
+    pub fn markdown(&self) -> Option<WasmMarkdownResult> {
         self.markdown.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_markdown(&mut self, value: Option<JsMarkdownResult>) {
+    pub fn set_markdown(&mut self, value: Option<WasmMarkdownResult>) {
         self.markdown = value;
     }
 
@@ -1587,51 +1587,51 @@ impl JsCrawlPageResult {
     }
 
     #[wasm_bindgen(getter, js_name = "extractionMeta")]
-    pub fn extraction_meta(&self) -> Option<JsExtractionMeta> {
+    pub fn extraction_meta(&self) -> Option<WasmExtractionMeta> {
         self.extraction_meta.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "extractionMeta")]
-    pub fn set_extraction_meta(&mut self, value: Option<JsExtractionMeta>) {
+    pub fn set_extraction_meta(&mut self, value: Option<WasmExtractionMeta>) {
         self.extraction_meta = value;
     }
 
     #[wasm_bindgen(getter, js_name = "downloadedDocument")]
-    pub fn downloaded_document(&self) -> Option<JsDownloadedDocument> {
+    pub fn downloaded_document(&self) -> Option<WasmDownloadedDocument> {
         self.downloaded_document.clone()
     }
 
     #[wasm_bindgen(setter, js_name = "downloadedDocument")]
-    pub fn set_downloaded_document(&mut self, value: Option<JsDownloadedDocument>) {
+    pub fn set_downloaded_document(&mut self, value: Option<WasmDownloadedDocument>) {
         self.downloaded_document = value;
     }
 }
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsCrawlResult {
-    pages: Vec<JsCrawlPageResult>,
+pub struct WasmCrawlResult {
+    pages: Vec<WasmCrawlPageResult>,
     final_url: String,
     redirect_count: usize,
     was_skipped: bool,
     error: Option<String>,
-    cookies: Vec<JsCookieInfo>,
+    cookies: Vec<WasmCookieInfo>,
     normalized_urls: Vec<String>,
 }
 
 #[wasm_bindgen]
-impl JsCrawlResult {
+impl WasmCrawlResult {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        pages: Option<Vec<JsCrawlPageResult>>,
+        pages: Option<Vec<WasmCrawlPageResult>>,
         final_url: Option<String>,
         redirect_count: Option<usize>,
         was_skipped: Option<bool>,
-        cookies: Option<Vec<JsCookieInfo>>,
+        cookies: Option<Vec<WasmCookieInfo>>,
         normalized_urls: Option<Vec<String>>,
         error: Option<String>,
-    ) -> JsCrawlResult {
-        JsCrawlResult {
+    ) -> WasmCrawlResult {
+        WasmCrawlResult {
             pages: pages.unwrap_or_default(),
             final_url: final_url.unwrap_or_default(),
             redirect_count: redirect_count.unwrap_or_default(),
@@ -1643,12 +1643,12 @@ impl JsCrawlResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn pages(&self) -> Vec<JsCrawlPageResult> {
+    pub fn pages(&self) -> Vec<WasmCrawlPageResult> {
         self.pages.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_pages(&mut self, value: Vec<JsCrawlPageResult>) {
+    pub fn set_pages(&mut self, value: Vec<WasmCrawlPageResult>) {
         self.pages = value;
     }
 
@@ -1693,12 +1693,12 @@ impl JsCrawlResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn cookies(&self) -> Vec<JsCookieInfo> {
+    pub fn cookies(&self) -> Vec<WasmCookieInfo> {
         self.cookies.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_cookies(&mut self, value: Vec<JsCookieInfo>) {
+    pub fn set_cookies(&mut self, value: Vec<WasmCookieInfo>) {
         self.cookies = value;
     }
 
@@ -1715,7 +1715,7 @@ impl JsCrawlResult {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsSitemapUrl {
+pub struct WasmSitemapUrl {
     url: String,
     lastmod: Option<String>,
     changefreq: Option<String>,
@@ -1723,15 +1723,15 @@ pub struct JsSitemapUrl {
 }
 
 #[wasm_bindgen]
-impl JsSitemapUrl {
+impl WasmSitemapUrl {
     #[wasm_bindgen(constructor)]
     pub fn new(
         url: Option<String>,
         lastmod: Option<String>,
         changefreq: Option<String>,
         priority: Option<String>,
-    ) -> JsSitemapUrl {
-        JsSitemapUrl {
+    ) -> WasmSitemapUrl {
+        WasmSitemapUrl {
             url: url.unwrap_or_default(),
             lastmod,
             changefreq,
@@ -1782,53 +1782,53 @@ impl JsSitemapUrl {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsMapResult {
-    urls: Vec<JsSitemapUrl>,
+pub struct WasmMapResult {
+    urls: Vec<WasmSitemapUrl>,
 }
 
 #[wasm_bindgen]
-impl JsMapResult {
+impl WasmMapResult {
     #[wasm_bindgen(constructor)]
-    pub fn new(urls: Option<Vec<JsSitemapUrl>>) -> JsMapResult {
-        JsMapResult {
+    pub fn new(urls: Option<Vec<WasmSitemapUrl>>) -> WasmMapResult {
+        WasmMapResult {
             urls: urls.unwrap_or_default(),
         }
     }
 
     #[wasm_bindgen(getter)]
-    pub fn urls(&self) -> Vec<JsSitemapUrl> {
+    pub fn urls(&self) -> Vec<WasmSitemapUrl> {
         self.urls.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_urls(&mut self, value: Vec<JsSitemapUrl>) {
+    pub fn set_urls(&mut self, value: Vec<WasmSitemapUrl>) {
         self.urls = value;
     }
 }
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsMarkdownResult {
+pub struct WasmMarkdownResult {
     content: String,
     document_structure: Option<JsValue>,
     tables: JsValue,
     warnings: Vec<String>,
-    citations: Option<JsCitationResult>,
+    citations: Option<WasmCitationResult>,
     fit_content: Option<String>,
 }
 
 #[wasm_bindgen]
-impl JsMarkdownResult {
+impl WasmMarkdownResult {
     #[wasm_bindgen(constructor)]
     pub fn new(
         content: Option<String>,
         tables: Option<JsValue>,
         warnings: Option<Vec<String>>,
         document_structure: Option<JsValue>,
-        citations: Option<JsCitationResult>,
+        citations: Option<WasmCitationResult>,
         fit_content: Option<String>,
-    ) -> JsMarkdownResult {
-        JsMarkdownResult {
+    ) -> WasmMarkdownResult {
+        WasmMarkdownResult {
             content: content.unwrap_or_default(),
             document_structure,
             tables: tables.unwrap_or_default(),
@@ -1879,12 +1879,12 @@ impl JsMarkdownResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn citations(&self) -> Option<JsCitationResult> {
+    pub fn citations(&self) -> Option<WasmCitationResult> {
         self.citations.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_citations(&mut self, value: Option<JsCitationResult>) {
+    pub fn set_citations(&mut self, value: Option<WasmCitationResult>) {
         self.citations = value;
     }
 
@@ -1901,7 +1901,7 @@ impl JsMarkdownResult {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsCachedPage {
+pub struct WasmCachedPage {
     url: String,
     status_code: u16,
     content_type: String,
@@ -1912,7 +1912,7 @@ pub struct JsCachedPage {
 }
 
 #[wasm_bindgen]
-impl JsCachedPage {
+impl WasmCachedPage {
     #[wasm_bindgen(constructor)]
     pub fn new(
         url: Option<String>,
@@ -1922,8 +1922,8 @@ impl JsCachedPage {
         cached_at: Option<u64>,
         etag: Option<String>,
         last_modified: Option<String>,
-    ) -> JsCachedPage {
-        JsCachedPage {
+    ) -> WasmCachedPage {
+        WasmCachedPage {
             url: url.unwrap_or_default(),
             status_code: status_code.unwrap_or_default(),
             content_type: content_type.unwrap_or_default(),
@@ -2007,25 +2007,25 @@ impl JsCachedPage {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsLinkInfo {
+pub struct WasmLinkInfo {
     url: String,
     text: String,
-    link_type: JsLinkType,
+    link_type: WasmLinkType,
     rel: Option<String>,
     nofollow: bool,
 }
 
 #[wasm_bindgen]
-impl JsLinkInfo {
+impl WasmLinkInfo {
     #[wasm_bindgen(constructor)]
     pub fn new(
         url: Option<String>,
         text: Option<String>,
-        link_type: Option<JsLinkType>,
+        link_type: Option<WasmLinkType>,
         nofollow: Option<bool>,
         rel: Option<String>,
-    ) -> JsLinkInfo {
-        JsLinkInfo {
+    ) -> WasmLinkInfo {
+        WasmLinkInfo {
             url: url.unwrap_or_default(),
             text: text.unwrap_or_default(),
             link_type: link_type.unwrap_or_default(),
@@ -2055,12 +2055,12 @@ impl JsLinkInfo {
     }
 
     #[wasm_bindgen(getter, js_name = "linkType")]
-    pub fn link_type(&self) -> JsLinkType {
+    pub fn link_type(&self) -> WasmLinkType {
         self.link_type
     }
 
     #[wasm_bindgen(setter, js_name = "linkType")]
-    pub fn set_link_type(&mut self, value: JsLinkType) {
+    pub fn set_link_type(&mut self, value: WasmLinkType) {
         self.link_type = value;
     }
 
@@ -2087,25 +2087,25 @@ impl JsLinkInfo {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsImageInfo {
+pub struct WasmImageInfo {
     url: String,
     alt: Option<String>,
     width: Option<u32>,
     height: Option<u32>,
-    source: JsImageSource,
+    source: WasmImageSource,
 }
 
 #[wasm_bindgen]
-impl JsImageInfo {
+impl WasmImageInfo {
     #[wasm_bindgen(constructor)]
     pub fn new(
         url: Option<String>,
-        source: Option<JsImageSource>,
+        source: Option<WasmImageSource>,
         alt: Option<String>,
         width: Option<u32>,
         height: Option<u32>,
-    ) -> JsImageInfo {
-        JsImageInfo {
+    ) -> WasmImageInfo {
+        WasmImageInfo {
             url: url.unwrap_or_default(),
             alt,
             width,
@@ -2155,29 +2155,29 @@ impl JsImageInfo {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn source(&self) -> JsImageSource {
+    pub fn source(&self) -> WasmImageSource {
         self.source
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_source(&mut self, value: JsImageSource) {
+    pub fn set_source(&mut self, value: WasmImageSource) {
         self.source = value;
     }
 }
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsFeedInfo {
+pub struct WasmFeedInfo {
     url: String,
     title: Option<String>,
-    feed_type: JsFeedType,
+    feed_type: WasmFeedType,
 }
 
 #[wasm_bindgen]
-impl JsFeedInfo {
+impl WasmFeedInfo {
     #[wasm_bindgen(constructor)]
-    pub fn new(url: Option<String>, feed_type: Option<JsFeedType>, title: Option<String>) -> JsFeedInfo {
-        JsFeedInfo {
+    pub fn new(url: Option<String>, feed_type: Option<WasmFeedType>, title: Option<String>) -> WasmFeedInfo {
+        WasmFeedInfo {
             url: url.unwrap_or_default(),
             title,
             feed_type: feed_type.unwrap_or_default(),
@@ -2205,29 +2205,29 @@ impl JsFeedInfo {
     }
 
     #[wasm_bindgen(getter, js_name = "feedType")]
-    pub fn feed_type(&self) -> JsFeedType {
+    pub fn feed_type(&self) -> WasmFeedType {
         self.feed_type
     }
 
     #[wasm_bindgen(setter, js_name = "feedType")]
-    pub fn set_feed_type(&mut self, value: JsFeedType) {
+    pub fn set_feed_type(&mut self, value: WasmFeedType) {
         self.feed_type = value;
     }
 }
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsJsonLdEntry {
+pub struct WasmJsonLdEntry {
     schema_type: String,
     name: Option<String>,
     raw: String,
 }
 
 #[wasm_bindgen]
-impl JsJsonLdEntry {
+impl WasmJsonLdEntry {
     #[wasm_bindgen(constructor)]
-    pub fn new(schema_type: Option<String>, raw: Option<String>, name: Option<String>) -> JsJsonLdEntry {
-        JsJsonLdEntry {
+    pub fn new(schema_type: Option<String>, raw: Option<String>, name: Option<String>) -> WasmJsonLdEntry {
+        WasmJsonLdEntry {
             schema_type: schema_type.unwrap_or_default(),
             name,
             raw: raw.unwrap_or_default(),
@@ -2267,7 +2267,7 @@ impl JsJsonLdEntry {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsCookieInfo {
+pub struct WasmCookieInfo {
     name: String,
     value: String,
     domain: Option<String>,
@@ -2275,15 +2275,15 @@ pub struct JsCookieInfo {
 }
 
 #[wasm_bindgen]
-impl JsCookieInfo {
+impl WasmCookieInfo {
     #[wasm_bindgen(constructor)]
     pub fn new(
         name: Option<String>,
         value: Option<String>,
         domain: Option<String>,
         path: Option<String>,
-    ) -> JsCookieInfo {
-        JsCookieInfo {
+    ) -> WasmCookieInfo {
+        WasmCookieInfo {
             name: name.unwrap_or_default(),
             value: value.unwrap_or_default(),
             domain,
@@ -2334,27 +2334,27 @@ impl JsCookieInfo {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsDownloadedAsset {
+pub struct WasmDownloadedAsset {
     url: String,
     content_hash: String,
     mime_type: Option<String>,
     size: usize,
-    asset_category: JsAssetCategory,
+    asset_category: WasmAssetCategory,
     html_tag: Option<String>,
 }
 
 #[wasm_bindgen]
-impl JsDownloadedAsset {
+impl WasmDownloadedAsset {
     #[wasm_bindgen(constructor)]
     pub fn new(
         url: Option<String>,
         content_hash: Option<String>,
         size: Option<usize>,
-        asset_category: Option<JsAssetCategory>,
+        asset_category: Option<WasmAssetCategory>,
         mime_type: Option<String>,
         html_tag: Option<String>,
-    ) -> JsDownloadedAsset {
-        JsDownloadedAsset {
+    ) -> WasmDownloadedAsset {
+        WasmDownloadedAsset {
             url: url.unwrap_or_default(),
             content_hash: content_hash.unwrap_or_default(),
             mime_type,
@@ -2405,12 +2405,12 @@ impl JsDownloadedAsset {
     }
 
     #[wasm_bindgen(getter, js_name = "assetCategory")]
-    pub fn asset_category(&self) -> JsAssetCategory {
+    pub fn asset_category(&self) -> WasmAssetCategory {
         self.asset_category
     }
 
     #[wasm_bindgen(setter, js_name = "assetCategory")]
-    pub fn set_asset_category(&mut self, value: JsAssetCategory) {
+    pub fn set_asset_category(&mut self, value: WasmAssetCategory) {
         self.asset_category = value;
     }
 
@@ -2427,7 +2427,7 @@ impl JsDownloadedAsset {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsArticleMetadata {
+pub struct WasmArticleMetadata {
     published_time: Option<String>,
     modified_time: Option<String>,
     author: Option<String>,
@@ -2436,7 +2436,7 @@ pub struct JsArticleMetadata {
 }
 
 #[wasm_bindgen]
-impl JsArticleMetadata {
+impl WasmArticleMetadata {
     #[wasm_bindgen(constructor)]
     pub fn new(
         tags: Option<Vec<String>>,
@@ -2444,8 +2444,8 @@ impl JsArticleMetadata {
         modified_time: Option<String>,
         author: Option<String>,
         section: Option<String>,
-    ) -> JsArticleMetadata {
-        JsArticleMetadata {
+    ) -> WasmArticleMetadata {
+        WasmArticleMetadata {
             published_time,
             modified_time,
             author,
@@ -2507,16 +2507,16 @@ impl JsArticleMetadata {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsHreflangEntry {
+pub struct WasmHreflangEntry {
     lang: String,
     url: String,
 }
 
 #[wasm_bindgen]
-impl JsHreflangEntry {
+impl WasmHreflangEntry {
     #[wasm_bindgen(constructor)]
-    pub fn new(lang: Option<String>, url: Option<String>) -> JsHreflangEntry {
-        JsHreflangEntry {
+    pub fn new(lang: Option<String>, url: Option<String>) -> WasmHreflangEntry {
+        WasmHreflangEntry {
             lang: lang.unwrap_or_default(),
             url: url.unwrap_or_default(),
         }
@@ -2545,7 +2545,7 @@ impl JsHreflangEntry {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsFaviconInfo {
+pub struct WasmFaviconInfo {
     url: String,
     rel: String,
     sizes: Option<String>,
@@ -2553,15 +2553,15 @@ pub struct JsFaviconInfo {
 }
 
 #[wasm_bindgen]
-impl JsFaviconInfo {
+impl WasmFaviconInfo {
     #[wasm_bindgen(constructor)]
     pub fn new(
         url: Option<String>,
         rel: Option<String>,
         sizes: Option<String>,
         mime_type: Option<String>,
-    ) -> JsFaviconInfo {
-        JsFaviconInfo {
+    ) -> WasmFaviconInfo {
+        WasmFaviconInfo {
             url: url.unwrap_or_default(),
             rel: rel.unwrap_or_default(),
             sizes,
@@ -2612,16 +2612,16 @@ impl JsFaviconInfo {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsHeadingInfo {
+pub struct WasmHeadingInfo {
     level: u8,
     text: String,
 }
 
 #[wasm_bindgen]
-impl JsHeadingInfo {
+impl WasmHeadingInfo {
     #[wasm_bindgen(constructor)]
-    pub fn new(level: Option<u8>, text: Option<String>) -> JsHeadingInfo {
-        JsHeadingInfo {
+    pub fn new(level: Option<u8>, text: Option<String>) -> WasmHeadingInfo {
+        WasmHeadingInfo {
             level: level.unwrap_or_default(),
             text: text.unwrap_or_default(),
         }
@@ -2650,7 +2650,7 @@ impl JsHeadingInfo {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsResponseMeta {
+pub struct WasmResponseMeta {
     etag: Option<String>,
     last_modified: Option<String>,
     cache_control: Option<String>,
@@ -2661,7 +2661,7 @@ pub struct JsResponseMeta {
 }
 
 #[wasm_bindgen]
-impl JsResponseMeta {
+impl WasmResponseMeta {
     #[wasm_bindgen(constructor)]
     pub fn new(
         etag: Option<String>,
@@ -2671,8 +2671,8 @@ impl JsResponseMeta {
         x_powered_by: Option<String>,
         content_language: Option<String>,
         content_encoding: Option<String>,
-    ) -> JsResponseMeta {
-        JsResponseMeta {
+    ) -> WasmResponseMeta {
+        WasmResponseMeta {
             etag,
             last_modified,
             cache_control,
@@ -2756,7 +2756,7 @@ impl JsResponseMeta {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsPageMetadata {
+pub struct WasmPageMetadata {
     title: Option<String>,
     description: Option<String>,
     canonical_url: Option<String>,
@@ -2795,15 +2795,15 @@ pub struct JsPageMetadata {
     dc_identifier: Option<String>,
     dc_language: Option<String>,
     dc_rights: Option<String>,
-    article: Option<JsArticleMetadata>,
-    hreflangs: Option<Vec<JsHreflangEntry>>,
-    favicons: Option<Vec<JsFaviconInfo>>,
-    headings: Option<Vec<JsHeadingInfo>>,
+    article: Option<WasmArticleMetadata>,
+    hreflangs: Option<Vec<WasmHreflangEntry>>,
+    favicons: Option<Vec<WasmFaviconInfo>>,
+    headings: Option<Vec<WasmHeadingInfo>>,
     word_count: Option<usize>,
 }
 
 #[wasm_bindgen]
-impl JsPageMetadata {
+impl WasmPageMetadata {
     #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
@@ -2845,13 +2845,13 @@ impl JsPageMetadata {
         dc_identifier: Option<String>,
         dc_language: Option<String>,
         dc_rights: Option<String>,
-        article: Option<JsArticleMetadata>,
-        hreflangs: Option<Vec<JsHreflangEntry>>,
-        favicons: Option<Vec<JsFaviconInfo>>,
-        headings: Option<Vec<JsHeadingInfo>>,
+        article: Option<WasmArticleMetadata>,
+        hreflangs: Option<Vec<WasmHreflangEntry>>,
+        favicons: Option<Vec<WasmFaviconInfo>>,
+        headings: Option<Vec<WasmHeadingInfo>>,
         word_count: Option<usize>,
-    ) -> JsPageMetadata {
-        JsPageMetadata {
+    ) -> WasmPageMetadata {
+        WasmPageMetadata {
             title,
             description,
             canonical_url,
@@ -3279,42 +3279,42 @@ impl JsPageMetadata {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn article(&self) -> Option<JsArticleMetadata> {
+    pub fn article(&self) -> Option<WasmArticleMetadata> {
         self.article.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_article(&mut self, value: Option<JsArticleMetadata>) {
+    pub fn set_article(&mut self, value: Option<WasmArticleMetadata>) {
         self.article = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn hreflangs(&self) -> Option<Vec<JsHreflangEntry>> {
+    pub fn hreflangs(&self) -> Option<Vec<WasmHreflangEntry>> {
         self.hreflangs.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_hreflangs(&mut self, value: Option<Vec<JsHreflangEntry>>) {
+    pub fn set_hreflangs(&mut self, value: Option<Vec<WasmHreflangEntry>>) {
         self.hreflangs = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn favicons(&self) -> Option<Vec<JsFaviconInfo>> {
+    pub fn favicons(&self) -> Option<Vec<WasmFaviconInfo>> {
         self.favicons.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_favicons(&mut self, value: Option<Vec<JsFaviconInfo>>) {
+    pub fn set_favicons(&mut self, value: Option<Vec<WasmFaviconInfo>>) {
         self.favicons = value;
     }
 
     #[wasm_bindgen(getter)]
-    pub fn headings(&self) -> Option<Vec<JsHeadingInfo>> {
+    pub fn headings(&self) -> Option<Vec<WasmHeadingInfo>> {
         self.headings.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_headings(&mut self, value: Option<Vec<JsHeadingInfo>>) {
+    pub fn set_headings(&mut self, value: Option<Vec<WasmHeadingInfo>>) {
         self.headings = value;
     }
 
@@ -3331,16 +3331,16 @@ impl JsPageMetadata {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsCitationResult {
+pub struct WasmCitationResult {
     content: String,
-    references: Vec<JsCitationReference>,
+    references: Vec<WasmCitationReference>,
 }
 
 #[wasm_bindgen]
-impl JsCitationResult {
+impl WasmCitationResult {
     #[wasm_bindgen(constructor)]
-    pub fn new(content: Option<String>, references: Option<Vec<JsCitationReference>>) -> JsCitationResult {
-        JsCitationResult {
+    pub fn new(content: Option<String>, references: Option<Vec<WasmCitationReference>>) -> WasmCitationResult {
+        WasmCitationResult {
             content: content.unwrap_or_default(),
             references: references.unwrap_or_default(),
         }
@@ -3357,29 +3357,29 @@ impl JsCitationResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn references(&self) -> Vec<JsCitationReference> {
+    pub fn references(&self) -> Vec<WasmCitationReference> {
         self.references.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_references(&mut self, value: Vec<JsCitationReference>) {
+    pub fn set_references(&mut self, value: Vec<WasmCitationReference>) {
         self.references = value;
     }
 }
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsCitationReference {
+pub struct WasmCitationReference {
     index: usize,
     url: String,
     text: String,
 }
 
 #[wasm_bindgen]
-impl JsCitationReference {
+impl WasmCitationReference {
     #[wasm_bindgen(constructor)]
-    pub fn new(index: Option<usize>, url: Option<String>, text: Option<String>) -> JsCitationReference {
-        JsCitationReference {
+    pub fn new(index: Option<usize>, url: Option<String>, text: Option<String>) -> WasmCitationReference {
+        WasmCitationReference {
             index: index.unwrap_or_default(),
             url: url.unwrap_or_default(),
             text: text.unwrap_or_default(),
@@ -3419,26 +3419,26 @@ impl JsCitationReference {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct JsCrawlEngineHandle {
+pub struct WasmCrawlEngineHandle {
     inner: Arc<kreuzcrawl::CrawlEngineHandle>,
 }
 
 #[wasm_bindgen]
-impl JsCrawlEngineHandle {}
+impl WasmCrawlEngineHandle {}
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsBatchScrapeResult {
+pub struct WasmBatchScrapeResult {
     url: String,
-    result: Option<JsScrapeResult>,
+    result: Option<WasmScrapeResult>,
     error: Option<String>,
 }
 
 #[wasm_bindgen]
-impl JsBatchScrapeResult {
+impl WasmBatchScrapeResult {
     #[wasm_bindgen(constructor)]
-    pub fn new(url: Option<String>, result: Option<JsScrapeResult>, error: Option<String>) -> JsBatchScrapeResult {
-        JsBatchScrapeResult {
+    pub fn new(url: Option<String>, result: Option<WasmScrapeResult>, error: Option<String>) -> WasmBatchScrapeResult {
+        WasmBatchScrapeResult {
             url: url.unwrap_or_default(),
             result,
             error,
@@ -3456,12 +3456,12 @@ impl JsBatchScrapeResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn result(&self) -> Option<JsScrapeResult> {
+    pub fn result(&self) -> Option<WasmScrapeResult> {
         self.result.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_result(&mut self, value: Option<JsScrapeResult>) {
+    pub fn set_result(&mut self, value: Option<WasmScrapeResult>) {
         self.result = value;
     }
 
@@ -3478,17 +3478,17 @@ impl JsBatchScrapeResult {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct JsBatchCrawlResult {
+pub struct WasmBatchCrawlResult {
     url: String,
-    result: Option<JsCrawlResult>,
+    result: Option<WasmCrawlResult>,
     error: Option<String>,
 }
 
 #[wasm_bindgen]
-impl JsBatchCrawlResult {
+impl WasmBatchCrawlResult {
     #[wasm_bindgen(constructor)]
-    pub fn new(url: Option<String>, result: Option<JsCrawlResult>, error: Option<String>) -> JsBatchCrawlResult {
-        JsBatchCrawlResult {
+    pub fn new(url: Option<String>, result: Option<WasmCrawlResult>, error: Option<String>) -> WasmBatchCrawlResult {
+        WasmBatchCrawlResult {
             url: url.unwrap_or_default(),
             result,
             error,
@@ -3506,12 +3506,12 @@ impl JsBatchCrawlResult {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn result(&self) -> Option<JsCrawlResult> {
+    pub fn result(&self) -> Option<WasmCrawlResult> {
         self.result.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_result(&mut self, value: Option<JsCrawlResult>) {
+    pub fn set_result(&mut self, value: Option<WasmCrawlResult>) {
         self.result = value;
     }
 
@@ -3528,14 +3528,14 @@ impl JsBatchCrawlResult {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum JsBrowserMode {
+pub enum WasmBrowserMode {
     Auto = 0,
     Always = 1,
     Never = 2,
 }
 
 #[allow(clippy::derivable_impls)]
-impl Default for JsBrowserMode {
+impl Default for WasmBrowserMode {
     fn default() -> Self {
         Self::Auto
     }
@@ -3543,14 +3543,14 @@ impl Default for JsBrowserMode {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum JsBrowserWait {
+pub enum WasmBrowserWait {
     NetworkIdle = 0,
     Selector = 1,
     Fixed = 2,
 }
 
 #[allow(clippy::derivable_impls)]
-impl Default for JsBrowserWait {
+impl Default for WasmBrowserWait {
     fn default() -> Self {
         Self::NetworkIdle
     }
@@ -3558,14 +3558,14 @@ impl Default for JsBrowserWait {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum JsAuthConfig {
+pub enum WasmAuthConfig {
     Basic = 0,
     Bearer = 1,
     Header = 2,
 }
 
 #[allow(clippy::derivable_impls)]
-impl Default for JsAuthConfig {
+impl Default for WasmAuthConfig {
     fn default() -> Self {
         Self::Basic
     }
@@ -3573,7 +3573,7 @@ impl Default for JsAuthConfig {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum JsLinkType {
+pub enum WasmLinkType {
     Internal = 0,
     External = 1,
     Anchor = 2,
@@ -3581,7 +3581,7 @@ pub enum JsLinkType {
 }
 
 #[allow(clippy::derivable_impls)]
-impl Default for JsLinkType {
+impl Default for WasmLinkType {
     fn default() -> Self {
         Self::Internal
     }
@@ -3589,7 +3589,7 @@ impl Default for JsLinkType {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum JsImageSource {
+pub enum WasmImageSource {
     Img = 0,
     PictureSource = 1,
     OgImage = 2,
@@ -3597,7 +3597,7 @@ pub enum JsImageSource {
 }
 
 #[allow(clippy::derivable_impls)]
-impl Default for JsImageSource {
+impl Default for WasmImageSource {
     fn default() -> Self {
         Self::Img
     }
@@ -3605,14 +3605,14 @@ impl Default for JsImageSource {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum JsFeedType {
+pub enum WasmFeedType {
     Rss = 0,
     Atom = 1,
     JsonFeed = 2,
 }
 
 #[allow(clippy::derivable_impls)]
-impl Default for JsFeedType {
+impl Default for WasmFeedType {
     fn default() -> Self {
         Self::Rss
     }
@@ -3620,7 +3620,7 @@ impl Default for JsFeedType {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum JsAssetCategory {
+pub enum WasmAssetCategory {
     Document = 0,
     Image = 1,
     Audio = 2,
@@ -3634,7 +3634,7 @@ pub enum JsAssetCategory {
 }
 
 #[allow(clippy::derivable_impls)]
-impl Default for JsAssetCategory {
+impl Default for WasmAssetCategory {
     fn default() -> Self {
         Self::Document
     }
@@ -3642,14 +3642,14 @@ impl Default for JsAssetCategory {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum JsCrawlEvent {
+pub enum WasmCrawlEvent {
     Page = 0,
     Error = 1,
     Complete = 2,
 }
 
 #[allow(clippy::derivable_impls)]
-impl Default for JsCrawlEvent {
+impl Default for WasmCrawlEvent {
     fn default() -> Self {
         Self::Page
     }
@@ -3657,53 +3657,65 @@ impl Default for JsCrawlEvent {
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "createEngine")]
-pub fn create_engine(config: Option<JsCrawlConfig>) -> Result<JsCrawlEngineHandle, JsValue> {
+pub fn create_engine(config: Option<WasmCrawlConfig>) -> Result<WasmCrawlEngineHandle, JsValue> {
     let result = kreuzcrawl::create_engine(config.map(Into::into)).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(JsCrawlEngineHandle {
+    Ok(WasmCrawlEngineHandle {
         inner: Arc::new(result),
     })
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen]
-pub async fn scrape(engine: JsCrawlEngineHandle, url: String) -> Result<JsScrapeResult, JsValue> {
+pub async fn scrape(engine: WasmCrawlEngineHandle, url: String) -> Result<WasmScrapeResult, JsValue> {
     let result = kreuzcrawl::scrape(&engine.inner, &url)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(JsScrapeResult::from(result))
+    Ok(WasmScrapeResult::from(result))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen]
-pub async fn crawl(engine: JsCrawlEngineHandle, url: String) -> Result<JsCrawlResult, JsValue> {
+pub async fn crawl(engine: WasmCrawlEngineHandle, url: String) -> Result<WasmCrawlResult, JsValue> {
     let result = kreuzcrawl::crawl(&engine.inner, &url)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(JsCrawlResult::from(result))
+    Ok(WasmCrawlResult::from(result))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "mapUrls")]
-pub async fn map_urls(engine: JsCrawlEngineHandle, url: String) -> Result<JsMapResult, JsValue> {
+pub async fn map_urls(engine: WasmCrawlEngineHandle, url: String) -> Result<WasmMapResult, JsValue> {
     let result = kreuzcrawl::map_urls(&engine.inner, &url)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(JsMapResult::from(result))
+    Ok(WasmMapResult::from(result))
 }
 
 #[wasm_bindgen(js_name = "batchScrape")]
-pub async fn batch_scrape(engine: JsCrawlEngineHandle, urls: Vec<String>) -> Vec<JsBatchScrapeResult> {
+pub async fn batch_scrape(engine: WasmCrawlEngineHandle, urls: Vec<String>) -> Vec<WasmBatchScrapeResult> {
     let result = kreuzcrawl::batch_scrape(&engine.inner, urls).await;
-    result.into_iter().map(JsBatchScrapeResult::from).collect::<Vec<_>>()
+    result.into_iter().map(WasmBatchScrapeResult::from).collect::<Vec<_>>()
 }
 
 #[wasm_bindgen(js_name = "batchCrawl")]
-pub async fn batch_crawl(engine: JsCrawlEngineHandle, urls: Vec<String>) -> Vec<JsBatchCrawlResult> {
+pub async fn batch_crawl(engine: WasmCrawlEngineHandle, urls: Vec<String>) -> Vec<WasmBatchCrawlResult> {
     let result = kreuzcrawl::batch_crawl(&engine.inner, urls).await;
-    result.into_iter().map(JsBatchCrawlResult::from).collect::<Vec<_>>()
+    result.into_iter().map(WasmBatchCrawlResult::from).collect::<Vec<_>>()
 }
 
-impl From<kreuzcrawl::ExtractionMeta> for JsExtractionMeta {
+impl From<WasmExtractionMeta> for kreuzcrawl::ExtractionMeta {
+    fn from(val: WasmExtractionMeta) -> Self {
+        Self {
+            cost: val.cost,
+            prompt_tokens: val.prompt_tokens,
+            completion_tokens: val.completion_tokens,
+            model: val.model,
+            chunks_processed: val.chunks_processed,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ExtractionMeta> for WasmExtractionMeta {
     fn from(val: kreuzcrawl::ExtractionMeta) -> Self {
         Self {
             cost: val.cost,
@@ -3715,8 +3727,8 @@ impl From<kreuzcrawl::ExtractionMeta> for JsExtractionMeta {
     }
 }
 
-impl From<JsProxyConfig> for kreuzcrawl::ProxyConfig {
-    fn from(val: JsProxyConfig) -> Self {
+impl From<WasmProxyConfig> for kreuzcrawl::ProxyConfig {
+    fn from(val: WasmProxyConfig) -> Self {
         Self {
             url: val.url,
             username: val.username,
@@ -3725,7 +3737,7 @@ impl From<JsProxyConfig> for kreuzcrawl::ProxyConfig {
     }
 }
 
-impl From<kreuzcrawl::ProxyConfig> for JsProxyConfig {
+impl From<kreuzcrawl::ProxyConfig> for WasmProxyConfig {
     fn from(val: kreuzcrawl::ProxyConfig) -> Self {
         Self {
             url: val.url,
@@ -3736,8 +3748,8 @@ impl From<kreuzcrawl::ProxyConfig> for JsProxyConfig {
 }
 
 #[allow(clippy::field_reassign_with_default)]
-impl From<JsBrowserConfig> for kreuzcrawl::BrowserConfig {
-    fn from(val: JsBrowserConfig) -> Self {
+impl From<WasmBrowserConfig> for kreuzcrawl::BrowserConfig {
+    fn from(val: WasmBrowserConfig) -> Self {
         let mut __result = kreuzcrawl::BrowserConfig::default();
         __result.mode = val.mode.into();
         __result.endpoint = val.endpoint;
@@ -3751,7 +3763,7 @@ impl From<JsBrowserConfig> for kreuzcrawl::BrowserConfig {
     }
 }
 
-impl From<kreuzcrawl::BrowserConfig> for JsBrowserConfig {
+impl From<kreuzcrawl::BrowserConfig> for WasmBrowserConfig {
     fn from(val: kreuzcrawl::BrowserConfig) -> Self {
         Self {
             mode: val.mode.into(),
@@ -3766,8 +3778,8 @@ impl From<kreuzcrawl::BrowserConfig> for JsBrowserConfig {
 
 #[allow(clippy::needless_update)]
 #[allow(clippy::field_reassign_with_default)]
-impl From<JsCrawlConfig> for kreuzcrawl::CrawlConfig {
-    fn from(val: JsCrawlConfig) -> Self {
+impl From<WasmCrawlConfig> for kreuzcrawl::CrawlConfig {
+    fn from(val: WasmCrawlConfig) -> Self {
         let mut __result = kreuzcrawl::CrawlConfig::default();
         __result.max_depth = val.max_depth;
         __result.max_pages = val.max_pages;
@@ -3809,7 +3821,7 @@ impl From<JsCrawlConfig> for kreuzcrawl::CrawlConfig {
     }
 }
 
-impl From<kreuzcrawl::CrawlConfig> for JsCrawlConfig {
+impl From<kreuzcrawl::CrawlConfig> for WasmCrawlConfig {
     fn from(val: kreuzcrawl::CrawlConfig) -> Self {
         Self {
             max_depth: val.max_depth,
@@ -3850,7 +3862,21 @@ impl From<kreuzcrawl::CrawlConfig> for JsCrawlConfig {
     }
 }
 
-impl From<kreuzcrawl::DownloadedDocument> for JsDownloadedDocument {
+impl From<WasmDownloadedDocument> for kreuzcrawl::DownloadedDocument {
+    fn from(val: WasmDownloadedDocument) -> Self {
+        Self {
+            url: val.url,
+            mime_type: Default::default(),
+            content: val.content,
+            size: val.size,
+            filename: Default::default(),
+            content_hash: Default::default(),
+            headers: Default::default(),
+        }
+    }
+}
+
+impl From<kreuzcrawl::DownloadedDocument> for WasmDownloadedDocument {
     fn from(val: kreuzcrawl::DownloadedDocument) -> Self {
         Self {
             url: val.url,
@@ -3864,7 +3890,7 @@ impl From<kreuzcrawl::DownloadedDocument> for JsDownloadedDocument {
     }
 }
 
-impl From<kreuzcrawl::InteractionResult> for JsInteractionResult {
+impl From<kreuzcrawl::InteractionResult> for WasmInteractionResult {
     fn from(val: kreuzcrawl::InteractionResult) -> Self {
         Self {
             action_results: val.action_results.into_iter().map(Into::into).collect(),
@@ -3875,7 +3901,7 @@ impl From<kreuzcrawl::InteractionResult> for JsInteractionResult {
     }
 }
 
-impl From<kreuzcrawl::ActionResult> for JsActionResult {
+impl From<kreuzcrawl::ActionResult> for WasmActionResult {
     fn from(val: kreuzcrawl::ActionResult) -> Self {
         Self {
             action_index: val.action_index,
@@ -3887,7 +3913,45 @@ impl From<kreuzcrawl::ActionResult> for JsActionResult {
     }
 }
 
-impl From<kreuzcrawl::ScrapeResult> for JsScrapeResult {
+impl From<WasmScrapeResult> for kreuzcrawl::ScrapeResult {
+    fn from(val: WasmScrapeResult) -> Self {
+        Self {
+            status_code: val.status_code,
+            content_type: val.content_type,
+            html: val.html,
+            body_size: val.body_size,
+            metadata: val.metadata.into(),
+            links: val.links.into_iter().map(Into::into).collect(),
+            images: val.images.into_iter().map(Into::into).collect(),
+            feeds: val.feeds.into_iter().map(Into::into).collect(),
+            json_ld: val.json_ld.into_iter().map(Into::into).collect(),
+            is_allowed: val.is_allowed,
+            crawl_delay: val.crawl_delay,
+            noindex_detected: val.noindex_detected,
+            nofollow_detected: val.nofollow_detected,
+            x_robots_tag: val.x_robots_tag,
+            is_pdf: val.is_pdf,
+            was_skipped: val.was_skipped,
+            detected_charset: val.detected_charset,
+            main_content_only: val.main_content_only,
+            auth_header_sent: val.auth_header_sent,
+            response_meta: val.response_meta.map(Into::into),
+            assets: val.assets.into_iter().map(Into::into).collect(),
+            js_render_hint: val.js_render_hint,
+            browser_used: val.browser_used,
+            markdown: val.markdown.map(Into::into),
+            extracted_data: val
+                .extracted_data
+                .as_ref()
+                .and_then(|v| serde_wasm_bindgen::from_value(v.clone()).ok()),
+            extraction_meta: val.extraction_meta.map(Into::into),
+            screenshot: val.screenshot,
+            downloaded_document: val.downloaded_document.map(Into::into),
+        }
+    }
+}
+
+impl From<kreuzcrawl::ScrapeResult> for WasmScrapeResult {
     fn from(val: kreuzcrawl::ScrapeResult) -> Self {
         Self {
             status_code: val.status_code,
@@ -3925,7 +3989,37 @@ impl From<kreuzcrawl::ScrapeResult> for JsScrapeResult {
     }
 }
 
-impl From<kreuzcrawl::CrawlPageResult> for JsCrawlPageResult {
+impl From<WasmCrawlPageResult> for kreuzcrawl::CrawlPageResult {
+    fn from(val: WasmCrawlPageResult) -> Self {
+        Self {
+            url: val.url,
+            normalized_url: val.normalized_url,
+            status_code: val.status_code,
+            content_type: val.content_type,
+            html: val.html,
+            body_size: val.body_size,
+            metadata: val.metadata.into(),
+            links: val.links.into_iter().map(Into::into).collect(),
+            images: val.images.into_iter().map(Into::into).collect(),
+            feeds: val.feeds.into_iter().map(Into::into).collect(),
+            json_ld: val.json_ld.into_iter().map(Into::into).collect(),
+            depth: val.depth,
+            stayed_on_domain: val.stayed_on_domain,
+            was_skipped: val.was_skipped,
+            is_pdf: val.is_pdf,
+            detected_charset: val.detected_charset,
+            markdown: val.markdown.map(Into::into),
+            extracted_data: val
+                .extracted_data
+                .as_ref()
+                .and_then(|v| serde_wasm_bindgen::from_value(v.clone()).ok()),
+            extraction_meta: val.extraction_meta.map(Into::into),
+            downloaded_document: val.downloaded_document.map(Into::into),
+        }
+    }
+}
+
+impl From<kreuzcrawl::CrawlPageResult> for WasmCrawlPageResult {
     fn from(val: kreuzcrawl::CrawlPageResult) -> Self {
         Self {
             url: val.url,
@@ -3955,7 +4049,21 @@ impl From<kreuzcrawl::CrawlPageResult> for JsCrawlPageResult {
     }
 }
 
-impl From<kreuzcrawl::CrawlResult> for JsCrawlResult {
+impl From<WasmCrawlResult> for kreuzcrawl::CrawlResult {
+    fn from(val: WasmCrawlResult) -> Self {
+        Self {
+            pages: val.pages.into_iter().map(Into::into).collect(),
+            final_url: val.final_url,
+            redirect_count: val.redirect_count,
+            was_skipped: val.was_skipped,
+            error: val.error,
+            cookies: val.cookies.into_iter().map(Into::into).collect(),
+            normalized_urls: val.normalized_urls,
+        }
+    }
+}
+
+impl From<kreuzcrawl::CrawlResult> for WasmCrawlResult {
     fn from(val: kreuzcrawl::CrawlResult) -> Self {
         Self {
             pages: val.pages.into_iter().map(Into::into).collect(),
@@ -3969,7 +4077,18 @@ impl From<kreuzcrawl::CrawlResult> for JsCrawlResult {
     }
 }
 
-impl From<kreuzcrawl::SitemapUrl> for JsSitemapUrl {
+impl From<WasmSitemapUrl> for kreuzcrawl::SitemapUrl {
+    fn from(val: WasmSitemapUrl) -> Self {
+        Self {
+            url: val.url,
+            lastmod: val.lastmod,
+            changefreq: val.changefreq,
+            priority: val.priority,
+        }
+    }
+}
+
+impl From<kreuzcrawl::SitemapUrl> for WasmSitemapUrl {
     fn from(val: kreuzcrawl::SitemapUrl) -> Self {
         Self {
             url: val.url,
@@ -3980,7 +4099,15 @@ impl From<kreuzcrawl::SitemapUrl> for JsSitemapUrl {
     }
 }
 
-impl From<kreuzcrawl::MapResult> for JsMapResult {
+impl From<WasmMapResult> for kreuzcrawl::MapResult {
+    fn from(val: WasmMapResult) -> Self {
+        Self {
+            urls: val.urls.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<kreuzcrawl::MapResult> for WasmMapResult {
     fn from(val: kreuzcrawl::MapResult) -> Self {
         Self {
             urls: val.urls.into_iter().map(Into::into).collect(),
@@ -3988,7 +4115,23 @@ impl From<kreuzcrawl::MapResult> for JsMapResult {
     }
 }
 
-impl From<kreuzcrawl::MarkdownResult> for JsMarkdownResult {
+impl From<WasmMarkdownResult> for kreuzcrawl::MarkdownResult {
+    fn from(val: WasmMarkdownResult) -> Self {
+        Self {
+            content: val.content,
+            document_structure: val
+                .document_structure
+                .as_ref()
+                .and_then(|v| serde_wasm_bindgen::from_value(v.clone()).ok()),
+            tables: serde_wasm_bindgen::from_value(val.tables.clone()).unwrap_or_default(),
+            warnings: val.warnings,
+            citations: val.citations.map(Into::into),
+            fit_content: val.fit_content,
+        }
+    }
+}
+
+impl From<kreuzcrawl::MarkdownResult> for WasmMarkdownResult {
     fn from(val: kreuzcrawl::MarkdownResult) -> Self {
         Self {
             content: val.content,
@@ -4004,7 +4147,7 @@ impl From<kreuzcrawl::MarkdownResult> for JsMarkdownResult {
     }
 }
 
-impl From<kreuzcrawl::CachedPage> for JsCachedPage {
+impl From<kreuzcrawl::CachedPage> for WasmCachedPage {
     fn from(val: kreuzcrawl::CachedPage) -> Self {
         Self {
             url: val.url,
@@ -4018,7 +4161,19 @@ impl From<kreuzcrawl::CachedPage> for JsCachedPage {
     }
 }
 
-impl From<kreuzcrawl::LinkInfo> for JsLinkInfo {
+impl From<WasmLinkInfo> for kreuzcrawl::LinkInfo {
+    fn from(val: WasmLinkInfo) -> Self {
+        Self {
+            url: val.url,
+            text: val.text,
+            link_type: val.link_type.into(),
+            rel: val.rel,
+            nofollow: val.nofollow,
+        }
+    }
+}
+
+impl From<kreuzcrawl::LinkInfo> for WasmLinkInfo {
     fn from(val: kreuzcrawl::LinkInfo) -> Self {
         Self {
             url: val.url,
@@ -4030,7 +4185,19 @@ impl From<kreuzcrawl::LinkInfo> for JsLinkInfo {
     }
 }
 
-impl From<kreuzcrawl::ImageInfo> for JsImageInfo {
+impl From<WasmImageInfo> for kreuzcrawl::ImageInfo {
+    fn from(val: WasmImageInfo) -> Self {
+        Self {
+            url: val.url,
+            alt: val.alt,
+            width: val.width,
+            height: val.height,
+            source: val.source.into(),
+        }
+    }
+}
+
+impl From<kreuzcrawl::ImageInfo> for WasmImageInfo {
     fn from(val: kreuzcrawl::ImageInfo) -> Self {
         Self {
             url: val.url,
@@ -4042,7 +4209,17 @@ impl From<kreuzcrawl::ImageInfo> for JsImageInfo {
     }
 }
 
-impl From<kreuzcrawl::FeedInfo> for JsFeedInfo {
+impl From<WasmFeedInfo> for kreuzcrawl::FeedInfo {
+    fn from(val: WasmFeedInfo) -> Self {
+        Self {
+            url: val.url,
+            title: val.title,
+            feed_type: val.feed_type.into(),
+        }
+    }
+}
+
+impl From<kreuzcrawl::FeedInfo> for WasmFeedInfo {
     fn from(val: kreuzcrawl::FeedInfo) -> Self {
         Self {
             url: val.url,
@@ -4052,7 +4229,17 @@ impl From<kreuzcrawl::FeedInfo> for JsFeedInfo {
     }
 }
 
-impl From<kreuzcrawl::JsonLdEntry> for JsJsonLdEntry {
+impl From<WasmJsonLdEntry> for kreuzcrawl::JsonLdEntry {
+    fn from(val: WasmJsonLdEntry) -> Self {
+        Self {
+            schema_type: val.schema_type,
+            name: val.name,
+            raw: val.raw,
+        }
+    }
+}
+
+impl From<kreuzcrawl::JsonLdEntry> for WasmJsonLdEntry {
     fn from(val: kreuzcrawl::JsonLdEntry) -> Self {
         Self {
             schema_type: val.schema_type,
@@ -4062,7 +4249,18 @@ impl From<kreuzcrawl::JsonLdEntry> for JsJsonLdEntry {
     }
 }
 
-impl From<kreuzcrawl::CookieInfo> for JsCookieInfo {
+impl From<WasmCookieInfo> for kreuzcrawl::CookieInfo {
+    fn from(val: WasmCookieInfo) -> Self {
+        Self {
+            name: val.name,
+            value: val.value,
+            domain: val.domain,
+            path: val.path,
+        }
+    }
+}
+
+impl From<kreuzcrawl::CookieInfo> for WasmCookieInfo {
     fn from(val: kreuzcrawl::CookieInfo) -> Self {
         Self {
             name: val.name,
@@ -4073,7 +4271,20 @@ impl From<kreuzcrawl::CookieInfo> for JsCookieInfo {
     }
 }
 
-impl From<kreuzcrawl::DownloadedAsset> for JsDownloadedAsset {
+impl From<WasmDownloadedAsset> for kreuzcrawl::DownloadedAsset {
+    fn from(val: WasmDownloadedAsset) -> Self {
+        Self {
+            url: val.url,
+            content_hash: val.content_hash,
+            mime_type: val.mime_type,
+            size: val.size,
+            asset_category: val.asset_category.into(),
+            html_tag: val.html_tag,
+        }
+    }
+}
+
+impl From<kreuzcrawl::DownloadedAsset> for WasmDownloadedAsset {
     fn from(val: kreuzcrawl::DownloadedAsset) -> Self {
         Self {
             url: val.url,
@@ -4086,7 +4297,19 @@ impl From<kreuzcrawl::DownloadedAsset> for JsDownloadedAsset {
     }
 }
 
-impl From<kreuzcrawl::ArticleMetadata> for JsArticleMetadata {
+impl From<WasmArticleMetadata> for kreuzcrawl::ArticleMetadata {
+    fn from(val: WasmArticleMetadata) -> Self {
+        Self {
+            published_time: val.published_time,
+            modified_time: val.modified_time,
+            author: val.author,
+            section: val.section,
+            tags: val.tags,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ArticleMetadata> for WasmArticleMetadata {
     fn from(val: kreuzcrawl::ArticleMetadata) -> Self {
         Self {
             published_time: val.published_time,
@@ -4098,7 +4321,16 @@ impl From<kreuzcrawl::ArticleMetadata> for JsArticleMetadata {
     }
 }
 
-impl From<kreuzcrawl::HreflangEntry> for JsHreflangEntry {
+impl From<WasmHreflangEntry> for kreuzcrawl::HreflangEntry {
+    fn from(val: WasmHreflangEntry) -> Self {
+        Self {
+            lang: val.lang,
+            url: val.url,
+        }
+    }
+}
+
+impl From<kreuzcrawl::HreflangEntry> for WasmHreflangEntry {
     fn from(val: kreuzcrawl::HreflangEntry) -> Self {
         Self {
             lang: val.lang,
@@ -4107,7 +4339,18 @@ impl From<kreuzcrawl::HreflangEntry> for JsHreflangEntry {
     }
 }
 
-impl From<kreuzcrawl::FaviconInfo> for JsFaviconInfo {
+impl From<WasmFaviconInfo> for kreuzcrawl::FaviconInfo {
+    fn from(val: WasmFaviconInfo) -> Self {
+        Self {
+            url: val.url,
+            rel: val.rel,
+            sizes: val.sizes,
+            mime_type: val.mime_type,
+        }
+    }
+}
+
+impl From<kreuzcrawl::FaviconInfo> for WasmFaviconInfo {
     fn from(val: kreuzcrawl::FaviconInfo) -> Self {
         Self {
             url: val.url,
@@ -4118,7 +4361,16 @@ impl From<kreuzcrawl::FaviconInfo> for JsFaviconInfo {
     }
 }
 
-impl From<kreuzcrawl::HeadingInfo> for JsHeadingInfo {
+impl From<WasmHeadingInfo> for kreuzcrawl::HeadingInfo {
+    fn from(val: WasmHeadingInfo) -> Self {
+        Self {
+            level: val.level,
+            text: val.text,
+        }
+    }
+}
+
+impl From<kreuzcrawl::HeadingInfo> for WasmHeadingInfo {
     fn from(val: kreuzcrawl::HeadingInfo) -> Self {
         Self {
             level: val.level,
@@ -4127,7 +4379,21 @@ impl From<kreuzcrawl::HeadingInfo> for JsHeadingInfo {
     }
 }
 
-impl From<kreuzcrawl::ResponseMeta> for JsResponseMeta {
+impl From<WasmResponseMeta> for kreuzcrawl::ResponseMeta {
+    fn from(val: WasmResponseMeta) -> Self {
+        Self {
+            etag: val.etag,
+            last_modified: val.last_modified,
+            cache_control: val.cache_control,
+            server: val.server,
+            x_powered_by: val.x_powered_by,
+            content_language: val.content_language,
+            content_encoding: val.content_encoding,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ResponseMeta> for WasmResponseMeta {
     fn from(val: kreuzcrawl::ResponseMeta) -> Self {
         Self {
             etag: val.etag,
@@ -4141,7 +4407,57 @@ impl From<kreuzcrawl::ResponseMeta> for JsResponseMeta {
     }
 }
 
-impl From<kreuzcrawl::PageMetadata> for JsPageMetadata {
+impl From<WasmPageMetadata> for kreuzcrawl::PageMetadata {
+    fn from(val: WasmPageMetadata) -> Self {
+        Self {
+            title: val.title,
+            description: val.description,
+            canonical_url: val.canonical_url,
+            keywords: val.keywords,
+            author: val.author,
+            viewport: val.viewport,
+            theme_color: val.theme_color,
+            generator: val.generator,
+            robots: val.robots,
+            html_lang: val.html_lang,
+            html_dir: val.html_dir,
+            og_title: val.og_title,
+            og_type: val.og_type,
+            og_image: val.og_image,
+            og_description: val.og_description,
+            og_url: val.og_url,
+            og_site_name: val.og_site_name,
+            og_locale: val.og_locale,
+            og_video: val.og_video,
+            og_audio: val.og_audio,
+            og_locale_alternates: val.og_locale_alternates,
+            twitter_card: val.twitter_card,
+            twitter_title: val.twitter_title,
+            twitter_description: val.twitter_description,
+            twitter_image: val.twitter_image,
+            twitter_site: val.twitter_site,
+            twitter_creator: val.twitter_creator,
+            dc_title: val.dc_title,
+            dc_creator: val.dc_creator,
+            dc_subject: val.dc_subject,
+            dc_description: val.dc_description,
+            dc_publisher: val.dc_publisher,
+            dc_date: val.dc_date,
+            dc_type: val.dc_type,
+            dc_format: val.dc_format,
+            dc_identifier: val.dc_identifier,
+            dc_language: val.dc_language,
+            dc_rights: val.dc_rights,
+            article: val.article.map(Into::into),
+            hreflangs: val.hreflangs.map(|v| v.into_iter().map(Into::into).collect()),
+            favicons: val.favicons.map(|v| v.into_iter().map(Into::into).collect()),
+            headings: val.headings.map(|v| v.into_iter().map(Into::into).collect()),
+            word_count: val.word_count,
+        }
+    }
+}
+
+impl From<kreuzcrawl::PageMetadata> for WasmPageMetadata {
     fn from(val: kreuzcrawl::PageMetadata) -> Self {
         Self {
             title: val.title,
@@ -4191,7 +4507,16 @@ impl From<kreuzcrawl::PageMetadata> for JsPageMetadata {
     }
 }
 
-impl From<kreuzcrawl::CitationResult> for JsCitationResult {
+impl From<WasmCitationResult> for kreuzcrawl::CitationResult {
+    fn from(val: WasmCitationResult) -> Self {
+        Self {
+            content: val.content,
+            references: val.references.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<kreuzcrawl::CitationResult> for WasmCitationResult {
     fn from(val: kreuzcrawl::CitationResult) -> Self {
         Self {
             content: val.content,
@@ -4200,7 +4525,17 @@ impl From<kreuzcrawl::CitationResult> for JsCitationResult {
     }
 }
 
-impl From<kreuzcrawl::CitationReference> for JsCitationReference {
+impl From<WasmCitationReference> for kreuzcrawl::CitationReference {
+    fn from(val: WasmCitationReference) -> Self {
+        Self {
+            index: val.index,
+            url: val.url,
+            text: val.text,
+        }
+    }
+}
+
+impl From<kreuzcrawl::CitationReference> for WasmCitationReference {
     fn from(val: kreuzcrawl::CitationReference) -> Self {
         Self {
             index: val.index,
@@ -4210,7 +4545,17 @@ impl From<kreuzcrawl::CitationReference> for JsCitationReference {
     }
 }
 
-impl From<kreuzcrawl::BatchScrapeResult> for JsBatchScrapeResult {
+impl From<WasmBatchScrapeResult> for kreuzcrawl::BatchScrapeResult {
+    fn from(val: WasmBatchScrapeResult) -> Self {
+        Self {
+            url: val.url,
+            result: val.result.map(Into::into),
+            error: val.error,
+        }
+    }
+}
+
+impl From<kreuzcrawl::BatchScrapeResult> for WasmBatchScrapeResult {
     fn from(val: kreuzcrawl::BatchScrapeResult) -> Self {
         Self {
             url: val.url,
@@ -4220,7 +4565,17 @@ impl From<kreuzcrawl::BatchScrapeResult> for JsBatchScrapeResult {
     }
 }
 
-impl From<kreuzcrawl::BatchCrawlResult> for JsBatchCrawlResult {
+impl From<WasmBatchCrawlResult> for kreuzcrawl::BatchCrawlResult {
+    fn from(val: WasmBatchCrawlResult) -> Self {
+        Self {
+            url: val.url,
+            result: val.result.map(Into::into),
+            error: val.error,
+        }
+    }
+}
+
+impl From<kreuzcrawl::BatchCrawlResult> for WasmBatchCrawlResult {
     fn from(val: kreuzcrawl::BatchCrawlResult) -> Self {
         Self {
             url: val.url,
@@ -4230,17 +4585,17 @@ impl From<kreuzcrawl::BatchCrawlResult> for JsBatchCrawlResult {
     }
 }
 
-impl From<JsBrowserMode> for kreuzcrawl::BrowserMode {
-    fn from(val: JsBrowserMode) -> Self {
+impl From<WasmBrowserMode> for kreuzcrawl::BrowserMode {
+    fn from(val: WasmBrowserMode) -> Self {
         match val {
-            JsBrowserMode::Auto => Self::Auto,
-            JsBrowserMode::Always => Self::Always,
-            JsBrowserMode::Never => Self::Never,
+            WasmBrowserMode::Auto => Self::Auto,
+            WasmBrowserMode::Always => Self::Always,
+            WasmBrowserMode::Never => Self::Never,
         }
     }
 }
 
-impl From<kreuzcrawl::BrowserMode> for JsBrowserMode {
+impl From<kreuzcrawl::BrowserMode> for WasmBrowserMode {
     fn from(val: kreuzcrawl::BrowserMode) -> Self {
         match val {
             kreuzcrawl::BrowserMode::Auto => Self::Auto,
@@ -4250,17 +4605,17 @@ impl From<kreuzcrawl::BrowserMode> for JsBrowserMode {
     }
 }
 
-impl From<JsBrowserWait> for kreuzcrawl::BrowserWait {
-    fn from(val: JsBrowserWait) -> Self {
+impl From<WasmBrowserWait> for kreuzcrawl::BrowserWait {
+    fn from(val: WasmBrowserWait) -> Self {
         match val {
-            JsBrowserWait::NetworkIdle => Self::NetworkIdle,
-            JsBrowserWait::Selector => Self::Selector,
-            JsBrowserWait::Fixed => Self::Fixed,
+            WasmBrowserWait::NetworkIdle => Self::NetworkIdle,
+            WasmBrowserWait::Selector => Self::Selector,
+            WasmBrowserWait::Fixed => Self::Fixed,
         }
     }
 }
 
-impl From<kreuzcrawl::BrowserWait> for JsBrowserWait {
+impl From<kreuzcrawl::BrowserWait> for WasmBrowserWait {
     fn from(val: kreuzcrawl::BrowserWait) -> Self {
         match val {
             kreuzcrawl::BrowserWait::NetworkIdle => Self::NetworkIdle,
@@ -4270,17 +4625,17 @@ impl From<kreuzcrawl::BrowserWait> for JsBrowserWait {
     }
 }
 
-impl From<JsAuthConfig> for kreuzcrawl::AuthConfig {
-    fn from(val: JsAuthConfig) -> Self {
+impl From<WasmAuthConfig> for kreuzcrawl::AuthConfig {
+    fn from(val: WasmAuthConfig) -> Self {
         match val {
-            JsAuthConfig::Basic => Self::Basic {
+            WasmAuthConfig::Basic => Self::Basic {
                 username: Default::default(),
                 password: Default::default(),
             },
-            JsAuthConfig::Bearer => Self::Bearer {
+            WasmAuthConfig::Bearer => Self::Bearer {
                 token: Default::default(),
             },
-            JsAuthConfig::Header => Self::Header {
+            WasmAuthConfig::Header => Self::Header {
                 name: Default::default(),
                 value: Default::default(),
             },
@@ -4288,7 +4643,7 @@ impl From<JsAuthConfig> for kreuzcrawl::AuthConfig {
     }
 }
 
-impl From<kreuzcrawl::AuthConfig> for JsAuthConfig {
+impl From<kreuzcrawl::AuthConfig> for WasmAuthConfig {
     fn from(val: kreuzcrawl::AuthConfig) -> Self {
         match val {
             kreuzcrawl::AuthConfig::Basic { .. } => Self::Basic,
@@ -4298,7 +4653,18 @@ impl From<kreuzcrawl::AuthConfig> for JsAuthConfig {
     }
 }
 
-impl From<kreuzcrawl::LinkType> for JsLinkType {
+impl From<WasmLinkType> for kreuzcrawl::LinkType {
+    fn from(val: WasmLinkType) -> Self {
+        match val {
+            WasmLinkType::Internal => Self::Internal,
+            WasmLinkType::External => Self::External,
+            WasmLinkType::Anchor => Self::Anchor,
+            WasmLinkType::Document => Self::Document,
+        }
+    }
+}
+
+impl From<kreuzcrawl::LinkType> for WasmLinkType {
     fn from(val: kreuzcrawl::LinkType) -> Self {
         match val {
             kreuzcrawl::LinkType::Internal => Self::Internal,
@@ -4309,7 +4675,18 @@ impl From<kreuzcrawl::LinkType> for JsLinkType {
     }
 }
 
-impl From<kreuzcrawl::ImageSource> for JsImageSource {
+impl From<WasmImageSource> for kreuzcrawl::ImageSource {
+    fn from(val: WasmImageSource) -> Self {
+        match val {
+            WasmImageSource::Img => Self::Img,
+            WasmImageSource::PictureSource => Self::PictureSource,
+            WasmImageSource::OgImage => Self::OgImage,
+            WasmImageSource::TwitterImage => Self::TwitterImage,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ImageSource> for WasmImageSource {
     fn from(val: kreuzcrawl::ImageSource) -> Self {
         match val {
             kreuzcrawl::ImageSource::Img => Self::Img,
@@ -4320,7 +4697,17 @@ impl From<kreuzcrawl::ImageSource> for JsImageSource {
     }
 }
 
-impl From<kreuzcrawl::FeedType> for JsFeedType {
+impl From<WasmFeedType> for kreuzcrawl::FeedType {
+    fn from(val: WasmFeedType) -> Self {
+        match val {
+            WasmFeedType::Rss => Self::Rss,
+            WasmFeedType::Atom => Self::Atom,
+            WasmFeedType::JsonFeed => Self::JsonFeed,
+        }
+    }
+}
+
+impl From<kreuzcrawl::FeedType> for WasmFeedType {
     fn from(val: kreuzcrawl::FeedType) -> Self {
         match val {
             kreuzcrawl::FeedType::Rss => Self::Rss,
@@ -4330,24 +4717,24 @@ impl From<kreuzcrawl::FeedType> for JsFeedType {
     }
 }
 
-impl From<JsAssetCategory> for kreuzcrawl::AssetCategory {
-    fn from(val: JsAssetCategory) -> Self {
+impl From<WasmAssetCategory> for kreuzcrawl::AssetCategory {
+    fn from(val: WasmAssetCategory) -> Self {
         match val {
-            JsAssetCategory::Document => Self::Document,
-            JsAssetCategory::Image => Self::Image,
-            JsAssetCategory::Audio => Self::Audio,
-            JsAssetCategory::Video => Self::Video,
-            JsAssetCategory::Font => Self::Font,
-            JsAssetCategory::Stylesheet => Self::Stylesheet,
-            JsAssetCategory::Script => Self::Script,
-            JsAssetCategory::Archive => Self::Archive,
-            JsAssetCategory::Data => Self::Data,
-            JsAssetCategory::Other => Self::Other,
+            WasmAssetCategory::Document => Self::Document,
+            WasmAssetCategory::Image => Self::Image,
+            WasmAssetCategory::Audio => Self::Audio,
+            WasmAssetCategory::Video => Self::Video,
+            WasmAssetCategory::Font => Self::Font,
+            WasmAssetCategory::Stylesheet => Self::Stylesheet,
+            WasmAssetCategory::Script => Self::Script,
+            WasmAssetCategory::Archive => Self::Archive,
+            WasmAssetCategory::Data => Self::Data,
+            WasmAssetCategory::Other => Self::Other,
         }
     }
 }
 
-impl From<kreuzcrawl::AssetCategory> for JsAssetCategory {
+impl From<kreuzcrawl::AssetCategory> for WasmAssetCategory {
     fn from(val: kreuzcrawl::AssetCategory) -> Self {
         match val {
             kreuzcrawl::AssetCategory::Document => Self::Document,
@@ -4364,7 +4751,7 @@ impl From<kreuzcrawl::AssetCategory> for JsAssetCategory {
     }
 }
 
-impl From<kreuzcrawl::CrawlEvent> for JsCrawlEvent {
+impl From<kreuzcrawl::CrawlEvent> for WasmCrawlEvent {
     fn from(val: kreuzcrawl::CrawlEvent) -> Self {
         match val {
             kreuzcrawl::CrawlEvent::Page(..) => Self::Page,
