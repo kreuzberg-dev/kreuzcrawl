@@ -18,7 +18,13 @@
 		]
 	},
 	"scripts": {
-		"build:ts": "echo 'No TypeScript wrapper layer — using NAPI-RS generated bindings directly'"
+		"artifacts": "napi artifacts",
+		"build": "napi build --platform --release",
+		"build:debug": "napi build --platform",
+		"build:ts": "echo 'No TypeScript wrapper layer — using NAPI-RS generated bindings directly'",
+		"prepublishOnly": "napi prepublish -t npm",
+		"universal": "napi universal",
+		"version": "napi version"
 	},
 	"devDependencies": {
 		"@napi-rs/cli": "^3.6.2"
