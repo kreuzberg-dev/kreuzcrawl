@@ -50,6 +50,6 @@ if (Test-Path "$TargetDir\pdfium.dll") {
 Copy-Item "crates\kreuzcrawl-ffi\kreuzcrawl.h" "$StagingDir\include\"
 
 # Copy pkg-config file
-Copy-Item "crates\kreuzcrawl-ffi\kreuzcrawl-ffi-install.pc" "$StagingDir\share\pkgconfig\kreuzcrawl-ffi.pc"
+Copy-Item "crates\kreuzcrawl-ffi\kreuzcrawl-ffi.pc" "$StagingDir\share\pkgconfig\kreuzcrawl-ffi.pc"
 
 Write-Host "✓ FFI artifacts staged successfully"

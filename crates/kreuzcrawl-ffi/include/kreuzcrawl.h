@@ -525,6 +525,22 @@ int32_t kcrawl_crawl_config_save_browser_profile(const KCRAWLCrawlConfig *ptr);
 KCRAWLCrawlConfig *kcrawl_crawl_config_default(void);
 
 /**
+ * Create a `DownloadedDocument` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_downloaded_document_free`.
+ */
+KCRAWLDownloadedDocument *kcrawl_downloaded_document_from_json(const char *json);
+
+/**
+ * Serialize a `DownloadedDocument` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_downloaded_document_to_json(const KCRAWLDownloadedDocument *ptr);
+
+/**
  * Free a `DownloadedDocument` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -603,6 +619,22 @@ char *kcrawl_interaction_result_final_url(const KCRAWLInteractionResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 uint8_t *kcrawl_interaction_result_screenshot(const KCRAWLInteractionResult *ptr);
+
+/**
+ * Create a `ActionResult` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_action_result_free`.
+ */
+KCRAWLActionResult *kcrawl_action_result_from_json(const char *json);
+
+/**
+ * Serialize a `ActionResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_action_result_to_json(const KCRAWLActionResult *ptr);
 
 /**
  * Free a `ActionResult` handle.

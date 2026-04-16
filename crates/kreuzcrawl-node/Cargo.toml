@@ -11,6 +11,7 @@ crate-type = ["cdylib"]
 kreuzcrawl = { path = "../kreuzcrawl" }
 napi = { version = "3", features = ["async"] }
 napi-derive = "3"
+serde_json = "1"
 
 [build-dependencies]
 napi-build = "2"

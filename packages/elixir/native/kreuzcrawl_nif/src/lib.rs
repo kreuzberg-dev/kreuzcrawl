@@ -1148,6 +1148,18 @@ pub fn crawlconfig_default() -> CrawlConfig {
     kreuzcrawl::CrawlConfig::default().into()
 }
 
+impl From<ExtractionMeta> for kreuzcrawl::ExtractionMeta {
+    fn from(val: ExtractionMeta) -> Self {
+        Self {
+            cost: val.cost,
+            prompt_tokens: val.prompt_tokens,
+            completion_tokens: val.completion_tokens,
+            model: val.model,
+            chunks_processed: val.chunks_processed,
+        }
+    }
+}
+
 impl From<kreuzcrawl::ExtractionMeta> for ExtractionMeta {
     fn from(val: kreuzcrawl::ExtractionMeta) -> Self {
         Self {
@@ -1290,6 +1302,20 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
     }
 }
 
+impl From<DownloadedDocument> for kreuzcrawl::DownloadedDocument {
+    fn from(val: DownloadedDocument) -> Self {
+        Self {
+            url: val.url,
+            mime_type: Default::default(),
+            content: val.content,
+            size: val.size,
+            filename: Default::default(),
+            content_hash: Default::default(),
+            headers: Default::default(),
+        }
+    }
+}
+
 impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     fn from(val: kreuzcrawl::DownloadedDocument) -> Self {
         Self {
@@ -1331,6 +1357,41 @@ impl From<kreuzcrawl::ActionResult> for ActionResult {
     }
 }
 
+impl From<ScrapeResult> for kreuzcrawl::ScrapeResult {
+    fn from(val: ScrapeResult) -> Self {
+        Self {
+            status_code: val.status_code,
+            content_type: val.content_type,
+            html: val.html,
+            body_size: val.body_size,
+            metadata: val.metadata.into(),
+            links: val.links.into_iter().map(Into::into).collect(),
+            images: val.images.into_iter().map(Into::into).collect(),
+            feeds: val.feeds.into_iter().map(Into::into).collect(),
+            json_ld: val.json_ld.into_iter().map(Into::into).collect(),
+            is_allowed: val.is_allowed,
+            crawl_delay: val.crawl_delay,
+            noindex_detected: val.noindex_detected,
+            nofollow_detected: val.nofollow_detected,
+            x_robots_tag: val.x_robots_tag,
+            is_pdf: val.is_pdf,
+            was_skipped: val.was_skipped,
+            detected_charset: val.detected_charset,
+            main_content_only: val.main_content_only,
+            auth_header_sent: val.auth_header_sent,
+            response_meta: val.response_meta.map(Into::into),
+            assets: val.assets.into_iter().map(Into::into).collect(),
+            js_render_hint: val.js_render_hint,
+            browser_used: val.browser_used,
+            markdown: val.markdown.map(Into::into),
+            extracted_data: val.extracted_data.as_ref().and_then(|s| serde_json::from_str(s).ok()),
+            extraction_meta: val.extraction_meta.map(Into::into),
+            screenshot: val.screenshot,
+            downloaded_document: val.downloaded_document.map(Into::into),
+        }
+    }
+}
+
 impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
     fn from(val: kreuzcrawl::ScrapeResult) -> Self {
         Self {
@@ -1366,6 +1427,33 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
     }
 }
 
+impl From<CrawlPageResult> for kreuzcrawl::CrawlPageResult {
+    fn from(val: CrawlPageResult) -> Self {
+        Self {
+            url: val.url,
+            normalized_url: val.normalized_url,
+            status_code: val.status_code,
+            content_type: val.content_type,
+            html: val.html,
+            body_size: val.body_size,
+            metadata: val.metadata.into(),
+            links: val.links.into_iter().map(Into::into).collect(),
+            images: val.images.into_iter().map(Into::into).collect(),
+            feeds: val.feeds.into_iter().map(Into::into).collect(),
+            json_ld: val.json_ld.into_iter().map(Into::into).collect(),
+            depth: val.depth,
+            stayed_on_domain: val.stayed_on_domain,
+            was_skipped: val.was_skipped,
+            is_pdf: val.is_pdf,
+            detected_charset: val.detected_charset,
+            markdown: val.markdown.map(Into::into),
+            extracted_data: val.extracted_data.as_ref().and_then(|s| serde_json::from_str(s).ok()),
+            extraction_meta: val.extraction_meta.map(Into::into),
+            downloaded_document: val.downloaded_document.map(Into::into),
+        }
+    }
+}
+
 impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
     fn from(val: kreuzcrawl::CrawlPageResult) -> Self {
         Self {
@@ -1393,6 +1481,20 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
     }
 }
 
+impl From<CrawlResult> for kreuzcrawl::CrawlResult {
+    fn from(val: CrawlResult) -> Self {
+        Self {
+            pages: val.pages.into_iter().map(Into::into).collect(),
+            final_url: val.final_url,
+            redirect_count: val.redirect_count,
+            was_skipped: val.was_skipped,
+            error: val.error,
+            cookies: val.cookies.into_iter().map(Into::into).collect(),
+            normalized_urls: val.normalized_urls,
+        }
+    }
+}
+
 impl From<kreuzcrawl::CrawlResult> for CrawlResult {
     fn from(val: kreuzcrawl::CrawlResult) -> Self {
         Self {
@@ -1403,6 +1505,17 @@ impl From<kreuzcrawl::CrawlResult> for CrawlResult {
             error: val.error,
             cookies: val.cookies.into_iter().map(Into::into).collect(),
             normalized_urls: val.normalized_urls,
+        }
+    }
+}
+
+impl From<SitemapUrl> for kreuzcrawl::SitemapUrl {
+    fn from(val: SitemapUrl) -> Self {
+        Self {
+            url: val.url,
+            lastmod: val.lastmod,
+            changefreq: val.changefreq,
+            priority: val.priority,
         }
     }
 }
@@ -1418,10 +1531,38 @@ impl From<kreuzcrawl::SitemapUrl> for SitemapUrl {
     }
 }
 
+impl From<MapResult> for kreuzcrawl::MapResult {
+    fn from(val: MapResult) -> Self {
+        Self {
+            urls: val.urls.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
 impl From<kreuzcrawl::MapResult> for MapResult {
     fn from(val: kreuzcrawl::MapResult) -> Self {
         Self {
             urls: val.urls.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<MarkdownResult> for kreuzcrawl::MarkdownResult {
+    fn from(val: MarkdownResult) -> Self {
+        Self {
+            content: val.content,
+            document_structure: val
+                .document_structure
+                .as_ref()
+                .and_then(|s| serde_json::from_str(s).ok()),
+            tables: val
+                .tables
+                .into_iter()
+                .filter_map(|s| serde_json::from_str(&s).ok())
+                .collect(),
+            warnings: val.warnings,
+            citations: val.citations.map(Into::into),
+            fit_content: val.fit_content,
         }
     }
 }
@@ -1453,6 +1594,18 @@ impl From<kreuzcrawl::CachedPage> for CachedPage {
     }
 }
 
+impl From<LinkInfo> for kreuzcrawl::LinkInfo {
+    fn from(val: LinkInfo) -> Self {
+        Self {
+            url: val.url,
+            text: val.text,
+            link_type: val.link_type.into(),
+            rel: val.rel,
+            nofollow: val.nofollow,
+        }
+    }
+}
+
 impl From<kreuzcrawl::LinkInfo> for LinkInfo {
     fn from(val: kreuzcrawl::LinkInfo) -> Self {
         Self {
@@ -1461,6 +1614,18 @@ impl From<kreuzcrawl::LinkInfo> for LinkInfo {
             link_type: val.link_type.into(),
             rel: val.rel,
             nofollow: val.nofollow,
+        }
+    }
+}
+
+impl From<ImageInfo> for kreuzcrawl::ImageInfo {
+    fn from(val: ImageInfo) -> Self {
+        Self {
+            url: val.url,
+            alt: val.alt,
+            width: val.width,
+            height: val.height,
+            source: val.source.into(),
         }
     }
 }
@@ -1477,12 +1642,32 @@ impl From<kreuzcrawl::ImageInfo> for ImageInfo {
     }
 }
 
+impl From<FeedInfo> for kreuzcrawl::FeedInfo {
+    fn from(val: FeedInfo) -> Self {
+        Self {
+            url: val.url,
+            title: val.title,
+            feed_type: val.feed_type.into(),
+        }
+    }
+}
+
 impl From<kreuzcrawl::FeedInfo> for FeedInfo {
     fn from(val: kreuzcrawl::FeedInfo) -> Self {
         Self {
             url: val.url,
             title: val.title,
             feed_type: val.feed_type.into(),
+        }
+    }
+}
+
+impl From<JsonLdEntry> for kreuzcrawl::JsonLdEntry {
+    fn from(val: JsonLdEntry) -> Self {
+        Self {
+            schema_type: val.schema_type,
+            name: val.name,
+            raw: val.raw,
         }
     }
 }
@@ -1497,6 +1682,17 @@ impl From<kreuzcrawl::JsonLdEntry> for JsonLdEntry {
     }
 }
 
+impl From<CookieInfo> for kreuzcrawl::CookieInfo {
+    fn from(val: CookieInfo) -> Self {
+        Self {
+            name: val.name,
+            value: val.value,
+            domain: val.domain,
+            path: val.path,
+        }
+    }
+}
+
 impl From<kreuzcrawl::CookieInfo> for CookieInfo {
     fn from(val: kreuzcrawl::CookieInfo) -> Self {
         Self {
@@ -1504,6 +1700,19 @@ impl From<kreuzcrawl::CookieInfo> for CookieInfo {
             value: val.value,
             domain: val.domain,
             path: val.path,
+        }
+    }
+}
+
+impl From<DownloadedAsset> for kreuzcrawl::DownloadedAsset {
+    fn from(val: DownloadedAsset) -> Self {
+        Self {
+            url: val.url,
+            content_hash: val.content_hash,
+            mime_type: val.mime_type,
+            size: val.size,
+            asset_category: val.asset_category.into(),
+            html_tag: val.html_tag,
         }
     }
 }
@@ -1521,6 +1730,18 @@ impl From<kreuzcrawl::DownloadedAsset> for DownloadedAsset {
     }
 }
 
+impl From<ArticleMetadata> for kreuzcrawl::ArticleMetadata {
+    fn from(val: ArticleMetadata) -> Self {
+        Self {
+            published_time: val.published_time,
+            modified_time: val.modified_time,
+            author: val.author,
+            section: val.section,
+            tags: val.tags,
+        }
+    }
+}
+
 impl From<kreuzcrawl::ArticleMetadata> for ArticleMetadata {
     fn from(val: kreuzcrawl::ArticleMetadata) -> Self {
         Self {
@@ -1533,11 +1754,31 @@ impl From<kreuzcrawl::ArticleMetadata> for ArticleMetadata {
     }
 }
 
+impl From<HreflangEntry> for kreuzcrawl::HreflangEntry {
+    fn from(val: HreflangEntry) -> Self {
+        Self {
+            lang: val.lang,
+            url: val.url,
+        }
+    }
+}
+
 impl From<kreuzcrawl::HreflangEntry> for HreflangEntry {
     fn from(val: kreuzcrawl::HreflangEntry) -> Self {
         Self {
             lang: val.lang,
             url: val.url,
+        }
+    }
+}
+
+impl From<FaviconInfo> for kreuzcrawl::FaviconInfo {
+    fn from(val: FaviconInfo) -> Self {
+        Self {
+            url: val.url,
+            rel: val.rel,
+            sizes: val.sizes,
+            mime_type: val.mime_type,
         }
     }
 }
@@ -1553,11 +1794,34 @@ impl From<kreuzcrawl::FaviconInfo> for FaviconInfo {
     }
 }
 
+impl From<HeadingInfo> for kreuzcrawl::HeadingInfo {
+    fn from(val: HeadingInfo) -> Self {
+        Self {
+            level: val.level,
+            text: val.text,
+        }
+    }
+}
+
 impl From<kreuzcrawl::HeadingInfo> for HeadingInfo {
     fn from(val: kreuzcrawl::HeadingInfo) -> Self {
         Self {
             level: val.level,
             text: val.text,
+        }
+    }
+}
+
+impl From<ResponseMeta> for kreuzcrawl::ResponseMeta {
+    fn from(val: ResponseMeta) -> Self {
+        Self {
+            etag: val.etag,
+            last_modified: val.last_modified,
+            cache_control: val.cache_control,
+            server: val.server,
+            x_powered_by: val.x_powered_by,
+            content_language: val.content_language,
+            content_encoding: val.content_encoding,
         }
     }
 }
@@ -1572,6 +1836,56 @@ impl From<kreuzcrawl::ResponseMeta> for ResponseMeta {
             x_powered_by: val.x_powered_by,
             content_language: val.content_language,
             content_encoding: val.content_encoding,
+        }
+    }
+}
+
+impl From<PageMetadata> for kreuzcrawl::PageMetadata {
+    fn from(val: PageMetadata) -> Self {
+        Self {
+            title: val.title,
+            description: val.description,
+            canonical_url: val.canonical_url,
+            keywords: val.keywords,
+            author: val.author,
+            viewport: val.viewport,
+            theme_color: val.theme_color,
+            generator: val.generator,
+            robots: val.robots,
+            html_lang: val.html_lang,
+            html_dir: val.html_dir,
+            og_title: val.og_title,
+            og_type: val.og_type,
+            og_image: val.og_image,
+            og_description: val.og_description,
+            og_url: val.og_url,
+            og_site_name: val.og_site_name,
+            og_locale: val.og_locale,
+            og_video: val.og_video,
+            og_audio: val.og_audio,
+            og_locale_alternates: val.og_locale_alternates,
+            twitter_card: val.twitter_card,
+            twitter_title: val.twitter_title,
+            twitter_description: val.twitter_description,
+            twitter_image: val.twitter_image,
+            twitter_site: val.twitter_site,
+            twitter_creator: val.twitter_creator,
+            dc_title: val.dc_title,
+            dc_creator: val.dc_creator,
+            dc_subject: val.dc_subject,
+            dc_description: val.dc_description,
+            dc_publisher: val.dc_publisher,
+            dc_date: val.dc_date,
+            dc_type: val.dc_type,
+            dc_format: val.dc_format,
+            dc_identifier: val.dc_identifier,
+            dc_language: val.dc_language,
+            dc_rights: val.dc_rights,
+            article: val.article.map(Into::into),
+            hreflangs: val.hreflangs.map(|v| v.into_iter().map(Into::into).collect()),
+            favicons: val.favicons.map(|v| v.into_iter().map(Into::into).collect()),
+            headings: val.headings.map(|v| v.into_iter().map(Into::into).collect()),
+            word_count: val.word_count,
         }
     }
 }
@@ -1626,11 +1940,30 @@ impl From<kreuzcrawl::PageMetadata> for PageMetadata {
     }
 }
 
+impl From<CitationResult> for kreuzcrawl::CitationResult {
+    fn from(val: CitationResult) -> Self {
+        Self {
+            content: val.content,
+            references: val.references.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
 impl From<kreuzcrawl::CitationResult> for CitationResult {
     fn from(val: kreuzcrawl::CitationResult) -> Self {
         Self {
             content: val.content,
             references: val.references.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<CitationReference> for kreuzcrawl::CitationReference {
+    fn from(val: CitationReference) -> Self {
+        Self {
+            index: val.index,
+            url: val.url,
+            text: val.text,
         }
     }
 }
@@ -1645,8 +1978,28 @@ impl From<kreuzcrawl::CitationReference> for CitationReference {
     }
 }
 
+impl From<BatchScrapeResult> for kreuzcrawl::BatchScrapeResult {
+    fn from(val: BatchScrapeResult) -> Self {
+        Self {
+            url: val.url,
+            result: val.result.map(Into::into),
+            error: val.error,
+        }
+    }
+}
+
 impl From<kreuzcrawl::BatchScrapeResult> for BatchScrapeResult {
     fn from(val: kreuzcrawl::BatchScrapeResult) -> Self {
+        Self {
+            url: val.url,
+            result: val.result.map(Into::into),
+            error: val.error,
+        }
+    }
+}
+
+impl From<BatchCrawlResult> for kreuzcrawl::BatchCrawlResult {
+    fn from(val: BatchCrawlResult) -> Self {
         Self {
             url: val.url,
             result: val.result.map(Into::into),
@@ -1733,6 +2086,17 @@ impl From<kreuzcrawl::AuthConfig> for AuthConfig {
     }
 }
 
+impl From<LinkType> for kreuzcrawl::LinkType {
+    fn from(val: LinkType) -> Self {
+        match val {
+            LinkType::Internal => Self::Internal,
+            LinkType::External => Self::External,
+            LinkType::Anchor => Self::Anchor,
+            LinkType::Document => Self::Document,
+        }
+    }
+}
+
 impl From<kreuzcrawl::LinkType> for LinkType {
     fn from(val: kreuzcrawl::LinkType) -> Self {
         match val {
@@ -1744,6 +2108,17 @@ impl From<kreuzcrawl::LinkType> for LinkType {
     }
 }
 
+impl From<ImageSource> for kreuzcrawl::ImageSource {
+    fn from(val: ImageSource) -> Self {
+        match val {
+            ImageSource::Img => Self::Img,
+            ImageSource::PictureSource => Self::PictureSource,
+            ImageSource::OgImage => Self::OgImage,
+            ImageSource::TwitterImage => Self::TwitterImage,
+        }
+    }
+}
+
 impl From<kreuzcrawl::ImageSource> for ImageSource {
     fn from(val: kreuzcrawl::ImageSource) -> Self {
         match val {
@@ -1751,6 +2126,16 @@ impl From<kreuzcrawl::ImageSource> for ImageSource {
             kreuzcrawl::ImageSource::PictureSource => Self::PictureSource,
             kreuzcrawl::ImageSource::OgImage => Self::OgImage,
             kreuzcrawl::ImageSource::TwitterImage => Self::TwitterImage,
+        }
+    }
+}
+
+impl From<FeedType> for kreuzcrawl::FeedType {
+    fn from(val: FeedType) -> Self {
+        match val {
+            FeedType::Rss => Self::Rss,
+            FeedType::Atom => Self::Atom,
+            FeedType::JsonFeed => Self::JsonFeed,
         }
     }
 }

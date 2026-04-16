@@ -20,4 +20,5 @@ public sealed interface AuthConfig {
 
 	record Header(@JsonProperty("name") String name, @JsonProperty("value") String value) implements AuthConfig {
 	}
+
 }
