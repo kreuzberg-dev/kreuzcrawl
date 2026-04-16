@@ -29,7 +29,7 @@ export DYLD_FALLBACK_LIBRARY_PATH="$HOME/.local/lib:$DYLD_FALLBACK_LIBRARY_PATH"
 ## Using with Go:
 ```bash
 pkg-config --modversion kreuzcrawl-ffi  # Verify installation
-go get github.com/kreuzcrawl-dev/kreuzcrawl/packages/go/v4@latest
+go get github.com/kreuzberg-dev/kreuzcrawl/packages/go/v4@latest
 ```
 EOF
 

@@ -4805,7 +4805,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("url", method!(CitationReference::url, 0))?;
     class.define_method("text", method!(CitationReference::text, 0))?;
 
-    let class = module.define_class("CrawlEngineHandle", ruby.class_object())?;
+    let _class = module.define_class("CrawlEngineHandle", ruby.class_object())?;
 
     let class = module.define_class("BatchScrapeResult", ruby.class_object())?;
     class.define_singleton_method("new", function!(BatchScrapeResult::new, 3))?;

@@ -46,7 +46,7 @@ CHECKS: list[tuple[str, str, str, dict[str, str]]] = [
     ("nuget", "Kreuzcrawl", "NuGet", {}),
     ("packagist", "kreuzcrawl/kreuzcrawl", "Packagist", {}),
     ("hex", "kreuzcrawl", "Hex.pm", {}),
-    ("homebrew", "kreuzcrawl", "Homebrew", {"tap_repo": "kreuzcrawl-dev/homebrew-tap"}),
+    ("homebrew", "kreuzcrawl", "Homebrew", {"tap_repo": "kreuzberg-dev/homebrew-tap"}),
 ]
 
 GH_ASSET_CHECKS: list[tuple[str, str, dict[str, str]]] = [

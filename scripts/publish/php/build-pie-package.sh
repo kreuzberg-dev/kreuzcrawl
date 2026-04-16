@@ -172,7 +172,7 @@ php -m | grep kreuzcrawl
 
 ## Support
 
-For issues, visit: https://github.com/kreuzcrawl-dev/kreuzcrawl/issues
+For issues, visit: https://github.com/kreuzberg-dev/kreuzcrawl/issues
 EOF
 
 TARBALL_NAME="${PKG_NAME}.tar.gz"

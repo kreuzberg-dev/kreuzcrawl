@@ -5,7 +5,7 @@
 High-performance document intelligence for Go backed by the Rust core that powers every Kreuzcrawl binding.
 
 > **Version {{ version }}**
-> Report issues at [github.com/kreuzcrawl-dev/kreuzcrawl](https://github.com/kreuzcrawl-dev/kreuzcrawl/issues).
+> Report issues at [github.com/kreuzberg-dev/kreuzcrawl](https://github.com/kreuzberg-dev/kreuzcrawl/issues).
 
 ## Install
 
@@ -50,11 +50,11 @@ When building outside the Kreuzcrawl monorepo, you need to provide the static li
 
 #### Option 1: Download Pre-built Static Library
 
-Download the static library for your platform from [GitHub Releases](https://github.com/kreuzcrawl-dev/kreuzcrawl/releases):
+Download the static library for your platform from [GitHub Releases](https://github.com/kreuzberg-dev/kreuzcrawl/releases):
 
 ```bash
 # Example: Linux x86_64
-curl -LO https://github.com/kreuzcrawl-dev/kreuzcrawl/releases/download/v{{ version }}/go-ffi-linux-x86_64.tar.gz
+curl -LO https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v{{ version }}/go-ffi-linux-x86_64.tar.gz
 tar -xzf go-ffi-linux-x86_64.tar.gz
 
 # Copy to a permanent location
@@ -79,7 +79,7 @@ If pre-built libraries aren't available for your platform:
 
 ```bash
 # Clone the repository
-git clone https://github.com/kreuzcrawl-dev/kreuzcrawl.git
+git clone https://github.com/kreuzberg-dev/kreuzcrawl.git
 cd kreuzcrawl
 
 # Build the static library
@@ -240,7 +240,7 @@ func init() {
 | Issue | Fix |
 |-------|-----|
 | `ld returned 1 exit status` or `undefined reference to 'html_to_markdown_...'` | The static library wasn't found. Make sure `CGO_LDFLAGS` points to the directory containing `libkreuzcrawl_ffi.a`: `CGO_LDFLAGS="-L/path/to/lib -lkreuzcrawl_ffi" go build` |
-| `cannot find -lkreuzcrawl_ffi` | The static library file is missing or in the wrong location. Download it from [GitHub Releases](https://github.com/kreuzcrawl-dev/kreuzcrawl/releases) or build it yourself: `cargo build -p kreuzcrawl-ffi --release` |
+| `cannot find -lkreuzcrawl_ffi` | The static library file is missing or in the wrong location. Download it from [GitHub Releases](https://github.com/kreuzberg-dev/kreuzcrawl/releases) or build it yourself: `cargo build -p kreuzcrawl-ffi --release` |
 | `undefined: v4.ExtractFile` | This function was removed in v4.1.0. Use `ExtractFileSync` and wrap in goroutine if needed (see migration guide) |
 | `Missing dependency: tesseract` | Install the OCR backend and ensure it is on `PATH`. Errors bubble up as `*v4.MissingDependencyError`. |
 | `undefined: C.customValidator` during build | Export the callback with `//export` in a `*_cgo.go` file before using it in `Register*` helpers. |

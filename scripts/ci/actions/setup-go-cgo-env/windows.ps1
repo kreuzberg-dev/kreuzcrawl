@@ -86,7 +86,7 @@ $importLibName = "libkreuzcrawl_ffi.dll.a"
 $importLibPath = Join-Path $ffiPath $importLibName
 # FIXME: Verbose linker flags (-Wl,-v) cause "invalid flag in go:cgo_ldflag" errors on Windows
 # These flags are incompatible with Windows Go CGO compilation
-# See: https://github.com/kreuzcrawl-dev/kreuzcrawl/pull/316
+# See: https://github.com/kreuzberg-dev/kreuzcrawl/pull/316
 $linkerVerboseFlags = ""
 # Temporarily disabled due to Go Windows CGO incompatibility
 # if ($env:KREUZBERG_GO_LINKER_VERBOSE -eq "1") {

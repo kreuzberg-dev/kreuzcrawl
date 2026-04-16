@@ -12,7 +12,7 @@
 set -euo pipefail
 
 VERSION="${1:?Usage: $0 <version>}"
-REPO="kreuzcrawl-dev/kreuzcrawl"
+REPO="kreuzberg-dev/kreuzcrawl"
 CHECKSUM_FILE="packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs"
 
 # Targets that are actually built in CI (from publish.yaml elixir-natives matrix)

@@ -247,7 +247,7 @@ edition = "2024"
 rust-version = "1.91"
 authors = ["Na'aman Hirschfeld <naaman@kreuzcrawl.dev>"]
 license = "MIT"
-repository = "https://github.com/kreuzcrawl-dev/kreuzcrawl"
+repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 homepage = "https://kreuzcrawl.dev"
 
 [workspace.dependencies]
