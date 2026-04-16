@@ -5,51 +5,50 @@ import java.util.Optional;
 
 public class ResponseMetaBuilder {
 
-  private Optional<String> etag = Optional.empty();
-  private Optional<String> lastModified = Optional.empty();
-  private Optional<String> cacheControl = Optional.empty();
-  private Optional<String> server = Optional.empty();
-  private Optional<String> xPoweredBy = Optional.empty();
-  private Optional<String> contentLanguage = Optional.empty();
-  private Optional<String> contentEncoding = Optional.empty();
+	private Optional<String> etag = Optional.empty();
+	private Optional<String> lastModified = Optional.empty();
+	private Optional<String> cacheControl = Optional.empty();
+	private Optional<String> server = Optional.empty();
+	private Optional<String> xPoweredBy = Optional.empty();
+	private Optional<String> contentLanguage = Optional.empty();
+	private Optional<String> contentEncoding = Optional.empty();
 
-  public ResponseMetaBuilder withEtag(Optional<String> value) {
-    this.etag = value;
-    return this;
-  }
+	public ResponseMetaBuilder withEtag(Optional<String> value) {
+		this.etag = value;
+		return this;
+	}
 
-  public ResponseMetaBuilder withLastModified(Optional<String> value) {
-    this.lastModified = value;
-    return this;
-  }
+	public ResponseMetaBuilder withLastModified(Optional<String> value) {
+		this.lastModified = value;
+		return this;
+	}
 
-  public ResponseMetaBuilder withCacheControl(Optional<String> value) {
-    this.cacheControl = value;
-    return this;
-  }
+	public ResponseMetaBuilder withCacheControl(Optional<String> value) {
+		this.cacheControl = value;
+		return this;
+	}
 
-  public ResponseMetaBuilder withServer(Optional<String> value) {
-    this.server = value;
-    return this;
-  }
+	public ResponseMetaBuilder withServer(Optional<String> value) {
+		this.server = value;
+		return this;
+	}
 
-  public ResponseMetaBuilder withXPoweredBy(Optional<String> value) {
-    this.xPoweredBy = value;
-    return this;
-  }
+	public ResponseMetaBuilder withXPoweredBy(Optional<String> value) {
+		this.xPoweredBy = value;
+		return this;
+	}
 
-  public ResponseMetaBuilder withContentLanguage(Optional<String> value) {
-    this.contentLanguage = value;
-    return this;
-  }
+	public ResponseMetaBuilder withContentLanguage(Optional<String> value) {
+		this.contentLanguage = value;
+		return this;
+	}
 
-  public ResponseMetaBuilder withContentEncoding(Optional<String> value) {
-    this.contentEncoding = value;
-    return this;
-  }
+	public ResponseMetaBuilder withContentEncoding(Optional<String> value) {
+		this.contentEncoding = value;
+		return this;
+	}
 
-  public ResponseMeta build() {
-    return new ResponseMeta(
-        etag, lastModified, cacheControl, server, xPoweredBy, contentLanguage, contentEncoding);
-  }
+	public ResponseMeta build() {
+		return new ResponseMeta(etag, lastModified, cacheControl, server, xPoweredBy, contentLanguage, contentEncoding);
+	}
 }

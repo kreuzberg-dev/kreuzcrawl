@@ -2,19 +2,19 @@
 package dev.kreuzberg.kreuzcrawl;
 
 public class KreuzcrawlException extends Exception {
-  private final int code;
+	private final int code;
 
-  public KreuzcrawlException(int code, String message) {
-    super(message);
-    this.code = code;
-  }
+	public KreuzcrawlException(int code, String message) {
+		super(message);
+		this.code = code;
+	}
 
-  public KreuzcrawlException(String message, Throwable cause) {
-    super(message, cause);
-    this.code = -1;
-  }
+	public KreuzcrawlException(String message, Throwable cause) {
+		super(message, cause);
+		this.code = -1;
+	}
 
-  public int getCode() {
-    return code;
-  }
+	public int getCode() {
+		return code;
+	}
 }

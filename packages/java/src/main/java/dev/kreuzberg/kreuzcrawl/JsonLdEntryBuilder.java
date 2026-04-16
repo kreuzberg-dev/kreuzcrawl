@@ -5,26 +5,26 @@ import java.util.Optional;
 
 public class JsonLdEntryBuilder {
 
-  private String schemaType = "";
-  private Optional<String> name = Optional.empty();
-  private String raw = "";
+	private String schemaType = "";
+	private Optional<String> name = Optional.empty();
+	private String raw = "";
 
-  public JsonLdEntryBuilder withSchemaType(String value) {
-    this.schemaType = value;
-    return this;
-  }
+	public JsonLdEntryBuilder withSchemaType(String value) {
+		this.schemaType = value;
+		return this;
+	}
 
-  public JsonLdEntryBuilder withName(Optional<String> value) {
-    this.name = value;
-    return this;
-  }
+	public JsonLdEntryBuilder withName(Optional<String> value) {
+		this.name = value;
+		return this;
+	}
 
-  public JsonLdEntryBuilder withRaw(String value) {
-    this.raw = value;
-    return this;
-  }
+	public JsonLdEntryBuilder withRaw(String value) {
+		this.raw = value;
+		return this;
+	}
 
-  public JsonLdEntry build() {
-    return new JsonLdEntry(schemaType, name, raw);
-  }
+	public JsonLdEntry build() {
+		return new JsonLdEntry(schemaType, name, raw);
+	}
 }

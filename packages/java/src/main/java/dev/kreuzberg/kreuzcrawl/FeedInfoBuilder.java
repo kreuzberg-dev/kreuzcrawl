@@ -5,26 +5,26 @@ import java.util.Optional;
 
 public class FeedInfoBuilder {
 
-  private String url = "";
-  private Optional<String> title = Optional.empty();
-  private FeedType feedType = null;
+	private String url = "";
+	private Optional<String> title = Optional.empty();
+	private FeedType feedType = null;
 
-  public FeedInfoBuilder withUrl(String value) {
-    this.url = value;
-    return this;
-  }
+	public FeedInfoBuilder withUrl(String value) {
+		this.url = value;
+		return this;
+	}
 
-  public FeedInfoBuilder withTitle(Optional<String> value) {
-    this.title = value;
-    return this;
-  }
+	public FeedInfoBuilder withTitle(Optional<String> value) {
+		this.title = value;
+		return this;
+	}
 
-  public FeedInfoBuilder withFeedType(FeedType value) {
-    this.feedType = value;
-    return this;
-  }
+	public FeedInfoBuilder withFeedType(FeedType value) {
+		this.feedType = value;
+		return this;
+	}
 
-  public FeedInfo build() {
-    return new FeedInfo(url, title, feedType);
-  }
+	public FeedInfo build() {
+		return new FeedInfo(url, title, feedType);
+	}
 }

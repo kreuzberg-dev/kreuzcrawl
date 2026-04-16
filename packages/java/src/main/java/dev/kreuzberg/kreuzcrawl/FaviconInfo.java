@@ -4,12 +4,9 @@ package dev.kreuzberg.kreuzcrawl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 
-public record FaviconInfo(
-    String url,
-    String rel,
-    Optional<String> sizes,
-    @JsonProperty("mime_type") Optional<String> mimeType) {
-  public static FaviconInfoBuilder builder() {
-    return new FaviconInfoBuilder();
-  }
+public record FaviconInfo(String url, String rel, Optional<String> sizes,
+		@JsonProperty("mime_type") Optional<String> mimeType) {
+	public static FaviconInfoBuilder builder() {
+		return new FaviconInfoBuilder();
+	}
 }

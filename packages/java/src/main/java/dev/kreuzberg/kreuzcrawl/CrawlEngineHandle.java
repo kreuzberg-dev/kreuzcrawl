@@ -6,29 +6,30 @@ import java.lang.foreign.MemorySegment;
 /**
  * Opaque handle to a configured crawl engine.
  *
- * <p>Constructed via [`create_engine`] with an optional [`CrawlConfig`]. All default trait
- * implementations (BFS strategy, in-memory frontier, per-domain throttle, etc.) are used
- * internally.
+ * <p>
+ * Constructed via [`create_engine`] with an optional [`CrawlConfig`]. All
+ * default trait implementations (BFS strategy, in-memory frontier, per-domain
+ * throttle, etc.) are used internally.
  */
 public class CrawlEngineHandle implements AutoCloseable {
-  private final MemorySegment handle;
+	private final MemorySegment handle;
 
-  CrawlEngineHandle(MemorySegment handle) {
-    this.handle = handle;
-  }
+	CrawlEngineHandle(MemorySegment handle) {
+		this.handle = handle;
+	}
 
-  MemorySegment handle() {
-    return this.handle;
-  }
+	MemorySegment handle() {
+		return this.handle;
+	}
 
-  @Override
-  public void close() {
-    if (handle != null && !handle.equals(MemorySegment.NULL)) {
-      try {
-        NativeLib.KCRAWL_CRAWL_ENGINE_HANDLE_FREE.invoke(handle);
-      } catch (Throwable e) {
-        throw new RuntimeException("Failed to free CrawlEngineHandle: " + e.getMessage(), e);
-      }
-    }
-  }
+	@Override
+	public void close() {
+		if (handle != null && !handle.equals(MemorySegment.NULL)) {
+			try {
+				NativeLib.KCRAWL_CRAWL_ENGINE_HANDLE_FREE.invoke(handle);
+			} catch (Throwable e) {
+				throw new RuntimeException("Failed to free CrawlEngineHandle: " + e.getMessage(), e);
+			}
+		}
+	}
 }

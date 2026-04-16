@@ -4,14 +4,10 @@ package dev.kreuzberg.kreuzcrawl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 
-public record BrowserConfig(
-    BrowserMode mode,
-    Optional<String> endpoint,
-    Long timeout,
-    BrowserWait waitValue,
-    @JsonProperty("wait_selector") Optional<String> waitSelector,
-    @JsonProperty("extra_wait") Optional<Long> extraWait) {
-  public static BrowserConfigBuilder builder() {
-    return new BrowserConfigBuilder();
-  }
+public record BrowserConfig(BrowserMode mode, Optional<String> endpoint, Long timeout, BrowserWait waitValue,
+		@JsonProperty("wait_selector") Optional<String> waitSelector,
+		@JsonProperty("extra_wait") Optional<Long> extraWait) {
+	public static BrowserConfigBuilder builder() {
+		return new BrowserConfigBuilder();
+	}
 }

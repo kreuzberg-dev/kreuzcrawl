@@ -2,7 +2,7 @@
 title: "PHP API Reference"
 ---
 
-## PHP API Reference <span class="version-badge">v0.1.0-rc.1</span>
+## PHP API Reference <span class="version-badge">v0.1.0-rc.2</span>
 
 ### Functions
 
@@ -239,10 +239,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode::Auto` | When to use the headless browser fallback. |
 | `endpoint` | `?string` | `null` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `float` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `float` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait::NetworkIdle` | Wait strategy after browser navigation. |
 | `waitSelector` | `?string` | `null` | CSS selector to wait for when `wait` is `Selector`. |
-| `extraWait` | `?float` | `0ms` | Extra time to wait after the wait condition is met. |
+| `extraWait` | `?float` | `null` | Extra time to wait after the wait condition is met. |
 
 ##### Methods
 
@@ -327,7 +327,7 @@ Configuration for crawl, scrape, and map operations.
 | `includePaths` | `array<string>` | `[]` | Regex patterns for paths to include during crawling. |
 | `excludePaths` | `array<string>` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `customHeaders` | `array<string, string>` | `{}` | Custom HTTP headers to send with each request. |
-| `requestTimeout` | `float` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `requestTimeout` | `float` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `maxRedirects` | `int` | `10` | Maximum number of redirects to follow. |
 | `retryCount` | `int` | `0` | Number of retry attempts for failed requests. |
 | `retryCodes` | `array<int>` | `[]` | HTTP status codes that should trigger a retry. |

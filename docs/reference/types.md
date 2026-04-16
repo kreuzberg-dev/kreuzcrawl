@@ -200,11 +200,11 @@ Browser fallback configuration.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode::Auto` | When to use the headless browser fallback. |
-| `endpoint` | `Option<String>` | `Default::default()` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `Duration` | `Duration::default()` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `endpoint` | `Option<String>` | `None` | CDP WebSocket endpoint for connecting to an external browser instance. |
+| `timeout` | `Duration` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait::NetworkIdle` | Wait strategy after browser navigation. |
-| `wait_selector` | `Option<String>` | `Default::default()` | CSS selector to wait for when `wait` is `Selector`. |
-| `extra_wait` | `Option<Duration>` | `Duration::default()` | Extra time to wait after the wait condition is met. |
+| `wait_selector` | `Option<String>` | `None` | CSS selector to wait for when `wait` is `Selector`. |
+| `extra_wait` | `Option<Duration>` | `None` | Extra time to wait after the wait condition is met. |
 
 ---
 
@@ -214,39 +214,39 @@ Configuration for crawl, scrape, and map operations.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `max_depth` | `Option<usize>` | `Default::default()` | Maximum crawl depth (number of link hops from the start URL). |
-| `max_pages` | `Option<usize>` | `Default::default()` | Maximum number of pages to crawl. |
-| `max_concurrent` | `Option<usize>` | `Default::default()` | Maximum number of concurrent requests. |
+| `max_depth` | `Option<usize>` | `None` | Maximum crawl depth (number of link hops from the start URL). |
+| `max_pages` | `Option<usize>` | `None` | Maximum number of pages to crawl. |
+| `max_concurrent` | `Option<usize>` | `None` | Maximum number of concurrent requests. |
 | `respect_robots_txt` | `bool` | `false` | Whether to respect robots.txt directives. |
-| `user_agent` | `Option<String>` | `Default::default()` | Custom user-agent string. |
+| `user_agent` | `Option<String>` | `None` | Custom user-agent string. |
 | `stay_on_domain` | `bool` | `false` | Whether to restrict crawling to the same domain. |
 | `allow_subdomains` | `bool` | `false` | Whether to allow subdomains when `stay_on_domain` is true. |
 | `include_paths` | `Vec<String>` | `vec![]` | Regex patterns for paths to include during crawling. |
 | `exclude_paths` | `Vec<String>` | `vec![]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `HashMap<String, String>` | `HashMap::new()` | Custom HTTP headers to send with each request. |
-| `request_timeout` | `Duration` | `Duration::default()` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `request_timeout` | `Duration` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `max_redirects` | `usize` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `usize` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `Vec<u16>` | `vec![]` | HTTP status codes that should trigger a retry. |
 | `cookies_enabled` | `bool` | `false` | Whether to enable cookie handling. |
-| `auth` | `Option<AuthConfig>` | `Default::default()` | Authentication configuration. |
-| `max_body_size` | `Option<usize>` | `Default::default()` | Maximum response body size in bytes. |
+| `auth` | `Option<AuthConfig>` | `None` | Authentication configuration. |
+| `max_body_size` | `Option<usize>` | `None` | Maximum response body size in bytes. |
 | `main_content_only` | `bool` | `false` | Whether to extract only the main content from HTML pages. |
 | `remove_tags` | `Vec<String>` | `vec![]` | CSS selectors for tags to remove from HTML before processing. |
-| `map_limit` | `Option<usize>` | `Default::default()` | Maximum number of URLs to return from a map operation. |
-| `map_search` | `Option<String>` | `Default::default()` | Search filter for map results (case-insensitive substring match on URLs). |
+| `map_limit` | `Option<usize>` | `None` | Maximum number of URLs to return from a map operation. |
+| `map_search` | `Option<String>` | `None` | Search filter for map results (case-insensitive substring match on URLs). |
 | `download_assets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
 | `asset_types` | `Vec<AssetCategory>` | `vec![]` | Filter for asset categories to download. |
-| `max_asset_size` | `Option<usize>` | `Default::default()` | Maximum size in bytes for individual asset downloads. |
+| `max_asset_size` | `Option<usize>` | `None` | Maximum size in bytes for individual asset downloads. |
 | `browser` | `BrowserConfig` | — | Browser configuration. |
-| `proxy` | `Option<ProxyConfig>` | `Default::default()` | Proxy configuration for HTTP requests. |
+| `proxy` | `Option<ProxyConfig>` | `None` | Proxy configuration for HTTP requests. |
 | `user_agents` | `Vec<String>` | `vec![]` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `capture_screenshot` | `bool` | `false` | Whether to capture a screenshot when using the browser. |
 | `download_documents` | `bool` | `true` | Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them. |
 | `document_max_size` | `Option<usize>` | `Default::default()` | Maximum size in bytes for document downloads. Defaults to 50 MB. |
 | `document_mime_types` | `Vec<String>` | `vec![]` | Allowlist of MIME types to download. If empty, uses built-in defaults. |
-| `warc_output` | `Option<PathBuf>` | `Default::default()` | Path to write WARC output. If `None`, WARC output is disabled. |
-| `browser_profile` | `Option<String>` | `Default::default()` | Named browser profile for persistent sessions (cookies, localStorage). |
+| `warc_output` | `Option<PathBuf>` | `None` | Path to write WARC output. If `None`, WARC output is disabled. |
+| `browser_profile` | `Option<String>` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
 
 ---

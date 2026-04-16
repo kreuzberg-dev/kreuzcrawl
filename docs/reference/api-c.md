@@ -2,7 +2,7 @@
 title: "C API Reference"
 ---
 
-## C API Reference <span class="version-badge">v0.1.0-rc.1</span>
+## C API Reference <span class="version-badge">v0.1.0-rc.2</span>
 
 ### Functions
 
@@ -239,10 +239,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `KcrawlBrowserMode` | `KCRAWL_KCRAWL_AUTO` | When to use the headless browser fallback. |
 | `endpoint` | `const char**` | `NULL` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `uint64_t` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `uint64_t` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `KcrawlBrowserWait` | `KCRAWL_KCRAWL_NETWORK_IDLE` | Wait strategy after browser navigation. |
 | `wait_selector` | `const char**` | `NULL` | CSS selector to wait for when `wait` is `Selector`. |
-| `extra_wait` | `uint64_t*` | `0ms` | Extra time to wait after the wait condition is met. |
+| `extra_wait` | `uint64_t*` | `NULL` | Extra time to wait after the wait condition is met. |
 
 ##### Methods
 
@@ -327,7 +327,7 @@ Configuration for crawl, scrape, and map operations.
 | `include_paths` | `const char**` | `NULL` | Regex patterns for paths to include during crawling. |
 | `exclude_paths` | `const char**` | `NULL` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `void*` | `NULL` | Custom HTTP headers to send with each request. |
-| `request_timeout` | `uint64_t` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `request_timeout` | `uint64_t` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `max_redirects` | `uintptr_t` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `uintptr_t` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `uint16_t*` | `NULL` | HTTP status codes that should trigger a retry. |

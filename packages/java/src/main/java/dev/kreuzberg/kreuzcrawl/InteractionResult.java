@@ -5,12 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Optional;
 
-public record InteractionResult(
-    @JsonProperty("action_results") List<ActionResult> actionResults,
-    @JsonProperty("final_html") String finalHtml,
-    @JsonProperty("final_url") String finalUrl,
-    Optional<byte[]> screenshot) {
-  public static InteractionResultBuilder builder() {
-    return new InteractionResultBuilder();
-  }
+public record InteractionResult(@JsonProperty("action_results") List<ActionResult> actionResults,
+		@JsonProperty("final_html") String finalHtml, @JsonProperty("final_url") String finalUrl,
+		Optional<byte[]> screenshot) {
+	public static InteractionResultBuilder builder() {
+		return new InteractionResultBuilder();
+	}
 }

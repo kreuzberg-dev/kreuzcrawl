@@ -2,7 +2,7 @@
 package dev.kreuzberg.kreuzcrawl;
 
 public record HeadingInfo(byte level, String text) {
-  public static HeadingInfoBuilder builder() {
-    return new HeadingInfoBuilder();
-  }
+	public static HeadingInfoBuilder builder() {
+		return new HeadingInfoBuilder();
+	}
 }

@@ -4,13 +4,9 @@ package dev.kreuzberg.kreuzcrawl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 
-public record LinkInfo(
-    String url,
-    String text,
-    @JsonProperty("link_type") LinkType linkType,
-    Optional<String> rel,
-    boolean nofollow) {
-  public static LinkInfoBuilder builder() {
-    return new LinkInfoBuilder();
-  }
+public record LinkInfo(String url, String text, @JsonProperty("link_type") LinkType linkType, Optional<String> rel,
+		boolean nofollow) {
+	public static LinkInfoBuilder builder() {
+		return new LinkInfoBuilder();
+	}
 }

@@ -2,7 +2,7 @@
 title: "Go API Reference"
 ---
 
-## Go API Reference <span class="version-badge">v0.1.0-rc.1</span>
+## Go API Reference <span class="version-badge">v0.1.0-rc.2</span>
 
 ### Functions
 
@@ -239,10 +239,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `Mode` | `BrowserMode` | `BrowserMode.Auto` | When to use the headless browser fallback. |
 | `Endpoint` | `*string` | `nil` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `Timeout` | `time.Duration` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `Timeout` | `time.Duration` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `Wait` | `BrowserWait` | `BrowserWait.NetworkIdle` | Wait strategy after browser navigation. |
 | `WaitSelector` | `*string` | `nil` | CSS selector to wait for when `wait` is `Selector`. |
-| `ExtraWait` | `*time.Duration` | `0ms` | Extra time to wait after the wait condition is met. |
+| `ExtraWait` | `*time.Duration` | `nil` | Extra time to wait after the wait condition is met. |
 
 ##### Methods
 
@@ -327,7 +327,7 @@ Configuration for crawl, scrape, and map operations.
 | `IncludePaths` | `[]string` | `nil` | Regex patterns for paths to include during crawling. |
 | `ExcludePaths` | `[]string` | `nil` | Regex patterns for paths to exclude during crawling. |
 | `CustomHeaders` | `map[string]string` | `nil` | Custom HTTP headers to send with each request. |
-| `RequestTimeout` | `time.Duration` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `RequestTimeout` | `time.Duration` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `MaxRedirects` | `int` | `10` | Maximum number of redirects to follow. |
 | `RetryCount` | `int` | `0` | Number of retry attempts for failed requests. |
 | `RetryCodes` | `[]uint16` | `nil` | HTTP status codes that should trigger a retry. |

@@ -4,7 +4,7 @@ package dev.kreuzberg.kreuzcrawl;
 import java.util.Optional;
 
 public record BatchScrapeResult(String url, Optional<ScrapeResult> result, Optional<String> error) {
-  public static BatchScrapeResultBuilder builder() {
-    return new BatchScrapeResultBuilder();
-  }
+	public static BatchScrapeResultBuilder builder() {
+		return new BatchScrapeResultBuilder();
+	}
 }

@@ -5,38 +5,38 @@ import java.util.Optional;
 
 public class ActionResultBuilder {
 
-  private long actionIndex = 0;
-  private String actionType = "";
-  private boolean success = false;
-  private Optional<Object> data = Optional.empty();
-  private Optional<String> error = Optional.empty();
+	private long actionIndex = 0;
+	private String actionType = "";
+	private boolean success = false;
+	private Optional<Object> data = Optional.empty();
+	private Optional<String> error = Optional.empty();
 
-  public ActionResultBuilder withActionIndex(long value) {
-    this.actionIndex = value;
-    return this;
-  }
+	public ActionResultBuilder withActionIndex(long value) {
+		this.actionIndex = value;
+		return this;
+	}
 
-  public ActionResultBuilder withActionType(String value) {
-    this.actionType = value;
-    return this;
-  }
+	public ActionResultBuilder withActionType(String value) {
+		this.actionType = value;
+		return this;
+	}
 
-  public ActionResultBuilder withSuccess(boolean value) {
-    this.success = value;
-    return this;
-  }
+	public ActionResultBuilder withSuccess(boolean value) {
+		this.success = value;
+		return this;
+	}
 
-  public ActionResultBuilder withData(Optional<Object> value) {
-    this.data = value;
-    return this;
-  }
+	public ActionResultBuilder withData(Optional<Object> value) {
+		this.data = value;
+		return this;
+	}
 
-  public ActionResultBuilder withError(Optional<String> value) {
-    this.error = value;
-    return this;
-  }
+	public ActionResultBuilder withError(Optional<String> value) {
+		this.error = value;
+		return this;
+	}
 
-  public ActionResult build() {
-    return new ActionResult(actionIndex, actionType, success, data, error);
-  }
+	public ActionResult build() {
+		return new ActionResult(actionIndex, actionType, success, data, error);
+	}
 }

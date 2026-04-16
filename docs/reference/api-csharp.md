@@ -2,7 +2,7 @@
 title: "C# API Reference"
 ---
 
-## C# API Reference <span class="version-badge">v0.1.0-rc.1</span>
+## C# API Reference <span class="version-badge">v0.1.0-rc.2</span>
 
 ### Functions
 
@@ -239,10 +239,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `Mode` | `BrowserMode` | `BrowserMode.Auto` | When to use the headless browser fallback. |
 | `Endpoint` | `string?` | `null` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `Timeout` | `TimeSpan` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `Timeout` | `TimeSpan` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `Wait` | `BrowserWait` | `BrowserWait.NetworkIdle` | Wait strategy after browser navigation. |
 | `WaitSelector` | `string?` | `null` | CSS selector to wait for when `wait` is `Selector`. |
-| `ExtraWait` | `TimeSpan?` | `0ms` | Extra time to wait after the wait condition is met. |
+| `ExtraWait` | `TimeSpan?` | `null` | Extra time to wait after the wait condition is met. |
 
 ##### Methods
 
@@ -327,7 +327,7 @@ Configuration for crawl, scrape, and map operations.
 | `IncludePaths` | `List<string>` | `new List<string>()` | Regex patterns for paths to include during crawling. |
 | `ExcludePaths` | `List<string>` | `new List<string>()` | Regex patterns for paths to exclude during crawling. |
 | `CustomHeaders` | `Dictionary<string, string>` | `new Dictionary<string, string>()` | Custom HTTP headers to send with each request. |
-| `RequestTimeout` | `TimeSpan` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `RequestTimeout` | `TimeSpan` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `MaxRedirects` | `nuint` | `10` | Maximum number of redirects to follow. |
 | `RetryCount` | `nuint` | `0` | Number of retry attempts for failed requests. |
 | `RetryCodes` | `List<ushort>` | `new List<ushort>()` | HTTP status codes that should trigger a retry. |
