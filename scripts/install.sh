@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-REPO="kreuzcrawl-dev/kreuzcrawl"
+REPO="kreuzberg-dev/kreuzcrawl"
 BINARY_NAME="kreuzcrawl"
 
 # --- Helpers ---

@@ -12,7 +12,7 @@ major="${version%%.*}"
 module_tag="packages/go/v${major}/${tag}"
 legacy_tag="packages/go/${tag}"
 
-repo="${GITHUB_REPOSITORY:-kreuzcrawl-dev/kreuzcrawl}"
+repo="${GITHUB_REPOSITORY:-kreuzberg-dev/kreuzcrawl}"
 sha=$(git rev-parse "$tag^{commit}")
 
 create_tag() {

@@ -79,8 +79,8 @@ languages:
     output_path: packages/go/v4/README.md
     package_manager:
       - go get
-    package_name: github.com/kreuzcrawl-dev/kreuzcrawl/packages/go/v4
-    badge_url: https://img.shields.io/github/v/tag/kreuzcrawl-dev/kreuzcrawl?label=Go&color=007ec6
+    package_name: github.com/kreuzberg-dev/kreuzcrawl/packages/go/v4
+    badge_url: https://img.shields.io/github/v/tag/kreuzberg-dev/kreuzcrawl?label=Go&color=007ec6
     docs_url: https://kreuzcrawl.dev/
     description: |
       Extract text, tables, images, and metadata from 91+ file formats and 248 programming languages including PDF, Office documents, and images. Go bindings with context-aware async support, idiomatic Go API, and CGO-based native performance.
