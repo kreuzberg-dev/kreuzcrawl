@@ -4,11 +4,18 @@
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
-		"name": "kreuzcrawl",
 		"binaryName": "kreuzcrawl-node",
-		"triples": {
-			"defaults": true
-		}
+		"package": {
+			"name": "@kreuzberg/kreuzcrawl"
+		},
+		"targets": [
+			"aarch64-apple-darwin",
+			"aarch64-unknown-linux-gnu",
+			"aarch64-unknown-linux-musl",
+			"x86_64-pc-windows-msvc",
+			"x86_64-unknown-linux-gnu",
+			"x86_64-unknown-linux-musl"
+		]
 	},
 	"scripts": {
 		"build:ts": "echo 'No TypeScript wrapper layer — using NAPI-RS generated bindings directly'"
