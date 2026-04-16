@@ -187,7 +187,7 @@ Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `String` | — | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
+| `url` | `String` | — | Proxy URL (e.g. "<http://proxy:8080",> "socks5://proxy:1080"). |
 | `username` | `Option<String>` | `Default::default()` | Optional username for proxy authentication. |
 | `password` | `Option<String>` | `Default::default()` | Optional password for proxy authentication. |
 

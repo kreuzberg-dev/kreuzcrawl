@@ -11,7 +11,7 @@ title: "C API Reference"
 Convert markdown links to numbered citations.
 
 `[Example](https://example.com)` becomes `Example[1]`
-with `[1]: https://example.com` in the reference list.
+with `[1]: <https://example.com`> in the reference list.
 Images `![alt](url)` are preserved unchanged.
 
 **Signature:**
@@ -691,7 +691,7 @@ Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `const char*` | — | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
+| `url` | `const char*` | — | Proxy URL (e.g. "<http://proxy:8080",> "socks5://proxy:1080"). |
 | `username` | `const char**` | `NULL` | Optional username for proxy authentication. |
 | `password` | `const char**` | `NULL` | Optional password for proxy authentication. |
 
