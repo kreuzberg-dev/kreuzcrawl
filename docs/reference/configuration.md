@@ -26,7 +26,7 @@ Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `str` | — | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
+| `url` | `str` | — | Proxy URL (e.g. "<http://proxy:8080",> "socks5://proxy:1080"). |
 | `username` | `str | None` | `None` | Optional username for proxy authentication. |
 | `password` | `str | None` | `None` | Optional password for proxy authentication. |
 

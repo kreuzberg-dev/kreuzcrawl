@@ -11,7 +11,7 @@ title: "PHP API Reference"
 Convert markdown links to numbered citations.
 
 `[Example](https://example.com)` becomes `Example[1]`
-with `[1]: https://example.com` in the reference list.
+with `[1]: <https://example.com`> in the reference list.
 Images `![alt](url)` are preserved unchanged.
 
 **Signature:**
@@ -691,7 +691,7 @@ Proxy configuration for HTTP requests.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | — | Proxy URL (e.g. "<http://proxy:8080>", "socks5://proxy:1080"). |
+| `url` | `string` | — | Proxy URL (e.g. "<http://proxy:8080",> "socks5://proxy:1080"). |
 | `username` | `?string` | `null` | Optional username for proxy authentication. |
 | `password` | `?string` | `null` | Optional password for proxy authentication. |
 
