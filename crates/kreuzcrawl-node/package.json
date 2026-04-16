@@ -3,6 +3,11 @@
 	"version": "0.1.0-rc.2",
 	"main": "index.js",
 	"types": "index.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kreuzberg-dev/kreuzcrawl.git"
+	},
+	"license": "Elastic-2.0",
 	"napi": {
 		"binaryName": "kreuzcrawl-node",
 		"package": {

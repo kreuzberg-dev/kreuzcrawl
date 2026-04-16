@@ -47,7 +47,7 @@ if (Test-Path "$TargetDir\pdfium.dll") {
 }
 
 # Copy header
-Copy-Item "crates\kreuzcrawl-ffi\kreuzcrawl.h" "$StagingDir\include\"
+Copy-Item "crates\kreuzcrawl-ffi\include\kreuzcrawl.h" "$StagingDir\include\"
 
 # Copy pkg-config file
 Copy-Item "crates\kreuzcrawl-ffi\kreuzcrawl-ffi.pc" "$StagingDir\share\pkgconfig\kreuzcrawl-ffi.pc"
