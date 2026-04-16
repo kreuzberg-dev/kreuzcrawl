@@ -3,6 +3,8 @@ target/
 .github/
 e2e/
 packages/
+!packages/elixir/native/
+!packages/ruby/ext/
 fixtures/
 *.md
 .claude/
