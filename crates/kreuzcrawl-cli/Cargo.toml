@@ -15,6 +15,7 @@ path = "src/main.rs"
 default = []
 api = ["kreuzcrawl/api"]
 mcp = ["kreuzcrawl/mcp"]
+mcp-http = ["kreuzcrawl/mcp-http"]
 warc = ["kreuzcrawl/warc"]
 ai = ["kreuzcrawl/ai"]
 tracing = ["kreuzcrawl/tracing"]

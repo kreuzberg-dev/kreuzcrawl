@@ -9,6 +9,9 @@
 			"defaults": true
 		}
 	},
+	"scripts": {
+		"build:ts": "echo 'No TypeScript wrapper layer — using NAPI-RS generated bindings directly'"
+	},
 	"devDependencies": {
 		"@napi-rs/cli": "^3.6.2"
 	}
