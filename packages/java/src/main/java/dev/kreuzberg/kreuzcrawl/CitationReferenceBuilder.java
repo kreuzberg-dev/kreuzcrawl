@@ -3,26 +3,26 @@ package dev.kreuzberg.kreuzcrawl;
 
 public class CitationReferenceBuilder {
 
-  private long index = 0;
-  private String url = "";
-  private String text = "";
+	private long index = 0;
+	private String url = "";
+	private String text = "";
 
-  public CitationReferenceBuilder withIndex(long value) {
-    this.index = value;
-    return this;
-  }
+	public CitationReferenceBuilder withIndex(long value) {
+		this.index = value;
+		return this;
+	}
 
-  public CitationReferenceBuilder withUrl(String value) {
-    this.url = value;
-    return this;
-  }
+	public CitationReferenceBuilder withUrl(String value) {
+		this.url = value;
+		return this;
+	}
 
-  public CitationReferenceBuilder withText(String value) {
-    this.text = value;
-    return this;
-  }
+	public CitationReferenceBuilder withText(String value) {
+		this.text = value;
+		return this;
+	}
 
-  public CitationReference build() {
-    return new CitationReference(index, url, text);
-  }
+	public CitationReference build() {
+		return new CitationReference(index, url, text);
+	}
 }

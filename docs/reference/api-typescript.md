@@ -2,7 +2,7 @@
 title: "TypeScript API Reference"
 ---
 
-## TypeScript API Reference <span class="version-badge">v0.1.0-rc.1</span>
+## TypeScript API Reference <span class="version-badge">v0.1.0-rc.2</span>
 
 ### Functions
 
@@ -239,10 +239,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode.Auto` | When to use the headless browser fallback. |
 | `endpoint` | `string | null` | `null` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `number` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `number` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait.NetworkIdle` | Wait strategy after browser navigation. |
 | `waitSelector` | `string | null` | `null` | CSS selector to wait for when `wait` is `Selector`. |
-| `extraWait` | `number | null` | `0ms` | Extra time to wait after the wait condition is met. |
+| `extraWait` | `number | null` | `null` | Extra time to wait after the wait condition is met. |
 
 ##### Methods
 
@@ -327,7 +327,7 @@ Configuration for crawl, scrape, and map operations.
 | `includePaths` | `Array<string>` | `[]` | Regex patterns for paths to include during crawling. |
 | `excludePaths` | `Array<string>` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `customHeaders` | `Record<string, string>` | `{}` | Custom HTTP headers to send with each request. |
-| `requestTimeout` | `number` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `requestTimeout` | `number` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `maxRedirects` | `number` | `10` | Maximum number of redirects to follow. |
 | `retryCount` | `number` | `0` | Number of retry attempts for failed requests. |
 | `retryCodes` | `Array<number>` | `[]` | HTTP status codes that should trigger a retry. |

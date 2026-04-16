@@ -40,10 +40,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode.AUTO` | When to use the headless browser fallback. |
 | `endpoint` | `str | None` | `None` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `float` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `float` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait.NETWORK_IDLE` | Wait strategy after browser navigation. |
 | `wait_selector` | `str | None` | `None` | CSS selector to wait for when `wait` is `Selector`. |
-| `extra_wait` | `float | None` | `0ms` | Extra time to wait after the wait condition is met. |
+| `extra_wait` | `float | None` | `None` | Extra time to wait after the wait condition is met. |
 
 ---
 
@@ -63,7 +63,7 @@ Configuration for crawl, scrape, and map operations.
 | `include_paths` | `list[str]` | `[]` | Regex patterns for paths to include during crawling. |
 | `exclude_paths` | `list[str]` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `dict[str, str]` | `{}` | Custom HTTP headers to send with each request. |
-| `request_timeout` | `float` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `request_timeout` | `float` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `max_redirects` | `int` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `int` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `list[int]` | `[]` | HTTP status codes that should trigger a retry. |

@@ -5,15 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import java.util.Optional;
 
-public record DownloadedDocument(
-    String url,
-    @JsonProperty("mime_type") String mimeType,
-    byte[] content,
-    long size,
-    Optional<String> filename,
-    @JsonProperty("content_hash") String contentHash,
-    Map<String, String> headers) {
-  public static DownloadedDocumentBuilder builder() {
-    return new DownloadedDocumentBuilder();
-  }
+public record DownloadedDocument(String url, @JsonProperty("mime_type") String mimeType, byte[] content, long size,
+		Optional<String> filename, @JsonProperty("content_hash") String contentHash, Map<String, String> headers) {
+	public static DownloadedDocumentBuilder builder() {
+		return new DownloadedDocumentBuilder();
+	}
 }

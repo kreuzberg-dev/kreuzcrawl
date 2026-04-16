@@ -4,9 +4,8 @@ package dev.kreuzberg.kreuzcrawl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 
-public record JsonLdEntry(
-    @JsonProperty("schema_type") String schemaType, Optional<String> name, String raw) {
-  public static JsonLdEntryBuilder builder() {
-    return new JsonLdEntryBuilder();
-  }
+public record JsonLdEntry(@JsonProperty("schema_type") String schemaType, Optional<String> name, String raw) {
+	public static JsonLdEntryBuilder builder() {
+		return new JsonLdEntryBuilder();
+	}
 }

@@ -4,14 +4,11 @@ package dev.kreuzberg.kreuzcrawl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 
-public record DownloadedAsset(
-    String url,
-    @JsonProperty("content_hash") String contentHash,
-    @JsonProperty("mime_type") Optional<String> mimeType,
-    long size,
-    @JsonProperty("asset_category") AssetCategory assetCategory,
-    @JsonProperty("html_tag") Optional<String> htmlTag) {
-  public static DownloadedAssetBuilder builder() {
-    return new DownloadedAssetBuilder();
-  }
+public record DownloadedAsset(String url, @JsonProperty("content_hash") String contentHash,
+		@JsonProperty("mime_type") Optional<String> mimeType, long size,
+		@JsonProperty("asset_category") AssetCategory assetCategory,
+		@JsonProperty("html_tag") Optional<String> htmlTag) {
+	public static DownloadedAssetBuilder builder() {
+		return new DownloadedAssetBuilder();
+	}
 }

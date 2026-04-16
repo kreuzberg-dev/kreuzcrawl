@@ -2,7 +2,7 @@
 package dev.kreuzberg.kreuzcrawl;
 
 public record HreflangEntry(String lang, String url) {
-  public static HreflangEntryBuilder builder() {
-    return new HreflangEntryBuilder();
-  }
+	public static HreflangEntryBuilder builder() {
+		return new HreflangEntryBuilder();
+	}
 }

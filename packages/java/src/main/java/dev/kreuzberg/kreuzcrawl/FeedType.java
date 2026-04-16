@@ -5,28 +5,26 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum FeedType {
-  Rss("rss"),
-  Atom("atom"),
-  JsonFeed("json_feed");
+	Rss("rss"), Atom("atom"), JsonFeed("json_feed");
 
-  private final String value;
+	private final String value;
 
-  FeedType(String value) {
-    this.value = value;
-  }
+	FeedType(String value) {
+		this.value = value;
+	}
 
-  @JsonValue
-  public String getValue() {
-    return value;
-  }
+	@JsonValue
+	public String getValue() {
+		return value;
+	}
 
-  @JsonCreator
-  public static FeedType fromValue(String value) {
-    for (FeedType e : values()) {
-      if (e.value.equalsIgnoreCase(value)) {
-        return e;
-      }
-    }
-    throw new IllegalArgumentException("Unknown value: " + value);
-  }
+	@JsonCreator
+	public static FeedType fromValue(String value) {
+		for (FeedType e : values()) {
+			if (e.value.equalsIgnoreCase(value)) {
+				return e;
+			}
+		}
+		throw new IllegalArgumentException("Unknown value: " + value);
+	}
 }

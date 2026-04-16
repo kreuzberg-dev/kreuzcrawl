@@ -3,20 +3,20 @@ package dev.kreuzberg.kreuzcrawl;
 
 public class HreflangEntryBuilder {
 
-  private String lang = "";
-  private String url = "";
+	private String lang = "";
+	private String url = "";
 
-  public HreflangEntryBuilder withLang(String value) {
-    this.lang = value;
-    return this;
-  }
+	public HreflangEntryBuilder withLang(String value) {
+		this.lang = value;
+		return this;
+	}
 
-  public HreflangEntryBuilder withUrl(String value) {
-    this.url = value;
-    return this;
-  }
+	public HreflangEntryBuilder withUrl(String value) {
+		this.url = value;
+		return this;
+	}
 
-  public HreflangEntry build() {
-    return new HreflangEntry(lang, url);
-  }
+	public HreflangEntry build() {
+		return new HreflangEntry(lang, url);
+	}
 }

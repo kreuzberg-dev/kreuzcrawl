@@ -2,7 +2,7 @@
 title: "Elixir API Reference"
 ---
 
-## Elixir API Reference <span class="version-badge">v0.1.0-rc.1</span>
+## Elixir API Reference <span class="version-badge">v0.1.0-rc.2</span>
 
 ### Functions
 
@@ -246,10 +246,10 @@ Browser fallback configuration.
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `:auto` | When to use the headless browser fallback. |
 | `endpoint` | `String.t() | nil` | `nil` | CDP WebSocket endpoint for connecting to an external browser instance. |
-| `timeout` | `integer()` | `0ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
+| `timeout` | `integer()` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `:network_idle` | Wait strategy after browser navigation. |
 | `wait_selector` | `String.t() | nil` | `nil` | CSS selector to wait for when `wait` is `Selector`. |
-| `extra_wait` | `integer() | nil` | `0ms` | Extra time to wait after the wait condition is met. |
+| `extra_wait` | `integer() | nil` | `nil` | Extra time to wait after the wait condition is met. |
 
 ##### Functions
 
@@ -334,7 +334,7 @@ Configuration for crawl, scrape, and map operations.
 | `include_paths` | `list(String.t())` | `[]` | Regex patterns for paths to include during crawling. |
 | `exclude_paths` | `list(String.t())` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `map()` | `%{}` | Custom HTTP headers to send with each request. |
-| `request_timeout` | `integer()` | `0ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `request_timeout` | `integer()` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `max_redirects` | `integer()` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `integer()` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `list(integer())` | `[]` | HTTP status codes that should trigger a retry. |

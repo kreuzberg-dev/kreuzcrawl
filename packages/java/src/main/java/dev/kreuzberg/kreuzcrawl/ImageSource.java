@@ -5,29 +5,26 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ImageSource {
-  Img("img"),
-  PictureSource("picture_source"),
-  OgImage("og:image"),
-  TwitterImage("twitter:image");
+	Img("img"), PictureSource("picture_source"), OgImage("og:image"), TwitterImage("twitter:image");
 
-  private final String value;
+	private final String value;
 
-  ImageSource(String value) {
-    this.value = value;
-  }
+	ImageSource(String value) {
+		this.value = value;
+	}
 
-  @JsonValue
-  public String getValue() {
-    return value;
-  }
+	@JsonValue
+	public String getValue() {
+		return value;
+	}
 
-  @JsonCreator
-  public static ImageSource fromValue(String value) {
-    for (ImageSource e : values()) {
-      if (e.value.equalsIgnoreCase(value)) {
-        return e;
-      }
-    }
-    throw new IllegalArgumentException("Unknown value: " + value);
-  }
+	@JsonCreator
+	public static ImageSource fromValue(String value) {
+		for (ImageSource e : values()) {
+			if (e.value.equalsIgnoreCase(value)) {
+				return e;
+			}
+		}
+		throw new IllegalArgumentException("Unknown value: " + value);
+	}
 }

@@ -5,26 +5,26 @@ import java.util.Optional;
 
 public class ProxyConfigBuilder {
 
-  private String url = "";
-  private Optional<String> username = Optional.empty();
-  private Optional<String> password = Optional.empty();
+	private String url = "";
+	private Optional<String> username = Optional.empty();
+	private Optional<String> password = Optional.empty();
 
-  public ProxyConfigBuilder withUrl(String value) {
-    this.url = value;
-    return this;
-  }
+	public ProxyConfigBuilder withUrl(String value) {
+		this.url = value;
+		return this;
+	}
 
-  public ProxyConfigBuilder withUsername(Optional<String> value) {
-    this.username = value;
-    return this;
-  }
+	public ProxyConfigBuilder withUsername(Optional<String> value) {
+		this.username = value;
+		return this;
+	}
 
-  public ProxyConfigBuilder withPassword(Optional<String> value) {
-    this.password = value;
-    return this;
-  }
+	public ProxyConfigBuilder withPassword(Optional<String> value) {
+		this.password = value;
+		return this;
+	}
 
-  public ProxyConfig build() {
-    return new ProxyConfig(url, username, password);
-  }
+	public ProxyConfig build() {
+		return new ProxyConfig(url, username, password);
+	}
 }
