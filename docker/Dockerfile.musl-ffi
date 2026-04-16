@@ -1,8 +1,55 @@
-FROM rust:1-alpine AS builder
-RUN apk add --no-cache musl-dev openssl-dev openssl-libs-static pkgconfig perl make
-WORKDIR /src
-COPY . .
-RUN cargo build --release --package kreuzcrawl-ffi
+# =============================================================================
+# Alpine-based builder for musl-linked FFI shared library.
+#
+# Usage:
+#   docker build -f docker/Dockerfile.musl-ffi \
+#     --output type=local,dest=./dist .
+#
+# Produces libkreuzcrawl_ffi.so at dist/libkreuzcrawl_ffi.so
+# =============================================================================
+FROM alpine:3.21 AS builder
 
+WORKDIR /build
+
+# Install build dependencies
+RUN apk add --no-cache \
+    curl gcc g++ musl-dev cmake make pkgconf \
+    openssl-dev openssl-libs-static \
+    perl linux-headers git file
+
+# Install Rust via rustup
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y --default-toolchain stable --component rust-src && \
+    echo "Rust host: $(~/.cargo/bin/rustc -vV | grep host)" && \
+    echo "Default target: $(~/.cargo/bin/rustc --print cfg | grep target)"
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Allow cdylib output on musl targets (default is +crt-static which blocks shared libs)
+ENV RUSTFLAGS="-C target-feature=-crt-static"
+
+# Copy workspace manifests and only the required crates
+COPY Cargo.toml Cargo.lock ./
+COPY crates/kreuzcrawl/ crates/kreuzcrawl/
+COPY crates/kreuzcrawl-ffi/ crates/kreuzcrawl-ffi/
+COPY crates/kreuzcrawl-bindings-common/ crates/kreuzcrawl-bindings-common/
+
+# Replace the crates/* glob with only the crates we have, and remove other members
+RUN sed -i \
+    's|"crates/\*"|"crates/kreuzcrawl", "crates/kreuzcrawl-ffi", "crates/kreuzcrawl-bindings-common"|; /e2e\/rust/d; /kreuzcrawl_nif/d; /tools\/\*/d' \
+    Cargo.toml
+
+# Build the FFI shared library
+RUN cargo build --release --package kreuzcrawl-ffi && \
+    cp target/release/libkreuzcrawl_ffi.so /build/libkreuzcrawl_ffi.so && \
+    strip /build/libkreuzcrawl_ffi.so
+
+# Verify the library
+RUN file /build/libkreuzcrawl_ffi.so && \
+    echo "=== Dynamic dependencies ===" && \
+    readelf -d /build/libkreuzcrawl_ffi.so 2>/dev/null | grep NEEDED || echo "No dynamic dependencies (fully static)"
+
+# =============================================================================
+# Output stage — just the shared library
+# =============================================================================
 FROM scratch
-COPY --from=builder /src/target/release/libkreuzcrawl_ffi.so /libkreuzcrawl_ffi.so
+COPY --from=builder /build/libkreuzcrawl_ffi.so /libkreuzcrawl_ffi.so
