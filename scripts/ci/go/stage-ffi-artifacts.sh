@@ -45,7 +45,7 @@ cp crates/kreuzcrawl-ffi/include/kreuzcrawl.h "${STAGING_DIR}/include/"
 echo "✓ Staged header: kreuzcrawl.h"
 
 # Stage pkg-config file
-cp crates/kreuzcrawl-ffi/kreuzcrawl-ffi-install.pc "${STAGING_DIR}/share/pkgconfig/kreuzcrawl-ffi.pc"
+cp crates/kreuzcrawl-ffi/kreuzcrawl-ffi.pc "${STAGING_DIR}/share/pkgconfig/kreuzcrawl-ffi.pc"
 echo "✓ Staged pkg-config: kreuzcrawl-ffi.pc"
 
 echo ""
