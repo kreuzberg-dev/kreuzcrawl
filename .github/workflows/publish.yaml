@@ -1182,7 +1182,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4"
+          ruby-version: ${{ runner.os == 'macOS' && 'ruby-3.4' || '3.4' }}
           bundler: none
           bundler-cache: false
 
