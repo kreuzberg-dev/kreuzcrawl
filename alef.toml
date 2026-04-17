@@ -535,6 +535,57 @@ NIFs for native BEAM integration with OTP-compatible error tuples and ResourceAr
 basic_usage = "getting-started/basic_usage.md"
 
 # ---------------------------------------------------------------------------
+# Registry Test Apps (test published packages from registries)
+# ---------------------------------------------------------------------------
+[e2e.registry]
+output = "test_apps"
+categories = ["smoke"]
+
+[e2e.registry.packages.python]
+name = "kreuzcrawl"
+version = ">=0.1.0rc2"
+
+[e2e.registry.packages.node]
+name = "@kreuzberg/kreuzcrawl"
+version = "^0.1.0-rc.2"
+
+[e2e.registry.packages.rust]
+name = "kreuzcrawl"
+version = "0.1.0-rc.2"
+
+[e2e.registry.packages.go]
+module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+version = "v0.1.0-rc.2"
+
+[e2e.registry.packages.java]
+name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
+version = "0.1.0-rc.2"
+
+[e2e.registry.packages.csharp]
+name = "Kreuzcrawl"
+version = "0.1.0-rc.2"
+
+[e2e.registry.packages.php]
+name = "kreuzberg-dev/kreuzcrawl"
+version = ">=0.1.0-rc.2"
+
+[e2e.registry.packages.ruby]
+name = "kreuzcrawl"
+version = "~> 0.1.0.rc2"
+
+[e2e.registry.packages.elixir]
+name = "kreuzcrawl"
+version = "~> 0.1.0-rc.2"
+
+[e2e.registry.packages.wasm]
+name = "@kreuzberg/kreuzcrawl-wasm"
+version = "^0.1.0-rc.2"
+
+[e2e.registry.packages.c]
+name = "kreuzcrawl-ffi"
+version = "0.1.0-rc.2"
+
+# ---------------------------------------------------------------------------
 # Version Sync
 # ---------------------------------------------------------------------------
 [sync]
