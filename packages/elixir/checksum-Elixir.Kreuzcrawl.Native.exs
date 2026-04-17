@@ -1,10 +1,10 @@
 %{
-  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.16-aarch64-apple-darwin.so.tar.gz" => "sha256:c06dbc9b3429f0d2213c4f96beb6339d006554910fb56adea040eaa9ed94fdb3",
-  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.16-aarch64-unknown-linux-gnu.so.tar.gz" => "sha256:c5dbc149e375a4ad3fae25fe29badb62b2cfa696d58643b1f306f34959f3132c",
-  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.16-x86_64-pc-windows-gnu.dll.tar.gz" => "sha256:497c2301f5990a4fce68a5113feee76fa4e59b99356bc7945f9454bccd4d32da",
-  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.16-x86_64-unknown-linux-gnu.so.tar.gz" => "sha256:54ec22642a0a53f76d44a00fbaeac3663559df4581122e371174762e1de8cd98",
-  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.17-aarch64-apple-darwin.so.tar.gz" => "sha256:925b7782ee5df8d33d450e197ab8240e0cd458280d4b8eb388542f031262fb23",
-  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.17-aarch64-unknown-linux-gnu.so.tar.gz" => "sha256:7eb8d68ee5b3d714470c8769d61be27b0f20055ee133c35383c2e9fefbaee842",
-  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.17-x86_64-pc-windows-gnu.dll.tar.gz" => "sha256:b5c252403147bd7a28f5ae87dad22000bdcd01ca7d09f008ee1b67e17766ad01",
-  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.17-x86_64-unknown-linux-gnu.so.tar.gz" => "sha256:46d8b6faca53dcc38d63996a427d460abbf888583ffdacab4246c3b7ae60cbea",
+  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.16-aarch64-apple-darwin.so.tar.gz" => "sha256:66f459dfa83a7a15d8bf76cf5fd3fef28ce31b4f00fab6f1d47e1f2c3846b357",
+  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.16-aarch64-unknown-linux-gnu.so.tar.gz" => "sha256:d1d4531a984fd21f2444f488d25395e18fc5bfbd7e3783914cbeb589c044bb71",
+  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.16-x86_64-pc-windows-gnu.dll.tar.gz" => "sha256:1b01658a3b96d159113f3cc84e22cf649768b95a92b5ffa48574c18355e2eb60",
+  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.16-x86_64-unknown-linux-gnu.so.tar.gz" => "sha256:f19ba394de19c477f6e119d44c02aa021a7d8ee3b22f59b904ca83e9dc0c7caf",
+  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.17-aarch64-apple-darwin.so.tar.gz" => "sha256:283bf015b767ac4c4195849f208a309223109ecfea9f3c8ca71934b440854cc0",
+  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.17-aarch64-unknown-linux-gnu.so.tar.gz" => "sha256:c414fb013b0189b24ccd49afd7d0637ea432138857b4be21ec5273c5c921b61d",
+  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.17-x86_64-pc-windows-gnu.dll.tar.gz" => "sha256:aa6c8e08b02db7ce36933c829762e2590dfbf343767590f3c2920400fe885302",
+  "libkreuzcrawl_nif-v0.1.0-rc.2-nif-2.17-x86_64-unknown-linux-gnu.so.tar.gz" => "sha256:8c27b17e39b241a47997706f35b701c80c0b7e86e0640022706fcb0ac7d0e58f",
 }
