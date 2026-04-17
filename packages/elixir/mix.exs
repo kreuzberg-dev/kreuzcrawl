@@ -17,7 +17,7 @@ defmodule Kreuzcrawl.MixProject do
     [
       licenses: ["Elastic-2.0"],
       links: %{"GitHub" => "https://github.com/kreuzberg-dev/kreuzcrawl"},
-      files: ~w(lib native .formatter.exs mix.exs README* LICENSE*)
+      files: ~w(lib native .formatter.exs mix.exs README*)
     ]
   end
 
