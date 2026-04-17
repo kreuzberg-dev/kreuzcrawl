@@ -1170,13 +1170,6 @@ jobs:
         if: runner.os == 'Linux'
         run: scripts/publish/ubuntu/free-disk-space.sh
 
-      - name: Install system dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install openssl@3 cmake pkg-config
-          echo "OPENSSL_DIR=$(brew --prefix openssl@3)" >> "$GITHUB_ENV"
-          echo "PKG_CONFIG_PATH=$(brew --prefix openssl@3)/lib/pkgconfig:${PKG_CONFIG_PATH:-}" >> "$GITHUB_ENV"
-
       - name: Setup OpenSSL
         uses: kreuzberg-dev/actions/setup-openssl@v1
 
@@ -1192,6 +1185,8 @@ jobs:
           ruby-version: "3.3"
           bundler: none
           bundler-cache: false
+        env:
+          RUBY_CONFIGURE_OPTS: "--with-openssl-dir=${{ env.OPENSSL_DIR }}"
 
       - name: Install Bundler
         shell: bash
