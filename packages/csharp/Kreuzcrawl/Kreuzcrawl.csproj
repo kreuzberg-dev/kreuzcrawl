@@ -8,11 +8,12 @@
     <Version>0.1.0-rc.2</Version>
     <Authors>Kreuzberg Team</Authors>
     <Description>High-performance web crawling engine - C# bindings</Description>
-    <PackageLicenseExpression>Elastic-2.0</PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/kreuzberg-dev/kreuzcrawl</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="../../../LICENSE" Pack="true" PackagePath="/" />
     <None Include="runtimes/**" Pack="true" PackagePath="runtimes/" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
