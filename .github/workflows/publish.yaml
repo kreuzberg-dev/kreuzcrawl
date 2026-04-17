@@ -1170,19 +1170,20 @@ jobs:
         if: runner.os == 'Linux'
         run: scripts/publish/ubuntu/free-disk-space.sh
 
-      - name: Setup OpenSSL
-        uses: kreuzberg-dev/actions/setup-openssl@v1
-
       - name: Setup Rust
         uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-ruby-${{ matrix.label }}
           use-sccache: true
 
+      - name: Setup OpenSSL (Linux)
+        if: runner.os == 'Linux'
+        uses: kreuzberg-dev/actions/setup-openssl@v1
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ runner.os == 'macOS' && 'ruby-3.4' || '3.4' }}
+          ruby-version: "3.4"
           bundler: none
           bundler-cache: false
 
