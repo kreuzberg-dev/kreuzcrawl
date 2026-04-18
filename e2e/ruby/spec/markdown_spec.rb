@@ -20,8 +20,9 @@ RSpec.describe 'markdown' do
     engine_config = { 'max_depth' => 1 }
     engine = Kreuzcrawl.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/markdown_crawl_all_pages"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'crawl.pages_crawled' not available on result type
+    expect(result).not_to be_nil
   end
 
   it 'markdown_fit_content: Fit markdown removes navigation and boilerplate content' do

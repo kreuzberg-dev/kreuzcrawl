@@ -7,29 +7,14 @@ internal static partial class NativeMethods
 {
     private const string LibName = "kreuzcrawl_ffi";
 
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_engine_handle_free")]
+    internal static extern void CrawlEngineHandleFree(IntPtr ptr);
+
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_config_from_json")]
     internal static extern IntPtr CrawlConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_config_free")]
     internal static extern void CrawlConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_engine_handle_free")]
-    internal static extern void CrawlEngineHandleFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_scrape_result_to_json")]
-    internal static extern IntPtr ScrapeResultToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_scrape_result_free")]
-    internal static extern void ScrapeResultFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_browser_config_to_json")]
-    internal static extern IntPtr BrowserConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_browser_config_free")]
-    internal static extern void BrowserConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_config_to_json")]
-    internal static extern IntPtr CrawlConfigToJson(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_map_result_to_json")]
     internal static extern IntPtr MapResultToJson(IntPtr ptr);
@@ -37,11 +22,26 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_map_result_free")]
     internal static extern void MapResultFree(IntPtr ptr);
 
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_scrape_result_to_json")]
+    internal static extern IntPtr ScrapeResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_scrape_result_free")]
+    internal static extern void ScrapeResultFree(IntPtr ptr);
+
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_result_to_json")]
     internal static extern IntPtr CrawlResultToJson(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_result_free")]
     internal static extern void CrawlResultFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_config_to_json")]
+    internal static extern IntPtr CrawlConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_browser_config_to_json")]
+    internal static extern IntPtr BrowserConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_browser_config_free")]
+    internal static extern void BrowserConfigFree(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_create_engine")]
     internal static extern IntPtr CreateEngine(
@@ -83,6 +83,12 @@ internal static partial class NativeMethods
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_config_default")]
     internal static extern IntPtr CrawlConfigDefault();
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_config_validate")]
+    internal static extern void CrawlConfigValidate();
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_result_unique_normalized_urls")]
+    internal static extern ulong CrawlResultUniqueNormalizedUrls();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_last_error_code")]
     internal static extern int LastErrorCode();

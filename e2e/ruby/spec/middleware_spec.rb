@@ -9,9 +9,10 @@ RSpec.describe 'middleware' do
     engine_config = { 'max_depth' => 1 }
     engine = Kreuzcrawl.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/middleware_engine_crawl_with_defaults"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'crawl.pages_crawled' not available on result type
     # skipped: field 'crawl.min_pages' not available on result type
+    expect(result).not_to be_nil
   end
 
   it 'middleware_noop_no_effect: Default middleware chain does not affect normal scraping' do

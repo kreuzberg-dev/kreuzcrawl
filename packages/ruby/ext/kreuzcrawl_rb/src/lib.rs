@@ -40,7 +40,7 @@ fn json_to_ruby(handle: &Ruby, val: serde_json::Value) -> magnus::Value {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ExtractionMeta")]
 #[serde(default)]
 pub struct ExtractionMeta {
@@ -111,7 +111,7 @@ impl ExtractionMeta {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ProxyConfig")]
 #[serde(default)]
 pub struct ProxyConfig {
@@ -543,9 +543,59 @@ impl CrawlConfig {
     fn save_browser_profile(&self) -> bool {
         self.save_browser_profile
     }
+
+    fn validate(&self) -> Result<(), Error> {
+        let core_self = kreuzcrawl::CrawlConfig {
+            max_depth: self.max_depth,
+            max_pages: self.max_pages,
+            max_concurrent: self.max_concurrent,
+            respect_robots_txt: self.respect_robots_txt,
+            user_agent: self.user_agent.clone(),
+            stay_on_domain: self.stay_on_domain,
+            allow_subdomains: self.allow_subdomains,
+            include_paths: self.include_paths.clone(),
+            exclude_paths: self.exclude_paths.clone(),
+            custom_headers: self.custom_headers.clone().into_iter().collect(),
+            request_timeout: self
+                .request_timeout
+                .map(std::time::Duration::from_millis)
+                .unwrap_or_default(),
+            max_redirects: self.max_redirects,
+            retry_count: self.retry_count,
+            retry_codes: self.retry_codes.clone(),
+            cookies_enabled: self.cookies_enabled,
+            auth: self.auth.clone().map(Into::into),
+            max_body_size: self.max_body_size,
+            main_content_only: self.main_content_only,
+            remove_tags: self.remove_tags.clone(),
+            map_limit: self.map_limit,
+            map_search: self.map_search.clone(),
+            download_assets: self.download_assets,
+            asset_types: self.asset_types.clone().into_iter().map(Into::into).collect(),
+            max_asset_size: self.max_asset_size,
+            browser: self.browser.clone().into(),
+            proxy: self.proxy.clone().map(Into::into),
+            user_agents: self.user_agents.clone(),
+            capture_screenshot: self.capture_screenshot,
+            download_documents: self.download_documents,
+            document_max_size: self.document_max_size,
+            document_mime_types: self.document_mime_types.clone(),
+            warc_output: self.warc_output.clone().map(Into::into),
+            browser_profile: self.browser_profile.clone(),
+            save_browser_profile: self.save_browser_profile,
+            ..Default::default()
+        };
+        let result = core_self.validate().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
+        Ok(result)
+    }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::DownloadedDocument")]
 #[serde(default)]
 pub struct DownloadedDocument {
@@ -632,7 +682,7 @@ impl DownloadedDocument {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::InteractionResult")]
 #[serde(default)]
 pub struct InteractionResult {
@@ -695,7 +745,7 @@ impl InteractionResult {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ActionResult")]
 #[serde(default)]
 pub struct ActionResult {
@@ -766,7 +816,7 @@ impl ActionResult {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ScrapeResult")]
 #[serde(default)]
 pub struct ScrapeResult {
@@ -1068,7 +1118,7 @@ impl ScrapeResult {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CrawlPageResult")]
 #[serde(default)]
 pub struct CrawlPageResult {
@@ -1294,7 +1344,7 @@ impl CrawlPageResult {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CrawlResult")]
 #[serde(default)]
 pub struct CrawlResult {
@@ -1379,9 +1429,22 @@ impl CrawlResult {
     fn normalized_urls(&self) -> Vec<String> {
         self.normalized_urls.clone()
     }
+
+    fn unique_normalized_urls(&self) -> usize {
+        let core_self = kreuzcrawl::CrawlResult {
+            pages: self.pages.clone().into_iter().map(Into::into).collect(),
+            final_url: self.final_url.clone(),
+            redirect_count: self.redirect_count,
+            was_skipped: self.was_skipped,
+            error: self.error.clone(),
+            cookies: self.cookies.clone().into_iter().map(Into::into).collect(),
+            normalized_urls: self.normalized_urls.clone(),
+        };
+        core_self.unique_normalized_urls()
+    }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::SitemapUrl")]
 #[serde(default)]
 pub struct SitemapUrl {
@@ -1439,7 +1502,7 @@ impl SitemapUrl {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::MapResult")]
 #[serde(default)]
 pub struct MapResult {
@@ -1476,7 +1539,7 @@ impl MapResult {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::MarkdownResult")]
 #[serde(default)]
 pub struct MarkdownResult {
@@ -1555,7 +1618,7 @@ impl MarkdownResult {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CachedPage")]
 #[serde(default)]
 pub struct CachedPage {
@@ -1801,7 +1864,7 @@ impl FeedInfo {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::JsonLdEntry")]
 #[serde(default)]
 pub struct JsonLdEntry {
@@ -1852,7 +1915,7 @@ impl JsonLdEntry {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CookieInfo")]
 #[serde(default)]
 pub struct CookieInfo {
@@ -1976,7 +2039,7 @@ impl DownloadedAsset {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ArticleMetadata")]
 #[serde(default)]
 pub struct ArticleMetadata {
@@ -2047,7 +2110,7 @@ impl ArticleMetadata {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::HreflangEntry")]
 #[serde(default)]
 pub struct HreflangEntry {
@@ -2091,7 +2154,7 @@ impl HreflangEntry {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::FaviconInfo")]
 #[serde(default)]
 pub struct FaviconInfo {
@@ -2149,7 +2212,7 @@ impl FaviconInfo {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::HeadingInfo")]
 #[serde(default)]
 pub struct HeadingInfo {
@@ -2193,7 +2256,7 @@ impl HeadingInfo {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ResponseMeta")]
 #[serde(default)]
 pub struct ResponseMeta {
@@ -2280,7 +2343,7 @@ impl ResponseMeta {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::PageMetadata")]
 #[serde(default)]
 pub struct PageMetadata {
@@ -2698,7 +2761,7 @@ impl PageMetadata {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CitationResult")]
 #[serde(default)]
 pub struct CitationResult {
@@ -2742,7 +2805,7 @@ impl CitationResult {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CitationReference")]
 #[serde(default)]
 pub struct CitationReference {
@@ -2811,7 +2874,7 @@ unsafe impl TryConvertOwned for CrawlEngineHandle {}
 
 impl CrawlEngineHandle {}
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::BatchScrapeResult")]
 #[serde(default)]
 pub struct BatchScrapeResult {
@@ -2862,7 +2925,7 @@ impl BatchScrapeResult {
     }
 }
 
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::BatchCrawlResult")]
 #[serde(default)]
 pub struct BatchCrawlResult {
@@ -4354,15 +4417,9 @@ impl From<kreuzcrawl::BrowserWait> for BrowserWait {
 impl From<AuthConfig> for kreuzcrawl::AuthConfig {
     fn from(val: AuthConfig) -> Self {
         match val {
-            AuthConfig::Basic { username, password } => Self::Basic {
-                username: val.username,
-                password: val.password,
-            },
-            AuthConfig::Bearer { token } => Self::Bearer { token: val.token },
-            AuthConfig::Header { name, value } => Self::Header {
-                name: val.name,
-                value: val.value,
-            },
+            AuthConfig::Basic { username, password } => Self::Basic { username, password },
+            AuthConfig::Bearer { token } => Self::Bearer { token },
+            AuthConfig::Header { name, value } => Self::Header { name, value },
         }
     }
 }
@@ -4370,15 +4427,9 @@ impl From<AuthConfig> for kreuzcrawl::AuthConfig {
 impl From<kreuzcrawl::AuthConfig> for AuthConfig {
     fn from(val: kreuzcrawl::AuthConfig) -> Self {
         match val {
-            kreuzcrawl::AuthConfig::Basic { username, password } => Self::Basic {
-                username: val.username,
-                password: val.password,
-            },
-            kreuzcrawl::AuthConfig::Bearer { token } => Self::Bearer { token: val.token },
-            kreuzcrawl::AuthConfig::Header { name, value } => Self::Header {
-                name: val.name,
-                value: val.value,
-            },
+            kreuzcrawl::AuthConfig::Basic { username, password } => Self::Basic { username, password },
+            kreuzcrawl::AuthConfig::Bearer { token } => Self::Bearer { token },
+            kreuzcrawl::AuthConfig::Header { name, value } => Self::Header { name, value },
         }
     }
 }
@@ -4484,14 +4535,9 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
 impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
     fn from(val: kreuzcrawl::CrawlEvent) -> Self {
         match val {
-            kreuzcrawl::CrawlEvent::Page(_0) => Self::Page { _0: val._0.into() },
-            kreuzcrawl::CrawlEvent::Error { url, error } => Self::Error {
-                url: val.url,
-                error: val.error,
-            },
-            kreuzcrawl::CrawlEvent::Complete { pages_crawled } => Self::Complete {
-                pages_crawled: val.pages_crawled,
-            },
+            kreuzcrawl::CrawlEvent::Page(_0) => Self::Page { _0: (*_0).into() },
+            kreuzcrawl::CrawlEvent::Error { url, error } => Self::Error { url, error },
+            kreuzcrawl::CrawlEvent::Complete { pages_crawled } => Self::Complete { pages_crawled },
         }
     }
 }
@@ -4566,6 +4612,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("warc_output", method!(CrawlConfig::warc_output, 0))?;
     class.define_method("browser_profile", method!(CrawlConfig::browser_profile, 0))?;
     class.define_method("save_browser_profile", method!(CrawlConfig::save_browser_profile, 0))?;
+    class.define_method("validate", method!(CrawlConfig::validate, 0))?;
 
     let class = module.define_class("DownloadedDocument", ruby.class_object())?;
     class.define_singleton_method("new", function!(DownloadedDocument::new, 7))?;
@@ -4655,6 +4702,10 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("error", method!(CrawlResult::error, 0))?;
     class.define_method("cookies", method!(CrawlResult::cookies, 0))?;
     class.define_method("normalized_urls", method!(CrawlResult::normalized_urls, 0))?;
+    class.define_method(
+        "unique_normalized_urls",
+        method!(CrawlResult::unique_normalized_urls, 0),
+    )?;
 
     let class = module.define_class("SitemapUrl", ruby.class_object())?;
     class.define_singleton_method("new", function!(SitemapUrl::new, 4))?;

@@ -958,7 +958,7 @@ impl BatchCrawlResult {
     }
 }
 
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
 pub enum BrowserMode {
     Auto,
     Always,
@@ -972,7 +972,7 @@ impl Default for BrowserMode {
     }
 }
 
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
 pub enum BrowserWait {
     NetworkIdle,
     Selector,
@@ -986,7 +986,7 @@ impl Default for BrowserWait {
     }
 }
 
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
 pub enum AuthConfig {
     Basic,
     Bearer,
@@ -1000,7 +1000,7 @@ impl Default for AuthConfig {
     }
 }
 
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
 pub enum LinkType {
     Internal,
     External,
@@ -1015,7 +1015,7 @@ impl Default for LinkType {
     }
 }
 
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
 pub enum ImageSource {
     Img,
     PictureSource,
@@ -1030,7 +1030,7 @@ impl Default for ImageSource {
     }
 }
 
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
 pub enum FeedType {
     Rss,
     Atom,
@@ -1044,7 +1044,7 @@ impl Default for FeedType {
     }
 }
 
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
 pub enum AssetCategory {
     Document,
     Image,
@@ -1065,7 +1065,7 @@ impl Default for AssetCategory {
     }
 }
 
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
 pub enum CrawlEvent {
     Page,
     Error,
@@ -1146,6 +1146,19 @@ pub fn browserconfig_default() -> BrowserConfig {
 #[rustler::nif]
 pub fn crawlconfig_default() -> CrawlConfig {
     kreuzcrawl::CrawlConfig::default().into()
+}
+
+#[rustler::nif]
+pub fn crawlconfig_validate(obj: CrawlConfig) -> Result<(), String> {
+    kreuzcrawl::CrawlConfig::from(obj)
+        .validate()
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[rustler::nif]
+pub fn crawlresult_unique_normalized_urls(obj: CrawlResult) -> usize {
+    kreuzcrawl::CrawlResult::from(obj).unique_normalized_urls()
 }
 
 impl From<ExtractionMeta> for kreuzcrawl::ExtractionMeta {

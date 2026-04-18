@@ -78,6 +78,7 @@ module Kreuzcrawl
     attr_accessor save_browser_profile: bool
 
     def initialize: (?max_depth: Integer, ?max_pages: Integer, ?max_concurrent: Integer, respect_robots_txt: bool, ?user_agent: String, stay_on_domain: bool, allow_subdomains: bool, include_paths: Array[String], exclude_paths: Array[String], custom_headers: Hash[String, String], request_timeout: Integer, max_redirects: Integer, retry_count: Integer, retry_codes: Array[Integer], cookies_enabled: bool, ?auth: AuthConfig, ?max_body_size: Integer, main_content_only: bool, remove_tags: Array[String], ?map_limit: Integer, ?map_search: String, download_assets: bool, asset_types: Array[AssetCategory], ?max_asset_size: Integer, browser: BrowserConfig, ?proxy: ProxyConfig, user_agents: Array[String], capture_screenshot: bool, download_documents: bool, ?document_max_size: Integer, document_mime_types: Array[String], ?warc_output: String, ?browser_profile: String, save_browser_profile: bool) -> void
+    def validate() -> void
     def self.default() -> CrawlConfig
   end
 
@@ -196,6 +197,7 @@ skipping the resource.
     attr_accessor normalized_urls: Array[String]
 
     def initialize: (pages: Array[CrawlPageResult], final_url: String, redirect_count: Integer, was_skipped: bool, ?error: String, cookies: Array[CookieInfo], normalized_urls: Array[String]) -> void
+    def unique_normalized_urls() -> Integer
   end
 
   class SitemapUrl

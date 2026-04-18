@@ -3,7 +3,6 @@
 
 use kreuzcrawl::create_engine;
 use kreuzcrawl::scrape;
-use kreuzcrawl::CrawlConfig;
 
 #[tokio::test]
 async fn test_scrape_batch_basic() {

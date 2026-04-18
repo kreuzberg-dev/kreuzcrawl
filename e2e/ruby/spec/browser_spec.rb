@@ -94,24 +94,27 @@ RSpec.describe 'browser' do
     engine_config = { 'browser' => { 'mode' => 'auto' } }
     engine = Kreuzcrawl.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/browser_fallback_spa_render"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'browser.js_render_hint' not available on result type
     # skipped: field 'browser.browser_used' not available on result type
+    expect(result).not_to be_nil
   end
 
   it 'browser_fallback_waf_blocked: Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)' do
     engine_config = { 'browser' => { 'mode' => 'auto' } }
     engine = Kreuzcrawl.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/browser_fallback_waf_blocked"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'browser.browser_used' not available on result type
+    expect(result).not_to be_nil
   end
 
   it 'browser_mode_always: Browser mode \'always\' uses browser even for normal server-rendered pages' do
     engine_config = { 'browser' => { 'mode' => 'always' } }
     engine = Kreuzcrawl.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/browser_mode_always"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'browser.browser_used' not available on result type
+    expect(result).not_to be_nil
   end
 end

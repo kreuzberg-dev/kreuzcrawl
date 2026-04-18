@@ -183,6 +183,24 @@ public static class KreuzcrawlLib
         return returnValue;
     }
 
+    /// <summary>
+    /// Validate the configuration, returning an error if any values are invalid.
+    /// </summary>
+    public static void CrawlConfigValidate()
+    {
+        NativeMethods.CrawlConfigValidate();
+    }
+
+    /// <summary>
+    /// Returns the count of unique normalized URLs encountered during crawling.
+    /// </summary>
+    public static ulong CrawlResultUniqueNormalizedUrls()
+    {
+        var result = NativeMethods.CrawlResultUniqueNormalizedUrls();
+        var returnValue = result;
+        return returnValue;
+    }
+
     private static KreuzcrawlException GetLastError()
     {
         var code = NativeMethods.LastErrorCode();

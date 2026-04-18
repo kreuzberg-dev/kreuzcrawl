@@ -240,6 +240,83 @@ impl CrawlConfig {
         self.proxy.clone()
     }
 
+    pub fn validate(&self) -> PhpResult<()> {
+        let core_self = kreuzcrawl::CrawlConfig {
+            max_depth: self.max_depth.map(|v| v as usize),
+            max_pages: self.max_pages.map(|v| v as usize),
+            max_concurrent: self.max_concurrent.map(|v| v as usize),
+            respect_robots_txt: self.respect_robots_txt,
+            user_agent: self.user_agent.clone(),
+            stay_on_domain: self.stay_on_domain,
+            allow_subdomains: self.allow_subdomains,
+            include_paths: self.include_paths.clone(),
+            exclude_paths: self.exclude_paths.clone(),
+            custom_headers: self.custom_headers.clone().into_iter().collect(),
+            request_timeout: std::time::Duration::from_millis(self.request_timeout as u64),
+            max_redirects: self.max_redirects as usize,
+            retry_count: self.retry_count as usize,
+            retry_codes: self.retry_codes.clone(),
+            cookies_enabled: self.cookies_enabled,
+            auth: self.auth.as_deref().map(|s| match s {
+                "Basic" => kreuzcrawl::AuthConfig::Basic {
+                    username: Default::default(),
+                    password: Default::default(),
+                },
+                "Bearer" => kreuzcrawl::AuthConfig::Bearer {
+                    token: Default::default(),
+                },
+                "Header" => kreuzcrawl::AuthConfig::Header {
+                    name: Default::default(),
+                    value: Default::default(),
+                },
+                _ => kreuzcrawl::AuthConfig::Basic {
+                    username: Default::default(),
+                    password: Default::default(),
+                },
+            }),
+            max_body_size: self.max_body_size.map(|v| v as usize),
+            main_content_only: self.main_content_only,
+            remove_tags: self.remove_tags.clone(),
+            map_limit: self.map_limit.map(|v| v as usize),
+            map_search: self.map_search.clone(),
+            download_assets: self.download_assets,
+            asset_types: self
+                .asset_types
+                .clone()
+                .into_iter()
+                .map(|s| match s.as_str() {
+                    "Document" => kreuzcrawl::AssetCategory::Document,
+                    "Image" => kreuzcrawl::AssetCategory::Image,
+                    "Audio" => kreuzcrawl::AssetCategory::Audio,
+                    "Video" => kreuzcrawl::AssetCategory::Video,
+                    "Font" => kreuzcrawl::AssetCategory::Font,
+                    "Stylesheet" => kreuzcrawl::AssetCategory::Stylesheet,
+                    "Script" => kreuzcrawl::AssetCategory::Script,
+                    "Archive" => kreuzcrawl::AssetCategory::Archive,
+                    "Data" => kreuzcrawl::AssetCategory::Data,
+                    "Other" => kreuzcrawl::AssetCategory::Other,
+                    _ => kreuzcrawl::AssetCategory::Document,
+                })
+                .collect(),
+            max_asset_size: self.max_asset_size.map(|v| v as usize),
+            browser: self.browser.clone().into(),
+            proxy: self.proxy.clone().map(Into::into),
+            user_agents: self.user_agents.clone(),
+            capture_screenshot: self.capture_screenshot,
+            download_documents: self.download_documents,
+            document_max_size: self.document_max_size.map(|v| v as usize),
+            document_mime_types: self.document_mime_types.clone(),
+            warc_output: self.warc_output.clone().map(Into::into),
+            browser_profile: self.browser_profile.clone(),
+            save_browser_profile: self.save_browser_profile,
+            ..Default::default()
+        };
+        let result = core_self
+            .validate()
+            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
+        Ok(result)
+    }
+
     #[allow(clippy::should_implement_trait)]
     pub fn default() -> CrawlConfig {
         kreuzcrawl::CrawlConfig::default().into()
@@ -674,6 +751,19 @@ impl CrawlResult {
     #[php(getter)]
     pub fn get_cookies(&self) -> Vec<CookieInfo> {
         self.cookies.clone()
+    }
+
+    pub fn unique_normalized_urls(&self) -> i64 {
+        let core_self = kreuzcrawl::CrawlResult {
+            pages: self.pages.clone().into_iter().map(Into::into).collect(),
+            final_url: self.final_url.clone(),
+            redirect_count: self.redirect_count as usize,
+            was_skipped: self.was_skipped,
+            error: self.error.clone(),
+            cookies: self.cookies.clone().into_iter().map(Into::into).collect(),
+            normalized_urls: self.normalized_urls.clone(),
+        };
+        core_self.unique_normalized_urls() as i64
     }
 }
 

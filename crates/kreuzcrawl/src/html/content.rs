@@ -30,7 +30,7 @@ pub(crate) fn apply_remove_tags(html: &str, tags: &[String]) -> String {
     }
     // Sort by start position descending so we remove from end first,
     // preserving earlier offsets.
-    ranges.sort_by(|a, b| b.0.cmp(&a.0));
+    ranges.sort_by_key(|b| std::cmp::Reverse(b.0));
     // Deduplicate overlapping ranges
     ranges.dedup_by(|a, b| a.0 >= b.0 && a.0 < b.1);
     let mut output = serialized;
