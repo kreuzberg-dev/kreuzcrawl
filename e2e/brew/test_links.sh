@@ -8,7 +8,6 @@ test_links_anchor_fragment() {
   local output
   output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/links_anchor_fragment" --format json)
 
-  # TODO: unsupported assertion type: contains_all
 }
 
 test_links_base_tag() {
@@ -29,7 +28,6 @@ test_links_document_types() {
   local output
   output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/links_document_types" --format json)
 
-  # TODO: unsupported assertion type: contains_all
 }
 
 test_links_empty_href() {
@@ -66,7 +64,9 @@ test_links_mailto_javascript_skip() {
   local val_links_length
   val_links_length=$(echo "$output" | jq -r '.links.length')
   assert_greater_than "$val_links_length" '0' 'links.length'
-  # TODO: unsupported assertion type: not_contains
+  local val_links___url
+  val_links___url=$(echo "$output" | jq -r '.links[].url')
+  assert_not_contains "$val_links___url" 'mailto:' 'links[].url'
 }
 
 test_links_protocol_relative() {

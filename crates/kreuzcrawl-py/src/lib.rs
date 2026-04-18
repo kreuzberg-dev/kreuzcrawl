@@ -329,6 +329,7 @@ impl CrawlConfig {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn validate(&self) -> PyResult<()> {
+        #[allow(clippy::needless_update)]
         let core_self = kreuzcrawl::CrawlConfig {
             max_depth: self.max_depth,
             max_pages: self.max_pages,
@@ -1800,7 +1801,6 @@ impl serde::Serialize for AuthConfig {
     }
 }
 
-
 impl<'de> serde::Deserialize<'de> for AuthConfig {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let inner = kreuzcrawl::AuthConfig::deserialize(deserializer)?;
@@ -1889,7 +1889,6 @@ impl serde::Serialize for CrawlEvent {
         self.inner.serialize(serializer)
     }
 }
-
 
 impl<'de> serde::Deserialize<'de> for CrawlEvent {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {

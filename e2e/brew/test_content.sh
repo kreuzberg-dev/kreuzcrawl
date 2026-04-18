@@ -11,7 +11,9 @@ test_content_204_no_content() {
   local val_status_code
   val_status_code=$(echo "$output" | jq -r '.status_code')
   assert_equals "$val_status_code" '204' 'status_code'
-  # TODO: unsupported assertion type: is_empty
+  local val_html
+  val_html=$(echo "$output" | jq -r '.html')
+  assert_is_empty "$val_html" 'html'
 }
 
 test_content_charset_iso8859() {
@@ -52,7 +54,9 @@ test_content_large_page_limit() {
   local output
   output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/content_large_page_limit" --format json)
 
-  # TODO: unsupported assertion type: less_than
+  local val_content_body_size
+  val_content_body_size=$(echo "$output" | jq -r '.body_size')
+  assert_less_than "$val_content_body_size" '1025' 'content.body_size'
 }
 
 test_content_main_only() {

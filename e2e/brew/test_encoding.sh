@@ -11,7 +11,9 @@ test_encoding_double_encoded() {
   local val_html
   val_html=$(echo "$output" | jq -r '.html')
   assert_not_empty "$val_html" 'html'
-  # TODO: unsupported assertion type: greater_than_or_equal
+  local val_links_length
+  val_links_length=$(echo "$output" | jq -r '.links.length')
+  assert_greater_than_or_equal "$val_links_length" '1' 'links.length'
 }
 
 test_encoding_mixed_charset_page() {
@@ -32,7 +34,9 @@ test_encoding_percent_encoded_path() {
   local val_html
   val_html=$(echo "$output" | jq -r '.html')
   assert_not_empty "$val_html" 'html'
-  # TODO: unsupported assertion type: greater_than_or_equal
+  local val_links_length
+  val_links_length=$(echo "$output" | jq -r '.links.length')
+  assert_greater_than_or_equal "$val_links_length" '2' 'links.length'
 }
 
 test_encoding_unicode_url() {

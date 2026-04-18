@@ -46,8 +46,12 @@ test_engine_scrape_basic() {
   local val_metadata_description
   val_metadata_description=$(echo "$output" | jq -r '.metadata.description')
   assert_contains "$val_metadata_description" 'Testing the engine' 'metadata.description'
-  # TODO: unsupported assertion type: greater_than_or_equal
-  # TODO: unsupported assertion type: greater_than_or_equal
+  local val_links_length
+  val_links_length=$(echo "$output" | jq -r '.links.length')
+  assert_greater_than_or_equal "$val_links_length" '1' 'links.length'
+  local val_metadata_headings_length
+  val_metadata_headings_length=$(echo "$output" | jq -r '.metadata.headings.length')
+  assert_greater_than_or_equal "$val_metadata_headings_length" '1' 'metadata.headings.length'
 }
 
 test_engine_stream_basic() {
