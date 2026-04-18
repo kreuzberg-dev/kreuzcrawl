@@ -64,9 +64,10 @@ RSpec.describe 'error' do
   it 'error_empty_response: Handles 200 with completely empty body gracefully' do
     engine = Kreuzcrawl.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/error_empty_response"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'html_not_empty' not available on result type
     # skipped: field 'error.is_error' not available on result type
+    expect(result).not_to be_nil
   end
 
   it 'error_invalid_proxy: Proxy pointing to unreachable address causes connection error during scrape' do

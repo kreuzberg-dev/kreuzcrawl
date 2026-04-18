@@ -8,25 +8,28 @@ RSpec.describe 'engine' do
   it 'engine_batch_basic: CrawlEngine with defaults batch scrapes like the free function' do
     engine = Kreuzcrawl.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_batch_basic"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'batch.completed_count' not available on result type
     # skipped: field 'batch.total_count' not available on result type
+    expect(result).not_to be_nil
   end
 
   it 'engine_crawl_basic: CrawlEngine with defaults crawls multiple pages like the free function' do
     engine_config = { 'max_depth' => 1 }
     engine = Kreuzcrawl.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_crawl_basic"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'crawl.pages_crawled' not available on result type
     # skipped: field 'crawl.min_pages' not available on result type
+    expect(result).not_to be_nil
   end
 
   it 'engine_map_basic: CrawlEngine with defaults discovers URLs like the free function' do
     engine = Kreuzcrawl.create_engine(nil)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_map_basic"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'map.min_urls' not available on result type
+    expect(result).not_to be_nil
   end
 
   it 'engine_scrape_basic: CrawlEngine with defaults scrapes a page identically to the free function' do
@@ -45,9 +48,10 @@ RSpec.describe 'engine' do
     engine_config = { 'max_depth' => 1 }
     engine = Kreuzcrawl.create_engine(engine_config.to_json)
     url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/engine_stream_basic"
-    Kreuzcrawl.scrape(engine, url)
+    result = Kreuzcrawl.scrape(engine, url)
     # skipped: field 'stream.has_page_event' not available on result type
     # skipped: field 'stream.has_complete_event' not available on result type
     # skipped: field 'stream.event_count_min' not available on result type
+    expect(result).not_to be_nil
   end
 end

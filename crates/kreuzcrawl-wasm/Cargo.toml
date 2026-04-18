@@ -10,7 +10,7 @@ repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 wasm-opt = false
 
 [package.metadata.cargo-machete]
-ignored = ["wasm-bindgen-futures"]
+ignored = ["wasm-bindgen-futures", "getrandom"]
 
 [lib]
 crate-type = ["cdylib"]

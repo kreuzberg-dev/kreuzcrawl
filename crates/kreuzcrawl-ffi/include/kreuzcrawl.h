@@ -525,6 +525,14 @@ int32_t kcrawl_crawl_config_save_browser_profile(const KCRAWLCrawlConfig *ptr);
 KCRAWLCrawlConfig *kcrawl_crawl_config_default(void);
 
 /**
+ * Validate the configuration, returning an error if any values are invalid.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kcrawl_crawl_config_validate(const KCRAWLCrawlConfig *this_);
+
+/**
  * Create a `DownloadedDocument` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -1124,6 +1132,14 @@ char *kcrawl_crawl_result_cookies(const KCRAWLCrawlResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 char *kcrawl_crawl_result_normalized_urls(const KCRAWLCrawlResult *ptr);
+
+/**
+ * Returns the count of unique normalized URLs encountered during crawling.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kcrawl_crawl_result_unique_normalized_urls(const KCRAWLCrawlResult *this_);
 
 /**
  * Create a `SitemapUrl` from a JSON string. Returns null on failure.

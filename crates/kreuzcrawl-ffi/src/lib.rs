@@ -1085,6 +1085,29 @@ pub unsafe extern "C" fn kcrawl_crawl_config_default() -> *mut kreuzcrawl::Crawl
     Box::into_raw(Box::new(result))
 }
 
+/// Validate the configuration, returning an error if any values are invalid.
+/// # Safety
+/// Caller must ensure all pointer arguments are valid or null.
+/// Returned pointers must be freed with the appropriate free function.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_crawl_config_validate(this: *const kreuzcrawl::CrawlConfig) -> i32 {
+    clear_last_error();
+    if this.is_null() {
+        set_last_error(1, "Null pointer passed for self");
+        return -1;
+    }
+    // SAFETY: null check above guarantees this is a valid pointer.
+    let obj = unsafe { &*this };
+    let result = obj.validate();
+    match result {
+        Ok(()) => 0,
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            -1
+        }
+    }
+}
+
 /// Create a `DownloadedDocument` from a JSON string. Returns null on failure.
 /// # Safety
 /// JSON string must be valid UTF-8 and null-terminated.
@@ -2535,6 +2558,23 @@ pub unsafe extern "C" fn kcrawl_crawl_result_normalized_urls(
         },
         Err(_) => std::ptr::null_mut(),
     }
+}
+
+/// Returns the count of unique normalized URLs encountered during crawling.
+/// # Safety
+/// Caller must ensure all pointer arguments are valid or null.
+/// Returned pointers must be freed with the appropriate free function.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_crawl_result_unique_normalized_urls(this: *const kreuzcrawl::CrawlResult) -> usize {
+    clear_last_error();
+    if this.is_null() {
+        set_last_error(1, "Null pointer passed for self");
+        return 0;
+    }
+    // SAFETY: null check above guarantees this is a valid pointer.
+    let obj = unsafe { &*this };
+    
+    obj.unique_normalized_urls()
 }
 
 /// Create a `SitemapUrl` from a JSON string. Returns null on failure.

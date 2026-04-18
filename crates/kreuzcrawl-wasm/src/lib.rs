@@ -696,6 +696,15 @@ impl WasmCrawlConfig {
     pub fn default() -> WasmCrawlConfig {
         kreuzcrawl::CrawlConfig::default().into()
     }
+
+    #[allow(clippy::missing_errors_doc)]
+    #[wasm_bindgen]
+    pub fn validate(&self) -> Result<(), JsValue> {
+        kreuzcrawl::CrawlConfig::from(self.clone())
+            .validate()
+            .map_err(|e| JsValue::from_str(&e.to_string()))?;
+        Ok(())
+    }
 }
 
 #[derive(Clone, Default)]
@@ -1710,6 +1719,11 @@ impl WasmCrawlResult {
     #[wasm_bindgen(setter, js_name = "normalizedUrls")]
     pub fn set_normalized_urls(&mut self, value: Vec<String>) {
         self.normalized_urls = value;
+    }
+
+    #[wasm_bindgen(js_name = "uniqueNormalizedUrls")]
+    pub fn unique_normalized_urls(&self) -> usize {
+        kreuzcrawl::CrawlResult::from(self.clone()).unique_normalized_urls()
     }
 }
 

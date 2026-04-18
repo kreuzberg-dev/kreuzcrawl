@@ -70,7 +70,7 @@ functions = ["create_engine", "scrape", "crawl", "map_urls", "batch_scrape", "ba
 [exclude]
 functions = []
 types = []
-methods = ["CrawlConfig.validate", "CrawlResult.unique_normalized_urls", "CrawlResult.new"]
+methods = ["CrawlResult.new"]
 
 [output]
 python = "crates/kreuzcrawl-py/src/"
@@ -567,7 +567,7 @@ version = "^0.1.0-rc.3"
 
 [e2e.registry.packages.rust]
 name = "kreuzcrawl"
-version = "0.1.0-rc.3"
+version = "0.1.0-rc.4"
 
 [e2e.registry.packages.go]
 module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
@@ -575,11 +575,11 @@ version = "v0.1.0-rc.3"
 
 [e2e.registry.packages.java]
 name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
-version = "0.1.0-rc.3"
+version = "0.1.0-rc.4"
 
 [e2e.registry.packages.csharp]
 name = "Kreuzcrawl"
-version = "0.1.0-rc.3"
+version = "0.1.0-rc.4"
 
 [e2e.registry.packages.php]
 name = "kreuzberg-dev/kreuzcrawl"
@@ -599,14 +599,14 @@ version = "^0.1.0-rc.3"
 
 [e2e.registry.packages.brew]
 name = "kreuzcrawl"
-version = "0.1.0-rc.3"
+version = "0.1.0-rc.4"
 
 [e2e.registry.packages.c]
 name = "kreuzcrawl-ffi"
-version = "0.1.0-rc.3"
+version = "0.1.0-rc.4"
 
 # ---------------------------------------------------------------------------
 # Version Sync
 # ---------------------------------------------------------------------------
 [sync]
-extra_paths = []
+extra_paths = ["package.json", "crates/kreuzcrawl-node/package.json"]

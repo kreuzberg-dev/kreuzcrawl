@@ -2802,3 +2802,17 @@ func BatchCrawl(engine *CrawlEngineHandle, urls []string) *[]BatchCrawlResult {
 	return &result
 }()
 }
+
+
+// Validate the configuration, returning an error if any values are invalid.
+func (r *CrawlConfig) Validate() error {
+    C.kcrawl_crawl_config_validate ((*C.KCRAWLCrawlConfig)(unsafe.Pointer(r)))
+    return lastError()
+}
+
+
+// Returns the count of unique normalized URLs encountered during crawling.
+func (r *CrawlResult) UniqueNormalizedUrls() *uint {
+    ptr := C.kcrawl_crawl_result_unique_normalized_urls ((*C.KCRAWLCrawlResult)(unsafe.Pointer(r)))
+    return func() *uint { v := uint(ptr); return &v }()
+}

@@ -326,6 +326,55 @@ impl CrawlConfig {
         }
     }
 
+    #[allow(clippy::missing_errors_doc)]
+    #[pyo3(signature = ())]
+    pub fn validate(&self) -> PyResult<()> {
+        let core_self = kreuzcrawl::CrawlConfig {
+            max_depth: self.max_depth,
+            max_pages: self.max_pages,
+            max_concurrent: self.max_concurrent,
+            respect_robots_txt: self.respect_robots_txt,
+            user_agent: self.user_agent.clone(),
+            stay_on_domain: self.stay_on_domain,
+            allow_subdomains: self.allow_subdomains,
+            include_paths: self.include_paths.clone(),
+            exclude_paths: self.exclude_paths.clone(),
+            custom_headers: self.custom_headers.clone().into_iter().collect(),
+            request_timeout: self
+                .request_timeout
+                .map(std::time::Duration::from_millis)
+                .unwrap_or_default(),
+            max_redirects: self.max_redirects,
+            retry_count: self.retry_count,
+            retry_codes: self.retry_codes.clone(),
+            cookies_enabled: self.cookies_enabled,
+            auth: self.auth.clone().map(Into::into),
+            max_body_size: self.max_body_size,
+            main_content_only: self.main_content_only,
+            remove_tags: self.remove_tags.clone(),
+            map_limit: self.map_limit,
+            map_search: self.map_search.clone(),
+            download_assets: self.download_assets,
+            asset_types: self.asset_types.clone().into_iter().map(Into::into).collect(),
+            max_asset_size: self.max_asset_size,
+            browser: self.browser.clone().into(),
+            proxy: self.proxy.clone().map(Into::into),
+            user_agents: self.user_agents.clone(),
+            capture_screenshot: self.capture_screenshot,
+            download_documents: self.download_documents,
+            document_max_size: self.document_max_size,
+            document_mime_types: self.document_mime_types.clone(),
+            warc_output: self.warc_output.clone().map(Into::into),
+            browser_profile: self.browser_profile.clone(),
+            save_browser_profile: self.save_browser_profile,
+            ..Default::default()
+        };
+        core_self
+            .validate()
+            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
+        Ok(())
+    }
+
     #[allow(clippy::should_implement_trait)]
     #[staticmethod]
     #[pyo3(signature = ())]
@@ -790,6 +839,20 @@ impl CrawlResult {
             cookies: cookies.unwrap_or_default(),
             normalized_urls: normalized_urls.unwrap_or_default(),
         }
+    }
+
+    #[pyo3(signature = ())]
+    pub fn unique_normalized_urls(&self) -> usize {
+        let core_self = kreuzcrawl::CrawlResult {
+            pages: self.pages.clone().into_iter().map(Into::into).collect(),
+            final_url: self.final_url.clone(),
+            redirect_count: self.redirect_count,
+            was_skipped: self.was_skipped,
+            error: self.error.clone(),
+            cookies: self.cookies.clone().into_iter().map(Into::into).collect(),
+            normalized_urls: self.normalized_urls.clone(),
+        };
+        core_self.unique_normalized_urls()
     }
 }
 

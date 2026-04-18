@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0-rc.4
+
+### Fixes
+
+- **Node**: Added missing `serde` dependency to Node binding crate — fixes compilation failure
+- **Elixir**: Added missing `serde` dependency to NIF crate + serde derives on enums — fixes compilation failure
+- **Ruby**: Fixed conflicting `Default` implementations — derive vs manual impl no longer collide
+- **Ruby**: Fixed enum conversion codegen — enum fields now use pattern matching instead of dot access
+- **Ruby**: Fixed `Box<T>` deref in enum tuple variant conversion (CrawlEvent::Page)
+- **Version sync**: Added root `package.json` and `kreuzcrawl-node/package.json` to sync-versions extra_paths
+
 ## 0.1.0-rc.3
 
 ### Fixes

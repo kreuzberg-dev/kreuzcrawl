@@ -55,4 +55,16 @@ defmodule Kreuzcrawl do
   def crawlconfig_default do
     Kreuzcrawl.Native.crawlconfig_default()
   end
+
+  @doc "Validate the configuration, returning an error if any values are invalid."
+  @spec crawlconfig_validate(map()) :: {:ok, nil} | {:error, String.t()}
+  def crawlconfig_validate(obj) do
+    Kreuzcrawl.Native.crawlconfig_validate(obj)
+  end
+
+  @doc "Returns the count of unique normalized URLs encountered during crawling."
+  @spec crawlresult_unique_normalized_urls(map()) :: non_neg_integer()
+  def crawlresult_unique_normalized_urls(obj) do
+    Kreuzcrawl.Native.crawlresult_unique_normalized_urls(obj)
+  end
 end
