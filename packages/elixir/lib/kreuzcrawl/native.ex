@@ -2,9 +2,20 @@
 defmodule Kreuzcrawl.Native do
   @moduledoc false
 
-  use Rustler,
+  use RustlerPrecompiled,
     otp_app: :kreuzcrawl,
-    crate: "kreuzcrawl_nif"
+    crate: "kreuzcrawl_nif",
+    base_url:
+      "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v#{Mix.Project.config()[:version]}",
+    version: Mix.Project.config()[:version],
+    force_build: System.get_env("KREUZCRAWL_BUILD") in ["1", "true"] or Mix.env() in [:test, :dev],
+    targets: ~w(
+      aarch64-apple-darwin
+      aarch64-unknown-linux-gnu
+      x86_64-unknown-linux-gnu
+      x86_64-pc-windows-gnu
+    ),
+    nif_versions: ["2.16", "2.17"]
 
   def create_engine(_config), do: :erlang.nif_error(:nif_not_loaded)
   def scrape_async(_engine, _url), do: :erlang.nif_error(:nif_not_loaded)

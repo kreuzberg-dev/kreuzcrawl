@@ -45,6 +45,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_concurrent_depth';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
         // skipped: field 'stayed_on_domain' not available on result type
@@ -59,6 +60,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_concurrent_limit';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -73,6 +75,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_concurrent_max_pages';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -86,6 +89,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_custom_headers';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -98,6 +102,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_depth_one';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
         // skipped: field 'stayed_on_domain' not available on result type
@@ -111,6 +116,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_depth_priority';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -123,6 +129,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_depth_two';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
         // skipped: field 'pages.length' not available on result type
@@ -136,6 +143,7 @@ final class CrawlTest extends TestCase
         $engine_config->max_depth = 2;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_depth_two_chain';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -148,6 +156,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_double_slash_normalization';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'unique_urls.length' not available on result type
     }
@@ -160,6 +169,7 @@ final class CrawlTest extends TestCase
         $engine_config->max_depth = 2;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_empty_page_no_links';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -173,6 +183,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_exclude_path_pattern';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -186,6 +197,7 @@ final class CrawlTest extends TestCase
         $engine_config->stay_on_domain = true;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_external_links_ignored';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
         // skipped: field 'stayed_on_domain' not available on result type
@@ -199,6 +211,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_fragment_stripping';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'unique_urls.length' not available on result type
     }
@@ -212,6 +225,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_include_path_pattern';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -223,6 +237,7 @@ final class CrawlTest extends TestCase
         $engine_config->max_depth = 0;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_max_depth_zero';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
         // skipped: field 'pages.length' not available on result type
@@ -236,6 +251,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_max_pages';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -248,6 +264,7 @@ final class CrawlTest extends TestCase
         $engine_config->max_depth = 1;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_mixed_content_types';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -260,6 +277,7 @@ final class CrawlTest extends TestCase
         $engine_config->max_depth = 1;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_multiple_redirects_in_traversal';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -272,6 +290,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_query_param_dedup';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'unique_urls.length' not available on result type
     }
@@ -284,6 +303,7 @@ final class CrawlTest extends TestCase
         $engine_config->max_depth = 1;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_redirect_in_traversal';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -296,6 +316,7 @@ final class CrawlTest extends TestCase
         $engine_config->max_depth = 1;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_self_link_no_loop';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -307,6 +328,7 @@ final class CrawlTest extends TestCase
         $engine_config->max_depth = 2;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_single_page_no_links';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -320,6 +342,7 @@ final class CrawlTest extends TestCase
         $engine_config->stay_on_domain = true;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_stay_on_domain';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
         // skipped: field 'stayed_on_domain' not available on result type
@@ -335,6 +358,7 @@ final class CrawlTest extends TestCase
         $engine_config->stay_on_domain = true;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_subdomain_exclusion';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
         // skipped: field 'stayed_on_domain' not available on result type
@@ -349,6 +373,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_subdomain_inclusion';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }
@@ -361,6 +386,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_trailing_slash_dedup';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'unique_urls.length' not available on result type
     }
@@ -373,6 +399,7 @@ final class CrawlTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_url_deduplication';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
     }

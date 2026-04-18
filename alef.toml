@@ -98,7 +98,7 @@ lib_name = "kreuzcrawl_ffi"
 visitor_callbacks = false
 
 [go]
-module = "github.com/kreuzberg-dev/kreuzcrawl"
+module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
 package_name = "kreuzcrawl"
 
 [java]
@@ -267,7 +267,7 @@ module = "@kreuzberg/kreuzcrawl"
 function = "scrape"
 
 [e2e.call.overrides.go]
-module = "github.com/kreuzberg-dev/kreuzcrawl"
+module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
 function = "Scrape"
 
 [e2e.call.overrides.java]
@@ -360,7 +360,7 @@ name = "@kreuzberg/kreuzcrawl"
 path = "../../crates/kreuzcrawl-node"
 
 [e2e.packages.go]
-module = "github.com/kreuzberg-dev/kreuzcrawl"
+module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
 path = "../../packages/go"
 
 [test.python]

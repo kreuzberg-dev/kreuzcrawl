@@ -20,6 +20,7 @@ final class StrategyTest extends TestCase
         $engine_config->max_depth = 1;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_best_first_seed';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.first_page_url_contains' not available on result type
@@ -33,6 +34,7 @@ final class StrategyTest extends TestCase
         $engine_config->max_depth = 2;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_bfs_default_order';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.crawl_order' not available on result type
@@ -46,6 +48,7 @@ final class StrategyTest extends TestCase
         $engine_config->max_depth = 2;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/strategy_dfs_depth_first';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'crawl.pages_crawled' not available on result type
         // skipped: field 'strategy.crawl_order' not available on result type
