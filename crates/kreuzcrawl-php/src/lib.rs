@@ -241,6 +241,7 @@ impl CrawlConfig {
     }
 
     pub fn validate(&self) -> PhpResult<()> {
+        #[allow(clippy::needless_update)]
         let core_self = kreuzcrawl::CrawlConfig {
             max_depth: self.max_depth.map(|v| v as usize),
             max_pages: self.max_pages.map(|v| v as usize),

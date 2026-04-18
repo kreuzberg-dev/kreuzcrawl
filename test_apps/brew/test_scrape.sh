@@ -74,11 +74,12 @@ test_scrape_basic_html_page() {
     local val_links_length
     val_links_length=$(echo "$output" | jq -r '.links.length')
     assert_greater_than "$val_links_length" '0' 'links.length'
-    # TODO: unsupported assertion type: contains_all
     local val_images_length
     val_images_length=$(echo "$output" | jq -r '.images.length')
     assert_equals "$val_images_length" '0' 'images.length'
-    # TODO: unsupported assertion type: is_empty
+    local val_og_title
+    val_og_title=$(echo "$output" | jq -r '.metadata.og_title')
+    assert_is_empty "$val_og_title" 'og.title'
 }
 
 test_scrape_complex_links() {
@@ -153,7 +154,9 @@ test_scrape_feed_discovery() {
     local val_status_code
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
-    # TODO: unsupported assertion type: greater_than_or_equal
+    local val_feeds_length
+    val_feeds_length=$(echo "$output" | jq -r '.feeds.length')
+    assert_greater_than_or_equal "$val_feeds_length" '3' 'feeds.length'
 }
 
 test_scrape_image_sources() {

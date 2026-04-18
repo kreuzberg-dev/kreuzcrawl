@@ -54,6 +54,38 @@ assert_greater_than() {
     fi
 }
 
+assert_greater_than_or_equal() {
+    local actual="$1" expected="$2" label="$3"
+    if [ "$actual" -lt "$expected" ]; then
+        echo "FAIL [$label]: expected $actual >= $expected" >&2
+        return 1
+    fi
+}
+
+assert_is_empty() {
+    local actual="$1" label="$2"
+    if [ -n "$actual" ]; then
+        echo "FAIL [$label]: expected empty value, got '$actual'" >&2
+        return 1
+    fi
+}
+
+assert_less_than() {
+    local actual="$1" expected="$2" label="$3"
+    if [ "$actual" -ge "$expected" ]; then
+        echo "FAIL [$label]: expected $actual < $expected" >&2
+        return 1
+    fi
+}
+
+assert_not_contains() {
+    local actual="$1" expected="$2" label="$3"
+    if [[ "$actual" == *"$expected"* ]]; then
+        echo "FAIL [$label]: expected not to contain '$expected'" >&2
+        return 1
+    fi
+}
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck source=test_markdown.sh
