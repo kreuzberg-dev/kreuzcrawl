@@ -6,37 +6,32 @@ import java.util.Optional;
 
 public class InteractionResultBuilder {
 
-    private List<ActionResult> actionResults = List.of();
-    private String finalHtml = "";
-    private String finalUrl = "";
-    private Optional<byte[]> screenshot = Optional.empty();
+	private List<ActionResult> actionResults = List.of();
+	private String finalHtml = "";
+	private String finalUrl = "";
+	private Optional<byte[]> screenshot = Optional.empty();
 
-    public InteractionResultBuilder withActionResults(List<ActionResult> value) {
-        this.actionResults = value;
-        return this;
-    }
+	public InteractionResultBuilder withActionResults(List<ActionResult> value) {
+		this.actionResults = value;
+		return this;
+	}
 
-    public InteractionResultBuilder withFinalHtml(String value) {
-        this.finalHtml = value;
-        return this;
-    }
+	public InteractionResultBuilder withFinalHtml(String value) {
+		this.finalHtml = value;
+		return this;
+	}
 
-    public InteractionResultBuilder withFinalUrl(String value) {
-        this.finalUrl = value;
-        return this;
-    }
+	public InteractionResultBuilder withFinalUrl(String value) {
+		this.finalUrl = value;
+		return this;
+	}
 
-    public InteractionResultBuilder withScreenshot(Optional<byte[]> value) {
-        this.screenshot = value;
-        return this;
-    }
+	public InteractionResultBuilder withScreenshot(Optional<byte[]> value) {
+		this.screenshot = value;
+		return this;
+	}
 
-    public InteractionResult build() {
-        return new InteractionResult(
-            actionResults,
-            finalHtml,
-            finalUrl,
-            screenshot
-        );
-    }
+	public InteractionResult build() {
+		return new InteractionResult(actionResults, finalHtml, finalUrl, screenshot);
+	}
 }
