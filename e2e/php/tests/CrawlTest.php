@@ -80,7 +80,11 @@ final class CrawlTest extends TestCase
     /** Sends custom headers on all crawl requests */
     public function test_crawl_custom_headers(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"custom_headers":{"Accept-Language":"en-US","X-Custom-Header":"test-value"},"max_depth":1,"respect_robots_txt":false}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->custom_headers = ["Accept-Language" => "en-US", "X-Custom-Header" => "test-value"];
+        $engine_config->max_depth = 1;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_custom_headers';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
@@ -163,7 +167,11 @@ final class CrawlTest extends TestCase
     /** Skips URLs matching the exclude path pattern */
     public function test_crawl_exclude_path_pattern(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"exclude_paths":["/admin/.*"],"max_depth":1,"respect_robots_txt":false}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->exclude_paths = ["/admin/.*"];
+        $engine_config->max_depth = 1;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_exclude_path_pattern';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type
@@ -198,7 +206,11 @@ final class CrawlTest extends TestCase
     /** Only follows URLs matching the include path pattern */
     public function test_crawl_include_path_pattern(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"include_paths":["/blog/.*"],"max_depth":1,"respect_robots_txt":false}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->include_paths = ["/blog/.*"];
+        $engine_config->max_depth = 1;
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_include_path_pattern';
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'pages.length' not available on result type

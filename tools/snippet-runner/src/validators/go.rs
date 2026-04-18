@@ -111,7 +111,7 @@ impl SnippetValidator for GoValidator {
         let dir = TempDir::new()?;
 
         // Init go module
-        let go_mod = "module snippet-check\n\ngo 1.21\n";
+        let go_mod = "module snippet-check\n\ngo 1.26\n";
         std::fs::write(dir.path().join("go.mod"), go_mod)?;
 
         let code = Self::wrap_if_fragment(&snippet.code);

@@ -94,7 +94,10 @@ final class ContentTest extends TestCase
     /** Removes specified HTML elements by CSS selector before processing */
     public function test_content_remove_tags(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"remove_tags":["nav","aside","footer"],"respect_robots_txt":false}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->remove_tags = ["nav", "aside", "footer"];
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/content_remove_tags';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertNotEmpty($result->html);
