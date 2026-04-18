@@ -4,16 +4,12 @@ package dev.kreuzberg.kreuzcrawl;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ResponseMeta(
-    Optional<String> etag,
-    @JsonProperty("last_modified") Optional<String> lastModified,
-    @JsonProperty("cache_control") Optional<String> cacheControl,
-    Optional<String> server,
-    @JsonProperty("x_powered_by") Optional<String> xPoweredBy,
-    @JsonProperty("content_language") Optional<String> contentLanguage,
-    @JsonProperty("content_encoding") Optional<String> contentEncoding
-) {
-    public static ResponseMetaBuilder builder() {
-        return new ResponseMetaBuilder();
-    }
+public record ResponseMeta(Optional<String> etag, @JsonProperty("last_modified") Optional<String> lastModified,
+		@JsonProperty("cache_control") Optional<String> cacheControl, Optional<String> server,
+		@JsonProperty("x_powered_by") Optional<String> xPoweredBy,
+		@JsonProperty("content_language") Optional<String> contentLanguage,
+		@JsonProperty("content_encoding") Optional<String> contentEncoding) {
+	public static ResponseMetaBuilder builder() {
+		return new ResponseMetaBuilder();
+	}
 }

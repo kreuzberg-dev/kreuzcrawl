@@ -5,23 +5,20 @@ import java.util.List;
 
 public class CitationResultBuilder {
 
-    private String content = "";
-    private List<CitationReference> references = List.of();
+	private String content = "";
+	private List<CitationReference> references = List.of();
 
-    public CitationResultBuilder withContent(String value) {
-        this.content = value;
-        return this;
-    }
+	public CitationResultBuilder withContent(String value) {
+		this.content = value;
+		return this;
+	}
 
-    public CitationResultBuilder withReferences(List<CitationReference> value) {
-        this.references = value;
-        return this;
-    }
+	public CitationResultBuilder withReferences(List<CitationReference> value) {
+		this.references = value;
+		return this;
+	}
 
-    public CitationResult build() {
-        return new CitationResult(
-            content,
-            references
-        );
-    }
+	public CitationResult build() {
+		return new CitationResult(content, references);
+	}
 }

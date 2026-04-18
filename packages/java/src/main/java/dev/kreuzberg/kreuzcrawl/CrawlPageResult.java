@@ -5,29 +5,16 @@ import java.util.List;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record CrawlPageResult(
-    String url,
-    @JsonProperty("normalized_url") String normalizedUrl,
-    @JsonProperty("status_code") short statusCode,
-    @JsonProperty("content_type") String contentType,
-    String html,
-    @JsonProperty("body_size") long bodySize,
-    PageMetadata metadata,
-    List<LinkInfo> links,
-    List<ImageInfo> images,
-    List<FeedInfo> feeds,
-    @JsonProperty("json_ld") List<JsonLdEntry> jsonLd,
-    long depth,
-    @JsonProperty("stayed_on_domain") boolean stayedOnDomain,
-    @JsonProperty("was_skipped") boolean wasSkipped,
-    @JsonProperty("is_pdf") boolean isPdf,
-    @JsonProperty("detected_charset") Optional<String> detectedCharset,
-    Optional<MarkdownResult> markdown,
-    @JsonProperty("extracted_data") Optional<Object> extractedData,
-    @JsonProperty("extraction_meta") Optional<ExtractionMeta> extractionMeta,
-    @JsonProperty("downloaded_document") Optional<DownloadedDocument> downloadedDocument
-) {
-    public static CrawlPageResultBuilder builder() {
-        return new CrawlPageResultBuilder();
-    }
+public record CrawlPageResult(String url, @JsonProperty("normalized_url") String normalizedUrl,
+		@JsonProperty("status_code") short statusCode, @JsonProperty("content_type") String contentType, String html,
+		@JsonProperty("body_size") long bodySize, PageMetadata metadata, List<LinkInfo> links, List<ImageInfo> images,
+		List<FeedInfo> feeds, @JsonProperty("json_ld") List<JsonLdEntry> jsonLd, long depth,
+		@JsonProperty("stayed_on_domain") boolean stayedOnDomain, @JsonProperty("was_skipped") boolean wasSkipped,
+		@JsonProperty("is_pdf") boolean isPdf, @JsonProperty("detected_charset") Optional<String> detectedCharset,
+		Optional<MarkdownResult> markdown, @JsonProperty("extracted_data") Optional<Object> extractedData,
+		@JsonProperty("extraction_meta") Optional<ExtractionMeta> extractionMeta,
+		@JsonProperty("downloaded_document") Optional<DownloadedDocument> downloadedDocument) {
+	public static CrawlPageResultBuilder builder() {
+		return new CrawlPageResultBuilder();
+	}
 }

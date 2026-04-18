@@ -6,149 +6,130 @@ import java.util.Optional;
 
 public class CrawlPageResultBuilder {
 
-    private String url = "";
-    private String normalizedUrl = "";
-    private short statusCode = 0;
-    private String contentType = "";
-    private String html = "";
-    private long bodySize = 0;
-    private PageMetadata metadata = null;
-    private List<LinkInfo> links = List.of();
-    private List<ImageInfo> images = List.of();
-    private List<FeedInfo> feeds = List.of();
-    private List<JsonLdEntry> jsonLd = List.of();
-    private long depth = 0;
-    private boolean stayedOnDomain = false;
-    private boolean wasSkipped = false;
-    private boolean isPdf = false;
-    private Optional<String> detectedCharset = Optional.empty();
-    private Optional<MarkdownResult> markdown = Optional.empty();
-    private Optional<Object> extractedData = Optional.empty();
-    private Optional<ExtractionMeta> extractionMeta = Optional.empty();
-    private Optional<DownloadedDocument> downloadedDocument = Optional.empty();
+	private String url = "";
+	private String normalizedUrl = "";
+	private short statusCode = 0;
+	private String contentType = "";
+	private String html = "";
+	private long bodySize = 0;
+	private PageMetadata metadata = null;
+	private List<LinkInfo> links = List.of();
+	private List<ImageInfo> images = List.of();
+	private List<FeedInfo> feeds = List.of();
+	private List<JsonLdEntry> jsonLd = List.of();
+	private long depth = 0;
+	private boolean stayedOnDomain = false;
+	private boolean wasSkipped = false;
+	private boolean isPdf = false;
+	private Optional<String> detectedCharset = Optional.empty();
+	private Optional<MarkdownResult> markdown = Optional.empty();
+	private Optional<Object> extractedData = Optional.empty();
+	private Optional<ExtractionMeta> extractionMeta = Optional.empty();
+	private Optional<DownloadedDocument> downloadedDocument = Optional.empty();
 
-    public CrawlPageResultBuilder withUrl(String value) {
-        this.url = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withUrl(String value) {
+		this.url = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withNormalizedUrl(String value) {
-        this.normalizedUrl = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withNormalizedUrl(String value) {
+		this.normalizedUrl = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withStatusCode(short value) {
-        this.statusCode = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withStatusCode(short value) {
+		this.statusCode = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withContentType(String value) {
-        this.contentType = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withContentType(String value) {
+		this.contentType = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withHtml(String value) {
-        this.html = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withHtml(String value) {
+		this.html = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withBodySize(long value) {
-        this.bodySize = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withBodySize(long value) {
+		this.bodySize = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withMetadata(PageMetadata value) {
-        this.metadata = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withMetadata(PageMetadata value) {
+		this.metadata = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withLinks(List<LinkInfo> value) {
-        this.links = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withLinks(List<LinkInfo> value) {
+		this.links = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withImages(List<ImageInfo> value) {
-        this.images = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withImages(List<ImageInfo> value) {
+		this.images = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withFeeds(List<FeedInfo> value) {
-        this.feeds = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withFeeds(List<FeedInfo> value) {
+		this.feeds = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withJsonLd(List<JsonLdEntry> value) {
-        this.jsonLd = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withJsonLd(List<JsonLdEntry> value) {
+		this.jsonLd = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withDepth(long value) {
-        this.depth = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withDepth(long value) {
+		this.depth = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withStayedOnDomain(boolean value) {
-        this.stayedOnDomain = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withStayedOnDomain(boolean value) {
+		this.stayedOnDomain = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withWasSkipped(boolean value) {
-        this.wasSkipped = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withWasSkipped(boolean value) {
+		this.wasSkipped = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withIsPdf(boolean value) {
-        this.isPdf = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withIsPdf(boolean value) {
+		this.isPdf = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withDetectedCharset(Optional<String> value) {
-        this.detectedCharset = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withDetectedCharset(Optional<String> value) {
+		this.detectedCharset = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withMarkdown(Optional<MarkdownResult> value) {
-        this.markdown = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withMarkdown(Optional<MarkdownResult> value) {
+		this.markdown = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withExtractedData(Optional<Object> value) {
-        this.extractedData = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withExtractedData(Optional<Object> value) {
+		this.extractedData = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withExtractionMeta(Optional<ExtractionMeta> value) {
-        this.extractionMeta = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withExtractionMeta(Optional<ExtractionMeta> value) {
+		this.extractionMeta = value;
+		return this;
+	}
 
-    public CrawlPageResultBuilder withDownloadedDocument(Optional<DownloadedDocument> value) {
-        this.downloadedDocument = value;
-        return this;
-    }
+	public CrawlPageResultBuilder withDownloadedDocument(Optional<DownloadedDocument> value) {
+		this.downloadedDocument = value;
+		return this;
+	}
 
-    public CrawlPageResult build() {
-        return new CrawlPageResult(
-            url,
-            normalizedUrl,
-            statusCode,
-            contentType,
-            html,
-            bodySize,
-            metadata,
-            links,
-            images,
-            feeds,
-            jsonLd,
-            depth,
-            stayedOnDomain,
-            wasSkipped,
-            isPdf,
-            detectedCharset,
-            markdown,
-            extractedData,
-            extractionMeta,
-            downloadedDocument
-        );
-    }
+	public CrawlPageResult build() {
+		return new CrawlPageResult(url, normalizedUrl, statusCode, contentType, html, bodySize, metadata, links, images,
+				feeds, jsonLd, depth, stayedOnDomain, wasSkipped, isPdf, detectedCharset, markdown, extractedData,
+				extractionMeta, downloadedDocument);
+	}
 }
