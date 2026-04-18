@@ -124,6 +124,7 @@ final class BrowserTest extends TestCase
         $engine_config->browser = ["mode" => "auto"];
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_fallback_spa_render';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'browser.js_render_hint' not available on result type
         // skipped: field 'browser.browser_used' not available on result type
@@ -136,6 +137,7 @@ final class BrowserTest extends TestCase
         $engine_config->browser = ["mode" => "auto"];
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_fallback_waf_blocked';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'browser.browser_used' not available on result type
     }
@@ -147,6 +149,7 @@ final class BrowserTest extends TestCase
         $engine_config->browser = ["mode" => "always"];
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/browser_mode_always';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'browser.browser_used' not available on result type
     }

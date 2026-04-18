@@ -6,14 +6,201 @@ import java.lang.foreign.Linker;
 import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 final class NativeLib {
 	private static final Linker LINKER = Linker.nativeLinker();
 	private static final SymbolLookup LIB;
+	private static final String NATIVES_RESOURCE_ROOT = "/natives";
+	private static final Object NATIVE_EXTRACT_LOCK = new Object();
+	private static String cachedExtractKey;
+	private static Path cachedExtractDir;
 
 	static {
-		System.loadLibrary("kreuzcrawl_ffi");
+		loadNativeLibrary();
 		LIB = SymbolLookup.loaderLookup();
+	}
+
+	private static void loadNativeLibrary() {
+		String osName = System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT);
+		String osArch = System.getProperty("os.arch", "").toLowerCase(java.util.Locale.ROOT);
+
+		String libName;
+		String libExt;
+		if (osName.contains("mac") || osName.contains("darwin")) {
+			libName = "libkreuzcrawl_ffi";
+			libExt = ".dylib";
+		} else if (osName.contains("win")) {
+			libName = "kreuzcrawl_ffi";
+			libExt = ".dll";
+		} else {
+			libName = "libkreuzcrawl_ffi";
+			libExt = ".so";
+		}
+
+		String nativesRid = resolveNativesRid(osName, osArch);
+		String nativesDir = NATIVES_RESOURCE_ROOT + "/" + nativesRid;
+
+		Path extracted = tryExtractAndLoadFromResources(nativesDir, libName, libExt);
+		if (extracted != null) {
+			return;
+		}
+
+		try {
+			System.loadLibrary("kreuzcrawl_ffi");
+		} catch (UnsatisfiedLinkError e) {
+			String msg = "Failed to load kreuzcrawl native library. Expected resource: " + nativesDir + "/" + libName
+					+ libExt + " (RID: " + nativesRid + "). "
+					+ "Ensure the library is bundled in the JAR under natives/{os-arch}/, "
+					+ "or place it on the system library path (java.library.path).";
+			UnsatisfiedLinkError out = new UnsatisfiedLinkError(msg + " Original error: " + e.getMessage());
+			out.initCause(e);
+			throw out;
+		}
+	}
+
+	private static Path tryExtractAndLoadFromResources(String nativesDir, String libName, String libExt) {
+		String resourcePath = nativesDir + "/" + libName + libExt;
+		URL resource = NativeLib.class.getResource(resourcePath);
+		if (resource == null) {
+			return null;
+		}
+
+		try {
+			Path tempDir = extractOrReuseNativeDirectory(nativesDir);
+			Path libPath = tempDir.resolve(libName + libExt);
+			if (!Files.exists(libPath)) {
+				throw new UnsatisfiedLinkError("Missing extracted native library: " + libPath);
+			}
+			System.load(libPath.toAbsolutePath().toString());
+			return libPath;
+		} catch (Exception e) {
+			System.err
+					.println("[NativeLib] Failed to extract and load native library from resources: " + e.getMessage());
+			return null;
+		}
+	}
+
+	private static Path extractOrReuseNativeDirectory(String nativesDir) throws Exception {
+		URL location = NativeLib.class.getProtectionDomain().getCodeSource().getLocation();
+		if (location == null) {
+			throw new IllegalStateException("Missing code source location for kreuzcrawl JAR");
+		}
+
+		Path codePath = Path.of(location.toURI());
+		String key = codePath.toAbsolutePath() + "::" + nativesDir;
+
+		synchronized (NATIVE_EXTRACT_LOCK) {
+			if (cachedExtractDir != null && key.equals(cachedExtractKey)) {
+				return cachedExtractDir;
+			}
+			Path tempDir = Files.createTempDirectory("kreuzcrawl_native");
+			tempDir.toFile().deleteOnExit();
+			List<Path> extracted = extractNativeDirectory(codePath, nativesDir, tempDir);
+			if (extracted.isEmpty()) {
+				throw new IllegalStateException("No native files extracted from resources dir: " + nativesDir);
+			}
+			cachedExtractKey = key;
+			cachedExtractDir = tempDir;
+			return tempDir;
+		}
+	}
+
+	private static List<Path> extractNativeDirectory(Path codePath, String nativesDir, Path destDir) throws Exception {
+		if (!Files.exists(destDir) || !Files.isDirectory(destDir)) {
+			throw new IllegalArgumentException("Destination directory does not exist: " + destDir);
+		}
+
+		String prefix = nativesDir.startsWith("/") ? nativesDir.substring(1) : nativesDir;
+		if (!prefix.endsWith("/")) {
+			prefix = prefix + "/";
+		}
+
+		if (Files.isDirectory(codePath)) {
+			Path nativesPath = codePath.resolve(prefix);
+			if (!Files.exists(nativesPath) || !Files.isDirectory(nativesPath)) {
+				return List.of();
+			}
+			return copyDirectory(nativesPath, destDir);
+		}
+
+		List<Path> extracted = new ArrayList<>();
+		try (JarFile jar = new JarFile(codePath.toFile())) {
+			Enumeration<JarEntry> entries = jar.entries();
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				String name = entry.getName();
+				if (!name.startsWith(prefix) || entry.isDirectory()) {
+					continue;
+				}
+				String relative = name.substring(prefix.length());
+				Path out = safeResolve(destDir, relative);
+				Files.createDirectories(out.getParent());
+				try (var in = jar.getInputStream(entry)) {
+					Files.copy(in, out, StandardCopyOption.REPLACE_EXISTING);
+				}
+				out.toFile().deleteOnExit();
+				extracted.add(out);
+			}
+		}
+		return extracted;
+	}
+
+	private static List<Path> copyDirectory(Path srcDir, Path destDir) throws Exception {
+		List<Path> copied = new ArrayList<>();
+		try (var paths = Files.walk(srcDir)) {
+			for (Path src : (Iterable<Path>) paths::iterator) {
+				if (Files.isDirectory(src)) {
+					continue;
+				}
+				Path relative = srcDir.relativize(src);
+				Path out = safeResolve(destDir, relative.toString());
+				Files.createDirectories(out.getParent());
+				Files.copy(src, out, StandardCopyOption.REPLACE_EXISTING);
+				out.toFile().deleteOnExit();
+				copied.add(out);
+			}
+		}
+		return copied;
+	}
+
+	private static Path safeResolve(Path destDir, String relative) throws Exception {
+		Path normalizedDest = destDir.toAbsolutePath().normalize();
+		Path out = normalizedDest.resolve(relative).normalize();
+		if (!out.startsWith(normalizedDest)) {
+			throw new SecurityException("Blocked extracting native file outside destination directory: " + relative);
+		}
+		return out;
+	}
+
+	private static String resolveNativesRid(String osName, String osArch) {
+		String arch;
+		if (osArch.contains("aarch64") || osArch.contains("arm64")) {
+			arch = "arm64";
+		} else if (osArch.contains("x86_64") || osArch.contains("amd64")) {
+			arch = "x86_64";
+		} else {
+			arch = osArch.replaceAll("[^a-z0-9_]+", "");
+		}
+
+		String os;
+		if (osName.contains("mac") || osName.contains("darwin")) {
+			os = "macos";
+		} else if (osName.contains("win")) {
+			os = "windows";
+		} else {
+			os = "linux";
+		}
+
+		return os + "-" + arch;
 	}
 
 	static final MethodHandle KCRAWL_CREATE_ENGINE = LINKER.downcallHandle(

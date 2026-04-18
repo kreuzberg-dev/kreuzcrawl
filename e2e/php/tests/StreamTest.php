@@ -20,6 +20,7 @@ final class StreamTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/crawl_stream_events';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.event_count_min' not available on result type
         // skipped: field 'stream.has_page_event' not available on result type
@@ -34,6 +35,7 @@ final class StreamTest extends TestCase
         $engine_config->max_depth = 2;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/stream_depth_crawl';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.event_count_min' not available on result type
         // skipped: field 'stream.has_page_event' not available on result type
@@ -48,6 +50,7 @@ final class StreamTest extends TestCase
         $engine_config->max_depth = 1;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/stream_with_error_event';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'stream.has_page_event' not available on result type
         // skipped: field 'stream.has_complete_event' not available on result type

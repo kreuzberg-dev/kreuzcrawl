@@ -21,6 +21,7 @@ final class CookiesTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/cookies_per_domain';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'cookies.length' not available on result type
         // skipped: field 'cookies' not available on result type
@@ -35,6 +36,7 @@ final class CookiesTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/cookies_persistence';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'cookies' not available on result type
     }
@@ -48,6 +50,7 @@ final class CookiesTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/cookies_set_cookie_response';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'cookies' not available on result type
     }

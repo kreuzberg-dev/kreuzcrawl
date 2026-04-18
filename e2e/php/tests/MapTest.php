@@ -20,6 +20,7 @@ final class MapTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_discover_urls';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
@@ -33,6 +34,7 @@ final class MapTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_exclude_patterns';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
@@ -46,6 +48,7 @@ final class MapTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_include_subdomains';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'urls' not available on result type
@@ -58,6 +61,7 @@ final class MapTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_large_sitemap';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
@@ -71,6 +75,7 @@ final class MapTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_limit_pagination';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
     }
@@ -84,6 +89,7 @@ final class MapTest extends TestCase
         $engine_config->respect_robots_txt = false;
         $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/map_search_filter';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'urls.length' not available on result type
         // skipped: field 'urls' not available on result type

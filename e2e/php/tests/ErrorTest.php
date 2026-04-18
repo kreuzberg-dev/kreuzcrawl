@@ -104,6 +104,7 @@ final class ErrorTest extends TestCase
     {
         $engine = Kreuzcrawl::createEngine(null);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_empty_response';
+        $this->expectNotToPerformAssertions();
         $result = Kreuzcrawl::scrape($engine, $url);
         // skipped: field 'html_not_empty' not available on result type
         // skipped: field 'error.is_error' not available on result type

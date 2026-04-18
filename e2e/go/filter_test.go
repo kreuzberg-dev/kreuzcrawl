@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	pkg "github.com/kreuzberg-dev/kreuzcrawl"
+	pkg "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
 )
 
 func Test_FilterBm25CrawlIntegration(t *testing.T) {
