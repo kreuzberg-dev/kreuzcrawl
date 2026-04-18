@@ -126,7 +126,19 @@ keywords = ["crawl", "scrape", "web", "spider"]
 [e2e]
 fixtures = "fixtures"
 output = "e2e"
-languages = ["rust", "python", "node", "go", "java", "csharp", "php", "ruby", "elixir", "wasm", "brew"]
+languages = [
+    "rust",
+    "python",
+    "node",
+    "go",
+    "java",
+    "csharp",
+    "php",
+    "ruby",
+    "elixir",
+    "wasm",
+    "brew",
+]
 fields_optional = [
     "markdown",
     "metadata.title",
@@ -547,51 +559,51 @@ categories = ["scrape", "markdown", "metadata"]
 
 [e2e.registry.packages.python]
 name = "kreuzcrawl"
-version = ">=0.1.0rc2"
+version = ">=0.1.0rc3"
 
 [e2e.registry.packages.node]
 name = "@kreuzberg/kreuzcrawl"
-version = "^0.1.0-rc.2"
+version = "^0.1.0-rc.3"
 
 [e2e.registry.packages.rust]
 name = "kreuzcrawl"
-version = "0.1.0-rc.2"
+version = "0.1.0-rc.3"
 
 [e2e.registry.packages.go]
 module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
-version = "v0.1.0-rc.2"
+version = "v0.1.0-rc.3"
 
 [e2e.registry.packages.java]
 name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
-version = "0.1.0-rc.2"
+version = "0.1.0-rc.3"
 
 [e2e.registry.packages.csharp]
 name = "Kreuzcrawl"
-version = "0.1.0-rc.2"
+version = "0.1.0-rc.3"
 
 [e2e.registry.packages.php]
 name = "kreuzberg-dev/kreuzcrawl"
-version = ">=0.1.0-rc.2"
+version = ">=0.1.0-rc.3"
 
 [e2e.registry.packages.ruby]
 name = "kreuzcrawl"
-version = "~> 0.1.0.rc2"
+version = "~> 0.1.0.rc3"
 
 [e2e.registry.packages.elixir]
 name = "kreuzcrawl"
-version = "~> 0.1.0-rc.2"
+version = "~> 0.1.0-rc.3"
 
 [e2e.registry.packages.wasm]
 name = "@kreuzberg/kreuzcrawl-wasm"
-version = "^0.1.0-rc.2"
+version = "^0.1.0-rc.3"
 
 [e2e.registry.packages.brew]
 name = "kreuzcrawl"
-version = "0.1.0-rc.2"
+version = "0.1.0-rc.3"
 
 [e2e.registry.packages.c]
 name = "kreuzcrawl-ffi"
-version = "0.1.0-rc.2"
+version = "0.1.0-rc.3"
 
 # ---------------------------------------------------------------------------
 # Version Sync

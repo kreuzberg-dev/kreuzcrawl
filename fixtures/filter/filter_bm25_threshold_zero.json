@@ -1,10 +1,7 @@
 {
 	"id": "filter_bm25_threshold_zero",
 	"description": "BM25 filter with zero threshold passes all pages",
-	"tags": [
-		"filter",
-		"bm25"
-	],
+	"tags": ["filter", "bm25"],
 	"input": {
 		"mock_responses": [
 			{

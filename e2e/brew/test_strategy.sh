@@ -4,34 +4,34 @@
 set -euo pipefail
 
 test_strategy_best_first_seed() {
-    # BestFirst strategy always processes the seed URL first
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_best_first_seed" --format json)
+  # BestFirst strategy always processes the seed URL first
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_best_first_seed" --format json)
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
-    # skipped: field 'strategy.first_page_url_contains' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'strategy.first_page_url_contains' not available on result type
 }
 
 test_strategy_bfs_default_order() {
-    # BFS strategy visits pages in breadth-first order
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_bfs_default_order" --format json)
+  # BFS strategy visits pages in breadth-first order
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_bfs_default_order" --format json)
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
-    # skipped: field 'strategy.crawl_order' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'strategy.crawl_order' not available on result type
 }
 
 test_strategy_dfs_depth_first() {
-    # DFS strategy visits pages in depth-first order
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_dfs_depth_first" --format json)
+  # DFS strategy visits pages in depth-first order
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_dfs_depth_first" --format json)
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
-    # skipped: field 'strategy.crawl_order' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'strategy.crawl_order' not available on result type
 }
 
 run_tests_strategy() {
-    run_test test_strategy_best_first_seed
-    run_test test_strategy_bfs_default_order
-    run_test test_strategy_dfs_depth_first
+  run_test test_strategy_best_first_seed
+  run_test test_strategy_bfs_default_order
+  run_test test_strategy_dfs_depth_first
 }

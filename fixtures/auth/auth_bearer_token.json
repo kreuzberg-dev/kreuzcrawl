@@ -1,10 +1,7 @@
 {
 	"id": "auth_bearer_token",
 	"description": "Sends Bearer token in Authorization header",
-	"tags": [
-		"auth",
-		"bearer"
-	],
+	"tags": ["auth", "bearer"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,9 +1,7 @@
 {
 	"id": "robots_disallow_path",
 	"description": "Robots.txt disallows specific paths",
-	"tags": [
-		"robots"
-	],
+	"tags": ["robots"],
 	"input": {
 		"mock_responses": [
 			{

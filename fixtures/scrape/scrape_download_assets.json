@@ -1,10 +1,7 @@
 {
 	"id": "scrape_download_assets",
 	"description": "Downloads CSS, JS, and image assets from page",
-	"tags": [
-		"scrape",
-		"assets"
-	],
+	"tags": ["scrape", "assets"],
 	"input": {
 		"mock_responses": [
 			{

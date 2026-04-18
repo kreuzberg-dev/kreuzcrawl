@@ -1,9 +1,7 @@
 {
 	"id": "redirect_308_permanent",
 	"description": "Follows 308 Permanent Redirect (preserves method)",
-	"tags": [
-		"redirect"
-	],
+	"tags": ["redirect"],
 	"input": {
 		"mock_responses": [
 			{

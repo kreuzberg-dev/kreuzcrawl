@@ -44,10 +44,8 @@ pub(crate) fn parse_robots_txt(body: &str, user_agent: &str) -> RobotsRules {
         let value = value.trim();
 
         match key.as_str() {
-            "sitemap" => {
-                if !value.is_empty() {
-                    sitemaps.push(value.to_owned());
-                }
+            "sitemap" if !value.is_empty() => {
+                sitemaps.push(value.to_owned());
             }
             "user-agent" => {
                 if in_rules {

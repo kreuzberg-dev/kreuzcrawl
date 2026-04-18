@@ -1,10 +1,7 @@
 {
 	"id": "encoding_mixed_charset_page",
 	"description": "Handles charset mismatch between HTTP header and HTML meta tag",
-	"tags": [
-		"encoding",
-		"charset"
-	],
+	"tags": ["encoding", "charset"],
 	"input": {
 		"mock_responses": [
 			{

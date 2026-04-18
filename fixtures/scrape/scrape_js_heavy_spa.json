@@ -1,10 +1,7 @@
 {
 	"id": "scrape_js_heavy_spa",
 	"description": "Handles SPA page with JavaScript-only content (no server-rendered HTML)",
-	"tags": [
-		"scrape",
-		"javascript"
-	],
+	"tags": ["scrape", "javascript"],
 	"input": {
 		"mock_responses": [
 			{

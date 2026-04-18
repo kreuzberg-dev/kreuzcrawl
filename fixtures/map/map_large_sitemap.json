@@ -1,11 +1,7 @@
 {
 	"id": "map_large_sitemap",
 	"description": "Handles large sitemap with 100+ URLs",
-	"tags": [
-		"map",
-		"sitemap",
-		"large"
-	],
+	"tags": ["map", "sitemap", "large"],
 	"input": {
 		"mock_responses": [
 			{

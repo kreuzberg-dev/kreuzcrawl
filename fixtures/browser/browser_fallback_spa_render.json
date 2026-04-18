@@ -1,11 +1,7 @@
 {
 	"id": "browser_fallback_spa_render",
 	"description": "Browser auto re-fetches SPA shell when JS rendering is detected",
-	"tags": [
-		"browser",
-		"fallback",
-		"spa"
-	],
+	"tags": ["browser", "fallback", "spa"],
 	"input": {
 		"mock_responses": [
 			{

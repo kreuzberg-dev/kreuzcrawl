@@ -1,9 +1,7 @@
 {
 	"id": "middleware_noop_no_effect",
 	"description": "Default middleware chain does not affect normal scraping",
-	"tags": [
-		"middleware"
-	],
+	"tags": ["middleware"],
 	"input": {
 		"mock_responses": [
 			{

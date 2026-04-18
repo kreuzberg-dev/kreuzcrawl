@@ -1,10 +1,7 @@
 {
 	"id": "crawl_concurrent_depth",
 	"description": "Concurrent crawl respects max_depth limit",
-	"tags": [
-		"crawl",
-		"concurrency"
-	],
+	"tags": ["crawl", "concurrency"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,9 +1,7 @@
 {
 	"id": "sitemap_index",
 	"description": "Follows sitemap index to discover child sitemaps",
-	"tags": [
-		"sitemap"
-	],
+	"tags": ["sitemap"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,10 +1,7 @@
 {
 	"id": "scrape_malformed_html",
 	"description": "Gracefully handles broken HTML without crashing",
-	"tags": [
-		"scrape",
-		"edge-case"
-	],
+	"tags": ["scrape", "edge-case"],
 	"input": {
 		"mock_responses": [
 			{

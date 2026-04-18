@@ -1,10 +1,7 @@
 {
 	"id": "browser_detect_next_rendered",
 	"description": "Does NOT flag Next.js page with full SSR content as needing JS rendering",
-	"tags": [
-		"browser",
-		"detection"
-	],
+	"tags": ["browser", "detection"],
 	"input": {
 		"mock_responses": [
 			{

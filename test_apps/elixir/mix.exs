@@ -12,7 +12,7 @@ defmodule E2eElixir.MixProject do
 
   defp deps do
     [
-      {:kreuzcrawl, "~> 0.1.0-rc.2"}
+      {:kreuzcrawl, "~> 0.1.0-rc.3"}
     ]
   end
 end

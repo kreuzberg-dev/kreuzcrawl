@@ -1,10 +1,7 @@
 {
 	"id": "crawl_exclude_path_pattern",
 	"description": "Skips URLs matching the exclude path pattern",
-	"tags": [
-		"crawl",
-		"filter"
-	],
+	"tags": ["crawl", "filter"],
 	"input": {
 		"mock_responses": [
 			{
@@ -37,9 +34,7 @@
 		],
 		"config": {
 			"max_depth": 1,
-			"exclude_paths": [
-				"/admin/.*"
-			],
+			"exclude_paths": ["/admin/.*"],
 			"respect_robots_txt": false
 		}
 	},

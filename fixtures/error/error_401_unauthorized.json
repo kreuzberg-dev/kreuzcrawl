@@ -1,9 +1,7 @@
 {
 	"id": "error_401_unauthorized",
 	"description": "Handles 401 Unauthorized response correctly",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"input": {
 		"mock_responses": [
 			{

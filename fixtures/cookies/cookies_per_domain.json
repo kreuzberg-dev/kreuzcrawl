@@ -1,10 +1,7 @@
 {
 	"id": "cookies_per_domain",
 	"description": "Isolates cookies per domain during crawl",
-	"tags": [
-		"cookies",
-		"isolation"
-	],
+	"tags": ["cookies", "isolation"],
 	"input": {
 		"mock_responses": [
 			{

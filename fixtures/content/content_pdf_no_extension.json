@@ -1,10 +1,7 @@
 {
 	"id": "content_pdf_no_extension",
 	"description": "Detects PDF content by Content-Type header when URL has no .pdf extension",
-	"tags": [
-		"content",
-		"pdf"
-	],
+	"tags": ["content", "pdf"],
 	"input": {
 		"mock_responses": [
 			{

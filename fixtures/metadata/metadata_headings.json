@@ -1,9 +1,7 @@
 {
 	"id": "metadata_headings",
 	"description": "Extracts heading hierarchy (h1-h6) from HTML page",
-	"tags": [
-		"metadata"
-	],
+	"tags": ["metadata"],
 	"input": {
 		"mock_responses": [
 			{

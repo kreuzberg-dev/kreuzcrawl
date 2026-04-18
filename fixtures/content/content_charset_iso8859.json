@@ -1,10 +1,7 @@
 {
 	"id": "content_charset_iso8859",
 	"description": "Handles ISO-8859-1 encoded page correctly",
-	"tags": [
-		"content",
-		"charset"
-	],
+	"tags": ["content", "charset"],
 	"input": {
 		"mock_responses": [
 			{

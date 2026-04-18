@@ -1,10 +1,7 @@
 {
 	"id": "markdown_fit_content",
 	"description": "Fit markdown removes navigation and boilerplate content",
-	"tags": [
-		"markdown",
-		"fit"
-	],
+	"tags": ["markdown", "fit"],
 	"input": {
 		"mock_responses": [
 			{

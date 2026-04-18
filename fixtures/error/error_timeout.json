@@ -1,9 +1,7 @@
 {
 	"id": "error_timeout",
 	"description": "Handles request timeout",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"input": {
 		"mock_responses": [
 			{

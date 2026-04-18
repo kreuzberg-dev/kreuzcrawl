@@ -1,10 +1,7 @@
 {
 	"id": "content_remove_tags",
 	"description": "Removes specified HTML elements by CSS selector before processing",
-	"tags": [
-		"content",
-		"filtering"
-	],
+	"tags": ["content", "filtering"],
 	"input": {
 		"mock_responses": [
 			{
@@ -17,11 +14,7 @@
 		],
 		"config": {
 			"respect_robots_txt": false,
-			"remove_tags": [
-				"nav",
-				"aside",
-				"footer"
-			]
+			"remove_tags": ["nav", "aside", "footer"]
 		}
 	},
 	"assertions": [

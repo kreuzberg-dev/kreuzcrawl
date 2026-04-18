@@ -3658,7 +3658,8 @@ impl Default for WasmCrawlEvent {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "createEngine")]
 pub fn create_engine(config: Option<WasmCrawlConfig>) -> Result<WasmCrawlEngineHandle, JsValue> {
-    let result = kreuzcrawl::create_engine(config.map(Into::into)).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let config_core: Option<kreuzcrawl::CrawlConfig> = config.map(Into::into);
+    let result = kreuzcrawl::create_engine(config_core).map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(WasmCrawlEngineHandle {
         inner: Arc::new(result),
     })

@@ -1,10 +1,7 @@
 {
 	"id": "crawl_multiple_redirects_in_traversal",
 	"description": "Multiple linked pages with redirects are handled during crawl traversal",
-	"tags": [
-		"crawl",
-		"redirect"
-	],
+	"tags": ["crawl", "redirect"],
 	"input": {
 		"mock_responses": [
 			{

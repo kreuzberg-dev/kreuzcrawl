@@ -1,10 +1,7 @@
 {
 	"id": "redirect_loop",
 	"description": "Detects redirect loop (A -> B -> A) and returns error",
-	"tags": [
-		"redirect",
-		"error"
-	],
+	"tags": ["redirect", "error"],
 	"input": {
 		"mock_responses": [
 			{

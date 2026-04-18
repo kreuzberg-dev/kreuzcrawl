@@ -1,10 +1,7 @@
 {
 	"id": "sitemap_compressed_gzip",
 	"description": "Parses a gzip-compressed sitemap file",
-	"tags": [
-		"sitemap",
-		"compression"
-	],
+	"tags": ["sitemap", "compression"],
 	"input": {
 		"mock_responses": [
 			{

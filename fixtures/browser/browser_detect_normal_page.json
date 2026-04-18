@@ -1,10 +1,7 @@
 {
 	"id": "browser_detect_normal_page",
 	"description": "Does NOT flag a normal server-rendered page as needing JS rendering",
-	"tags": [
-		"browser",
-		"detection"
-	],
+	"tags": ["browser", "detection"],
 	"input": {
 		"mock_responses": [
 			{

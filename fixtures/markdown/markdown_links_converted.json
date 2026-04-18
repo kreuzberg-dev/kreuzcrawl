@@ -1,9 +1,7 @@
 {
 	"id": "markdown_links_converted",
 	"description": "HTML links are converted to markdown link syntax",
-	"tags": [
-		"markdown"
-	],
+	"tags": ["markdown"],
 	"input": {
 		"mock_responses": [
 			{

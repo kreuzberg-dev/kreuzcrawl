@@ -6,7 +6,7 @@ use rustler::ResourceArc;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ExtractionMeta {
     pub cost: Option<f64>,
     pub prompt_tokens: Option<u64>,
@@ -30,7 +30,7 @@ impl ExtractionMeta {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ProxyConfig {
     pub url: String,
     pub username: Option<String>,
@@ -47,7 +47,7 @@ impl ProxyConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct BrowserConfig {
     pub mode: BrowserMode,
     pub endpoint: Option<String>,
@@ -73,7 +73,7 @@ impl BrowserConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CrawlConfig {
     pub max_depth: Option<usize>,
     pub max_pages: Option<usize>,
@@ -206,7 +206,7 @@ impl CrawlConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct DownloadedDocument {
     pub url: String,
     pub mime_type: String,
@@ -234,7 +234,7 @@ impl DownloadedDocument {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct InteractionResult {
     pub action_results: Vec<ActionResult>,
     pub final_html: String,
@@ -256,7 +256,7 @@ impl InteractionResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ActionResult {
     pub action_index: usize,
     pub action_type: String,
@@ -283,7 +283,7 @@ impl ActionResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ScrapeResult {
     pub status_code: u16,
     pub content_type: String,
@@ -377,7 +377,7 @@ impl ScrapeResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CrawlPageResult {
     pub url: String,
     pub normalized_url: String,
@@ -443,7 +443,7 @@ impl CrawlPageResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CrawlResult {
     pub pages: Vec<CrawlPageResult>,
     pub final_url: String,
@@ -477,7 +477,7 @@ impl CrawlResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct SitemapUrl {
     pub url: String,
     pub lastmod: Option<String>,
@@ -496,7 +496,7 @@ impl SitemapUrl {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct MapResult {
     pub urls: Vec<SitemapUrl>,
 }
@@ -509,7 +509,7 @@ impl MapResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct MarkdownResult {
     pub content: String,
     pub document_structure: Option<String>,
@@ -532,7 +532,7 @@ impl MarkdownResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CachedPage {
     pub url: String,
     pub status_code: u16,
@@ -563,7 +563,7 @@ impl CachedPage {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct LinkInfo {
     pub url: String,
     pub text: String,
@@ -584,7 +584,7 @@ impl LinkInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ImageInfo {
     pub url: String,
     pub alt: Option<String>,
@@ -605,7 +605,7 @@ impl ImageInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct FeedInfo {
     pub url: String,
     pub title: Option<String>,
@@ -622,7 +622,7 @@ impl FeedInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct JsonLdEntry {
     pub schema_type: String,
     pub name: Option<String>,
@@ -642,7 +642,7 @@ impl JsonLdEntry {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CookieInfo {
     pub name: String,
     pub value: String,
@@ -661,7 +661,7 @@ impl CookieInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct DownloadedAsset {
     pub url: String,
     pub content_hash: String,
@@ -690,7 +690,7 @@ impl DownloadedAsset {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ArticleMetadata {
     pub published_time: Option<String>,
     pub modified_time: Option<String>,
@@ -711,7 +711,7 @@ impl ArticleMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct HreflangEntry {
     pub lang: String,
     pub url: String,
@@ -726,7 +726,7 @@ impl HreflangEntry {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct FaviconInfo {
     pub url: String,
     pub rel: String,
@@ -745,7 +745,7 @@ impl FaviconInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct HeadingInfo {
     pub level: u8,
     pub text: String,
@@ -760,7 +760,7 @@ impl HeadingInfo {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ResponseMeta {
     pub etag: Option<String>,
     pub last_modified: Option<String>,
@@ -785,7 +785,7 @@ impl ResponseMeta {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PageMetadata {
     pub title: Option<String>,
     pub description: Option<String>,
@@ -882,7 +882,7 @@ impl PageMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CitationResult {
     pub content: String,
     pub references: Vec<CitationReference>,
@@ -897,7 +897,7 @@ impl CitationResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CitationReference {
     pub index: usize,
     pub url: String,
@@ -924,7 +924,7 @@ impl std::panic::RefUnwindSafe for CrawlEngineHandle {}
 
 impl rustler::Resource for CrawlEngineHandle {}
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct BatchScrapeResult {
     pub url: String,
     pub result: Option<ScrapeResult>,
@@ -941,7 +941,7 @@ impl BatchScrapeResult {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct BatchCrawlResult {
     pub url: String,
     pub result: Option<CrawlResult>,

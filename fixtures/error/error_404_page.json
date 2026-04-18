@@ -1,9 +1,7 @@
 {
 	"id": "error_404_page",
 	"description": "Handles 404 response correctly",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"input": {
 		"mock_responses": [
 			{

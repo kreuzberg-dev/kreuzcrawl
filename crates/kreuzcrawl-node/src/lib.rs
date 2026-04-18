@@ -14,7 +14,7 @@ static WORKER_POOL: std::sync::LazyLock<tokio::runtime::Runtime> = std::sync::La
         .expect("Failed to create Tokio runtime")
 });
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExtractionMeta {
     pub cost: Option<f64>,
@@ -27,7 +27,7 @@ pub struct JsExtractionMeta {
     pub chunks_processed: Option<i64>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsProxyConfig {
     pub url: Option<String>,
@@ -35,7 +35,7 @@ pub struct JsProxyConfig {
     pub password: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsBrowserConfig {
     pub mode: Option<JsBrowserMode>,
@@ -48,7 +48,7 @@ pub struct JsBrowserConfig {
     pub extra_wait: Option<i64>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCrawlConfig {
     #[napi(js_name = "maxDepth")]
@@ -118,7 +118,7 @@ pub struct JsCrawlConfig {
     pub save_browser_profile: Option<bool>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDownloadedDocument {
     pub url: Option<String>,
@@ -132,7 +132,7 @@ pub struct JsDownloadedDocument {
     pub headers: Option<HashMap<String, String>>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsInteractionResult {
     #[napi(js_name = "actionResults")]
@@ -144,7 +144,7 @@ pub struct JsInteractionResult {
     pub screenshot: Option<Vec<u8>>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsActionResult {
     #[napi(js_name = "actionIndex")]
@@ -156,7 +156,7 @@ pub struct JsActionResult {
     pub error: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsScrapeResult {
     #[napi(js_name = "statusCode")]
@@ -209,7 +209,7 @@ pub struct JsScrapeResult {
     pub downloaded_document: Option<JsDownloadedDocument>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCrawlPageResult {
     pub url: Option<String>,
@@ -246,7 +246,7 @@ pub struct JsCrawlPageResult {
     pub downloaded_document: Option<JsDownloadedDocument>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCrawlResult {
     pub pages: Option<Vec<JsCrawlPageResult>>,
@@ -262,7 +262,7 @@ pub struct JsCrawlResult {
     pub normalized_urls: Option<Vec<String>>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsSitemapUrl {
     pub url: Option<String>,
@@ -271,13 +271,13 @@ pub struct JsSitemapUrl {
     pub priority: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsMapResult {
     pub urls: Option<Vec<JsSitemapUrl>>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsMarkdownResult {
     pub content: Option<String>,
@@ -290,7 +290,7 @@ pub struct JsMarkdownResult {
     pub fit_content: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCachedPage {
     pub url: Option<String>,
@@ -306,7 +306,7 @@ pub struct JsCachedPage {
     pub cached_at: Option<i64>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsLinkInfo {
     pub url: Option<String>,
@@ -317,7 +317,7 @@ pub struct JsLinkInfo {
     pub nofollow: Option<bool>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsImageInfo {
     pub url: Option<String>,
@@ -327,7 +327,7 @@ pub struct JsImageInfo {
     pub source: Option<JsImageSource>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsFeedInfo {
     pub url: Option<String>,
@@ -336,7 +336,7 @@ pub struct JsFeedInfo {
     pub feed_type: Option<JsFeedType>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsJsonLdEntry {
     #[napi(js_name = "schemaType")]
@@ -345,7 +345,7 @@ pub struct JsJsonLdEntry {
     pub raw: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCookieInfo {
     pub name: Option<String>,
@@ -354,7 +354,7 @@ pub struct JsCookieInfo {
     pub path: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDownloadedAsset {
     pub url: Option<String>,
@@ -369,7 +369,7 @@ pub struct JsDownloadedAsset {
     pub html_tag: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsArticleMetadata {
     #[napi(js_name = "publishedTime")]
@@ -381,14 +381,14 @@ pub struct JsArticleMetadata {
     pub tags: Option<Vec<String>>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHreflangEntry {
     pub lang: Option<String>,
     pub url: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsFaviconInfo {
     pub url: Option<String>,
@@ -398,14 +398,14 @@ pub struct JsFaviconInfo {
     pub mime_type: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHeadingInfo {
     pub level: Option<u8>,
     pub text: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsResponseMeta {
     pub etag: Option<String>,
@@ -422,7 +422,7 @@ pub struct JsResponseMeta {
     pub content_encoding: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageMetadata {
     pub title: Option<String>,
@@ -502,14 +502,14 @@ pub struct JsPageMetadata {
     pub word_count: Option<i64>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCitationResult {
     pub content: Option<String>,
     pub references: Option<Vec<JsCitationReference>>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCitationReference {
     pub index: Option<i64>,
@@ -526,7 +526,7 @@ pub struct JsCrawlEngineHandle {
 #[napi]
 impl JsCrawlEngineHandle {}
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsBatchScrapeResult {
     pub url: Option<String>,
@@ -534,7 +534,7 @@ pub struct JsBatchScrapeResult {
     pub error: Option<String>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsBatchCrawlResult {
     pub url: Option<String>,
@@ -543,7 +543,7 @@ pub struct JsBatchCrawlResult {
 }
 
 #[napi(string_enum = "snake_case")]
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub enum JsBrowserMode {
     Auto,
     Always,
@@ -558,7 +558,7 @@ impl Default for JsBrowserMode {
 }
 
 #[napi(string_enum = "snake_case")]
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub enum JsBrowserWait {
     NetworkIdle,
     Selector,
@@ -572,7 +572,7 @@ impl Default for JsBrowserWait {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsAuthConfig {
     #[napi(js_name = "type")]
@@ -599,7 +599,7 @@ impl Default for JsAuthConfig {
 }
 
 #[napi(string_enum = "snake_case")]
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub enum JsLinkType {
     Internal,
     External,
@@ -615,7 +615,7 @@ impl Default for JsLinkType {
 }
 
 #[napi(string_enum = "snake_case")]
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub enum JsImageSource {
     Img,
     PictureSource,
@@ -631,7 +631,7 @@ impl Default for JsImageSource {
 }
 
 #[napi(string_enum = "snake_case")]
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub enum JsFeedType {
     Rss,
     Atom,
@@ -646,7 +646,7 @@ impl Default for JsFeedType {
 }
 
 #[napi(string_enum = "snake_case")]
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub enum JsAssetCategory {
     Document,
     Image,
@@ -668,7 +668,7 @@ impl Default for JsAssetCategory {
 }
 
 #[napi(string_enum)]
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub enum JsCrawlEvent {
     Page,
     Error,
@@ -685,7 +685,7 @@ impl Default for JsCrawlEvent {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "createEngine")]
 pub fn create_engine(config: Option<JsCrawlConfig>) -> Result<JsCrawlEngineHandle> {
-    let config_core = config.map(Into::into);
+    let config_core: Option<kreuzcrawl::CrawlConfig> = config.map(Into::into);
     kreuzcrawl::create_engine(config_core)
         .map(|val| JsCrawlEngineHandle { inner: Arc::new(val) })
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))

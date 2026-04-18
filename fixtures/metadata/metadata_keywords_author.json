@@ -1,9 +1,7 @@
 {
 	"id": "metadata_keywords_author",
 	"description": "Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata",
-	"tags": [
-		"metadata"
-	],
+	"tags": ["metadata"],
 	"input": {
 		"mock_responses": [
 			{
