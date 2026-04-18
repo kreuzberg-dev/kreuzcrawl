@@ -15,7 +15,9 @@ final class StealthTest extends TestCase
     /** User-agent rotation config is accepted and crawl succeeds */
     public function test_stealth_ua_rotation_config(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"user_agents":["Mozilla/5.0 (Windows NT 10.0)","Chrome/120.0.0.0"]}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->user_agents = ["Mozilla/5.0 (Windows NT 10.0)", "Chrome/120.0.0.0"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/stealth_ua_rotation_config';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);

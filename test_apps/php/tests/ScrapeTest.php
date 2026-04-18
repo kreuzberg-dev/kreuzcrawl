@@ -41,7 +41,10 @@ final class ScrapeTest extends TestCase
     /** Only downloads image assets when asset_types filter is set */
     public function test_scrape_asset_type_filter(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"asset_types":["image"],"download_assets":true}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->asset_types = ["image"];
+        $engine_config->download_assets = true;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/scrape_asset_type_filter';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(200, $result->status_code);

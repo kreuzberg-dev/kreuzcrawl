@@ -15,7 +15,10 @@ final class AuthTest extends TestCase
     /** Sends HTTP Basic authentication header */
     public function test_auth_basic_http(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"auth":{"password":"testpass","type":"basic","username":"testuser"},"respect_robots_txt":false}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->auth = ["password" => "testpass", "type" => "basic", "username" => "testuser"];
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/auth_basic_http';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->auth_header_sent);
@@ -25,7 +28,10 @@ final class AuthTest extends TestCase
     /** Sends Bearer token in Authorization header */
     public function test_auth_bearer_token(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"auth":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test","type":"bearer"},"respect_robots_txt":false}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->auth = ["token" => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test", "type" => "bearer"];
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/auth_bearer_token';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->auth_header_sent);
@@ -35,7 +41,10 @@ final class AuthTest extends TestCase
     /** Sends authentication via custom header (X-API-Key) */
     public function test_auth_custom_header(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"auth":{"name":"X-API-Key","type":"header","value":"sk-test-key-12345"},"respect_robots_txt":false}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->auth = ["name" => "X-API-Key", "type" => "header", "value" => "sk-test-key-12345"];
+        $engine_config->respect_robots_txt = false;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/auth_custom_header';
         $result = Kreuzcrawl::scrape($engine, $url);
         $this->assertEquals(true, $result->auth_header_sent);

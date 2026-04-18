@@ -15,7 +15,9 @@ final class ValidationTest extends TestCase
     /** Invalid regex in exclude_paths is rejected */
     public function test_validation_invalid_exclude_regex(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"exclude_paths":["(unclosed"]}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->exclude_paths = ["(unclosed"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_invalid_exclude_regex';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -24,7 +26,9 @@ final class ValidationTest extends TestCase
     /** Invalid regex in include_paths is rejected */
     public function test_validation_invalid_include_regex(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"include_paths":["[invalid"]}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->include_paths = ["[invalid"];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_invalid_include_regex';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -33,7 +37,9 @@ final class ValidationTest extends TestCase
     /** Retry code outside 100-599 is rejected */
     public function test_validation_invalid_retry_code(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"retry_codes":[999]}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->retry_codes = [999];
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_invalid_retry_code';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);

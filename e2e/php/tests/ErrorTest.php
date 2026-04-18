@@ -112,7 +112,10 @@ final class ErrorTest extends TestCase
     /** Proxy pointing to unreachable address causes connection error during scrape */
     public function test_error_invalid_proxy(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"proxy":{"url":"http://127.0.0.1:1"},"request_timeout":2000}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->proxy = ["url" => "http://127.0.0.1:1"];
+        $engine_config->request_timeout = 2000;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_invalid_proxy';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -141,7 +144,11 @@ final class ErrorTest extends TestCase
     /** Retries request on 503 Service Unavailable response */
     public function test_error_retry_503(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"respect_robots_txt":false,"retry_codes":[503],"retry_count":2}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine_config->retry_codes = [503];
+        $engine_config->retry_count = 2;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_retry_503';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
@@ -150,7 +157,11 @@ final class ErrorTest extends TestCase
     /** Implements exponential backoff when retrying failed requests */
     public function test_error_retry_backoff(): void
     {
-        $engine = Kreuzcrawl::createEngineFromJson('{"respect_robots_txt":false,"retry_codes":[429],"retry_count":3}');
+        $engine_config = CrawlConfig::default();
+        $engine_config->respect_robots_txt = false;
+        $engine_config->retry_codes = [429];
+        $engine_config->retry_count = 3;
+        $engine = Kreuzcrawl::createEngine($engine_config);
         $url = getenv('MOCK_SERVER_URL') . '/fixtures/error_retry_backoff';
         $this->expectException(\Exception::class);
         Kreuzcrawl::scrape($engine, $url);
