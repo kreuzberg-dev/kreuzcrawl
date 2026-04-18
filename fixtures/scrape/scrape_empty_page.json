@@ -1,10 +1,7 @@
 {
 	"id": "scrape_empty_page",
 	"description": "Handles an empty HTML document without errors",
-	"tags": [
-		"scrape",
-		"edge-case"
-	],
+	"tags": ["scrape", "edge-case"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,10 +1,7 @@
 {
 	"id": "links_document_types",
 	"description": "Detects PDF, DOCX, XLSX links as document type",
-	"tags": [
-		"links",
-		"documents"
-	],
+	"tags": ["links", "documents"],
 	"input": {
 		"mock_responses": [
 			{
@@ -20,9 +17,7 @@
 		{
 			"type": "contains_all",
 			"field": "links[].link_type",
-			"values": [
-				"document"
-			]
+			"values": ["document"]
 		}
 	]
 }

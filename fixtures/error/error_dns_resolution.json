@@ -1,10 +1,7 @@
 {
 	"id": "error_dns_resolution",
 	"description": "Handles DNS resolution failure gracefully",
-	"tags": [
-		"error",
-		"network"
-	],
+	"tags": ["error", "network"],
 	"input": {
 		"mock_responses": [
 			{

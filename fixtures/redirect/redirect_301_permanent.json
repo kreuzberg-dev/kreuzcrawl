@@ -1,10 +1,7 @@
 {
 	"id": "redirect_301_permanent",
 	"description": "Follows 301 permanent redirect and returns final page content",
-	"tags": [
-		"redirect",
-		"smoke"
-	],
+	"tags": ["redirect", "smoke"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,10 +1,7 @@
 {
 	"id": "error_connection_refused",
 	"description": "Handles connection refused error gracefully",
-	"tags": [
-		"error",
-		"network"
-	],
+	"tags": ["error", "network"],
 	"input": {
 		"mock_responses": [
 			{

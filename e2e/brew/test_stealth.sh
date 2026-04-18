@@ -4,15 +4,15 @@
 set -euo pipefail
 
 test_stealth_ua_rotation_config() {
-    # User-agent rotation config is accepted and crawl succeeds
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/stealth_ua_rotation_config" --format json)
+  # User-agent rotation config is accepted and crawl succeeds
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/stealth_ua_rotation_config" --format json)
 
-    local val_status_code
-    val_status_code=$(echo "$output" | jq -r '.status_code')
-    assert_equals "$val_status_code" '200' 'status_code'
+  local val_status_code
+  val_status_code=$(echo "$output" | jq -r '.status_code')
+  assert_equals "$val_status_code" '200' 'status_code'
 }
 
 run_tests_stealth() {
-    run_test test_stealth_ua_rotation_config
+  run_test test_stealth_ua_rotation_config
 }

@@ -1,10 +1,7 @@
 {
 	"id": "links_base_tag",
 	"description": "Resolves relative URLs using base tag href",
-	"tags": [
-		"links",
-		"resolution"
-	],
+	"tags": ["links", "resolution"],
 	"input": {
 		"mock_responses": [
 			{

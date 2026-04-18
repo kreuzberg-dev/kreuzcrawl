@@ -1,9 +1,7 @@
 {
 	"id": "metadata_response_headers",
 	"description": "Extracts response metadata from HTTP headers (etag, server, content-language)",
-	"tags": [
-		"metadata"
-	],
+	"tags": ["metadata"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,9 +1,7 @@
 {
 	"id": "redirect_303_see_other",
 	"description": "Follows 303 See Other redirect (method changes to GET)",
-	"tags": [
-		"redirect"
-	],
+	"tags": ["redirect"],
 	"input": {
 		"mock_responses": [
 			{

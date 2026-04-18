@@ -1,9 +1,7 @@
 {
 	"id": "metadata_article_times",
 	"description": "Extracts article:published_time, modified_time, author, section, and tags",
-	"tags": [
-		"metadata"
-	],
+	"tags": ["metadata"],
 	"input": {
 		"mock_responses": [
 			{

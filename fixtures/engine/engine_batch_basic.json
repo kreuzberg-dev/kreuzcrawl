@@ -1,10 +1,7 @@
 {
 	"id": "engine_batch_basic",
 	"description": "CrawlEngine with defaults batch scrapes like the free function",
-	"tags": [
-		"engine",
-		"batch"
-	],
+	"tags": ["engine", "batch"],
 	"input": {
 		"mock_responses": [
 			{
@@ -29,10 +26,7 @@
 				"body_inline": "<html><head><title>Batch 2</title></head><body>Content 2</body></html>"
 			}
 		],
-		"batch_urls": [
-			"/page1",
-			"/page2"
-		],
+		"batch_urls": ["/page1", "/page2"],
 		"config": {}
 	},
 	"assertions": [

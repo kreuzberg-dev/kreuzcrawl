@@ -1,9 +1,7 @@
 {
 	"id": "error_408_request_timeout",
 	"description": "Handles 408 Request Timeout response correctly",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"input": {
 		"mock_responses": [
 			{

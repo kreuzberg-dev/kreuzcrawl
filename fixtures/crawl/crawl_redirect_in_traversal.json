@@ -1,10 +1,7 @@
 {
 	"id": "crawl_redirect_in_traversal",
 	"description": "Links that redirect are followed during crawl traversal",
-	"tags": [
-		"crawl",
-		"redirect"
-	],
+	"tags": ["crawl", "redirect"],
 	"input": {
 		"mock_responses": [
 			{

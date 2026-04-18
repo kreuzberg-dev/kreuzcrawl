@@ -1,10 +1,7 @@
 {
 	"id": "sitemap_empty",
 	"description": "Handles empty sitemap gracefully",
-	"tags": [
-		"sitemap",
-		"edge-case"
-	],
+	"tags": ["sitemap", "edge-case"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,10 +1,7 @@
 {
 	"id": "robots_user_agent_specific",
 	"description": "Matches user-agent specific rules in robots.txt",
-	"tags": [
-		"robots",
-		"user-agent"
-	],
+	"tags": ["robots", "user-agent"],
 	"input": {
 		"mock_responses": [
 			{

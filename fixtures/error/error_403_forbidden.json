@@ -1,9 +1,7 @@
 {
 	"id": "error_403_forbidden",
 	"description": "Handles 403 Forbidden response correctly",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"input": {
 		"mock_responses": [
 			{

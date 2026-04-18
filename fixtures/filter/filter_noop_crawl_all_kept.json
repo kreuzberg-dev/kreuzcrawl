@@ -1,11 +1,7 @@
 {
 	"id": "filter_noop_crawl_all_kept",
 	"description": "NoopFilter keeps all pages during a multi-page crawl",
-	"tags": [
-		"filter",
-		"crawl",
-		"noop"
-	],
+	"tags": ["filter", "crawl", "noop"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,4 +1,39 @@
 # Changelog
 
-!!! note "Under Construction"
-    This page is being written. Check back soon.
+## 0.1.0-rc.3
+
+### Fixes
+
+- **Go**: Fixed module path to `github.com/kreuzberg-dev/kreuzcrawl/packages/go` for proper Go module resolution
+- **Java**: Added extract-from-JAR native library loading — published Maven artifact now works standalone without manual `java.library.path` configuration
+- **Elixir**: Switched to `RustlerPrecompiled` with GitHub release URLs for precompiled NIF binaries
+- **PHP**: Fixed `createEngineFromJson()` — now uses `CrawlConfig` object construction matching the binding API
+- **PHP**: Fixed risky test warning for fixtures with all skipped assertions
+- **NuGet**: Use `PackageLicenseFile` instead of `PackageLicenseExpression` (Elastic-2.0 not OSI-approved)
+- **Docker (musl)**: Source cargo env before build (PATH not inherited on ARM)
+- **Ruby (macOS)**: Removed `setup-openssl` action that caused OpenSSL conflicts
+
+### Features
+
+- **Test apps**: Added test_apps for all 11 languages (Rust, Python, Node, Go, Java, C#, PHP, Ruby, Elixir, WASM, Homebrew CLI)
+- **Brew generator**: New shell-script e2e test generator for Homebrew CLI testing
+- **WASM**: Full e2e test support — removed incorrect language skips from all fixtures
+- **WASM codegen**: Fixed `mock_url` and `handle` argument handling in generated tests
+- **Go**: Updated to Go 1.26
+- **Idempotency**: All 14 registry publish jobs check for existing packages before publishing
+
+### Infrastructure
+
+- **Publish workflow**: 66/76 jobs succeeded (0 failures, 10 skipped) on rc.2
+- **Shared actions**: Upstreamed `setup-openssl` fix, leveraged shared build/publish actions from `kreuzberg-dev/actions`
+- **Fixtures**: Removed all language skip blocks — all bindings are full crawlers
+
+## 0.1.0-rc.2
+
+- Initial multi-registry publish (crates.io, PyPI, npm, RubyGems, Maven Central, NuGet, Packagist, Hex.pm, Go, WASM, CLI binaries, Docker, Homebrew)
+- Published kreuzcrawl and kreuzcrawl-cli to crates.io
+- Created Homebrew formula in homebrew-tap repo
+
+## 0.1.0-rc.1
+
+- Initial release candidate

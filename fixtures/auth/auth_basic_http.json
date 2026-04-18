@@ -1,10 +1,7 @@
 {
 	"id": "auth_basic_http",
 	"description": "Sends HTTP Basic authentication header",
-	"tags": [
-		"auth",
-		"basic"
-	],
+	"tags": ["auth", "basic"],
 	"input": {
 		"mock_responses": [
 			{

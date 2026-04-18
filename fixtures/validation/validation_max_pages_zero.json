@@ -1,9 +1,7 @@
 {
 	"id": "validation_max_pages_zero",
 	"description": "max_pages=0 is rejected as invalid config",
-	"tags": [
-		"validation"
-	],
+	"tags": ["validation"],
 	"input": {
 		"mock_responses": [
 			{

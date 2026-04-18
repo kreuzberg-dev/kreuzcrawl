@@ -1,10 +1,7 @@
 {
 	"id": "crawl_concurrent_limit",
 	"description": "Respects max concurrent requests limit during crawl",
-	"tags": [
-		"crawl",
-		"concurrency"
-	],
+	"tags": ["crawl", "concurrency"],
 	"input": {
 		"mock_responses": [
 			{

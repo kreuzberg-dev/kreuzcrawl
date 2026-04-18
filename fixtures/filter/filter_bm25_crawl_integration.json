@@ -1,11 +1,7 @@
 {
 	"id": "filter_bm25_crawl_integration",
 	"description": "BM25 filter works during multi-page crawl, keeping relevant pages",
-	"tags": [
-		"filter",
-		"crawl",
-		"bm25"
-	],
+	"tags": ["filter", "crawl", "bm25"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,9 +1,7 @@
 {
 	"id": "validation_timeout_zero",
 	"description": "Zero request timeout is rejected as invalid config",
-	"tags": [
-		"validation"
-	],
+	"tags": ["validation"],
 	"input": {
 		"mock_responses": [
 			{

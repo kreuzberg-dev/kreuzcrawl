@@ -1,9 +1,7 @@
 {
 	"id": "metadata_favicons",
 	"description": "Extracts favicon link tags including apple-touch-icon",
-	"tags": [
-		"metadata"
-	],
+	"tags": ["metadata"],
 	"input": {
 		"mock_responses": [
 			{

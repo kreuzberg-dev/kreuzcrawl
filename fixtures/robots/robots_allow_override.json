@@ -1,10 +1,7 @@
 {
 	"id": "robots_allow_override",
 	"description": "Allow directive overrides Disallow for specific paths",
-	"tags": [
-		"robots",
-		"allow"
-	],
+	"tags": ["robots", "allow"],
 	"input": {
 		"mock_responses": [
 			{

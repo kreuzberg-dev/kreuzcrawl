@@ -1,9 +1,7 @@
 {
 	"id": "crawl_stay_on_domain",
 	"description": "Does not follow external links when stay_on_domain is true",
-	"tags": [
-		"crawl"
-	],
+	"tags": ["crawl"],
 	"input": {
 		"mock_responses": [
 			{

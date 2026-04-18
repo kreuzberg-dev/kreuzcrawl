@@ -1,10 +1,7 @@
 {
 	"id": "content_large_page_limit",
 	"description": "Respects max body size limit and truncates or skips oversized pages",
-	"tags": [
-		"content",
-		"limits"
-	],
+	"tags": ["content", "limits"],
 	"input": {
 		"mock_responses": [
 			{

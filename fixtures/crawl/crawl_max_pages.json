@@ -1,9 +1,7 @@
 {
 	"id": "crawl_max_pages",
 	"description": "Stops crawling at page budget limit",
-	"tags": [
-		"crawl"
-	],
+	"tags": ["crawl"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,10 +1,7 @@
 {
 	"id": "error_partial_response",
 	"description": "Handles incomplete or truncated HTTP response",
-	"tags": [
-		"error",
-		"network"
-	],
+	"tags": ["error", "network"],
 	"input": {
 		"mock_responses": [
 			{

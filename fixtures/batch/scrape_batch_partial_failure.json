@@ -1,9 +1,7 @@
 {
 	"id": "scrape_batch_partial_failure",
 	"description": "Batch scrape with one URL failing returns partial results",
-	"tags": [
-		"batch"
-	],
+	"tags": ["batch"],
 	"input": {
 		"mock_responses": [
 			{
@@ -39,11 +37,7 @@
 				"body_inline": "<html><body><h1>Good 2</h1></body></html>"
 			}
 		],
-		"batch_urls": [
-			"/good1",
-			"/bad",
-			"/good2"
-		],
+		"batch_urls": ["/good1", "/bad", "/good2"],
 		"config": {}
 	},
 	"assertions": [

@@ -1,10 +1,7 @@
 {
 	"id": "crawl_self_link_no_loop",
 	"description": "Page linking to itself does not cause infinite crawl loop",
-	"tags": [
-		"crawl",
-		"dedup"
-	],
+	"tags": ["crawl", "dedup"],
 	"input": {
 		"mock_responses": [
 			{

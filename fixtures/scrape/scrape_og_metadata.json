@@ -1,11 +1,7 @@
 {
 	"id": "scrape_og_metadata",
 	"description": "Extracts full Open Graph metadata from a page",
-	"tags": [
-		"scrape",
-		"metadata",
-		"og"
-	],
+	"tags": ["scrape", "metadata", "og"],
 	"input": {
 		"mock_responses": [
 			{

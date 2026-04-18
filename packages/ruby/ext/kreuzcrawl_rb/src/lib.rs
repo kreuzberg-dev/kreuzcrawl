@@ -40,7 +40,7 @@ fn json_to_ruby(handle: &Ruby, val: serde_json::Value) -> magnus::Value {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ExtractionMeta")]
 #[serde(default)]
 pub struct ExtractionMeta {
@@ -111,7 +111,7 @@ impl ExtractionMeta {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ProxyConfig")]
 #[serde(default)]
 pub struct ProxyConfig {
@@ -162,7 +162,7 @@ impl ProxyConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::BrowserConfig")]
 #[serde(default)]
 pub struct BrowserConfig {
@@ -228,7 +228,7 @@ impl BrowserConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CrawlConfig")]
 #[serde(default)]
 pub struct CrawlConfig {
@@ -545,7 +545,7 @@ impl CrawlConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::DownloadedDocument")]
 #[serde(default)]
 pub struct DownloadedDocument {
@@ -632,7 +632,7 @@ impl DownloadedDocument {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::InteractionResult")]
 #[serde(default)]
 pub struct InteractionResult {
@@ -695,7 +695,7 @@ impl InteractionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ActionResult")]
 #[serde(default)]
 pub struct ActionResult {
@@ -766,7 +766,7 @@ impl ActionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ScrapeResult")]
 #[serde(default)]
 pub struct ScrapeResult {
@@ -1068,7 +1068,7 @@ impl ScrapeResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CrawlPageResult")]
 #[serde(default)]
 pub struct CrawlPageResult {
@@ -1294,7 +1294,7 @@ impl CrawlPageResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CrawlResult")]
 #[serde(default)]
 pub struct CrawlResult {
@@ -1381,7 +1381,7 @@ impl CrawlResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::SitemapUrl")]
 #[serde(default)]
 pub struct SitemapUrl {
@@ -1439,7 +1439,7 @@ impl SitemapUrl {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::MapResult")]
 #[serde(default)]
 pub struct MapResult {
@@ -1476,7 +1476,7 @@ impl MapResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::MarkdownResult")]
 #[serde(default)]
 pub struct MarkdownResult {
@@ -1555,7 +1555,7 @@ impl MarkdownResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CachedPage")]
 #[serde(default)]
 pub struct CachedPage {
@@ -1642,7 +1642,7 @@ impl CachedPage {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::LinkInfo")]
 #[serde(default)]
 pub struct LinkInfo {
@@ -1701,7 +1701,7 @@ impl LinkInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ImageInfo")]
 #[serde(default)]
 pub struct ImageInfo {
@@ -1760,7 +1760,7 @@ impl ImageInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::FeedInfo")]
 #[serde(default)]
 pub struct FeedInfo {
@@ -1801,7 +1801,7 @@ impl FeedInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::JsonLdEntry")]
 #[serde(default)]
 pub struct JsonLdEntry {
@@ -1852,7 +1852,7 @@ impl JsonLdEntry {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CookieInfo")]
 #[serde(default)]
 pub struct CookieInfo {
@@ -1910,7 +1910,7 @@ impl CookieInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::DownloadedAsset")]
 #[serde(default)]
 pub struct DownloadedAsset {
@@ -1976,7 +1976,7 @@ impl DownloadedAsset {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ArticleMetadata")]
 #[serde(default)]
 pub struct ArticleMetadata {
@@ -2047,7 +2047,7 @@ impl ArticleMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::HreflangEntry")]
 #[serde(default)]
 pub struct HreflangEntry {
@@ -2091,7 +2091,7 @@ impl HreflangEntry {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::FaviconInfo")]
 #[serde(default)]
 pub struct FaviconInfo {
@@ -2149,7 +2149,7 @@ impl FaviconInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::HeadingInfo")]
 #[serde(default)]
 pub struct HeadingInfo {
@@ -2193,7 +2193,7 @@ impl HeadingInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ResponseMeta")]
 #[serde(default)]
 pub struct ResponseMeta {
@@ -2280,7 +2280,7 @@ impl ResponseMeta {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::PageMetadata")]
 #[serde(default)]
 pub struct PageMetadata {
@@ -2698,7 +2698,7 @@ impl PageMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CitationResult")]
 #[serde(default)]
 pub struct CitationResult {
@@ -2742,7 +2742,7 @@ impl CitationResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::CitationReference")]
 #[serde(default)]
 pub struct CitationReference {
@@ -2811,7 +2811,7 @@ unsafe impl TryConvertOwned for CrawlEngineHandle {}
 
 impl CrawlEngineHandle {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::BatchScrapeResult")]
 #[serde(default)]
 pub struct BatchScrapeResult {
@@ -2862,7 +2862,7 @@ impl BatchScrapeResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::BatchCrawlResult")]
 #[serde(default)]
 pub struct BatchCrawlResult {
@@ -4354,9 +4354,15 @@ impl From<kreuzcrawl::BrowserWait> for BrowserWait {
 impl From<AuthConfig> for kreuzcrawl::AuthConfig {
     fn from(val: AuthConfig) -> Self {
         match val {
-            AuthConfig::Basic { username, password } => Self::Basic { username, password },
-            AuthConfig::Bearer { token } => Self::Bearer { token },
-            AuthConfig::Header { name, value } => Self::Header { name, value },
+            AuthConfig::Basic { username, password } => Self::Basic {
+                username: val.username,
+                password: val.password,
+            },
+            AuthConfig::Bearer { token } => Self::Bearer { token: val.token },
+            AuthConfig::Header { name, value } => Self::Header {
+                name: val.name,
+                value: val.value,
+            },
         }
     }
 }
@@ -4364,9 +4370,15 @@ impl From<AuthConfig> for kreuzcrawl::AuthConfig {
 impl From<kreuzcrawl::AuthConfig> for AuthConfig {
     fn from(val: kreuzcrawl::AuthConfig) -> Self {
         match val {
-            kreuzcrawl::AuthConfig::Basic { username, password } => Self::Basic { username, password },
-            kreuzcrawl::AuthConfig::Bearer { token } => Self::Bearer { token },
-            kreuzcrawl::AuthConfig::Header { name, value } => Self::Header { name, value },
+            kreuzcrawl::AuthConfig::Basic { username, password } => Self::Basic {
+                username: val.username,
+                password: val.password,
+            },
+            kreuzcrawl::AuthConfig::Bearer { token } => Self::Bearer { token: val.token },
+            kreuzcrawl::AuthConfig::Header { name, value } => Self::Header {
+                name: val.name,
+                value: val.value,
+            },
         }
     }
 }
@@ -4472,9 +4484,14 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
 impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
     fn from(val: kreuzcrawl::CrawlEvent) -> Self {
         match val {
-            kreuzcrawl::CrawlEvent::Page(_0) => Self::Page { _0: (*_0).into() },
-            kreuzcrawl::CrawlEvent::Error { url, error } => Self::Error { url, error },
-            kreuzcrawl::CrawlEvent::Complete { pages_crawled } => Self::Complete { pages_crawled },
+            kreuzcrawl::CrawlEvent::Page(_0) => Self::Page { _0: val._0.into() },
+            kreuzcrawl::CrawlEvent::Error { url, error } => Self::Error {
+                url: val.url,
+                error: val.error,
+            },
+            kreuzcrawl::CrawlEvent::Complete { pages_crawled } => Self::Complete {
+                pages_crawled: val.pages_crawled,
+            },
         }
     }
 }

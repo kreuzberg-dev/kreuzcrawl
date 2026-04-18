@@ -1,10 +1,7 @@
 {
 	"id": "error_empty_response",
 	"description": "Handles 200 with completely empty body gracefully",
-	"tags": [
-		"error",
-		"edge-case"
-	],
+	"tags": ["error", "edge-case"],
 	"input": {
 		"mock_responses": [
 			{

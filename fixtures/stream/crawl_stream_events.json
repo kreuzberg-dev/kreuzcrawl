@@ -1,9 +1,7 @@
 {
 	"id": "crawl_stream_events",
 	"description": "Crawl stream produces page and complete events",
-	"tags": [
-		"stream"
-	],
+	"tags": ["stream"],
 	"input": {
 		"mock_responses": [
 			{

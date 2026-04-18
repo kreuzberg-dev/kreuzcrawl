@@ -1,10 +1,7 @@
 {
 	"id": "error_waf_false_403",
 	"description": "Detects WAF/bot protection false 403 (Cloudflare challenge page)",
-	"tags": [
-		"error",
-		"waf"
-	],
+	"tags": ["error", "waf"],
 	"input": {
 		"mock_responses": [
 			{

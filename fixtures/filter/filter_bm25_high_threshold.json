@@ -1,10 +1,7 @@
 {
 	"id": "filter_bm25_high_threshold",
 	"description": "BM25 filter with very high threshold filters out all pages",
-	"tags": [
-		"filter",
-		"bm25"
-	],
+	"tags": ["filter", "bm25"],
 	"input": {
 		"mock_responses": [
 			{

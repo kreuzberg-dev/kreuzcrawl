@@ -57,8 +57,8 @@ final class NativeLib {
 		try {
 			System.loadLibrary("kreuzcrawl_ffi");
 		} catch (UnsatisfiedLinkError e) {
-			String msg = "Failed to load kreuzcrawl native library. Expected resource: " + nativesDir + "/" + libName
-					+ libExt + " (RID: " + nativesRid + "). "
+			String msg = "Failed to load kreuzcrawl_ffi native library. Expected resource: " + nativesDir + "/"
+					+ libName + libExt + " (RID: " + nativesRid + "). "
 					+ "Ensure the library is bundled in the JAR under natives/{os-arch}/, "
 					+ "or place it on the system library path (java.library.path).";
 			UnsatisfiedLinkError out = new UnsatisfiedLinkError(msg + " Original error: " + e.getMessage());
@@ -92,7 +92,7 @@ final class NativeLib {
 	private static Path extractOrReuseNativeDirectory(String nativesDir) throws Exception {
 		URL location = NativeLib.class.getProtectionDomain().getCodeSource().getLocation();
 		if (location == null) {
-			throw new IllegalStateException("Missing code source location for kreuzcrawl JAR");
+			throw new IllegalStateException("Missing code source location for kreuzcrawl_ffi JAR");
 		}
 
 		Path codePath = Path.of(location.toURI());
@@ -102,7 +102,7 @@ final class NativeLib {
 			if (cachedExtractDir != null && key.equals(cachedExtractKey)) {
 				return cachedExtractDir;
 			}
-			Path tempDir = Files.createTempDirectory("kreuzcrawl_native");
+			Path tempDir = Files.createTempDirectory("kreuzcrawl_ffi_native");
 			tempDir.toFile().deleteOnExit();
 			List<Path> extracted = extractNativeDirectory(codePath, nativesDir, tempDir);
 			if (extracted.isEmpty()) {

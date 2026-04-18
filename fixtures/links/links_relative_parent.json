@@ -1,10 +1,7 @@
 {
 	"id": "links_relative_parent",
 	"description": "Resolves ../ and ./ relative parent path links correctly",
-	"tags": [
-		"links",
-		"resolution"
-	],
+	"tags": ["links", "resolution"],
 	"input": {
 		"mock_responses": [
 			{

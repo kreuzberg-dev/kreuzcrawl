@@ -1,10 +1,7 @@
 {
 	"id": "content_utf8_bom",
 	"description": "Handles UTF-8 content with BOM marker correctly",
-	"tags": [
-		"content",
-		"charset"
-	],
+	"tags": ["content", "charset"],
 	"input": {
 		"mock_responses": [
 			{

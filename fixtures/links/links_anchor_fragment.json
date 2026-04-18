@@ -1,9 +1,7 @@
 {
 	"id": "links_anchor_fragment",
 	"description": "Identifies fragment-only links as anchor type",
-	"tags": [
-		"links"
-	],
+	"tags": ["links"],
 	"input": {
 		"mock_responses": [
 			{
@@ -19,9 +17,7 @@
 		{
 			"type": "contains_all",
 			"field": "links[].link_type",
-			"values": [
-				"anchor"
-			]
+			"values": ["anchor"]
 		}
 	]
 }

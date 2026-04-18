@@ -1,10 +1,7 @@
 {
 	"id": "middleware_engine_crawl_with_defaults",
 	"description": "Engine crawl with default middleware chain produces correct multi-page results",
-	"tags": [
-		"middleware",
-		"crawl"
-	],
+	"tags": ["middleware", "crawl"],
 	"input": {
 		"mock_responses": [
 			{

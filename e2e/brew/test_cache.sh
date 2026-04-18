@@ -4,15 +4,15 @@
 set -euo pipefail
 
 test_cache_basic() {
-    # Crawling with disk cache enabled succeeds without errors
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/cache_basic" --format json)
+  # Crawling with disk cache enabled succeeds without errors
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/cache_basic" --format json)
 
-    local val_status_code
-    val_status_code=$(echo "$output" | jq -r '.status_code')
-    assert_equals "$val_status_code" '200' 'status_code'
+  local val_status_code
+  val_status_code=$(echo "$output" | jq -r '.status_code')
+  assert_equals "$val_status_code" '200' 'status_code'
 }
 
 run_tests_cache() {
-    run_test test_cache_basic
+  run_test test_cache_basic
 }

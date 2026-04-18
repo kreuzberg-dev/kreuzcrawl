@@ -1,9 +1,7 @@
 {
 	"id": "crawl_single_page_no_links",
 	"description": "Crawling a page with no links returns only the seed page",
-	"tags": [
-		"crawl"
-	],
+	"tags": ["crawl"],
 	"input": {
 		"mock_responses": [
 			{

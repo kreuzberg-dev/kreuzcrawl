@@ -1,10 +1,7 @@
 {
 	"id": "markdown_with_citations",
 	"description": "Markdown includes citation conversion with numbered references",
-	"tags": [
-		"markdown",
-		"citations"
-	],
+	"tags": ["markdown", "citations"],
 	"input": {
 		"mock_responses": [
 			{

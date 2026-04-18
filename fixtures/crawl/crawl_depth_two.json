@@ -1,10 +1,7 @@
 {
 	"id": "crawl_depth_two",
 	"description": "Crawls 3 levels deep (depth 0, 1, 2)",
-	"tags": [
-		"crawl",
-		"depth"
-	],
+	"tags": ["crawl", "depth"],
 	"input": {
 		"mock_responses": [
 			{

@@ -1,10 +1,7 @@
 {
 	"id": "links_mailto_javascript_skip",
 	"description": "Skips mailto:, javascript:, and tel: scheme links",
-	"tags": [
-		"links",
-		"filtering"
-	],
+	"tags": ["links", "filtering"],
 	"input": {
 		"mock_responses": [
 			{

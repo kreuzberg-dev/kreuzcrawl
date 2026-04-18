@@ -1,9 +1,7 @@
 {
 	"id": "error_502_bad_gateway",
 	"description": "Handles 502 Bad Gateway response correctly",
-	"tags": [
-		"error"
-	],
+	"tags": ["error"],
 	"input": {
 		"mock_responses": [
 			{

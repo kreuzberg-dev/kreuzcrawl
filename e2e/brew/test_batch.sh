@@ -4,36 +4,36 @@
 set -euo pipefail
 
 test_scrape_batch_basic() {
-    # Batch scrape of multiple URLs all succeeding
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_basic" --format json)
+  # Batch scrape of multiple URLs all succeeding
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_basic" --format json)
 
-    # skipped: field 'batch.completed_count' not available on result type
-    # skipped: field 'batch.failed_count' not available on result type
-    # skipped: field 'batch.total_count' not available on result type
+  # skipped: field 'batch.completed_count' not available on result type
+  # skipped: field 'batch.failed_count' not available on result type
+  # skipped: field 'batch.total_count' not available on result type
 }
 
 test_scrape_batch_partial_failure() {
-    # Batch scrape with one URL failing returns partial results
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure" --format json)
+  # Batch scrape with one URL failing returns partial results
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure" --format json)
 
-    # skipped: field 'batch.completed_count' not available on result type
-    # skipped: field 'batch.failed_count' not available on result type
-    # skipped: field 'batch.total_count' not available on result type
+  # skipped: field 'batch.completed_count' not available on result type
+  # skipped: field 'batch.failed_count' not available on result type
+  # skipped: field 'batch.total_count' not available on result type
 }
 
 test_scrape_batch_progress() {
-    # Batch scrape results include specific URL
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_progress" --format json)
+  # Batch scrape results include specific URL
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_progress" --format json)
 
-    # skipped: field 'batch.total_count' not available on result type
-    # skipped: field 'batch.results' not available on result type
+  # skipped: field 'batch.total_count' not available on result type
+  # skipped: field 'batch.results' not available on result type
 }
 
 run_tests_batch() {
-    run_test test_scrape_batch_basic
-    run_test test_scrape_batch_partial_failure
-    run_test test_scrape_batch_progress
+  run_test test_scrape_batch_basic
+  run_test test_scrape_batch_partial_failure
+  run_test test_scrape_batch_progress
 }

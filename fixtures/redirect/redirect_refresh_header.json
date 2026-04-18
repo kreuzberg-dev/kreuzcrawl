@@ -1,9 +1,7 @@
 {
 	"id": "redirect_refresh_header",
 	"description": "Handles HTTP Refresh header redirect",
-	"tags": [
-		"redirect"
-	],
+	"tags": ["redirect"],
 	"input": {
 		"mock_responses": [
 			{

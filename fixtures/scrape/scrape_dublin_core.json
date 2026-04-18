@@ -1,11 +1,7 @@
 {
 	"id": "scrape_dublin_core",
 	"description": "Extracts Dublin Core metadata from a page",
-	"tags": [
-		"scrape",
-		"metadata",
-		"dublin-core"
-	],
+	"tags": ["scrape", "metadata", "dublin-core"],
 	"input": {
 		"mock_responses": [
 			{
