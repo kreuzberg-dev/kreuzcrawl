@@ -3,11 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** An unclassified error occurred. */
 public class OtherException extends CrawlErrorException {
-	public OtherException(String message) {
-		super(message);
-	}
+    public OtherException(String message) {
+        super(message);
+    }
 
-	public OtherException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public OtherException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

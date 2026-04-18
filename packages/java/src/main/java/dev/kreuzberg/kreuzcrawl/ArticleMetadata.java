@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ArticleMetadata(@JsonProperty("published_time") Optional<String> publishedTime,
-		@JsonProperty("modified_time") Optional<String> modifiedTime, Optional<String> author, Optional<String> section,
-		List<String> tags) {
-	public static ArticleMetadataBuilder builder() {
-		return new ArticleMetadataBuilder();
-	}
+public record ArticleMetadata(
+    @JsonProperty("published_time") Optional<String> publishedTime,
+    @JsonProperty("modified_time") Optional<String> modifiedTime,
+    Optional<String> author,
+    Optional<String> section,
+    List<String> tags
+) {
+    public static ArticleMetadataBuilder builder() {
+        return new ArticleMetadataBuilder();
+    }
 }

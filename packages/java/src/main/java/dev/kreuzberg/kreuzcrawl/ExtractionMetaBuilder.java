@@ -5,38 +5,44 @@ import java.util.Optional;
 
 public class ExtractionMetaBuilder {
 
-	private Optional<Double> cost = Optional.empty();
-	private Optional<Long> promptTokens = Optional.empty();
-	private Optional<Long> completionTokens = Optional.empty();
-	private Optional<String> model = Optional.empty();
-	private long chunksProcessed = 0;
+    private Optional<Double> cost = Optional.empty();
+    private Optional<Long> promptTokens = Optional.empty();
+    private Optional<Long> completionTokens = Optional.empty();
+    private Optional<String> model = Optional.empty();
+    private long chunksProcessed = 0;
 
-	public ExtractionMetaBuilder withCost(Optional<Double> value) {
-		this.cost = value;
-		return this;
-	}
+    public ExtractionMetaBuilder withCost(Optional<Double> value) {
+        this.cost = value;
+        return this;
+    }
 
-	public ExtractionMetaBuilder withPromptTokens(Optional<Long> value) {
-		this.promptTokens = value;
-		return this;
-	}
+    public ExtractionMetaBuilder withPromptTokens(Optional<Long> value) {
+        this.promptTokens = value;
+        return this;
+    }
 
-	public ExtractionMetaBuilder withCompletionTokens(Optional<Long> value) {
-		this.completionTokens = value;
-		return this;
-	}
+    public ExtractionMetaBuilder withCompletionTokens(Optional<Long> value) {
+        this.completionTokens = value;
+        return this;
+    }
 
-	public ExtractionMetaBuilder withModel(Optional<String> value) {
-		this.model = value;
-		return this;
-	}
+    public ExtractionMetaBuilder withModel(Optional<String> value) {
+        this.model = value;
+        return this;
+    }
 
-	public ExtractionMetaBuilder withChunksProcessed(long value) {
-		this.chunksProcessed = value;
-		return this;
-	}
+    public ExtractionMetaBuilder withChunksProcessed(long value) {
+        this.chunksProcessed = value;
+        return this;
+    }
 
-	public ExtractionMeta build() {
-		return new ExtractionMeta(cost, promptTokens, completionTokens, model, chunksProcessed);
-	}
+    public ExtractionMeta build() {
+        return new ExtractionMeta(
+            cost,
+            promptTokens,
+            completionTokens,
+            model,
+            chunksProcessed
+        );
+    }
 }

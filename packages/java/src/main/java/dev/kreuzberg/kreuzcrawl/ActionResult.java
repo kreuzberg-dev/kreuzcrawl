@@ -4,10 +4,14 @@ package dev.kreuzberg.kreuzcrawl;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ActionResult(@JsonProperty("action_index") long actionIndex,
-		@JsonProperty("action_type") String actionType, boolean success, Optional<Object> data,
-		Optional<String> error) {
-	public static ActionResultBuilder builder() {
-		return new ActionResultBuilder();
-	}
+public record ActionResult(
+    @JsonProperty("action_index") long actionIndex,
+    @JsonProperty("action_type") String actionType,
+    boolean success,
+    Optional<Object> data,
+    Optional<String> error
+) {
+    public static ActionResultBuilder builder() {
+        return new ActionResultBuilder();
+    }
 }
