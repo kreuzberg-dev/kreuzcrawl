@@ -5,26 +5,28 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum BrowserWait {
-	NetworkIdle("network_idle"), Selector("selector"), Fixed("fixed");
+    NetworkIdle("network_idle"),
+    Selector("selector"),
+    Fixed("fixed");
 
-	private final String value;
+    private final String value;
 
-	BrowserWait(String value) {
-		this.value = value;
-	}
+    BrowserWait(String value) {
+        this.value = value;
+    }
 
-	@JsonValue
-	public String getValue() {
-		return value;
-	}
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
 
-	@JsonCreator
-	public static BrowserWait fromValue(String value) {
-		for (BrowserWait e : values()) {
-			if (e.value.equalsIgnoreCase(value)) {
-				return e;
-			}
-		}
-		throw new IllegalArgumentException("Unknown value: " + value);
-	}
+    @JsonCreator
+    public static BrowserWait fromValue(String value) {
+        for (BrowserWait e : values()) {
+            if (e.value.equalsIgnoreCase(value)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Unknown value: " + value);
+    }
 }

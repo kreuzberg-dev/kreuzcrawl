@@ -252,7 +252,10 @@ impl CrawlConfig {
             include_paths: self.include_paths.clone(),
             exclude_paths: self.exclude_paths.clone(),
             custom_headers: self.custom_headers.clone().into_iter().collect(),
-            request_timeout: std::time::Duration::from_millis(self.request_timeout as u64),
+            request_timeout: self
+                .request_timeout
+                .map(|v| std::time::Duration::from_millis(v as u64))
+                .unwrap_or_default(),
             max_redirects: self.max_redirects as usize,
             retry_count: self.retry_count as usize,
             retry_codes: self.retry_codes.clone(),
@@ -311,10 +314,10 @@ impl CrawlConfig {
             save_browser_profile: self.save_browser_profile,
             ..Default::default()
         };
-        let result = core_self
+        core_self
             .validate()
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
+        Ok(())
     }
 
     #[allow(clippy::should_implement_trait)]

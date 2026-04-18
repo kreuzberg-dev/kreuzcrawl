@@ -3,11 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** The resource is permanently gone (HTTP 410). */
 public class GoneException extends CrawlErrorException {
-	public GoneException(String message) {
-		super(message);
-	}
+    public GoneException(String message) {
+        super(message);
+    }
 
-	public GoneException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public GoneException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

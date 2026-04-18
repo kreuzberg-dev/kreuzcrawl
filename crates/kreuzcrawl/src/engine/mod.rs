@@ -9,7 +9,6 @@ mod crawl_loop;
 use std::sync::Arc;
 
 use crate::error::CrawlError;
-use crate::http::build_client;
 #[cfg(not(target_arch = "wasm32"))]
 use crate::tower::CrawlRequest;
 use crate::traits::*;
@@ -68,73 +67,164 @@ impl CrawlEngine {
         tower::util::BoxCloneService::new(service)
     }
 
+    /// Fetch a URL through the appropriate path (Tower stack or browser) and
+    /// return the `CrawlResponse` together with a flag indicating whether the
+    /// browser was used.
+    ///
+    /// This is intentionally `#[cfg(not(target_arch = "wasm32"))]`-only: wasm
+    /// has its own simpler inline path inside `scrape`.
+    #[cfg(not(target_arch = "wasm32"))]
+    async fn fetch_response(&self, url: &str) -> Result<(crate::tower::CrawlResponse, bool), CrawlError> {
+        use crate::tower::CrawlResponse;
+
+        /// Convert an `HttpResponse` (from the browser path) into the `CrawlResponse`
+        /// shape expected by the extraction pipeline. Browser fetches do not carry
+        /// HTTP response headers, so we supply an empty map.
+        #[cfg(feature = "browser")]
+        fn browser_http_to_crawl(r: crate::http::HttpResponse) -> CrawlResponse {
+            CrawlResponse {
+                status: r.status,
+                content_type: r.content_type,
+                body: r.body,
+                body_bytes: r.body_bytes,
+                headers: std::collections::HashMap::new(),
+            }
+        }
+
+        // BrowserMode::Always — skip HTTP entirely.
+        #[cfg(feature = "browser")]
+        if self.config.browser.mode == crate::types::BrowserMode::Always {
+            let pool = self.config.browser_pool.as_deref();
+            let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
+            return Ok((browser_http_to_crawl(http_resp), true));
+        }
+
+        // Tower HTTP stack (with optional WAF fallback).
+        let client = crate::http::build_client(&self.config)?;
+        let mut service = self.build_service(&client);
+        use tower::Service;
+        match service.call(CrawlRequest::new(url)).await {
+            Ok(resp) => Ok((resp, false)),
+            Err(CrawlError::NotFound(_)) if self.config.respect_robots_txt => {
+                // Return a sentinel response; the scrape() caller recognises status 404
+                // and short-circuits with a minimal result (preserving prior behaviour).
+                Ok((
+                    CrawlResponse {
+                        status: 404,
+                        content_type: String::new(),
+                        body: String::new(),
+                        body_bytes: Vec::new(),
+                        headers: std::collections::HashMap::new(),
+                    },
+                    false,
+                ))
+            }
+            // WAF fallback: delegate to browser when mode is Auto.
+            #[cfg(feature = "browser")]
+            Err(CrawlError::WafBlocked(_)) if self.config.browser.mode == crate::types::BrowserMode::Auto => {
+                let pool = self.config.browser_pool.as_deref();
+                let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
+                Ok((browser_http_to_crawl(http_resp), true))
+            }
+            Err(e) => Err(e),
+        }
+    }
+
     /// Scrape a single URL, returning the extracted data.
     ///
     /// On native targets, routes the request through the Tower service stack
     /// (rate limiting, UA rotation) then runs the extraction pipeline.
     /// On wasm, performs a direct HTTP fetch without the Tower stack.
+    ///
+    /// Browser fallback behaviour (native + `browser` feature only):
+    /// - `BrowserMode::Always`: skips HTTP entirely, goes straight to headless Chrome.
+    /// - `BrowserMode::Auto` + WAF blocked: falls back to headless Chrome when the
+    ///   Tower stack returns `CrawlError::WafBlocked`.
+    /// - `BrowserMode::Auto` + JS detected: after extraction, if `js_render_hint` is
+    ///   `true` and the browser has not been used yet, re-fetches with headless Chrome
+    ///   and re-runs the extraction pipeline on the rendered HTML.
     pub async fn scrape(&self, url: &str) -> Result<ScrapeResult, CrawlError> {
         self.config.validate()?;
-        let client = build_client(&self.config)?;
 
         #[cfg(not(target_arch = "wasm32"))]
-        let response = {
-            let mut service = self.build_service(&client);
-            use tower::Service;
-            match service.call(CrawlRequest::new(url)).await {
-                Ok(resp) => resp,
-                Err(CrawlError::NotFound(_)) if self.config.respect_robots_txt => {
-                    return Ok(ScrapeResult {
-                        status_code: 404,
-                        content_type: String::new(),
-                        html: String::new(),
-                        body_size: 0,
-                        metadata: PageMetadata::default(),
-                        links: Vec::new(),
-                        images: Vec::new(),
-                        feeds: Vec::new(),
-                        json_ld: Vec::new(),
-                        is_allowed: true,
-                        crawl_delay: None,
-                        noindex_detected: false,
-                        nofollow_detected: false,
-                        x_robots_tag: None,
-                        is_pdf: false,
-                        was_skipped: false,
-                        detected_charset: None,
-                        main_content_only: self.config.main_content_only,
-                        auth_header_sent: self.config.auth.is_some(),
-                        response_meta: None,
-                        assets: Vec::new(),
-                        js_render_hint: false,
-                        browser_used: false,
-                        markdown: None,
-                        extracted_data: None,
-                        extraction_meta: None,
-                        screenshot: None,
-                        downloaded_document: None,
-                    });
-                }
-                Err(e) => return Err(e),
+        let (response, browser_used_for_fetch) = {
+            let (resp, used_browser) = self.fetch_response(url).await?;
+            // Preserve the original early-return for 404 when robots.txt is respected:
+            // skip extraction entirely and return a minimal result.
+            if resp.status == 404 && self.config.respect_robots_txt {
+                return Ok(ScrapeResult {
+                    status_code: 404,
+                    content_type: String::new(),
+                    html: String::new(),
+                    body_size: 0,
+                    metadata: PageMetadata::default(),
+                    links: Vec::new(),
+                    images: Vec::new(),
+                    feeds: Vec::new(),
+                    json_ld: Vec::new(),
+                    is_allowed: true,
+                    crawl_delay: None,
+                    noindex_detected: false,
+                    nofollow_detected: false,
+                    x_robots_tag: None,
+                    is_pdf: false,
+                    was_skipped: false,
+                    detected_charset: None,
+                    main_content_only: self.config.main_content_only,
+                    auth_header_sent: self.config.auth.is_some(),
+                    response_meta: None,
+                    assets: Vec::new(),
+                    js_render_hint: false,
+                    browser_used: false,
+                    markdown: None,
+                    extracted_data: None,
+                    extraction_meta: None,
+                    screenshot: None,
+                    downloaded_document: None,
+                });
             }
+            (resp, used_browser)
         };
 
         #[cfg(target_arch = "wasm32")]
-        let response = {
+        let (response, browser_used_for_fetch) = {
+            let client = build_client(&self.config)?;
             let resp =
                 crate::http::fetch_with_retry(url, &self.config, &std::collections::HashMap::new(), &client).await?;
             let headers = std::collections::HashMap::new();
             // fetch_with_retry returns HttpResponse; convert to CrawlResponse
-            crate::tower::CrawlResponse {
+            let crawl_resp = crate::tower::CrawlResponse {
                 status: resp.status,
                 content_type: resp.content_type,
                 body: resp.body,
                 body_bytes: resp.body_bytes,
                 headers,
-            }
+            };
+            (crawl_resp, false)
         };
 
-        crate::scrape::scrape_from_crawl_response(url, &response, &self.config).await
+        let mut result = crate::scrape::scrape_from_crawl_response(url, &response, &self.config).await?;
+        result.browser_used = browser_used_for_fetch;
+
+        // JS-render fallback: if extraction detected JS-heavy content and we have
+        // not already used the browser, re-fetch with headless Chrome and re-extract.
+        #[cfg(all(not(target_arch = "wasm32"), feature = "browser"))]
+        if result.js_render_hint && !result.browser_used && self.config.browser.mode == crate::types::BrowserMode::Auto
+        {
+            let pool = self.config.browser_pool.as_deref();
+            let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
+            let crawl_resp = crate::tower::CrawlResponse {
+                status: http_resp.status,
+                content_type: http_resp.content_type,
+                body: http_resp.body,
+                body_bytes: http_resp.body_bytes,
+                headers: std::collections::HashMap::new(),
+            };
+            result = crate::scrape::scrape_from_crawl_response(url, &crawl_resp, &self.config).await?;
+            result.browser_used = true;
+        }
+
+        Ok(result)
     }
 
     /// Discover all pages on a website by following links and sitemaps.
