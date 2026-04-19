@@ -65,8 +65,8 @@ WORKDIR /app
 COPY --from=builder /build/kreuzcrawl /usr/local/bin/kreuzcrawl
 
 # Create non-root user
-RUN addgroup -D -S kreuzcrawl && \
-    adduser -D -S -G kreuzcrawl -h /app -s /sbin/nologin kreuzcrawl && \
+RUN addgroup -S kreuzcrawl && \
+    adduser -S -G kreuzcrawl -h /app -s /sbin/nologin kreuzcrawl && \
     chown -R kreuzcrawl:kreuzcrawl /app
 
 USER kreuzcrawl
