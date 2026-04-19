@@ -1,6 +1,6 @@
 {
 	"name": "@kreuzberg/kreuzcrawl-wasm",
-	"version": "0.1.0-rc.8",
+	"version": "0.1.0-rc.9",
 	"private": false,
 	"description": "Kreuzcrawl WASM bindings for document intelligence",
 	"license": "Elastic-2.0",
@@ -26,7 +26,7 @@
 		"build:wasm:bundler": "wasm-pack build --release --target bundler --out-dir pkg/bundler",
 		"build:wasm:nodejs": "wasm-pack build --release --target nodejs --out-dir pkg/nodejs",
 		"build:wasm:deno": "wasm-pack build --release --target deno --out-dir pkg/deno",
-		"build:all": "npm run build:wasm:web && npm run build:wasm:bundler && npm run build:wasm:nodejs && npm run build:wasm:deno",
+		"build:all": "npm run build:wasm:web && npm run build:wasm:bundler && npm run build:wasm:nodejs && npm run build:wasm:deno && find pkg -name .gitignore -delete",
 		"test": "vitest run",
 		"test:watch": "vitest watch",
 		"test:coverage": "vitest run --coverage",

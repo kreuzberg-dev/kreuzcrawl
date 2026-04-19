@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-rc.9
+
+### Fixes
+
+- **WASM**: Remove wasm-pack-generated `.gitignore` from `pkg/` subdirectories after build — npm respects nested `.gitignore` and was excluding compiled WASM artifacts even with `files` field set
+
 ## 0.1.0-rc.8
 
 ### Fixes
