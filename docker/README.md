@@ -7,6 +7,7 @@ This directory contains Dockerfiles for building kreuzcrawl container images.
 **The main, production-ready image** for kreuzcrawl. Optimized for CLI usage and distribution.
 
 ### Features
+
 - **Base**: Alpine Linux 3.21 (minimal)
 - **Architecture**: Multi-arch (amd64, arm64)
 - **Binary**: Statically compiled with musl
@@ -54,30 +55,39 @@ docker pull ghcr.io/kreuzberg-dev/kreuzcrawl:v0.1.0
 ## Legacy Images
 
 ### Dockerfile (Full variant)
+
 Full-featured image with Chromium for browser automation, Tesseract OCR, and optional PaddleOCR.
+
 - **Size**: ~500MB+
 - **Use case**: Complex document processing with OCR/browser features
 - **Status**: Maintained for compatibility
 
 ### Dockerfile.cli
+
 Minimal CLI image on Debian slim.
+
 - **Base**: Debian bookworm-slim
 - **Size**: ~100-150MB
 - **Status**: Superseded by Dockerfile.alpine (better size/portability)
 
 ### Dockerfile.musl-build
+
 Alpine builder for extracting the CLI binary to host filesystem.
+
 - **Output**: `dist/kreuzcrawl` (static binary)
 - **Use case**: Standalone CLI distribution without Docker
 
 ### Dockerfile.musl-ffi, Dockerfile.musl-nif
+
 Specialized builders for language bindings (FFI, Ruby NIF).
+
 - **Output**: Shared libraries for Python/Ruby/Node.js bindings
 - **Status**: Used in binding build workflows only
 
 ## CI/CD Integration
 
 ### Publish Workflow
+
 `.github/workflows/publish-docker.yaml`
 
 - **Trigger**: `workflow_dispatch`, `release` (published), `repository_dispatch`
@@ -88,6 +98,7 @@ Specialized builders for language bindings (FFI, Ruby NIF).
 - **Testing**: Runs full test suite before push
 
 ### Testing
+
 ```bash
 # Local test of image
 scripts/ci/docker/build_and_test.sh
@@ -100,9 +111,11 @@ scripts/ci/docker/build_and_test.sh --verbose
 ```
 
 ### Test Suite
+
 `scripts/ci/docker/test_docker.py`
 
 Tests for Alpine CLI variant:
+
 - Image existence
 - Binary version/help output
 - Feature detection (MIME types, extraction)
@@ -113,6 +126,7 @@ Tests for Alpine CLI variant:
 - Error handling
 
 Run full test suite:
+
 ```bash
 python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:latest --variant cli
 ```
@@ -120,15 +134,18 @@ python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:latest --variant cli
 ## Build Performance
 
 ### Multi-stage Build Optimization
+
 - **Builder**: Alpine + Rust toolchain, optimized for size
 - **Runtime**: Alpine only with CA certs + curl
 - **Cache**: Leverages Docker layer caching and GitHub Actions cache
 
 ### Build Time
+
 - **First build**: ~10-15 minutes (downloading Rust, building dependencies)
 - **Incremental**: ~2-3 minutes (cached layers)
 
 ### Image Size Breakdown (Alpine variant)
+
 - Alpine base: ~5MB
 - CA certificates: ~500KB
 - curl: ~3MB
@@ -138,6 +155,7 @@ python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:latest --variant cli
 ## Security
 
 ### Image Security Practices
+
 - ✅ Non-root user (`kreuzcrawl:kreuzcrawl`)
 - ✅ Read-only filesystem support (with `/tmp` exemption)
 - ✅ Minimal base (Alpine, no extra utilities)
@@ -146,6 +164,7 @@ python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:latest --variant cli
 - ✅ Binary stripped of debug symbols
 
 ### Runtime Best Practices
+
 ```bash
 # Read-only root filesystem + tmpfs for temporary files
 docker run --rm \
@@ -167,18 +186,22 @@ docker run --rm \
 ## Troubleshooting
 
 ### Image too large?
+
 - Use `Dockerfile.alpine` (not legacy variants)
 - Ensure binary is stripped: `strip target/release/kreuzcrawl`
 
 ### Build fails on ARM64?
+
 - Ensure `--platform` flag is set if cross-compiling
 - Check Rust target installed: `rustc --print target-list`
 
 ### Binary crashes at startup?
+
 - Verify static linking: `ldd kreuzcrawl` (should show `not a dynamic executable`)
 - Check feature flags: `kreuzcrawl --version`
 
 ### Test failures in CI?
+
 - Check available disk space: `df -h`
 - Review test logs: `scripts/ci/docker/test_docker.py --verbose`
 - Verify registry credentials in GitHub secrets
@@ -186,6 +209,7 @@ docker run --rm \
 ## Development Workflow
 
 ### Local Build & Test
+
 ```bash
 # Build image
 docker build -f docker/Dockerfile.alpine -t kreuzcrawl:dev .
@@ -198,6 +222,7 @@ python3 scripts/ci/docker/test_docker.py --image kreuzcrawl:dev --variant cli --
 ```
 
 ### Publish Workflow (after release)
+
 ```bash
 # Option 1: Via GitHub Actions UI
 # - Go to .github/workflows/publish-docker.yaml

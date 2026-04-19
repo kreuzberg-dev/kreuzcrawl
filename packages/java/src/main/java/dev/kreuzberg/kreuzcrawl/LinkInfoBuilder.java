@@ -5,38 +5,44 @@ import java.util.Optional;
 
 public class LinkInfoBuilder {
 
-	private String url = "";
-	private String text = "";
-	private LinkType linkType = null;
-	private Optional<String> rel = Optional.empty();
-	private boolean nofollow = false;
+    private String url = "";
+    private String text = "";
+    private LinkType linkType = null;
+    private Optional<String> rel = Optional.empty();
+    private boolean nofollow = false;
 
-	public LinkInfoBuilder withUrl(String value) {
-		this.url = value;
-		return this;
-	}
+    public LinkInfoBuilder withUrl(String value) {
+        this.url = value;
+        return this;
+    }
 
-	public LinkInfoBuilder withText(String value) {
-		this.text = value;
-		return this;
-	}
+    public LinkInfoBuilder withText(String value) {
+        this.text = value;
+        return this;
+    }
 
-	public LinkInfoBuilder withLinkType(LinkType value) {
-		this.linkType = value;
-		return this;
-	}
+    public LinkInfoBuilder withLinkType(LinkType value) {
+        this.linkType = value;
+        return this;
+    }
 
-	public LinkInfoBuilder withRel(Optional<String> value) {
-		this.rel = value;
-		return this;
-	}
+    public LinkInfoBuilder withRel(Optional<String> value) {
+        this.rel = value;
+        return this;
+    }
 
-	public LinkInfoBuilder withNofollow(boolean value) {
-		this.nofollow = value;
-		return this;
-	}
+    public LinkInfoBuilder withNofollow(boolean value) {
+        this.nofollow = value;
+        return this;
+    }
 
-	public LinkInfo build() {
-		return new LinkInfo(url, text, linkType, rel, nofollow);
-	}
+    public LinkInfo build() {
+        return new LinkInfo(
+            url,
+            text,
+            linkType,
+            rel,
+            nofollow
+        );
+    }
 }

@@ -3,9 +3,14 @@ package dev.kreuzberg.kreuzcrawl;
 
 import java.util.Optional;
 
-public record ImageInfo(String url, Optional<String> alt, Optional<Integer> width, Optional<Integer> height,
-		ImageSource source) {
-	public static ImageInfoBuilder builder() {
-		return new ImageInfoBuilder();
-	}
+public record ImageInfo(
+    String url,
+    Optional<String> alt,
+    Optional<Integer> width,
+    Optional<Integer> height,
+    ImageSource source
+) {
+    public static ImageInfoBuilder builder() {
+        return new ImageInfoBuilder();
+    }
 }
