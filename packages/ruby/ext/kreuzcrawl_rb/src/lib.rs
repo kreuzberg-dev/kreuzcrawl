@@ -545,6 +545,7 @@ impl CrawlConfig {
     }
 
     fn validate(&self) -> Result<(), Error> {
+        #[allow(clippy::needless_update)]
         let core_self = kreuzcrawl::CrawlConfig {
             max_depth: self.max_depth,
             max_pages: self.max_pages,
@@ -556,10 +557,7 @@ impl CrawlConfig {
             include_paths: self.include_paths.clone(),
             exclude_paths: self.exclude_paths.clone(),
             custom_headers: self.custom_headers.clone().into_iter().collect(),
-            request_timeout: self
-                .request_timeout
-                .map(std::time::Duration::from_millis)
-                .unwrap_or_default(),
+            request_timeout: std::time::Duration::from_millis(self.request_timeout),
             max_redirects: self.max_redirects,
             retry_count: self.retry_count,
             retry_codes: self.retry_codes.clone(),
