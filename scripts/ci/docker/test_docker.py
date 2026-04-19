@@ -79,6 +79,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Test kreuzcrawl Docker image")
     parser.add_argument("--image", default="kreuzcrawl:latest", help="Docker image to test")
     parser.add_argument("--variant", default="cli", help="Image variant (unused, kept for compat)")
+    parser.add_argument("--verbose", action="store_true", help="Verbose output")
     args = parser.parse_args()
 
     image = args.image
