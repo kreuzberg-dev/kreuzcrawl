@@ -1,0 +1,79 @@
+# =============================================================================
+# Alpine-based builder for musl CLI binary.
+#
+# This is the primary CLI image for kreuzcrawl distribution:
+# - Multi-arch support (amd64, arm64)
+# - Minimal dependency footprint (Alpine 3.21)
+# - Single static binary, fully portable
+# - Optimized for container deployment
+#
+# Build: docker build -f docker/Dockerfile.alpine -t kreuzcrawl:latest .
+# =============================================================================
+FROM alpine:3.21 AS builder
+
+WORKDIR /build
+
+# Install build dependencies: Rust + compile toolchain
+RUN apk add --no-cache \
+    curl gcc g++ musl-dev cmake make pkgconf \
+    openssl-dev openssl-libs-static \
+    perl linux-headers git file
+
+# Install Rust via rustup
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y --default-toolchain stable --component rust-src && \
+    echo "Rust host: $(~/.cargo/bin/rustc -vV | grep host)" && \
+    echo "Default target: $(~/.cargo/bin/rustc --print cfg | grep target)"
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Copy workspace manifests and required crates
+COPY Cargo.toml Cargo.lock ./
+COPY crates/kreuzcrawl/ crates/kreuzcrawl/
+COPY crates/kreuzcrawl-cli/ crates/kreuzcrawl-cli/
+COPY crates/kreuzcrawl-bindings-common/ crates/kreuzcrawl-bindings-common/
+
+# Keep only the crates we need
+RUN sed -i 's|members = \[.*\]|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-cli", "crates/kreuzcrawl-bindings-common"]|' Cargo.toml
+
+# Build release binary with selected features
+RUN . "$HOME/.cargo/env" && \
+    cargo build --release --package kreuzcrawl-cli --features "api,mcp" && \
+    cp target/release/kreuzcrawl /build/kreuzcrawl && \
+    strip /build/kreuzcrawl
+
+# Verify the binary
+RUN file /build/kreuzcrawl && \
+    /build/kreuzcrawl --version
+
+# =============================================================================
+# Runtime Stage — Alpine with non-root user
+# =============================================================================
+FROM alpine:3.21
+
+LABEL org.opencontainers.image.source="https://github.com/kreuzberg-dev/kreuzcrawl"
+LABEL org.opencontainers.image.description="Kreuzcrawl — high-performance web crawler CLI"
+LABEL org.opencontainers.image.licenses="Elastic-2.0"
+
+# Minimal runtime dependencies
+RUN apk add --no-cache \
+    ca-certificates \
+    curl
+
+WORKDIR /app
+
+# Copy binary from builder
+COPY --from=builder /build/kreuzcrawl /usr/local/bin/kreuzcrawl
+
+# Create non-root user
+RUN addgroup -D -S kreuzcrawl && \
+    adduser -D -S -G kreuzcrawl -h /app -s /sbin/nologin kreuzcrawl && \
+    chown -R kreuzcrawl:kreuzcrawl /app
+
+USER kreuzcrawl
+
+# CLI entrypoint: kreuzcrawl command
+# Examples:
+#   docker run kreuzcrawl scrape https://example.com
+#   docker run kreuzcrawl extract /data/file.pdf
+#   docker run kreuzcrawl --help
+ENTRYPOINT ["kreuzcrawl"]

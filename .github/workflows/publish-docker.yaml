@@ -32,6 +32,8 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 permissions:
   contents: read
@@ -99,8 +101,7 @@ jobs:
       contents: read
       packages: read
     outputs:
-      full_exists: ${{ steps.full.outputs.exists }}
-      cli_exists: ${{ steps.cli.outputs.exists }}
+      image_exists: ${{ steps.check.outputs.exists }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -109,26 +110,19 @@ jobs:
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v4
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check full image tag
-        id: full
+      - name: Check image tag
+        id: check
         env:
-          DOCKER_TAG: ghcr.io/kreuzberg-dev/kreuzcrawl:${{ needs.prepare.outputs.version }}
-          SUMMARY_LABEL: full
-        run: scripts/publish/check-docker-tag.sh
-
-      - name: Check CLI image tag
-        id: cli
-        env:
-          DOCKER_TAG: ghcr.io/kreuzberg-dev/kreuzcrawl-cli:${{ needs.prepare.outputs.version }}
+          DOCKER_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.prepare.outputs.version }}
           SUMMARY_LABEL: cli
         run: scripts/publish/check-docker-tag.sh
 
   publish-docker:
-    name: Publish Docker image (${{ matrix.variant }})
+    name: Publish Docker image
     needs:
       - prepare
       - check-docker
@@ -137,20 +131,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - variant: full
-            dockerfile: docker/Dockerfile
-            image: ghcr.io/kreuzberg-dev/kreuzcrawl
-            tag_suffix: ""
-            extra_tag: "latest"
-          - variant: cli
-            dockerfile: docker/Dockerfile.cli
-            image: ghcr.io/kreuzberg-dev/kreuzcrawl-cli
-            tag_suffix: ""
-            extra_tag: "latest"
     if: ${{ needs.prepare.outputs.release_docker == 'true' }}
     steps:
       - uses: actions/checkout@v6
@@ -172,84 +152,59 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Skip because tag already exists
-        if: >-
-          ${{
-            needs.prepare.outputs.force_republish != 'true' &&
-            ((matrix.variant == 'full' && needs.check-docker.outputs.full_exists == 'true') ||
-             (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists == 'true'))
-          }}
-        run: echo "Docker tag already exists for variant ${{ matrix.variant }}; skipping publish." >> "$GITHUB_STEP_SUMMARY"
+        if: ${{ needs.prepare.outputs.force_republish != 'true' && needs.check-docker.outputs.image_exists == 'true' }}
+        run: echo "Docker tag already exists; skipping publish." >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Build AMD64 test image
-        if: >-
-          ${{
-            needs.prepare.outputs.force_republish == 'true' ||
-            (matrix.variant == 'full' && needs.check-docker.outputs.full_exists != 'true') ||
-            (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists != 'true')
-          }}
-        run: docker build -f ${{ matrix.dockerfile }} -t kreuzcrawl-publish:${{ matrix.variant }}-test .
+      - name: Build test image (amd64)
+        if: ${{ needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true' }}
+        run: docker build -f docker/Dockerfile.alpine -t kreuzcrawl-test:latest .
+
+      - name: Run Docker tests
+        if: ${{ needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true' }}
+        run: python3 scripts/ci/docker/test_docker.py --image kreuzcrawl-test:latest --variant cli --verbose
 
       - name: Log in to GitHub Container Registry
-        if: >-
-          ${{
-            needs.prepare.outputs.dry_run != 'true' &&
-            (needs.prepare.outputs.force_republish == 'true' ||
-             (matrix.variant == 'full' && needs.check-docker.outputs.full_exists != 'true') ||
-             (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists != 'true'))
-          }}
+        if: ${{ needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
         uses: docker/login-action@v4
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Docker metadata
-        if: >-
-          ${{
-            needs.prepare.outputs.dry_run != 'true' &&
-            (needs.prepare.outputs.force_republish == 'true' ||
-             (matrix.variant == 'full' && needs.check-docker.outputs.full_exists != 'true') ||
-             (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists != 'true'))
-          }}
+        if: ${{ needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
         id: docker_meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ matrix.image }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ needs.prepare.outputs.version }}${{ matrix.tag_suffix }}
-            type=raw,value=${{ matrix.extra_tag }}
+            type=raw,value=${{ needs.prepare.outputs.version }}
+            type=raw,value=latest
 
       - name: Build and push image
-        if: >-
-          ${{
-            needs.prepare.outputs.dry_run != 'true' &&
-            (needs.prepare.outputs.force_republish == 'true' ||
-             (matrix.variant == 'full' && needs.check-docker.outputs.full_exists != 'true') ||
-             (matrix.variant == 'cli' && needs.check-docker.outputs.cli_exists != 'true'))
-          }}
+        if: ${{ needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: ${{ matrix.dockerfile }}
+          file: docker/Dockerfile.alpine
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: |
             ${{ steps.docker_meta.outputs.labels }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.description=Kreuzcrawl web crawling engine - ${{ matrix.variant }} variant
+            org.opencontainers.image.description=Kreuzcrawl web crawling engine — Alpine CLI
             org.opencontainers.image.licenses=Elastic-2.0
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
-          cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=publish-docker
 
       - name: Docker dry-run summary
         if: ${{ needs.prepare.outputs.dry_run == 'true' }}
         env:
-          IMAGE: ${{ matrix.image }}
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           VERSION: ${{ needs.prepare.outputs.version }}
-          TAG_SUFFIX: ${{ matrix.tag_suffix }}
         run: scripts/publish/docker/dry-run-summary.sh
 
-      - name: Clean up local Docker images
+      - name: Clean up test images
         if: ${{ always() }}
-        run: docker rmi kreuzcrawl-publish:${{ matrix.variant }}-test || true
+        run: docker rmi kreuzcrawl-test:latest || true
