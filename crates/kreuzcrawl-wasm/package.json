@@ -10,6 +10,15 @@
 		"directory": "crates/kreuzcrawl-wasm"
 	},
 	"type": "module",
+	"files": [
+		"pkg",
+		"*.wasm",
+		"*.d.ts",
+		"README.md"
+	],
+	"main": "pkg/nodejs/kreuzcrawl_wasm.js",
+	"module": "pkg/web/kreuzcrawl_wasm.js",
+	"types": "pkg/nodejs/kreuzcrawl_wasm.d.ts",
 	"scripts": {
 		"build": "wasm-pack build --target nodejs --out-dir pkg/nodejs",
 		"build:ci": "wasm-pack build --release --target nodejs --out-dir pkg/nodejs",

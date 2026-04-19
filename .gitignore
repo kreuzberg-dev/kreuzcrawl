@@ -174,3 +174,4 @@ bin/
 obj/
 pkg/
 erl_crash.dump
+test_apps/elixir/_build/
