@@ -48,7 +48,6 @@ permissions:
 jobs:
   prepare:
     name: Prepare metadata
-    if: ${{ github.event_name != 'release' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
