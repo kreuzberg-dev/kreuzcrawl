@@ -21,7 +21,6 @@ defmodule Kreuzcrawl.MixProject do
         lib
         native/kreuzcrawl_nif/src
         native/kreuzcrawl_nif/Cargo.toml
-        native/kreuzcrawl_nif/Cargo.lock
         mix.exs
         README.md
         .formatter.exs
