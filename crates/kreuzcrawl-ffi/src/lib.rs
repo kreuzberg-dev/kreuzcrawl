@@ -5,8 +5,8 @@ use std::cell::RefCell;
 use std::ffi::{c_char, CStr, CString};
 
 thread_local! {
-    static LAST_ERROR_CODE: RefCell<i32> = RefCell::new(0);
-    static LAST_ERROR_CONTEXT: RefCell<Option<CString>> = RefCell::new(None);
+    static LAST_ERROR_CODE: RefCell<i32> = const { RefCell::new(0) };
+    static LAST_ERROR_CONTEXT: RefCell<Option<CString>> = const { RefCell::new(None) };
 }
 
 fn set_last_error(code: i32, message: &str) {
@@ -2573,8 +2573,8 @@ pub unsafe extern "C" fn kcrawl_crawl_result_unique_normalized_urls(this: *const
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.unique_normalized_urls();
-    result
+
+    obj.unique_normalized_urls()
 }
 
 /// Create a `SitemapUrl` from a JSON string. Returns null on failure.

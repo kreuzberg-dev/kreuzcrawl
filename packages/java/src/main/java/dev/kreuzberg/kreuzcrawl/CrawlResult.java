@@ -5,16 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record CrawlResult(
-    List<CrawlPageResult> pages,
-    @JsonProperty("final_url") String finalUrl,
-    @JsonProperty("redirect_count") long redirectCount,
-    @JsonProperty("was_skipped") boolean wasSkipped,
-    Optional<String> error,
-    List<CookieInfo> cookies,
-    @JsonProperty("normalized_urls") List<String> normalizedUrls
-) {
-    public static CrawlResultBuilder builder() {
-        return new CrawlResultBuilder();
-    }
+public record CrawlResult(List<CrawlPageResult> pages, @JsonProperty("final_url") String finalUrl,
+		@JsonProperty("redirect_count") long redirectCount, @JsonProperty("was_skipped") boolean wasSkipped,
+		Optional<String> error, List<CookieInfo> cookies,
+		@JsonProperty("normalized_urls") List<String> normalizedUrls) {
+	public static CrawlResultBuilder builder() {
+		return new CrawlResultBuilder();
+	}
 }

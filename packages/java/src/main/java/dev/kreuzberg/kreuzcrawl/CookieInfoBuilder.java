@@ -5,37 +5,32 @@ import java.util.Optional;
 
 public class CookieInfoBuilder {
 
-    private String name = "";
-    private String value = "";
-    private Optional<String> domain = Optional.empty();
-    private Optional<String> path = Optional.empty();
+	private String name = "";
+	private String value = "";
+	private Optional<String> domain = Optional.empty();
+	private Optional<String> path = Optional.empty();
 
-    public CookieInfoBuilder withName(String value) {
-        this.name = value;
-        return this;
-    }
+	public CookieInfoBuilder withName(String value) {
+		this.name = value;
+		return this;
+	}
 
-    public CookieInfoBuilder withValue(String value) {
-        this.value = value;
-        return this;
-    }
+	public CookieInfoBuilder withValue(String value) {
+		this.value = value;
+		return this;
+	}
 
-    public CookieInfoBuilder withDomain(Optional<String> value) {
-        this.domain = value;
-        return this;
-    }
+	public CookieInfoBuilder withDomain(Optional<String> value) {
+		this.domain = value;
+		return this;
+	}
 
-    public CookieInfoBuilder withPath(Optional<String> value) {
-        this.path = value;
-        return this;
-    }
+	public CookieInfoBuilder withPath(Optional<String> value) {
+		this.path = value;
+		return this;
+	}
 
-    public CookieInfo build() {
-        return new CookieInfo(
-            name,
-            value,
-            domain,
-            path
-        );
-    }
+	public CookieInfo build() {
+		return new CookieInfo(name, value, domain, path);
+	}
 }

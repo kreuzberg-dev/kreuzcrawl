@@ -1,4 +1,0 @@
-%{
-  "kreuzcrawl": {:hex, :kreuzcrawl, "0.1.0-rc.5", "e3e7b6f5407b0ce2b8c1544c56d62aebc9a79205705fea13fabca782cf618f4c", [:mix], [{:rustler, "~> 0.37.0", [hex: :rustler, repo: "hexpm", optional: true]}, {:rustler_precompiled, "~> 0.9", [hex: :rustler_precompiled, repo: "hexpm", optional: false]}], "hexpm", "794262b478d950993a67e371d2c67a7209f67ea816c0c344f2e8722b3f9e01df"},
-  "rustler_precompiled": {:hex, :rustler_precompiled, "0.9.0", "3a052eda09f3d2436364645cc1f13279cf95db310eb0c17b0d8f25484b233aa0", [:mix], [{:rustler, "~> 0.23", [hex: :rustler, repo: "hexpm", optional: true]}], "hexpm", "471d97315bd3bf7b64623418b3693eedd8e47de3d1cb79a0ac8f9da7d770d94c"},
-}

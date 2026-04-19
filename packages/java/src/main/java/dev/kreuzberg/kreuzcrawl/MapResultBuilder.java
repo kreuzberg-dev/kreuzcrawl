@@ -5,16 +5,14 @@ import java.util.List;
 
 public class MapResultBuilder {
 
-    private List<SitemapUrl> urls = List.of();
+	private List<SitemapUrl> urls = List.of();
 
-    public MapResultBuilder withUrls(List<SitemapUrl> value) {
-        this.urls = value;
-        return this;
-    }
+	public MapResultBuilder withUrls(List<SitemapUrl> value) {
+		this.urls = value;
+		return this;
+	}
 
-    public MapResult build() {
-        return new MapResult(
-            urls
-        );
-    }
+	public MapResult build() {
+		return new MapResult(urls);
+	}
 }

@@ -5,35 +5,27 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum AssetCategory {
-    Document("document"),
-    Image("image"),
-    Audio("audio"),
-    Video("video"),
-    Font("font"),
-    Stylesheet("stylesheet"),
-    Script("script"),
-    Archive("archive"),
-    Data("data"),
-    Other("other");
+	Document("document"), Image("image"), Audio("audio"), Video("video"), Font("font"), Stylesheet(
+			"stylesheet"), Script("script"), Archive("archive"), Data("data"), Other("other");
 
-    private final String value;
+	private final String value;
 
-    AssetCategory(String value) {
-        this.value = value;
-    }
+	AssetCategory(String value) {
+		this.value = value;
+	}
 
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
+	@JsonValue
+	public String getValue() {
+		return value;
+	}
 
-    @JsonCreator
-    public static AssetCategory fromValue(String value) {
-        for (AssetCategory e : values()) {
-            if (e.value.equalsIgnoreCase(value)) {
-                return e;
-            }
-        }
-        throw new IllegalArgumentException("Unknown value: " + value);
-    }
+	@JsonCreator
+	public static AssetCategory fromValue(String value) {
+		for (AssetCategory e : values()) {
+			if (e.value.equalsIgnoreCase(value)) {
+				return e;
+			}
+		}
+		throw new IllegalArgumentException("Unknown value: " + value);
+	}
 }

@@ -2,45 +2,48 @@ $schema: https://raw.githubusercontent.com/Goldziher/ai-rulez/main/schema/ai-rul
 description: Web crawler with Rust core and Python/TypeScript bindings
 gitignore: true
 name: Kreuzcrawl
-
 header:
   style: minimal
-
 # Include shared ai-rulez configuration from git repository
 includes:
   - name: kreuzberg-core
     source: https://github.com/kreuzberg-dev/ai-rulez.git
-    local_override: ../ai-rulez
     path: modules/core
+    merge_strategy: local-override
+  - name: kreuzberg-languages
+    source: https://github.com/kreuzberg-dev/ai-rulez.git
+    path: modules/languages
     merge_strategy: local-override
   - name: kreuzberg-cicd
     source: https://github.com/kreuzberg-dev/ai-rulez.git
-    local_override: ../ai-rulez
     path: modules/cicd
     merge_strategy: local-override
   - name: kreuzberg-e2e-generator
     source: https://github.com/kreuzberg-dev/ai-rulez.git
-    local_override: ../ai-rulez
     path: modules/e2e-generator
     merge_strategy: local-override
-
 builtins:
   - rust
   - python
-  - pyo3
   - typescript
-  - napi-rs
+  - go
+  - java
+  - ruby
+  - php
+  - csharp
+  - elixir
   - security
   - git-workflow
   - code-quality
   - testing
   - token-efficiency
   - default-commands
-
 presets:
   - claude
   - gemini
   - codex
-compression:
-  level: moderate
 version: "3.0"
+installed_skills:
+  - name: alef
+    source: https://github.com/kreuzberg-dev/alef.git
+    description: Generate fully-typed polyglot language bindings for Rust libraries using Alef

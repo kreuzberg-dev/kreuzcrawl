@@ -10,6 +10,9 @@ license = "MIT"
 publish = false
 
 [dependencies]
-kreuzcrawl = "0.1.0-rc.5"
+kreuzcrawl = "0.1.0-rc.7"
 serde_json = "1"
 tokio = { version = "1", features = ["full"] }
+
+[package.metadata.cargo-machete]
+ignored = ["serde_json"]

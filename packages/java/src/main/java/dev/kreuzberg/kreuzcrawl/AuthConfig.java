@@ -6,25 +6,19 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = false)
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = AuthConfig.Basic.class, name = "basic"),
-    @JsonSubTypes.Type(value = AuthConfig.Bearer.class, name = "bearer"),
-    @JsonSubTypes.Type(value = AuthConfig.Header.class, name = "header")
-})
+@JsonSubTypes({@JsonSubTypes.Type(value = AuthConfig.Basic.class, name = "basic"),
+		@JsonSubTypes.Type(value = AuthConfig.Bearer.class, name = "bearer"),
+		@JsonSubTypes.Type(value = AuthConfig.Header.class, name = "header")})
 public sealed interface AuthConfig {
 
-    record Basic(
-        @JsonProperty("username") String username,
-        @JsonProperty("password") String password
-    ) implements AuthConfig {
-    }
+	record Basic(@JsonProperty("username") String username,
+			@JsonProperty("password") String password) implements AuthConfig {
+	}
 
-    record Bearer(@JsonProperty("token") String token) implements AuthConfig { }
+	record Bearer(@JsonProperty("token") String token) implements AuthConfig {
+	}
 
-    record Header(
-        @JsonProperty("name") String name,
-        @JsonProperty("value") String value
-    ) implements AuthConfig {
-    }
+	record Header(@JsonProperty("name") String name, @JsonProperty("value") String value) implements AuthConfig {
+	}
 
 }

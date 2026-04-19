@@ -4,14 +4,10 @@ package dev.kreuzberg.kreuzcrawl;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ExtractionMeta(
-    Optional<Double> cost,
-    @JsonProperty("prompt_tokens") Optional<Long> promptTokens,
-    @JsonProperty("completion_tokens") Optional<Long> completionTokens,
-    Optional<String> model,
-    @JsonProperty("chunks_processed") long chunksProcessed
-) {
-    public static ExtractionMetaBuilder builder() {
-        return new ExtractionMetaBuilder();
-    }
+public record ExtractionMeta(Optional<Double> cost, @JsonProperty("prompt_tokens") Optional<Long> promptTokens,
+		@JsonProperty("completion_tokens") Optional<Long> completionTokens, Optional<String> model,
+		@JsonProperty("chunks_processed") long chunksProcessed) {
+	public static ExtractionMetaBuilder builder() {
+		return new ExtractionMetaBuilder();
+	}
 }
