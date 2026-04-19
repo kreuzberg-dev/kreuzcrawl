@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-rc.5
+
+### Fixes
+
+- **Version sync**: All workspace member Cargo.toml files now synced (binding crates were stuck at rc.2)
+- **Ruby**: Fixed Duration conversion in validate method (`.map()` on `u64`)
+- **Browser**: Re-wired `browser_fetch` into engine scrape pipeline (lost during Tower refactor)
+- **Brew e2e**: Implemented 5 missing assertion types (greater_than_or_equal, contains_all, is_empty, less_than, not_contains)
+
 ## 0.1.0-rc.4
 
 ### Fixes

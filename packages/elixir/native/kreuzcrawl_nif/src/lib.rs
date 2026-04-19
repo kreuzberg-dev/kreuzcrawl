@@ -1150,10 +1150,10 @@ pub fn crawlconfig_default() -> CrawlConfig {
 
 #[rustler::nif]
 pub fn crawlconfig_validate(obj: CrawlConfig) -> Result<(), String> {
-    kreuzcrawl::CrawlConfig::from(obj)
+    let result = kreuzcrawl::CrawlConfig::from(obj)
         .validate()
         .map_err(|e| e.to_string())?;
-    Ok(())
+    Ok(result)
 }
 
 #[rustler::nif]
