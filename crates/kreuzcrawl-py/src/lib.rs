@@ -341,7 +341,10 @@ impl CrawlConfig {
             include_paths: self.include_paths.clone(),
             exclude_paths: self.exclude_paths.clone(),
             custom_headers: self.custom_headers.clone().into_iter().collect(),
-            request_timeout: std::time::Duration::from_millis(self.request_timeout),
+            request_timeout: self
+                .request_timeout
+                .map(std::time::Duration::from_millis)
+                .unwrap_or_default(),
             max_redirects: self.max_redirects,
             retry_count: self.retry_count,
             retry_codes: self.retry_codes.clone(),
@@ -367,10 +370,10 @@ impl CrawlConfig {
             save_browser_profile: self.save_browser_profile,
             ..Default::default()
         };
-        let result = core_self
+        core_self
             .validate()
             .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
+        Ok(())
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -1763,6 +1766,7 @@ pub enum BrowserWait {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
+#[derive(Default)]
 pub struct AuthConfig {
     pub(crate) inner: kreuzcrawl::AuthConfig,
 }
@@ -1797,13 +1801,6 @@ impl serde::Serialize for AuthConfig {
     }
 }
 
-impl Default for AuthConfig {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
-    }
-}
 
 impl<'de> serde::Deserialize<'de> for AuthConfig {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
@@ -1859,6 +1856,7 @@ pub enum AssetCategory {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
+#[derive(Default)]
 pub struct CrawlEvent {
     pub(crate) inner: kreuzcrawl::CrawlEvent,
 }
@@ -1893,13 +1891,6 @@ impl serde::Serialize for CrawlEvent {
     }
 }
 
-impl Default for CrawlEvent {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
-    }
-}
 
 impl<'de> serde::Deserialize<'de> for CrawlEvent {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
