@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-rc.7
+
+### Fixes
+
+- **WASM**: Added `.npmignore` to include compiled `pkg/` artifacts (`.gitignore` was overriding `files` field)
+- **Ruby**: Fixed gem version format in test_apps (`0.1.0.pre.rc.3` instead of `0.1.0.rc3`)
+
 ## 0.1.0-rc.6
 
 ### Fixes

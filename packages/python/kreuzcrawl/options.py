@@ -171,7 +171,7 @@ class CrawlConfig:
     cookies_enabled: bool = False
     """Whether to enable cookie handling."""
 
-    auth: dict | None = None
+    auth: dict[str, Any] | None = None
     """Authentication configuration."""
 
     max_body_size: int | None = None

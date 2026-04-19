@@ -6,7 +6,8 @@
     clippy::default_trait_access,
     clippy::cast_possible_wrap,
     clippy::cast_possible_truncation,
-    clippy::cast_sign_loss
+    clippy::cast_sign_loss,
+    clippy::just_underscores_and_digits
 )]
 
 use pyo3::exceptions::PyRuntimeError;
@@ -370,10 +371,10 @@ impl CrawlConfig {
             save_browser_profile: self.save_browser_profile,
             ..Default::default()
         };
-        let result = core_self
+        core_self
             .validate()
             .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
+        Ok(())
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -1766,6 +1767,7 @@ pub enum BrowserWait {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
+#[derive(Default)]
 pub struct AuthConfig {
     pub(crate) inner: kreuzcrawl::AuthConfig,
 }
@@ -1797,14 +1799,6 @@ impl From<kreuzcrawl::AuthConfig> for AuthConfig {
 impl serde::Serialize for AuthConfig {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         self.inner.serialize(serializer)
-    }
-}
-
-impl Default for AuthConfig {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
     }
 }
 
@@ -1862,6 +1856,7 @@ pub enum AssetCategory {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
+#[derive(Default)]
 pub struct CrawlEvent {
     pub(crate) inner: kreuzcrawl::CrawlEvent,
 }
@@ -1893,14 +1888,6 @@ impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
 impl serde::Serialize for CrawlEvent {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         self.inner.serialize(serializer)
-    }
-}
-
-impl Default for CrawlEvent {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
     }
 }
 

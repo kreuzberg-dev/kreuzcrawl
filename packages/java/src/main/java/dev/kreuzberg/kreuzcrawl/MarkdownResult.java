@@ -5,15 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record MarkdownResult(
-    String content,
-    @JsonProperty("document_structure") Optional<Object> documentStructure,
-    List<Object> tables,
-    List<String> warnings,
-    Optional<CitationResult> citations,
-    @JsonProperty("fit_content") Optional<String> fitContent
-) {
-    public static MarkdownResultBuilder builder() {
-        return new MarkdownResultBuilder();
-    }
+public record MarkdownResult(String content, @JsonProperty("document_structure") Optional<Object> documentStructure,
+		List<Object> tables, List<String> warnings, Optional<CitationResult> citations,
+		@JsonProperty("fit_content") Optional<String> fitContent) {
+	public static MarkdownResultBuilder builder() {
+		return new MarkdownResultBuilder();
+	}
 }

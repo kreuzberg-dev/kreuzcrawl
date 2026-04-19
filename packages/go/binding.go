@@ -2657,21 +2657,17 @@ func NewBatchCrawlResult(opts ...BatchCrawlResultOption) *BatchCrawlResult {
 //
 // If `config` is `None`, uses [`CrawlConfig::default()`].
 // Returns an error if the configuration is invalid.
-func CreateEngine(config ...*CrawlConfig) (*CrawlEngineHandle, error) {
-    var configVal *CrawlConfig
-    if len(config) > 0 {
-        configVal = config[0]
-    }
-    jsonBytescConfigVal, err := json.Marshal(configVal)
+func CreateEngine(config *CrawlConfig) (*CrawlEngineHandle, error) {
+    jsonBytescConfig, err := json.Marshal(config)
     if err != nil {
         return nil, fmt.Errorf("failed to marshal: %w", err)
     }
-    tmpStrcConfigVal := C.CString(string(jsonBytescConfigVal))
-    cConfigVal := C.kcrawl_crawl_config_from_json(tmpStrcConfigVal)
-    C.free(unsafe.Pointer(tmpStrcConfigVal))
-    defer C.kcrawl_crawl_config_free(cConfigVal)
+    tmpStrcConfig := C.CString(string(jsonBytescConfig))
+    cConfig := C.kcrawl_crawl_config_from_json(tmpStrcConfig)
+    C.free(unsafe.Pointer(tmpStrcConfig))
+    defer C.kcrawl_crawl_config_free(cConfig)
 
-    ptr := C.kcrawl_create_engine(cConfigVal)
+    ptr := C.kcrawl_create_engine(cConfig)
     if err := lastError(); err != nil {
         if ptr != nil {
             C.kcrawl_crawl_engine_handle_free(ptr)
@@ -2806,13 +2802,13 @@ func BatchCrawl(engine *CrawlEngineHandle, urls []string) *[]BatchCrawlResult {
 
 // Validate the configuration, returning an error if any values are invalid.
 func (r *CrawlConfig) Validate() error {
-    C.kcrawl_crawl_config_validate ((*C.KCRAWLCrawlConfig)(unsafe.Pointer(r)))
+    C.kcrawl_crawl_config_validate ((*C.KCRAWLCrawlConfig)(unsafe.Pointer(r.ptr)))
     return lastError()
 }
 
 
 // Returns the count of unique normalized URLs encountered during crawling.
 func (r *CrawlResult) UniqueNormalizedUrls() *uint {
-    ptr := C.kcrawl_crawl_result_unique_normalized_urls ((*C.KCRAWLCrawlResult)(unsafe.Pointer(r)))
+    ptr := C.kcrawl_crawl_result_unique_normalized_urls ((*C.KCRAWLCrawlResult)(unsafe.Pointer(r.ptr)))
     return func() *uint { v := uint(ptr); return &v }()
 }

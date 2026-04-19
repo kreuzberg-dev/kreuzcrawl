@@ -6,43 +6,33 @@ import java.util.Map;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record CrawlConfig(
-    @JsonProperty("max_depth") Optional<Long> maxDepth,
-    @JsonProperty("max_pages") Optional<Long> maxPages,
-    @JsonProperty("max_concurrent") Optional<Long> maxConcurrent,
-    @JsonProperty("respect_robots_txt") boolean respectRobotsTxt,
-    @JsonProperty("user_agent") Optional<String> userAgent,
-    @JsonProperty("stay_on_domain") boolean stayOnDomain,
-    @JsonProperty("allow_subdomains") boolean allowSubdomains,
-    @JsonProperty("include_paths") List<String> includePaths,
-    @JsonProperty("exclude_paths") List<String> excludePaths,
-    @JsonProperty("custom_headers") Map<String, String> customHeaders,
-    @JsonProperty("request_timeout") Long requestTimeout,
-    @JsonProperty("max_redirects") long maxRedirects,
-    @JsonProperty("retry_count") long retryCount,
-    @JsonProperty("retry_codes") List<Short> retryCodes,
-    @JsonProperty("cookies_enabled") boolean cookiesEnabled,
-    Optional<AuthConfig> auth,
-    @JsonProperty("max_body_size") Optional<Long> maxBodySize,
-    @JsonProperty("main_content_only") boolean mainContentOnly,
-    @JsonProperty("remove_tags") List<String> removeTags,
-    @JsonProperty("map_limit") Optional<Long> mapLimit,
-    @JsonProperty("map_search") Optional<String> mapSearch,
-    @JsonProperty("download_assets") boolean downloadAssets,
-    @JsonProperty("asset_types") List<AssetCategory> assetTypes,
-    @JsonProperty("max_asset_size") Optional<Long> maxAssetSize,
-    BrowserConfig browser,
-    Optional<ProxyConfig> proxy,
-    @JsonProperty("user_agents") List<String> userAgents,
-    @JsonProperty("capture_screenshot") boolean captureScreenshot,
-    @JsonProperty("download_documents") boolean downloadDocuments,
-    @JsonProperty("document_max_size") Optional<Long> documentMaxSize,
-    @JsonProperty("document_mime_types") List<String> documentMimeTypes,
-    @JsonProperty("warc_output") Optional<java.nio.file.Path> warcOutput,
-    @JsonProperty("browser_profile") Optional<String> browserProfile,
-    @JsonProperty("save_browser_profile") boolean saveBrowserProfile
-) {
-    public static CrawlConfigBuilder builder() {
-        return new CrawlConfigBuilder();
-    }
+public record CrawlConfig(@JsonProperty("max_depth") Optional<Long> maxDepth,
+		@JsonProperty("max_pages") Optional<Long> maxPages,
+		@JsonProperty("max_concurrent") Optional<Long> maxConcurrent,
+		@JsonProperty("respect_robots_txt") boolean respectRobotsTxt,
+		@JsonProperty("user_agent") Optional<String> userAgent, @JsonProperty("stay_on_domain") boolean stayOnDomain,
+		@JsonProperty("allow_subdomains") boolean allowSubdomains,
+		@JsonProperty("include_paths") List<String> includePaths,
+		@JsonProperty("exclude_paths") List<String> excludePaths,
+		@JsonProperty("custom_headers") Map<String, String> customHeaders,
+		@JsonProperty("request_timeout") Long requestTimeout, @JsonProperty("max_redirects") long maxRedirects,
+		@JsonProperty("retry_count") long retryCount, @JsonProperty("retry_codes") List<Short> retryCodes,
+		@JsonProperty("cookies_enabled") boolean cookiesEnabled, Optional<AuthConfig> auth,
+		@JsonProperty("max_body_size") Optional<Long> maxBodySize,
+		@JsonProperty("main_content_only") boolean mainContentOnly,
+		@JsonProperty("remove_tags") List<String> removeTags, @JsonProperty("map_limit") Optional<Long> mapLimit,
+		@JsonProperty("map_search") Optional<String> mapSearch, @JsonProperty("download_assets") boolean downloadAssets,
+		@JsonProperty("asset_types") List<AssetCategory> assetTypes,
+		@JsonProperty("max_asset_size") Optional<Long> maxAssetSize, BrowserConfig browser, Optional<ProxyConfig> proxy,
+		@JsonProperty("user_agents") List<String> userAgents,
+		@JsonProperty("capture_screenshot") boolean captureScreenshot,
+		@JsonProperty("download_documents") boolean downloadDocuments,
+		@JsonProperty("document_max_size") Optional<Long> documentMaxSize,
+		@JsonProperty("document_mime_types") List<String> documentMimeTypes,
+		@JsonProperty("warc_output") Optional<java.nio.file.Path> warcOutput,
+		@JsonProperty("browser_profile") Optional<String> browserProfile,
+		@JsonProperty("save_browser_profile") boolean saveBrowserProfile) {
+	public static CrawlConfigBuilder builder() {
+		return new CrawlConfigBuilder();
+	}
 }

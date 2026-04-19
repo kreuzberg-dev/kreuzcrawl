@@ -36,7 +36,7 @@ module Kreuzcrawl
     attr_accessor extra_wait: Integer
 
     def initialize: (mode: BrowserMode, ?endpoint: String, timeout: Integer, wait: BrowserWait, ?wait_selector: String, ?extra_wait: Integer) -> void
-    def self.default() -> BrowserConfig
+    def self.default: () -> BrowserConfig
   end
 
   class CrawlConfig
@@ -78,16 +78,16 @@ module Kreuzcrawl
     attr_accessor save_browser_profile: bool
 
     def initialize: (?max_depth: Integer, ?max_pages: Integer, ?max_concurrent: Integer, respect_robots_txt: bool, ?user_agent: String, stay_on_domain: bool, allow_subdomains: bool, include_paths: Array[String], exclude_paths: Array[String], custom_headers: Hash[String, String], request_timeout: Integer, max_redirects: Integer, retry_count: Integer, retry_codes: Array[Integer], cookies_enabled: bool, ?auth: AuthConfig, ?max_body_size: Integer, main_content_only: bool, remove_tags: Array[String], ?map_limit: Integer, ?map_search: String, download_assets: bool, asset_types: Array[AssetCategory], ?max_asset_size: Integer, browser: BrowserConfig, ?proxy: ProxyConfig, user_agents: Array[String], capture_screenshot: bool, download_documents: bool, ?document_max_size: Integer, document_mime_types: Array[String], ?warc_output: String, ?browser_profile: String, save_browser_profile: bool) -> void
-    def validate() -> void
-    def self.default() -> CrawlConfig
+    def validate: () -> void
+    def self.default: () -> CrawlConfig
   end
 
   class DownloadedDocument
     # A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
-
-When the crawler encounters non-HTML content and `download_documents` is
-enabled, it downloads the raw bytes and populates this struct instead of
-skipping the resource.
+    #
+    # When the crawler encounters non-HTML content and `download_documents` is
+    # enabled, it downloads the raw bytes and populates this struct instead of
+    # skipping the resource.
 
     attr_accessor url: String
     attr_accessor mime_type: String
@@ -197,7 +197,7 @@ skipping the resource.
     attr_accessor normalized_urls: Array[String]
 
     def initialize: (pages: Array[CrawlPageResult], final_url: String, redirect_count: Integer, was_skipped: bool, ?error: String, cookies: Array[CookieInfo], normalized_urls: Array[String]) -> void
-    def unique_normalized_urls() -> Integer
+    def unique_normalized_urls: () -> Integer
   end
 
   class SitemapUrl
@@ -438,10 +438,10 @@ skipping the resource.
 
   class CrawlEngineHandle
     # Opaque handle to a configured crawl engine.
-
-Constructed via [`create_engine`] with an optional [`CrawlConfig`].
-All default trait implementations (BFS strategy, in-memory frontier,
-per-domain throttle, etc.) are used internally.
+    #
+    # Constructed via [`create_engine`] with an optional [`CrawlConfig`].
+    # All default trait implementations (BFS strategy, in-memory frontier,
+    # per-domain throttle, etc.) are used internally.
 
   end
 
@@ -538,16 +538,16 @@ per-domain throttle, etc.) are used internally.
     Complete: Integer
   end
 
-  def self.create_engine(?config: CrawlConfig) -> CrawlEngineHandle
+  def self.create_engine: (?CrawlConfig config) -> CrawlEngineHandle
 
-  def self.scrape(engine: CrawlEngineHandle, url: String) -> ScrapeResult
+  def self.scrape: (CrawlEngineHandle engine, String url) -> ScrapeResult
 
-  def self.crawl(engine: CrawlEngineHandle, url: String) -> CrawlResult
+  def self.crawl: (CrawlEngineHandle engine, String url) -> CrawlResult
 
-  def self.map_urls(engine: CrawlEngineHandle, url: String) -> MapResult
+  def self.map_urls: (CrawlEngineHandle engine, String url) -> MapResult
 
-  def self.batch_scrape(engine: CrawlEngineHandle, urls: Array[String]) -> Array[BatchScrapeResult]
+  def self.batch_scrape: (CrawlEngineHandle engine, Array[String] urls) -> Array[BatchScrapeResult]
 
-  def self.batch_crawl(engine: CrawlEngineHandle, urls: Array[String]) -> Array[BatchCrawlResult]
+  def self.batch_crawl: (CrawlEngineHandle engine, Array[String] urls) -> Array[BatchCrawlResult]
 
 end

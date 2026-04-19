@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kreuzcrawl (0.1.0.pre.rc.6)
+    kreuzcrawl (0.1.0.pre.rc.7)
       rb_sys (~> 0.9)
 
 GEM
@@ -83,7 +83,7 @@ CHECKSUMS
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
   json (2.19.3) sha256=289b0bb53052a1fa8c34ab33cc750b659ba14a5c45f3fcf4b18762dc67c78646
-  kreuzcrawl (0.1.0.pre.rc.6)
+  kreuzcrawl (0.1.0.pre.rc.7)
   language_server-protocol (3.17.0.5) sha256=fd1e39a51a28bf3eec959379985a72e296e9f9acfce46f6a79d31ca8760803cc
   lint_roller (1.1.0) sha256=2c0c845b632a7d172cb849cc90c1bce937a28c5c8ccccb50dfd46a485003cc87
   parallel (2.0.1) sha256=337782d3e39f4121e67563bf91dd8ece67f48923d90698614773a0ec9a5b2c7d

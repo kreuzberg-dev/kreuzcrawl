@@ -5,30 +5,26 @@ import java.util.Optional;
 
 public class BatchScrapeResultBuilder {
 
-    private String url = "";
-    private Optional<ScrapeResult> result = Optional.empty();
-    private Optional<String> error = Optional.empty();
+	private String url = "";
+	private Optional<ScrapeResult> result = Optional.empty();
+	private Optional<String> error = Optional.empty();
 
-    public BatchScrapeResultBuilder withUrl(String value) {
-        this.url = value;
-        return this;
-    }
+	public BatchScrapeResultBuilder withUrl(String value) {
+		this.url = value;
+		return this;
+	}
 
-    public BatchScrapeResultBuilder withResult(Optional<ScrapeResult> value) {
-        this.result = value;
-        return this;
-    }
+	public BatchScrapeResultBuilder withResult(Optional<ScrapeResult> value) {
+		this.result = value;
+		return this;
+	}
 
-    public BatchScrapeResultBuilder withError(Optional<String> value) {
-        this.error = value;
-        return this;
-    }
+	public BatchScrapeResultBuilder withError(Optional<String> value) {
+		this.error = value;
+		return this;
+	}
 
-    public BatchScrapeResult build() {
-        return new BatchScrapeResult(
-            url,
-            result,
-            error
-        );
-    }
+	public BatchScrapeResult build() {
+		return new BatchScrapeResult(url, result, error);
+	}
 }
