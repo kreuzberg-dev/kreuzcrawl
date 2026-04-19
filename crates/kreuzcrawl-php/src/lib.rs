@@ -315,10 +315,10 @@ impl CrawlConfig {
             save_browser_profile: self.save_browser_profile,
             ..Default::default()
         };
-        core_self
+        let result = core_self
             .validate()
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
+        Ok(result)
     }
 
     #[allow(clippy::should_implement_trait)]

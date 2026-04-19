@@ -700,10 +700,10 @@ impl WasmCrawlConfig {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen]
     pub fn validate(&self) -> Result<(), JsValue> {
-        kreuzcrawl::CrawlConfig::from(self.clone())
+        let result = kreuzcrawl::CrawlConfig::from(self.clone())
             .validate()
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
+        Ok(result)
     }
 }
 

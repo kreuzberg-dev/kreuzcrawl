@@ -3,11 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** A server error occurred (HTTP 5xx). */
 public class ServerErrorException extends CrawlErrorException {
-	public ServerErrorException(String message) {
-		super(message);
-	}
+    public ServerErrorException(String message) {
+        super(message);
+    }
 
-	public ServerErrorException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public ServerErrorException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

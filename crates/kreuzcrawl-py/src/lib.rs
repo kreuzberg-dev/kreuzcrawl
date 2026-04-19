@@ -370,10 +370,10 @@ impl CrawlConfig {
             save_browser_profile: self.save_browser_profile,
             ..Default::default()
         };
-        core_self
+        let result = core_self
             .validate()
             .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Ok(result)
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -1766,7 +1766,6 @@ pub enum BrowserWait {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
-#[derive(Default)]
 pub struct AuthConfig {
     pub(crate) inner: kreuzcrawl::AuthConfig,
 }
@@ -1801,6 +1800,13 @@ impl serde::Serialize for AuthConfig {
     }
 }
 
+impl Default for AuthConfig {
+    fn default() -> Self {
+        Self {
+            inner: Default::default(),
+        }
+    }
+}
 
 impl<'de> serde::Deserialize<'de> for AuthConfig {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
@@ -1856,7 +1862,6 @@ pub enum AssetCategory {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
-#[derive(Default)]
 pub struct CrawlEvent {
     pub(crate) inner: kreuzcrawl::CrawlEvent,
 }
@@ -1891,6 +1896,13 @@ impl serde::Serialize for CrawlEvent {
     }
 }
 
+impl Default for CrawlEvent {
+    fn default() -> Self {
+        Self {
+            inner: Default::default(),
+        }
+    }
+}
 
 impl<'de> serde::Deserialize<'de> for CrawlEvent {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {

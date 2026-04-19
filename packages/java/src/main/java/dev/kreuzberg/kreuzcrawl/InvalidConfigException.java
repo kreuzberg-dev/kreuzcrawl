@@ -3,11 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** The provided configuration is invalid. */
 public class InvalidConfigException extends CrawlErrorException {
-	public InvalidConfigException(String message) {
-		super(message);
-	}
+    public InvalidConfigException(String message) {
+        super(message);
+    }
 
-	public InvalidConfigException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public InvalidConfigException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

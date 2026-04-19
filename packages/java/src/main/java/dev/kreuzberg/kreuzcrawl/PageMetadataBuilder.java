@@ -6,270 +6,310 @@ import java.util.Optional;
 
 public class PageMetadataBuilder {
 
-	private Optional<String> title = Optional.empty();
-	private Optional<String> description = Optional.empty();
-	private Optional<String> canonicalUrl = Optional.empty();
-	private Optional<String> keywords = Optional.empty();
-	private Optional<String> author = Optional.empty();
-	private Optional<String> viewport = Optional.empty();
-	private Optional<String> themeColor = Optional.empty();
-	private Optional<String> generator = Optional.empty();
-	private Optional<String> robots = Optional.empty();
-	private Optional<String> htmlLang = Optional.empty();
-	private Optional<String> htmlDir = Optional.empty();
-	private Optional<String> ogTitle = Optional.empty();
-	private Optional<String> ogType = Optional.empty();
-	private Optional<String> ogImage = Optional.empty();
-	private Optional<String> ogDescription = Optional.empty();
-	private Optional<String> ogUrl = Optional.empty();
-	private Optional<String> ogSiteName = Optional.empty();
-	private Optional<String> ogLocale = Optional.empty();
-	private Optional<String> ogVideo = Optional.empty();
-	private Optional<String> ogAudio = Optional.empty();
-	private Optional<List<String>> ogLocaleAlternates = Optional.empty();
-	private Optional<String> twitterCard = Optional.empty();
-	private Optional<String> twitterTitle = Optional.empty();
-	private Optional<String> twitterDescription = Optional.empty();
-	private Optional<String> twitterImage = Optional.empty();
-	private Optional<String> twitterSite = Optional.empty();
-	private Optional<String> twitterCreator = Optional.empty();
-	private Optional<String> dcTitle = Optional.empty();
-	private Optional<String> dcCreator = Optional.empty();
-	private Optional<String> dcSubject = Optional.empty();
-	private Optional<String> dcDescription = Optional.empty();
-	private Optional<String> dcPublisher = Optional.empty();
-	private Optional<String> dcDate = Optional.empty();
-	private Optional<String> dcType = Optional.empty();
-	private Optional<String> dcFormat = Optional.empty();
-	private Optional<String> dcIdentifier = Optional.empty();
-	private Optional<String> dcLanguage = Optional.empty();
-	private Optional<String> dcRights = Optional.empty();
-	private Optional<ArticleMetadata> article = Optional.empty();
-	private Optional<List<HreflangEntry>> hreflangs = Optional.empty();
-	private Optional<List<FaviconInfo>> favicons = Optional.empty();
-	private Optional<List<HeadingInfo>> headings = Optional.empty();
-	private Optional<Long> wordCount = Optional.empty();
+    private Optional<String> title = Optional.empty();
+    private Optional<String> description = Optional.empty();
+    private Optional<String> canonicalUrl = Optional.empty();
+    private Optional<String> keywords = Optional.empty();
+    private Optional<String> author = Optional.empty();
+    private Optional<String> viewport = Optional.empty();
+    private Optional<String> themeColor = Optional.empty();
+    private Optional<String> generator = Optional.empty();
+    private Optional<String> robots = Optional.empty();
+    private Optional<String> htmlLang = Optional.empty();
+    private Optional<String> htmlDir = Optional.empty();
+    private Optional<String> ogTitle = Optional.empty();
+    private Optional<String> ogType = Optional.empty();
+    private Optional<String> ogImage = Optional.empty();
+    private Optional<String> ogDescription = Optional.empty();
+    private Optional<String> ogUrl = Optional.empty();
+    private Optional<String> ogSiteName = Optional.empty();
+    private Optional<String> ogLocale = Optional.empty();
+    private Optional<String> ogVideo = Optional.empty();
+    private Optional<String> ogAudio = Optional.empty();
+    private Optional<List<String>> ogLocaleAlternates = Optional.empty();
+    private Optional<String> twitterCard = Optional.empty();
+    private Optional<String> twitterTitle = Optional.empty();
+    private Optional<String> twitterDescription = Optional.empty();
+    private Optional<String> twitterImage = Optional.empty();
+    private Optional<String> twitterSite = Optional.empty();
+    private Optional<String> twitterCreator = Optional.empty();
+    private Optional<String> dcTitle = Optional.empty();
+    private Optional<String> dcCreator = Optional.empty();
+    private Optional<String> dcSubject = Optional.empty();
+    private Optional<String> dcDescription = Optional.empty();
+    private Optional<String> dcPublisher = Optional.empty();
+    private Optional<String> dcDate = Optional.empty();
+    private Optional<String> dcType = Optional.empty();
+    private Optional<String> dcFormat = Optional.empty();
+    private Optional<String> dcIdentifier = Optional.empty();
+    private Optional<String> dcLanguage = Optional.empty();
+    private Optional<String> dcRights = Optional.empty();
+    private Optional<ArticleMetadata> article = Optional.empty();
+    private Optional<List<HreflangEntry>> hreflangs = Optional.empty();
+    private Optional<List<FaviconInfo>> favicons = Optional.empty();
+    private Optional<List<HeadingInfo>> headings = Optional.empty();
+    private Optional<Long> wordCount = Optional.empty();
 
-	public PageMetadataBuilder withTitle(Optional<String> value) {
-		this.title = value;
-		return this;
-	}
+    public PageMetadataBuilder withTitle(Optional<String> value) {
+        this.title = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDescription(Optional<String> value) {
-		this.description = value;
-		return this;
-	}
+    public PageMetadataBuilder withDescription(Optional<String> value) {
+        this.description = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withCanonicalUrl(Optional<String> value) {
-		this.canonicalUrl = value;
-		return this;
-	}
+    public PageMetadataBuilder withCanonicalUrl(Optional<String> value) {
+        this.canonicalUrl = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withKeywords(Optional<String> value) {
-		this.keywords = value;
-		return this;
-	}
+    public PageMetadataBuilder withKeywords(Optional<String> value) {
+        this.keywords = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withAuthor(Optional<String> value) {
-		this.author = value;
-		return this;
-	}
+    public PageMetadataBuilder withAuthor(Optional<String> value) {
+        this.author = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withViewport(Optional<String> value) {
-		this.viewport = value;
-		return this;
-	}
+    public PageMetadataBuilder withViewport(Optional<String> value) {
+        this.viewport = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withThemeColor(Optional<String> value) {
-		this.themeColor = value;
-		return this;
-	}
+    public PageMetadataBuilder withThemeColor(Optional<String> value) {
+        this.themeColor = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withGenerator(Optional<String> value) {
-		this.generator = value;
-		return this;
-	}
+    public PageMetadataBuilder withGenerator(Optional<String> value) {
+        this.generator = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withRobots(Optional<String> value) {
-		this.robots = value;
-		return this;
-	}
+    public PageMetadataBuilder withRobots(Optional<String> value) {
+        this.robots = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withHtmlLang(Optional<String> value) {
-		this.htmlLang = value;
-		return this;
-	}
+    public PageMetadataBuilder withHtmlLang(Optional<String> value) {
+        this.htmlLang = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withHtmlDir(Optional<String> value) {
-		this.htmlDir = value;
-		return this;
-	}
+    public PageMetadataBuilder withHtmlDir(Optional<String> value) {
+        this.htmlDir = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgTitle(Optional<String> value) {
-		this.ogTitle = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgTitle(Optional<String> value) {
+        this.ogTitle = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgType(Optional<String> value) {
-		this.ogType = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgType(Optional<String> value) {
+        this.ogType = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgImage(Optional<String> value) {
-		this.ogImage = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgImage(Optional<String> value) {
+        this.ogImage = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgDescription(Optional<String> value) {
-		this.ogDescription = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgDescription(Optional<String> value) {
+        this.ogDescription = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgUrl(Optional<String> value) {
-		this.ogUrl = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgUrl(Optional<String> value) {
+        this.ogUrl = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgSiteName(Optional<String> value) {
-		this.ogSiteName = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgSiteName(Optional<String> value) {
+        this.ogSiteName = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgLocale(Optional<String> value) {
-		this.ogLocale = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgLocale(Optional<String> value) {
+        this.ogLocale = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgVideo(Optional<String> value) {
-		this.ogVideo = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgVideo(Optional<String> value) {
+        this.ogVideo = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgAudio(Optional<String> value) {
-		this.ogAudio = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgAudio(Optional<String> value) {
+        this.ogAudio = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withOgLocaleAlternates(Optional<List<String>> value) {
-		this.ogLocaleAlternates = value;
-		return this;
-	}
+    public PageMetadataBuilder withOgLocaleAlternates(Optional<List<String>> value) {
+        this.ogLocaleAlternates = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withTwitterCard(Optional<String> value) {
-		this.twitterCard = value;
-		return this;
-	}
+    public PageMetadataBuilder withTwitterCard(Optional<String> value) {
+        this.twitterCard = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withTwitterTitle(Optional<String> value) {
-		this.twitterTitle = value;
-		return this;
-	}
+    public PageMetadataBuilder withTwitterTitle(Optional<String> value) {
+        this.twitterTitle = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withTwitterDescription(Optional<String> value) {
-		this.twitterDescription = value;
-		return this;
-	}
+    public PageMetadataBuilder withTwitterDescription(Optional<String> value) {
+        this.twitterDescription = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withTwitterImage(Optional<String> value) {
-		this.twitterImage = value;
-		return this;
-	}
+    public PageMetadataBuilder withTwitterImage(Optional<String> value) {
+        this.twitterImage = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withTwitterSite(Optional<String> value) {
-		this.twitterSite = value;
-		return this;
-	}
+    public PageMetadataBuilder withTwitterSite(Optional<String> value) {
+        this.twitterSite = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withTwitterCreator(Optional<String> value) {
-		this.twitterCreator = value;
-		return this;
-	}
+    public PageMetadataBuilder withTwitterCreator(Optional<String> value) {
+        this.twitterCreator = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcTitle(Optional<String> value) {
-		this.dcTitle = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcTitle(Optional<String> value) {
+        this.dcTitle = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcCreator(Optional<String> value) {
-		this.dcCreator = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcCreator(Optional<String> value) {
+        this.dcCreator = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcSubject(Optional<String> value) {
-		this.dcSubject = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcSubject(Optional<String> value) {
+        this.dcSubject = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcDescription(Optional<String> value) {
-		this.dcDescription = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcDescription(Optional<String> value) {
+        this.dcDescription = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcPublisher(Optional<String> value) {
-		this.dcPublisher = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcPublisher(Optional<String> value) {
+        this.dcPublisher = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcDate(Optional<String> value) {
-		this.dcDate = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcDate(Optional<String> value) {
+        this.dcDate = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcType(Optional<String> value) {
-		this.dcType = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcType(Optional<String> value) {
+        this.dcType = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcFormat(Optional<String> value) {
-		this.dcFormat = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcFormat(Optional<String> value) {
+        this.dcFormat = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcIdentifier(Optional<String> value) {
-		this.dcIdentifier = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcIdentifier(Optional<String> value) {
+        this.dcIdentifier = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcLanguage(Optional<String> value) {
-		this.dcLanguage = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcLanguage(Optional<String> value) {
+        this.dcLanguage = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withDcRights(Optional<String> value) {
-		this.dcRights = value;
-		return this;
-	}
+    public PageMetadataBuilder withDcRights(Optional<String> value) {
+        this.dcRights = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withArticle(Optional<ArticleMetadata> value) {
-		this.article = value;
-		return this;
-	}
+    public PageMetadataBuilder withArticle(Optional<ArticleMetadata> value) {
+        this.article = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withHreflangs(Optional<List<HreflangEntry>> value) {
-		this.hreflangs = value;
-		return this;
-	}
+    public PageMetadataBuilder withHreflangs(Optional<List<HreflangEntry>> value) {
+        this.hreflangs = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withFavicons(Optional<List<FaviconInfo>> value) {
-		this.favicons = value;
-		return this;
-	}
+    public PageMetadataBuilder withFavicons(Optional<List<FaviconInfo>> value) {
+        this.favicons = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withHeadings(Optional<List<HeadingInfo>> value) {
-		this.headings = value;
-		return this;
-	}
+    public PageMetadataBuilder withHeadings(Optional<List<HeadingInfo>> value) {
+        this.headings = value;
+        return this;
+    }
 
-	public PageMetadataBuilder withWordCount(Optional<Long> value) {
-		this.wordCount = value;
-		return this;
-	}
+    public PageMetadataBuilder withWordCount(Optional<Long> value) {
+        this.wordCount = value;
+        return this;
+    }
 
-	public PageMetadata build() {
-		return new PageMetadata(title, description, canonicalUrl, keywords, author, viewport, themeColor, generator,
-				robots, htmlLang, htmlDir, ogTitle, ogType, ogImage, ogDescription, ogUrl, ogSiteName, ogLocale,
-				ogVideo, ogAudio, ogLocaleAlternates, twitterCard, twitterTitle, twitterDescription, twitterImage,
-				twitterSite, twitterCreator, dcTitle, dcCreator, dcSubject, dcDescription, dcPublisher, dcDate, dcType,
-				dcFormat, dcIdentifier, dcLanguage, dcRights, article, hreflangs, favicons, headings, wordCount);
-	}
+    public PageMetadata build() {
+        return new PageMetadata(
+            title,
+            description,
+            canonicalUrl,
+            keywords,
+            author,
+            viewport,
+            themeColor,
+            generator,
+            robots,
+            htmlLang,
+            htmlDir,
+            ogTitle,
+            ogType,
+            ogImage,
+            ogDescription,
+            ogUrl,
+            ogSiteName,
+            ogLocale,
+            ogVideo,
+            ogAudio,
+            ogLocaleAlternates,
+            twitterCard,
+            twitterTitle,
+            twitterDescription,
+            twitterImage,
+            twitterSite,
+            twitterCreator,
+            dcTitle,
+            dcCreator,
+            dcSubject,
+            dcDescription,
+            dcPublisher,
+            dcDate,
+            dcType,
+            dcFormat,
+            dcIdentifier,
+            dcLanguage,
+            dcRights,
+            article,
+            hreflangs,
+            favicons,
+            headings,
+            wordCount
+        );
+    }
 }

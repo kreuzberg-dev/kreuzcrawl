@@ -3,11 +3,11 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** Errors that can occur during crawling, scraping, or mapping operations. */
 public class CrawlErrorException extends Exception {
-	public CrawlErrorException(String message) {
-		super(message);
-	}
+    public CrawlErrorException(String message) {
+        super(message);
+    }
 
-	public CrawlErrorException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public CrawlErrorException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -6,50 +6,58 @@ import java.util.Optional;
 
 public class DownloadedDocumentBuilder {
 
-	private String url = "";
-	private String mimeType = "";
-	private byte[] content = new byte[0];
-	private long size = 0;
-	private Optional<String> filename = Optional.empty();
-	private String contentHash = "";
-	private Map<String, String> headers = Map.of();
+    private String url = "";
+    private String mimeType = "";
+    private byte[] content = new byte[0];
+    private long size = 0;
+    private Optional<String> filename = Optional.empty();
+    private String contentHash = "";
+    private Map<String, String> headers = Map.of();
 
-	public DownloadedDocumentBuilder withUrl(String value) {
-		this.url = value;
-		return this;
-	}
+    public DownloadedDocumentBuilder withUrl(String value) {
+        this.url = value;
+        return this;
+    }
 
-	public DownloadedDocumentBuilder withMimeType(String value) {
-		this.mimeType = value;
-		return this;
-	}
+    public DownloadedDocumentBuilder withMimeType(String value) {
+        this.mimeType = value;
+        return this;
+    }
 
-	public DownloadedDocumentBuilder withContent(byte[] value) {
-		this.content = value;
-		return this;
-	}
+    public DownloadedDocumentBuilder withContent(byte[] value) {
+        this.content = value;
+        return this;
+    }
 
-	public DownloadedDocumentBuilder withSize(long value) {
-		this.size = value;
-		return this;
-	}
+    public DownloadedDocumentBuilder withSize(long value) {
+        this.size = value;
+        return this;
+    }
 
-	public DownloadedDocumentBuilder withFilename(Optional<String> value) {
-		this.filename = value;
-		return this;
-	}
+    public DownloadedDocumentBuilder withFilename(Optional<String> value) {
+        this.filename = value;
+        return this;
+    }
 
-	public DownloadedDocumentBuilder withContentHash(String value) {
-		this.contentHash = value;
-		return this;
-	}
+    public DownloadedDocumentBuilder withContentHash(String value) {
+        this.contentHash = value;
+        return this;
+    }
 
-	public DownloadedDocumentBuilder withHeaders(Map<String, String> value) {
-		this.headers = value;
-		return this;
-	}
+    public DownloadedDocumentBuilder withHeaders(Map<String, String> value) {
+        this.headers = value;
+        return this;
+    }
 
-	public DownloadedDocument build() {
-		return new DownloadedDocument(url, mimeType, content, size, filename, contentHash, headers);
-	}
+    public DownloadedDocument build() {
+        return new DownloadedDocument(
+            url,
+            mimeType,
+            content,
+            size,
+            filename,
+            contentHash,
+            headers
+        );
+    }
 }
