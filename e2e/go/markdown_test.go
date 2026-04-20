@@ -14,7 +14,7 @@ import (
 
 func Test_MarkdownBasicConversion(t *testing.T) {
 	// HTML is always converted to markdown alongside raw HTML
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -68,7 +68,7 @@ func Test_MarkdownCrawlAllPages(t *testing.T) {
 
 func Test_MarkdownFitContent(t *testing.T) {
 	// Fit markdown removes navigation and boilerplate content
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -89,7 +89,7 @@ func Test_MarkdownFitContent(t *testing.T) {
 
 func Test_MarkdownHeadingsAndParagraphs(t *testing.T) {
 	// Markdown conversion preserves heading hierarchy and paragraph text
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -112,7 +112,7 @@ func Test_MarkdownHeadingsAndParagraphs(t *testing.T) {
 
 func Test_MarkdownLinksConverted(t *testing.T) {
 	// HTML links are converted to markdown link syntax
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -141,7 +141,7 @@ func Test_MarkdownLinksConverted(t *testing.T) {
 
 func Test_MarkdownWithCitations(t *testing.T) {
 	// Markdown includes citation conversion with numbered references
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

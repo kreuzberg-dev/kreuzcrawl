@@ -5,8 +5,7 @@ set -euo pipefail
 
 test_sitemap_basic() {
   # Parses a standard urlset sitemap
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_basic" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_basic" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
   # skipped: field 'has_lastmod' not available on result type
@@ -14,40 +13,35 @@ test_sitemap_basic() {
 
 test_sitemap_compressed_gzip() {
   # Parses a gzip-compressed sitemap file
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_compressed_gzip" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_compressed_gzip" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_sitemap_empty() {
   # Handles empty sitemap gracefully
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_empty" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_empty" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_sitemap_from_robots_txt() {
   # Discovers sitemap via robots.txt Sitemap directive
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_from_robots_txt" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_from_robots_txt" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_sitemap_index() {
   # Follows sitemap index to discover child sitemaps
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_index" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_index" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_sitemap_lastmod_filter() {
   # Filters sitemap URLs by lastmod date
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_lastmod_filter" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_lastmod_filter" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
   # skipped: field 'has_lastmod' not available on result type
@@ -55,16 +49,14 @@ test_sitemap_lastmod_filter() {
 
 test_sitemap_only_mode() {
   # Uses sitemap URLs exclusively without following page links
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_only_mode" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_only_mode" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_sitemap_xhtml_links() {
   # Parses sitemap with XHTML namespace alternate links
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_xhtml_links" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/sitemap_xhtml_links" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
   # skipped: field 'has_lastmod' not available on result type

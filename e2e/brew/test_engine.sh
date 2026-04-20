@@ -5,8 +5,7 @@ set -euo pipefail
 
 test_engine_batch_basic() {
   # CrawlEngine with defaults batch scrapes like the free function
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/engine_batch_basic" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/engine_batch_basic" --format json >/dev/null
 
   # skipped: field 'batch.completed_count' not available on result type
   # skipped: field 'batch.total_count' not available on result type
@@ -14,8 +13,7 @@ test_engine_batch_basic() {
 
 test_engine_crawl_basic() {
   # CrawlEngine with defaults crawls multiple pages like the free function
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/engine_crawl_basic" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/engine_crawl_basic" --format json >/dev/null
 
   # skipped: field 'crawl.pages_crawled' not available on result type
   # skipped: field 'crawl.min_pages' not available on result type
@@ -23,8 +21,7 @@ test_engine_crawl_basic() {
 
 test_engine_map_basic() {
   # CrawlEngine with defaults discovers URLs like the free function
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/engine_map_basic" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/engine_map_basic" --format json >/dev/null
 
   # skipped: field 'map.min_urls' not available on result type
 }
@@ -56,8 +53,7 @@ test_engine_scrape_basic() {
 
 test_engine_stream_basic() {
   # CrawlEngine with defaults streams events like the free function
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/engine_stream_basic" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/engine_stream_basic" --format json >/dev/null
 
   # skipped: field 'stream.has_page_event' not available on result type
   # skipped: field 'stream.has_complete_event' not available on result type

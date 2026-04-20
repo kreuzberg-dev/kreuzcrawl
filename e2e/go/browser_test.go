@@ -57,7 +57,7 @@ func Test_BrowserConfigNeverMode(t *testing.T) {
 
 func Test_BrowserDetectMinimalPage(t *testing.T) {
 	// Does NOT flag a short but real content page as needing JS rendering
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -75,7 +75,7 @@ func Test_BrowserDetectMinimalPage(t *testing.T) {
 
 func Test_BrowserDetectNextEmpty(t *testing.T) {
 	// Detects Next.js page with __NEXT_DATA__ but no rendered content as needing JS rendering
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -93,7 +93,7 @@ func Test_BrowserDetectNextEmpty(t *testing.T) {
 
 func Test_BrowserDetectNextRendered(t *testing.T) {
 	// Does NOT flag Next.js page with full SSR content as needing JS rendering
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -112,7 +112,7 @@ func Test_BrowserDetectNextRendered(t *testing.T) {
 
 func Test_BrowserDetectNormalPage(t *testing.T) {
 	// Does NOT flag a normal server-rendered page as needing JS rendering
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -130,7 +130,7 @@ func Test_BrowserDetectNormalPage(t *testing.T) {
 
 func Test_BrowserDetectNuxtShell(t *testing.T) {
 	// Detects Nuxt SPA shell with empty #__nuxt div as needing JS rendering
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -148,7 +148,7 @@ func Test_BrowserDetectNuxtShell(t *testing.T) {
 
 func Test_BrowserDetectReactShell(t *testing.T) {
 	// Detects React SPA shell with empty #root div as needing JS rendering
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -167,7 +167,7 @@ func Test_BrowserDetectReactShell(t *testing.T) {
 
 func Test_BrowserDetectVueShell(t *testing.T) {
 	// Detects Vue SPA shell with empty #app div as needing JS rendering
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

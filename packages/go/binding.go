@@ -2802,13 +2802,29 @@ func BatchCrawl(engine *CrawlEngineHandle, urls []string) *[]BatchCrawlResult {
 
 // Validate the configuration, returning an error if any values are invalid.
 func (r *CrawlConfig) Validate() error {
-    C.kcrawl_crawl_config_validate ((*C.KCRAWLCrawlConfig)(unsafe.Pointer(r.ptr)))
+    jsonBytesRecv, err := json.Marshal(r)
+    if err != nil {
+        return fmt.Errorf("failed to marshal receiver: %w", err)
+    }
+    tmpStrRecv := C.CString(string(jsonBytesRecv))
+    cRecv := C.kcrawl_crawl_config_from_json(tmpStrRecv)
+    C.free(unsafe.Pointer(tmpStrRecv))
+    defer C.kcrawl_crawl_config_free(cRecv)
+    C.kcrawl_crawl_config_validate (cRecv)
     return lastError()
 }
 
 
 // Returns the count of unique normalized URLs encountered during crawling.
 func (r *CrawlResult) UniqueNormalizedUrls() *uint {
-    ptr := C.kcrawl_crawl_result_unique_normalized_urls ((*C.KCRAWLCrawlResult)(unsafe.Pointer(r.ptr)))
+    jsonBytesRecv, err := json.Marshal(r)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal receiver: %v", err))
+    }
+    tmpStrRecv := C.CString(string(jsonBytesRecv))
+    cRecv := C.kcrawl_crawl_result_from_json(tmpStrRecv)
+    C.free(unsafe.Pointer(tmpStrRecv))
+    defer C.kcrawl_crawl_result_free(cRecv)
+    ptr := C.kcrawl_crawl_result_unique_normalized_urls (cRecv)
     return func() *uint { v := uint(ptr); return &v }()
 }

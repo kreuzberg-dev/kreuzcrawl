@@ -5,24 +5,21 @@ set -euo pipefail
 
 test_map_discover_urls() {
   # Discovers all URLs on a site without fetching full content
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_discover_urls" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_discover_urls" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_map_exclude_patterns() {
   # Excludes URLs matching patterns from URL map
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_exclude_patterns" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_exclude_patterns" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_map_include_subdomains() {
   # Includes subdomain URLs in URL map discovery
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_include_subdomains" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_include_subdomains" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
   # skipped: field 'urls' not available on result type
@@ -30,24 +27,21 @@ test_map_include_subdomains() {
 
 test_map_large_sitemap() {
   # Handles large sitemap with 100+ URLs
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_large_sitemap" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_large_sitemap" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_map_limit_pagination() {
   # Limits map result count to specified maximum
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_limit_pagination" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_limit_pagination" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
 }
 
 test_map_search_filter() {
   # Filters map results by search keyword
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_search_filter" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/map_search_filter" --format json >/dev/null
 
   # skipped: field 'urls.length' not available on result type
   # skipped: field 'urls' not available on result type

@@ -14,7 +14,7 @@ import (
 
 func Test_EngineBatchBasic(t *testing.T) {
 	// CrawlEngine with defaults batch scrapes like the free function
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -48,7 +48,7 @@ func Test_EngineCrawlBasic(t *testing.T) {
 
 func Test_EngineMapBasic(t *testing.T) {
 	// CrawlEngine with defaults discovers URLs like the free function
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -62,7 +62,7 @@ func Test_EngineMapBasic(t *testing.T) {
 
 func Test_EngineScrapeBasic(t *testing.T) {
 	// CrawlEngine with defaults scrapes a page identically to the free function
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

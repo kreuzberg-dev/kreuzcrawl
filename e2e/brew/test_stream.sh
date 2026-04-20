@@ -5,8 +5,7 @@ set -euo pipefail
 
 test_crawl_stream_events() {
   # Crawl stream produces page and complete events
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/crawl_stream_events" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/crawl_stream_events" --format json >/dev/null
 
   # skipped: field 'stream.event_count_min' not available on result type
   # skipped: field 'stream.has_page_event' not available on result type
@@ -15,8 +14,7 @@ test_crawl_stream_events() {
 
 test_stream_depth_crawl() {
   # Stream produces events for multi-depth crawl with link following
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/stream_depth_crawl" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/stream_depth_crawl" --format json >/dev/null
 
   # skipped: field 'stream.event_count_min' not available on result type
   # skipped: field 'stream.has_page_event' not available on result type
@@ -25,8 +23,7 @@ test_stream_depth_crawl() {
 
 test_stream_with_error_event() {
   # Stream emits page and complete events even when some pages fail
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/stream_with_error_event" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/stream_with_error_event" --format json >/dev/null
 
   # skipped: field 'stream.has_page_event' not available on result type
   # skipped: field 'stream.has_complete_event' not available on result type

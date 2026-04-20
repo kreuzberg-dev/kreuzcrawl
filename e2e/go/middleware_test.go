@@ -33,7 +33,7 @@ func Test_MiddlewareEngineCrawlWithDefaults(t *testing.T) {
 
 func Test_MiddlewareNoopNoEffect(t *testing.T) {
 	// Default middleware chain does not affect normal scraping
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
