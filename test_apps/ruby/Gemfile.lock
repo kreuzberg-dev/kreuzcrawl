@@ -4,9 +4,9 @@ GEM
     ast (2.4.3)
     diff-lcs (1.6.2)
     json (2.19.4)
-    kreuzcrawl (0.1.0.pre.rc.7-aarch64-linux)
-    kreuzcrawl (0.1.0.pre.rc.7-arm64-darwin)
-    kreuzcrawl (0.1.0.pre.rc.7-x86_64-linux)
+    kreuzcrawl (0.1.0.pre.rc.9-aarch64-linux)
+    kreuzcrawl (0.1.0.pre.rc.9-arm64-darwin)
+    kreuzcrawl (0.1.0.pre.rc.9-x86_64-linux)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     parallel (2.0.1)
@@ -58,7 +58,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  kreuzcrawl (>= 0.1.0.pre.rc.3)
+  kreuzcrawl (>= 0.1.0.pre.rc.9)
   rspec (~> 3.13)
   rubocop (~> 1.86)
   rubocop-rspec (~> 3.9)
@@ -67,9 +67,9 @@ CHECKSUMS
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
   json (2.19.4) sha256=670a7d333fb3b18ca5b29cb255eb7bef099e40d88c02c80bd42a3f30fe5239ac
-  kreuzcrawl (0.1.0.pre.rc.7-aarch64-linux) sha256=e23086211c320455669469122e40707d06a58cec8eda5fb57b6485b2f0896029
-  kreuzcrawl (0.1.0.pre.rc.7-arm64-darwin) sha256=f0288c64c82d6060f042c86557f66c7786577612e1c399c6ce33d48ee885195d
-  kreuzcrawl (0.1.0.pre.rc.7-x86_64-linux) sha256=353743f86f8decbed7951de37b9366fba8e0de23b598dacc3d94e2b50c82f765
+  kreuzcrawl (0.1.0.pre.rc.9-aarch64-linux) sha256=c3842df287e62956ae33b5e16817a17d366c9d0dc541062dea60998bde868b81
+  kreuzcrawl (0.1.0.pre.rc.9-arm64-darwin) sha256=4a3148a0c487c662ca1040745a13ef0e79f1e1562e85dc071b4be4af789951f3
+  kreuzcrawl (0.1.0.pre.rc.9-x86_64-linux) sha256=db4da14a72971802c13b6399f74aebf53e28375bebdd81322686e42506b2ec5a
   language_server-protocol (3.17.0.5) sha256=fd1e39a51a28bf3eec959379985a72e296e9f9acfce46f6a79d31ca8760803cc
   lint_roller (1.1.0) sha256=2c0c845b632a7d172cb849cc90c1bce937a28c5c8ccccb50dfd46a485003cc87
   parallel (2.0.1) sha256=337782d3e39f4121e67563bf91dd8ece67f48923d90698614773a0ec9a5b2c7d

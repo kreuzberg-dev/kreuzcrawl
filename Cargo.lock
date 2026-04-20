@@ -1992,7 +1992,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-e2e-rust"
-version = "0.1.0-rc.9"
+version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
  "serde_json",

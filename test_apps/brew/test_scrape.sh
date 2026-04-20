@@ -12,7 +12,7 @@ test_scrape_asset_dedup() {
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
     local val_assets_length
-    val_assets_length=$(echo "$output" | jq -r '.assets.length')
+    val_assets_length=$(echo "$output" | jq -r '.assets | length')
     assert_equals "$val_assets_length" '2' 'assets.length'
     local val_assets___content_hash
     val_assets___content_hash=$(echo "$output" | jq -r '.assets[].content_hash')
@@ -28,7 +28,7 @@ test_scrape_asset_max_size() {
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
     local val_assets_length
-    val_assets_length=$(echo "$output" | jq -r '.assets.length')
+    val_assets_length=$(echo "$output" | jq -r '.assets | length')
     assert_equals "$val_assets_length" '2' 'assets.length'
 }
 
@@ -41,7 +41,7 @@ test_scrape_asset_type_filter() {
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
     local val_assets_length
-    val_assets_length=$(echo "$output" | jq -r '.assets.length')
+    val_assets_length=$(echo "$output" | jq -r '.assets | length')
     assert_equals "$val_assets_length" '1' 'assets.length'
     local val_assets___category
     val_assets___category=$(echo "$output" | jq -r '.assets[].asset_category')
@@ -72,10 +72,10 @@ test_scrape_basic_html_page() {
     val_metadata_canonical_url=$(echo "$output" | jq -r '.metadata.canonical_url')
     assert_not_empty "$val_metadata_canonical_url" 'metadata.canonical_url'
     local val_links_length
-    val_links_length=$(echo "$output" | jq -r '.links.length')
+    val_links_length=$(echo "$output" | jq -r '.links | length')
     assert_greater_than "$val_links_length" '0' 'links.length'
     local val_images_length
-    val_images_length=$(echo "$output" | jq -r '.images.length')
+    val_images_length=$(echo "$output" | jq -r '.images | length')
     assert_equals "$val_images_length" '0' 'images.length'
     local val_og_title
     val_og_title=$(echo "$output" | jq -r '.metadata.og_title')
@@ -91,7 +91,7 @@ test_scrape_complex_links() {
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
     local val_links_length
-    val_links_length=$(echo "$output" | jq -r '.links.length')
+    val_links_length=$(echo "$output" | jq -r '.links | length')
     assert_greater_than "$val_links_length" '9' 'links.length'
     local val_links___url
     val_links___url=$(echo "$output" | jq -r '.links[].url')
@@ -107,7 +107,7 @@ test_scrape_download_assets() {
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
     local val_assets_length
-    val_assets_length=$(echo "$output" | jq -r '.assets.length')
+    val_assets_length=$(echo "$output" | jq -r '.assets | length')
     assert_greater_than "$val_assets_length" '2' 'assets.length'
 }
 
@@ -139,10 +139,10 @@ test_scrape_empty_page() {
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
     local val_links_length
-    val_links_length=$(echo "$output" | jq -r '.links.length')
+    val_links_length=$(echo "$output" | jq -r '.links | length')
     assert_greater_than "$val_links_length" '-1' 'links.length'
     local val_images_length
-    val_images_length=$(echo "$output" | jq -r '.images.length')
+    val_images_length=$(echo "$output" | jq -r '.images | length')
     assert_equals "$val_images_length" '0' 'images.length'
 }
 
@@ -155,7 +155,7 @@ test_scrape_feed_discovery() {
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
     local val_feeds_length
-    val_feeds_length=$(echo "$output" | jq -r '.feeds.length')
+    val_feeds_length=$(echo "$output" | jq -r '.feeds | length')
     assert_greater_than_or_equal "$val_feeds_length" '3' 'feeds.length'
 }
 
@@ -168,7 +168,7 @@ test_scrape_image_sources() {
     val_status_code=$(echo "$output" | jq -r '.status_code')
     assert_equals "$val_status_code" '200' 'status_code'
     local val_images_length
-    val_images_length=$(echo "$output" | jq -r '.images.length')
+    val_images_length=$(echo "$output" | jq -r '.images | length')
     assert_greater_than "$val_images_length" '4' 'images.length'
     local val_og_image
     val_og_image=$(echo "$output" | jq -r '.metadata.og_image')

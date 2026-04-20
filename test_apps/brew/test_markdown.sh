@@ -27,8 +27,7 @@ test_markdown_basic_conversion() {
 
 test_markdown_crawl_all_pages() {
     # All crawled pages have markdown field populated
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/markdown_crawl_all_pages" --format json)
+    kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/markdown_crawl_all_pages" --format json >/dev/null
 
     # skipped: field 'crawl.pages_crawled' not available on result type
 }

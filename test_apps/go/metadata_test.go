@@ -13,7 +13,7 @@ import (
 
 func Test_MetadataArticleTimes(t *testing.T) {
 	// Extracts article:published_time, modified_time, author, section, and tags
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -34,7 +34,7 @@ func Test_MetadataArticleTimes(t *testing.T) {
 
 func Test_MetadataFavicons(t *testing.T) {
 	// Extracts favicon link tags including apple-touch-icon
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -52,7 +52,7 @@ func Test_MetadataFavicons(t *testing.T) {
 
 func Test_MetadataHeadings(t *testing.T) {
 	// Extracts heading hierarchy (h1-h6) from HTML page
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -71,7 +71,7 @@ func Test_MetadataHeadings(t *testing.T) {
 
 func Test_MetadataHreflang(t *testing.T) {
 	// Extracts hreflang alternate link tags
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -89,7 +89,7 @@ func Test_MetadataHreflang(t *testing.T) {
 
 func Test_MetadataKeywordsAuthor(t *testing.T) {
 	// Extracts keywords, author, viewport, generator, theme-color, robots, lang, dir metadata
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -170,7 +170,7 @@ func Test_MetadataKeywordsAuthor(t *testing.T) {
 
 func Test_MetadataOgVideoAudio(t *testing.T) {
 	// Extracts og:video, og:audio, and og:locale:alternate metadata
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -201,7 +201,7 @@ func Test_MetadataOgVideoAudio(t *testing.T) {
 
 func Test_MetadataResponseHeaders(t *testing.T) {
 	// Extracts response metadata from HTTP headers (etag, server, content-language)
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -221,7 +221,7 @@ func Test_MetadataResponseHeaders(t *testing.T) {
 
 func Test_MetadataWordCount(t *testing.T) {
 	// Computes word count from visible page text
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
