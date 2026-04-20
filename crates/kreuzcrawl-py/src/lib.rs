@@ -1806,7 +1806,6 @@ impl serde::Serialize for AuthConfig {
     }
 }
 
-
 impl<'de> serde::Deserialize<'de> for AuthConfig {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let inner = kreuzcrawl::AuthConfig::deserialize(deserializer)?;
@@ -1895,7 +1894,6 @@ impl serde::Serialize for CrawlEvent {
         self.inner.serialize(serializer)
     }
 }
-
 
 impl<'de> serde::Deserialize<'de> for CrawlEvent {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
