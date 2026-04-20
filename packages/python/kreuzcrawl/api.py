@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 import kreuzcrawl._kreuzcrawl as _rust
 
 if TYPE_CHECKING:
-    from ._kreuzcrawl import CrawlEngineHandle
-    from .options import BrowserConfig, CrawlConfig, ProxyConfig
+    from ._kreuzcrawl import CrawlEngineHandle, CrawlResult, MapResult, ScrapeResult
+    from .options import BatchCrawlResult, BatchScrapeResult, BrowserConfig, CrawlConfig, ProxyConfig
 
 
 _TO_RUST_ASSETCATEGORY_MAP = {
@@ -107,32 +107,32 @@ def _to_rust_crawl_config(value: CrawlConfig | None) -> _rust.CrawlConfig | None
     )
 
 
-def create_engine(config: CrawlConfig | None = None) -> _rust.CrawlEngineHandle:
+def create_engine(config: CrawlConfig | None = None) -> CrawlEngineHandle:
     """Create a new crawl engine with the given configuration."""
     _rust_config = _to_rust_crawl_config(config)
     return _rust.create_engine(_rust_config)
 
 
-def scrape(engine: CrawlEngineHandle, url: str) -> _rust.ScrapeResult:
+def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult:
     """Scrape a single URL, returning extracted page data."""
     return _rust.scrape(engine, url)
 
 
-def crawl(engine: CrawlEngineHandle, url: str) -> _rust.CrawlResult:
+def crawl(engine: CrawlEngineHandle, url: str) -> CrawlResult:
     """Crawl a website starting from `url`, following links up to the configured depth."""
     return _rust.crawl(engine, url)
 
 
-def map_urls(engine: CrawlEngineHandle, url: str) -> _rust.MapResult:
+def map_urls(engine: CrawlEngineHandle, url: str) -> MapResult:
     """Discover all pages on a website by following links and sitemaps."""
     return _rust.map_urls(engine, url)
 
 
-def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[_rust.BatchScrapeResult]:
+def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchScrapeResult]:
     """Scrape multiple URLs concurrently."""
     return _rust.batch_scrape(engine, urls)
 
 
-def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[_rust.BatchCrawlResult]:
+def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchCrawlResult]:
     """Crawl multiple seed URLs concurrently, each following links to configured depth."""
     return _rust.batch_crawl(engine, urls)

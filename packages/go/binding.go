@@ -3,8 +3,9 @@
 package kreuzcrawl
 
 /*
-#include "internal/ffi/kreuzcrawl.h"
-#include <stdlib.h>
+#cgo CFLAGS: -I${SRCDIR}/../../crates/kreuzcrawl-ffi/include
+#cgo LDFLAGS: -L${SRCDIR}/../../target/release -lkreuzcrawl_ffi
+#include "kreuzcrawl.h"
 */
 import "C"
 

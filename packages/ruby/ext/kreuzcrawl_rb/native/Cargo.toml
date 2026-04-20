@@ -10,6 +10,10 @@ categories = ["text-processing"]
 
 [lib]
 crate-type = ["cdylib"]
+path = "../../../../crates/kreuzcrawl-rb/src/lib.rs"
+
+[package.metadata.cargo-machete]
+ignored = ["kreuzcrawl", "magnus", "serde", "serde_json", "tokio"]
 
 [dependencies]
 kreuzcrawl = { path = "../../../../crates/kreuzcrawl" }

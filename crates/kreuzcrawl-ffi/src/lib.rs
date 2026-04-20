@@ -2581,7 +2581,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_unique_normalized_urls(this: *const
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-
+    
     obj.unique_normalized_urls()
 }
 

@@ -41,12 +41,12 @@ def _wait_for_server(url: str, timeout: float = STARTUP_TIMEOUT) -> None:
 
 
 @pytest.fixture(scope="session")
-def api_url() -> str:  # noqa: PT004
+def api_url() -> str:
     """Start the API server and yield its base URL."""
     port = _find_free_port()
     base_url = f"http://127.0.0.1:{port}"
 
-    proc = subprocess.Popen(  # noqa: S603, S607
+    proc = subprocess.Popen(
         [
             "cargo",
             "run",

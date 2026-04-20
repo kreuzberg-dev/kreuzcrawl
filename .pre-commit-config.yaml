@@ -65,7 +65,7 @@ repos:
     rev: v1.20.1
     hooks:
       - id: mypy
-        exclude: "e2e/|scripts/|test_apps/|benchmarks/"
+        exclude: "e2e/|scripts/|test_apps/|tests/|benchmarks/"
 
   # Rust: formatting, linting, and license checking
   - repo: https://github.com/AndrejOrsula/pre-commit-cargo
@@ -187,7 +187,7 @@ repos:
 
   # Shell scripts: formatting and linting
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.14.2-1
+    rev: v3.13.1-1
     hooks:
       - id: shfmt
         args: ["-w", "-i", "2"]
