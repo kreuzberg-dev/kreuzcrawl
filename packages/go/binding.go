@@ -117,9 +117,9 @@ const (
     // A `<source>` tag inside `<picture>`.
     ImageSourcePictureSource ImageSource = "picture_source"
     // An `og:image` meta tag.
-    ImageSourceOgImage ImageSource = "og_image"
+    ImageSourceOgImage ImageSource = "og:image"
     // A `twitter:image` meta tag.
-    ImageSourceTwitterImage ImageSource = "twitter_image"
+    ImageSourceTwitterImage ImageSource = "twitter:image"
 )
 
 
@@ -2757,12 +2757,12 @@ func MapUrls(engine *CrawlEngineHandle, url string) (*MapResult, error) {
 
 
 // Scrape multiple URLs concurrently.
-func BatchScrape(engine *CrawlEngineHandle, urls []string) *[]BatchScrapeResult {
+func BatchScrape(engine *CrawlEngineHandle, urls []string) (*[]BatchScrapeResult, error) {
     cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
     jsonBytescUrls, err := json.Marshal(urls)
     if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
+        return nil, fmt.Errorf("failed to marshal: %w", err)
     }
     cUrls := C.CString(string(jsonBytescUrls))
     defer C.free(unsafe.Pointer(cUrls))
@@ -2774,17 +2774,17 @@ func BatchScrape(engine *CrawlEngineHandle, urls []string) *[]BatchScrapeResult 
 	var result []BatchScrapeResult
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
-}()
+}(), nil
 }
 
 
 // Crawl multiple seed URLs concurrently, each following links to configured depth.
-func BatchCrawl(engine *CrawlEngineHandle, urls []string) *[]BatchCrawlResult {
+func BatchCrawl(engine *CrawlEngineHandle, urls []string) (*[]BatchCrawlResult, error) {
     cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
     jsonBytescUrls, err := json.Marshal(urls)
     if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
+        return nil, fmt.Errorf("failed to marshal: %w", err)
     }
     cUrls := C.CString(string(jsonBytescUrls))
     defer C.free(unsafe.Pointer(cUrls))
@@ -2796,7 +2796,7 @@ func BatchCrawl(engine *CrawlEngineHandle, urls []string) *[]BatchCrawlResult {
 	var result []BatchCrawlResult
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
-}()
+}(), nil
 }
 
 
@@ -2816,15 +2816,15 @@ func (r *CrawlConfig) Validate() error {
 
 
 // Returns the count of unique normalized URLs encountered during crawling.
-func (r *CrawlResult) UniqueNormalizedUrls() *uint {
+func (r *CrawlResult) UniqueNormalizedUrls() (*uint, error) {
     jsonBytesRecv, err := json.Marshal(r)
     if err != nil {
-        panic(fmt.Sprintf("failed to marshal receiver: %v", err))
+        return nil, fmt.Errorf("failed to marshal receiver: %w", err)
     }
     tmpStrRecv := C.CString(string(jsonBytesRecv))
     cRecv := C.kcrawl_crawl_result_from_json(tmpStrRecv)
     C.free(unsafe.Pointer(tmpStrRecv))
     defer C.kcrawl_crawl_result_free(cRecv)
     ptr := C.kcrawl_crawl_result_unique_normalized_urls (cRecv)
-    return func() *uint { v := uint(ptr); return &v }()
+    return func() *uint { v := uint(ptr); return &v }(), nil
 }
