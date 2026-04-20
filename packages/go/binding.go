@@ -2,11 +2,9 @@
 
 package kreuzcrawl
 
-/*
-#cgo CFLAGS: -I${SRCDIR}/../../crates/kreuzcrawl-ffi/include
-#cgo LDFLAGS: -L${SRCDIR}/../../target/release -lkreuzcrawl_ffi
-#include "kreuzcrawl.h"
-*/
+// CGO directives are provided by ffi.go, ffi_dev.go, ffi_windows.go, or cgo_flags.go.
+// Do not add #cgo directives here.
+
 import "C"
 
 import (
