@@ -5,8 +5,7 @@ set -euo pipefail
 
 test_strategy_best_first_seed() {
   # BestFirst strategy always processes the seed URL first
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_best_first_seed" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_best_first_seed" --format json >/dev/null
 
   # skipped: field 'crawl.pages_crawled' not available on result type
   # skipped: field 'strategy.first_page_url_contains' not available on result type
@@ -14,8 +13,7 @@ test_strategy_best_first_seed() {
 
 test_strategy_bfs_default_order() {
   # BFS strategy visits pages in breadth-first order
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_bfs_default_order" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_bfs_default_order" --format json >/dev/null
 
   # skipped: field 'crawl.pages_crawled' not available on result type
   # skipped: field 'strategy.crawl_order' not available on result type
@@ -23,8 +21,7 @@ test_strategy_bfs_default_order() {
 
 test_strategy_dfs_depth_first() {
   # DFS strategy visits pages in depth-first order
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_dfs_depth_first" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/strategy_dfs_depth_first" --format json >/dev/null
 
   # skipped: field 'crawl.pages_crawled' not available on result type
   # skipped: field 'strategy.crawl_order' not available on result type

@@ -14,7 +14,7 @@ import (
 
 func Test_Content204NoContent(t *testing.T) {
 	// Handles 204 No Content response gracefully
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

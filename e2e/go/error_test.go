@@ -13,7 +13,7 @@ import (
 
 func Test_Error401Unauthorized(t *testing.T) {
 	// Handles 401 Unauthorized response correctly
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -26,7 +26,7 @@ func Test_Error401Unauthorized(t *testing.T) {
 
 func Test_Error403Forbidden(t *testing.T) {
 	// Handles 403 Forbidden response correctly
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -39,7 +39,7 @@ func Test_Error403Forbidden(t *testing.T) {
 
 func Test_Error404Page(t *testing.T) {
 	// Handles 404 response correctly
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -52,7 +52,7 @@ func Test_Error404Page(t *testing.T) {
 
 func Test_Error408RequestTimeout(t *testing.T) {
 	// Handles 408 Request Timeout response correctly
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -65,7 +65,7 @@ func Test_Error408RequestTimeout(t *testing.T) {
 
 func Test_Error410Gone(t *testing.T) {
 	// Handles 410 Gone response correctly
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -78,7 +78,7 @@ func Test_Error410Gone(t *testing.T) {
 
 func Test_Error500Server(t *testing.T) {
 	// Handles 500 server error
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -91,7 +91,7 @@ func Test_Error500Server(t *testing.T) {
 
 func Test_Error502BadGateway(t *testing.T) {
 	// Handles 502 Bad Gateway response correctly
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -138,7 +138,7 @@ func Test_ErrorDnsResolution(t *testing.T) {
 
 func Test_ErrorEmptyResponse(t *testing.T) {
 	// Handles 200 with completely empty body gracefully
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -187,7 +187,7 @@ func Test_ErrorPartialResponse(t *testing.T) {
 
 func Test_ErrorRateLimited(t *testing.T) {
 	// Handles 429 rate limiting with Retry-After
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -268,7 +268,7 @@ func Test_ErrorTimeout(t *testing.T) {
 
 func Test_ErrorWafAkamai(t *testing.T) {
 	// Akamai WAF detection returns WafBlocked error
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -281,7 +281,7 @@ func Test_ErrorWafAkamai(t *testing.T) {
 
 func Test_ErrorWafFalse403(t *testing.T) {
 	// Detects WAF/bot protection false 403 (Cloudflare challenge page)
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -294,7 +294,7 @@ func Test_ErrorWafFalse403(t *testing.T) {
 
 func Test_ErrorWafImperva(t *testing.T) {
 	// Imperva/Incapsula WAF detection
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

@@ -13,7 +13,7 @@ import (
 
 func Test_SitemapBasic(t *testing.T) {
 	// Parses a standard urlset sitemap
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -46,7 +46,7 @@ func Test_SitemapCompressedGzip(t *testing.T) {
 
 func Test_SitemapEmpty(t *testing.T) {
 	// Handles empty sitemap gracefully
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -78,7 +78,7 @@ func Test_SitemapFromRobotsTxt(t *testing.T) {
 
 func Test_SitemapIndex(t *testing.T) {
 	// Follows sitemap index to discover child sitemaps
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

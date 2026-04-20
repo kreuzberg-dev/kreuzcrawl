@@ -77,8 +77,7 @@ test_error_dns_resolution() {
 
 test_error_empty_response() {
   # Handles 200 with completely empty body gracefully
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/error_empty_response" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/error_empty_response" --format json >/dev/null
 
   # skipped: field 'html_not_empty' not available on result type
   # skipped: field 'error.is_error' not available on result type

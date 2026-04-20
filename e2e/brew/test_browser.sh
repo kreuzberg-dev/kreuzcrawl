@@ -115,8 +115,7 @@ test_browser_detect_vue_shell() {
 
 test_browser_fallback_spa_render() {
   # Browser auto re-fetches SPA shell when JS rendering is detected
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/browser_fallback_spa_render" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/browser_fallback_spa_render" --format json >/dev/null
 
   # skipped: field 'browser.js_render_hint' not available on result type
   # skipped: field 'browser.browser_used' not available on result type
@@ -124,16 +123,14 @@ test_browser_fallback_spa_render() {
 
 test_browser_fallback_waf_blocked() {
   # Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/browser_fallback_waf_blocked" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/browser_fallback_waf_blocked" --format json >/dev/null
 
   # skipped: field 'browser.browser_used' not available on result type
 }
 
 test_browser_mode_always() {
   # Browser mode 'always' uses browser even for normal server-rendered pages
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/browser_mode_always" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/browser_mode_always" --format json >/dev/null
 
   # skipped: field 'browser.browser_used' not available on result type
 }

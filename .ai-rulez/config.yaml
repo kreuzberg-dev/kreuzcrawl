@@ -41,6 +41,8 @@ builtins:
 presets:
   - claude
   - copilot
+  - cursor
+  - antigravity
   - codex
 version: "3.0"
 installed_skills:

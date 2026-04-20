@@ -13,7 +13,7 @@ import (
 
 func Test_LinksAnchorFragment(t *testing.T) {
 	// Identifies fragment-only links as anchor type
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -31,7 +31,7 @@ func Test_LinksAnchorFragment(t *testing.T) {
 
 func Test_LinksBaseTag(t *testing.T) {
 	// Resolves relative URLs using base tag href
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -52,7 +52,7 @@ func Test_LinksBaseTag(t *testing.T) {
 
 func Test_LinksDocumentTypes(t *testing.T) {
 	// Detects PDF, DOCX, XLSX links as document type
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -70,7 +70,7 @@ func Test_LinksDocumentTypes(t *testing.T) {
 
 func Test_LinksEmptyHref(t *testing.T) {
 	// Handles empty href attributes without errors
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -91,7 +91,7 @@ func Test_LinksEmptyHref(t *testing.T) {
 
 func Test_LinksInternalExternalClassification(t *testing.T) {
 	// Correctly classifies internal vs external links by domain
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -112,7 +112,7 @@ func Test_LinksInternalExternalClassification(t *testing.T) {
 
 func Test_LinksMailtoJavascriptSkip(t *testing.T) {
 	// Skips mailto:, javascript:, and tel: scheme links
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -133,7 +133,7 @@ func Test_LinksMailtoJavascriptSkip(t *testing.T) {
 
 func Test_LinksProtocolRelative(t *testing.T) {
 	// Handles protocol-relative URLs (//example.com) correctly
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -154,7 +154,7 @@ func Test_LinksProtocolRelative(t *testing.T) {
 
 func Test_LinksRelAttributes(t *testing.T) {
 	// Preserves rel=nofollow and rel=canonical attributes
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -170,7 +170,7 @@ func Test_LinksRelAttributes(t *testing.T) {
 
 func Test_LinksRelativeParent(t *testing.T) {
 	// Resolves ../ and ./ relative parent path links correctly
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

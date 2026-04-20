@@ -175,3 +175,7 @@ obj/
 # pkg/ removed — needed for WASM npm publish (wasm-pack outputs to pkg/)
 erl_crash.dump
 test_apps/elixir/_build/
+pkg/
+
+# AI Rules generated files
+.github/copilot-instructions.md

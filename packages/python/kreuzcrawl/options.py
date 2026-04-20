@@ -293,95 +293,6 @@ class ActionResult:
 
 
 @dataclass
-class ScrapeResult:
-    """The result of a single-page scrape operation."""
-
-    status_code: int = 0
-    """The HTTP status code of the response."""
-
-    content_type: str = ""
-    """The Content-Type header value."""
-
-    html: str = ""
-    """The HTML body of the response."""
-
-    body_size: int = 0
-    """The size of the response body in bytes."""
-
-    metadata: Any | None = None
-    """Extracted metadata from the page."""
-
-    links: list[Any] = field(default_factory=list)
-    """Links found on the page."""
-
-    images: list[Any] = field(default_factory=list)
-    """Images found on the page."""
-
-    feeds: list[Any] = field(default_factory=list)
-    """Feed links found on the page."""
-
-    json_ld: list[Any] = field(default_factory=list)
-    """JSON-LD entries found on the page."""
-
-    is_allowed: bool = False
-    """Whether the URL is allowed by robots.txt."""
-
-    crawl_delay: int | None = None
-    """The crawl delay from robots.txt, in seconds."""
-
-    noindex_detected: bool = False
-    """Whether a noindex directive was detected."""
-
-    nofollow_detected: bool = False
-    """Whether a nofollow directive was detected."""
-
-    x_robots_tag: str | None = None
-    """The X-Robots-Tag header value, if present."""
-
-    is_pdf: bool = False
-    """Whether the content is a PDF."""
-
-    was_skipped: bool = False
-    """Whether the page was skipped (binary or PDF content)."""
-
-    detected_charset: str | None = None
-    """The detected character set encoding."""
-
-    main_content_only: bool = False
-    """Whether main_content_only was active during extraction."""
-
-    auth_header_sent: bool = False
-    """Whether an authentication header was sent with the request."""
-
-    response_meta: Any | None = None
-    """Response metadata extracted from HTTP headers."""
-
-    assets: list[Any] = field(default_factory=list)
-    """Downloaded assets from the page."""
-
-    js_render_hint: bool = False
-    """Whether the page content suggests JavaScript rendering is needed."""
-
-    browser_used: bool = False
-    """Whether the browser fallback was used to fetch this page."""
-
-    markdown: Any | None = None
-    """Markdown conversion of the page content."""
-
-    extracted_data: str | None = None
-    """Structured data extracted by LLM. Populated when using LlmExtractor."""
-
-    extraction_meta: Any | None = None
-    """Metadata about the LLM extraction pass (cost, tokens, model)."""
-
-    screenshot: bytes | None = None
-    """Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled."""
-
-    downloaded_document: Any | None = None
-    """Downloaded non-HTML document (PDF, DOCX, image, code, etc.)."""
-
-
-@dataclass
 class CrawlPageResult:
     """The result of crawling a single page during a crawl operation."""
 
@@ -447,32 +358,6 @@ class CrawlPageResult:
 
 
 @dataclass
-class CrawlResult:
-    """The result of a multi-page crawl operation."""
-
-    pages: list[Any] = field(default_factory=list)
-    """The list of crawled pages."""
-
-    final_url: str = ""
-    """The final URL after following redirects."""
-
-    redirect_count: int = 0
-    """The number of redirects followed."""
-
-    was_skipped: bool = False
-    """Whether any page was skipped during crawling."""
-
-    error: str | None = None
-    """An error message, if the crawl encountered an issue."""
-
-    cookies: list[Any] = field(default_factory=list)
-    """Cookies collected during the crawl."""
-
-    normalized_urls: list[str] = field(default_factory=list)
-    """Normalized URLs encountered during crawling (for deduplication counting)."""
-
-
-@dataclass
 class SitemapUrl:
     """A URL entry from a sitemap."""
 
@@ -487,14 +372,6 @@ class SitemapUrl:
 
     priority: str | None = None
     """The priority, if present."""
-
-
-@dataclass
-class MapResult:
-    """The result of a map operation, containing discovered URLs."""
-
-    urls: list[Any] = field(default_factory=list)
-    """The list of discovered URLs."""
 
 
 @dataclass
@@ -858,17 +735,6 @@ class PageMetadata:
 
     word_count: int | None = None
     """Computed word count of the page body text."""
-
-
-@dataclass
-class CitationResult:
-    """Result of citation conversion."""
-
-    content: str = ""
-    """Markdown with links replaced by numbered citations."""
-
-    references: list[Any] = field(default_factory=list)
-    """Numbered reference list: (index, url, text)."""
 
 
 @dataclass

@@ -5,8 +5,7 @@ set -euo pipefail
 
 test_scrape_batch_basic() {
   # Batch scrape of multiple URLs all succeeding
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_basic" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_basic" --format json >/dev/null
 
   # skipped: field 'batch.completed_count' not available on result type
   # skipped: field 'batch.failed_count' not available on result type
@@ -15,8 +14,7 @@ test_scrape_batch_basic() {
 
 test_scrape_batch_partial_failure() {
   # Batch scrape with one URL failing returns partial results
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_partial_failure" --format json >/dev/null
 
   # skipped: field 'batch.completed_count' not available on result type
   # skipped: field 'batch.failed_count' not available on result type
@@ -25,8 +23,7 @@ test_scrape_batch_partial_failure() {
 
 test_scrape_batch_progress() {
   # Batch scrape results include specific URL
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_progress" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/scrape_batch_progress" --format json >/dev/null
 
   # skipped: field 'batch.total_count' not available on result type
   # skipped: field 'batch.results' not available on result type

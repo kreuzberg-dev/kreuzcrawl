@@ -5,8 +5,7 @@ set -euo pipefail
 
 test_redirect_301_permanent() {
   # Follows 301 permanent redirect and returns final page content
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_301_permanent" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_301_permanent" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -14,8 +13,7 @@ test_redirect_301_permanent() {
 
 test_redirect_302_found() {
   # Follows 302 Found redirect correctly
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_302_found" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_302_found" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -23,8 +21,7 @@ test_redirect_302_found() {
 
 test_redirect_303_see_other() {
   # Follows 303 See Other redirect (method changes to GET)
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_303_see_other" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_303_see_other" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -32,8 +29,7 @@ test_redirect_303_see_other() {
 
 test_redirect_307_temporary() {
   # Follows 307 Temporary Redirect (preserves method)
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_307_temporary" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_307_temporary" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -41,8 +37,7 @@ test_redirect_307_temporary() {
 
 test_redirect_308_permanent() {
   # Follows 308 Permanent Redirect (preserves method)
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_308_permanent" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_308_permanent" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -50,8 +45,7 @@ test_redirect_308_permanent() {
 
 test_redirect_chain() {
   # Follows a chain of redirects (301 -> 302 -> 200)
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_chain" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_chain" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -59,8 +53,7 @@ test_redirect_chain() {
 
 test_redirect_cross_domain() {
   # Reports cross-domain redirect target without following to external domain
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_cross_domain" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_cross_domain" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -68,24 +61,21 @@ test_redirect_cross_domain() {
 
 test_redirect_loop() {
   # Detects redirect loop (A -> B -> A) and returns error
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_loop" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_loop" --format json >/dev/null
 
   # skipped: field 'is_error' not available on result type
 }
 
 test_redirect_max_exceeded() {
   # Aborts when redirect count exceeds max_redirects limit
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_max_exceeded" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_max_exceeded" --format json >/dev/null
 
   # skipped: field 'is_error' not available on result type
 }
 
 test_redirect_meta_refresh() {
   # Follows HTML meta-refresh redirect to target page
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_meta_refresh" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_meta_refresh" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -93,8 +83,7 @@ test_redirect_meta_refresh() {
 
 test_redirect_refresh_header() {
   # Handles HTTP Refresh header redirect
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_refresh_header" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_refresh_header" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type
@@ -102,8 +91,7 @@ test_redirect_refresh_header() {
 
 test_redirect_to_404() {
   # Redirect target returns 404 Not Found
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_to_404" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/redirect_to_404" --format json >/dev/null
 
   # skipped: field 'final_url' not available on result type
   # skipped: field 'redirect_count' not available on result type

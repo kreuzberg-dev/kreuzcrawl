@@ -5,8 +5,7 @@ set -euo pipefail
 
 test_middleware_engine_crawl_with_defaults() {
   # Engine crawl with default middleware chain produces correct multi-page results
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/middleware_engine_crawl_with_defaults" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/middleware_engine_crawl_with_defaults" --format json >/dev/null
 
   # skipped: field 'crawl.pages_crawled' not available on result type
   # skipped: field 'crawl.min_pages' not available on result type

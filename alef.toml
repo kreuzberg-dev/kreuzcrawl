@@ -609,4 +609,8 @@ version = "0.1.0-rc.8"
 # Version Sync
 # ---------------------------------------------------------------------------
 [sync]
-extra_paths = ["package.json", "crates/kreuzcrawl-node/package.json", "packages/ruby/ext/kreuzcrawl_rb/src/kreuzcrawl/version.rb"]
+extra_paths = [
+    "package.json",
+    "crates/kreuzcrawl-node/package.json",
+    "packages/ruby/ext/kreuzcrawl_rb/src/kreuzcrawl/version.rb",
+]

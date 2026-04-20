@@ -12,7 +12,7 @@ import (
 
 func Test_ScrapeBatchBasic(t *testing.T) {
 	// Batch scrape of multiple URLs all succeeding
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -28,7 +28,7 @@ func Test_ScrapeBatchBasic(t *testing.T) {
 
 func Test_ScrapeBatchPartialFailure(t *testing.T) {
 	// Batch scrape with one URL failing returns partial results
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -44,7 +44,7 @@ func Test_ScrapeBatchPartialFailure(t *testing.T) {
 
 func Test_ScrapeBatchProgress(t *testing.T) {
 	// Batch scrape results include specific URL
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

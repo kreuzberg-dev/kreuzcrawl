@@ -5,8 +5,7 @@ set -euo pipefail
 
 test_rate_limit_basic_delay() {
   # Rate limiter adds delay between requests to the same domain
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/rate_limit_basic_delay" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/rate_limit_basic_delay" --format json >/dev/null
 
   # skipped: field 'crawl.pages_crawled' not available on result type
   # skipped: field 'rate_limit.min_duration_ms' not available on result type
@@ -14,8 +13,7 @@ test_rate_limit_basic_delay() {
 
 test_rate_limit_zero_no_delay() {
   # Rate limiter with zero delay does not slow crawling
-  local output
-  output=$(kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/rate_limit_zero_no_delay" --format json)
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/rate_limit_zero_no_delay" --format json >/dev/null
 
   # skipped: field 'crawl.pages_crawled' not available on result type
 }
