@@ -691,9 +691,9 @@ dependencies = [
 
 [[package]]
 name = "constant_time_eq"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
+checksum = "7dab3fe76c1571ecd5cfe878b61bce3fedf4adbde5d8a8653b2a7956ffd14628"
 
 [[package]]
 name = "convert_case"
@@ -1921,7 +1921,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1962,14 +1962,14 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-bindings-common"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
 ]
 
 [[package]]
 name = "kreuzcrawl-cli"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "clap",
  "kreuzcrawl",
@@ -1979,7 +1979,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-e2e-generator"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "camino",
@@ -1992,7 +1992,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-e2e-rust"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
  "serde_json",
@@ -2001,7 +2001,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-ffi"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "cbindgen",
  "kreuzcrawl",
@@ -2011,7 +2011,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-node"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
  "napi",
@@ -2023,7 +2023,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-php"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "ext-php-rs",
  "kreuzcrawl",
@@ -2034,7 +2034,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-py"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
  "pyo3",
@@ -2045,9 +2045,9 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-wasm"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
- "getrandom 0.3.4",
+ "getrandom 0.4.2",
  "kreuzcrawl",
  "serde-wasm-bindgen",
  "wasm-bindgen",
@@ -2056,7 +2056,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl_nif"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "kreuzcrawl",
  "rustler",
@@ -2132,9 +2132,9 @@ checksum = "92daf443525c4cce67b150400bc2316076100ce0b3686209eb8cf3c31612e6f0"
 
 [[package]]
 name = "liter-llm"
-version = "1.2.1"
+version = "1.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1884be380e45da823105c85ef0fa188af81d57be7de9b65016576e1774fdd5f8"
+checksum = "4e4ce5d2d0b09f2e63537ba40b15b0a95c2d6818ed0454eb04d9593ba4a0cad3"
 dependencies = [
  "base64",
  "bytes",
@@ -2288,7 +2288,7 @@ dependencies = [
 
 [[package]]
 name = "mock-server"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "axum",
  "clap",
@@ -2453,9 +2453,9 @@ checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
 
 [[package]]
 name = "openssl"
-version = "0.10.77"
+version = "0.10.78"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bfe4646e360ec77dff7dde40ed3d6c5fee52d156ef4a62f53973d38294dad87f"
+checksum = "f38c4372413cdaaf3cc79dd92d29d7d9f5ab09b51b10dded508fb90bb70b9222"
 dependencies = [
  "bitflags",
  "cfg-if",
@@ -2485,9 +2485,9 @@ checksum = "7c87def4c32ab89d880effc9e097653c8da5d6ef28e6b539d313baaacfbafcbe"
 
 [[package]]
 name = "openssl-sys"
-version = "0.9.113"
+version = "0.9.114"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad2f2c0eba47118757e4c6d2bff2838f3e0523380021356e7875e858372ce644"
+checksum = "13ce1245cd07fcc4cfdb438f7507b0c7e4f3849a69fd84d52374c66d83741bb6"
 dependencies = [
  "cc",
  "libc",
@@ -3517,7 +3517,7 @@ checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
 
 [[package]]
 name = "snippet-runner"
-version = "0.1.0-rc.10"
+version = "0.1.0"
 dependencies = [
  "clap",
  "rayon",
