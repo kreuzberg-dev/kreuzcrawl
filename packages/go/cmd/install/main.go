@@ -31,7 +31,7 @@ import (
 
 const (
 	// DefaultVersion is the default version to download if not specified
-	DefaultVersion = "0.1.0-rc.9"
+	DefaultVersion = "0.1.0-rc.10"
 	// BaseURL is the base URL for GitHub releases
 	BaseURL = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download"
 	// DefaultInstallDir is the default installation directory
@@ -112,7 +112,7 @@ func main() {
 }
 
 func run() error {
-	version := flag.String("version", DefaultVersion, "Version to download (e.g., 0.1.0-rc.9)")
+	version := flag.String("version", DefaultVersion, "Version to download (e.g., 0.1.0-rc.10)")
 	installDir := flag.String("dir", "", "Installation directory (default: ~/.kreuzcrawl)")
 	showEnv := flag.Bool("env", false, "Only show environment variables for existing installation")
 	outputDir := flag.String("output", "", "Output directory for generated cgo_flags.go (default: current directory or GOFILE directory)")
@@ -200,7 +200,7 @@ func run() error {
 // validateVersion checks that version follows semantic versioning pattern
 func validateVersion(version string) error {
 	if !versionRegex.MatchString(version) {
-		return fmt.Errorf("invalid version format: %s (expected semver like 0.1.0-rc.9)", version)
+		return fmt.Errorf("invalid version format: %s (expected semver like 0.1.0-rc.10)", version)
 	}
 	return nil
 }
