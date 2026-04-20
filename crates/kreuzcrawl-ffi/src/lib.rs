@@ -6399,7 +6399,7 @@ pub unsafe extern "C" fn kcrawl_create_engine(
     };
     let result = kreuzcrawl::create_engine(config_rs);
     match result {
-        Ok(val) => Box::into_raw(Box::new(val.clone())),
+        Ok(val) => Box::into_raw(Box::new(val)),
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -6421,7 +6421,7 @@ pub unsafe extern "C" fn kcrawl_scrape(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
-    let engine_rs = unsafe { &*engine }.clone();
+    let engine_rs = unsafe { &*engine };
     if url.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'url'");
         return std::ptr::null_mut();
@@ -6435,7 +6435,7 @@ pub unsafe extern "C" fn kcrawl_scrape(
     };
     let result = get_ffi_runtime().block_on(async { kreuzcrawl::scrape(&engine_rs, &url_rs).await });
     match result {
-        Ok(val) => Box::into_raw(Box::new(val.clone())),
+        Ok(val) => Box::into_raw(Box::new(val)),
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -6457,7 +6457,7 @@ pub unsafe extern "C" fn kcrawl_crawl(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
-    let engine_rs = unsafe { &*engine }.clone();
+    let engine_rs = unsafe { &*engine };
     if url.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'url'");
         return std::ptr::null_mut();
@@ -6471,7 +6471,7 @@ pub unsafe extern "C" fn kcrawl_crawl(
     };
     let result = get_ffi_runtime().block_on(async { kreuzcrawl::crawl(&engine_rs, &url_rs).await });
     match result {
-        Ok(val) => Box::into_raw(Box::new(val.clone())),
+        Ok(val) => Box::into_raw(Box::new(val)),
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -6493,7 +6493,7 @@ pub unsafe extern "C" fn kcrawl_map_urls(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
-    let engine_rs = unsafe { &*engine }.clone();
+    let engine_rs = unsafe { &*engine };
     if url.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'url'");
         return std::ptr::null_mut();
@@ -6507,7 +6507,7 @@ pub unsafe extern "C" fn kcrawl_map_urls(
     };
     let result = get_ffi_runtime().block_on(async { kreuzcrawl::map_urls(&engine_rs, &url_rs).await });
     match result {
-        Ok(val) => Box::into_raw(Box::new(val.clone())),
+        Ok(val) => Box::into_raw(Box::new(val)),
         Err(e) => {
             set_last_error(2, &e.to_string());
             std::ptr::null_mut()
@@ -6529,7 +6529,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
-    let engine_rs = unsafe { &*engine }.clone();
+    let engine_rs = unsafe { &*engine };
     if urls.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'urls'");
         return std::ptr::null_mut();
@@ -6572,7 +6572,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
-    let engine_rs = unsafe { &*engine }.clone();
+    let engine_rs = unsafe { &*engine };
     if urls.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'urls'");
         return std::ptr::null_mut();

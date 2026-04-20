@@ -8,8 +8,17 @@ from typing import TYPE_CHECKING
 import kreuzcrawl._kreuzcrawl as _rust
 
 if TYPE_CHECKING:
-    from ._kreuzcrawl import CrawlEngineHandle, CrawlResult, MapResult, ScrapeResult
-    from .options import BatchCrawlResult, BatchScrapeResult, BrowserConfig, CrawlConfig, ProxyConfig
+    from ._kreuzcrawl import (
+        BatchCrawlResult,
+        BatchScrapeResult,
+        BrowserConfig,
+        CrawlConfig,
+        CrawlEngineHandle,
+        CrawlResult,
+        MapResult,
+        ScrapeResult,
+    )
+    from .options import ProxyConfig
 
 
 _TO_RUST_ASSETCATEGORY_MAP = {
