@@ -12,6 +12,7 @@ on:
       - '.textlintrc.json'
       - '.github/workflows/docs.yaml'
       - 'scripts/ci/docs/**'
+      - 'tools/snippet-runner/**'
   pull_request:
     branches: [main]
     paths:
@@ -23,6 +24,7 @@ on:
       - '.textlintrc.json'
       - '.github/workflows/docs.yaml'
       - 'scripts/ci/docs/**'
+      - 'tools/snippet-runner/**'
   workflow_dispatch:
 
 permissions:
@@ -100,7 +102,7 @@ jobs:
   deploy:
     name: "Deploy to GitHub Pages"
     needs: [validate, validate-snippets, lint-prose]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     permissions:
       contents: read
       pages: write
