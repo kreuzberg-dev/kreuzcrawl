@@ -3674,15 +3674,15 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     fn from(val: kreuzcrawl::DownloadedDocument) -> Self {
         Self {
             url: val.url,
-            mime_type: format!("{:?}", val.mime_type),
+            mime_type: val.mime_type.to_string(),
             content: val.content.to_vec(),
             size: val.size,
-            filename: val.filename.as_ref().map(|v| format!("{:?}", v)),
-            content_hash: format!("{:?}", val.content_hash),
+            filename: val.filename.as_ref().map(|v| v.to_string()),
+            content_hash: val.content_hash.to_string(),
             headers: val
                 .headers
                 .into_iter()
-                .map(|(k, v)| (format!("{:?}", k), format!("{:?}", v)))
+                .map(|(k, v)| (k.to_string(), v.to_string()))
                 .collect(),
         }
     }
@@ -3703,7 +3703,7 @@ impl From<kreuzcrawl::ActionResult> for ActionResult {
     fn from(val: kreuzcrawl::ActionResult) -> Self {
         Self {
             action_index: val.action_index,
-            action_type: format!("{:?}", val.action_type),
+            action_type: val.action_type.to_string(),
             success: val.success,
             data: val.data.as_ref().map(ToString::to_string),
             error: val.error,
