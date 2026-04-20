@@ -1,5 +1,5 @@
 {
-	"name": "kreuzberg/kreuzcrawl",
+	"name": "kreuzberg-dev/kreuzcrawl",
 	"description": "High-performance Rust web crawling engine \u2014 PHP bindings",
 	"type": "php-ext",
 	"license": "Elastic-2.0",

@@ -140,7 +140,7 @@ This is a pre-built PIE package for the Kreuzcrawl PHP extension.
 The easiest way to install this extension is using PIE:
 
 \`\`\`bash
-pie install kreuzcrawl/kreuzcrawl
+pie install kreuzberg-dev/kreuzcrawl
 \`\`\`
 
 PIE will automatically:
@@ -160,7 +160,7 @@ If you prefer manual installation:
    \`\`\`
 4. Install the Composer package:
    \`\`\`bash
-   composer require kreuzcrawl/kreuzcrawl
+   composer require kreuzberg-dev/kreuzcrawl
    \`\`\`
 
 ## Verification
