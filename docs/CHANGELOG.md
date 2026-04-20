@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1
+
+### Fixes
+
+- **WASM**: Added `getrandom` with `wasm_js` feature for wasm32 target compatibility
+- **Java**: Downgraded Maven compiler and source plugins from beta to stable (4.0.0-beta → 3.x)
+- **Elixir**: NIF scaffold lib.path + `MIX_ENV=prod` for Hex publish (from v0.1.0)
+- **CI**: Fixed PEP 440 version conversion for stable releases (0.1.0 no longer becomes 0.10)
+
 ## 0.1.0
 
 First stable release. High-performance web crawling engine with bindings for 11 languages.
