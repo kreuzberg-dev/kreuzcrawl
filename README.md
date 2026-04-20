@@ -71,7 +71,7 @@ High-performance Rust web crawling engine for structured data extraction. Scrape
 - **MCP server** — Model Context Protocol integration for AI agents
 - **REST API** — HTTP server with OpenAPI spec
 
-**[Documentation](https://docs.kreuzcrawl.kreuzberg.dev)** | **[API Reference](https://docs.kreuzcrawl.kreuzberg.dev/reference/)**
+**[Documentation](https://docs.kreuzcrawl.kreuzberg.dev)** | **[API Reference](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-rust/)**
 
 ## Installation
 
@@ -268,7 +268,7 @@ Contributions are welcome! See our [Contributing Guide](https://github.com/kreuz
 ## Links
 
 - [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
-- [API Reference](https://docs.kreuzcrawl.kreuzberg.dev/reference/)
+- [API Reference](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-rust/)
 - [GitHub](https://github.com/kreuzberg-dev/kreuzcrawl)
 - [Issues](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
 - [Discussions](https://github.com/kreuzberg-dev/kreuzcrawl/discussions)
