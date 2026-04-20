@@ -150,7 +150,7 @@ func Test_ScrapeBasicHtmlPage(t *testing.T) {
 
 func Test_ScrapeComplexLinks(t *testing.T) {
 	// Classifies links by type: internal, external, anchor, document, image
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -197,7 +197,7 @@ func Test_ScrapeDownloadAssets(t *testing.T) {
 
 func Test_ScrapeDublinCore(t *testing.T) {
 	// Extracts Dublin Core metadata from a page
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -230,7 +230,7 @@ func Test_ScrapeDublinCore(t *testing.T) {
 
 func Test_ScrapeEmptyPage(t *testing.T) {
 	// Handles an empty HTML document without errors
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -252,7 +252,7 @@ func Test_ScrapeEmptyPage(t *testing.T) {
 
 func Test_ScrapeFeedDiscovery(t *testing.T) {
 	// Discovers RSS, Atom, and JSON feed links
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -271,7 +271,7 @@ func Test_ScrapeFeedDiscovery(t *testing.T) {
 
 func Test_ScrapeImageSources(t *testing.T) {
 	// Extracts images from img, picture, og:image, twitter:image
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -297,7 +297,7 @@ func Test_ScrapeImageSources(t *testing.T) {
 
 func Test_ScrapeJsHeavySpa(t *testing.T) {
 	// Handles SPA page with JavaScript-only content (no server-rendered HTML)
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -313,7 +313,7 @@ func Test_ScrapeJsHeavySpa(t *testing.T) {
 
 func Test_ScrapeJsonLd(t *testing.T) {
 	// Extracts JSON-LD structured data from a page
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -344,7 +344,7 @@ func Test_ScrapeJsonLd(t *testing.T) {
 
 func Test_ScrapeMalformedHtml(t *testing.T) {
 	// Gracefully handles broken HTML without crashing
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -370,7 +370,7 @@ func Test_ScrapeMalformedHtml(t *testing.T) {
 
 func Test_ScrapeOgMetadata(t *testing.T) {
 	// Extracts full Open Graph metadata from a page
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}
@@ -420,7 +420,7 @@ func Test_ScrapeOgMetadata(t *testing.T) {
 
 func Test_ScrapeTwitterCard(t *testing.T) {
 	// Extracts Twitter Card metadata from a page
-	engine, createErr := pkg.CreateEngine()
+	engine, createErr := pkg.CreateEngine(nil)
 	if createErr != nil {
 		t.Fatalf("create handle failed: %v", createErr)
 	}

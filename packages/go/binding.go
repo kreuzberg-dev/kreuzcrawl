@@ -2,9 +2,10 @@
 
 package kreuzcrawl
 
-// CGO directives are provided by ffi.go, ffi_dev.go, ffi_windows.go, or cgo_flags.go.
-// Do not add #cgo directives here.
-
+/*
+#include "internal/ffi/kreuzcrawl.h"
+#include <stdlib.h>
+*/
 import "C"
 
 import (
