@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.1.0
+
+First stable release. High-performance web crawling engine with bindings for 11 languages.
+
+### Highlights
+
+- Rust core with async Tokio runtime, configurable crawl depth/concurrency/rate limiting
+- REST API server (Firecrawl v1-compatible) with OpenAPI 3.1 spec
+- MCP (Model Context Protocol) server for AI agent integration
+- Docker image (Alpine, multi-arch amd64/arm64)
+- CLI with Homebrew tap (`brew install kreuzberg-dev/tap/kreuzcrawl`)
+
+### Language Bindings
+
+Python (PyPI), Node.js (npm), Ruby (RubyGems), Go (pkg.go.dev), Java (Maven Central), C# (NuGet), PHP (Packagist), Elixir (Hex.pm), WebAssembly (npm), C FFI (GitHub Releases), Rust (crates.io)
+
+### Changes Since rc.10
+
+- Fixed Elixir Hex publish (NIF lib.path + MIX_ENV=prod)
+- Fixed version.rb sync regex (pre-release suffix matching)
+- Fixed Ruby native scaffold missing lib.path
+- Clean prek run (all hooks pass)
+- Idempotent `alef verify` via blake3 output content hashing
+
 ## 0.1.0-rc.10
 
 ### Features
