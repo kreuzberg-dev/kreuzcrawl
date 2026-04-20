@@ -14,7 +14,7 @@ repos:
 
   # AI-Rulez: auto-generate AI assistant configuration files
   - repo: https://github.com/Goldziher/ai-rulez
-    rev: v3.14.0
+    rev: v3.14.2
     hooks:
       - id: ai-rulez-validate
       - id: ai-rulez-generate
@@ -187,7 +187,7 @@ repos:
 
   # Shell scripts: formatting and linting
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.13.1-1
+    rev: v3.14.2-1
     hooks:
       - id: shfmt
         args: ["-w", "-i", "2"]
