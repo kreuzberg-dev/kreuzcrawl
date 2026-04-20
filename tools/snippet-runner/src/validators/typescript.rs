@@ -48,6 +48,19 @@ impl TypeScriptValidator {
             if has_fn_decl && !has_body {
                 return true;
             }
+
+            // Bare method signatures like "validate(): void" or "crawl(config: Config): Promise<Result>"
+            if lines.len() <= 3 && !has_body {
+                let first = lines[0].trim();
+                if first.contains('(') && first.contains(')') && first.contains(':') {
+                    let before_paren = first.split('(').next().unwrap_or("");
+                    let is_identifier =
+                        !before_paren.is_empty() && before_paren.chars().all(|c| c.is_alphanumeric() || c == '_');
+                    if is_identifier {
+                        return true;
+                    }
+                }
+            }
         }
 
         false
