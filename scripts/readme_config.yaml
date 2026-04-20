@@ -137,8 +137,8 @@ languages:
     template: language_package.md.jinja
     package_manager:
       - composer
-    package_name: kreuzcrawl/kreuzcrawl
-    badge_url: https://img.shields.io/packagist/v/kreuzcrawl/kreuzcrawl?label=PHP&color=007ec6
+    package_name: kreuzberg-dev/kreuzcrawl
+    badge_url: https://img.shields.io/packagist/v/kreuzberg-dev/kreuzcrawl?label=PHP&color=007ec6
     docs_url: https://kreuzcrawl.dev/
     description: |
       Extract text, tables, images, and metadata from 91+ file formats and 248 programming languages including PDF, Office documents, and images. PHP bindings with modern PHP 8.2+ support and type-safe API.

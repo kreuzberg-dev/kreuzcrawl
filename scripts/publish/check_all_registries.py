@@ -44,7 +44,7 @@ CHECKS: list[tuple[str, str, str, dict[str, str]]] = [
     ("cratesio", "kreuzcrawl-pdfium-render", "crates.io (pdfium)", {}),
     ("maven", "dev.kreuzcrawl:kreuzcrawl", "Maven", {}),
     ("nuget", "Kreuzcrawl", "NuGet", {}),
-    ("packagist", "kreuzcrawl/kreuzcrawl", "Packagist", {}),
+    ("packagist", "kreuzberg-dev/kreuzcrawl", "Packagist", {}),
     ("hex", "kreuzcrawl", "Hex.pm", {}),
     ("homebrew", "kreuzcrawl", "Homebrew", {"tap_repo": "kreuzberg-dev/homebrew-tap"}),
 ]
