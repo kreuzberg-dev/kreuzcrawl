@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.0-rc.10
+
+### Features
+
+- **Go**: Added FFI download pattern — `go generate` downloads prebuilt libraries from GitHub releases, enabling standalone `go get` without local C build
+- **API**: Added schemathesis property-based contract tests (12 tests covering all endpoints)
+- **CLI**: Added Homebrew installation instructions (`brew install kreuzberg-dev/tap/kreuzcrawl`)
+
+### Fixes
+
+- **Go**: Fixed non-opaque struct methods using `r.ptr` — now marshals to JSON via `_from_json` FFI
+- **Go e2e**: Pass `nil` to `CreateEngine` when no config specified
+- **Python stubs**: Removed docstrings from `.pyi` files (ruff PYI021 compliance)
+- **WASM e2e**: Quote hyphenated keys in object literals, use `WasmCrawlConfig` class construction
+- **Brew e2e**: Fixed jq `| length` pipe syntax (was `.length`), skip output capture for all-skipped assertions
+- **Python e2e**: Wrap long `CrawlConfig` lines for E501 compliance
+- **Rust e2e**: Removed `[workspace]` from generated Cargo.toml (conflicts with parent workspace)
+- **Elixir**: Fixed long line formatting in `native.ex` scaffold
+- **PHP**: Unified Packagist package name to `kreuzberg-dev/kreuzcrawl`
+- **CI**: Removed prepare job gate that skipped release events
+- **Docs**: Fixed stale version references in Java/Elixir READMEs and installation guide
+- **Pre-commit**: Replaced local sync-versions hook with `alef-verify` + `alef-sync-versions`
+
 ## 0.1.0-rc.9
 
 ### Fixes
