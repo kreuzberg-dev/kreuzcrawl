@@ -3316,7 +3316,8 @@ jobs:
           # Clone the tap and check the formula
           TAP_DIR=$(mktemp -d)
           git clone "https://x-access-token:${GH_TOKEN}@github.com/kreuzberg-dev/homebrew-tap.git" "$TAP_DIR"
-          FORMULA_SHA=$(grep 'sha256 "' "$TAP_DIR/Formula/kreuzcrawl.rb" | head -1 | sed 's/.*sha256 "\([^"]*\)".*/\1/')
+          # Match sha256 with either single or double quotes (Ruby formulae use both)
+          FORMULA_SHA=$(grep -E "^\s+sha256 ['\"][a-f0-9]{64}['\"]" "$TAP_DIR/Formula/kreuzcrawl.rb" | head -1 | sed "s/.*sha256 ['\"]\\([^'\"]*\\)['\"].*/\\1/")
 
           echo "Tarball SHA256: $ACTUAL_SHA"
           echo "Formula SHA256: $FORMULA_SHA"
@@ -3325,7 +3326,7 @@ jobs:
             echo "::error::Homebrew formula sha256 mismatch! Tarball=$ACTUAL_SHA Formula=$FORMULA_SHA"
             echo "This usually means the git tag was recreated after the formula was published."
             echo "Updating formula with correct sha256..."
-            sed -i "s|sha256 \"${FORMULA_SHA}\"|sha256 \"${ACTUAL_SHA}\"|" "$TAP_DIR/Formula/kreuzcrawl.rb"
+            sed -i "s|sha256 ['\"]${FORMULA_SHA}['\"]|sha256 \"${ACTUAL_SHA}\"|" "$TAP_DIR/Formula/kreuzcrawl.rb"
             cd "$TAP_DIR"
             git add Formula/kreuzcrawl.rb
             git commit -m "fix(homebrew): correct sha256 for kreuzcrawl ${TAG}"

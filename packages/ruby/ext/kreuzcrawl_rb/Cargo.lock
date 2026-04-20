@@ -1174,7 +1174,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.1.0-rc.5"
+version = "0.1.1"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1200,7 +1200,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-rb"
-version = "0.1.0-rc.5"
+version = "0.1.1"
 dependencies = [
  "kreuzcrawl",
  "magnus",
