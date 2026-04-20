@@ -67,8 +67,14 @@ fn is_api_signature(code: &str) -> bool {
     let lines: Vec<&str> = code.lines().collect();
     // Single-line or very short (1-3 lines) with `->` return type
     if lines.len() <= 3 && code.contains(" -> ") {
-        // Looks like: Module.method(...) -> Type
         return true;
+    }
+    // Bare method definitions without `end` (API reference signatures)
+    if lines.len() <= 3 {
+        let first = lines[0].trim();
+        if (first.starts_with("def ") || first.starts_with("def self.")) && !code.contains("\nend") {
+            return true;
+        }
     }
     false
 }
