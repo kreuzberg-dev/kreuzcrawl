@@ -15,8 +15,6 @@ use url::Url;
 
 use std::collections::HashMap;
 
-use tower::Service;
-
 use crate::error::CrawlError;
 use crate::helpers::{compile_regexes, fetch_robots_rules, find_ascii_case_insensitive};
 use crate::html::{
@@ -26,7 +24,6 @@ use crate::html::{
 use crate::http::{build_client, extract_cookies_from_hashmap};
 use crate::normalize::{normalize_url, normalize_url_for_dedup, resolve_redirect, strip_fragment};
 use crate::robots::{RobotsRules, is_path_allowed};
-use crate::tower::CrawlRequest;
 use crate::traits::*;
 use crate::types::*;
 
@@ -155,10 +152,7 @@ impl CrawlEngine {
         let start_time = Instant::now();
 
         // ── Phase 1: resolve initial redirects ──────────────────────────
-        let mut service = self.build_service(&client);
-        let final_url = self
-            .resolve_initial_redirects(url, max_redirects, &mut service, &mut state)
-            .await;
+        let final_url = self.resolve_initial_redirects(url, max_redirects, &mut state).await;
 
         // If we have an error already (from redirects), return early
         if state.error.is_some() {
@@ -205,7 +199,6 @@ impl CrawlEngine {
         self.run_crawl_loop(
             &mut state,
             &mut working_set,
-            &mut service,
             &exclude_regexes,
             &include_regexes,
             &robots_rules,
@@ -248,20 +241,17 @@ impl CrawlEngine {
     }
 
     /// Follow HTTP, Refresh header, and meta refresh redirects until a final page is reached.
-    async fn resolve_initial_redirects(
-        &self,
-        url: &str,
-        max_redirects: usize,
-        service: &mut tower::util::BoxCloneService<CrawlRequest, crate::tower::CrawlResponse, CrawlError>,
-        state: &mut CrawlState,
-    ) -> String {
+    ///
+    /// Uses [`fetch_response`](Self::fetch_response) so that browser fallback (WAF blocked or
+    /// `BrowserMode::Always`) applies during redirect resolution just as it does during scraping.
+    async fn resolve_initial_redirects(&self, url: &str, max_redirects: usize, state: &mut CrawlState) -> String {
         let mut current_url = url.to_owned();
         let mut seen_redirects: HashSet<String> = HashSet::with_capacity(max_redirects + 1);
         seen_redirects.insert(current_url.clone());
 
         loop {
-            let resp = match service.call(CrawlRequest::new(&current_url)).await {
-                Ok(r) => r,
+            let resp = match self.fetch_response(&current_url).await {
+                Ok((r, _browser_used)) => r,
                 Err(e) => {
                     state.error = Some(format!("{e}"));
                     break;
@@ -396,7 +386,6 @@ impl CrawlEngine {
         &self,
         state: &mut CrawlState,
         working_set: &mut Vec<FrontierEntry>,
-        service: &mut tower::util::BoxCloneService<CrawlRequest, crate::tower::CrawlResponse, CrawlError>,
         exclude_regexes: &[Regex],
         include_regexes: &[Regex],
         robots_rules: &Option<RobotsRules>,
@@ -451,13 +440,15 @@ impl CrawlEngine {
                     .await
                     .map_err(|_| CrawlError::Other("semaphore closed".into()))?;
 
-                let mut svc = service.clone();
+                // Clone the engine so the spawned task owns its own copy. This is
+                // cheap: all heavy state (frontier, store, cache, …) is behind Arc.
+                let engine = self.clone();
 
                 join_set.spawn(async move {
                     let _permit = permit;
 
-                    let resp = svc
-                        .call(CrawlRequest::new(&entry.url))
+                    let (resp, _browser_used) = engine
+                        .fetch_response(&entry.url)
                         .await
                         .map_err(|e| (entry.clone(), e))?;
 
