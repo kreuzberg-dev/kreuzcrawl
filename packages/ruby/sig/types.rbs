@@ -100,29 +100,6 @@ module Kreuzcrawl
     def initialize: (url: String, mime_type: String, content: String, size: Integer, ?filename: String, content_hash: String, headers: Hash[String, String]) -> void
   end
 
-  class InteractionResult
-    # Result of executing a sequence of page interaction actions.
-
-    attr_accessor action_results: Array[ActionResult]
-    attr_accessor final_html: String
-    attr_accessor final_url: String
-    attr_accessor screenshot: String
-
-    def initialize: (action_results: Array[ActionResult], final_html: String, final_url: String, ?screenshot: String) -> void
-  end
-
-  class ActionResult
-    # Result from a single page action execution.
-
-    attr_accessor action_index: Integer
-    attr_accessor action_type: String
-    attr_accessor success: bool
-    attr_accessor data: untyped
-    attr_accessor error: String
-
-    def initialize: (action_index: Integer, action_type: String, success: bool, ?data: untyped, ?error: String) -> void
-  end
-
   class ScrapeResult
     # The result of a single-page scrape operation.
 
@@ -230,20 +207,6 @@ module Kreuzcrawl
     attr_accessor fit_content: String
 
     def initialize: (content: String, ?document_structure: untyped, tables: Array[untyped], warnings: Array[String], ?citations: CitationResult, ?fit_content: String) -> void
-  end
-
-  class CachedPage
-    # Cached page data for HTTP response caching.
-
-    attr_accessor url: String
-    attr_accessor status_code: Integer
-    attr_accessor content_type: String
-    attr_accessor body: String
-    attr_accessor etag: String
-    attr_accessor last_modified: String
-    attr_accessor cached_at: Integer
-
-    def initialize: (url: String, status_code: Integer, content_type: String, body: String, ?etag: String, ?last_modified: String, cached_at: Integer) -> void
   end
 
   class LinkInfo
@@ -440,8 +403,7 @@ module Kreuzcrawl
     # Opaque handle to a configured crawl engine.
     #
     # Constructed via [`create_engine`] with an optional [`CrawlConfig`].
-    # All default trait implementations (BFS strategy, in-memory frontier,
-    # per-domain throttle, etc.) are used internally.
+    # Default implementations for all pluggable components are used internally.
 
   end
 
@@ -528,14 +490,6 @@ module Kreuzcrawl
     Archive: Integer
     Data: Integer
     Other: Integer
-  end
-
-  class CrawlEvent
-    # An event emitted during a streaming crawl operation.
-
-    Page: Integer
-    Error: Integer
-    Complete: Integer
   end
 
   def self.create_engine: (?CrawlConfig config) -> CrawlEngineHandle

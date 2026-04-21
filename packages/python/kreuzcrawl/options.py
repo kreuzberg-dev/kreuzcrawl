@@ -256,43 +256,6 @@ class DownloadedDocument:
 
 
 @dataclass
-class InteractionResult:
-    """Result of executing a sequence of page interaction actions."""
-
-    action_results: list[Any] = field(default_factory=list)
-    """Results from each executed action."""
-
-    final_html: str = ""
-    """Final page HTML after all actions completed."""
-
-    final_url: str = ""
-    """Final page URL (may have changed due to navigation)."""
-
-    screenshot: bytes | None = None
-    """Screenshot taken after all actions, if requested."""
-
-
-@dataclass
-class ActionResult:
-    """Result from a single page action execution."""
-
-    action_index: int = 0
-    """Zero-based index of the action in the sequence."""
-
-    action_type: str = ""
-    """The type of action that was executed."""
-
-    success: bool = False
-    """Whether the action completed successfully."""
-
-    data: str | None = None
-    """Action-specific return data (screenshot bytes, JS return value, scraped HTML)."""
-
-    error: str | None = None
-    """Error message if the action failed."""
-
-
-@dataclass
 class CrawlPageResult:
     """The result of crawling a single page during a crawl operation."""
 
@@ -348,7 +311,7 @@ class CrawlPageResult:
     """Markdown conversion of the page content."""
 
     extracted_data: str | None = None
-    """Structured data extracted by LLM. Populated when using LlmExtractor."""
+    """Structured data extracted by LLM. Populated when extraction is configured."""
 
     extraction_meta: Any | None = None
     """Metadata about the LLM extraction pass (cost, tokens, model)."""
@@ -395,19 +358,6 @@ class MarkdownResult:
 
     fit_content: str | None = None
     """Content-filtered markdown optimized for LLM consumption."""
-
-
-@dataclass
-class CachedPage:
-    """Cached page data for HTTP response caching."""
-
-    url: str = ""
-    status_code: int = 0
-    content_type: str = ""
-    body: str = ""
-    etag: str | None = None
-    last_modified: str | None = None
-    cached_at: int = 0
 
 
 @dataclass

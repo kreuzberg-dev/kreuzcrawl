@@ -32,10 +32,7 @@ types = [
     "MapResult",
     "MarkdownResult",
     "SitemapUrl",
-    "CachedPage",
     "DownloadedDocument",
-    "InteractionResult",
-    "ActionResult",
     # Discovery
     "LinkInfo",
     "LinkType",
@@ -47,7 +44,6 @@ types = [
     "CookieInfo",
     "DownloadedAsset",
     "AssetCategory",
-    "CrawlEvent",
     # Metadata
     "PageMetadata",
     "ArticleMetadata",

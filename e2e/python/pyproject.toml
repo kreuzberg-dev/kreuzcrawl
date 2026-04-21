@@ -21,7 +21,7 @@ dependencies = [ "kreuzcrawl", "pytest>=7.4", "pytest-asyncio>=0.23", "pytest-ti
 packages = []
 
 [tool.uv]
-sources.kreuzcrawl = { path = "../../packages/python", editable = true }
+sources.kreuzcrawl = { workspace = true }
 
 [tool.pytest]
 ini_options.asyncio_mode = "auto"

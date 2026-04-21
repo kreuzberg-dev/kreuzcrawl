@@ -116,7 +116,7 @@ pub struct ScrapeResult {
     pub browser_used: bool,
     /// Markdown conversion of the page content.
     pub markdown: Option<MarkdownResult>,
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     pub extracted_data: Option<serde_json::Value>,
     /// Metadata about the LLM extraction pass (cost, tokens, model).
     pub extraction_meta: Option<ExtractionMeta>,
@@ -166,7 +166,7 @@ pub struct CrawlPageResult {
     pub detected_charset: Option<String>,
     /// Markdown conversion of the page content.
     pub markdown: Option<MarkdownResult>,
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     pub extracted_data: Option<serde_json::Value>,
     /// Metadata about the LLM extraction pass (cost, tokens, model).
     pub extraction_meta: Option<ExtractionMeta>,

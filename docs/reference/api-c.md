@@ -2,34 +2,9 @@
 title: "C API Reference"
 ---
 
-## C API Reference <span class="version-badge">v0.1.0-rc.10</span>
+## C API Reference <span class="version-badge">v0.1.1</span>
 
 ### Functions
-
-#### kcrawl_generate_citations()
-
-Convert markdown links to numbered citations.
-
-`[Example](https://example.com)` becomes `Example[1]`
-with `[1]: <https://example.com`> in the reference list.
-Images `![alt](url)` are preserved unchanged.
-
-**Signature:**
-
-```c
-KcrawlCitationResult* kcrawl_generate_citations(const char* markdown);
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `markdown` | `const char*` | Yes | The markdown |
-
-**Returns:** `KcrawlCitationResult`
-
-
----
 
 #### kcrawl_create_engine()
 
@@ -175,21 +150,6 @@ KcrawlBatchCrawlResult* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const
 
 ### Types
 
-#### KcrawlActionResult
-
-Result from a single page action execution.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `action_index` | `uintptr_t` | — | Zero-based index of the action in the sequence. |
-| `action_type` | `KcrawlStr` | — | The type of action that was executed. |
-| `success` | `bool` | — | Whether the action completed successfully. |
-| `data` | `void**` | `NULL` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
-| `error` | `const char**` | `NULL` | Error message if the action failed. |
-
-
----
-
 #### KcrawlArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
@@ -253,23 +213,6 @@ Browser fallback configuration.
 ```c
 KcrawlBrowserConfig kcrawl_default();
 ```
-
-
----
-
-#### KcrawlCachedPage
-
-Cached page data for HTTP response caching.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `url` | `const char*` | — | Url |
-| `status_code` | `uint16_t` | — | Status code |
-| `content_type` | `const char*` | — | Content type |
-| `body` | `const char*` | — | Body |
-| `etag` | `const char**` | `NULL` | Etag |
-| `last_modified` | `const char**` | `NULL` | Last modified |
-| `cached_at` | `uint64_t` | — | Cached at |
 
 
 ---
@@ -380,8 +323,7 @@ void kcrawl_validate();
 Opaque handle to a configured crawl engine.
 
 Constructed via `create_engine` with an optional `CrawlConfig`.
-All default trait implementations (BFS strategy, in-memory frontier,
-per-domain throttle, etc.) are used internally.
+Default implementations for all pluggable components are used internally.
 
 
 ---
@@ -409,7 +351,7 @@ The result of crawling a single page during a crawl operation.
 | `is_pdf` | `bool` | — | Whether the content is a PDF. |
 | `detected_charset` | `const char**` | `NULL` | The detected character set encoding. |
 | `markdown` | `KcrawlMarkdownResult*` | `NULL` | Markdown conversion of the page content. |
-| `extracted_data` | `void**` | `NULL` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extracted_data` | `void**` | `NULL` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `KcrawlExtractionMeta*` | `NULL` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `downloaded_document` | `KcrawlDownloadedDocument*` | `NULL` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 
@@ -472,11 +414,11 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `const char*` | — | The URL the document was fetched from. |
-| `mime_type` | `KcrawlStr` | — | The MIME type from the Content-Type header. |
+| `mime_type` | `const char*` | — | The MIME type from the Content-Type header. |
 | `content` | `const uint8_t*` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `uintptr_t` | — | Size of the document in bytes. |
-| `filename` | `KcrawlStr*` | `NULL` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `KcrawlStr` | — | SHA-256 hex digest of the content. |
+| `filename` | `const char**` | `NULL` | Filename extracted from Content-Disposition or URL path. |
+| `content_hash` | `const char*` | — | SHA-256 hex digest of the content. |
 | `headers` | `void*` | `NULL` | Selected response headers. |
 
 
@@ -559,20 +501,6 @@ Information about an image found on a page.
 | `width` | `uint32_t*` | `NULL` | The width attribute, if present and parseable. |
 | `height` | `uint32_t*` | `NULL` | The height attribute, if present and parseable. |
 | `source` | `KcrawlImageSource` | `KCRAWL_KCRAWL_IMG` | The source of the image reference. |
-
-
----
-
-#### KcrawlInteractionResult
-
-Result of executing a sequence of page interaction actions.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `action_results` | `KcrawlActionResult*` | `NULL` | Results from each executed action. |
-| `final_html` | `const char*` | — | Final page HTML after all actions completed. |
-| `final_url` | `const char*` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `const uint8_t**` | `NULL` | Screenshot taken after all actions, if requested. |
 
 
 ---
@@ -745,7 +673,7 @@ The result of a single-page scrape operation.
 | `js_render_hint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `KcrawlMarkdownResult*` | `NULL` | Markdown conversion of the page content. |
-| `extracted_data` | `void**` | `NULL` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extracted_data` | `void**` | `NULL` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `KcrawlExtractionMeta*` | `NULL` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `const uint8_t**` | `NULL` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `KcrawlDownloadedDocument*` | `NULL` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
@@ -865,19 +793,6 @@ The category of a downloaded asset.
 | `KCRAWL_ARCHIVE` | An archive file (ZIP, TAR, etc.). |
 | `KCRAWL_DATA` | A data file (JSON, XML, CSV, etc.). |
 | `KCRAWL_OTHER` | An unrecognized asset type. |
-
-
----
-
-#### KcrawlCrawlEvent
-
-An event emitted during a streaming crawl operation.
-
-| Value | Description |
-|-------|-------------|
-| `KCRAWL_PAGE` | A single page has been crawled. — Fields: `0`: `KcrawlCrawlPageResult` |
-| `KCRAWL_ERROR` | An error occurred while crawling a URL. — Fields: `url`: `const char*`, `error`: `const char*` |
-| `KCRAWL_COMPLETE` | The crawl has completed. — Fields: `pages_crawled`: `uintptr_t` |
 
 
 ---

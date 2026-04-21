@@ -101,39 +101,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `str` | — | The URL the document was fetched from. |
-| `mime_type` | `Str` | — | The MIME type from the Content-Type header. |
+| `mime_type` | `str` | — | The MIME type from the Content-Type header. |
 | `content` | `bytes` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `int` | — | Size of the document in bytes. |
-| `filename` | `Str | None` | `None` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `Str` | — | SHA-256 hex digest of the content. |
-| `headers` | `dict[Str, Str]` | `{}` | Selected response headers. |
-
----
-
-### InteractionResult
-
-Result of executing a sequence of page interaction actions.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `action_results` | `list[ActionResult]` | `[]` | Results from each executed action. |
-| `final_html` | `str` | — | Final page HTML after all actions completed. |
-| `final_url` | `str` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `bytes | None` | `None` | Screenshot taken after all actions, if requested. |
-
----
-
-### ActionResult
-
-Result from a single page action execution.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `action_index` | `int` | — | Zero-based index of the action in the sequence. |
-| `action_type` | `Str` | — | The type of action that was executed. |
-| `success` | `bool` | — | Whether the action completed successfully. |
-| `data` | `Any | None` | `None` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
-| `error` | `str | None` | `None` | Error message if the action failed. |
+| `filename` | `str | None` | `None` | Filename extracted from Content-Disposition or URL path. |
+| `content_hash` | `str` | — | SHA-256 hex digest of the content. |
+| `headers` | `dict[str, str]` | `{}` | Selected response headers. |
 
 ---
 
@@ -167,7 +140,7 @@ The result of a single-page scrape operation.
 | `js_render_hint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `MarkdownResult | None` | `None` | Markdown conversion of the page content. |
-| `extracted_data` | `Any | None` | `None` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extracted_data` | `Any | None` | `None` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `ExtractionMeta | None` | `None` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `bytes | None` | `None` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `DownloadedDocument | None` | `None` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
@@ -197,7 +170,7 @@ The result of crawling a single page during a crawl operation.
 | `is_pdf` | `bool` | — | Whether the content is a PDF. |
 | `detected_charset` | `str | None` | `None` | The detected character set encoding. |
 | `markdown` | `MarkdownResult | None` | `None` | Markdown conversion of the page content. |
-| `extracted_data` | `Any | None` | `None` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extracted_data` | `Any | None` | `None` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `ExtractionMeta | None` | `None` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `downloaded_document` | `DownloadedDocument | None` | `None` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 
@@ -254,22 +227,6 @@ Rich markdown conversion result from HTML processing.
 | `warnings` | `list[str]` | `[]` | Non-fatal processing warnings. |
 | `citations` | `CitationResult | None` | `None` | Content with links replaced by numbered citations. |
 | `fit_content` | `str | None` | `None` | Content-filtered markdown optimized for LLM consumption. |
-
----
-
-### CachedPage
-
-Cached page data for HTTP response caching.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `url` | `str` | — | Url |
-| `status_code` | `int` | — | Status code |
-| `content_type` | `str` | — | Content type |
-| `body` | `str` | — | Body |
-| `etag` | `str | None` | `None` | Etag |
-| `last_modified` | `str | None` | `None` | Last modified |
-| `cached_at` | `int` | — | Cached at |
 
 ---
 

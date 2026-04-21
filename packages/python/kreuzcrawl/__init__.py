@@ -33,7 +33,6 @@ from .exceptions import (
     WafBlockedError,
 )
 from .options import (
-    ActionResult,
     ArticleMetadata,
     AssetCategory,
     BatchCrawlResult,
@@ -41,7 +40,6 @@ from .options import (
     BrowserConfig,
     BrowserMode,
     BrowserWait,
-    CachedPage,
     CitationReference,
     CookieInfo,
     CrawlConfig,
@@ -56,7 +54,6 @@ from .options import (
     HreflangEntry,
     ImageInfo,
     ImageSource,
-    InteractionResult,
     JsonLdEntry,
     LinkInfo,
     LinkType,
@@ -68,7 +65,6 @@ from .options import (
 )
 
 __all__ = [
-    "ActionResult",
     "ArticleMetadata",
     "AssetCategory",
     "AuthConfig",
@@ -80,7 +76,6 @@ __all__ = [
     "BrowserMode",
     "BrowserTimeoutError",
     "BrowserWait",
-    "CachedPage",
     "CitationReference",
     "CitationResult",
     "CookieInfo",
@@ -104,7 +99,6 @@ __all__ = [
     "HreflangEntry",
     "ImageInfo",
     "ImageSource",
-    "InteractionResult",
     "InvalidConfigError",
     "JsonLdEntry",
     "LinkInfo",

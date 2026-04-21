@@ -57,7 +57,9 @@ public record ScrapeResult(
 		@JsonProperty("browser_used") boolean browserUsed,
 		/** Markdown conversion of the page content. */
 		Optional<MarkdownResult> markdown,
-		/** Structured data extracted by LLM. Populated when using LlmExtractor. */
+		/**
+		 * Structured data extracted by LLM. Populated when extraction is configured.
+		 */
 		@JsonProperty("extracted_data") Optional<Object> extractedData,
 		/** Metadata about the LLM extraction pass (cost, tokens, model). */
 		@JsonProperty("extraction_meta") Optional<ExtractionMeta> extractionMeta,

@@ -681,140 +681,6 @@ impl DownloadedDocument {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzcrawl::InteractionResult")]
-#[serde(default)]
-pub struct InteractionResult {
-    pub action_results: Vec<ActionResult>,
-    pub final_html: String,
-    pub final_url: String,
-    pub screenshot: Option<Vec<u8>>,
-}
-
-unsafe impl IntoValueFromNative for InteractionResult {}
-
-impl magnus::TryConvert for InteractionResult {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &InteractionResult = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for InteractionResult {}
-
-impl Default for InteractionResult {
-    fn default() -> Self {
-        Self {
-            action_results: Default::default(),
-            final_html: Default::default(),
-            final_url: Default::default(),
-            screenshot: Default::default(),
-        }
-    }
-}
-
-impl InteractionResult {
-    fn new(
-        action_results: Option<Vec<ActionResult>>,
-        final_html: Option<String>,
-        final_url: Option<String>,
-        screenshot: Option<Vec<u8>>,
-    ) -> Self {
-        Self {
-            action_results: action_results.unwrap_or_default(),
-            final_html: final_html.unwrap_or_default(),
-            final_url: final_url.unwrap_or_default(),
-            screenshot,
-        }
-    }
-
-    fn action_results(&self) -> Vec<ActionResult> {
-        self.action_results.clone()
-    }
-
-    fn final_html(&self) -> String {
-        self.final_html.clone()
-    }
-
-    fn final_url(&self) -> String {
-        self.final_url.clone()
-    }
-
-    fn screenshot(&self) -> Option<Vec<u8>> {
-        self.screenshot.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzcrawl::ActionResult")]
-#[serde(default)]
-pub struct ActionResult {
-    pub action_index: usize,
-    pub action_type: String,
-    pub success: bool,
-    pub data: Option<String>,
-    pub error: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for ActionResult {}
-
-impl magnus::TryConvert for ActionResult {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ActionResult = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ActionResult {}
-
-impl Default for ActionResult {
-    fn default() -> Self {
-        Self {
-            action_index: Default::default(),
-            action_type: Default::default(),
-            success: Default::default(),
-            data: Default::default(),
-            error: Default::default(),
-        }
-    }
-}
-
-impl ActionResult {
-    fn new(
-        action_index: Option<usize>,
-        action_type: Option<String>,
-        success: Option<bool>,
-        data: Option<String>,
-        error: Option<String>,
-    ) -> Self {
-        Self {
-            action_index: action_index.unwrap_or_default(),
-            action_type: action_type.unwrap_or_default(),
-            success: success.unwrap_or_default(),
-            data,
-            error,
-        }
-    }
-
-    fn action_index(&self) -> usize {
-        self.action_index
-    }
-
-    fn action_type(&self) -> String {
-        self.action_type.clone()
-    }
-
-    fn success(&self) -> bool {
-        self.success
-    }
-
-    fn data(&self) -> Option<String> {
-        self.data.clone()
-    }
-
-    fn error(&self) -> Option<String> {
-        self.error.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::ScrapeResult")]
 #[serde(default)]
 pub struct ScrapeResult {
@@ -1613,93 +1479,6 @@ impl MarkdownResult {
 
     fn fit_content(&self) -> Option<String> {
         self.fit_content.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzcrawl::CachedPage")]
-#[serde(default)]
-pub struct CachedPage {
-    pub url: String,
-    pub status_code: u16,
-    pub content_type: String,
-    pub body: String,
-    pub etag: Option<String>,
-    pub last_modified: Option<String>,
-    pub cached_at: u64,
-}
-
-unsafe impl IntoValueFromNative for CachedPage {}
-
-impl magnus::TryConvert for CachedPage {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &CachedPage = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for CachedPage {}
-
-impl Default for CachedPage {
-    fn default() -> Self {
-        Self {
-            url: Default::default(),
-            status_code: Default::default(),
-            content_type: Default::default(),
-            body: Default::default(),
-            etag: Default::default(),
-            last_modified: Default::default(),
-            cached_at: Default::default(),
-        }
-    }
-}
-
-impl CachedPage {
-    fn new(
-        url: Option<String>,
-        status_code: Option<u16>,
-        content_type: Option<String>,
-        body: Option<String>,
-        etag: Option<String>,
-        last_modified: Option<String>,
-        cached_at: Option<u64>,
-    ) -> Self {
-        Self {
-            url: url.unwrap_or_default(),
-            status_code: status_code.unwrap_or_default(),
-            content_type: content_type.unwrap_or_default(),
-            body: body.unwrap_or_default(),
-            etag,
-            last_modified,
-            cached_at: cached_at.unwrap_or_default(),
-        }
-    }
-
-    fn url(&self) -> String {
-        self.url.clone()
-    }
-
-    fn status_code(&self) -> u16 {
-        self.status_code
-    }
-
-    fn content_type(&self) -> String {
-        self.content_type.clone()
-    }
-
-    fn body(&self) -> String {
-        self.body.clone()
-    }
-
-    fn etag(&self) -> Option<String> {
-        self.etag.clone()
-    }
-
-    fn last_modified(&self) -> Option<String> {
-        self.last_modified.clone()
-    }
-
-    fn cached_at(&self) -> u64 {
-        self.cached_at
     }
 }
 
@@ -3295,39 +3074,6 @@ impl magnus::TryConvert for AssetCategory {
 unsafe impl IntoValueFromNative for AssetCategory {}
 unsafe impl TryConvertOwned for AssetCategory {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum CrawlEvent {
-    Page { _0: CrawlPageResult },
-    Error { url: String, error: String },
-    Complete { pages_crawled: usize },
-}
-
-impl Default for CrawlEvent {
-    fn default() -> Self {
-        Self::Page { _0: Default::default() }
-    }
-}
-
-impl magnus::IntoValue for CrawlEvent {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for CrawlEvent {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for CrawlEvent {}
-unsafe impl TryConvertOwned for CrawlEvent {}
-
 fn create_engine(config: Option<String>) -> Result<CrawlEngineHandle, Error> {
     let config: Option<CrawlConfig> = config
         .as_deref()
@@ -3688,29 +3434,6 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     }
 }
 
-impl From<kreuzcrawl::InteractionResult> for InteractionResult {
-    fn from(val: kreuzcrawl::InteractionResult) -> Self {
-        Self {
-            action_results: val.action_results.into_iter().map(Into::into).collect(),
-            final_html: val.final_html,
-            final_url: val.final_url,
-            screenshot: val.screenshot.map(|v| v.to_vec()),
-        }
-    }
-}
-
-impl From<kreuzcrawl::ActionResult> for ActionResult {
-    fn from(val: kreuzcrawl::ActionResult) -> Self {
-        Self {
-            action_index: val.action_index,
-            action_type: format!("{:?}", val.action_type),
-            success: val.success,
-            data: val.data.as_ref().map(ToString::to_string),
-            error: val.error,
-        }
-    }
-}
-
 impl From<ScrapeResult> for kreuzcrawl::ScrapeResult {
     fn from(val: ScrapeResult) -> Self {
         Self {
@@ -3930,20 +3653,6 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CachedPage> for CachedPage {
-    fn from(val: kreuzcrawl::CachedPage) -> Self {
-        Self {
-            url: val.url,
-            status_code: val.status_code,
-            content_type: val.content_type,
-            body: val.body,
-            etag: val.etag,
-            last_modified: val.last_modified,
-            cached_at: val.cached_at,
         }
     }
 }
@@ -4530,16 +4239,6 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
     }
 }
 
-impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
-    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
-        match val {
-            kreuzcrawl::CrawlEvent::Page(_0) => Self::Page { _0: (*_0).into() },
-            kreuzcrawl::CrawlEvent::Error { url, error } => Self::Error { url, error },
-            kreuzcrawl::CrawlEvent::Complete { pages_crawled } => Self::Complete { pages_crawled },
-        }
-    }
-}
-
 /// Convert a `kreuzcrawl::CrawlError` error to a Magnus runtime error.
 #[allow(dead_code)]
 fn crawl_error_to_magnus_err(e: kreuzcrawl::CrawlError) -> magnus::Error {
@@ -4621,21 +4320,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("filename", method!(DownloadedDocument::filename, 0))?;
     class.define_method("content_hash", method!(DownloadedDocument::content_hash, 0))?;
     class.define_method("headers", method!(DownloadedDocument::headers, 0))?;
-
-    let class = module.define_class("InteractionResult", ruby.class_object())?;
-    class.define_singleton_method("new", function!(InteractionResult::new, 4))?;
-    class.define_method("action_results", method!(InteractionResult::action_results, 0))?;
-    class.define_method("final_html", method!(InteractionResult::final_html, 0))?;
-    class.define_method("final_url", method!(InteractionResult::final_url, 0))?;
-    class.define_method("screenshot", method!(InteractionResult::screenshot, 0))?;
-
-    let class = module.define_class("ActionResult", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ActionResult::new, 5))?;
-    class.define_method("action_index", method!(ActionResult::action_index, 0))?;
-    class.define_method("action_type", method!(ActionResult::action_type, 0))?;
-    class.define_method("success", method!(ActionResult::success, 0))?;
-    class.define_method("data", method!(ActionResult::data, 0))?;
-    class.define_method("error", method!(ActionResult::error, 0))?;
 
     let class = module.define_class("ScrapeResult", ruby.class_object())?;
     class.define_singleton_method("new", function!(ScrapeResult::new, 1))?;
@@ -4724,16 +4408,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("warnings", method!(MarkdownResult::warnings, 0))?;
     class.define_method("citations", method!(MarkdownResult::citations, 0))?;
     class.define_method("fit_content", method!(MarkdownResult::fit_content, 0))?;
-
-    let class = module.define_class("CachedPage", ruby.class_object())?;
-    class.define_singleton_method("new", function!(CachedPage::new, 7))?;
-    class.define_method("url", method!(CachedPage::url, 0))?;
-    class.define_method("status_code", method!(CachedPage::status_code, 0))?;
-    class.define_method("content_type", method!(CachedPage::content_type, 0))?;
-    class.define_method("body", method!(CachedPage::body, 0))?;
-    class.define_method("etag", method!(CachedPage::etag, 0))?;
-    class.define_method("last_modified", method!(CachedPage::last_modified, 0))?;
-    class.define_method("cached_at", method!(CachedPage::cached_at, 0))?;
 
     let class = module.define_class("LinkInfo", ruby.class_object())?;
     class.define_singleton_method("new", function!(LinkInfo::new, 5))?;

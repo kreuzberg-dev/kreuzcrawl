@@ -8,6 +8,7 @@
 - **CLI**: Browser fallback now works in the crawl path (was scrape-only)
 - **CLI**: `--timeout` propagated to browser page-load timeout
 - **CLI**: `--browser-endpoint` validated as `ws://` or `wss://` URL
+- **API**: Removed internal types from polyglot bindings (`CachedPage`, `InteractionResult`, `ActionResult`, `CrawlEvent`)
 - **Bindings**: TypeScript discriminated unions for `AuthConfig` and `CrawlEvent`
 - **Bindings**: TypeScript non-optional fields are now required (no `?`) in `.d.ts`
 - **Bindings**: JSDoc on all TypeScript types, functions, enums, and fields
@@ -27,6 +28,7 @@
 - **Bindings**: TypeScript string enum values use correct casing (snake_case)
 - **Bindings**: TypeScript `format!("{:?}")` replaced with `.to_string()` for string fields
 - **Bindings**: Elixir NIF crate name `kreuzcrawl_nif` (was `kreuzcrawl_rustler`)
+- **Docs**: Removed internal type references (`LlmExtractor`, strategy names) from generated API reference
 - **Docs**: Fixed broken links to deleted repos in comparisons page
 - **Docs**: Added `CONTRIBUTING.md` at project root
 - **Docs**: Snippet validator skips bare Ruby method signatures

@@ -156,7 +156,7 @@ public sealed class ScrapeResult
     public MarkdownResult? Markdown { get; set; } = null;
 
     /// <summary>
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     /// </summary>
     [JsonPropertyName("extracted_data")]
     public object? ExtractedData { get; set; } = null;
