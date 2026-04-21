@@ -4,7 +4,7 @@ defmodule Kreuzcrawl.CrawlEvent do
 
   @type t :: term()
 
-  @type page :: %{type: :page, 0: term()}
+  @type page :: %{type: :page, value_0: term()}
   @type error :: %{type: :error, url: term(), error: term()}
   @type complete :: %{type: :complete, pages_crawled: term()}
 end

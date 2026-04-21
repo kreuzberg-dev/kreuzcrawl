@@ -691,9 +691,9 @@ dependencies = [
 
 [[package]]
 name = "constant_time_eq"
-version = "0.4.3"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7dab3fe76c1571ecd5cfe878b61bce3fedf4adbde5d8a8653b2a7956ffd14628"
+checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
 
 [[package]]
 name = "convert_case"
@@ -1081,9 +1081,9 @@ dependencies = [
 
 [[package]]
 name = "ext-php-rs"
-version = "0.15.10"
+version = "0.15.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "896f178baf2f04a110819ef1c7bdab6bfbeecd7e6eb242f65a6ab0a0632f01d1"
+checksum = "e31d80d6762073b876fe2745820d2241f3309dd42227e26197fa40b54599a220"
 dependencies = [
  "anyhow",
  "bitflags",
@@ -1143,9 +1143,9 @@ dependencies = [
 
 [[package]]
 name = "ext-php-rs-derive"
-version = "0.11.11"
+version = "0.11.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9cbfc942526ee091e48818a0f654c67d159fb4068539bd2bfe7ce474dca939ff"
+checksum = "f6cb94d5f4c1e9758b6b936ad306dea36a034c125334d9a438fe966a5d596a85"
 dependencies = [
  "convert_case",
  "darling",
@@ -1474,9 +1474,9 @@ dependencies = [
 
 [[package]]
 name = "html-to-markdown-rs"
-version = "3.2.5"
+version = "3.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bcb619abe81160bba2e2185823e10f6c0793220a266f16791aa715287de322cd"
+checksum = "bc4b9f5076d013aac34a0369c73035cf68f3d9e0771ce96a99e5a02e7e3bf9d4"
 dependencies = [
  "ahash",
  "astral-tl",
