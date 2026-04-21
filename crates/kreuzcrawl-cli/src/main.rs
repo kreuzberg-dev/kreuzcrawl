@@ -2,8 +2,33 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use clap::{Parser, Subcommand};
-use kreuzcrawl::{CrawlConfig, CrawlEngine, PerDomainThrottle, ProxyConfig};
+use clap::{Parser, Subcommand, ValueEnum};
+use kreuzcrawl::{BrowserConfig, BrowserMode, CrawlConfig, CrawlEngine, PerDomainThrottle, ProxyConfig};
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
+enum CliBrowserMode {
+    Auto,
+    Always,
+    Never,
+}
+
+impl From<CliBrowserMode> for BrowserMode {
+    fn from(value: CliBrowserMode) -> Self {
+        match value {
+            CliBrowserMode::Auto => BrowserMode::Auto,
+            CliBrowserMode::Always => BrowserMode::Always,
+            CliBrowserMode::Never => BrowserMode::Never,
+        }
+    }
+}
+
+fn build_browser_config(browser_mode: CliBrowserMode, browser_endpoint: Option<String>) -> BrowserConfig {
+    BrowserConfig {
+        mode: browser_mode.into(),
+        endpoint: browser_endpoint,
+        ..Default::default()
+    }
+}
 
 #[derive(Parser)]
 #[command(name = "kreuzcrawl", about = "High-performance web crawler and scraper", version)]
@@ -33,6 +58,12 @@ enum Commands {
         /// Respect robots.txt
         #[arg(long)]
         respect_robots_txt: bool,
+        /// When to use the browser: auto, always, or never
+        #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
+        browser_mode: CliBrowserMode,
+        /// CDP WebSocket endpoint for an external browser
+        #[arg(long)]
+        browser_endpoint: Option<String>,
     },
     /// Crawl a website following links
     Crawl {
@@ -69,6 +100,12 @@ enum Commands {
         /// Stay on the same domain
         #[arg(long)]
         stay_on_domain: bool,
+        /// When to use the browser: auto, always, or never
+        #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
+        browser_mode: CliBrowserMode,
+        /// CDP WebSocket endpoint for an external browser
+        #[arg(long)]
+        browser_endpoint: Option<String>,
     },
     /// Discover all URLs on a website via sitemaps and link extraction
     Map {
@@ -111,6 +148,8 @@ async fn main() {
             user_agent,
             timeout,
             respect_robots_txt,
+            browser_mode,
+            browser_endpoint,
         } => {
             let config = CrawlConfig {
                 user_agent,
@@ -121,6 +160,7 @@ async fn main() {
                     username: None,
                     password: None,
                 }),
+                browser: build_browser_config(browser_mode, browser_endpoint),
                 ..Default::default()
             };
             let engine = CrawlEngine::builder().config(config).build().unwrap();
@@ -154,6 +194,8 @@ async fn main() {
             timeout,
             respect_robots_txt,
             stay_on_domain,
+            browser_mode,
+            browser_endpoint,
         } => {
             let config = CrawlConfig {
                 max_depth: Some(depth),
@@ -168,6 +210,7 @@ async fn main() {
                     username: None,
                     password: None,
                 }),
+                browser: build_browser_config(browser_mode, browser_endpoint),
                 ..Default::default()
             };
             let engine = CrawlEngine::builder()
@@ -274,5 +317,31 @@ async fn main() {
                 std::process::exit(1);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{CliBrowserMode, build_browser_config};
+    use kreuzcrawl::BrowserMode;
+
+    #[test]
+    fn maps_cli_browser_mode_to_engine_mode() {
+        assert_eq!(build_browser_config(CliBrowserMode::Auto, None).mode, BrowserMode::Auto);
+        assert_eq!(
+            build_browser_config(CliBrowserMode::Always, None).mode,
+            BrowserMode::Always
+        );
+        assert_eq!(
+            build_browser_config(CliBrowserMode::Never, None).mode,
+            BrowserMode::Never
+        );
+    }
+
+    #[test]
+    fn preserves_browser_endpoint() {
+        let endpoint = Some("ws://127.0.0.1:9222/devtools/browser/test".to_string());
+        let config = build_browser_config(CliBrowserMode::Auto, endpoint.clone());
+        assert_eq!(config.endpoint, endpoint);
     }
 }

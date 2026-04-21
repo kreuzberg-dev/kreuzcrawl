@@ -31,6 +31,8 @@ kreuzcrawl scrape <URL> [OPTIONS]
 | `--user-agent <STRING>` | -- | Custom user agent |
 | `--timeout <MS>` | `30000` | Request timeout in milliseconds |
 | `--respect-robots-txt` | `false` | Respect robots.txt |
+| `--browser-mode <MODE>` | `auto` | Browser mode: `auto`, `always`, or `never` |
+| `--browser-endpoint <WS_URL>` | -- | CDP WebSocket endpoint for an external browser |
 
 **Examples:**
 
@@ -43,6 +45,12 @@ kreuzcrawl scrape https://example.com --format markdown
 
 # Scrape through a proxy with custom timeout
 kreuzcrawl scrape https://example.com --proxy http://proxy:8080 --timeout 60000
+
+# Force browser rendering for a JS-heavy page
+kreuzcrawl scrape https://quotes.toscrape.com/js/ --browser-mode always --format markdown
+
+# Connect to an external browser via CDP
+kreuzcrawl scrape https://example.com --browser-endpoint ws://127.0.0.1:9222/devtools/browser/...
 ```
 
 **Output:**
@@ -80,6 +88,8 @@ kreuzcrawl crawl <URL>... [OPTIONS]
 | `--timeout <MS>` | -- | `30000` | Request timeout in milliseconds |
 | `--respect-robots-txt` | -- | `false` | Respect robots.txt |
 | `--stay-on-domain` | -- | `false` | Stay on the same domain |
+| `--browser-mode <MODE>` | -- | `auto` | Browser mode: `auto`, `always`, or `never` |
+| `--browser-endpoint <WS_URL>` | -- | -- | CDP WebSocket endpoint for an external browser |
 
 **Examples:**
 
@@ -95,6 +105,9 @@ kreuzcrawl crawl https://example.com --format markdown --stay-on-domain
 
 # Batch crawl multiple seed URLs
 kreuzcrawl crawl https://example.com https://example.org -d 1
+
+# Force browser rendering during crawl
+kreuzcrawl crawl https://quotes.toscrape.com/js/ --browser-mode always --format markdown
 ```
 
 **Output:**
