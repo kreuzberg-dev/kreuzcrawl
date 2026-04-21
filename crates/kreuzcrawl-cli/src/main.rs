@@ -22,10 +22,26 @@ impl From<CliBrowserMode> for BrowserMode {
     }
 }
 
-fn build_browser_config(browser_mode: CliBrowserMode, browser_endpoint: Option<String>) -> BrowserConfig {
+/// Validate that a `--browser-endpoint` value is a WebSocket URL (`ws://` or `wss://`).
+fn parse_browser_endpoint(value: &str) -> Result<String, String> {
+    if value.starts_with("ws://") || value.starts_with("wss://") {
+        Ok(value.to_owned())
+    } else {
+        Err(format!(
+            "browser endpoint must be a WebSocket URL starting with ws:// or wss://, got: {value:?}"
+        ))
+    }
+}
+
+fn build_browser_config(
+    browser_mode: CliBrowserMode,
+    browser_endpoint: Option<String>,
+    timeout: Duration,
+) -> BrowserConfig {
     BrowserConfig {
         mode: browser_mode.into(),
         endpoint: browser_endpoint,
+        timeout,
         ..Default::default()
     }
 }
@@ -61,8 +77,8 @@ enum Commands {
         /// When to use the browser: auto, always, or never
         #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
         browser_mode: CliBrowserMode,
-        /// CDP WebSocket endpoint for an external browser
-        #[arg(long)]
+        /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
+        #[arg(long, value_parser = parse_browser_endpoint)]
         browser_endpoint: Option<String>,
     },
     /// Crawl a website following links
@@ -103,8 +119,8 @@ enum Commands {
         /// When to use the browser: auto, always, or never
         #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
         browser_mode: CliBrowserMode,
-        /// CDP WebSocket endpoint for an external browser
-        #[arg(long)]
+        /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
+        #[arg(long, value_parser = parse_browser_endpoint)]
         browser_endpoint: Option<String>,
     },
     /// Discover all URLs on a website via sitemaps and link extraction
@@ -151,16 +167,17 @@ async fn main() {
             browser_mode,
             browser_endpoint,
         } => {
+            let timeout_duration = Duration::from_millis(timeout);
             let config = CrawlConfig {
                 user_agent,
-                request_timeout: Duration::from_millis(timeout),
+                request_timeout: timeout_duration,
                 respect_robots_txt,
                 proxy: proxy.map(|url| ProxyConfig {
                     url,
                     username: None,
                     password: None,
                 }),
-                browser: build_browser_config(browser_mode, browser_endpoint),
+                browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
                 ..Default::default()
             };
             let engine = CrawlEngine::builder().config(config).build().unwrap();
@@ -197,12 +214,13 @@ async fn main() {
             browser_mode,
             browser_endpoint,
         } => {
+            let timeout_duration = Duration::from_millis(timeout);
             let config = CrawlConfig {
                 max_depth: Some(depth),
                 max_pages,
                 max_concurrent: Some(concurrent),
                 user_agent,
-                request_timeout: Duration::from_millis(timeout),
+                request_timeout: timeout_duration,
                 respect_robots_txt,
                 stay_on_domain,
                 proxy: proxy.map(|url| ProxyConfig {
@@ -210,7 +228,7 @@ async fn main() {
                     username: None,
                     password: None,
                 }),
-                browser: build_browser_config(browser_mode, browser_endpoint),
+                browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
                 ..Default::default()
             };
             let engine = CrawlEngine::builder()
@@ -322,18 +340,25 @@ async fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{CliBrowserMode, build_browser_config};
+    use std::time::Duration;
+
+    use super::{CliBrowserMode, build_browser_config, parse_browser_endpoint};
     use kreuzcrawl::BrowserMode;
+
+    const DEFAULT_TIMEOUT: Duration = Duration::from_millis(30_000);
 
     #[test]
     fn maps_cli_browser_mode_to_engine_mode() {
-        assert_eq!(build_browser_config(CliBrowserMode::Auto, None).mode, BrowserMode::Auto);
         assert_eq!(
-            build_browser_config(CliBrowserMode::Always, None).mode,
+            build_browser_config(CliBrowserMode::Auto, None, DEFAULT_TIMEOUT).mode,
+            BrowserMode::Auto
+        );
+        assert_eq!(
+            build_browser_config(CliBrowserMode::Always, None, DEFAULT_TIMEOUT).mode,
             BrowserMode::Always
         );
         assert_eq!(
-            build_browser_config(CliBrowserMode::Never, None).mode,
+            build_browser_config(CliBrowserMode::Never, None, DEFAULT_TIMEOUT).mode,
             BrowserMode::Never
         );
     }
@@ -341,7 +366,27 @@ mod tests {
     #[test]
     fn preserves_browser_endpoint() {
         let endpoint = Some("ws://127.0.0.1:9222/devtools/browser/test".to_string());
-        let config = build_browser_config(CliBrowserMode::Auto, endpoint.clone());
+        let config = build_browser_config(CliBrowserMode::Auto, endpoint.clone(), DEFAULT_TIMEOUT);
         assert_eq!(config.endpoint, endpoint);
+    }
+
+    #[test]
+    fn timeout_is_propagated_to_browser_config() {
+        let timeout = Duration::from_millis(5_000);
+        let config = build_browser_config(CliBrowserMode::Auto, None, timeout);
+        assert_eq!(config.timeout, timeout);
+    }
+
+    #[test]
+    fn parse_browser_endpoint_accepts_ws_urls() {
+        assert!(parse_browser_endpoint("ws://127.0.0.1:9222/devtools/browser/abc").is_ok());
+        assert!(parse_browser_endpoint("wss://remote.host/devtools/browser/abc").is_ok());
+    }
+
+    #[test]
+    fn parse_browser_endpoint_rejects_non_ws_urls() {
+        assert!(parse_browser_endpoint("http://127.0.0.1:9222").is_err());
+        assert!(parse_browser_endpoint("https://remote.host").is_err());
+        assert!(parse_browser_endpoint("127.0.0.1:9222").is_err());
     }
 }
