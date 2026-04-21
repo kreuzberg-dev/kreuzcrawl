@@ -99,9 +99,32 @@ jobs:
         run: scripts/ci/docs/textlint.sh
         continue-on-error: true
 
+  lint-links:
+    name: "Validate: Links (lychee)"
+    needs: [validate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - name: Build docs
+        run: scripts/ci/docs/build.sh
+      - name: Check links with lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: "--config .lychee.toml site/"
+          fail: true
+
   deploy:
     name: "Deploy to GitHub Pages"
-    needs: [validate, validate-snippets, lint-prose]
+    needs: [validate, validate-snippets, lint-prose, lint-links]
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     permissions:
       contents: read

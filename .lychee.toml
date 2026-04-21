@@ -1,0 +1,87 @@
+# Configuration for the lychee link checker.
+# https://github.com/lycheeverse/lychee
+
+# Root directory for resolving relative paths in the built site
+root_dir = "site"
+
+# Exclude common patterns that produce false positives
+exclude = [
+    # Localhost / loopback addresses
+    "localhost",
+    "127\\.0\\.0\\.1",
+    "0\\.0\\.0\\.0",
+
+    # Placeholder / example domains
+    "example\\.com",
+    "example\\.org",
+
+    # Template variables (e.g. ${var}, {{ var }})
+    "\\$\\{",
+    "\\{\\{",
+
+    # GitHub edit links (require auth)
+    "github\\.com/.*/edit/",
+
+    # GitHub raw links for new/renamed files (404 until pushed)
+    "github\\.com/.*/raw/",
+
+    # Docs site self-references (404 until deployed)
+    "docs\\.kreuzcrawl\\.kreuzberg\\.dev",
+    "kreuzcrawl\\.kreuzberg\\.dev",
+
+    # PyPI project pages (rate-limited)
+    "pypi\\.org/project/",
+
+    # crates.io (rate-limited)
+    "crates\\.io/crates/",
+
+    # npm (rate-limited)
+    "npmjs\\.com/package/",
+
+    # RubyGems (rate-limited)
+    "rubygems\\.org/gems/",
+
+    # Maven Central (rate-limited)
+    "central\\.sonatype\\.com",
+
+    # NuGet (rate-limited)
+    "nuget\\.org/packages/",
+
+    # Hex.pm (rate-limited)
+    "hex\\.pm/packages/",
+
+    # Packagist (rate-limited)
+    "packagist\\.org/packages/",
+
+    # pkg.go.dev (rate-limited)
+    "pkg\\.go\\.dev/",
+
+    # GitHub Discussions (may not be enabled)
+    "github\\.com/.*/discussions",
+
+    # Example/placeholder URLs in code samples
+    "proxy:8080",
+    "ws://localhost",
+    "wss://localhost",
+]
+
+# Accept these HTTP status codes as valid
+accept = [200, 204, 301, 302, 429]
+
+# Connection timeout in seconds
+timeout = 30
+
+# Max retries per link
+max_retries = 3
+
+# Max concurrent requests
+max_concurrency = 10
+
+# Do not check email addresses
+include_mail = false
+
+# Do not require HTTPS
+require_https = false
+
+# Cache results to speed up repeated runs
+cache = true

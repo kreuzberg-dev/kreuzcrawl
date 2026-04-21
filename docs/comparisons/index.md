@@ -414,7 +414,7 @@ title: Kreuzcrawl vs Webclaw
 
 ## Kreuzcrawl vs Webclaw
 
-[Webclaw](https://github.com/peterprototypes/webclaw) is a Rust web crawling tool that deliberately avoids headless browsers. Instead, Webclaw uses TLS fingerprinting and HTTP-level stealth to bypass anti-bot protections. This browserless approach yields extremely fast extraction times (reported 3.2ms per page) and zero browser overhead. Webclaw also includes brand extraction and MCP server support.
+Webclaw is a Rust web crawling tool that deliberately avoids headless browsers. Instead, Webclaw uses TLS fingerprinting and HTTP-level stealth to bypass anti-bot protections. This browserless approach yields extremely fast extraction times (reported 3.2ms per page) and zero browser overhead. Webclaw also includes brand extraction and MCP server support.
 
 The core architectural difference: **Webclaw is browserless by design; Kreuzcrawl uses browser fallback when HTTP-only fetching is insufficient.** This creates distinct trade-offs around speed, compatibility, and resource usage.
 
@@ -550,7 +550,7 @@ title: Kreuzcrawl vs CRW
 
 ## Kreuzcrawl vs CRW
 
-[CRW](https://github.com/nicholasgasior/crw) is a Rust-based web crawling tool that emphasizes simplicity and Firecrawl API compatibility. CRW provides a Firecrawl-compatible REST API, making it a drop-in replacement for teams migrating from Firecrawl's hosted service. It supports LightPanda as an alternative lightweight browser and includes MCP server support.
+CRW is a Rust-based web crawling tool that emphasizes simplicity and Firecrawl API compatibility. CRW provides a Firecrawl-compatible REST API, making it a drop-in replacement for teams migrating from Firecrawl's hosted service. It supports LightPanda as an alternative lightweight browser and includes MCP server support.
 
 The key distinction: **CRW focuses on being a simple, Firecrawl-compatible server; Kreuzcrawl focuses on being a deeply extensible crawling library.** CRW optimizes for ease of deployment and API compatibility, while Kreuzcrawl optimizes for architectural flexibility and content intelligence.
 
