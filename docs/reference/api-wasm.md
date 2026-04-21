@@ -2,34 +2,9 @@
 title: "WebAssembly API Reference"
 ---
 
-## WebAssembly API Reference <span class="version-badge">v0.1.0-rc.10</span>
+## WebAssembly API Reference <span class="version-badge">v0.1.1</span>
 
 ### Functions
-
-#### generateCitations()
-
-Convert markdown links to numbered citations.
-
-`[Example](https://example.com)` becomes `Example[1]`
-with `[1]: <https://example.com`> in the reference list.
-Images `![alt](url)` are preserved unchanged.
-
-**Signature:**
-
-```typescript
-function generateCitations(markdown: string): CitationResult
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `markdown` | `string` | Yes | The markdown |
-
-**Returns:** `CitationResult`
-
-
----
 
 #### createEngine()
 
@@ -175,21 +150,6 @@ function batchCrawl(engine: CrawlEngineHandle, urls: Array<string>): Promise<Arr
 
 ### Types
 
-#### ActionResult
-
-Result from a single page action execution.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `actionIndex` | `number` | — | Zero-based index of the action in the sequence. |
-| `actionType` | `Str` | — | The type of action that was executed. |
-| `success` | `boolean` | — | Whether the action completed successfully. |
-| `data` | `unknown | null` | `null` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
-| `error` | `string | null` | `null` | Error message if the action failed. |
-
-
----
-
 #### ArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
@@ -253,23 +213,6 @@ Browser fallback configuration.
 ```typescript
 static default(): BrowserConfig
 ```
-
-
----
-
-#### CachedPage
-
-Cached page data for HTTP response caching.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `url` | `string` | — | Url |
-| `statusCode` | `number` | — | Status code |
-| `contentType` | `string` | — | Content type |
-| `body` | `string` | — | Body |
-| `etag` | `string | null` | `null` | Etag |
-| `lastModified` | `string | null` | `null` | Last modified |
-| `cachedAt` | `number` | — | Cached at |
 
 
 ---
@@ -380,8 +323,7 @@ validate(): void
 Opaque handle to a configured crawl engine.
 
 Constructed via `create_engine` with an optional `CrawlConfig`.
-All default trait implementations (BFS strategy, in-memory frontier,
-per-domain throttle, etc.) are used internally.
+Default implementations for all pluggable components are used internally.
 
 
 ---
@@ -409,7 +351,7 @@ The result of crawling a single page during a crawl operation.
 | `isPdf` | `boolean` | — | Whether the content is a PDF. |
 | `detectedCharset` | `string | null` | `null` | The detected character set encoding. |
 | `markdown` | `MarkdownResult | null` | `null` | Markdown conversion of the page content. |
-| `extractedData` | `unknown | null` | `null` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extractedData` | `unknown | null` | `null` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extractionMeta` | `ExtractionMeta | null` | `null` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `downloadedDocument` | `DownloadedDocument | null` | `null` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 
@@ -472,12 +414,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `string` | — | The URL the document was fetched from. |
-| `mimeType` | `Str` | — | The MIME type from the Content-Type header. |
+| `mimeType` | `string` | — | The MIME type from the Content-Type header. |
 | `content` | `Buffer` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `number` | — | Size of the document in bytes. |
-| `filename` | `Str | null` | `null` | Filename extracted from Content-Disposition or URL path. |
-| `contentHash` | `Str` | — | SHA-256 hex digest of the content. |
-| `headers` | `Record<Str, Str>` | `{}` | Selected response headers. |
+| `filename` | `string | null` | `null` | Filename extracted from Content-Disposition or URL path. |
+| `contentHash` | `string` | — | SHA-256 hex digest of the content. |
+| `headers` | `Record<string, string>` | `{}` | Selected response headers. |
 
 
 ---
@@ -559,20 +501,6 @@ Information about an image found on a page.
 | `width` | `number | null` | `null` | The width attribute, if present and parseable. |
 | `height` | `number | null` | `null` | The height attribute, if present and parseable. |
 | `source` | `ImageSource` | `ImageSource.Img` | The source of the image reference. |
-
-
----
-
-#### InteractionResult
-
-Result of executing a sequence of page interaction actions.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `actionResults` | `Array<ActionResult>` | `[]` | Results from each executed action. |
-| `finalHtml` | `string` | — | Final page HTML after all actions completed. |
-| `finalUrl` | `string` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `Buffer | null` | `null` | Screenshot taken after all actions, if requested. |
 
 
 ---
@@ -745,7 +673,7 @@ The result of a single-page scrape operation.
 | `jsRenderHint` | `boolean` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `browserUsed` | `boolean` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `MarkdownResult | null` | `null` | Markdown conversion of the page content. |
-| `extractedData` | `unknown | null` | `null` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extractedData` | `unknown | null` | `null` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extractionMeta` | `ExtractionMeta | null` | `null` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `Buffer | null` | `null` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloadedDocument` | `DownloadedDocument | null` | `null` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
@@ -865,19 +793,6 @@ The category of a downloaded asset.
 | `Archive` | An archive file (ZIP, TAR, etc.). |
 | `Data` | A data file (JSON, XML, CSV, etc.). |
 | `Other` | An unrecognized asset type. |
-
-
----
-
-#### CrawlEvent
-
-An event emitted during a streaming crawl operation.
-
-| Value | Description |
-|-------|-------------|
-| `Page` | A single page has been crawled. — Fields: `0`: `CrawlPageResult` |
-| `Error` | An error occurred while crawling a URL. — Fields: `url`: `string`, `error`: `string` |
-| `Complete` | The crawl has completed. — Fields: `pagesCrawled`: `number` |
 
 
 ---

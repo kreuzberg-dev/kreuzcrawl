@@ -18,7 +18,7 @@ public final class Kreuzcrawl {
 	}
 
 	public static CrawlEngineHandle createEngine() throws KreuzcrawlRsException {
-		return createEngine(null);
+		return KreuzcrawlRs.createEngine(null);
 	}
 
 	/**

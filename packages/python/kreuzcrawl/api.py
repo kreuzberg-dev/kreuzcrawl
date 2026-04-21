@@ -21,20 +21,6 @@ if TYPE_CHECKING:
     )
 
 
-_TO_RUST_ASSETCATEGORY_MAP = {
-    "document": _rust.AssetCategory.Document,
-    "image": _rust.AssetCategory.Image,
-    "audio": _rust.AssetCategory.Audio,
-    "video": _rust.AssetCategory.Video,
-    "font": _rust.AssetCategory.Font,
-    "stylesheet": _rust.AssetCategory.Stylesheet,
-    "script": _rust.AssetCategory.Script,
-    "archive": _rust.AssetCategory.Archive,
-    "data": _rust.AssetCategory.Data,
-    "other": _rust.AssetCategory.Other,
-}
-
-
 _TO_RUST_BROWSERMODE_MAP = {
     "auto": _rust.BrowserMode.Auto,
     "always": _rust.BrowserMode.Always,
@@ -46,6 +32,20 @@ _TO_RUST_BROWSERWAIT_MAP = {
     "network_idle": _rust.BrowserWait.NetworkIdle,
     "selector": _rust.BrowserWait.Selector,
     "fixed": _rust.BrowserWait.Fixed,
+}
+
+
+_TO_RUST_ASSETCATEGORY_MAP = {
+    "document": _rust.AssetCategory.Document,
+    "image": _rust.AssetCategory.Image,
+    "audio": _rust.AssetCategory.Audio,
+    "video": _rust.AssetCategory.Video,
+    "font": _rust.AssetCategory.Font,
+    "stylesheet": _rust.AssetCategory.Stylesheet,
+    "script": _rust.AssetCategory.Script,
+    "archive": _rust.AssetCategory.Archive,
+    "data": _rust.AssetCategory.Data,
+    "other": _rust.AssetCategory.Other,
 }
 
 
@@ -121,7 +121,7 @@ def _to_rust_crawl_config(value: CrawlConfig | None) -> _rust.CrawlConfig | None
 def create_engine(config: CrawlConfig | None = None) -> CrawlEngineHandle:
     """Create a new crawl engine with the given configuration."""
     _rust_config = _to_rust_crawl_config(config)
-    return _rust.create_engine(_rust_config)
+    return _rust.create_engine(_rust_config)  # type: ignore[arg-type]
 
 
 def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult:

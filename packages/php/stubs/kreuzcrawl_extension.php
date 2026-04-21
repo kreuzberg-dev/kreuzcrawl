@@ -18,8 +18,7 @@ namespace Kreuzcrawl {
      * Opaque handle to a configured crawl engine.
      *
      * Constructed via [`create_engine`] with an optional [`CrawlConfig`].
-     * All default trait implementations (BFS strategy, in-memory frontier,
-     * per-domain throttle, etc.) are used internally.
+     * Default implementations for all pluggable components are used internally.
      */
     class CrawlEngineHandle {}
 
@@ -276,60 +275,6 @@ namespace Kreuzcrawl {
         public function getContentHash(): string {}
         /** @return array<string, string> */
         public function getHeaders(): array {}
-    }
-
-    /**
-     * Result of executing a sequence of page interaction actions.
-     */
-    class InteractionResult
-    {
-        /** @var array<ActionResult> */
-        public array $action_results;
-        public string $final_html;
-        public string $final_url;
-        public ?string $screenshot;
-
-        /**
-         * @param array<ActionResult> $action_results
-         */
-        public function __construct(
-            array $action_results,
-            string $final_html,
-            string $final_url,
-            ?string $screenshot = null
-        ) {}
-
-        /** @return array<ActionResult> */
-        public function getActionResults(): array {}
-        public function getFinalHtml(): string {}
-        public function getFinalUrl(): string {}
-        public function getScreenshot(): ?string {}
-    }
-
-    /**
-     * Result from a single page action execution.
-     */
-    class ActionResult
-    {
-        public int $action_index;
-        public string $action_type;
-        public bool $success;
-        public ?string $data;
-        public ?string $error;
-
-        public function __construct(
-            int $action_index,
-            string $action_type,
-            bool $success,
-            ?string $data = null,
-            ?string $error = null
-        ) {}
-
-        public function getActionIndex(): int {}
-        public function getActionType(): string {}
-        public function getSuccess(): bool {}
-        public function getData(): ?string {}
-        public function getError(): ?string {}
     }
 
     /**
@@ -649,38 +594,6 @@ namespace Kreuzcrawl {
         public function getWarnings(): array {}
         public function getCitations(): ?CitationResult {}
         public function getFitContent(): ?string {}
-    }
-
-    /**
-     * Cached page data for HTTP response caching.
-     */
-    class CachedPage
-    {
-        public string $url;
-        public int $status_code;
-        public string $content_type;
-        public string $body;
-        public ?string $etag;
-        public ?string $last_modified;
-        public int $cached_at;
-
-        public function __construct(
-            string $url,
-            int $status_code,
-            string $content_type,
-            string $body,
-            int $cached_at,
-            ?string $etag = null,
-            ?string $last_modified = null
-        ) {}
-
-        public function getUrl(): string {}
-        public function getStatusCode(): int {}
-        public function getContentType(): string {}
-        public function getBody(): string {}
-        public function getEtag(): ?string {}
-        public function getLastModified(): ?string {}
-        public function getCachedAt(): int {}
     }
 
     /**
@@ -1236,13 +1149,6 @@ namespace Kreuzcrawl {
         case Archive = 'Archive';
         case Data = 'Data';
         case Other = 'Other';
-    }
-
-    enum CrawlEvent: string
-    {
-        case Page = 'Page';
-        case Error = 'Error';
-        case Complete = 'Complete';
     }
 
     class KreuzcrawlApi

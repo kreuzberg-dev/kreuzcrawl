@@ -2,34 +2,9 @@
 title: "Go API Reference"
 ---
 
-## Go API Reference <span class="version-badge">v0.1.0-rc.10</span>
+## Go API Reference <span class="version-badge">v0.1.1</span>
 
 ### Functions
-
-#### GenerateCitations()
-
-Convert markdown links to numbered citations.
-
-`[Example](https://example.com)` becomes `Example[1]`
-with `[1]: <https://example.com`> in the reference list.
-Images `![alt](url)` are preserved unchanged.
-
-**Signature:**
-
-```go
-func GenerateCitations(markdown string) CitationResult
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `Markdown` | `string` | Yes | The markdown |
-
-**Returns:** `CitationResult`
-
-
----
 
 #### CreateEngine()
 
@@ -175,21 +150,6 @@ func BatchCrawl(engine CrawlEngineHandle, urls []string) []BatchCrawlResult
 
 ### Types
 
-#### ActionResult
-
-Result from a single page action execution.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `ActionIndex` | `int` | — | Zero-based index of the action in the sequence. |
-| `ActionType` | `Str` | — | The type of action that was executed. |
-| `Success` | `bool` | — | Whether the action completed successfully. |
-| `Data` | `*interface{}` | `nil` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
-| `Error` | `*string` | `nil` | Error message if the action failed. |
-
-
----
-
 #### ArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
@@ -253,23 +213,6 @@ Browser fallback configuration.
 ```go
 func (o *BrowserConfig) Default() BrowserConfig
 ```
-
-
----
-
-#### CachedPage
-
-Cached page data for HTTP response caching.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `Url` | `string` | — | Url |
-| `StatusCode` | `uint16` | — | Status code |
-| `ContentType` | `string` | — | Content type |
-| `Body` | `string` | — | Body |
-| `Etag` | `*string` | `nil` | Etag |
-| `LastModified` | `*string` | `nil` | Last modified |
-| `CachedAt` | `uint64` | — | Cached at |
 
 
 ---
@@ -380,8 +323,7 @@ func (o *CrawlConfig) Validate() error
 Opaque handle to a configured crawl engine.
 
 Constructed via `create_engine` with an optional `CrawlConfig`.
-All default trait implementations (BFS strategy, in-memory frontier,
-per-domain throttle, etc.) are used internally.
+Default implementations for all pluggable components are used internally.
 
 
 ---
@@ -409,7 +351,7 @@ The result of crawling a single page during a crawl operation.
 | `IsPdf` | `bool` | — | Whether the content is a PDF. |
 | `DetectedCharset` | `*string` | `nil` | The detected character set encoding. |
 | `Markdown` | `*MarkdownResult` | `nil` | Markdown conversion of the page content. |
-| `ExtractedData` | `*interface{}` | `nil` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `ExtractedData` | `*interface{}` | `nil` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `ExtractionMeta` | `*ExtractionMeta` | `nil` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `DownloadedDocument` | `*DownloadedDocument` | `nil` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 
@@ -472,12 +414,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `Url` | `string` | — | The URL the document was fetched from. |
-| `MimeType` | `Str` | — | The MIME type from the Content-Type header. |
+| `MimeType` | `string` | — | The MIME type from the Content-Type header. |
 | `Content` | `[]byte` | — | Raw document bytes. Skipped during JSON serialization. |
 | `Size` | `int` | — | Size of the document in bytes. |
-| `Filename` | `*Str` | `nil` | Filename extracted from Content-Disposition or URL path. |
-| `ContentHash` | `Str` | — | SHA-256 hex digest of the content. |
-| `Headers` | `map[Str]Str` | `nil` | Selected response headers. |
+| `Filename` | `*string` | `nil` | Filename extracted from Content-Disposition or URL path. |
+| `ContentHash` | `string` | — | SHA-256 hex digest of the content. |
+| `Headers` | `map[string]string` | `nil` | Selected response headers. |
 
 
 ---
@@ -559,20 +501,6 @@ Information about an image found on a page.
 | `Width` | `*uint32` | `nil` | The width attribute, if present and parseable. |
 | `Height` | `*uint32` | `nil` | The height attribute, if present and parseable. |
 | `Source` | `ImageSource` | `ImageSource.Img` | The source of the image reference. |
-
-
----
-
-#### InteractionResult
-
-Result of executing a sequence of page interaction actions.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `ActionResults` | `[]ActionResult` | `nil` | Results from each executed action. |
-| `FinalHtml` | `string` | — | Final page HTML after all actions completed. |
-| `FinalUrl` | `string` | — | Final page URL (may have changed due to navigation). |
-| `Screenshot` | `*[]byte` | `nil` | Screenshot taken after all actions, if requested. |
 
 
 ---
@@ -745,7 +673,7 @@ The result of a single-page scrape operation.
 | `JsRenderHint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `BrowserUsed` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `Markdown` | `*MarkdownResult` | `nil` | Markdown conversion of the page content. |
-| `ExtractedData` | `*interface{}` | `nil` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `ExtractedData` | `*interface{}` | `nil` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `ExtractionMeta` | `*ExtractionMeta` | `nil` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `Screenshot` | `*[]byte` | `nil` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `DownloadedDocument` | `*DownloadedDocument` | `nil` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
@@ -865,19 +793,6 @@ The category of a downloaded asset.
 | `Archive` | An archive file (ZIP, TAR, etc.). |
 | `Data` | A data file (JSON, XML, CSV, etc.). |
 | `Other` | An unrecognized asset type. |
-
-
----
-
-#### CrawlEvent
-
-An event emitted during a streaming crawl operation.
-
-| Value | Description |
-|-------|-------------|
-| `Page` | A single page has been crawled. — Fields: `0`: `CrawlPageResult` |
-| `Error` | An error occurred while crawling a URL. — Fields: `Url`: `string`, `Error`: `string` |
-| `Complete` | The crawl has completed. — Fields: `PagesCrawled`: `int` |
 
 
 ---

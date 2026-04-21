@@ -6,7 +6,8 @@
     clippy::let_unit_value,
     clippy::needless_borrow,
     clippy::map_identity,
-    clippy::just_underscores_and_digits
+    clippy::just_underscores_and_digits,
+    clippy::unused_unit
 )]
 
 use rustler::ResourceArc;
@@ -234,55 +235,6 @@ impl DownloadedDocument {
                 .and_then(|t| t.decode().ok())
                 .unwrap_or_default(),
             headers: opts.get("headers").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
-pub struct InteractionResult {
-    pub action_results: Vec<ActionResult>,
-    pub final_html: String,
-    pub final_url: String,
-    pub screenshot: Option<Vec<u8>>,
-}
-
-impl InteractionResult {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            action_results: opts
-                .get("action_results")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            final_html: opts.get("final_html").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            final_url: opts.get("final_url").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            screenshot: opts.get("screenshot").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
-pub struct ActionResult {
-    pub action_index: usize,
-    pub action_type: String,
-    pub success: bool,
-    pub data: Option<String>,
-    pub error: Option<String>,
-}
-
-impl ActionResult {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            action_index: opts
-                .get("action_index")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            action_type: opts
-                .get("action_type")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            success: opts.get("success").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            data: opts.get("data").and_then(|t| t.decode().ok()),
-            error: opts.get("error").and_then(|t| t.decode().ok()),
         }
     }
 }
@@ -532,37 +484,6 @@ impl MarkdownResult {
             warnings: opts.get("warnings").and_then(|t| t.decode().ok()).unwrap_or_default(),
             citations: opts.get("citations").and_then(|t| t.decode().ok()),
             fit_content: opts.get("fit_content").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
-pub struct CachedPage {
-    pub url: String,
-    pub status_code: u16,
-    pub content_type: String,
-    pub body: String,
-    pub etag: Option<String>,
-    pub last_modified: Option<String>,
-    pub cached_at: u64,
-}
-
-impl CachedPage {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            url: opts.get("url").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            status_code: opts
-                .get("status_code")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            content_type: opts
-                .get("content_type")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            body: opts.get("body").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            etag: opts.get("etag").and_then(|t| t.decode().ok()),
-            last_modified: opts.get("last_modified").and_then(|t| t.decode().ok()),
-            cached_at: opts.get("cached_at").and_then(|t| t.decode().ok()).unwrap_or_default(),
         }
     }
 }
@@ -1069,20 +990,6 @@ impl Default for AssetCategory {
     }
 }
 
-#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, rustler::NifUnitEnum)]
-pub enum CrawlEvent {
-    Page,
-    Error,
-    Complete,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for CrawlEvent {
-    fn default() -> Self {
-        Self::Page
-    }
-}
-
 #[rustler::nif]
 pub fn create_engine(config: Option<String>) -> Result<ResourceArc<CrawlEngineHandle>, String> {
     let config_core: Option<kreuzcrawl::CrawlConfig> = config
@@ -1351,29 +1258,6 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     }
 }
 
-impl From<kreuzcrawl::InteractionResult> for InteractionResult {
-    fn from(val: kreuzcrawl::InteractionResult) -> Self {
-        Self {
-            action_results: val.action_results.into_iter().map(Into::into).collect(),
-            final_html: val.final_html,
-            final_url: val.final_url,
-            screenshot: val.screenshot.map(|v| v.to_vec()),
-        }
-    }
-}
-
-impl From<kreuzcrawl::ActionResult> for ActionResult {
-    fn from(val: kreuzcrawl::ActionResult) -> Self {
-        Self {
-            action_index: val.action_index,
-            action_type: format!("{:?}", val.action_type),
-            success: val.success,
-            data: val.data.as_ref().map(ToString::to_string),
-            error: val.error,
-        }
-    }
-}
-
 impl From<ScrapeResult> for kreuzcrawl::ScrapeResult {
     fn from(val: ScrapeResult) -> Self {
         Self {
@@ -1593,20 +1477,6 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CachedPage> for CachedPage {
-    fn from(val: kreuzcrawl::CachedPage) -> Self {
-        Self {
-            url: val.url,
-            status_code: val.status_code,
-            content_type: val.content_type,
-            body: val.body,
-            etag: val.etag,
-            last_modified: val.last_modified,
-            cached_at: val.cached_at,
         }
     }
 }
@@ -2197,16 +2067,6 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
             kreuzcrawl::AssetCategory::Archive => Self::Archive,
             kreuzcrawl::AssetCategory::Data => Self::Data,
             kreuzcrawl::AssetCategory::Other => Self::Other,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
-    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
-        match val {
-            kreuzcrawl::CrawlEvent::Page(..) => Self::Page,
-            kreuzcrawl::CrawlEvent::Error { .. } => Self::Error,
-            kreuzcrawl::CrawlEvent::Complete { .. } => Self::Complete,
         }
     }
 }

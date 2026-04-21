@@ -394,83 +394,6 @@ impl DownloadedDocument {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
-#[php(name = "Kreuzcrawl\\InteractionResult")]
-pub struct InteractionResult {
-    /// Results from each executed action.
-    pub action_results: Vec<ActionResult>,
-    /// Final page HTML after all actions completed.
-    #[php(prop, name = "final_html")]
-    pub final_html: String,
-    /// Final page URL (may have changed due to navigation).
-    #[php(prop, name = "final_url")]
-    pub final_url: String,
-    /// Screenshot taken after all actions, if requested.
-    pub screenshot: Option<Vec<u8>>,
-}
-
-#[php_impl]
-impl InteractionResult {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_action_results(&self) -> Vec<ActionResult> {
-        self.action_results.clone()
-    }
-
-    #[php(getter)]
-    pub fn get_screenshot(&self) -> Option<Vec<u8>> {
-        self.screenshot.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzcrawl\\ActionResult")]
-pub struct ActionResult {
-    /// Zero-based index of the action in the sequence.
-    #[php(prop, name = "action_index")]
-    pub action_index: i64,
-    /// The type of action that was executed.
-    #[php(prop, name = "action_type")]
-    pub action_type: String,
-    /// Whether the action completed successfully.
-    #[php(prop, name = "success")]
-    pub success: bool,
-    /// Action-specific return data (screenshot bytes, JS return value, scraped HTML).
-    pub data: Option<String>,
-    /// Error message if the action failed.
-    #[php(prop, name = "error")]
-    pub error: Option<String>,
-}
-
-#[php_impl]
-impl ActionResult {
-    pub fn __construct(
-        action_index: Option<i64>,
-        action_type: Option<String>,
-        success: Option<bool>,
-        data: Option<String>,
-        error: Option<String>,
-    ) -> Self {
-        Self {
-            action_index: action_index.unwrap_or_default(),
-            action_type: action_type.unwrap_or_default(),
-            success: success.unwrap_or_default(),
-            data,
-            error,
-        }
-    }
-
-    #[php(getter)]
-    pub fn get_data(&self) -> Option<String> {
-        self.data.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
 #[php(name = "Kreuzcrawl\\ScrapeResult")]
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
@@ -537,7 +460,7 @@ pub struct ScrapeResult {
     pub browser_used: bool,
     /// Markdown conversion of the page content.
     pub markdown: Option<MarkdownResult>,
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     pub extracted_data: Option<String>,
     /// Metadata about the LLM extraction pass (cost, tokens, model).
     pub extraction_meta: Option<ExtractionMeta>,
@@ -663,7 +586,7 @@ pub struct CrawlPageResult {
     pub detected_charset: Option<String>,
     /// Markdown conversion of the page content.
     pub markdown: Option<MarkdownResult>,
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     pub extracted_data: Option<String>,
     /// Metadata about the LLM extraction pass (cost, tokens, model).
     pub extraction_meta: Option<ExtractionMeta>,
@@ -873,49 +796,6 @@ impl MarkdownResult {
     #[php(getter)]
     pub fn get_citations(&self) -> Option<CitationResult> {
         self.citations.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzcrawl\\CachedPage")]
-pub struct CachedPage {
-    #[php(prop, name = "url")]
-    pub url: String,
-    #[php(prop, name = "status_code")]
-    pub status_code: u16,
-    #[php(prop, name = "content_type")]
-    pub content_type: String,
-    #[php(prop, name = "body")]
-    pub body: String,
-    #[php(prop, name = "etag")]
-    pub etag: Option<String>,
-    #[php(prop, name = "last_modified")]
-    pub last_modified: Option<String>,
-    #[php(prop, name = "cached_at")]
-    pub cached_at: i64,
-}
-
-#[php_impl]
-impl CachedPage {
-    pub fn __construct(
-        url: Option<String>,
-        status_code: Option<u16>,
-        content_type: Option<String>,
-        body: Option<String>,
-        etag: Option<String>,
-        last_modified: Option<String>,
-        cached_at: Option<i64>,
-    ) -> Self {
-        Self {
-            url: url.unwrap_or_default(),
-            status_code: status_code.unwrap_or_default(),
-            content_type: content_type.unwrap_or_default(),
-            body: body.unwrap_or_default(),
-            etag,
-            last_modified,
-            cached_at: cached_at.unwrap_or_default(),
-        }
     }
 }
 
@@ -1571,11 +1451,6 @@ pub const ASSETCATEGORY_ARCHIVE: &str = "Archive";
 pub const ASSETCATEGORY_DATA: &str = "Data";
 pub const ASSETCATEGORY_OTHER: &str = "Other";
 
-// CrawlEvent enum values
-pub const CRAWLEVENT_PAGE: &str = "Page";
-pub const CRAWLEVENT_ERROR: &str = "Error";
-pub const CRAWLEVENT_COMPLETE: &str = "Complete";
-
 #[php_class]
 #[php(name = "Kreuzcrawl\\KreuzcrawlApi")]
 pub struct KreuzcrawlApi;
@@ -1793,29 +1668,6 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     }
 }
 
-impl From<kreuzcrawl::InteractionResult> for InteractionResult {
-    fn from(val: kreuzcrawl::InteractionResult) -> Self {
-        Self {
-            action_results: val.action_results.into_iter().map(Into::into).collect(),
-            final_html: val.final_html,
-            final_url: val.final_url,
-            screenshot: val.screenshot.map(|v| v.to_vec()),
-        }
-    }
-}
-
-impl From<kreuzcrawl::ActionResult> for ActionResult {
-    fn from(val: kreuzcrawl::ActionResult) -> Self {
-        Self {
-            action_index: val.action_index as i64,
-            action_type: format!("{:?}", val.action_type),
-            success: val.success,
-            data: val.data.as_ref().map(ToString::to_string),
-            error: val.error,
-        }
-    }
-}
-
 impl From<ScrapeResult> for kreuzcrawl::ScrapeResult {
     fn from(val: ScrapeResult) -> Self {
         let json = serde_json::to_string(&val).expect("alef: serialize binding type");
@@ -1977,20 +1829,6 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CachedPage> for CachedPage {
-    fn from(val: kreuzcrawl::CachedPage) -> Self {
-        Self {
-            url: val.url,
-            status_code: val.status_code,
-            content_type: val.content_type,
-            body: val.body,
-            etag: val.etag,
-            last_modified: val.last_modified,
-            cached_at: val.cached_at as i64,
         }
     }
 }
@@ -2467,15 +2305,12 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<BrowserConfig>()
         .class::<CrawlConfig>()
         .class::<DownloadedDocument>()
-        .class::<InteractionResult>()
-        .class::<ActionResult>()
         .class::<ScrapeResult>()
         .class::<CrawlPageResult>()
         .class::<CrawlResult>()
         .class::<SitemapUrl>()
         .class::<MapResult>()
         .class::<MarkdownResult>()
-        .class::<CachedPage>()
         .class::<LinkInfo>()
         .class::<ImageInfo>()
         .class::<FeedInfo>()

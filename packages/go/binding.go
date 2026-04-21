@@ -163,18 +163,6 @@ const (
 )
 
 
-// An event emitted during a streaming crawl operation.
-// Variants: Page, Error, Complete
-type CrawlEvent struct {
-    // The URL that failed.
-    Url *string `json:"url,omitempty"`
-    // The error message.
-    Error *string `json:"error,omitempty"`
-    // Total number of pages crawled.
-    PagesCrawled *uint `json:"pages_crawled,omitempty"`
-}
-
-
 // Metadata about an LLM extraction pass.
 type ExtractionMeta struct {
     // Estimated cost of the LLM call in USD.
@@ -714,116 +702,6 @@ func NewDownloadedDocument(opts ...DownloadedDocumentOption) *DownloadedDocument
 }
 
 
-// Result of executing a sequence of page interaction actions.
-type InteractionResult struct {
-    // Results from each executed action.
-    ActionResults []ActionResult `json:"action_results,omitempty"`
-    // Final page HTML after all actions completed.
-    FinalHtml string `json:"final_html"`
-    // Final page URL (may have changed due to navigation).
-    FinalUrl string `json:"final_url"`
-    // Screenshot taken after all actions, if requested.
-    Screenshot *[]byte `json:"screenshot,omitempty"`
-}
-
-
-// InteractionResult option function
-type InteractionResultOption func(*InteractionResult)
-
-// WithInteractionResultActionResults sets the action_results field.
-func WithInteractionResultActionResults(v []ActionResult) InteractionResultOption {
-    return func(c *InteractionResult) { c.ActionResults = v }
-}
-
-// WithInteractionResultFinalHtml sets the final_html field.
-func WithInteractionResultFinalHtml(v string) InteractionResultOption {
-    return func(c *InteractionResult) { c.FinalHtml = v }
-}
-
-// WithInteractionResultFinalUrl sets the final_url field.
-func WithInteractionResultFinalUrl(v string) InteractionResultOption {
-    return func(c *InteractionResult) { c.FinalUrl = v }
-}
-
-// WithInteractionResultScreenshot sets the screenshot field.
-func WithInteractionResultScreenshot(v []byte) InteractionResultOption {
-    return func(c *InteractionResult) { c.Screenshot = &v }
-}
-
-// NewInteractionResult creates a InteractionResult with optional parameters.
-func NewInteractionResult(opts ...InteractionResultOption) *InteractionResult {
-    c := &InteractionResult {
-        ActionResults: nil,
-        FinalHtml: "",
-        FinalUrl: "",
-        Screenshot: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Result from a single page action execution.
-type ActionResult struct {
-    // Zero-based index of the action in the sequence.
-    ActionIndex uint `json:"action_index"`
-    // The type of action that was executed.
-    ActionType string `json:"action_type"`
-    // Whether the action completed successfully.
-    Success bool `json:"success"`
-    // Action-specific return data (screenshot bytes, JS return value, scraped HTML).
-    Data *json.RawMessage `json:"data,omitempty"`
-    // Error message if the action failed.
-    Error *string `json:"error,omitempty"`
-}
-
-
-// ActionResult option function
-type ActionResultOption func(*ActionResult)
-
-// WithActionResultActionIndex sets the action_index field.
-func WithActionResultActionIndex(v uint) ActionResultOption {
-    return func(c *ActionResult) { c.ActionIndex = v }
-}
-
-// WithActionResultActionType sets the action_type field.
-func WithActionResultActionType(v string) ActionResultOption {
-    return func(c *ActionResult) { c.ActionType = v }
-}
-
-// WithActionResultSuccess sets the success field.
-func WithActionResultSuccess(v bool) ActionResultOption {
-    return func(c *ActionResult) { c.Success = v }
-}
-
-// WithActionResultData sets the data field.
-func WithActionResultData(v json.RawMessage) ActionResultOption {
-    return func(c *ActionResult) { c.Data = &v }
-}
-
-// WithActionResultError sets the error field.
-func WithActionResultError(v string) ActionResultOption {
-    return func(c *ActionResult) { c.Error = &v }
-}
-
-// NewActionResult creates a ActionResult with optional parameters.
-func NewActionResult(opts ...ActionResultOption) *ActionResult {
-    c := &ActionResult {
-        ActionIndex: 0,
-        ActionType: "",
-        Success: false,
-        Data: nil,
-        Error: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
 // The result of a single-page scrape operation.
 type ScrapeResult struct {
     // The HTTP status code of the response.
@@ -874,7 +752,7 @@ type ScrapeResult struct {
     BrowserUsed bool `json:"browser_used"`
     // Markdown conversion of the page content.
     Markdown *MarkdownResult `json:"markdown,omitempty"`
-    // Structured data extracted by LLM. Populated when using LlmExtractor.
+    // Structured data extracted by LLM. Populated when extraction is configured.
     ExtractedData *json.RawMessage `json:"extracted_data,omitempty"`
     // Metadata about the LLM extraction pass (cost, tokens, model).
     ExtractionMeta *ExtractionMeta `json:"extraction_meta,omitempty"`
@@ -1103,7 +981,7 @@ type CrawlPageResult struct {
     DetectedCharset *string `json:"detected_charset,omitempty"`
     // Markdown conversion of the page content.
     Markdown *MarkdownResult `json:"markdown,omitempty"`
-    // Structured data extracted by LLM. Populated when using LlmExtractor.
+    // Structured data extracted by LLM. Populated when extraction is configured.
     ExtractedData *json.RawMessage `json:"extracted_data,omitempty"`
     // Metadata about the LLM extraction pass (cost, tokens, model).
     ExtractionMeta *ExtractionMeta `json:"extraction_meta,omitempty"`
@@ -1458,74 +1336,6 @@ func NewMarkdownResult(opts ...MarkdownResultOption) *MarkdownResult {
         Warnings: nil,
         Citations: nil,
         FitContent: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Cached page data for HTTP response caching.
-type CachedPage struct {
-    Url string `json:"url"`
-    StatusCode uint16 `json:"status_code"`
-    ContentType string `json:"content_type"`
-    Body string `json:"body"`
-    Etag *string `json:"etag,omitempty"`
-    LastModified *string `json:"last_modified,omitempty"`
-    CachedAt uint64 `json:"cached_at"`
-}
-
-
-// CachedPage option function
-type CachedPageOption func(*CachedPage)
-
-// WithCachedPageUrl sets the url field.
-func WithCachedPageUrl(v string) CachedPageOption {
-    return func(c *CachedPage) { c.Url = v }
-}
-
-// WithCachedPageStatusCode sets the status_code field.
-func WithCachedPageStatusCode(v uint16) CachedPageOption {
-    return func(c *CachedPage) { c.StatusCode = v }
-}
-
-// WithCachedPageContentType sets the content_type field.
-func WithCachedPageContentType(v string) CachedPageOption {
-    return func(c *CachedPage) { c.ContentType = v }
-}
-
-// WithCachedPageBody sets the body field.
-func WithCachedPageBody(v string) CachedPageOption {
-    return func(c *CachedPage) { c.Body = v }
-}
-
-// WithCachedPageEtag sets the etag field.
-func WithCachedPageEtag(v string) CachedPageOption {
-    return func(c *CachedPage) { c.Etag = &v }
-}
-
-// WithCachedPageLastModified sets the last_modified field.
-func WithCachedPageLastModified(v string) CachedPageOption {
-    return func(c *CachedPage) { c.LastModified = &v }
-}
-
-// WithCachedPageCachedAt sets the cached_at field.
-func WithCachedPageCachedAt(v uint64) CachedPageOption {
-    return func(c *CachedPage) { c.CachedAt = v }
-}
-
-// NewCachedPage creates a CachedPage with optional parameters.
-func NewCachedPage(opts ...CachedPageOption) *CachedPage {
-    c := &CachedPage {
-        Url: "",
-        StatusCode: 0,
-        ContentType: "",
-        Body: "",
-        Etag: nil,
-        LastModified: nil,
-        CachedAt: 0,
     }
     for _, opt := range opts {
         opt(c)
@@ -2552,8 +2362,7 @@ func NewCitationReference(opts ...CitationReferenceOption) *CitationReference {
 // Opaque handle to a configured crawl engine.
 //
 // Constructed via [`create_engine`] with an optional [`CrawlConfig`].
-// All default trait implementations (BFS strategy, in-memory frontier,
-// per-domain throttle, etc.) are used internally.
+// Default implementations for all pluggable components are used internally.
 type CrawlEngineHandle struct {
     ptr unsafe.Pointer
 }

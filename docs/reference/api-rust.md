@@ -2,34 +2,9 @@
 title: "Rust API Reference"
 ---
 
-## Rust API Reference <span class="version-badge">v0.1.0-rc.10</span>
+## Rust API Reference <span class="version-badge">v0.1.1</span>
 
 ### Functions
-
-#### generate_citations()
-
-Convert markdown links to numbered citations.
-
-`[Example](https://example.com)` becomes `Example[1]`
-with `[1]: <https://example.com`> in the reference list.
-Images `![alt](url)` are preserved unchanged.
-
-**Signature:**
-
-```rust
-pub fn generate_citations(markdown: &str) -> CitationResult
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `markdown` | `String` | Yes | The markdown |
-
-**Returns:** `CitationResult`
-
-
----
 
 #### create_engine()
 
@@ -175,21 +150,6 @@ pub async fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Vec<Ba
 
 ### Types
 
-#### ActionResult
-
-Result from a single page action execution.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `action_index` | `usize` | — | Zero-based index of the action in the sequence. |
-| `action_type` | `Str` | — | The type of action that was executed. |
-| `success` | `bool` | — | Whether the action completed successfully. |
-| `data` | `Option<serde_json::Value>` | `Default::default()` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
-| `error` | `Option<String>` | `Default::default()` | Error message if the action failed. |
-
-
----
-
 #### ArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
@@ -253,23 +213,6 @@ Browser fallback configuration.
 ```rust
 pub fn default() -> BrowserConfig
 ```
-
-
----
-
-#### CachedPage
-
-Cached page data for HTTP response caching.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `url` | `String` | — | Url |
-| `status_code` | `u16` | — | Status code |
-| `content_type` | `String` | — | Content type |
-| `body` | `String` | — | Body |
-| `etag` | `Option<String>` | `Default::default()` | Etag |
-| `last_modified` | `Option<String>` | `Default::default()` | Last modified |
-| `cached_at` | `u64` | — | Cached at |
 
 
 ---
@@ -380,8 +323,7 @@ pub fn validate(&self)
 Opaque handle to a configured crawl engine.
 
 Constructed via `create_engine` with an optional `CrawlConfig`.
-All default trait implementations (BFS strategy, in-memory frontier,
-per-domain throttle, etc.) are used internally.
+Default implementations for all pluggable components are used internally.
 
 
 ---
@@ -409,7 +351,7 @@ The result of crawling a single page during a crawl operation.
 | `is_pdf` | `bool` | — | Whether the content is a PDF. |
 | `detected_charset` | `Option<String>` | `Default::default()` | The detected character set encoding. |
 | `markdown` | `Option<MarkdownResult>` | `Default::default()` | Markdown conversion of the page content. |
-| `extracted_data` | `Option<serde_json::Value>` | `Default::default()` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extracted_data` | `Option<serde_json::Value>` | `Default::default()` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `Option<ExtractionMeta>` | `Default::default()` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `downloaded_document` | `Option<DownloadedDocument>` | `Default::default()` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 
@@ -472,12 +414,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `String` | — | The URL the document was fetched from. |
-| `mime_type` | `Str` | — | The MIME type from the Content-Type header. |
+| `mime_type` | `String` | — | The MIME type from the Content-Type header. |
 | `content` | `Vec<u8>` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `usize` | — | Size of the document in bytes. |
-| `filename` | `Option<Str>` | `Default::default()` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `Str` | — | SHA-256 hex digest of the content. |
-| `headers` | `HashMap<Str, Str>` | `HashMap::new()` | Selected response headers. |
+| `filename` | `Option<String>` | `Default::default()` | Filename extracted from Content-Disposition or URL path. |
+| `content_hash` | `String` | — | SHA-256 hex digest of the content. |
+| `headers` | `HashMap<String, String>` | `HashMap::new()` | Selected response headers. |
 
 
 ---
@@ -559,20 +501,6 @@ Information about an image found on a page.
 | `width` | `Option<u32>` | `Default::default()` | The width attribute, if present and parseable. |
 | `height` | `Option<u32>` | `Default::default()` | The height attribute, if present and parseable. |
 | `source` | `ImageSource` | `ImageSource::Img` | The source of the image reference. |
-
-
----
-
-#### InteractionResult
-
-Result of executing a sequence of page interaction actions.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `action_results` | `Vec<ActionResult>` | `vec![]` | Results from each executed action. |
-| `final_html` | `String` | — | Final page HTML after all actions completed. |
-| `final_url` | `String` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `Option<Vec<u8>>` | `Default::default()` | Screenshot taken after all actions, if requested. |
 
 
 ---
@@ -745,7 +673,7 @@ The result of a single-page scrape operation.
 | `js_render_hint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `Option<MarkdownResult>` | `Default::default()` | Markdown conversion of the page content. |
-| `extracted_data` | `Option<serde_json::Value>` | `Default::default()` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extracted_data` | `Option<serde_json::Value>` | `Default::default()` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `Option<ExtractionMeta>` | `Default::default()` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `Option<Vec<u8>>` | `Default::default()` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `Option<DownloadedDocument>` | `Default::default()` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
@@ -865,19 +793,6 @@ The category of a downloaded asset.
 | `Archive` | An archive file (ZIP, TAR, etc.). |
 | `Data` | A data file (JSON, XML, CSV, etc.). |
 | `Other` | An unrecognized asset type. |
-
-
----
-
-#### CrawlEvent
-
-An event emitted during a streaming crawl operation.
-
-| Value | Description |
-|-------|-------------|
-| `Page` | A single page has been crawled. — Fields: `0`: `CrawlPageResult` |
-| `Error` | An error occurred while crawling a URL. — Fields: `url`: `String`, `error`: `String` |
-| `Complete` | The crawl has completed. — Fields: `pages_crawled`: `usize` |
 
 
 ---

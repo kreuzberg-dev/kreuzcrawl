@@ -14,6 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../packages/csharp/kreuzcrawl/Kreuzcrawl.csproj" />
+    <ProjectReference Include="../../packages/csharp/Kreuzcrawl.csproj" />
   </ItemGroup>
 </Project>

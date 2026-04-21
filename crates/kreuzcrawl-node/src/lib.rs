@@ -141,30 +141,6 @@ pub struct JsDownloadedDocument {
 
 #[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
-pub struct JsInteractionResult {
-    #[napi(js_name = "actionResults")]
-    pub action_results: Option<Vec<JsActionResult>>,
-    #[napi(js_name = "finalHtml")]
-    pub final_html: Option<String>,
-    #[napi(js_name = "finalUrl")]
-    pub final_url: Option<String>,
-    pub screenshot: Option<Vec<u8>>,
-}
-
-#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
-#[napi(object)]
-pub struct JsActionResult {
-    #[napi(js_name = "actionIndex")]
-    pub action_index: Option<i64>,
-    #[napi(js_name = "actionType")]
-    pub action_type: Option<String>,
-    pub success: Option<bool>,
-    pub data: Option<String>,
-    pub error: Option<String>,
-}
-
-#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
-#[napi(object)]
 pub struct JsScrapeResult {
     #[napi(js_name = "statusCode")]
     pub status_code: Option<u16>,
@@ -295,22 +271,6 @@ pub struct JsMarkdownResult {
     pub citations: Option<JsCitationResult>,
     #[napi(js_name = "fitContent")]
     pub fit_content: Option<String>,
-}
-
-#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
-#[napi(object)]
-pub struct JsCachedPage {
-    pub url: Option<String>,
-    #[napi(js_name = "statusCode")]
-    pub status_code: Option<u16>,
-    #[napi(js_name = "contentType")]
-    pub content_type: Option<String>,
-    pub body: Option<String>,
-    pub etag: Option<String>,
-    #[napi(js_name = "lastModified")]
-    pub last_modified: Option<String>,
-    #[napi(js_name = "cachedAt")]
-    pub cached_at: Option<i64>,
 }
 
 #[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
@@ -674,21 +634,6 @@ impl Default for JsAssetCategory {
     }
 }
 
-#[napi(string_enum)]
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-pub enum JsCrawlEvent {
-    Page,
-    Error,
-    Complete,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for JsCrawlEvent {
-    fn default() -> Self {
-        Self::Page
-    }
-}
-
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "createEngine")]
 pub fn create_engine(config: Option<JsCrawlConfig>) -> Result<JsCrawlEngineHandle> {
@@ -928,29 +873,6 @@ impl From<kreuzcrawl::DownloadedDocument> for JsDownloadedDocument {
                     .map(|(k, v)| (k.to_string(), v.to_string()))
                     .collect(),
             ),
-        }
-    }
-}
-
-impl From<kreuzcrawl::InteractionResult> for JsInteractionResult {
-    fn from(val: kreuzcrawl::InteractionResult) -> Self {
-        Self {
-            action_results: Some(val.action_results.into_iter().map(Into::into).collect()),
-            final_html: Some(val.final_html),
-            final_url: Some(val.final_url),
-            screenshot: val.screenshot.map(|v| v.to_vec()),
-        }
-    }
-}
-
-impl From<kreuzcrawl::ActionResult> for JsActionResult {
-    fn from(val: kreuzcrawl::ActionResult) -> Self {
-        Self {
-            action_index: Some(val.action_index as i64),
-            action_type: Some(format!("{:?}", val.action_type)),
-            success: Some(val.success),
-            data: val.data.as_ref().map(ToString::to_string),
-            error: val.error,
         }
     }
 }
@@ -1209,20 +1131,6 @@ impl From<kreuzcrawl::MarkdownResult> for JsMarkdownResult {
             warnings: Some(val.warnings),
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CachedPage> for JsCachedPage {
-    fn from(val: kreuzcrawl::CachedPage) -> Self {
-        Self {
-            url: Some(val.url),
-            status_code: Some(val.status_code),
-            content_type: Some(val.content_type),
-            body: Some(val.body),
-            etag: val.etag,
-            last_modified: val.last_modified,
-            cached_at: Some(val.cached_at as i64),
         }
     }
 }
@@ -1841,16 +1749,6 @@ impl From<kreuzcrawl::AssetCategory> for JsAssetCategory {
             kreuzcrawl::AssetCategory::Archive => Self::Archive,
             kreuzcrawl::AssetCategory::Data => Self::Data,
             kreuzcrawl::AssetCategory::Other => Self::Other,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CrawlEvent> for JsCrawlEvent {
-    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
-        match val {
-            kreuzcrawl::CrawlEvent::Page(..) => Self::Page,
-            kreuzcrawl::CrawlEvent::Error { .. } => Self::Error,
-            kreuzcrawl::CrawlEvent::Complete { .. } => Self::Complete,
         }
     }
 }

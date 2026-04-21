@@ -6,7 +6,8 @@
     clippy::let_unit_value,
     clippy::needless_borrow,
     clippy::map_identity,
-    clippy::just_underscores_and_digits
+    clippy::just_underscores_and_digits,
+    clippy::unused_unit
 )]
 
 use std::sync::Arc;
@@ -827,155 +828,6 @@ impl WasmDownloadedDocument {
     #[wasm_bindgen(setter)]
     pub fn set_headers(&mut self, value: JsValue) {
         self.headers = value;
-    }
-}
-
-/// Result of executing a sequence of page interaction actions.
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct WasmInteractionResult {
-    action_results: Vec<WasmActionResult>,
-    final_html: String,
-    final_url: String,
-    screenshot: Option<Vec<u8>>,
-}
-
-#[wasm_bindgen]
-impl WasmInteractionResult {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        action_results: Option<Vec<WasmActionResult>>,
-        final_html: Option<String>,
-        final_url: Option<String>,
-        screenshot: Option<Vec<u8>>,
-    ) -> WasmInteractionResult {
-        WasmInteractionResult {
-            action_results: action_results.unwrap_or_default(),
-            final_html: final_html.unwrap_or_default(),
-            final_url: final_url.unwrap_or_default(),
-            screenshot,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "actionResults")]
-    pub fn action_results(&self) -> Vec<WasmActionResult> {
-        self.action_results.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "actionResults")]
-    pub fn set_action_results(&mut self, value: Vec<WasmActionResult>) {
-        self.action_results = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "finalHtml")]
-    pub fn final_html(&self) -> String {
-        self.final_html.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "finalHtml")]
-    pub fn set_final_html(&mut self, value: String) {
-        self.final_html = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "finalUrl")]
-    pub fn final_url(&self) -> String {
-        self.final_url.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "finalUrl")]
-    pub fn set_final_url(&mut self, value: String) {
-        self.final_url = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn screenshot(&self) -> Option<Vec<u8>> {
-        self.screenshot.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_screenshot(&mut self, value: Option<Vec<u8>>) {
-        self.screenshot = value;
-    }
-}
-
-/// Result from a single page action execution.
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct WasmActionResult {
-    action_index: usize,
-    action_type: String,
-    success: bool,
-    data: Option<JsValue>,
-    error: Option<String>,
-}
-
-#[wasm_bindgen]
-impl WasmActionResult {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        action_index: Option<usize>,
-        action_type: Option<String>,
-        success: Option<bool>,
-        data: Option<JsValue>,
-        error: Option<String>,
-    ) -> WasmActionResult {
-        WasmActionResult {
-            action_index: action_index.unwrap_or_default(),
-            action_type: action_type.unwrap_or_default(),
-            success: success.unwrap_or_default(),
-            data,
-            error,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "actionIndex")]
-    pub fn action_index(&self) -> usize {
-        self.action_index
-    }
-
-    #[wasm_bindgen(setter, js_name = "actionIndex")]
-    pub fn set_action_index(&mut self, value: usize) {
-        self.action_index = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "actionType")]
-    pub fn action_type(&self) -> String {
-        self.action_type.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "actionType")]
-    pub fn set_action_type(&mut self, value: String) {
-        self.action_type = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn success(&self) -> bool {
-        self.success
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_success(&mut self, value: bool) {
-        self.success = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn data(&self) -> Option<JsValue> {
-        self.data.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_data(&mut self, value: Option<JsValue>) {
-        self.data = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn error(&self) -> Option<String> {
-        self.error.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_error(&mut self, value: Option<String>) {
-        self.error = value;
     }
 }
 
@@ -1936,113 +1788,6 @@ impl WasmMarkdownResult {
     #[wasm_bindgen(setter, js_name = "fitContent")]
     pub fn set_fit_content(&mut self, value: Option<String>) {
         self.fit_content = value;
-    }
-}
-
-/// Cached page data for HTTP response caching.
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct WasmCachedPage {
-    url: String,
-    status_code: u16,
-    content_type: String,
-    body: String,
-    etag: Option<String>,
-    last_modified: Option<String>,
-    cached_at: u64,
-}
-
-#[wasm_bindgen]
-impl WasmCachedPage {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        url: Option<String>,
-        status_code: Option<u16>,
-        content_type: Option<String>,
-        body: Option<String>,
-        cached_at: Option<u64>,
-        etag: Option<String>,
-        last_modified: Option<String>,
-    ) -> WasmCachedPage {
-        WasmCachedPage {
-            url: url.unwrap_or_default(),
-            status_code: status_code.unwrap_or_default(),
-            content_type: content_type.unwrap_or_default(),
-            body: body.unwrap_or_default(),
-            etag,
-            last_modified,
-            cached_at: cached_at.unwrap_or_default(),
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn url(&self) -> String {
-        self.url.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_url(&mut self, value: String) {
-        self.url = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "statusCode")]
-    pub fn status_code(&self) -> u16 {
-        self.status_code
-    }
-
-    #[wasm_bindgen(setter, js_name = "statusCode")]
-    pub fn set_status_code(&mut self, value: u16) {
-        self.status_code = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "contentType")]
-    pub fn content_type(&self) -> String {
-        self.content_type.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "contentType")]
-    pub fn set_content_type(&mut self, value: String) {
-        self.content_type = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn body(&self) -> String {
-        self.body.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_body(&mut self, value: String) {
-        self.body = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn etag(&self) -> Option<String> {
-        self.etag.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_etag(&mut self, value: Option<String>) {
-        self.etag = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "lastModified")]
-    pub fn last_modified(&self) -> Option<String> {
-        self.last_modified.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "lastModified")]
-    pub fn set_last_modified(&mut self, value: Option<String>) {
-        self.last_modified = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "cachedAt")]
-    pub fn cached_at(&self) -> u64 {
-        self.cached_at
-    }
-
-    #[wasm_bindgen(setter, js_name = "cachedAt")]
-    pub fn set_cached_at(&mut self, value: u64) {
-        self.cached_at = value;
     }
 }
 
@@ -3474,8 +3219,7 @@ impl WasmCitationReference {
 /// Opaque handle to a configured crawl engine.
 ///
 /// Constructed via [`create_engine`] with an optional [`CrawlConfig`].
-/// All default trait implementations (BFS strategy, in-memory frontier,
-/// per-domain throttle, etc.) are used internally.
+/// Default implementations for all pluggable components are used internally.
 #[derive(Clone)]
 #[wasm_bindgen]
 pub struct WasmCrawlEngineHandle {
@@ -3705,22 +3449,6 @@ pub enum WasmAssetCategory {
 impl Default for WasmAssetCategory {
     fn default() -> Self {
         Self::Document
-    }
-}
-
-/// An event emitted during a streaming crawl operation.
-#[wasm_bindgen]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum WasmCrawlEvent {
-    Page = 0,
-    Error = 1,
-    Complete = 2,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WasmCrawlEvent {
-    fn default() -> Self {
-        Self::Page
     }
 }
 
@@ -3969,29 +3697,6 @@ impl From<kreuzcrawl::DownloadedDocument> for WasmDownloadedDocument {
     }
 }
 
-impl From<kreuzcrawl::InteractionResult> for WasmInteractionResult {
-    fn from(val: kreuzcrawl::InteractionResult) -> Self {
-        Self {
-            action_results: val.action_results.into_iter().map(Into::into).collect(),
-            final_html: val.final_html,
-            final_url: val.final_url,
-            screenshot: val.screenshot.map(|v| v.to_vec()),
-        }
-    }
-}
-
-impl From<kreuzcrawl::ActionResult> for WasmActionResult {
-    fn from(val: kreuzcrawl::ActionResult) -> Self {
-        Self {
-            action_index: val.action_index,
-            action_type: format!("{:?}", val.action_type),
-            success: val.success,
-            data: val.data.as_ref().and_then(|v| serde_wasm_bindgen::to_value(v).ok()),
-            error: val.error,
-        }
-    }
-}
-
 impl From<WasmScrapeResult> for kreuzcrawl::ScrapeResult {
     fn from(val: WasmScrapeResult) -> Self {
         Self {
@@ -4222,20 +3927,6 @@ impl From<kreuzcrawl::MarkdownResult> for WasmMarkdownResult {
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CachedPage> for WasmCachedPage {
-    fn from(val: kreuzcrawl::CachedPage) -> Self {
-        Self {
-            url: val.url,
-            status_code: val.status_code,
-            content_type: val.content_type,
-            body: val.body,
-            etag: val.etag,
-            last_modified: val.last_modified,
-            cached_at: val.cached_at,
         }
     }
 }
@@ -4826,16 +4517,6 @@ impl From<kreuzcrawl::AssetCategory> for WasmAssetCategory {
             kreuzcrawl::AssetCategory::Archive => Self::Archive,
             kreuzcrawl::AssetCategory::Data => Self::Data,
             kreuzcrawl::AssetCategory::Other => Self::Other,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CrawlEvent> for WasmCrawlEvent {
-    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
-        match val {
-            kreuzcrawl::CrawlEvent::Page(..) => Self::Page,
-            kreuzcrawl::CrawlEvent::Error { .. } => Self::Error,
-            kreuzcrawl::CrawlEvent::Complete { .. } => Self::Complete,
         }
     }
 }

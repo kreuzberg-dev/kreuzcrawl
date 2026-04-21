@@ -11,7 +11,8 @@
     clippy::unused_unit,
     clippy::let_unit_value,
     clippy::needless_borrow,
-    clippy::too_many_arguments
+    clippy::too_many_arguments,
+    clippy::map_identity
 )]
 
 use pyo3::exceptions::PyRuntimeError;
@@ -143,7 +144,7 @@ impl BrowserConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct CrawlConfig {
@@ -443,85 +444,6 @@ impl DownloadedDocument {
 
 #[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
-pub struct InteractionResult {
-    /// Results from each executed action.
-    #[pyo3(get)]
-    pub action_results: Vec<ActionResult>,
-    /// Final page HTML after all actions completed.
-    #[pyo3(get)]
-    pub final_html: String,
-    /// Final page URL (may have changed due to navigation).
-    #[pyo3(get)]
-    pub final_url: String,
-    /// Screenshot taken after all actions, if requested.
-    #[pyo3(get)]
-    pub screenshot: Option<Vec<u8>>,
-}
-
-#[pymethods]
-impl InteractionResult {
-    #[must_use]
-    #[pyo3(signature = (action_results=None, final_html=None, final_url=None, screenshot=None))]
-    #[new]
-    pub fn new(
-        action_results: Option<Vec<ActionResult>>,
-        final_html: Option<String>,
-        final_url: Option<String>,
-        screenshot: Option<Vec<u8>>,
-    ) -> Self {
-        Self {
-            action_results: action_results.unwrap_or_default(),
-            final_html: final_html.unwrap_or_default(),
-            final_url: final_url.unwrap_or_default(),
-            screenshot,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct ActionResult {
-    /// Zero-based index of the action in the sequence.
-    #[pyo3(get)]
-    pub action_index: usize,
-    /// The type of action that was executed.
-    #[pyo3(get)]
-    pub action_type: String,
-    /// Whether the action completed successfully.
-    #[pyo3(get)]
-    pub success: bool,
-    /// Action-specific return data (screenshot bytes, JS return value, scraped HTML).
-    #[pyo3(get)]
-    pub data: Option<String>,
-    /// Error message if the action failed.
-    #[pyo3(get)]
-    pub error: Option<String>,
-}
-
-#[pymethods]
-impl ActionResult {
-    #[must_use]
-    #[pyo3(signature = (action_index=None, action_type=None, success=None, data=None, error=None))]
-    #[new]
-    pub fn new(
-        action_index: Option<usize>,
-        action_type: Option<String>,
-        success: Option<bool>,
-        data: Option<String>,
-        error: Option<String>,
-    ) -> Self {
-        Self {
-            action_index: action_index.unwrap_or_default(),
-            action_type: action_type.unwrap_or_default(),
-            success: success.unwrap_or_default(),
-            data,
-            error,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
-#[pyclass(frozen, from_py_object)]
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
     #[pyo3(get)]
@@ -595,7 +517,7 @@ pub struct ScrapeResult {
     /// Markdown conversion of the page content.
     #[pyo3(get)]
     pub markdown: Option<MarkdownResult>,
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     #[pyo3(get)]
     pub extracted_data: Option<String>,
     /// Metadata about the LLM extraction pass (cost, tokens, model).
@@ -732,7 +654,7 @@ pub struct CrawlPageResult {
     /// Markdown conversion of the page content.
     #[pyo3(get)]
     pub markdown: Option<MarkdownResult>,
-    /// Structured data extracted by LLM. Populated when using LlmExtractor.
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     #[pyo3(get)]
     pub extracted_data: Option<String>,
     /// Metadata about the LLM extraction pass (cost, tokens, model).
@@ -962,51 +884,6 @@ impl MarkdownResult {
             warnings: warnings.unwrap_or_default(),
             citations,
             fit_content,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct CachedPage {
-    #[pyo3(get)]
-    pub url: String,
-    #[pyo3(get)]
-    pub status_code: u16,
-    #[pyo3(get)]
-    pub content_type: String,
-    #[pyo3(get)]
-    pub body: String,
-    #[pyo3(get)]
-    pub etag: Option<String>,
-    #[pyo3(get)]
-    pub last_modified: Option<String>,
-    #[pyo3(get)]
-    pub cached_at: u64,
-}
-
-#[pymethods]
-impl CachedPage {
-    #[must_use]
-    #[pyo3(signature = (url=None, status_code=None, content_type=None, body=None, cached_at=None, etag=None, last_modified=None))]
-    #[new]
-    pub fn new(
-        url: Option<String>,
-        status_code: Option<u16>,
-        content_type: Option<String>,
-        body: Option<String>,
-        cached_at: Option<u64>,
-        etag: Option<String>,
-        last_modified: Option<String>,
-    ) -> Self {
-        Self {
-            url: url.unwrap_or_default(),
-            status_code: status_code.unwrap_or_default(),
-            content_type: content_type.unwrap_or_default(),
-            body: body.unwrap_or_default(),
-            etag,
-            last_modified,
-            cached_at: cached_at.unwrap_or_default(),
         }
     }
 }
@@ -1858,50 +1735,6 @@ pub enum AssetCategory {
     Other = 9,
 }
 
-#[derive(Clone)]
-#[pyclass(frozen)]
-#[derive(Default)]
-pub struct CrawlEvent {
-    pub(crate) inner: kreuzcrawl::CrawlEvent,
-}
-
-#[pymethods]
-impl CrawlEvent {
-    #[new]
-    fn new(py: Python<'_>, value: &Bound<'_, pyo3::types::PyDict>) -> PyResult<Self> {
-        let json_mod = py.import("json")?;
-        let json_str: String = json_mod.call_method1("dumps", (value,))?.extract()?;
-        let inner: kreuzcrawl::CrawlEvent = serde_json::from_str(&json_str)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Invalid CrawlEvent: {e}")))?;
-        Ok(Self { inner })
-    }
-}
-
-impl From<CrawlEvent> for kreuzcrawl::CrawlEvent {
-    fn from(val: CrawlEvent) -> Self {
-        val.inner
-    }
-}
-
-impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
-    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
-        Self { inner: val }
-    }
-}
-
-impl serde::Serialize for CrawlEvent {
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        self.inner.serialize(serializer)
-    }
-}
-
-impl<'de> serde::Deserialize<'de> for CrawlEvent {
-    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        let inner = kreuzcrawl::CrawlEvent::deserialize(deserializer)?;
-        Ok(Self { inner })
-    }
-}
-
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (config=None))]
@@ -2206,29 +2039,6 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     }
 }
 
-impl From<kreuzcrawl::InteractionResult> for InteractionResult {
-    fn from(val: kreuzcrawl::InteractionResult) -> Self {
-        Self {
-            action_results: val.action_results.into_iter().map(Into::into).collect(),
-            final_html: val.final_html,
-            final_url: val.final_url,
-            screenshot: val.screenshot.map(|v| v.to_vec()),
-        }
-    }
-}
-
-impl From<kreuzcrawl::ActionResult> for ActionResult {
-    fn from(val: kreuzcrawl::ActionResult) -> Self {
-        Self {
-            action_index: val.action_index,
-            action_type: format!("{:?}", val.action_type),
-            success: val.success,
-            data: val.data.as_ref().map(ToString::to_string),
-            error: val.error,
-        }
-    }
-}
-
 impl From<ScrapeResult> for kreuzcrawl::ScrapeResult {
     fn from(val: ScrapeResult) -> Self {
         Self {
@@ -2448,20 +2258,6 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
             warnings: val.warnings,
             citations: val.citations.map(Into::into),
             fit_content: val.fit_content,
-        }
-    }
-}
-
-impl From<kreuzcrawl::CachedPage> for CachedPage {
-    fn from(val: kreuzcrawl::CachedPage) -> Self {
-        Self {
-            url: val.url,
-            status_code: val.status_code,
-            content_type: val.content_type,
-            body: val.body,
-            etag: val.etag,
-            last_modified: val.last_modified,
-            cached_at: val.cached_at,
         }
     }
 }
@@ -3042,15 +2838,12 @@ pub fn _kreuzcrawl(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<BrowserConfig>()?;
     m.add_class::<CrawlConfig>()?;
     m.add_class::<DownloadedDocument>()?;
-    m.add_class::<InteractionResult>()?;
-    m.add_class::<ActionResult>()?;
     m.add_class::<ScrapeResult>()?;
     m.add_class::<CrawlPageResult>()?;
     m.add_class::<CrawlResult>()?;
     m.add_class::<SitemapUrl>()?;
     m.add_class::<MapResult>()?;
     m.add_class::<MarkdownResult>()?;
-    m.add_class::<CachedPage>()?;
     m.add_class::<LinkInfo>()?;
     m.add_class::<ImageInfo>()?;
     m.add_class::<FeedInfo>()?;
@@ -3075,7 +2868,6 @@ pub fn _kreuzcrawl(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<ImageSource>()?;
     m.add_class::<FeedType>()?;
     m.add_class::<AssetCategory>()?;
-    m.add_class::<CrawlEvent>()?;
     m.add_function(wrap_pyfunction!(create_engine, m)?)?;
     m.add_function(wrap_pyfunction!(scrape, m)?)?;
     m.add_function(wrap_pyfunction!(crawl, m)?)?;

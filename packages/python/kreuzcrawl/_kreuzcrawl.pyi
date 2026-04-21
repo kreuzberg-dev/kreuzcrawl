@@ -143,34 +143,6 @@ class DownloadedDocument:
         filename: str | None = None,
     ) -> None: ...
 
-class InteractionResult:
-    action_results: list[ActionResult]
-    final_html: str
-    final_url: str
-    screenshot: bytes | None
-    def __init__(
-        self,
-        action_results: list[ActionResult],
-        final_html: str,
-        final_url: str,
-        screenshot: bytes | None = None,
-    ) -> None: ...
-
-class ActionResult:
-    action_index: int
-    action_type: str
-    success: bool
-    data: dict[str, Any] | None
-    error: str | None
-    def __init__(
-        self,
-        action_index: int,
-        action_type: str,
-        success: bool,
-        data: dict[str, Any] | None = None,
-        error: str | None = None,
-    ) -> None: ...
-
 class ScrapeResult:
     status_code: int
     content_type: str
@@ -329,25 +301,6 @@ class MarkdownResult:
         document_structure: dict[str, Any] | None = None,
         citations: CitationResult | None = None,
         fit_content: str | None = None,
-    ) -> None: ...
-
-class CachedPage:
-    url: str
-    status_code: int
-    content_type: str
-    body: str
-    etag: str | None
-    last_modified: str | None
-    cached_at: int
-    def __init__(
-        self,
-        url: str,
-        status_code: int,
-        content_type: str,
-        body: str,
-        cached_at: int,
-        etag: str | None = None,
-        last_modified: str | None = None,
     ) -> None: ...
 
 class LinkInfo:
@@ -581,8 +534,6 @@ class CitationReference:
     text: str
     def __init__(self, index: int, url: str, text: str) -> None: ...
 
-class CrawlEngineHandle: ...
-
 class BatchScrapeResult:
     url: str
     result: ScrapeResult | None
@@ -604,6 +555,8 @@ class BatchCrawlResult:
         result: CrawlResult | None = None,
         error: str | None = None,
     ) -> None: ...
+
+class CrawlEngineHandle: ...
 
 class BrowserMode:
     Auto: BrowserMode = ...
@@ -652,9 +605,6 @@ class AssetCategory:
     Data: AssetCategory = ...
     Other: AssetCategory = ...
     def __init__(self, value: int | str) -> None: ...
-
-class CrawlEvent:
-    def __init__(self, value: dict[str, Any]) -> None: ...
 
 def create_engine(config: CrawlConfig | None = None) -> CrawlEngineHandle: ...
 def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult: ...

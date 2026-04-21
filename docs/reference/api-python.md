@@ -2,34 +2,9 @@
 title: "Python API Reference"
 ---
 
-## Python API Reference <span class="version-badge">v0.1.0-rc.10</span>
+## Python API Reference <span class="version-badge">v0.1.1</span>
 
 ### Functions
-
-#### generate_citations()
-
-Convert markdown links to numbered citations.
-
-`[Example](https://example.com)` becomes `Example[1]`
-with `[1]: <https://example.com`> in the reference list.
-Images `![alt](url)` are preserved unchanged.
-
-**Signature:**
-
-```python
-def generate_citations(markdown: str) -> CitationResult
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `markdown` | `str` | Yes | The markdown |
-
-**Returns:** `CitationResult`
-
-
----
 
 #### create_engine()
 
@@ -175,21 +150,6 @@ def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchCrawlRe
 
 ### Types
 
-#### ActionResult
-
-Result from a single page action execution.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `action_index` | `int` | — | Zero-based index of the action in the sequence. |
-| `action_type` | `Str` | — | The type of action that was executed. |
-| `success` | `bool` | — | Whether the action completed successfully. |
-| `data` | `Any | None` | `None` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
-| `error` | `str | None` | `None` | Error message if the action failed. |
-
-
----
-
 #### ArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
@@ -254,23 +214,6 @@ Browser fallback configuration.
 @staticmethod
 def default() -> BrowserConfig
 ```
-
-
----
-
-#### CachedPage
-
-Cached page data for HTTP response caching.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `url` | `str` | — | Url |
-| `status_code` | `int` | — | Status code |
-| `content_type` | `str` | — | Content type |
-| `body` | `str` | — | Body |
-| `etag` | `str | None` | `None` | Etag |
-| `last_modified` | `str | None` | `None` | Last modified |
-| `cached_at` | `int` | — | Cached at |
 
 
 ---
@@ -382,8 +325,7 @@ def validate(self) -> None
 Opaque handle to a configured crawl engine.
 
 Constructed via `create_engine` with an optional `CrawlConfig`.
-All default trait implementations (BFS strategy, in-memory frontier,
-per-domain throttle, etc.) are used internally.
+Default implementations for all pluggable components are used internally.
 
 
 ---
@@ -411,7 +353,7 @@ The result of crawling a single page during a crawl operation.
 | `is_pdf` | `bool` | — | Whether the content is a PDF. |
 | `detected_charset` | `str | None` | `None` | The detected character set encoding. |
 | `markdown` | `MarkdownResult | None` | `None` | Markdown conversion of the page content. |
-| `extracted_data` | `Any | None` | `None` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extracted_data` | `Any | None` | `None` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `ExtractionMeta | None` | `None` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `downloaded_document` | `DownloadedDocument | None` | `None` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 
@@ -474,12 +416,12 @@ skipping the resource.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `url` | `str` | — | The URL the document was fetched from. |
-| `mime_type` | `Str` | — | The MIME type from the Content-Type header. |
+| `mime_type` | `str` | — | The MIME type from the Content-Type header. |
 | `content` | `bytes` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `int` | — | Size of the document in bytes. |
-| `filename` | `Str | None` | `None` | Filename extracted from Content-Disposition or URL path. |
-| `content_hash` | `Str` | — | SHA-256 hex digest of the content. |
-| `headers` | `dict[Str, Str]` | `{}` | Selected response headers. |
+| `filename` | `str | None` | `None` | Filename extracted from Content-Disposition or URL path. |
+| `content_hash` | `str` | — | SHA-256 hex digest of the content. |
+| `headers` | `dict[str, str]` | `{}` | Selected response headers. |
 
 
 ---
@@ -561,20 +503,6 @@ Information about an image found on a page.
 | `width` | `int | None` | `None` | The width attribute, if present and parseable. |
 | `height` | `int | None` | `None` | The height attribute, if present and parseable. |
 | `source` | `ImageSource` | `ImageSource.IMG` | The source of the image reference. |
-
-
----
-
-#### InteractionResult
-
-Result of executing a sequence of page interaction actions.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `action_results` | `list[ActionResult]` | `[]` | Results from each executed action. |
-| `final_html` | `str` | — | Final page HTML after all actions completed. |
-| `final_url` | `str` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `bytes | None` | `None` | Screenshot taken after all actions, if requested. |
 
 
 ---
@@ -747,7 +675,7 @@ The result of a single-page scrape operation.
 | `js_render_hint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `MarkdownResult | None` | `None` | Markdown conversion of the page content. |
-| `extracted_data` | `Any | None` | `None` | Structured data extracted by LLM. Populated when using LlmExtractor. |
+| `extracted_data` | `Any | None` | `None` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `ExtractionMeta | None` | `None` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `bytes | None` | `None` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `DownloadedDocument | None` | `None` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
@@ -867,19 +795,6 @@ The category of a downloaded asset.
 | `ARCHIVE` | An archive file (ZIP, TAR, etc.). |
 | `DATA` | A data file (JSON, XML, CSV, etc.). |
 | `OTHER` | An unrecognized asset type. |
-
-
----
-
-#### CrawlEvent
-
-An event emitted during a streaming crawl operation.
-
-| Value | Description |
-|-------|-------------|
-| `PAGE` | A single page has been crawled. — Fields: `0`: `CrawlPageResult` |
-| `ERROR` | An error occurred while crawling a URL. — Fields: `url`: `str`, `error`: `str` |
-| `COMPLETE` | The crawl has completed. — Fields: `pages_crawled`: `int` |
 
 
 ---

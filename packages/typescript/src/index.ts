@@ -10,7 +10,6 @@ export {
 } from "@kreuzberg/kreuzcrawl";
 
 export type {
-	JsActionResult,
 	JsArticleMetadata,
 	JsAssetCategory,
 	JsAuthConfig,
@@ -19,13 +18,11 @@ export type {
 	JsBrowserConfig,
 	JsBrowserMode,
 	JsBrowserWait,
-	JsCachedPage,
 	JsCitationReference,
 	JsCitationResult,
 	JsCookieInfo,
 	JsCrawlConfig,
 	JsCrawlEngineHandle,
-	JsCrawlEvent,
 	JsCrawlPageResult,
 	JsCrawlResult,
 	JsDownloadedAsset,
@@ -38,7 +35,6 @@ export type {
 	JsHreflangEntry,
 	JsImageInfo,
 	JsImageSource,
-	JsInteractionResult,
 	JsJsonLdEntry,
 	JsLinkInfo,
 	JsLinkType,
