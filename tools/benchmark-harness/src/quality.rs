@@ -1,109 +1,138 @@
-//! Quality metric computation.
+//! Quality scoring module for benchmark results.
 //!
-//! Tokenises scrape output and fixture ground-truth text, then computes
-//! token-level truth coverage, noise rejection, and a combined quality score.
+//! Computes TF1-based quality metrics by comparing extracted text against ground truth.
+//! Uses token-level (bag-of-words) multiset precision and recall.
 //!
-//! ## Scoring model
+//! # Scoring weights
 //!
-//! The scrape-evals dataset provides asymmetric ground truth:
-//! - `truth_text`: core content that **should** appear in the extraction.
-//! - `lie_text`: noise that should **not** appear in the extraction.
+//! Text-only scoring uses a **0.6 / 0.4 text / numeric split**:
 //!
-//! These metrics use dataset-specific definitions — they are NOT standard IR
-//! precision/recall:
+//! ```text
+//! quality_score = 0.6 * f1_text + 0.4 * f1_numeric
+//! ```
 //!
-//! * **Truth coverage** = `truth_tokens_found / truth_tokens_total`
-//! * **Noise rejection** = `1.0 - (lie_tokens_found / lie_tokens_total)`
-//! * **Quality score**:
-//!   - Both provided: harmonic mean of truth_coverage and noise_rejection
-//!     (0.0 when denominator is 0)
-//!   - Only truth: truth_coverage
-//!   - Only lie: noise_rejection
-//!   - Neither: `None`
+//! Numeric tokens receive disproportionate weight (40% despite typically being
+//! a small fraction of the token count) because web scraped content often
+//! contains prices, counts, and other numeric data where a single wrong digit
+//! invalidates a table row or data point.
 //!
-//! Extracted content is markdown-stripped before tokenization so that syntax
-//! tokens (`#`, `**`, `[]()`, etc.) do not inflate or corrupt scores.
+//! # Tokenization
 //!
-//! ## Limitations
-//!
-//! - Matching is set-based (not frequency-aware): a term counts once regardless
-//!   of how often it appears.
-//! - Markdown stripping is best-effort via regex; unusual or deeply nested
-//!   syntax may survive stripping and affect scores.
-//! - Very short truth or lie texts (1–2 tokens) may produce unstable scores
-//!   because a single token match swings the metric by 50–100 %.
+//! Tokenization is intentionally simple: lowercase, split on whitespace,
+//! strip non-alphanumeric characters except periods and commas embedded between
+//! alphanumeric characters (preserving decimal numbers like "3.14" and European
+//! format "3,14"). This preserves punctuation that is semantically meaningful
+//! while ignoring decorative punctuation.
 
-use ahash::AHashSet;
+use std::collections::HashMap;
+use std::sync::LazyLock;
+
 use regex::Regex;
-use std::sync::OnceLock;
 
 use crate::types::ScrapeQualityMetrics;
 
-/// Strip common markdown syntax from `text` before tokenization.
-///
-/// This prevents syntax tokens (`#`, `**`, `` ` ``, `|`, etc.) from
-/// inflating or corrupting token-overlap scores when extracted content is
-/// markdown but ground-truth texts are plain text.
-///
-/// Transformations applied (in order):
-/// 1. Images `![alt](url)` → `alt`
-/// 2. Links `[text](url)` → `text`
-/// 3. Fenced code blocks ` ``` … ``` ` → (removed)
-/// 4. Inline code `` `…` `` → (removed)
-/// 5. Bold/italic markers `**`, `__`, `*`, `_` → (removed)
-/// 6. Heading markers `#+ ` at line start → (removed)
-/// 7. Horizontal rules `---`, `***`, `___` on their own line → (removed)
-/// 8. Blockquote markers `>` at line start → (removed)
-/// 9. Table pipe characters `|` → space
-pub(crate) fn strip_markdown(text: &str) -> String {
-    // Compile regexes once per process.
-    static IMAGE_RE: OnceLock<Regex> = OnceLock::new();
-    static LINK_RE: OnceLock<Regex> = OnceLock::new();
-    static FENCED_CODE_RE: OnceLock<Regex> = OnceLock::new();
-    static INLINE_CODE_RE: OnceLock<Regex> = OnceLock::new();
-    static BOLD_ITALIC_RE: OnceLock<Regex> = OnceLock::new();
-    static HEADING_RE: OnceLock<Regex> = OnceLock::new();
-    static HLINE_RE: OnceLock<Regex> = OnceLock::new();
-    static BLOCKQUOTE_RE: OnceLock<Regex> = OnceLock::new();
+/// Regex to strip markdown image syntax `![alt](url)` → `alt`
+static MD_IMAGE_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"!\[([^\]]*)\]\([^)]*\)").expect("invalid regex"));
 
-    let image_re = IMAGE_RE.get_or_init(|| Regex::new(r"!\[([^\]]*)\]\([^)]*\)").unwrap());
-    let link_re = LINK_RE.get_or_init(|| Regex::new(r"\[([^\]]*)\]\([^)]*\)").unwrap());
-    let fenced_code_re =
-        FENCED_CODE_RE.get_or_init(|| Regex::new(r"(?s)```[^`]*```").unwrap());
-    let inline_code_re = INLINE_CODE_RE.get_or_init(|| Regex::new(r"`[^`]*`").unwrap());
-    // Strip bold/italic markers: `**`, `__`, lone `*`, lone `_`.
-    // The regex crate does not support lookaheads, so we match the two-char
-    // forms first, then remove any remaining lone `*` or `_` characters.
-    let bold_italic_re =
-        BOLD_ITALIC_RE.get_or_init(|| Regex::new(r"\*\*|__|[*_]").unwrap());
-    let heading_re = HEADING_RE.get_or_init(|| Regex::new(r"(?m)^#{1,6}\s+").unwrap());
-    let hline_re = HLINE_RE
-        .get_or_init(|| Regex::new(r"(?m)^\s*(?:---|\*\*\*|___)\s*$").unwrap());
-    let blockquote_re =
-        BLOCKQUOTE_RE.get_or_init(|| Regex::new(r"(?m)^>\s?").unwrap());
+/// Regex to strip markdown link syntax `[text](url)` → `text`
+static MD_LINK_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\[([^\]]*)\]\([^)]*\)").expect("invalid regex"));
 
-    let s = image_re.replace_all(text, "$1");
-    let s = link_re.replace_all(&s, "$1");
-    let s = fenced_code_re.replace_all(&s, "");
-    let s = inline_code_re.replace_all(&s, "");
-    let s = bold_italic_re.replace_all(&s, "");
-    let s = heading_re.replace_all(&s, "");
-    let s = hline_re.replace_all(&s, "");
-    let s = blockquote_re.replace_all(&s, "");
-    s.replace('|', " ")
+/// Strip markdown link and image syntax so URL components do not become tokens.
+/// `![alt](url)` → `alt`, `[text](url)` → `text`.
+fn strip_markdown_links(text: &str) -> String {
+    let text = MD_IMAGE_RE.replace_all(text, "$1");
+    MD_LINK_RE.replace_all(&text, "$1").into_owned()
 }
 
-/// Truth coverage threshold above which [`ScrapeQualityMetrics::truth_found`] is `true`.
-const TRUTH_FOUND_THRESHOLD: f64 = 0.5;
+/// Internal result of [`compute_quality`], exposing precision and recall.
+struct QualityResult {
+    f1_text: f64,
+    f1_numeric: f64,
+    quality_score: f64,
+    precision: f64,
+    recall: f64,
+    missing_tokens: Vec<(String, usize)>,
+    extra_tokens: Vec<(String, usize)>,
+    correct: bool,
+}
 
-/// Noise rejection threshold above which [`ScrapeQualityMetrics::lie_rejected`] is `true`.
-const LIE_REJECTED_THRESHOLD: f64 = 0.5;
-
-/// Compute quality metrics for extracted content against ground truth.
+/// Compute TF1 quality metrics comparing extracted text against ground truth.
 ///
-/// Returns `None` if neither `truth_text` nor `lie_text` is provided (no
-/// ground truth to score against), or if `truth_text` is `Some("")` (empty
-/// after tokenization — a perfect score would be meaningless).
+/// Algorithm:
+/// 1. Tokenize both texts: lowercase, split on whitespace, strip non-alphanumeric chars except
+///    periods and commas embedded between alphanumeric chars (e.g. "3.14", "3,14")
+/// 2. Build token multisets (bag of words with counts)
+/// 3. Compute precision = |intersection| / |extracted tokens|
+/// 4. Compute recall = |intersection| / |ground truth tokens|
+/// 5. F1 = 2 * precision * recall / (precision + recall)
+///    - If both token sets are empty, F1 = 1.0 (vacuously perfect match)
+/// 6. Separate F1 for all tokens vs numeric-only tokens
+/// 7. quality_score = 0.6 * f1_text + 0.4 * f1_numeric
+fn compute_quality(extracted: &str, ground_truth: &str) -> QualityResult {
+    let extracted_tokens = tokenize(extracted);
+    let truth_tokens = tokenize(ground_truth);
+
+    let f1_text = compute_f1(&extracted_tokens, &truth_tokens);
+
+    let extracted_numeric = filter_numeric(&extracted_tokens);
+    let truth_numeric = filter_numeric(&truth_tokens);
+    let f1_numeric = compute_f1(&extracted_numeric, &truth_numeric);
+
+    // When neither side has numeric tokens, both-empty compute_f1 returns 1.0
+    // which would give a free 0.4 boost. Use text-only scoring in that case.
+    let quality_score = if extracted_numeric.is_empty() && truth_numeric.is_empty() {
+        f1_text
+    } else {
+        0.6 * f1_text + 0.4 * f1_numeric
+    };
+
+    // Compute precision and recall separately for the top-level text F1.
+    let (precision, recall) = if extracted_tokens.is_empty() && truth_tokens.is_empty() {
+        (1.0, 1.0)
+    } else if extracted_tokens.is_empty() || truth_tokens.is_empty() {
+        (0.0, 0.0)
+    } else {
+        let extracted_counts = build_counts(&extracted_tokens);
+        let truth_counts = build_counts(&truth_tokens);
+        let intersection: usize = truth_counts
+            .iter()
+            .map(|(token, &count)| {
+                let ext_count = extracted_counts.get(token).copied().unwrap_or(0);
+                ext_count.min(count)
+            })
+            .sum();
+        (
+            intersection as f64 / extracted_tokens.len() as f64,
+            intersection as f64 / truth_tokens.len() as f64,
+        )
+    };
+
+    let (missing_tokens, extra_tokens) = compute_token_diff(&extracted_tokens, &truth_tokens);
+
+    let correct = quality_score >= 0.95;
+
+    QualityResult {
+        f1_text,
+        f1_numeric,
+        quality_score,
+        precision,
+        recall,
+        missing_tokens,
+        extra_tokens,
+        correct,
+    }
+}
+
+/// Compute quality for a web scrape result.
+///
+/// Uses TF1 (multiset token F1) comparing extracted text against `truth_text`.
+/// When `lie_text` is provided, computes a noise penalty (fraction of lie tokens
+/// found in extracted text).
+///
+/// Returns `None` if `truth_text` is `None` or empty after tokenization — there
+/// is no scoreable signal without ground truth.
 ///
 /// # Examples
 ///
@@ -117,143 +146,179 @@ const LIE_REJECTED_THRESHOLD: f64 = 0.5;
 /// )
 /// .expect("ground truth provided");
 ///
-/// assert!(metrics.truth_coverage > 0.0);
-/// assert!(metrics.lie_rejected);
+/// assert!(metrics.f1_text > 0.0);
+/// assert!(metrics.noise_penalty < 0.5);
 /// ```
 pub fn compute_scrape_quality(
-    extracted_content: &str,
+    extracted: &str,
     truth_text: Option<&str>,
     lie_text: Option<&str>,
 ) -> Option<ScrapeQualityMetrics> {
-    if truth_text.is_none() && lie_text.is_none() {
+    let truth = truth_text?; // need at least truth_text
+    if truth.trim().is_empty() {
         return None;
     }
 
-    // Strip markdown syntax before tokenizing so that structural tokens
-    // (`#`, `**`, `|`, etc.) do not inflate or corrupt overlap scores.
-    let stripped = strip_markdown(extracted_content);
-    let extracted_tokens = tokenize(&stripped);
-    let extracted_set = token_set(&extracted_tokens);
+    let quality = compute_quality(extracted, truth);
 
-    // --- truth_coverage: fraction of truth tokens found in extraction ---
-    //
-    // When truth_text is None we do NOT default to 1.0 — that would
-    // manufacture a phantom perfect truth score. Instead, the quality_score
-    // computation below uses only the available signal.
-    let (truth_coverage, truth_tokens_found, truth_tokens_total) = match truth_text {
-        None => (None, 0_usize, 0_usize),
-        Some(text) => {
-            let truth_tokens = tokenize(text);
-            let truth_set = token_set(&truth_tokens);
-            let total = truth_set.len();
-            // Empty truth_text after tokenization yields no scoreable signal —
-            // return None rather than a misleading perfect score.
-            if total == 0 {
-                return None;
-            }
-            let found = truth_set
-                .iter()
-                .filter(|t| extracted_set.contains(*t))
-                .count();
-            let coverage = found as f64 / total as f64;
-            (Some(coverage), found, total)
+    // Compute noise penalty from lie_text: fraction of lie tokens present in extraction.
+    let noise_penalty = lie_text.map_or(0.0, |lie| {
+        if lie.trim().is_empty() {
+            return 0.0;
         }
-    };
-
-    // --- noise_rejection: 1.0 - fraction of lie tokens found in extraction ---
-    //
-    // When lie_text is None we do NOT default to 1.0 — that would manufacture
-    // a phantom perfect noise-rejection score. The quality_score computation
-    // below uses only the available signal.
-    let (noise_rejection, lie_tokens_found, lie_tokens_total) = match lie_text {
-        None => (None, 0_usize, 0_usize),
-        Some(text) => {
-            let lie_tokens = tokenize(text);
-            let lie_set = token_set(&lie_tokens);
-            let total = lie_set.len();
-            if total == 0 {
-                tracing::warn!(
-                    "lie_text is Some but tokenizes to zero tokens — noise_rejection \
-                     defaults to 1.0, which may be misleading"
-                );
-                (Some(1.0_f64), 0, 0)
-            } else {
-                let found = lie_set
-                    .iter()
-                    .filter(|t| extracted_set.contains(*t))
-                    .count();
-                let rejection = 1.0 - (found as f64 / total as f64);
-                (Some(rejection), found, total)
-            }
+        let lie_tokens = tokenize(lie);
+        if lie_tokens.is_empty() {
+            return 0.0;
         }
-    };
-
-    // Compute quality_score using only the signals that are actually present.
-    // Mixing a real score with a phantom 1.0 default would bias the result.
-    let quality_score = match (truth_coverage, noise_rejection) {
-        (Some(tc), Some(nr)) => {
-            let denom = tc + nr;
-            if denom == 0.0 { 0.0 } else { 2.0 * tc * nr / denom }
-        }
-        (Some(tc), None) => tc,
-        (None, Some(nr)) => nr,
-        // Both None is ruled out by the early return at the top.
-        (None, None) => return None,
-    };
-
-    // Unwrap with safe fallbacks: None means "not provided" → use 0.0/1.0 for
-    // the individual metric fields so downstream consumers still get meaningful
-    // numbers for the one-sided case.
-    let truth_coverage_val = truth_coverage.unwrap_or(0.0);
-    let noise_rejection_val = noise_rejection.unwrap_or(1.0);
+        let extracted_tokens = tokenize(extracted);
+        let ext_counts = build_counts(&extracted_tokens);
+        let found: usize = lie_tokens
+            .iter()
+            .filter(|t| ext_counts.contains_key(t.as_str()))
+            .count();
+        found as f64 / lie_tokens.len() as f64
+    });
 
     Some(ScrapeQualityMetrics {
-        truth_coverage: truth_coverage_val,
-        noise_rejection: noise_rejection_val,
-        quality_score,
-        truth_found: truth_coverage_val >= TRUTH_FOUND_THRESHOLD,
-        lie_rejected: noise_rejection_val >= LIE_REJECTED_THRESHOLD,
-        truth_tokens_found,
-        truth_tokens_total,
-        lie_tokens_found,
-        lie_tokens_total,
+        f1_text: quality.f1_text,
+        f1_numeric: quality.f1_numeric,
+        quality_score: quality.quality_score,
+        precision: quality.precision,
+        recall: quality.recall,
+        noise_penalty,
+        missing_tokens: quality.missing_tokens,
+        extra_tokens: quality.extra_tokens,
+        correct: quality.correct,
     })
 }
 
-/// Normalise and tokenise `text` for token-level comparison.
-///
-/// Steps applied to each whitespace-delimited token:
-/// 1. Lowercase the entire input.
-/// 2. Strip leading and trailing non-alphanumeric characters.
-/// 3. Discard empty tokens and tokens that are purely non-alphanumeric.
-///
-/// Embedded punctuation such as `"3.14"` is preserved because its period is
-/// surrounded by alphanumeric characters. Trailing punctuation is stripped by
-/// `trim_matches`, so `"hello,"` becomes `"hello"`, and `",hello,"` also
-/// becomes `"hello"`. Only punctuation flanked by alphanumeric characters on
-/// both sides (e.g. `"say,hello"`) survives stripping.
+/// Tokenize text: lowercase, split on whitespace, strip non-alphanumeric characters
+/// (preserving `.` and `,` only when embedded between alphanumeric chars, e.g. "3.14", "3,14")
 pub(crate) fn tokenize(text: &str) -> Vec<String> {
+    let text = strip_markdown_links(text);
     text.to_lowercase()
         .split_whitespace()
-        .filter_map(|raw| {
-            let stripped = raw
-                .trim_matches(|c: char| !c.is_alphanumeric())
-                .to_owned();
-            if stripped.is_empty() || stripped.chars().all(|c| !c.is_alphanumeric()) {
-                None
+        .map(|w| {
+            // First pass: keep alphanumeric, periods, and commas
+            let kept: String = w
+                .chars()
+                .filter(|c| c.is_alphanumeric() || *c == '.' || *c == ',')
+                .collect();
+            // Second pass: strip leading/trailing periods and commas
+            kept.trim_matches(|c: char| c == '.' || c == ',').to_string()
+        })
+        .filter(|w| !w.is_empty())
+        .map(|token| {
+            // Normalize numeric tokens: "15.0" -> "15", "100.00" -> "100"
+            // Only apply f64 normalization for numbers with 15 or fewer digits
+            // to avoid precision loss (f64 has ~15.9 significant digits).
+            let digit_count = token.chars().filter(|c| c.is_ascii_digit()).count();
+            if digit_count <= 15 {
+                if let Ok(num) = token.parse::<f64>() {
+                    let normalized = format!("{num}");
+                    if normalized != token { normalized } else { token }
+                } else {
+                    token
+                }
             } else {
-                Some(stripped)
+                token
             }
         })
         .collect()
 }
 
-/// Build a deduplicated lookup set from a token slice.
+/// Filter tokens to only those containing numeric characters (Unicode-aware).
+fn filter_numeric(tokens: &[String]) -> Vec<String> {
+    tokens
+        .iter()
+        .filter(|t| t.chars().any(|c| c.is_numeric()))
+        .cloned()
+        .collect()
+}
+
+/// Compute F1 score between two token bags using multiset intersection.
+pub fn compute_f1(extracted: &[String], truth: &[String]) -> f64 {
+    if extracted.is_empty() && truth.is_empty() {
+        return 1.0; // Both empty = perfect match
+    }
+    if extracted.is_empty() || truth.is_empty() {
+        return 0.0;
+    }
+
+    let extracted_counts = build_counts(extracted);
+    let truth_counts = build_counts(truth);
+
+    // Multiset intersection: for each ground truth token, count min(truth_count, extracted_count).
+    // Tokens only in extracted text contribute 0 to intersection (penalized via precision denominator).
+    let intersection: usize = truth_counts
+        .iter()
+        .map(|(token, &count)| {
+            let ext_count = extracted_counts.get(token).copied().unwrap_or(0);
+            ext_count.min(count)
+        })
+        .sum();
+
+    let precision = intersection as f64 / extracted.len() as f64;
+    let recall = intersection as f64 / truth.len() as f64;
+
+    if precision + recall == 0.0 {
+        return 0.0;
+    }
+
+    2.0 * precision * recall / (precision + recall)
+}
+
+/// Build a token frequency map.
+pub(crate) fn build_counts(tokens: &[String]) -> HashMap<&str, usize> {
+    let mut counts = HashMap::new();
+    for token in tokens {
+        *counts.entry(token.as_str()).or_insert(0) += 1;
+    }
+    counts
+}
+
+/// Compute token-level diff between extracted and ground truth token bags.
 ///
-/// Returns references into the original slice, so the slice must outlive the
-/// returned set.
-pub(crate) fn token_set(tokens: &[String]) -> AHashSet<&str> {
-    tokens.iter().map(String::as_str).collect()
+/// Returns `(missing_tokens, extra_tokens)` where:
+/// - `missing_tokens`: tokens in GT with higher count than in extraction (recall misses)
+/// - `extra_tokens`: tokens in extraction with higher count than in GT (precision misses)
+///
+/// Both are sorted by deficit/surplus count descending.
+pub type TokenDiff = (Vec<(String, usize)>, Vec<(String, usize)>);
+
+pub fn compute_token_diff(extracted: &[String], truth: &[String]) -> TokenDiff {
+    let extracted_counts = build_counts(extracted);
+    let truth_counts = build_counts(truth);
+
+    // Tokens in GT but missing/under-represented in extraction
+    let mut missing: Vec<(String, usize)> = truth_counts
+        .iter()
+        .filter_map(|(&token, &gt_count)| {
+            let ext_count = extracted_counts.get(token).copied().unwrap_or(0);
+            if gt_count > ext_count {
+                Some((token.to_string(), gt_count - ext_count))
+            } else {
+                None
+            }
+        })
+        .collect();
+    missing.sort_by_key(|b| std::cmp::Reverse(b.1));
+
+    // Tokens in extraction but not in GT or over-represented
+    let mut extra: Vec<(String, usize)> = extracted_counts
+        .iter()
+        .filter_map(|(&token, &ext_count)| {
+            let gt_count = truth_counts.get(token).copied().unwrap_or(0);
+            if ext_count > gt_count {
+                Some((token.to_string(), ext_count - gt_count))
+            } else {
+                None
+            }
+        })
+        .collect();
+    extra.sort_by_key(|b| std::cmp::Reverse(b.1));
+
+    (missing, extra)
 }
 
 #[cfg(test)]
@@ -261,103 +326,174 @@ mod tests {
     use super::*;
 
     // -----------------------------------------------------------------------
-    // tokenize
+    // compute_quality (internal)
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_tokenize_empty_string() {
-        assert!(tokenize("").is_empty());
+    fn test_identical_text() {
+        let text = "Hello world this is a test";
+        let result = compute_quality(text, text);
+        assert!((result.f1_text - 1.0).abs() < 0.001);
+        assert!((result.quality_score - 1.0).abs() < 0.01); // text-only scoring (no numerics)
     }
 
     #[test]
-    fn test_tokenize_whitespace_only() {
-        assert!(tokenize("   \t\n  ").is_empty());
+    fn test_completely_different() {
+        let result = compute_quality("alpha beta gamma", "one two three");
+        assert_eq!(result.f1_text, 0.0);
     }
 
     #[test]
-    fn test_tokenize_lowercases() {
-        assert_eq!(tokenize("Hello WORLD"), vec!["hello", "world"]);
+    fn test_partial_overlap() {
+        let result = compute_quality("hello world foo", "hello world bar");
+        // Extracted: {hello, world, foo}, Truth: {hello, world, bar}
+        // Intersection: {hello, world} = 2
+        // Precision: 2/3, Recall: 2/3, F1: 2/3
+        assert!((result.f1_text - 2.0 / 3.0).abs() < 0.001);
     }
 
     #[test]
-    fn test_tokenize_strips_leading_trailing_punctuation() {
-        // Leading/trailing non-alphanumeric stripped, inner kept.
-        assert_eq!(tokenize("...hello..."), vec!["hello"]);
-        assert_eq!(tokenize(",hello,"), vec!["hello"]);
+    fn test_numeric_scoring() {
+        let result = compute_quality("page 42 section 7", "page 42 section 7");
+        assert!((result.f1_numeric - 1.0).abs() < 0.001);
     }
 
     #[test]
-    fn test_tokenize_keeps_embedded_period() {
-        // "3.14" — the period is embedded, so it survives.
+    fn test_empty_inputs() {
+        let result = compute_quality("", "");
+        assert!((result.f1_text - 1.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_empty_extracted() {
+        let result = compute_quality("", "some ground truth");
+        assert_eq!(result.f1_text, 0.0);
+    }
+
+    #[test]
+    fn test_punctuation_stripped() {
+        let result = compute_quality("hello, world!", "hello world");
+        assert!((result.f1_text - 1.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_case_insensitive() {
+        let result = compute_quality("Hello World", "hello world");
+        assert!((result.f1_text - 1.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_tokenize_number_normalization() {
+        // "15.0" and "15" should produce the same token
+        let tokens_a = tokenize("15.0");
+        let tokens_b = tokenize("15");
+        assert_eq!(tokens_a, tokens_b, "15.0 and 15 should normalize to the same token");
+        assert_eq!(tokens_a, vec!["15"]);
+
+        // "100.00" should normalize to "100"
+        assert_eq!(tokenize("100.00"), vec!["100"]);
+    }
+
+    #[test]
+    fn test_compute_f1_number_equivalence() {
+        let extracted = tokenize("price 15.0 dollars");
+        let truth = tokenize("price 15 dollars");
+        let f1 = compute_f1(&extracted, &truth);
+        assert!(
+            (f1 - 1.0).abs() < 0.001,
+            "F1 should be 1.0 for semantically equivalent numeric tokens, got {f1}"
+        );
+    }
+
+    #[test]
+    fn test_tokenize_preserves_decimals() {
+        // Non-trailing-zero decimals must be preserved
         assert_eq!(tokenize("3.14"), vec!["3.14"]);
+        assert_eq!(tokenize("0.5"), vec!["0.5"]);
+        assert_eq!(tokenize("12.345"), vec!["12.345"]);
     }
 
     #[test]
-    fn test_tokenize_keeps_embedded_comma() {
-        // Outer comma stripped, but inner comma would stay.
-        // "hello," → strip trailing "," → "hello"
-        assert_eq!(tokenize("hello,"), vec!["hello"]);
-        // "say,hello" has no outer non-alphanum — stays as-is.
-        assert_eq!(tokenize("say,hello"), vec!["say,hello"]);
+    fn test_no_numbers_no_boost() {
+        // Two texts with no numeric tokens should score based on text_f1 only,
+        // not get a free 0.4 boost from both-empty numeric F1.
+        let result = compute_quality("hello world foo", "hello world bar");
+        // text F1: intersection {hello, world} = 2, precision=2/3, recall=2/3, F1=2/3
+        let expected_text_f1 = 2.0 / 3.0;
+        assert!(
+            (result.f1_text - expected_text_f1).abs() < 0.001,
+            "text F1 should be 2/3, got {}",
+            result.f1_text
+        );
+        // quality_score should equal text_f1 (no numeric component)
+        assert!(
+            (result.quality_score - expected_text_f1).abs() < 0.001,
+            "quality_score should equal text F1 ({expected_text_f1}) when no numbers, got {}",
+            result.quality_score
+        );
     }
 
     #[test]
-    fn test_tokenize_filters_pure_punctuation_tokens() {
-        assert_eq!(tokenize("--- !!! ???"), Vec::<String>::new());
+    fn test_url_stripped_from_tokens() {
+        // Markdown links should not produce URL component tokens
+        let tokens = tokenize("[link text](https://example.com)");
+        assert_eq!(tokens, vec!["link", "text"]);
+
+        // Markdown images should not produce URL component tokens
+        let tokens = tokenize("![alt text](https://example.com/image.png)");
+        assert_eq!(tokens, vec!["alt", "text"]);
+
+        // Mixed content
+        let tokens = tokenize("See [docs](https://example.com/docs) for details");
+        assert_eq!(tokens, vec!["see", "docs", "for", "details"]);
     }
 
     #[test]
-    fn test_tokenize_mixed() {
-        let result = tokenize("The quick 3.14 fox!");
-        assert_eq!(result, vec!["the", "quick", "3.14", "fox"]);
+    fn test_large_number_preserved() {
+        // 17-digit number should not be mangled by f64 precision loss
+        let tokens = tokenize("10000000000000001");
+        assert_eq!(
+            tokens,
+            vec!["10000000000000001"],
+            "17-digit number should be preserved as-is, not rounded by f64"
+        );
+
+        // 15-digit number (including the trailing zero) should still be normalized
+        let tokens = tokenize("12345678901234.0");
+        assert_eq!(
+            tokens,
+            vec!["12345678901234"],
+            "15-digit number with trailing .0 should still normalize"
+        );
     }
 
     // -----------------------------------------------------------------------
-    // token_set
+    // compute_scrape_quality — public API
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_token_set_deduplicates() {
-        let tokens = vec!["apple".to_owned(), "banana".to_owned(), "apple".to_owned()];
-        let set = token_set(&tokens);
-        assert_eq!(set.len(), 2);
-        assert!(set.contains("apple"));
-        assert!(set.contains("banana"));
-    }
-
-    #[test]
-    fn test_token_set_empty() {
-        let tokens: Vec<String> = vec![];
-        assert!(token_set(&tokens).is_empty());
-    }
-
-    // -----------------------------------------------------------------------
-    // compute_scrape_quality — None cases
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_returns_none_when_no_ground_truth() {
+    fn test_returns_none_when_no_truth() {
+        // Without truth_text, no score is possible regardless of lie_text.
         assert!(compute_scrape_quality("some content", None, None).is_none());
+        assert!(compute_scrape_quality("some content", None, Some("noise")).is_none());
     }
 
-    // -----------------------------------------------------------------------
-    // compute_scrape_quality — truth only
-    // -----------------------------------------------------------------------
+    #[test]
+    fn test_returns_none_when_truth_empty() {
+        assert!(compute_scrape_quality("some content", Some(""), None).is_none());
+        assert!(compute_scrape_quality("some content", Some("   "), None).is_none());
+    }
 
     #[test]
-    fn test_full_truth_match() {
+    fn test_full_truth_match_no_lie() {
+        // Exact match: extracted equals truth exactly.
         let metrics =
-            compute_scrape_quality("the quick brown fox", Some("quick brown fox"), None).unwrap();
+            compute_scrape_quality("quick brown fox", Some("quick brown fox"), None).unwrap();
 
-        assert_eq!(metrics.truth_coverage, 1.0);
-        // No lie text provided — noise_rejection field shows 1.0 (display fallback),
-        // and quality_score equals truth_coverage alone (no phantom harmonic mean).
-        assert_eq!(metrics.noise_rejection, 1.0);
-        assert_eq!(metrics.quality_score, 1.0);
-        assert_eq!(metrics.truth_tokens_total, 3);
-        assert_eq!(metrics.truth_tokens_found, 3);
-        assert!(metrics.truth_found);
-        assert!(metrics.lie_rejected);
+        assert!((metrics.f1_text - 1.0).abs() < 0.001);
+        assert!((metrics.quality_score - 1.0).abs() < 0.01);
+        assert_eq!(metrics.noise_penalty, 0.0);
+        assert!(metrics.correct);
     }
 
     #[test]
@@ -366,307 +502,111 @@ mod tests {
             compute_scrape_quality("completely different text", Some("quick brown fox"), None)
                 .unwrap();
 
-        assert_eq!(metrics.truth_coverage, 0.0);
-        assert_eq!(metrics.truth_tokens_found, 0);
-        assert!(!metrics.truth_found);
-    }
-
-    #[test]
-    fn test_partial_truth_match() {
-        // extracted has 2 of 4 truth tokens
-        let metrics = compute_scrape_quality(
-            "quick fox runs fast",
-            Some("quick brown fox jumps"),
-            None,
-        )
-        .unwrap();
-
-        assert_eq!(metrics.truth_tokens_total, 4);
-        assert_eq!(metrics.truth_tokens_found, 2);
-        assert!((metrics.truth_coverage - 0.5).abs() < f64::EPSILON);
-        // exactly at threshold → truth_found is true
-        assert!(metrics.truth_found);
-    }
-
-    #[test]
-    fn test_truth_case_insensitive() {
-        let metrics =
-            compute_scrape_quality("QUICK BROWN FOX", Some("quick brown fox"), None).unwrap();
-        assert_eq!(metrics.truth_coverage, 1.0);
-    }
-
-    #[test]
-    fn test_empty_truth_text_returns_none() {
-        // Empty truth_text after tokenization has no scoreable signal → None.
-        let metrics = compute_scrape_quality("some extracted content", Some(""), None);
-        assert!(metrics.is_none());
-    }
-
-    // -----------------------------------------------------------------------
-    // compute_scrape_quality — lie only
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_lie_fully_rejected() {
-        let metrics =
-            compute_scrape_quality("completely different content", None, Some("noise garbage spam"))
-                .unwrap();
-
-        assert_eq!(metrics.lie_tokens_found, 0);
-        assert_eq!(metrics.noise_rejection, 1.0);
-        assert!(metrics.lie_rejected);
-    }
-
-    #[test]
-    fn test_lie_fully_present() {
-        let metrics =
-            compute_scrape_quality("noise garbage spam here", None, Some("noise garbage spam"))
-                .unwrap();
-
-        assert_eq!(metrics.lie_tokens_total, 3);
-        assert_eq!(metrics.lie_tokens_found, 3);
-        assert_eq!(metrics.noise_rejection, 0.0);
-        assert!(!metrics.lie_rejected);
-    }
-
-    #[test]
-    fn test_lie_partially_present() {
-        // 1 of 2 lie tokens found → noise_rejection = 1 - 0.5 = 0.5
-        let metrics =
-            compute_scrape_quality("noise clean content", None, Some("noise garbage")).unwrap();
-
-        assert_eq!(metrics.lie_tokens_total, 2);
-        assert_eq!(metrics.lie_tokens_found, 1);
-        assert!((metrics.noise_rejection - 0.5).abs() < f64::EPSILON);
-        // exactly at threshold → lie_rejected is true
-        assert!(metrics.lie_rejected);
-    }
-
-    #[test]
-    fn test_empty_lie_text_gives_full_noise_rejection() {
-        let metrics = compute_scrape_quality("some content", None, Some("")).unwrap();
-        assert_eq!(metrics.noise_rejection, 1.0);
-        assert_eq!(metrics.lie_tokens_total, 0);
-    }
-
-    // -----------------------------------------------------------------------
-    // compute_scrape_quality — combined truth + lie
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_combined_full_match_no_lie() {
-        let metrics = compute_scrape_quality(
-            "the quick brown fox jumps",
-            Some("quick brown fox"),
-            Some("spam noise garbage"),
-        )
-        .unwrap();
-
-        assert_eq!(metrics.truth_coverage, 1.0);
-        assert_eq!(metrics.noise_rejection, 1.0);
-        assert!(metrics.quality_score > 0.99);
-    }
-
-    #[test]
-    fn test_combined_partial_match_with_some_lie() {
-        // truth: "alpha beta gamma delta" (4 tokens); extracted has 2 → truth_coverage = 0.5
-        // lie: "spam junk" (2 tokens); extracted has 1 → noise_rejection = 0.5
-        // quality_score = 2 * 0.5 * 0.5 / (0.5 + 0.5) = 0.5
-        let metrics = compute_scrape_quality(
-            "alpha beta spam extra words",
-            Some("alpha beta gamma delta"),
-            Some("spam junk"),
-        )
-        .unwrap();
-
-        assert_eq!(metrics.truth_tokens_total, 4);
-        assert_eq!(metrics.truth_tokens_found, 2);
-        assert_eq!(metrics.lie_tokens_total, 2);
-        assert_eq!(metrics.lie_tokens_found, 1);
-        assert!((metrics.truth_coverage - 0.5).abs() < f64::EPSILON);
-        assert!((metrics.noise_rejection - 0.5).abs() < f64::EPSILON);
-        assert!((metrics.quality_score - 0.5).abs() < f64::EPSILON);
-    }
-
-    #[test]
-    fn test_quality_score_is_zero_when_both_zero() {
-        // truth_coverage = 0 and noise_rejection = 0 → denominator is 0 → quality_score = 0
-        let metrics = compute_scrape_quality(
-            "completely irrelevant",
-            Some("truth tokens here"),
-            Some("completely irrelevant"), // all lie tokens present → noise_rejection = 0
-        )
-        .unwrap();
-
-        assert_eq!(metrics.truth_coverage, 0.0);
-        assert_eq!(metrics.noise_rejection, 0.0);
+        assert_eq!(metrics.f1_text, 0.0);
         assert_eq!(metrics.quality_score, 0.0);
+        assert!(!metrics.correct);
     }
 
     #[test]
-    fn test_noise_rejection_mixed_case() {
-        // lie tokens should match case-insensitively
+    fn test_precision_and_recall_exposed() {
+        // extracted = "hello world foo", truth = "hello world bar"
+        // intersection = {hello, world} = 2
+        // precision = 2/3, recall = 2/3
         let metrics =
-            compute_scrape_quality("SPAM HERE", None, Some("spam noise")).unwrap();
+            compute_scrape_quality("hello world foo", Some("hello world bar"), None).unwrap();
 
-        assert_eq!(metrics.lie_tokens_found, 1); // "spam" found (via lowercasing)
-        assert_eq!(metrics.lie_tokens_total, 2);
-        assert!((metrics.noise_rejection - 0.5).abs() < f64::EPSILON);
+        assert!((metrics.precision - 2.0 / 3.0).abs() < 0.001);
+        assert!((metrics.recall - 2.0 / 3.0).abs() < 0.001);
     }
 
     #[test]
-    fn test_truth_deduplication() {
-        // Duplicate truth tokens count only once in the set.
+    fn test_noise_penalty_zero_when_no_lie() {
         let metrics =
-            compute_scrape_quality("fox", Some("fox fox fox"), None).unwrap();
-
-        assert_eq!(metrics.truth_tokens_total, 1); // deduplicated to 1 unique token
-        assert_eq!(metrics.truth_tokens_found, 1);
-        assert_eq!(metrics.truth_coverage, 1.0);
+            compute_scrape_quality("hello world", Some("hello world"), None).unwrap();
+        assert_eq!(metrics.noise_penalty, 0.0);
     }
 
     #[test]
-    fn test_extracted_content_empty() {
+    fn test_noise_penalty_zero_when_lie_absent_from_extraction() {
         let metrics = compute_scrape_quality(
-            "",
-            Some("important content here"),
-            Some("spam noise"),
+            "good content here",
+            Some("good content"),
+            Some("spam garbage noise"),
         )
         .unwrap();
 
-        assert_eq!(metrics.truth_coverage, 0.0);
-        assert_eq!(metrics.noise_rejection, 1.0); // no lie tokens found in empty content
-        assert_eq!(metrics.truth_tokens_found, 0);
-        assert_eq!(metrics.lie_tokens_found, 0);
+        assert_eq!(metrics.noise_penalty, 0.0);
     }
 
     #[test]
-    fn test_punctuation_stripped_in_truth_matching() {
-        // "fox!" in extracted should match "fox" in truth after stripping.
+    fn test_noise_penalty_one_when_all_lie_present() {
+        // All lie tokens appear in extracted → penalty = 1.0
+        let metrics = compute_scrape_quality(
+            "good content spam garbage noise",
+            Some("good content"),
+            Some("spam garbage noise"),
+        )
+        .unwrap();
+
+        assert!((metrics.noise_penalty - 1.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_noise_penalty_partial() {
+        // lie = "spam garbage" (2 tokens), extracted contains "spam" but not "garbage"
+        // penalty = 1/2 = 0.5
+        let metrics = compute_scrape_quality(
+            "good content spam",
+            Some("good content"),
+            Some("spam garbage"),
+        )
+        .unwrap();
+
+        assert!((metrics.noise_penalty - 0.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_noise_penalty_empty_lie_text() {
+        // Empty lie_text → penalty = 0.0
         let metrics =
-            compute_scrape_quality("quick fox! jumps", Some("quick fox jumps"), None).unwrap();
-
-        assert_eq!(metrics.truth_coverage, 1.0);
-    }
-
-    // -----------------------------------------------------------------------
-    // strip_markdown
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_strip_markdown_headings() {
-        assert_eq!(strip_markdown("# Title\n## Subtitle"), "Title\nSubtitle");
+            compute_scrape_quality("hello world", Some("hello world"), Some("")).unwrap();
+        assert_eq!(metrics.noise_penalty, 0.0);
     }
 
     #[test]
-    fn test_strip_markdown_bold_italic() {
-        assert_eq!(strip_markdown("**bold** and __also bold__"), "bold and also bold");
-        assert_eq!(strip_markdown("*italic*"), "italic");
+    fn test_noise_penalty_case_insensitive() {
+        // lie token "SPAM" should match "spam" in extracted (via tokenize lowercasing)
+        let metrics = compute_scrape_quality(
+            "good content spam",
+            Some("good content"),
+            Some("SPAM"),
+        )
+        .unwrap();
+
+        assert!((metrics.noise_penalty - 1.0).abs() < 0.001);
     }
 
     #[test]
-    fn test_strip_markdown_links() {
-        assert_eq!(strip_markdown("[click here](https://example.com)"), "click here");
-    }
-
-    #[test]
-    fn test_strip_markdown_images() {
-        assert_eq!(strip_markdown("![alt text](https://example.com/img.png)"), "alt text");
-    }
-
-    #[test]
-    fn test_strip_markdown_inline_code() {
-        assert_eq!(strip_markdown("use `foo()` here"), "use  here");
-    }
-
-    #[test]
-    fn test_strip_markdown_fenced_code() {
-        let input = "intro\n```\ncode block\n```\noutro";
-        let result = strip_markdown(input);
-        assert!(!result.contains("code block"));
-        assert!(result.contains("intro"));
-        assert!(result.contains("outro"));
-    }
-
-    #[test]
-    fn test_strip_markdown_horizontal_rule() {
-        let result = strip_markdown("before\n---\nafter");
-        assert!(!result.contains("---"));
-        assert!(result.contains("before"));
-        assert!(result.contains("after"));
-    }
-
-    #[test]
-    fn test_strip_markdown_blockquote() {
-        assert_eq!(strip_markdown("> quoted text"), "quoted text");
-    }
-
-    #[test]
-    fn test_strip_markdown_table_pipes() {
-        let result = strip_markdown("| col1 | col2 |");
-        assert!(!result.contains('|'));
-    }
-
-    #[test]
-    fn test_strip_markdown_plain_text_unchanged() {
-        let plain = "The quick brown fox jumps over the lazy dog";
-        assert_eq!(strip_markdown(plain), plain);
-    }
-
-    // -----------------------------------------------------------------------
-    // quality_score single-signal semantics
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_quality_score_truth_only_equals_truth_coverage() {
-        // When only truth is provided, quality_score should equal truth_coverage
-        // (no phantom noise_rejection=1.0 inflating the harmonic mean).
+    fn test_missing_and_extra_tokens_populated() {
         let metrics =
-            compute_scrape_quality("alpha beta", Some("alpha beta gamma"), None).unwrap();
+            compute_scrape_quality("hello world foo", Some("hello world bar"), None).unwrap();
 
-        // truth_coverage = 2/3 ≈ 0.667
-        let expected = 2.0_f64 / 3.0;
-        assert!((metrics.truth_coverage - expected).abs() < 1e-9);
-        assert!((metrics.quality_score - expected).abs() < 1e-9,
-            "quality_score ({}) should equal truth_coverage ({}) when lie is absent",
-            metrics.quality_score, expected);
+        // "bar" is in truth but not extracted → missing
+        assert!(metrics.missing_tokens.iter().any(|(t, _)| t == "bar"));
+        // "foo" is in extracted but not truth → extra
+        assert!(metrics.extra_tokens.iter().any(|(t, _)| t == "foo"));
     }
 
     #[test]
-    fn test_quality_score_lie_only_equals_noise_rejection() {
-        // When only lie is provided, quality_score should equal noise_rejection.
+    fn test_correct_flag_threshold() {
+        // Identical texts should have correct = true (quality_score = 1.0 >= 0.95)
         let metrics =
-            compute_scrape_quality("clean content here", None, Some("spam garbage junk")).unwrap();
+            compute_scrape_quality("hello world", Some("hello world"), None).unwrap();
+        assert!(metrics.correct);
 
-        assert_eq!(metrics.noise_rejection, 1.0); // none of the lie tokens appear
-        assert_eq!(metrics.quality_score, 1.0,
-            "quality_score should equal noise_rejection when truth is absent");
-    }
-
-    #[test]
-    fn test_quality_score_lie_only_partial_rejection() {
-        // 1 of 2 lie tokens found → noise_rejection = 0.5 → quality_score = 0.5
+        // Completely different → correct = false
         let metrics =
-            compute_scrape_quality("spam clean", None, Some("spam garbage")).unwrap();
-
-        assert!((metrics.noise_rejection - 0.5).abs() < f64::EPSILON);
-        assert!((metrics.quality_score - 0.5).abs() < f64::EPSILON);
-    }
-
-    // -----------------------------------------------------------------------
-    // strip_markdown integration with scoring
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_markdown_syntax_not_scored_as_tokens() {
-        // Markdown heading marker "#" and bold "**" should not count as tokens.
-        // Without stripping, "##" would be a token in extracted and could match
-        // nothing in truth — but more importantly, stripping prevents phantom
-        // matches on punctuation tokens.
-        let extracted = "## Title\n**bold content** here";
-        let truth = "Title bold content here";
-        let metrics = compute_scrape_quality(extracted, Some(truth), None).unwrap();
-        // After stripping markdown, all truth tokens appear in extracted.
-        assert_eq!(metrics.truth_coverage, 1.0);
+            compute_scrape_quality("alpha beta", Some("one two three"), None).unwrap();
+        assert!(!metrics.correct);
     }
 }

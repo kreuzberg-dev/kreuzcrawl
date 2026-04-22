@@ -112,15 +112,15 @@ pub fn write_fixture_outputs(
             .and_then(|r| r.quality.as_ref())
             .map(|q| {
                 serde_json::json!({
-                    "truth_coverage": q.truth_coverage,
-                    "noise_rejection": q.noise_rejection,
+                    "f1_text": q.f1_text,
+                    "f1_numeric": q.f1_numeric,
                     "quality_score": q.quality_score,
-                    "truth_found": q.truth_found,
-                    "lie_rejected": q.lie_rejected,
-                    "truth_tokens_found": q.truth_tokens_found,
-                    "truth_tokens_total": q.truth_tokens_total,
-                    "lie_tokens_found": q.lie_tokens_found,
-                    "lie_tokens_total": q.lie_tokens_total,
+                    "precision": q.precision,
+                    "recall": q.recall,
+                    "noise_penalty": q.noise_penalty,
+                    "correct": q.correct,
+                    "missing_tokens": q.missing_tokens,
+                    "extra_tokens": q.extra_tokens,
                 })
             })
             .unwrap_or(serde_json::Value::Null);
@@ -189,9 +189,12 @@ pub fn print_summary(output: &BenchmarkOutput) {
             quality.scored_urls,
             quality.total_urls
         );
-        eprintln!("Mean quality: {:.3}", quality.mean_quality_score);
-        eprintln!("Mean truth  : {:.3}", quality.mean_truth_coverage);
-        eprintln!("Mean noise- : {:.3}", quality.mean_noise_rejection);
+        eprintln!("F1 text     : {:.3}", quality.mean_f1_text);
+        eprintln!("F1 numeric  : {:.3}", quality.mean_f1_numeric);
+        eprintln!("Quality     : {:.3}", quality.mean_quality_score);
+        eprintln!("Precision   : {:.3}", quality.mean_precision);
+        eprintln!("Recall      : {:.3}", quality.mean_recall);
+        eprintln!("Noise pen.  : {:.3}", quality.mean_noise_penalty);
     }
 
     eprintln!("=========================");
@@ -366,25 +369,41 @@ fn build_quality_report(
         scored_urls as f64 / scoreable_urls as f64
     };
 
-    let (mean_truth_coverage, mean_noise_rejection, mean_quality_score) = if scored_urls == 0 {
-        (0.0, 0.0, 0.0)
+    let (
+        mean_f1_text,
+        mean_f1_numeric,
+        mean_quality_score,
+        mean_precision,
+        mean_recall,
+        mean_noise_penalty,
+    ) = if scored_urls == 0 {
+        (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     } else {
         let n = scored_urls as f64;
-        let sum_truth: f64 = scored.iter().map(|q| q.truth_coverage).sum();
-        let sum_noise: f64 = scored.iter().map(|q| q.noise_rejection).sum();
+        let sum_f1_text: f64 = scored.iter().map(|q| q.f1_text).sum();
+        let sum_f1_numeric: f64 = scored.iter().map(|q| q.f1_numeric).sum();
         let sum_quality: f64 = scored.iter().map(|q| q.quality_score).sum();
+        let sum_precision: f64 = scored.iter().map(|q| q.precision).sum();
+        let sum_recall: f64 = scored.iter().map(|q| q.recall).sum();
+        let sum_noise: f64 = scored.iter().map(|q| q.noise_penalty).sum();
         (
-            sanitize_f64(sum_truth / n),
-            sanitize_f64(sum_noise / n),
+            sanitize_f64(sum_f1_text / n),
+            sanitize_f64(sum_f1_numeric / n),
             sanitize_f64(sum_quality / n),
+            sanitize_f64(sum_precision / n),
+            sanitize_f64(sum_recall / n),
+            sanitize_f64(sum_noise / n),
         )
     };
 
     DatasetQualityReport {
         coverage: sanitize_f64(coverage),
-        mean_truth_coverage,
-        mean_noise_rejection,
+        mean_f1_text,
+        mean_f1_numeric,
         mean_quality_score,
+        mean_precision,
+        mean_recall,
+        mean_noise_penalty,
         total_urls: scoreable_urls,
         successful_urls,
         scored_urls,
@@ -671,17 +690,17 @@ mod tests {
         }
     }
 
-    fn make_quality(truth_coverage: f64, noise_rejection: f64, quality_score: f64) -> ScrapeQualityMetrics {
+    fn make_quality(f1_text: f64, noise_penalty: f64, quality_score: f64) -> ScrapeQualityMetrics {
         ScrapeQualityMetrics {
-            truth_coverage,
-            noise_rejection,
+            f1_text,
+            f1_numeric: 0.0,
             quality_score,
-            truth_found: truth_coverage >= 0.5,
-            lie_rejected: noise_rejection >= 0.5,
-            truth_tokens_found: 1,
-            truth_tokens_total: 1,
-            lie_tokens_found: 0,
-            lie_tokens_total: 0,
+            precision: f1_text,
+            recall: f1_text,
+            noise_penalty,
+            missing_tokens: vec![],
+            extra_tokens: vec![],
+            correct: quality_score >= 0.95,
         }
     }
 
@@ -718,7 +737,7 @@ mod tests {
         assert_eq!(report.total_urls, 2);
         assert_eq!(report.scored_urls, 2);
         assert!((report.coverage - 1.0).abs() < 1e-9);
-        assert!((report.mean_truth_coverage - 0.6).abs() < 1e-9);
+        assert!((report.mean_f1_text - 0.6).abs() < 1e-9);
     }
 
     #[test]
