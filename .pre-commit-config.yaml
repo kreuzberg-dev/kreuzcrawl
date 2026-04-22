@@ -201,7 +201,7 @@ repos:
 
   # Markdown: linting
   - repo: https://github.com/rvben/rumdl-pre-commit
-    rev: "v0.1.76"
+    rev: "v0.1.78"
     hooks:
       - id: rumdl-fmt
         exclude: '^(test_apps/|tools/benchmark-harness/vendored/|docs/index\.md|docs/getting-started/installation\.md)'
@@ -247,7 +247,7 @@ repos:
 
   # Alef: verify generated code freshness and sync versions
   - repo: https://github.com/kreuzberg-dev/alef
-    rev: v0.4.4
+    rev: v0.5.1
     hooks:
       - id: alef-verify
       - id: alef-sync-versions

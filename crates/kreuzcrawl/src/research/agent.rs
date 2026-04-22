@@ -1,4 +1,5 @@
 //! The main research agent that orchestrates the plan-crawl-synthesize loop.
+#![allow(dead_code)]
 
 use super::planner::ResearchPlanner;
 use super::synthesizer::ResearchSynthesizer;

@@ -12,7 +12,12 @@
     clippy::let_unit_value,
     clippy::needless_borrow,
     clippy::too_many_arguments,
-    clippy::map_identity
+    clippy::map_identity,
+    clippy::unnecessary_cast,
+    clippy::unwrap_or_default,
+    clippy::derivable_impls,
+    clippy::needless_borrows_for_generic_args,
+    clippy::unnecessary_fallible_conversions
 )]
 
 use pyo3::exceptions::PyRuntimeError;
@@ -181,6 +186,10 @@ pub struct CrawlConfig {
     /// Timeout for individual HTTP requests (in milliseconds when serialized).
     #[pyo3(get)]
     pub request_timeout: Option<u64>,
+    /// Per-domain rate limit in milliseconds. When set, enforces a minimum delay
+    /// between requests to the same domain. Defaults to 200ms when `None`.
+    #[pyo3(get)]
+    pub rate_limit_ms: Option<u64>,
     /// Maximum number of redirects to follow.
     #[pyo3(get)]
     pub max_redirects: usize,
@@ -256,7 +265,7 @@ pub struct CrawlConfig {
 impl CrawlConfig {
     #[allow(clippy::too_many_arguments)]
     #[must_use]
-    #[pyo3(signature = (respect_robots_txt=None, stay_on_domain=None, allow_subdomains=None, include_paths=None, exclude_paths=None, custom_headers=None, request_timeout=None, max_redirects=None, retry_count=None, retry_codes=None, cookies_enabled=None, main_content_only=None, remove_tags=None, download_assets=None, asset_types=None, browser=None, user_agents=None, capture_screenshot=None, download_documents=None, document_mime_types=None, save_browser_profile=None, max_depth=None, max_pages=None, max_concurrent=None, user_agent=None, auth=None, max_body_size=None, map_limit=None, map_search=None, max_asset_size=None, proxy=None, document_max_size=None, warc_output=None, browser_profile=None))]
+    #[pyo3(signature = (respect_robots_txt=None, stay_on_domain=None, allow_subdomains=None, include_paths=None, exclude_paths=None, custom_headers=None, request_timeout=None, max_redirects=None, retry_count=None, retry_codes=None, cookies_enabled=None, main_content_only=None, remove_tags=None, download_assets=None, asset_types=None, browser=None, user_agents=None, capture_screenshot=None, download_documents=None, document_mime_types=None, save_browser_profile=None, max_depth=None, max_pages=None, max_concurrent=None, user_agent=None, rate_limit_ms=None, auth=None, max_body_size=None, map_limit=None, map_search=None, max_asset_size=None, proxy=None, document_max_size=None, warc_output=None, browser_profile=None))]
     #[new]
     pub fn new(
         respect_robots_txt: Option<bool>,
@@ -284,6 +293,7 @@ impl CrawlConfig {
         max_pages: Option<usize>,
         max_concurrent: Option<usize>,
         user_agent: Option<String>,
+        rate_limit_ms: Option<u64>,
         auth: Option<AuthConfig>,
         max_body_size: Option<usize>,
         map_limit: Option<usize>,
@@ -306,6 +316,7 @@ impl CrawlConfig {
             exclude_paths: exclude_paths.unwrap_or_default(),
             custom_headers: custom_headers.unwrap_or_default(),
             request_timeout,
+            rate_limit_ms,
             max_redirects: max_redirects.unwrap_or(10),
             retry_count: retry_count.unwrap_or(0),
             retry_codes: retry_codes.unwrap_or_default(),
@@ -351,6 +362,7 @@ impl CrawlConfig {
                 .request_timeout
                 .map(std::time::Duration::from_millis)
                 .unwrap_or_default(),
+            rate_limit_ms: self.rate_limit_ms,
             max_redirects: self.max_redirects,
             retry_count: self.retry_count,
             retry_codes: self.retry_codes.clone(),
@@ -1648,7 +1660,6 @@ pub enum BrowserWait {
 
 #[derive(Clone)]
 #[pyclass(frozen)]
-#[derive(Default)]
 pub struct AuthConfig {
     pub(crate) inner: kreuzcrawl::AuthConfig,
 }
@@ -1680,6 +1691,14 @@ impl From<kreuzcrawl::AuthConfig> for AuthConfig {
 impl serde::Serialize for AuthConfig {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         self.inner.serialize(serializer)
+    }
+}
+
+impl Default for AuthConfig {
+    fn default() -> Self {
+        Self {
+            inner: Default::default(),
+        }
     }
 }
 
@@ -1939,6 +1958,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
         if let Some(__v) = val.request_timeout {
             __result.request_timeout = std::time::Duration::from_millis(__v);
         }
+        __result.rate_limit_ms = val.rate_limit_ms;
         __result.max_redirects = val.max_redirects;
         __result.retry_count = val.retry_count;
         __result.retry_codes = val.retry_codes;
@@ -1980,6 +2000,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             exclude_paths: val.exclude_paths,
             custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: Some(val.request_timeout.as_millis() as u64),
+            rate_limit_ms: val.rate_limit_ms,
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
             retry_codes: val.retry_codes,

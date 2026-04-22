@@ -1,6 +1,7 @@
+#![allow(clippy::unwrap_used, clippy::panic)]
 //! Integration tests for frontier deduplication: verifying duplicate URLs are not re-fetched.
 
-use kreuzcrawl::{CrawlConfig, CrawlEngine, NoopRateLimiter};
+use kreuzcrawl::{CrawlConfig, crawl, create_engine};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -43,13 +44,9 @@ async fn test_duplicate_links_deduplicated() {
         max_concurrent: Some(1),
         ..Default::default()
     };
-    let engine = CrawlEngine::builder()
-        .config(config)
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
+    let handle = create_engine(Some(config)).unwrap();
 
-    let result = engine.crawl(&mock.uri()).await.unwrap();
+    let result = crawl(&handle, &mock.uri()).await.unwrap();
     assert_eq!(
         result.pages.len(),
         3,

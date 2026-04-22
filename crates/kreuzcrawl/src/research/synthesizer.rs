@@ -1,4 +1,5 @@
 //! Research synthesizer that combines findings into a coherent report.
+#![allow(dead_code)]
 
 use super::types::{Finding, SourceInfo};
 use crate::error::CrawlError;

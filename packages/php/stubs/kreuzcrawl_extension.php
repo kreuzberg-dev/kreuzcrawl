@@ -116,6 +116,7 @@ namespace Kreuzcrawl {
         /** @var array<string, string> */
         public array $custom_headers;
         public float $request_timeout;
+        public ?int $rate_limit_ms;
         public int $max_redirects;
         public int $retry_count;
         /** @var array<int> */
@@ -181,6 +182,7 @@ namespace Kreuzcrawl {
             ?int $max_pages = null,
             ?int $max_concurrent = null,
             ?string $user_agent = null,
+            ?int $rate_limit_ms = null,
             ?AuthConfig $auth = null,
             ?int $max_body_size = null,
             ?int $map_limit = null,
@@ -206,6 +208,7 @@ namespace Kreuzcrawl {
         /** @return array<string, string> */
         public function getCustomHeaders(): array {}
         public function getRequestTimeout(): float {}
+        public function getRateLimitMs(): ?int {}
         public function getMaxRedirects(): int {}
         public function getRetryCount(): int {}
         /** @return array<int> */

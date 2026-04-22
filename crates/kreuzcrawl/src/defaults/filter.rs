@@ -1,4 +1,5 @@
 //! Content filters for post-extraction page filtering.
+#![allow(dead_code)]
 
 use ahash::AHashMap;
 use async_trait::async_trait;

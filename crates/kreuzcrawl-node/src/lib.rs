@@ -6,7 +6,13 @@
     clippy::let_unit_value,
     clippy::needless_borrow,
     clippy::map_identity,
-    clippy::just_underscores_and_digits
+    clippy::just_underscores_and_digits,
+    clippy::unnecessary_cast,
+    clippy::unused_unit,
+    clippy::unwrap_or_default,
+    clippy::derivable_impls,
+    clippy::needless_borrows_for_generic_args,
+    clippy::unnecessary_fallible_conversions
 )]
 
 use napi::*;
@@ -80,6 +86,8 @@ pub struct JsCrawlConfig {
     pub custom_headers: Option<HashMap<String, String>>,
     #[napi(js_name = "requestTimeout")]
     pub request_timeout: Option<i64>,
+    #[napi(js_name = "rateLimitMs")]
+    pub rate_limit_ms: Option<i64>,
     #[napi(js_name = "maxRedirects")]
     pub max_redirects: Option<i64>,
     #[napi(js_name = "retryCount")]
@@ -773,6 +781,7 @@ impl From<JsCrawlConfig> for kreuzcrawl::CrawlConfig {
         if let Some(__v) = val.request_timeout {
             __result.request_timeout = std::time::Duration::from_millis(__v as u64);
         }
+        __result.rate_limit_ms = val.rate_limit_ms.map(|v| v as u64);
         __result.max_redirects = val.max_redirects.map(|v| v as usize).unwrap_or_default();
         __result.retry_count = val.retry_count.map(|v| v as usize).unwrap_or_default();
         __result.retry_codes = val.retry_codes.unwrap_or_default();
@@ -817,6 +826,7 @@ impl From<kreuzcrawl::CrawlConfig> for JsCrawlConfig {
             exclude_paths: Some(val.exclude_paths),
             custom_headers: Some(val.custom_headers.into_iter().collect()),
             request_timeout: Some(val.request_timeout.as_millis() as u64 as i64),
+            rate_limit_ms: val.rate_limit_ms.map(|v| v as i64),
             max_redirects: Some(val.max_redirects as i64),
             retry_count: Some(val.retry_count as i64),
             retry_codes: Some(val.retry_codes),

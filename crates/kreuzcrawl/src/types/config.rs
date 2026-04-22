@@ -175,6 +175,9 @@ pub struct CrawlConfig {
     /// Timeout for individual HTTP requests (in milliseconds when serialized).
     #[serde(with = "duration_ms")]
     pub request_timeout: Duration,
+    /// Per-domain rate limit in milliseconds. When set, enforces a minimum delay
+    /// between requests to the same domain. Defaults to 200ms when `None`.
+    pub rate_limit_ms: Option<u64>,
     /// Maximum number of redirects to follow.
     pub max_redirects: usize,
     /// Number of retry attempts for failed requests.
@@ -247,6 +250,7 @@ impl Default for CrawlConfig {
             exclude_paths: Vec::new(),
             custom_headers: HashMap::new(),
             request_timeout: Duration::from_secs(30),
+            rate_limit_ms: None,
             max_redirects: 10,
             retry_count: 0,
             retry_codes: Vec::new(),

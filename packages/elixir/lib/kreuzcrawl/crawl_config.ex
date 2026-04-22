@@ -13,6 +13,7 @@ defmodule Kreuzcrawl.CrawlConfig do
             exclude_paths: [],
             custom_headers: %{},
             request_timeout: 30_000,
+            rate_limit_ms: nil,
             max_redirects: 10,
             retry_count: 0,
             retry_codes: [],

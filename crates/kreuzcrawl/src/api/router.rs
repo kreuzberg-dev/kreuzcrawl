@@ -99,7 +99,7 @@ mod tests {
     #[tokio::test]
     async fn test_create_router() {
         let engine = CrawlEngine::builder()
-            .rate_limiter(crate::NoopRateLimiter)
+            .rate_limiter(crate::defaults::NoopRateLimiter)
             .build()
             .expect("default engine");
         let _router = create_router(Arc::new(engine));

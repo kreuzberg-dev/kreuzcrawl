@@ -7,7 +7,12 @@
     clippy::needless_borrow,
     clippy::map_identity,
     clippy::just_underscores_and_digits,
-    clippy::unused_unit
+    clippy::unused_unit,
+    clippy::unnecessary_cast,
+    clippy::unwrap_or_default,
+    clippy::derivable_impls,
+    clippy::needless_borrows_for_generic_args,
+    clippy::unnecessary_fallible_conversions
 )]
 
 use rustler::ResourceArc;
@@ -91,6 +96,7 @@ pub struct CrawlConfig {
     pub exclude_paths: Vec<String>,
     pub custom_headers: HashMap<String, String>,
     pub request_timeout: u64,
+    pub rate_limit_ms: Option<u64>,
     pub max_redirects: usize,
     pub retry_count: usize,
     pub retry_codes: Vec<u16>,
@@ -151,6 +157,7 @@ impl CrawlConfig {
                 .get("request_timeout")
                 .and_then(|t| t.decode().ok())
                 .unwrap_or(30000),
+            rate_limit_ms: opts.get("rate_limit_ms").and_then(|t| t.decode().ok()),
             max_redirects: opts.get("max_redirects").and_then(|t| t.decode().ok()).unwrap_or(10),
             retry_count: opts.get("retry_count").and_then(|t| t.decode().ok()).unwrap_or(0),
             retry_codes: opts
@@ -1157,6 +1164,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             exclude_paths: val.exclude_paths,
             custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: std::time::Duration::from_millis(val.request_timeout),
+            rate_limit_ms: val.rate_limit_ms,
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
             retry_codes: val.retry_codes,
@@ -1199,6 +1207,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             exclude_paths: val.exclude_paths,
             custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: val.request_timeout.as_millis() as u64,
+            rate_limit_ms: val.rate_limit_ms,
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
             retry_codes: val.retry_codes,

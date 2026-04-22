@@ -1,4 +1,5 @@
 //! Disk-backed HTTP response cache using blake3 for key hashing.
+#![allow(dead_code)]
 
 #[cfg(not(target_arch = "wasm32"))]
 use std::path::{Path, PathBuf};

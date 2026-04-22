@@ -78,6 +78,13 @@ public sealed class CrawlConfig
     public ulong? RequestTimeout { get; set; } = null;
 
     /// <summary>
+    /// Per-domain rate limit in milliseconds. When set, enforces a minimum delay
+    /// between requests to the same domain. Defaults to 200ms when `None`.
+    /// </summary>
+    [JsonPropertyName("rate_limit_ms")]
+    public ulong? RateLimitMs { get; set; } = null;
+
+    /// <summary>
     /// Maximum number of redirects to follow.
     /// </summary>
     [JsonPropertyName("max_redirects")]

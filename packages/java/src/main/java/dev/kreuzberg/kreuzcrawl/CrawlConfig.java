@@ -32,6 +32,8 @@ public record CrawlConfig(
 		@JsonProperty("custom_headers") Map<String, String> customHeaders,
 		/** Timeout for individual HTTP requests (in milliseconds when serialized). */
 		@JsonProperty("request_timeout") Long requestTimeout,
+		/** Per-domain rate limit in milliseconds. When set, enforces a minimum delay */
+		@JsonProperty("rate_limit_ms") Optional<Long> rateLimitMs,
 		/** Maximum number of redirects to follow. */
 		@JsonProperty("max_redirects") long maxRedirects,
 		/** Number of retry attempts for failed requests. */

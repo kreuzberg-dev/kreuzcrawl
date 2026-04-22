@@ -1,6 +1,7 @@
+#![allow(clippy::unwrap_used, clippy::panic)]
 //! Integration tests for batch_crawl: multiple seed URLs crawled concurrently.
 
-use kreuzcrawl::{CrawlConfig, CrawlEngine, NoopRateLimiter};
+use kreuzcrawl::{CrawlConfig, batch_crawl, create_engine};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -24,25 +25,26 @@ async fn test_batch_crawl_multiple_seeds() {
         max_depth: Some(0),
         ..Default::default()
     };
-    let engine = CrawlEngine::builder()
-        .config(config)
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
+    let handle = create_engine(Some(config)).unwrap();
 
     let urls: Vec<String> = ["a", "b", "c"].iter().map(|n| format!("{}/{n}", mock.uri())).collect();
-    let url_refs: Vec<&str> = urls.iter().map(|s| s.as_str()).collect();
 
-    let results = engine.batch_crawl(&url_refs).await;
+    let results = batch_crawl(&handle, urls).await;
     assert_eq!(results.len(), 3);
 
-    let success_count = results.iter().filter(|(_, r)| r.is_ok()).count();
+    let success_count = results.iter().filter(|r| r.result.is_some()).count();
     assert_eq!(success_count, 3, "all 3 should succeed");
 
     // Verify each result has pages.
-    for (url, result) in &results {
-        let crawl = result.as_ref().unwrap_or_else(|e| panic!("{url} failed: {e}"));
-        assert!(!crawl.pages.is_empty(), "{url} should have at least 1 page");
+    for result in &results {
+        let crawl = result.result.as_ref().unwrap_or_else(|| {
+            panic!(
+                "{} failed: {}",
+                result.url,
+                result.error.as_deref().unwrap_or("unknown")
+            )
+        });
+        assert!(!crawl.pages.is_empty(), "{} should have at least 1 page", result.url);
     }
 }
 
@@ -70,19 +72,14 @@ async fn test_batch_crawl_partial_failure() {
         max_depth: Some(0),
         ..Default::default()
     };
-    let engine = CrawlEngine::builder()
-        .config(config)
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
+    let handle = create_engine(Some(config)).unwrap();
 
-    let urls = [format!("{}/ok", mock.uri()), format!("{}/fail", mock.uri())];
-    let url_refs: Vec<&str> = urls.iter().map(|s| s.as_str()).collect();
+    let urls = vec![format!("{}/ok", mock.uri()), format!("{}/fail", mock.uri())];
 
-    let results = engine.batch_crawl(&url_refs).await;
+    let results = batch_crawl(&handle, urls).await;
     assert_eq!(results.len(), 2);
 
     // At least one should succeed and at least one should fail or have an error.
-    let successes = results.iter().filter(|(_, r)| r.is_ok()).count();
+    let successes = results.iter().filter(|r| r.result.is_some()).count();
     assert!(successes >= 1, "at least one seed should succeed");
 }

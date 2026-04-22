@@ -30,7 +30,7 @@ pub struct CitationReference {
 // Allows one level of balanced parentheses in URLs (e.g. Wikipedia-style URLs)
 // Pattern: match chars that aren't ), allowing one balanced pair (...) inside
 static LINK_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"!?\[([^\]]*)\]\(([^)]*\([^)]*\)[^)]*|[^)]*)\)").unwrap());
+    LazyLock::new(|| Regex::new(r"!?\[([^\]]*)\]\(([^)]*\([^)]*\)[^)]*|[^)]*)\)").expect("hardcoded regex is valid"));
 
 /// Convert markdown links to numbered citations.
 ///
@@ -42,7 +42,7 @@ pub fn generate_citations(markdown: &str) -> CitationResult {
     let mut seen_urls = std::collections::HashMap::new();
 
     let content = LINK_RE.replace_all(markdown, |caps: &regex::Captures| {
-        let full_match = caps.get(0).unwrap().as_str();
+        let full_match = caps.get(0).expect("capture group 0 always exists").as_str();
         // Skip images (start with !)
         if full_match.starts_with('!') {
             return full_match.to_owned();

@@ -7,7 +7,12 @@
     clippy::needless_borrow,
     clippy::map_identity,
     clippy::just_underscores_and_digits,
-    clippy::unused_unit
+    clippy::unused_unit,
+    clippy::unnecessary_cast,
+    clippy::unwrap_or_default,
+    clippy::derivable_impls,
+    clippy::needless_borrows_for_generic_args,
+    clippy::unnecessary_fallible_conversions
 )]
 
 use std::sync::Arc;
@@ -260,6 +265,7 @@ pub struct WasmCrawlConfig {
     exclude_paths: Vec<String>,
     custom_headers: JsValue,
     request_timeout: Option<u64>,
+    rate_limit_ms: Option<u64>,
     max_redirects: usize,
     retry_count: usize,
     retry_codes: Vec<u16>,
@@ -315,6 +321,7 @@ impl WasmCrawlConfig {
         max_pages: Option<usize>,
         max_concurrent: Option<usize>,
         user_agent: Option<String>,
+        rate_limit_ms: Option<u64>,
         auth: Option<WasmAuthConfig>,
         max_body_size: Option<usize>,
         map_limit: Option<usize>,
@@ -337,6 +344,7 @@ impl WasmCrawlConfig {
             exclude_paths: exclude_paths.unwrap_or_default(),
             custom_headers: custom_headers.unwrap_or_default(),
             request_timeout,
+            rate_limit_ms,
             max_redirects: max_redirects.unwrap_or(10),
             retry_count: retry_count.unwrap_or(0),
             retry_codes: retry_codes.unwrap_or_default(),
@@ -471,6 +479,16 @@ impl WasmCrawlConfig {
     #[wasm_bindgen(setter, js_name = "requestTimeout")]
     pub fn set_request_timeout(&mut self, value: Option<u64>) {
         self.request_timeout = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "rateLimitMs")]
+    pub fn rate_limit_ms(&self) -> Option<u64> {
+        self.rate_limit_ms
+    }
+
+    #[wasm_bindgen(setter, js_name = "rateLimitMs")]
+    pub fn set_rate_limit_ms(&mut self, value: Option<u64>) {
+        self.rate_limit_ms = value;
     }
 
     #[wasm_bindgen(getter, js_name = "maxRedirects")]
@@ -3601,6 +3619,7 @@ impl From<WasmCrawlConfig> for kreuzcrawl::CrawlConfig {
         if let Some(__v) = val.request_timeout {
             __result.request_timeout = std::time::Duration::from_millis(__v);
         }
+        __result.rate_limit_ms = val.rate_limit_ms;
         __result.max_redirects = val.max_redirects;
         __result.retry_count = val.retry_count;
         __result.retry_codes = val.retry_codes;
@@ -3642,6 +3661,7 @@ impl From<kreuzcrawl::CrawlConfig> for WasmCrawlConfig {
             exclude_paths: val.exclude_paths,
             custom_headers: serde_wasm_bindgen::to_value(&val.custom_headers).unwrap_or(JsValue::NULL),
             request_timeout: Some(val.request_timeout.as_millis() as u64),
+            rate_limit_ms: val.rate_limit_ms,
             max_redirects: val.max_redirects,
             retry_count: val.retry_count,
             retry_codes: val.retry_codes,

@@ -26,5 +26,4 @@ mod startup;
 mod state;
 mod types;
 
-pub use router::create_router;
-pub use startup::{serve, serve_with_config};
+pub use startup::serve_with_config;

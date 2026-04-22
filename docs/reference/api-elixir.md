@@ -2,7 +2,7 @@
 title: "Elixir API Reference"
 ---
 
-## Elixir API Reference <span class="version-badge">v0.1.1</span>
+## Elixir API Reference <span class="version-badge">v0.1.2</span>
 
 ### Functions
 
@@ -277,6 +277,7 @@ Configuration for crawl, scrape, and map operations.
 | `exclude_paths` | `list(String.t())` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `map()` | `%{}` | Custom HTTP headers to send with each request. |
 | `request_timeout` | `integer()` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `rate_limit_ms` | `integer() | nil` | `nil` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `nil`. |
 | `max_redirects` | `integer()` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `integer()` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `list(integer())` | `[]` | HTTP status codes that should trigger a retry. |

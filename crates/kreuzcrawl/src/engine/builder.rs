@@ -46,42 +46,49 @@ impl CrawlEngineBuilder {
     }
 
     /// Set the frontier implementation.
+    #[allow(dead_code)]
     pub fn frontier(mut self, frontier: impl Frontier + 'static) -> Self {
         self.frontier = Some(Arc::new(frontier));
         self
     }
 
     /// Set the rate limiter implementation.
+    #[allow(dead_code)]
     pub fn rate_limiter(mut self, rate_limiter: impl RateLimiter + 'static) -> Self {
         self.rate_limiter = Some(Arc::new(rate_limiter));
         self
     }
 
     /// Set the store implementation.
+    #[allow(dead_code)]
     pub fn store(mut self, store: impl CrawlStore + 'static) -> Self {
         self.store = Some(Arc::new(store));
         self
     }
 
     /// Set the event emitter implementation.
+    #[allow(dead_code)]
     pub fn event_emitter(mut self, event_emitter: impl EventEmitter + 'static) -> Self {
         self.event_emitter = Some(Arc::new(event_emitter));
         self
     }
 
     /// Set the crawl strategy implementation.
+    #[allow(dead_code)]
     pub fn strategy(mut self, strategy: impl CrawlStrategy + 'static) -> Self {
         self.strategy = Some(Arc::new(strategy));
         self
     }
 
     /// Set the content filter implementation.
+    #[allow(dead_code)]
     pub fn content_filter(mut self, content_filter: impl ContentFilter + 'static) -> Self {
         self.content_filter = Some(Arc::new(content_filter));
         self
     }
 
     /// Set the persistent cache implementation.
+    #[allow(dead_code)]
     pub fn cache(mut self, cache: impl CrawlCache + 'static) -> Self {
         self.cache = Some(Arc::new(cache));
         self
@@ -93,6 +100,7 @@ impl CrawlEngineBuilder {
     /// the engine can always be constructed and individual operations report validation errors.
     pub fn build(self) -> Result<CrawlEngine, CrawlError> {
         let config = self.config.unwrap_or_default();
+        let rate_limit_ms = config.rate_limit_ms.unwrap_or(200);
         #[cfg(not(target_arch = "wasm32"))]
         let ua_rotation = crate::tower::UaRotationLayer::new(config.user_agents.clone());
         Ok(CrawlEngine {
@@ -100,9 +108,11 @@ impl CrawlEngineBuilder {
             frontier: self
                 .frontier
                 .unwrap_or_else(|| Arc::new(defaults::InMemoryFrontier::new())),
-            rate_limiter: self
-                .rate_limiter
-                .unwrap_or_else(|| Arc::new(defaults::PerDomainThrottle::new(std::time::Duration::from_millis(200)))),
+            rate_limiter: self.rate_limiter.unwrap_or_else(|| {
+                Arc::new(defaults::PerDomainThrottle::new(std::time::Duration::from_millis(
+                    rate_limit_ms,
+                )))
+            }),
             store: self.store.unwrap_or_else(|| Arc::new(defaults::NoopStore)),
             event_emitter: self.event_emitter.unwrap_or_else(|| Arc::new(defaults::NoopEmitter)),
             strategy: self.strategy.unwrap_or_else(|| Arc::new(defaults::BfsStrategy)),

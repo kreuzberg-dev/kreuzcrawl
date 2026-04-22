@@ -1,69 +1,57 @@
 //! kreuzcrawl -- A Rust crawling engine for turning websites into structured data.
 
 #[cfg(feature = "api")]
-pub mod api;
+pub(crate) mod api;
 mod assets;
-pub mod bindings;
+pub(crate) mod bindings;
 #[cfg(feature = "browser")]
 mod browser;
 mod browser_detect;
 #[cfg(feature = "browser")]
 mod browser_pool;
 #[cfg(feature = "browser")]
-pub mod browser_profile;
-pub mod citations;
+pub(crate) mod browser_profile;
+pub(crate) mod citations;
 
-pub mod defaults;
-pub mod engine;
+pub(crate) mod defaults;
+pub(crate) mod engine;
 mod error;
 #[cfg(not(target_arch = "wasm32"))]
 mod helpers;
 mod html;
 mod http;
 #[cfg(feature = "interact")]
-pub mod interact;
+pub(crate) mod interact;
 mod map;
 mod markdown;
 #[cfg(feature = "mcp")]
-pub mod mcp;
+pub(crate) mod mcp;
 mod normalize;
 mod pruning;
 #[cfg(feature = "ai")]
-pub mod research;
+pub(crate) mod research;
 mod robots;
 mod scrape;
 mod sitemap;
-pub mod tower;
-pub mod traits;
+pub(crate) mod tower;
+pub(crate) mod traits;
 mod types;
 #[cfg(feature = "warc")]
-pub mod warc;
+pub(crate) mod warc;
 
+#[cfg(feature = "api")]
+pub use api::serve_with_config as serve_api;
 pub use bindings::{
     BatchCrawlResult, BatchScrapeResult, CrawlEngineHandle, batch_crawl, batch_scrape, crawl, create_engine, map_urls,
     scrape,
 };
-#[cfg(feature = "browser")]
-pub use browser_pool::{BrowserPool, BrowserPoolConfig, PooledPage};
 pub use citations::{CitationReference, CitationResult};
-#[cfg(not(target_arch = "wasm32"))]
-pub use defaults::DiskCache;
-#[cfg(feature = "ai")]
-pub use defaults::LlmExtractor;
-pub use defaults::{
-    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, Bm25Filter, DfsStrategy, InMemoryFrontier, NoopCache,
-    NoopEmitter, NoopFilter, NoopRateLimiter, NoopStore, PerDomainThrottle,
-};
-pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
-pub use traits::{
-    CompleteEvent, ContentFilter, CrawlCache, CrawlStats, CrawlStore, CrawlStrategy, ErrorEvent, EventEmitter,
-    Frontier, FrontierEntry, PageEvent, RateLimiter,
-};
+#[cfg(feature = "mcp")]
+pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use types::{
-    ActionResult, ArticleMetadata, AssetCategory, AuthConfig, BrowserConfig, BrowserMode, BrowserWait, CachedPage,
-    CookieInfo, CrawlConfig, CrawlEvent, CrawlPageResult, CrawlResult, DownloadedAsset, DownloadedDocument,
-    ExtractionMeta, FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource,
-    InteractionResult, JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig,
-    ResponseMeta, ScrapeResult, SitemapUrl,
+    ArticleMetadata, AssetCategory, AuthConfig, BrowserConfig, BrowserMode, BrowserWait, CookieInfo, CrawlConfig,
+    CrawlPageResult, CrawlResult, DownloadedAsset, DownloadedDocument, ExtractionMeta, FaviconInfo, FeedInfo, FeedType,
+    HeadingInfo, HreflangEntry, ImageInfo, ImageSource, JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult,
+    PageMetadata, ProxyConfig, ResponseMeta, ScrapeResult, SitemapUrl,
 };

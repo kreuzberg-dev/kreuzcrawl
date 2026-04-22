@@ -1,7 +1,8 @@
+#![allow(clippy::unwrap_used, clippy::panic)]
 //! Integration tests verifying that Tower service layers (UA rotation, caching)
 //! actually affect HTTP requests sent to the server.
 
-use kreuzcrawl::{CrawlConfig, CrawlEngine, NoopRateLimiter};
+use kreuzcrawl::{CrawlConfig, create_engine, scrape};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -23,13 +24,9 @@ async fn test_ua_rotation_reaches_server() {
         user_agents: vec!["TestBot/1.0".into()],
         ..CrawlConfig::default()
     };
-    let engine = CrawlEngine::builder()
-        .config(config)
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
+    let handle = create_engine(Some(config)).unwrap();
 
-    let result = engine.scrape(&mock.uri()).await;
+    let result = scrape(&handle, &mock.uri()).await;
     assert!(result.is_ok(), "should succeed: {:?}", result.err());
 
     // Verify the User-Agent header the server actually received.
@@ -68,15 +65,11 @@ async fn test_ua_rotation_cycles_through_agents() {
         user_agents: vec!["AgentA/1.0".to_string(), "AgentB/2.0".to_string()],
         ..CrawlConfig::default()
     };
-    let engine = CrawlEngine::builder()
-        .config(config)
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
+    let handle = create_engine(Some(config)).unwrap();
 
     for i in 0..3 {
         let url = format!("{}/page{i}", mock.uri());
-        engine.scrape(&url).await.unwrap();
+        scrape(&handle, &url).await.unwrap();
     }
 
     let received = mock.received_requests().await.unwrap();
@@ -129,20 +122,15 @@ async fn test_cache_layer_avoids_duplicate_fetches() {
         .mount(&mock)
         .await;
 
-    let config = CrawlConfig::default();
-    let engine = CrawlEngine::builder()
-        .config(config)
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
+    let handle = create_engine(Some(CrawlConfig::default())).unwrap();
 
     // First scrape populates the Tower cache layer.
-    let result1 = engine.scrape(&mock.uri()).await.unwrap();
+    let result1 = scrape(&handle, &mock.uri()).await.unwrap();
     assert_eq!(result1.status_code, 200);
     assert!(result1.html.contains("Cached"));
 
     // Second scrape should be served from the cache layer (no second HTTP request).
-    let result2 = engine.scrape(&mock.uri()).await.unwrap();
+    let result2 = scrape(&handle, &mock.uri()).await.unwrap();
     assert_eq!(result2.status_code, 200);
     assert!(result2.html.contains("Cached"));
 }

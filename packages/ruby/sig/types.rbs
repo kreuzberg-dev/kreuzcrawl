@@ -53,6 +53,7 @@ module Kreuzcrawl
     attr_accessor exclude_paths: Array[String]
     attr_accessor custom_headers: Hash[String, String]
     attr_accessor request_timeout: Integer
+    attr_accessor rate_limit_ms: Integer
     attr_accessor max_redirects: Integer
     attr_accessor retry_count: Integer
     attr_accessor retry_codes: Array[Integer]
@@ -77,7 +78,7 @@ module Kreuzcrawl
     attr_accessor browser_profile: String
     attr_accessor save_browser_profile: bool
 
-    def initialize: (?max_depth: Integer, ?max_pages: Integer, ?max_concurrent: Integer, respect_robots_txt: bool, ?user_agent: String, stay_on_domain: bool, allow_subdomains: bool, include_paths: Array[String], exclude_paths: Array[String], custom_headers: Hash[String, String], request_timeout: Integer, max_redirects: Integer, retry_count: Integer, retry_codes: Array[Integer], cookies_enabled: bool, ?auth: AuthConfig, ?max_body_size: Integer, main_content_only: bool, remove_tags: Array[String], ?map_limit: Integer, ?map_search: String, download_assets: bool, asset_types: Array[AssetCategory], ?max_asset_size: Integer, browser: BrowserConfig, ?proxy: ProxyConfig, user_agents: Array[String], capture_screenshot: bool, download_documents: bool, ?document_max_size: Integer, document_mime_types: Array[String], ?warc_output: String, ?browser_profile: String, save_browser_profile: bool) -> void
+    def initialize: (?max_depth: Integer, ?max_pages: Integer, ?max_concurrent: Integer, respect_robots_txt: bool, ?user_agent: String, stay_on_domain: bool, allow_subdomains: bool, include_paths: Array[String], exclude_paths: Array[String], custom_headers: Hash[String, String], request_timeout: Integer, ?rate_limit_ms: Integer, max_redirects: Integer, retry_count: Integer, retry_codes: Array[Integer], cookies_enabled: bool, ?auth: AuthConfig, ?max_body_size: Integer, main_content_only: bool, remove_tags: Array[String], ?map_limit: Integer, ?map_search: String, download_assets: bool, asset_types: Array[AssetCategory], ?max_asset_size: Integer, browser: BrowserConfig, ?proxy: ProxyConfig, user_agents: Array[String], capture_screenshot: bool, download_documents: bool, ?document_max_size: Integer, document_mime_types: Array[String], ?warc_output: String, ?browser_profile: String, save_browser_profile: bool) -> void
     def validate: () -> void
     def self.default: () -> CrawlConfig
   end

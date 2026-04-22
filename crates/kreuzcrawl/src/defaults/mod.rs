@@ -9,14 +9,12 @@ mod rate_limiter;
 mod store;
 mod strategy;
 
-#[cfg(not(target_arch = "wasm32"))]
-pub use cache::DiskCache;
 pub use cache::NoopCache;
 pub use emitter::NoopEmitter;
-pub use filter::{Bm25Filter, NoopFilter};
+pub use filter::NoopFilter;
 pub use frontier::InMemoryFrontier;
-#[cfg(feature = "ai")]
-pub use llm_extractor::LlmExtractor;
-pub use rate_limiter::{NoopRateLimiter, PerDomainThrottle};
+#[cfg(test)]
+pub use rate_limiter::NoopRateLimiter;
+pub use rate_limiter::PerDomainThrottle;
 pub use store::NoopStore;
-pub use strategy::{AdaptiveStrategy, BestFirstStrategy, BfsStrategy, DfsStrategy};
+pub use strategy::BfsStrategy;

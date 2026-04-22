@@ -1,9 +1,9 @@
-#[cfg(feature = "api")]
-use std::sync::Arc;
 use std::time::Duration;
 
 use clap::{Parser, Subcommand, ValueEnum};
-use kreuzcrawl::{BrowserConfig, BrowserMode, CrawlConfig, CrawlEngine, PerDomainThrottle, ProxyConfig};
+use kreuzcrawl::{
+    BrowserConfig, BrowserMode, CrawlConfig, ProxyConfig, batch_crawl, crawl, create_engine, map_urls, scrape,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
 enum CliBrowserMode {
@@ -180,8 +180,8 @@ async fn main() {
                 browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
                 ..Default::default()
             };
-            let engine = CrawlEngine::builder().config(config).build().unwrap();
-            match engine.scrape(&url).await {
+            let handle = create_engine(Some(config)).expect("failed to create crawl engine");
+            match scrape(&handle, &url).await {
                 Ok(result) => {
                     if format == "markdown" {
                         if let Some(ref md) = result.markdown {
@@ -190,7 +190,10 @@ async fn main() {
                             eprintln!("No markdown content available");
                         }
                     } else {
-                        println!("{}", serde_json::to_string_pretty(&result).unwrap());
+                        println!(
+                            "{}",
+                            serde_json::to_string_pretty(&result).expect("result is serializable")
+                        );
                     }
                 }
                 Err(e) => {
@@ -219,6 +222,7 @@ async fn main() {
                 max_depth: Some(depth),
                 max_pages,
                 max_concurrent: Some(concurrent),
+                rate_limit_ms: Some(rate_limit),
                 user_agent,
                 request_timeout: timeout_duration,
                 respect_robots_txt,
@@ -231,14 +235,10 @@ async fn main() {
                 browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
                 ..Default::default()
             };
-            let engine = CrawlEngine::builder()
-                .config(config)
-                .rate_limiter(PerDomainThrottle::new(Duration::from_millis(rate_limit)))
-                .build()
-                .unwrap();
+            let handle = create_engine(Some(config)).expect("failed to create crawl engine");
 
             if urls.len() == 1 {
-                match engine.crawl(&urls[0]).await {
+                match crawl(&handle, &urls[0]).await {
                     Ok(result) => {
                         if format == "markdown" {
                             for page in &result.pages {
@@ -247,7 +247,10 @@ async fn main() {
                                 }
                             }
                         } else {
-                            println!("{}", serde_json::to_string_pretty(&result).unwrap());
+                            println!(
+                                "{}",
+                                serde_json::to_string_pretty(&result).expect("result is serializable")
+                            );
                         }
                     }
                     Err(e) => {
@@ -256,19 +259,18 @@ async fn main() {
                     }
                 }
             } else {
-                let url_refs: Vec<&str> = urls.iter().map(|s| s.as_str()).collect();
-                let results = engine.batch_crawl(&url_refs).await;
+                let results = batch_crawl(&handle, urls).await;
                 if format == "markdown" {
-                    for (seed_url, result) in &results {
-                        match result {
-                            Ok(r) => {
-                                for page in &r.pages {
-                                    if let Some(ref md) = page.markdown {
-                                        println!("---\nSeed: {seed_url}\nURL: {}\n---\n{}\n", page.url, md.content);
-                                    }
+                    for entry in &results {
+                        if let Some(ref r) = entry.result {
+                            for page in &r.pages {
+                                if let Some(ref md) = page.markdown {
+                                    println!("---\nSeed: {}\nURL: {}\n---\n{}\n", entry.url, page.url, md.content);
                                 }
                             }
-                            Err(e) => eprintln!("Error crawling {seed_url}: {e}"),
+                        }
+                        if let Some(ref e) = entry.error {
+                            eprintln!("Error crawling {}: {e}", entry.url);
                         }
                     }
                 } else {
@@ -277,18 +279,19 @@ async fn main() {
                         serde_json::to_string_pretty(
                             &results
                                 .iter()
-                                .map(|(url, r)| {
+                                .map(|entry| {
                                     serde_json::json!({
-                                        "seed_url": url,
-                                        "result": match r {
-                                            Ok(r) => serde_json::to_value(r).unwrap_or_default(),
-                                            Err(e) => serde_json::json!({"error": e.to_string()}),
+                                        "seed_url": entry.url,
+                                        "result": match (&entry.result, &entry.error) {
+                                            (Some(r), _) => serde_json::to_value(r).unwrap_or_default(),
+                                            (_, Some(e)) => serde_json::json!({"error": e}),
+                                            _ => serde_json::json!(null),
                                         }
                                     })
                                 })
                                 .collect::<Vec<_>>()
                         )
-                        .unwrap()
+                        .expect("results are serializable")
                     );
                 }
             }
@@ -305,8 +308,8 @@ async fn main() {
                 map_search: search,
                 ..Default::default()
             };
-            let engine = CrawlEngine::builder().config(config).build().unwrap();
-            match engine.map(&url).await {
+            let handle = create_engine(Some(config)).expect("failed to create crawl engine");
+            match map_urls(&handle, &url).await {
                 Ok(result) => {
                     for url_entry in &result.urls {
                         println!("{}", url_entry.url);
@@ -320,9 +323,8 @@ async fn main() {
         }
         #[cfg(feature = "api")]
         Commands::Serve { host, port } => {
-            let engine = CrawlEngine::builder().build().unwrap();
             eprintln!("Starting REST API server on {host}:{port}");
-            if let Err(e) = kreuzcrawl::api::serve(&host, port, Arc::new(engine)).await {
+            if let Err(e) = kreuzcrawl::serve_api(&host, port, CrawlConfig::default()).await {
                 eprintln!("Server error: {e}");
                 std::process::exit(1);
             }
@@ -330,7 +332,7 @@ async fn main() {
         #[cfg(feature = "mcp")]
         Commands::Mcp {} => {
             eprintln!("Starting MCP server (stdio transport)");
-            if let Err(e) = kreuzcrawl::mcp::start_mcp_server().await {
+            if let Err(e) = kreuzcrawl::start_mcp_server().await {
                 eprintln!("MCP server error: {e}");
                 std::process::exit(1);
             }

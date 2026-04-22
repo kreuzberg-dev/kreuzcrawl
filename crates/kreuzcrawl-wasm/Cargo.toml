@@ -1,6 +1,6 @@
 [package]
 name = "kreuzcrawl-wasm"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"
@@ -24,3 +24,7 @@ kreuzcrawl = { path = "../kreuzcrawl", default-features = false }
 serde-wasm-bindgen = "0.6"
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
+
+[lints.clippy]
+duplicated_attributes = "allow"
+unwrap_used = "allow"

@@ -87,3 +87,6 @@ tempfile = { workspace = true }
 tokio = { workspace = true }
 tokio-stream = { workspace = true }
 wiremock = "0.6"
+
+[lints]
+workspace = true

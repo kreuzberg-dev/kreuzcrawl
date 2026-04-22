@@ -14,6 +14,7 @@ sources = [
 ]
 version_from = "Cargo.toml"
 workspace_root = "."
+path_mappings = { "kreuzcrawl::citations" = "kreuzcrawl", "kreuzcrawl::bindings" = "kreuzcrawl" }
 
 [exclude]
 types = ["CachedPage", "InteractionResult", "ActionResult", "CrawlEvent"]

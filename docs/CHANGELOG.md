@@ -1,14 +1,22 @@
 # Changelog
 
-## Unreleased
+## 0.1.2
+
+### Breaking Changes
+
+- **Rust API**: Public surface restricted to binding API only. `CrawlEngine`, `CrawlEngineBuilder`, all traits (`Frontier`, `RateLimiter`, `CrawlStore`, `EventEmitter`, `CrawlStrategy`, `ContentFilter`, `CrawlCache`), and all default implementations are now `pub(crate)`. Use `create_engine`, `scrape`, `crawl`, `map_urls`, `batch_scrape`, `batch_crawl` instead.
+- **Rust API**: `BrowserPool`, `BrowserPoolConfig`, `PooledPage` no longer re-exported
+- **Rust API**: `CachedPage`, `InteractionResult`, `ActionResult`, `CrawlEvent` removed from bindings
 
 ### Features
 
+- **Config**: Added `rate_limit_ms: Option<u64>` to `CrawlConfig` for per-domain rate limiting across all languages
 - **CLI**: Added `--browser-mode` and `--browser-endpoint` flags to `scrape` and `crawl` subcommands
 - **CLI**: Browser fallback now works in the crawl path (was scrape-only)
 - **CLI**: `--timeout` propagated to browser page-load timeout
 - **CLI**: `--browser-endpoint` validated as `ws://` or `wss://` URL
-- **API**: Removed internal types from polyglot bindings (`CachedPage`, `InteractionResult`, `ActionResult`, `CrawlEvent`)
+- **CLI**: Refactored to use only the public binding API (`create_engine`, `scrape`, `crawl`, `map_urls`, `batch_crawl`)
+- **Rust API**: `serve_api` and `start_mcp_server` re-exported at crate root for server deployments
 - **Bindings**: TypeScript discriminated unions for `AuthConfig` and `CrawlEvent`
 - **Bindings**: TypeScript non-optional fields are now required (no `?`) in `.d.ts`
 - **Bindings**: JSDoc on all TypeScript types, functions, enums, and fields
@@ -17,6 +25,7 @@
 - **Bindings**: Elixir enum modules generated for all 9 enums
 - **Bindings**: WASM rustdoc on all generated types and functions
 - **Bindings**: WASM structured error objects `{code, message}` (was plain strings)
+- **Infra**: Workspace-level Cargo lints (`clippy::all`, `unsafe_code`) inherited by all crates
 - **Docs**: Lychee link checker added to CI docs workflow
 - **E2E**: 48 new test fixtures covering batch_crawl, downloads, interaction, WARC, proxy, browser crawl, and more
 
@@ -36,6 +45,9 @@
 - **CI**: Homebrew formula sha256 handles single-quoted values
 - **CI**: Docs workflow setup-go@v6 for Go 1.26 toolchain
 - **CI**: Ruby `Gemfile.lock` synced for v0.1.1
+- **Alef**: `alef docs` now uses filtered IR matching binding surface
+- **Alef**: Deterministic C# NativeMethods.cs ordering (sorted DllImport entries)
+- **Alef**: `alef.toml` uses exclude blacklist instead of include whitelist
 
 ## 0.1.1
 

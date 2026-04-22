@@ -2,7 +2,7 @@
 title: "TypeScript API Reference"
 ---
 
-## TypeScript API Reference <span class="version-badge">v0.1.1</span>
+## TypeScript API Reference <span class="version-badge">v0.1.2</span>
 
 ### Functions
 
@@ -271,6 +271,7 @@ Configuration for crawl, scrape, and map operations.
 | `excludePaths` | `Array<string>` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `customHeaders` | `Record<string, string>` | `{}` | Custom HTTP headers to send with each request. |
 | `requestTimeout` | `number` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `rateLimitMs` | `number | null` | `null` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `null`. |
 | `maxRedirects` | `number` | `10` | Maximum number of redirects to follow. |
 | `retryCount` | `number` | `0` | Number of retry attempts for failed requests. |
 | `retryCodes` | `Array<number>` | `[]` | HTTP status codes that should trigger a retry. |

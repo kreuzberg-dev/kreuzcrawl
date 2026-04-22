@@ -64,6 +64,7 @@ pub struct ApiDoc;
 /// Generate OpenAPI JSON schema.
 ///
 /// Returns the complete OpenAPI 3.1 specification as a JSON string.
+#[allow(dead_code)]
 pub fn openapi_json() -> String {
     ApiDoc::openapi().to_pretty_json().unwrap_or_else(|_| "{}".to_string())
 }
