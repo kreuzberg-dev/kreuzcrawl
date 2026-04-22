@@ -1,6 +1,7 @@
+#![allow(clippy::unwrap_used, clippy::panic)]
 //! Integration tests for markdown output: citations, fit_content, and structure.
 
-use kreuzcrawl::{CrawlConfig, CrawlEngine, NoopRateLimiter};
+use kreuzcrawl::{CrawlConfig, create_engine, scrape};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -28,13 +29,8 @@ async fn test_markdown_output_is_populated() {
         .mount(&mock)
         .await;
 
-    let engine = CrawlEngine::builder()
-        .config(CrawlConfig::default())
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
-
-    let result = engine.scrape(&mock.uri()).await.unwrap();
+    let handle = create_engine(Some(CrawlConfig::default())).unwrap();
+    let result = scrape(&handle, &mock.uri()).await.unwrap();
     let md = result.markdown.expect("markdown should be present");
 
     // Markdown content should contain the title and text.
@@ -81,13 +77,8 @@ async fn test_markdown_heading_extraction() {
         .mount(&mock)
         .await;
 
-    let engine = CrawlEngine::builder()
-        .config(CrawlConfig::default())
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
-
-    let result = engine.scrape(&mock.uri()).await.unwrap();
+    let handle = create_engine(Some(CrawlConfig::default())).unwrap();
+    let result = scrape(&handle, &mock.uri()).await.unwrap();
     let md = result.markdown.expect("markdown should be present");
 
     assert!(

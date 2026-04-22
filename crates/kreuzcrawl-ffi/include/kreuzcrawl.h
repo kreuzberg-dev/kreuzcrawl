@@ -353,6 +353,13 @@ char *kcrawl_crawl_config_custom_headers(const KCRAWLCrawlConfig *ptr);
 uint64_t kcrawl_crawl_config_request_timeout(const KCRAWLCrawlConfig *ptr);
 
 /**
+ * Get the `rate_limit_ms` field from a `CrawlConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kcrawl_crawl_config_rate_limit_ms(const KCRAWLCrawlConfig *ptr);
+
+/**
  * Get the `max_redirects` field from a `CrawlConfig`.
  * # Safety
  * Pointer must be a valid handle returned by this library.

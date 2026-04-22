@@ -200,7 +200,7 @@ pub(crate) fn is_path_allowed(path: &str, rules: &RobotsRules) -> bool {
     for rule in &rules.allow {
         if robots_path_matches(path, rule) {
             let len = rule.len();
-            if best_allow.is_none() || len > best_allow.unwrap() {
+            if best_allow.is_none() || len > best_allow.expect("checked is_none above") {
                 best_allow = Some(len);
             }
         }
@@ -208,7 +208,7 @@ pub(crate) fn is_path_allowed(path: &str, rules: &RobotsRules) -> bool {
     for rule in &rules.disallow {
         if robots_path_matches(path, rule) {
             let len = rule.len();
-            if best_disallow.is_none() || len > best_disallow.unwrap() {
+            if best_disallow.is_none() || len > best_disallow.expect("checked is_none above") {
                 best_disallow = Some(len);
             }
         }

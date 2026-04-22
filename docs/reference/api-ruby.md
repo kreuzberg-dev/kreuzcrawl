@@ -2,7 +2,7 @@
 title: "Ruby API Reference"
 ---
 
-## Ruby API Reference <span class="version-badge">v0.1.1</span>
+## Ruby API Reference <span class="version-badge">v0.1.2</span>
 
 ### Functions
 
@@ -271,6 +271,7 @@ Configuration for crawl, scrape, and map operations.
 | `exclude_paths` | `Array<String>` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `Hash{String=>String}` | `{}` | Custom HTTP headers to send with each request. |
 | `request_timeout` | `Float` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `rate_limit_ms` | `Integer?` | `nil` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `nil`. |
 | `max_redirects` | `Integer` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `Integer` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `Array<Integer>` | `[]` | HTTP status codes that should trigger a retry. |

@@ -1,4 +1,5 @@
 //! Types for the deep research agent.
+#![allow(dead_code)]
 
 use serde::{Deserialize, Serialize};
 

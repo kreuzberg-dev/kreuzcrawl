@@ -21,20 +21,6 @@ if TYPE_CHECKING:
     )
 
 
-_TO_RUST_ASSETCATEGORY_MAP = {
-    "document": _rust.AssetCategory.Document,
-    "image": _rust.AssetCategory.Image,
-    "audio": _rust.AssetCategory.Audio,
-    "video": _rust.AssetCategory.Video,
-    "font": _rust.AssetCategory.Font,
-    "stylesheet": _rust.AssetCategory.Stylesheet,
-    "script": _rust.AssetCategory.Script,
-    "archive": _rust.AssetCategory.Archive,
-    "data": _rust.AssetCategory.Data,
-    "other": _rust.AssetCategory.Other,
-}
-
-
 _TO_RUST_BROWSERWAIT_MAP = {
     "network_idle": _rust.BrowserWait.NetworkIdle,
     "selector": _rust.BrowserWait.Selector,
@@ -46,6 +32,20 @@ _TO_RUST_BROWSERMODE_MAP = {
     "auto": _rust.BrowserMode.Auto,
     "always": _rust.BrowserMode.Always,
     "never": _rust.BrowserMode.Never,
+}
+
+
+_TO_RUST_ASSETCATEGORY_MAP = {
+    "document": _rust.AssetCategory.Document,
+    "image": _rust.AssetCategory.Image,
+    "audio": _rust.AssetCategory.Audio,
+    "video": _rust.AssetCategory.Video,
+    "font": _rust.AssetCategory.Font,
+    "stylesheet": _rust.AssetCategory.Stylesheet,
+    "script": _rust.AssetCategory.Script,
+    "archive": _rust.AssetCategory.Archive,
+    "data": _rust.AssetCategory.Data,
+    "other": _rust.AssetCategory.Other,
 }
 
 
@@ -90,6 +90,7 @@ def _to_rust_crawl_config(value: CrawlConfig | None) -> _rust.CrawlConfig | None
         exclude_paths=value.exclude_paths,
         custom_headers=value.custom_headers,
         request_timeout=value.request_timeout,
+        rate_limit_ms=value.rate_limit_ms,
         max_redirects=value.max_redirects,
         retry_count=value.retry_count,
         retry_codes=value.retry_codes,

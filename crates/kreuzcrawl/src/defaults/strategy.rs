@@ -1,4 +1,5 @@
 //! Crawl strategies: BFS, DFS, best-first, and adaptive URL selection.
+#![allow(dead_code)]
 
 use std::collections::VecDeque;
 

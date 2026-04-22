@@ -24,3 +24,6 @@ thiserror = { workspace = true }
 toml = { workspace = true }
 walkdir = "2.5"
 which = "8"
+
+[lints]
+workspace = true

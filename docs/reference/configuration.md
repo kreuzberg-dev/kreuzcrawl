@@ -64,6 +64,7 @@ Configuration for crawl, scrape, and map operations.
 | `exclude_paths` | `list[str]` | `[]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `dict[str, str]` | `{}` | Custom HTTP headers to send with each request. |
 | `request_timeout` | `float` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `rate_limit_ms` | `int | None` | `None` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `None`. |
 | `max_redirects` | `int` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `int` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `list[int]` | `[]` | HTTP status codes that should trigger a retry. |

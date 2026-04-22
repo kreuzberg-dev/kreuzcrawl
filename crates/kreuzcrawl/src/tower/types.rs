@@ -31,6 +31,7 @@ pub struct CrawlResponse {
     pub status: u16,
     pub content_type: String,
     pub body: String,
+    #[allow(dead_code)]
     pub body_bytes: Vec<u8>,
     pub headers: HashMap<String, Vec<String>>,
 }

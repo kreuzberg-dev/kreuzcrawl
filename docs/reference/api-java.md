@@ -2,7 +2,7 @@
 title: "Java API Reference"
 ---
 
-## Java API Reference <span class="version-badge">v0.1.1</span>
+## Java API Reference <span class="version-badge">v0.1.2</span>
 
 ### Functions
 
@@ -271,6 +271,7 @@ Configuration for crawl, scrape, and map operations.
 | `excludePaths` | `List<String>` | `Collections.emptyList()` | Regex patterns for paths to exclude during crawling. |
 | `customHeaders` | `Map<String, String>` | `Collections.emptyMap()` | Custom HTTP headers to send with each request. |
 | `requestTimeout` | `Duration` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `rateLimitMs` | `Optional<Long>` | `null` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `null`. |
 | `maxRedirects` | `long` | `10` | Maximum number of redirects to follow. |
 | `retryCount` | `long` | `0` | Number of retry attempts for failed requests. |
 | `retryCodes` | `List<Short>` | `Collections.emptyList()` | HTTP status codes that should trigger a retry. |

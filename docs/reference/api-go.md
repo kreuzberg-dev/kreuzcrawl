@@ -2,7 +2,7 @@
 title: "Go API Reference"
 ---
 
-## Go API Reference <span class="version-badge">v0.1.1</span>
+## Go API Reference <span class="version-badge">v0.1.2</span>
 
 ### Functions
 
@@ -271,6 +271,7 @@ Configuration for crawl, scrape, and map operations.
 | `ExcludePaths` | `[]string` | `nil` | Regex patterns for paths to exclude during crawling. |
 | `CustomHeaders` | `map[string]string` | `nil` | Custom HTTP headers to send with each request. |
 | `RequestTimeout` | `time.Duration` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `RateLimitMs` | `*uint64` | `nil` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `nil`. |
 | `MaxRedirects` | `int` | `10` | Maximum number of redirects to follow. |
 | `RetryCount` | `int` | `0` | Number of retry attempts for failed requests. |
 | `RetryCodes` | `[]uint16` | `nil` | HTTP status codes that should trigger a retry. |

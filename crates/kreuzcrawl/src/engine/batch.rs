@@ -1,4 +1,5 @@
 //! Batch and streaming crawl operations.
+#![allow(dead_code)]
 
 use std::sync::Arc;
 

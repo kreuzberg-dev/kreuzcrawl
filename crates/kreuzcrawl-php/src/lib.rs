@@ -4,7 +4,13 @@
     clippy::let_unit_value,
     clippy::needless_borrow,
     clippy::map_identity,
-    clippy::just_underscores_and_digits
+    clippy::just_underscores_and_digits,
+    clippy::unnecessary_cast,
+    clippy::unused_unit,
+    clippy::unwrap_or_default,
+    clippy::derivable_impls,
+    clippy::needless_borrows_for_generic_args,
+    clippy::unnecessary_fallible_conversions
 )]
 
 use ext_php_rs::prelude::*;
@@ -157,6 +163,10 @@ pub struct CrawlConfig {
     /// Timeout for individual HTTP requests (in milliseconds when serialized).
     #[php(prop, name = "request_timeout")]
     pub request_timeout: Option<i64>,
+    /// Per-domain rate limit in milliseconds. When set, enforces a minimum delay
+    /// between requests to the same domain. Defaults to 200ms when `None`.
+    #[php(prop, name = "rate_limit_ms")]
+    pub rate_limit_ms: Option<i64>,
     /// Maximum number of redirects to follow.
     #[php(prop, name = "max_redirects")]
     pub max_redirects: i64,
@@ -264,6 +274,7 @@ impl CrawlConfig {
                 .request_timeout
                 .map(|v| std::time::Duration::from_millis(v as u64))
                 .unwrap_or_default(),
+            rate_limit_ms: self.rate_limit_ms.map(|v| v as u64),
             max_redirects: self.max_redirects as usize,
             retry_count: self.retry_count as usize,
             retry_codes: self.retry_codes.clone(),
@@ -1595,6 +1606,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             exclude_paths: val.exclude_paths,
             custom_headers: val.custom_headers.into_iter().collect(),
             request_timeout: Some(val.request_timeout.as_millis() as u64 as i64),
+            rate_limit_ms: val.rate_limit_ms.map(|v| v as i64),
             max_redirects: val.max_redirects as i64,
             retry_count: val.retry_count as i64,
             retry_codes: val.retry_codes,

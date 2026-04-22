@@ -60,6 +60,7 @@ class CrawlConfig:
     exclude_paths: list[str]
     custom_headers: dict[str, str]
     request_timeout: int | None
+    rate_limit_ms: int | None
     max_redirects: int
     retry_count: int
     retry_codes: list[int]
@@ -110,6 +111,7 @@ class CrawlConfig:
         max_concurrent: int | None = None,
         user_agent: str | None = None,
         request_timeout: int | None = None,
+        rate_limit_ms: int | None = None,
         auth: AuthConfig | dict[str, Any] | None = None,
         max_body_size: int | None = None,
         map_limit: int | None = None,

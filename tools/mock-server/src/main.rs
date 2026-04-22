@@ -208,7 +208,7 @@ async fn serve_fixture(Path(rest): Path<String>, State(routes): State<Arc<RouteM
     Response::builder()
         .status(StatusCode::NOT_FOUND)
         .body(Body::from(format!("no mock route for: {key}")))
-        .unwrap()
+        .expect("NOT_FOUND response builder is infallible")
 }
 
 async fn build_response(route: &MockRoute) -> Response<Body> {
@@ -222,7 +222,9 @@ async fn build_response(route: &MockRoute) -> Response<Body> {
             builder = builder.header(name, val);
         }
     }
-    builder.body(Body::from(route.body.clone())).unwrap()
+    builder
+        .body(Body::from(route.body.clone()))
+        .expect("response body builder is infallible")
 }
 
 async fn health() -> &'static str {

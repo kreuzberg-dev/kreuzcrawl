@@ -1,6 +1,7 @@
+#![allow(clippy::unwrap_used, clippy::panic)]
 //! Integration tests for WAF/bot-protection detection via actual HTTP responses.
 
-use kreuzcrawl::{CrawlConfig, CrawlEngine, CrawlError, NoopRateLimiter};
+use kreuzcrawl::{CrawlConfig, CrawlError, create_engine, scrape};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -19,13 +20,8 @@ async fn assert_waf_blocked(body: &str, headers: Vec<(&str, &str)>) {
         .mount(&mock)
         .await;
 
-    let engine = CrawlEngine::builder()
-        .config(CrawlConfig::default())
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
-
-    let result = engine.scrape(&mock.uri()).await;
+    let handle = create_engine(Some(CrawlConfig::default())).unwrap();
+    let result = scrape(&handle, &mock.uri()).await;
     assert!(
         matches!(result, Err(CrawlError::WafBlocked(_))),
         "expected WafBlocked, got: {:?}",
@@ -83,13 +79,8 @@ async fn test_plain_403_is_not_waf() {
         .mount(&mock)
         .await;
 
-    let engine = CrawlEngine::builder()
-        .config(CrawlConfig::default())
-        .rate_limiter(NoopRateLimiter)
-        .build()
-        .unwrap();
-
-    let result = engine.scrape(&mock.uri()).await;
+    let handle = create_engine(Some(CrawlConfig::default())).unwrap();
+    let result = scrape(&handle, &mock.uri()).await;
     assert!(
         matches!(result, Err(CrawlError::Forbidden(_))),
         "plain 403 should be Forbidden, not WafBlocked: {:?}",

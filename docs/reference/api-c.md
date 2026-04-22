@@ -2,7 +2,7 @@
 title: "C API Reference"
 ---
 
-## C API Reference <span class="version-badge">v0.1.1</span>
+## C API Reference <span class="version-badge">v0.1.2</span>
 
 ### Functions
 
@@ -271,6 +271,7 @@ Configuration for crawl, scrape, and map operations.
 | `exclude_paths` | `const char**` | `NULL` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `void*` | `NULL` | Custom HTTP headers to send with each request. |
 | `request_timeout` | `uint64_t` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `rate_limit_ms` | `uint64_t*` | `NULL` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `NULL`. |
 | `max_redirects` | `uintptr_t` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `uintptr_t` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `uint16_t*` | `NULL` | HTTP status codes that should trigger a retry. |

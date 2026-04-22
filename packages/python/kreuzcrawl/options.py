@@ -159,6 +159,9 @@ class CrawlConfig:
     request_timeout: int = 30000
     """Timeout for individual HTTP requests (in milliseconds when serialized)."""
 
+    rate_limit_ms: int | None = None
+    """Per-domain rate limit in milliseconds. When set, enforces a minimum delay"""
+
     max_redirects: int = 10
     """Maximum number of redirects to follow."""
 

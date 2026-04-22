@@ -6,7 +6,13 @@
     clippy::let_unit_value,
     clippy::needless_borrow,
     clippy::redundant_locals,
-    dropping_references
+    clippy::drop_ref,
+    clippy::unnecessary_cast,
+    clippy::unused_unit,
+    clippy::unwrap_or_default,
+    clippy::derivable_impls,
+    clippy::needless_borrows_for_generic_args,
+    clippy::unnecessary_fallible_conversions
 )]
 
 use std::cell::RefCell;
@@ -731,6 +737,21 @@ pub unsafe extern "C" fn kcrawl_crawl_config_request_timeout(ptr: *const kreuzcr
     }
     let obj = unsafe { &*ptr };
     obj.request_timeout.as_millis() as u64
+}
+
+/// Get the `rate_limit_ms` field from a `CrawlConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_crawl_config_rate_limit_ms(ptr: *const kreuzcrawl::CrawlConfig) -> u64 {
+    if ptr.is_null() {
+        return 0;
+    }
+    let obj = unsafe { &*ptr };
+    match &obj.rate_limit_ms {
+        Some(val) => *val,
+        None => 0,
+    }
 }
 
 /// Get the `max_redirects` field from a `CrawlConfig`.
@@ -2315,8 +2336,8 @@ pub unsafe extern "C" fn kcrawl_crawl_result_unique_normalized_urls(this: *const
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-
-    obj.unique_normalized_urls()
+    let result = obj.unique_normalized_urls();
+    result
 }
 
 /// Create a `SitemapUrl` from a JSON string. Returns null on failure.
@@ -2690,7 +2711,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_warnings(
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_markdown_result_citations(
     ptr: *const kreuzcrawl::MarkdownResult,
-) -> *mut kreuzcrawl::citations::CitationResult {
+) -> *mut kreuzcrawl::CitationResult {
     if ptr.is_null() {
         return std::ptr::null_mut();
     }

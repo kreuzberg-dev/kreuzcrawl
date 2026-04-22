@@ -356,6 +356,9 @@ type CrawlConfig struct {
     CustomHeaders map[string]string `json:"custom_headers,omitempty"`
     // Timeout for individual HTTP requests (in milliseconds when serialized).
     RequestTimeout *uint64 `json:"request_timeout,omitempty"`
+    // Per-domain rate limit in milliseconds. When set, enforces a minimum delay
+    // between requests to the same domain. Defaults to 200ms when `None`.
+    RateLimitMs *uint64 `json:"rate_limit_ms,omitempty"`
     // Maximum number of redirects to follow.
     MaxRedirects *uint `json:"max_redirects,omitempty"`
     // Number of retry attempts for failed requests.
@@ -461,6 +464,11 @@ func WithCrawlConfigCustomHeaders(v map[string]string) CrawlConfigOption {
 // WithCrawlConfigRequestTimeout sets the request_timeout field.
 func WithCrawlConfigRequestTimeout(v uint64) CrawlConfigOption {
     return func(c *CrawlConfig) { c.RequestTimeout = &v }
+}
+
+// WithCrawlConfigRateLimitMs sets the rate_limit_ms field.
+func WithCrawlConfigRateLimitMs(v uint64) CrawlConfigOption {
+    return func(c *CrawlConfig) { c.RateLimitMs = &v }
 }
 
 // WithCrawlConfigMaxRedirects sets the max_redirects field.
@@ -592,6 +600,7 @@ func NewCrawlConfig(opts ...CrawlConfigOption) *CrawlConfig {
         ExcludePaths: nil,
         CustomHeaders: nil,
         RequestTimeout: nil,
+        RateLimitMs: nil,
         MaxRedirects: nil,
         RetryCount: 0,
         RetryCodes: nil,

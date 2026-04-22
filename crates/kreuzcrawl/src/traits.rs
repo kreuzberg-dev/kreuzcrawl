@@ -1,4 +1,5 @@
 //! Trait-based extension points for the crawl engine.
+#![allow(dead_code)]
 
 use std::time::Duration;
 

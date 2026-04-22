@@ -2,7 +2,7 @@
 title: "C# API Reference"
 ---
 
-## C# API Reference <span class="version-badge">v0.1.1</span>
+## C# API Reference <span class="version-badge">v0.1.2</span>
 
 ### Functions
 
@@ -271,6 +271,7 @@ Configuration for crawl, scrape, and map operations.
 | `ExcludePaths` | `List<string>` | `new List<string>()` | Regex patterns for paths to exclude during crawling. |
 | `CustomHeaders` | `Dictionary<string, string>` | `new Dictionary<string, string>()` | Custom HTTP headers to send with each request. |
 | `RequestTimeout` | `TimeSpan` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `RateLimitMs` | `ulong?` | `null` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `null`. |
 | `MaxRedirects` | `nuint` | `10` | Maximum number of redirects to follow. |
 | `RetryCount` | `nuint` | `0` | Number of retry attempts for failed requests. |
 | `RetryCodes` | `List<ushort>` | `new List<ushort>()` | HTTP status codes that should trigger a retry. |

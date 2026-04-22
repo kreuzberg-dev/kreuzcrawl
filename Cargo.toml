@@ -10,7 +10,7 @@ exclude = [
 resolver = "2"
 
 [workspace.package]
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 authors = ["Na'aman Hirschfeld <naaman@kreuzberg.dev>"]
 license = "Elastic-2.0"
@@ -21,6 +21,12 @@ readme = "README.md"
 rust-version = "1.91"
 keywords = ["crawl", "scrape", "web", "spider", "rust"]
 categories = ["web-programming", "network-programming"]
+
+[workspace.lints.rust]
+unsafe_code = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
 
 [workspace.dependencies]
 ahash = "0.8"

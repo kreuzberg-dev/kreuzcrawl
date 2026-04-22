@@ -1,4 +1,5 @@
 //! Persistent browser profiles for preserving cookies and localStorage across sessions.
+#![allow(dead_code)]
 
 use std::path::PathBuf;
 

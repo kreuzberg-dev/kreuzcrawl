@@ -35,6 +35,7 @@ pub struct DownloadedDocument {
 
 /// Result of executing a sequence of page interaction actions.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[allow(dead_code)]
 pub struct InteractionResult {
     /// Results from each executed action.
     pub action_results: Vec<ActionResult>,
@@ -49,6 +50,7 @@ pub struct InteractionResult {
 
 /// Result from a single page action execution.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[allow(dead_code)]
 pub struct ActionResult {
     /// Zero-based index of the action in the sequence.
     pub action_index: usize,

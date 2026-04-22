@@ -1,4 +1,5 @@
 //! Research planner that decides the next step in the research loop.
+#![allow(dead_code)]
 
 use super::types::{Finding, StepAction};
 use crate::error::CrawlError;

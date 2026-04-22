@@ -2,7 +2,7 @@
 title: "Rust API Reference"
 ---
 
-## Rust API Reference <span class="version-badge">v0.1.1</span>
+## Rust API Reference <span class="version-badge">v0.1.2</span>
 
 ### Functions
 
@@ -271,6 +271,7 @@ Configuration for crawl, scrape, and map operations.
 | `exclude_paths` | `Vec<String>` | `vec![]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `HashMap<String, String>` | `HashMap::new()` | Custom HTTP headers to send with each request. |
 | `request_timeout` | `std::time::Duration` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
+| `rate_limit_ms` | `Option<u64>` | `None` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `None`. |
 | `max_redirects` | `usize` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `usize` | `0` | Number of retry attempts for failed requests. |
 | `retry_codes` | `Vec<u16>` | `vec![]` | HTTP status codes that should trigger a retry. |

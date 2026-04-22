@@ -15,3 +15,6 @@ categories = ["api-bindings"]
 
 [dependencies]
 kreuzcrawl = { path = "../kreuzcrawl", features = ["native-runtime"] }
+
+[lints]
+workspace = true

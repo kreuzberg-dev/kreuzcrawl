@@ -21,6 +21,7 @@ public class CrawlConfigBuilder {
 	private List<String> excludePaths = List.of();
 	private Map<String, String> customHeaders = Map.of();
 	private Long requestTimeout = null;
+	private Optional<Long> rateLimitMs = Optional.empty();
 	private long maxRedirects = 0;
 	private long retryCount = 0;
 	private List<Short> retryCodes = List.of();
@@ -97,6 +98,11 @@ public class CrawlConfigBuilder {
 
 	public CrawlConfigBuilder withRequestTimeout(Long value) {
 		this.requestTimeout = value;
+		return this;
+	}
+
+	public CrawlConfigBuilder withRateLimitMs(Optional<Long> value) {
+		this.rateLimitMs = value;
 		return this;
 	}
 
@@ -217,9 +223,9 @@ public class CrawlConfigBuilder {
 
 	public CrawlConfig build() {
 		return new CrawlConfig(maxDepth, maxPages, maxConcurrent, respectRobotsTxt, userAgent, stayOnDomain,
-				allowSubdomains, includePaths, excludePaths, customHeaders, requestTimeout, maxRedirects, retryCount,
-				retryCodes, cookiesEnabled, auth, maxBodySize, mainContentOnly, removeTags, mapLimit, mapSearch,
-				downloadAssets, assetTypes, maxAssetSize, browser, proxy, userAgents, captureScreenshot,
+				allowSubdomains, includePaths, excludePaths, customHeaders, requestTimeout, rateLimitMs, maxRedirects,
+				retryCount, retryCodes, cookiesEnabled, auth, maxBodySize, mainContentOnly, removeTags, mapLimit,
+				mapSearch, downloadAssets, assetTypes, maxAssetSize, browser, proxy, userAgents, captureScreenshot,
 				downloadDocuments, documentMaxSize, documentMimeTypes, warcOutput, browserProfile, saveBrowserProfile);
 	}
 }

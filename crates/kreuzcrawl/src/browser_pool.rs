@@ -180,7 +180,7 @@ impl BrowserPool {
             self.healthy.store(true, Ordering::Release);
         }
 
-        let bs = guard.as_ref().unwrap();
+        let bs = guard.as_ref().expect("browser state was just set above");
         tokio::time::timeout(PAGE_OPEN_TIMEOUT, bs.browser.new_page("about:blank"))
             .await
             .map_err(|_| CrawlError::BrowserError("timeout opening page".into()))?

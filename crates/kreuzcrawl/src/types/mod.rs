@@ -12,6 +12,5 @@ pub use discovery::{
 };
 pub use metadata::{ArticleMetadata, FaviconInfo, HeadingInfo, HreflangEntry, PageMetadata, ResponseMeta};
 pub use results::{
-    ActionResult, CachedPage, CrawlPageResult, CrawlResult, DownloadedDocument, InteractionResult, MapResult,
-    MarkdownResult, ScrapeResult, SitemapUrl,
+    CachedPage, CrawlPageResult, CrawlResult, DownloadedDocument, MapResult, MarkdownResult, ScrapeResult, SitemapUrl,
 };

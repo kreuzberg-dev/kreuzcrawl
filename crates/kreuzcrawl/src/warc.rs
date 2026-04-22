@@ -1,4 +1,5 @@
 //! WARC 1.1 (Web ARChive) output writer.
+#![allow(dead_code)]
 //!
 //! Produces standards-compliant WARC 1.1 records for archiving crawled web content.
 //! See <https://iipc.github.io/warc-specifications/specifications/warc-format/warc-1.1/>.
@@ -119,7 +120,7 @@ fn make_record_id() -> String {
 fn format_warc_date(dt: DateTime<Utc>) -> String {
     let mut buf = String::with_capacity(20);
     use std::fmt::Write as _;
-    write!(buf, "{}", dt.format("%Y-%m-%dT%H:%M:%SZ")).unwrap();
+    write!(buf, "{}", dt.format("%Y-%m-%dT%H:%M:%SZ")).expect("write to String cannot fail");
     buf
 }
 
@@ -151,11 +152,11 @@ fn build_http_block(status: u16, headers: &[(&str, &str)], body: &[u8]) -> Resul
 
     let mut bytes = Vec::with_capacity(estimated_size);
     use std::io::Write as _;
-    write!(&mut bytes, "HTTP/1.1 {status} {reason}\r\n").unwrap();
+    write!(&mut bytes, "HTTP/1.1 {status} {reason}\r\n").expect("write to Vec cannot fail");
     for (name, value) in headers {
-        write!(&mut bytes, "{name}: {value}\r\n").unwrap();
+        write!(&mut bytes, "{name}: {value}\r\n").expect("write to Vec cannot fail");
     }
-    write!(&mut bytes, "\r\n").unwrap();
+    write!(&mut bytes, "\r\n").expect("write to Vec cannot fail");
     bytes.extend_from_slice(body);
     Ok(bytes)
 }

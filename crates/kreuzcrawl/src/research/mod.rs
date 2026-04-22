@@ -7,6 +7,3 @@ mod agent;
 mod planner;
 mod synthesizer;
 mod types;
-
-pub use agent::ResearchAgent;
-pub use types::{Finding, ResearchConfig, ResearchResult, ResearchStep, SourceInfo, StepAction};
