@@ -241,19 +241,9 @@ fn quality_crawl_config() -> kreuzcrawl::CrawlConfig {
     kreuzcrawl::CrawlConfig {
         content: kreuzcrawl::ContentConfig {
             output_format: "plain".to_owned(),
+            preprocessing_preset: "aggressive".to_owned(),
             ..Default::default()
         },
-        // Only strip crawl-specific noise that the content extractor doesn't handle.
-        remove_tags: vec![
-            ".cookie-banner",
-            ".cookie-notice",
-            ".gdpr-banner",
-            ".advertisement",
-            "#cookie-consent",
-        ]
-        .into_iter()
-        .map(String::from)
-        .collect(),
         retry_count: 1,
         retry_codes: vec![429, 500, 502, 503, 504],
         cookies_enabled: true,

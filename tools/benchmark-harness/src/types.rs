@@ -26,33 +26,29 @@ pub struct ScrapeFixture {
 
 /// Quality metrics computed for a single scrape result against a fixture.
 ///
-/// Note: these metrics use dataset-specific definitions that differ from
-/// standard IR precision/recall.
+/// Uses kreuzberg's TF1 scoring: multiset token-level F1 with separate
+/// numeric scoring and lie_text noise penalty.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScrapeQualityMetrics {
-    /// Fraction of truth tokens found in the extracted content
-    /// (`truth_tokens_found / truth_tokens_total`).
-    /// This is NOT standard IR precision.
-    pub truth_coverage: f64,
-    /// Fraction of lie tokens absent from the extracted content
-    /// (`1.0 - lie_tokens_found / lie_tokens_total`).
-    /// This is NOT standard IR recall.
-    pub noise_rejection: f64,
-    /// Harmonic mean of `truth_coverage` and `noise_rejection`.
-    /// This is NOT standard IR F1.
+    /// Text F1 score (all tokens). 0.0–1.0.
+    pub f1_text: f64,
+    /// Numeric-only F1 score (tokens containing digits). 0.0–1.0.
+    pub f1_numeric: f64,
+    /// Combined quality score: 0.6*f1_text + 0.4*f1_numeric. 0.0–1.0.
     pub quality_score: f64,
-    /// Whether any truth token was found in the output.
-    pub truth_found: bool,
-    /// Whether all lie tokens were successfully excluded.
-    pub lie_rejected: bool,
-    /// Number of truth tokens present in the scrape output.
-    pub truth_tokens_found: usize,
-    /// Total number of truth tokens in the fixture.
-    pub truth_tokens_total: usize,
-    /// Number of lie tokens present in the scrape output (should be zero).
-    pub lie_tokens_found: usize,
-    /// Total number of lie tokens in the fixture.
-    pub lie_tokens_total: usize,
+    /// Precision: fraction of extracted tokens that appear in ground truth.
+    pub precision: f64,
+    /// Recall: fraction of ground truth tokens found in extraction.
+    pub recall: f64,
+    /// Noise penalty: fraction of lie_text tokens found in extraction.
+    /// 0.0 = clean (no lie tokens present), 1.0 = all lie tokens present.
+    pub noise_penalty: f64,
+    /// Tokens in ground truth but missing from extraction (recall misses), sorted by count.
+    pub missing_tokens: Vec<(String, usize)>,
+    /// Tokens in extraction but not in ground truth (precision misses), sorted by count.
+    pub extra_tokens: Vec<(String, usize)>,
+    /// Whether quality_score >= 0.95.
+    pub correct: bool,
 }
 
 /// System-level performance metrics captured during a benchmark run.
@@ -185,12 +181,18 @@ pub struct ScrapeBenchmarkResult {
 pub struct DatasetQualityReport {
     /// Fraction of fixtures for which quality was successfully measured.
     pub coverage: f64,
-    /// Mean truth coverage across all scored fixtures.
-    pub mean_truth_coverage: f64,
-    /// Mean noise rejection across all scored fixtures.
-    pub mean_noise_rejection: f64,
-    /// Mean quality score across all scored fixtures.
+    /// Mean text F1 across all scored fixtures.
+    pub mean_f1_text: f64,
+    /// Mean numeric F1 across all scored fixtures.
+    pub mean_f1_numeric: f64,
+    /// Mean combined quality score across all scored fixtures.
     pub mean_quality_score: f64,
+    /// Mean precision across all scored fixtures.
+    pub mean_precision: f64,
+    /// Mean recall across all scored fixtures.
+    pub mean_recall: f64,
+    /// Mean noise penalty across all scored fixtures.
+    pub mean_noise_penalty: f64,
     /// Total number of fixture URLs in the dataset.
     pub total_urls: usize,
     /// Number of URLs that were scraped without error.
