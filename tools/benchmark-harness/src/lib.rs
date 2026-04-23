@@ -17,6 +17,7 @@ pub mod quality;
 pub mod runner;
 pub mod stats;
 pub mod types;
+pub mod verify;
 
 pub use config::{BenchmarkConfig, ProfilingConfig};
 pub use error::{Error, Result};

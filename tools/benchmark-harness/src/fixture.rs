@@ -39,6 +39,12 @@ pub(crate) struct ScrapeFixtureRaw {
     pub(crate) tags: Vec<String>,
     #[serde(default)]
     pub(crate) expected_status: Option<u16>,
+    #[serde(default)]
+    pub(crate) verify_selectors: Vec<String>,
+    #[serde(default)]
+    pub(crate) verify_text: Vec<String>,
+    #[serde(default)]
+    pub(crate) category: Option<String>,
 }
 
 impl From<ScrapeFixtureRaw> for ScrapeFixture {
@@ -57,6 +63,9 @@ impl From<ScrapeFixtureRaw> for ScrapeFixture {
             split: raw.split,
             tags: raw.tags,
             expected_status: raw.expected_status,
+            verify_selectors: raw.verify_selectors,
+            verify_text: raw.verify_text,
+            category: raw.category,
         }
     }
 }
