@@ -7,8 +7,8 @@ root="$(git rev-parse --show-toplevel)"
 
 export PATH="$HOME/go/bin:/usr/lib/golang/bin:${PATH:-}"
 export PKG_CONFIG_PATH="$root/crates/kreuzcrawl-ffi:${PKG_CONFIG_PATH:-}"
-export DYLD_LIBRARY_PATH="$root/target/debug:${DYLD_LIBRARY_PATH:-}"
-export LD_LIBRARY_PATH="$root/target/debug:${LD_LIBRARY_PATH:-}"
+export DYLD_LIBRARY_PATH="$root/target/release:$root/target/debug:${DYLD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="$root/target/release:$root/target/debug:${LD_LIBRARY_PATH:-}"
 
 # Go module directories in go.work
 workspace_dirs=(

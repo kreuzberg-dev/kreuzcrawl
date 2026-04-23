@@ -6,10 +6,11 @@ use std::path::Path;
 
 use chrono::Utc;
 
+use ahash::AHashMap;
+
 use crate::adapter::ScrapeOutput;
 use crate::config::BenchmarkConfig;
 use crate::stats::{percentile_r7, sanitize_f64};
-use std::collections::HashMap;
 
 use crate::Result;
 use crate::types::{
@@ -73,9 +74,9 @@ pub fn write_fixture_outputs(
     std::fs::create_dir_all(&fixtures_dir)?;
 
     // Index results and fixtures by fixture_id for O(1) lookup.
-    let result_map: HashMap<&str, &ScrapeBenchmarkResult> =
+    let result_map: AHashMap<&str, &ScrapeBenchmarkResult> =
         results.iter().map(|r| (r.fixture_id.as_str(), r)).collect();
-    let fixture_map: HashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
+    let fixture_map: AHashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
 
     for (fixture_id, maybe_output) in outputs {
         let Some(output) = maybe_output else {
@@ -300,7 +301,7 @@ fn build_performance_report(results: &[ScrapeBenchmarkResult]) -> DatasetPerform
 /// size are also excluded from scoring.
 fn build_quality_report(results: &[ScrapeBenchmarkResult], fixtures: &[ScrapeFixture]) -> DatasetQualityReport {
     // Build a lookup from fixture ID to fixture metadata when available.
-    let fixture_map: HashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
+    let fixture_map: AHashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
 
     // Count expected-failure fixtures so we can subtract them from total_urls.
     let expected_failure_count = if fixture_map.is_empty() {
@@ -417,8 +418,8 @@ fn build_reachability_report(
     };
 
     // Build per-category breakdown using fixture metadata.
-    let fixture_map: HashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
-    let mut category_map: HashMap<String, Vec<&ScrapeBenchmarkResult>> = HashMap::new();
+    let fixture_map: AHashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
+    let mut category_map: AHashMap<String, Vec<&ScrapeBenchmarkResult>> = AHashMap::new();
     for result in &reachable_results {
         let cat = fixture_map
             .get(result.fixture_id.as_str())
@@ -530,7 +531,7 @@ pub fn compare_results(
     candidate_name: &str,
 ) -> ComparisonReport {
     // Index baseline by fixture_id for O(1) lookup.
-    let baseline_map: HashMap<&str, &ScrapeBenchmarkResult> =
+    let baseline_map: AHashMap<&str, &ScrapeBenchmarkResult> =
         baseline_results.iter().map(|r| (r.fixture_id.as_str(), r)).collect();
 
     let mut fixture_comparisons: Vec<FixtureComparison> = Vec::new();

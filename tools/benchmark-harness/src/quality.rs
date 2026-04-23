@@ -24,8 +24,9 @@
 //! format "3,14"). This preserves punctuation that is semantically meaningful
 //! while ignoring decorative punctuation.
 
-use std::collections::HashMap;
 use std::sync::LazyLock;
+
+use ahash::AHashMap;
 
 use regex::Regex;
 
@@ -267,8 +268,8 @@ pub fn compute_f1(extracted: &[String], truth: &[String]) -> f64 {
 }
 
 /// Build a token frequency map.
-pub(crate) fn build_counts(tokens: &[String]) -> HashMap<&str, usize> {
-    let mut counts = HashMap::new();
+pub(crate) fn build_counts(tokens: &[String]) -> AHashMap<&str, usize> {
+    let mut counts = AHashMap::new();
     for token in tokens {
         *counts.entry(token.as_str()).or_insert(0) += 1;
     }
