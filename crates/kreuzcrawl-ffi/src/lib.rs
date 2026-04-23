@@ -19,8 +19,8 @@ use std::cell::RefCell;
 use std::ffi::{c_char, CStr, CString};
 
 thread_local! {
-    static LAST_ERROR_CODE: RefCell<i32> = const { RefCell::new(0) };
-    static LAST_ERROR_CONTEXT: RefCell<Option<CString>> = const { RefCell::new(None) };
+    static LAST_ERROR_CODE: RefCell<i32> = RefCell::new(0);
+    static LAST_ERROR_CONTEXT: RefCell<Option<CString>> = RefCell::new(None);
 }
 
 fn set_last_error(code: i32, message: &str) {
@@ -57,6 +57,7 @@ pub unsafe extern "C" fn kcrawl_last_error_context() -> *const c_char {
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_free_string(ptr: *mut c_char) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by CString::into_raw; caller ensures no aliases.
         unsafe {
             drop(CString::from_raw(ptr));
         }
@@ -84,6 +85,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_from_json(json: *const c_char) -
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -111,6 +113,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_to_json(ptr: *const kreuzcrawl::
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -133,6 +136,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_to_json(ptr: *const kreuzcrawl::
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_extraction_meta_free(ptr: *mut kreuzcrawl::ExtractionMeta) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -147,6 +151,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_cost(ptr: *const kreuzcrawl::Ext
     if ptr.is_null() {
         return 0.0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.cost {
         Some(val) => *val,
@@ -162,6 +167,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_prompt_tokens(ptr: *const kreuzc
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.prompt_tokens {
         Some(val) => *val,
@@ -177,6 +183,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_completion_tokens(ptr: *const kr
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.completion_tokens {
         Some(val) => *val,
@@ -192,6 +199,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_model(ptr: *const kreuzcrawl::Ex
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.model {
         Some(val) => match CString::new(val.to_string()) {
@@ -210,6 +218,7 @@ pub unsafe extern "C" fn kcrawl_extraction_meta_chunks_processed(ptr: *const kre
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.chunks_processed
 }
@@ -225,6 +234,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -252,6 +262,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_to_json(ptr: *const kreuzcrawl::Pro
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -274,6 +285,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_to_json(ptr: *const kreuzcrawl::Pro
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_proxy_config_free(ptr: *mut kreuzcrawl::ProxyConfig) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -288,6 +300,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_url(ptr: *const kreuzcrawl::ProxyCo
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -303,6 +316,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_username(ptr: *const kreuzcrawl::Pr
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.username {
         Some(val) => match CString::new(val.to_string()) {
@@ -321,6 +335,7 @@ pub unsafe extern "C" fn kcrawl_proxy_config_password(ptr: *const kreuzcrawl::Pr
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.password {
         Some(val) => match CString::new(val.to_string()) {
@@ -329,6 +344,280 @@ pub unsafe extern "C" fn kcrawl_proxy_config_password(ptr: *const kreuzcrawl::Pr
         },
         None => std::ptr::null_mut(),
     }
+}
+
+/// Create a `ContentConfig` from a JSON string. Returns null on failure.
+/// # Safety
+/// JSON string must be valid UTF-8 and null-terminated.
+/// Returned handle must be freed with `kcrawl_content_config_free`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_from_json(json: *const c_char) -> *mut kreuzcrawl::ContentConfig {
+    clear_last_error();
+    if json.is_null() {
+        set_last_error(1, "Null pointer passed for JSON string");
+        return std::ptr::null_mut();
+    }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
+    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
+        Ok(s) => s,
+        Err(_) => {
+            set_last_error(1, "Invalid UTF-8 in JSON string");
+            return std::ptr::null_mut();
+        }
+    };
+    match serde_json::from_str::<kreuzcrawl::ContentConfig>(c_str) {
+        Ok(val) => Box::into_raw(Box::new(val)),
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Serialize a `ContentConfig` to a JSON string. Returns null on failure.
+/// # Safety
+/// `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+/// The returned string must be freed with `kcrawl_free_string`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_to_json(ptr: *const kreuzcrawl::ContentConfig) -> *mut c_char {
+    clear_last_error();
+    if ptr.is_null() {
+        set_last_error(1, "Null pointer passed to to_json");
+        return std::ptr::null_mut();
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let val = unsafe { &*ptr };
+    match serde_json::to_string(val) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(e) => {
+                set_last_error(2, &e.to_string());
+                std::ptr::null_mut()
+            }
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Free a `ContentConfig` handle.
+/// # Safety
+/// Pointer must have been returned by this library, or be null.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_free(ptr: *mut kreuzcrawl::ContentConfig) {
+    if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
+        unsafe {
+            drop(Box::from_raw(ptr));
+        }
+    }
+}
+
+/// Get the `output_format` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_output_format(
+    ptr: *const kreuzcrawl::ContentConfig,
+) -> *mut std::ffi::c_char {
+    if ptr.is_null() {
+        return std::ptr::null_mut();
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    match CString::new(obj.output_format.to_string()) {
+        Ok(cs) => cs.into_raw(),
+        Err(_) => std::ptr::null_mut(),
+    }
+}
+
+/// Get the `preprocessing_preset` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_preprocessing_preset(
+    ptr: *const kreuzcrawl::ContentConfig,
+) -> *mut std::ffi::c_char {
+    if ptr.is_null() {
+        return std::ptr::null_mut();
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    match CString::new(obj.preprocessing_preset.to_string()) {
+        Ok(cs) => cs.into_raw(),
+        Err(_) => std::ptr::null_mut(),
+    }
+}
+
+/// Get the `remove_navigation` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_remove_navigation(ptr: *const kreuzcrawl::ContentConfig) -> i32 {
+    if ptr.is_null() {
+        return 0;
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    obj.remove_navigation as i32
+}
+
+/// Get the `remove_forms` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_remove_forms(ptr: *const kreuzcrawl::ContentConfig) -> i32 {
+    if ptr.is_null() {
+        return 0;
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    obj.remove_forms as i32
+}
+
+/// Get the `strip_tags` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_strip_tags(
+    ptr: *const kreuzcrawl::ContentConfig,
+) -> *mut std::ffi::c_char {
+    if ptr.is_null() {
+        return std::ptr::null_mut();
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    match serde_json::to_string(&obj.strip_tags) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(_) => std::ptr::null_mut(),
+        },
+        Err(_) => std::ptr::null_mut(),
+    }
+}
+
+/// Get the `preserve_tags` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_preserve_tags(
+    ptr: *const kreuzcrawl::ContentConfig,
+) -> *mut std::ffi::c_char {
+    if ptr.is_null() {
+        return std::ptr::null_mut();
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    match serde_json::to_string(&obj.preserve_tags) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(_) => std::ptr::null_mut(),
+        },
+        Err(_) => std::ptr::null_mut(),
+    }
+}
+
+/// Get the `exclude_selectors` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_exclude_selectors(
+    ptr: *const kreuzcrawl::ContentConfig,
+) -> *mut std::ffi::c_char {
+    if ptr.is_null() {
+        return std::ptr::null_mut();
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    match serde_json::to_string(&obj.exclude_selectors) {
+        Ok(s) => match CString::new(s) {
+            Ok(cs) => cs.into_raw(),
+            Err(_) => std::ptr::null_mut(),
+        },
+        Err(_) => std::ptr::null_mut(),
+    }
+}
+
+/// Get the `skip_images` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_skip_images(ptr: *const kreuzcrawl::ContentConfig) -> i32 {
+    if ptr.is_null() {
+        return 0;
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    obj.skip_images as i32
+}
+
+/// Get the `max_depth` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_max_depth(ptr: *const kreuzcrawl::ContentConfig) -> usize {
+    if ptr.is_null() {
+        return 0;
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    match &obj.max_depth {
+        Some(val) => *val,
+        None => 0,
+    }
+}
+
+/// Get the `wrap` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_wrap(ptr: *const kreuzcrawl::ContentConfig) -> i32 {
+    if ptr.is_null() {
+        return 0;
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    obj.wrap as i32
+}
+
+/// Get the `wrap_width` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_wrap_width(ptr: *const kreuzcrawl::ContentConfig) -> usize {
+    if ptr.is_null() {
+        return 0;
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    obj.wrap_width
+}
+
+/// Get the `include_document_structure` field from a `ContentConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_include_document_structure(
+    ptr: *const kreuzcrawl::ContentConfig,
+) -> i32 {
+    if ptr.is_null() {
+        return 0;
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    obj.include_document_structure as i32
+}
+
+/// # Safety
+/// Caller must ensure all pointer arguments are valid or null.
+/// Returned pointers must be freed with the appropriate free function.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_content_config_default() -> *mut kreuzcrawl::ContentConfig {
+    clear_last_error();
+    let result = kreuzcrawl::ContentConfig::default();
+    Box::into_raw(Box::new(result))
 }
 
 /// Create a `BrowserConfig` from a JSON string. Returns null on failure.
@@ -342,6 +631,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_from_json(json: *const c_char) ->
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -369,6 +659,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_to_json(ptr: *const kreuzcrawl::B
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -391,6 +682,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_to_json(ptr: *const kreuzcrawl::B
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_browser_config_free(ptr: *mut kreuzcrawl::BrowserConfig) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -407,6 +699,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_mode(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.mode.clone()))
 }
@@ -421,6 +714,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_endpoint(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.endpoint {
         Some(val) => match CString::new(val.to_string()) {
@@ -439,6 +733,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_timeout(ptr: *const kreuzcrawl::B
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.timeout.as_millis() as u64
 }
@@ -453,6 +748,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_wait(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.wait.clone()))
 }
@@ -467,6 +763,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_wait_selector(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.wait_selector {
         Some(val) => match CString::new(val.to_string()) {
@@ -485,6 +782,7 @@ pub unsafe extern "C" fn kcrawl_browser_config_extra_wait(ptr: *const kreuzcrawl
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.extra_wait {
         Some(val) => val.as_millis() as u64,
@@ -513,6 +811,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -540,6 +839,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_to_json(ptr: *const kreuzcrawl::Cra
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -562,6 +862,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_to_json(ptr: *const kreuzcrawl::Cra
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_crawl_config_free(ptr: *mut kreuzcrawl::CrawlConfig) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -576,6 +877,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_depth(ptr: *const kreuzcrawl::C
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.max_depth {
         Some(val) => *val,
@@ -591,6 +893,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_pages(ptr: *const kreuzcrawl::C
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.max_pages {
         Some(val) => *val,
@@ -606,6 +909,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_concurrent(ptr: *const kreuzcra
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.max_concurrent {
         Some(val) => *val,
@@ -621,6 +925,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_respect_robots_txt(ptr: *const kreu
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.respect_robots_txt as i32
 }
@@ -633,6 +938,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_user_agent(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.user_agent {
         Some(val) => match CString::new(val.to_string()) {
@@ -651,6 +957,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_stay_on_domain(ptr: *const kreuzcra
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.stay_on_domain as i32
 }
@@ -663,6 +970,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_allow_subdomains(ptr: *const kreuzc
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.allow_subdomains as i32
 }
@@ -677,6 +985,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_include_paths(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.include_paths) {
         Ok(s) => match CString::new(s) {
@@ -697,6 +1006,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_exclude_paths(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.exclude_paths) {
         Ok(s) => match CString::new(s) {
@@ -717,6 +1027,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_custom_headers(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.custom_headers) {
         Ok(s) => match CString::new(s) {
@@ -735,6 +1046,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_request_timeout(ptr: *const kreuzcr
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.request_timeout.as_millis() as u64
 }
@@ -747,6 +1059,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_rate_limit_ms(ptr: *const kreuzcraw
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.rate_limit_ms {
         Some(val) => *val,
@@ -762,6 +1075,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_redirects(ptr: *const kreuzcraw
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.max_redirects
 }
@@ -774,6 +1088,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_retry_count(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.retry_count
 }
@@ -786,6 +1101,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_retry_codes(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.retry_codes) {
         Ok(s) => match CString::new(s) {
@@ -804,6 +1120,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_cookies_enabled(ptr: *const kreuzcr
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.cookies_enabled as i32
 }
@@ -816,6 +1133,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_auth(ptr: *const kreuzcrawl::CrawlC
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.auth {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -831,23 +1149,12 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_body_size(ptr: *const kreuzcraw
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.max_body_size {
         Some(val) => *val,
         None => 0,
     }
-}
-
-/// Get the `main_content_only` field from a `CrawlConfig`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_crawl_config_main_content_only(ptr: *const kreuzcrawl::CrawlConfig) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.main_content_only as i32
 }
 
 /// Get the `remove_tags` field from a `CrawlConfig`.
@@ -858,6 +1165,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_remove_tags(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.remove_tags) {
         Ok(s) => match CString::new(s) {
@@ -868,6 +1176,21 @@ pub unsafe extern "C" fn kcrawl_crawl_config_remove_tags(ptr: *const kreuzcrawl:
     }
 }
 
+/// Get the `content` field from a `CrawlConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kcrawl_crawl_config_content(
+    ptr: *const kreuzcrawl::CrawlConfig,
+) -> *mut kreuzcrawl::ContentConfig {
+    if ptr.is_null() {
+        return std::ptr::null_mut();
+    }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
+    let obj = unsafe { &*ptr };
+    Box::into_raw(Box::new(obj.content.clone()))
+}
+
 /// Get the `map_limit` field from a `CrawlConfig`.
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
@@ -876,6 +1199,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_map_limit(ptr: *const kreuzcrawl::C
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.map_limit {
         Some(val) => *val,
@@ -891,6 +1215,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_map_search(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.map_search {
         Some(val) => match CString::new(val.to_string()) {
@@ -909,6 +1234,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_download_assets(ptr: *const kreuzcr
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.download_assets as i32
 }
@@ -921,6 +1247,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_asset_types(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.asset_types) {
         Ok(s) => match CString::new(s) {
@@ -939,6 +1266,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_max_asset_size(ptr: *const kreuzcra
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.max_asset_size {
         Some(val) => *val,
@@ -956,6 +1284,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_browser(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.browser.clone()))
 }
@@ -970,6 +1299,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_proxy(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.proxy {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -985,6 +1315,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_user_agents(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.user_agents) {
         Ok(s) => match CString::new(s) {
@@ -1003,6 +1334,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_capture_screenshot(ptr: *const kreu
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.capture_screenshot as i32
 }
@@ -1015,6 +1347,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_download_documents(ptr: *const kreu
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.download_documents as i32
 }
@@ -1027,6 +1360,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_document_max_size(ptr: *const kreuz
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.document_max_size {
         Some(val) => *val,
@@ -1044,6 +1378,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_document_mime_types(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.document_mime_types) {
         Ok(s) => match CString::new(s) {
@@ -1062,6 +1397,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_warc_output(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.warc_output {
         Some(val) => match CString::new(val.to_string_lossy().to_string()) {
@@ -1082,6 +1418,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_browser_profile(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.browser_profile {
         Some(val) => match CString::new(val.to_string()) {
@@ -1100,6 +1437,7 @@ pub unsafe extern "C" fn kcrawl_crawl_config_save_browser_profile(ptr: *const kr
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.save_browser_profile as i32
 }
@@ -1150,6 +1488,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_from_json(
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -1177,6 +1516,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_to_json(ptr: *const kreuzcra
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -1199,6 +1539,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_to_json(ptr: *const kreuzcra
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_downloaded_document_free(ptr: *mut kreuzcrawl::DownloadedDocument) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -1215,6 +1556,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_url(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -1233,9 +1575,11 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_content(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     let data = &obj.content;
     if !out_len.is_null() {
+        // SAFETY: null check above guarantees out_len is a valid pointer.
         unsafe {
             *out_len = data.len();
         }
@@ -1251,6 +1595,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_document_size(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.size
 }
@@ -1266,6 +1611,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_from_json(json: *const c_char) -> 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -1293,6 +1639,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_to_json(ptr: *const kreuzcrawl::Sc
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -1315,6 +1662,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_to_json(ptr: *const kreuzcrawl::Sc
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_scrape_result_free(ptr: *mut kreuzcrawl::ScrapeResult) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -1329,6 +1677,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_status_code(ptr: *const kreuzcrawl
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.status_code
 }
@@ -1343,6 +1692,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_content_type(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.content_type.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -1358,6 +1708,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_html(ptr: *const kreuzcrawl::Scrap
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.html.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -1373,6 +1724,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_body_size(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.body_size
 }
@@ -1387,6 +1739,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_metadata(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.metadata.clone()))
 }
@@ -1399,6 +1752,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_links(ptr: *const kreuzcrawl::Scra
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.links) {
         Ok(s) => match CString::new(s) {
@@ -1417,6 +1771,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_images(ptr: *const kreuzcrawl::Scr
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.images) {
         Ok(s) => match CString::new(s) {
@@ -1435,6 +1790,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_feeds(ptr: *const kreuzcrawl::Scra
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.feeds) {
         Ok(s) => match CString::new(s) {
@@ -1453,6 +1809,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_json_ld(ptr: *const kreuzcrawl::Sc
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.json_ld) {
         Ok(s) => match CString::new(s) {
@@ -1471,6 +1828,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_is_allowed(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.is_allowed as i32
 }
@@ -1483,6 +1841,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_crawl_delay(ptr: *const kreuzcrawl
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.crawl_delay {
         Some(val) => *val,
@@ -1498,6 +1857,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_noindex_detected(ptr: *const kreuz
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.noindex_detected as i32
 }
@@ -1510,6 +1870,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_nofollow_detected(ptr: *const kreu
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.nofollow_detected as i32
 }
@@ -1524,6 +1885,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_x_robots_tag(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.x_robots_tag {
         Some(val) => match CString::new(val.to_string()) {
@@ -1542,6 +1904,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_is_pdf(ptr: *const kreuzcrawl::Scr
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.is_pdf as i32
 }
@@ -1554,6 +1917,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_was_skipped(ptr: *const kreuzcrawl
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.was_skipped as i32
 }
@@ -1568,6 +1932,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_detected_charset(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.detected_charset {
         Some(val) => match CString::new(val.to_string()) {
@@ -1578,18 +1943,6 @@ pub unsafe extern "C" fn kcrawl_scrape_result_detected_charset(
     }
 }
 
-/// Get the `main_content_only` field from a `ScrapeResult`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kcrawl_scrape_result_main_content_only(ptr: *const kreuzcrawl::ScrapeResult) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.main_content_only as i32
-}
-
 /// Get the `auth_header_sent` field from a `ScrapeResult`.
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
@@ -1598,6 +1951,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_auth_header_sent(ptr: *const kreuz
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.auth_header_sent as i32
 }
@@ -1612,6 +1966,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_response_meta(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.response_meta {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -1627,6 +1982,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_assets(ptr: *const kreuzcrawl::Scr
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.assets) {
         Ok(s) => match CString::new(s) {
@@ -1645,6 +2001,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_js_render_hint(ptr: *const kreuzcr
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.js_render_hint as i32
 }
@@ -1657,6 +2014,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_browser_used(ptr: *const kreuzcraw
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.browser_used as i32
 }
@@ -1671,6 +2029,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_markdown(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.markdown {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -1688,6 +2047,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_extracted_data(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.extracted_data {
         Some(val) => match serde_json::to_string(&val) {
@@ -1711,6 +2071,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_extraction_meta(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.extraction_meta {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -1726,6 +2087,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_screenshot(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.screenshot {
         Some(val) => val.as_ptr() as *mut u8,
@@ -1743,6 +2105,7 @@ pub unsafe extern "C" fn kcrawl_scrape_result_downloaded_document(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.downloaded_document {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -1761,6 +2124,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_from_json(json: *const c_char)
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -1788,6 +2152,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_to_json(ptr: *const kreuzcrawl
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -1810,6 +2175,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_to_json(ptr: *const kreuzcrawl
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_crawl_page_result_free(ptr: *mut kreuzcrawl::CrawlPageResult) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -1826,6 +2192,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_url(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -1843,6 +2210,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_normalized_url(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.normalized_url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -1858,6 +2226,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_status_code(ptr: *const kreuzc
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.status_code
 }
@@ -1872,6 +2241,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_content_type(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.content_type.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -1889,6 +2259,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_html(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.html.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -1904,6 +2275,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_body_size(ptr: *const kreuzcra
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.body_size
 }
@@ -1918,6 +2290,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_metadata(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.metadata.clone()))
 }
@@ -1932,6 +2305,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_links(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.links) {
         Ok(s) => match CString::new(s) {
@@ -1952,6 +2326,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_images(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.images) {
         Ok(s) => match CString::new(s) {
@@ -1972,6 +2347,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_feeds(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.feeds) {
         Ok(s) => match CString::new(s) {
@@ -1992,6 +2368,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_json_ld(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.json_ld) {
         Ok(s) => match CString::new(s) {
@@ -2010,6 +2387,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_depth(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.depth
 }
@@ -2022,6 +2400,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_stayed_on_domain(ptr: *const k
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.stayed_on_domain as i32
 }
@@ -2034,6 +2413,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_was_skipped(ptr: *const kreuzc
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.was_skipped as i32
 }
@@ -2046,6 +2426,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_is_pdf(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.is_pdf as i32
 }
@@ -2060,6 +2441,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_detected_charset(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.detected_charset {
         Some(val) => match CString::new(val.to_string()) {
@@ -2080,6 +2462,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_markdown(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.markdown {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -2097,6 +2480,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_extracted_data(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.extracted_data {
         Some(val) => match serde_json::to_string(&val) {
@@ -2120,6 +2504,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_extraction_meta(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.extraction_meta {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -2137,6 +2522,7 @@ pub unsafe extern "C" fn kcrawl_crawl_page_result_downloaded_document(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.downloaded_document {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -2155,6 +2541,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -2182,6 +2569,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_to_json(ptr: *const kreuzcrawl::Cra
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -2204,6 +2592,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_to_json(ptr: *const kreuzcrawl::Cra
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_crawl_result_free(ptr: *mut kreuzcrawl::CrawlResult) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -2218,6 +2607,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_pages(ptr: *const kreuzcrawl::Crawl
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.pages) {
         Ok(s) => match CString::new(s) {
@@ -2236,6 +2626,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_final_url(ptr: *const kreuzcrawl::C
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.final_url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -2251,6 +2642,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_redirect_count(ptr: *const kreuzcra
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.redirect_count
 }
@@ -2263,6 +2655,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_was_skipped(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.was_skipped as i32
 }
@@ -2275,6 +2668,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_error(ptr: *const kreuzcrawl::Crawl
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.error {
         Some(val) => match CString::new(val.to_string()) {
@@ -2293,6 +2687,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_cookies(ptr: *const kreuzcrawl::Cra
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.cookies) {
         Ok(s) => match CString::new(s) {
@@ -2313,6 +2708,7 @@ pub unsafe extern "C" fn kcrawl_crawl_result_normalized_urls(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.normalized_urls) {
         Ok(s) => match CString::new(s) {
@@ -2351,6 +2747,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_from_json(json: *const c_char) -> *m
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -2378,6 +2775,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_to_json(ptr: *const kreuzcrawl::Site
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -2400,6 +2798,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_to_json(ptr: *const kreuzcrawl::Site
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_sitemap_url_free(ptr: *mut kreuzcrawl::SitemapUrl) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -2414,6 +2813,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_url(ptr: *const kreuzcrawl::SitemapU
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -2429,6 +2829,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_lastmod(ptr: *const kreuzcrawl::Site
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.lastmod {
         Some(val) => match CString::new(val.to_string()) {
@@ -2447,6 +2848,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_changefreq(ptr: *const kreuzcrawl::S
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.changefreq {
         Some(val) => match CString::new(val.to_string()) {
@@ -2465,6 +2867,7 @@ pub unsafe extern "C" fn kcrawl_sitemap_url_priority(ptr: *const kreuzcrawl::Sit
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.priority {
         Some(val) => match CString::new(val.to_string()) {
@@ -2486,6 +2889,7 @@ pub unsafe extern "C" fn kcrawl_map_result_from_json(json: *const c_char) -> *mu
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -2513,6 +2917,7 @@ pub unsafe extern "C" fn kcrawl_map_result_to_json(ptr: *const kreuzcrawl::MapRe
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -2535,6 +2940,7 @@ pub unsafe extern "C" fn kcrawl_map_result_to_json(ptr: *const kreuzcrawl::MapRe
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_map_result_free(ptr: *mut kreuzcrawl::MapResult) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -2549,6 +2955,7 @@ pub unsafe extern "C" fn kcrawl_map_result_urls(ptr: *const kreuzcrawl::MapResul
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.urls) {
         Ok(s) => match CString::new(s) {
@@ -2570,6 +2977,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_from_json(json: *const c_char) -
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -2597,6 +3005,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_to_json(ptr: *const kreuzcrawl::
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -2619,6 +3028,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_to_json(ptr: *const kreuzcrawl::
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_markdown_result_free(ptr: *mut kreuzcrawl::MarkdownResult) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -2635,6 +3045,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_content(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.content.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -2652,6 +3063,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_document_structure(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.document_structure {
         Some(val) => match serde_json::to_string(&val) {
@@ -2675,6 +3087,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_tables(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.tables) {
         Ok(s) => match CString::new(s) {
@@ -2695,6 +3108,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_warnings(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.warnings) {
         Ok(s) => match CString::new(s) {
@@ -2715,6 +3129,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_citations(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.citations {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -2732,6 +3147,7 @@ pub unsafe extern "C" fn kcrawl_markdown_result_fit_content(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.fit_content {
         Some(val) => match CString::new(val.to_string()) {
@@ -2753,6 +3169,7 @@ pub unsafe extern "C" fn kcrawl_link_info_from_json(json: *const c_char) -> *mut
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -2780,6 +3197,7 @@ pub unsafe extern "C" fn kcrawl_link_info_to_json(ptr: *const kreuzcrawl::LinkIn
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -2802,6 +3220,7 @@ pub unsafe extern "C" fn kcrawl_link_info_to_json(ptr: *const kreuzcrawl::LinkIn
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_link_info_free(ptr: *mut kreuzcrawl::LinkInfo) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -2816,6 +3235,7 @@ pub unsafe extern "C" fn kcrawl_link_info_url(ptr: *const kreuzcrawl::LinkInfo) 
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -2831,6 +3251,7 @@ pub unsafe extern "C" fn kcrawl_link_info_text(ptr: *const kreuzcrawl::LinkInfo)
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.text.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -2846,6 +3267,7 @@ pub unsafe extern "C" fn kcrawl_link_info_link_type(ptr: *const kreuzcrawl::Link
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.link_type.clone()))
 }
@@ -2858,6 +3280,7 @@ pub unsafe extern "C" fn kcrawl_link_info_rel(ptr: *const kreuzcrawl::LinkInfo) 
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.rel {
         Some(val) => match CString::new(val.to_string()) {
@@ -2876,6 +3299,7 @@ pub unsafe extern "C" fn kcrawl_link_info_nofollow(ptr: *const kreuzcrawl::LinkI
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.nofollow as i32
 }
@@ -2891,6 +3315,7 @@ pub unsafe extern "C" fn kcrawl_image_info_from_json(json: *const c_char) -> *mu
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -2918,6 +3343,7 @@ pub unsafe extern "C" fn kcrawl_image_info_to_json(ptr: *const kreuzcrawl::Image
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -2940,6 +3366,7 @@ pub unsafe extern "C" fn kcrawl_image_info_to_json(ptr: *const kreuzcrawl::Image
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_image_info_free(ptr: *mut kreuzcrawl::ImageInfo) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -2954,6 +3381,7 @@ pub unsafe extern "C" fn kcrawl_image_info_url(ptr: *const kreuzcrawl::ImageInfo
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -2969,6 +3397,7 @@ pub unsafe extern "C" fn kcrawl_image_info_alt(ptr: *const kreuzcrawl::ImageInfo
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.alt {
         Some(val) => match CString::new(val.to_string()) {
@@ -2987,6 +3416,7 @@ pub unsafe extern "C" fn kcrawl_image_info_width(ptr: *const kreuzcrawl::ImageIn
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.width {
         Some(val) => *val,
@@ -3002,6 +3432,7 @@ pub unsafe extern "C" fn kcrawl_image_info_height(ptr: *const kreuzcrawl::ImageI
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.height {
         Some(val) => *val,
@@ -3017,6 +3448,7 @@ pub unsafe extern "C" fn kcrawl_image_info_source(ptr: *const kreuzcrawl::ImageI
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.source.clone()))
 }
@@ -3032,6 +3464,7 @@ pub unsafe extern "C" fn kcrawl_feed_info_from_json(json: *const c_char) -> *mut
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -3059,6 +3492,7 @@ pub unsafe extern "C" fn kcrawl_feed_info_to_json(ptr: *const kreuzcrawl::FeedIn
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -3081,6 +3515,7 @@ pub unsafe extern "C" fn kcrawl_feed_info_to_json(ptr: *const kreuzcrawl::FeedIn
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_feed_info_free(ptr: *mut kreuzcrawl::FeedInfo) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -3095,6 +3530,7 @@ pub unsafe extern "C" fn kcrawl_feed_info_url(ptr: *const kreuzcrawl::FeedInfo) 
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3110,6 +3546,7 @@ pub unsafe extern "C" fn kcrawl_feed_info_title(ptr: *const kreuzcrawl::FeedInfo
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.title {
         Some(val) => match CString::new(val.to_string()) {
@@ -3128,6 +3565,7 @@ pub unsafe extern "C" fn kcrawl_feed_info_feed_type(ptr: *const kreuzcrawl::Feed
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.feed_type.clone()))
 }
@@ -3143,6 +3581,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_from_json(json: *const c_char) -> 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -3170,6 +3609,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_to_json(ptr: *const kreuzcrawl::Js
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -3192,6 +3632,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_to_json(ptr: *const kreuzcrawl::Js
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_json_ld_entry_free(ptr: *mut kreuzcrawl::JsonLdEntry) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -3208,6 +3649,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_schema_type(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.schema_type.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3223,6 +3665,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_name(ptr: *const kreuzcrawl::JsonL
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.name {
         Some(val) => match CString::new(val.to_string()) {
@@ -3241,6 +3684,7 @@ pub unsafe extern "C" fn kcrawl_json_ld_entry_raw(ptr: *const kreuzcrawl::JsonLd
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.raw.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3259,6 +3703,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_from_json(json: *const c_char) -> *m
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -3286,6 +3731,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_to_json(ptr: *const kreuzcrawl::Cook
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -3308,6 +3754,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_to_json(ptr: *const kreuzcrawl::Cook
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_cookie_info_free(ptr: *mut kreuzcrawl::CookieInfo) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -3322,6 +3769,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_name(ptr: *const kreuzcrawl::CookieI
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.name.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3337,6 +3785,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_value(ptr: *const kreuzcrawl::Cookie
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.value.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3352,6 +3801,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_domain(ptr: *const kreuzcrawl::Cooki
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.domain {
         Some(val) => match CString::new(val.to_string()) {
@@ -3370,6 +3820,7 @@ pub unsafe extern "C" fn kcrawl_cookie_info_path(ptr: *const kreuzcrawl::CookieI
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.path {
         Some(val) => match CString::new(val.to_string()) {
@@ -3391,6 +3842,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_from_json(json: *const c_char) 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -3418,6 +3870,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_to_json(ptr: *const kreuzcrawl:
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -3440,6 +3893,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_to_json(ptr: *const kreuzcrawl:
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_downloaded_asset_free(ptr: *mut kreuzcrawl::DownloadedAsset) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -3454,6 +3908,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_url(ptr: *const kreuzcrawl::Dow
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3471,6 +3926,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_content_hash(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.content_hash.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3488,6 +3944,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_mime_type(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.mime_type {
         Some(val) => match CString::new(val.to_string()) {
@@ -3506,6 +3963,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_size(ptr: *const kreuzcrawl::Do
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.size
 }
@@ -3520,6 +3978,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_asset_category(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     Box::into_raw(Box::new(obj.asset_category.clone()))
 }
@@ -3534,6 +3993,7 @@ pub unsafe extern "C" fn kcrawl_downloaded_asset_html_tag(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.html_tag {
         Some(val) => match CString::new(val.to_string()) {
@@ -3555,6 +4015,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_from_json(json: *const c_char) 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -3582,6 +4043,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_to_json(ptr: *const kreuzcrawl:
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -3604,6 +4066,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_to_json(ptr: *const kreuzcrawl:
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_article_metadata_free(ptr: *mut kreuzcrawl::ArticleMetadata) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -3620,6 +4083,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_published_time(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.published_time {
         Some(val) => match CString::new(val.to_string()) {
@@ -3640,6 +4104,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_modified_time(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.modified_time {
         Some(val) => match CString::new(val.to_string()) {
@@ -3660,6 +4125,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_author(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.author {
         Some(val) => match CString::new(val.to_string()) {
@@ -3680,6 +4146,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_section(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.section {
         Some(val) => match CString::new(val.to_string()) {
@@ -3700,6 +4167,7 @@ pub unsafe extern "C" fn kcrawl_article_metadata_tags(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.tags) {
         Ok(s) => match CString::new(s) {
@@ -3721,6 +4189,7 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_from_json(json: *const c_char) ->
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -3748,6 +4217,7 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_to_json(ptr: *const kreuzcrawl::H
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -3770,6 +4240,7 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_to_json(ptr: *const kreuzcrawl::H
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_hreflang_entry_free(ptr: *mut kreuzcrawl::HreflangEntry) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -3784,6 +4255,7 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_lang(ptr: *const kreuzcrawl::Href
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.lang.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3799,6 +4271,7 @@ pub unsafe extern "C" fn kcrawl_hreflang_entry_url(ptr: *const kreuzcrawl::Hrefl
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3817,6 +4290,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -3844,6 +4318,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_to_json(ptr: *const kreuzcrawl::Fav
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -3866,6 +4341,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_to_json(ptr: *const kreuzcrawl::Fav
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_favicon_info_free(ptr: *mut kreuzcrawl::FaviconInfo) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -3880,6 +4356,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_url(ptr: *const kreuzcrawl::Favicon
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3895,6 +4372,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_rel(ptr: *const kreuzcrawl::Favicon
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.rel.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -3910,6 +4388,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_sizes(ptr: *const kreuzcrawl::Favic
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.sizes {
         Some(val) => match CString::new(val.to_string()) {
@@ -3928,6 +4407,7 @@ pub unsafe extern "C" fn kcrawl_favicon_info_mime_type(ptr: *const kreuzcrawl::F
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.mime_type {
         Some(val) => match CString::new(val.to_string()) {
@@ -3949,6 +4429,7 @@ pub unsafe extern "C" fn kcrawl_heading_info_from_json(json: *const c_char) -> *
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -3976,6 +4457,7 @@ pub unsafe extern "C" fn kcrawl_heading_info_to_json(ptr: *const kreuzcrawl::Hea
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -3998,6 +4480,7 @@ pub unsafe extern "C" fn kcrawl_heading_info_to_json(ptr: *const kreuzcrawl::Hea
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_heading_info_free(ptr: *mut kreuzcrawl::HeadingInfo) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -4012,6 +4495,7 @@ pub unsafe extern "C" fn kcrawl_heading_info_level(ptr: *const kreuzcrawl::Headi
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.level
 }
@@ -4024,6 +4508,7 @@ pub unsafe extern "C" fn kcrawl_heading_info_text(ptr: *const kreuzcrawl::Headin
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.text.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -4042,6 +4527,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_from_json(json: *const c_char) -> 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -4069,6 +4555,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_to_json(ptr: *const kreuzcrawl::Re
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -4091,6 +4578,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_to_json(ptr: *const kreuzcrawl::Re
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_response_meta_free(ptr: *mut kreuzcrawl::ResponseMeta) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -4105,6 +4593,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_etag(ptr: *const kreuzcrawl::Respo
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.etag {
         Some(val) => match CString::new(val.to_string()) {
@@ -4125,6 +4614,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_last_modified(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.last_modified {
         Some(val) => match CString::new(val.to_string()) {
@@ -4145,6 +4635,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_cache_control(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.cache_control {
         Some(val) => match CString::new(val.to_string()) {
@@ -4163,6 +4654,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_server(ptr: *const kreuzcrawl::Res
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.server {
         Some(val) => match CString::new(val.to_string()) {
@@ -4183,6 +4675,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_x_powered_by(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.x_powered_by {
         Some(val) => match CString::new(val.to_string()) {
@@ -4203,6 +4696,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_content_language(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.content_language {
         Some(val) => match CString::new(val.to_string()) {
@@ -4223,6 +4717,7 @@ pub unsafe extern "C" fn kcrawl_response_meta_content_encoding(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.content_encoding {
         Some(val) => match CString::new(val.to_string()) {
@@ -4244,6 +4739,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_from_json(json: *const c_char) -> 
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -4271,6 +4767,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_to_json(ptr: *const kreuzcrawl::Pa
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -4293,6 +4790,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_to_json(ptr: *const kreuzcrawl::Pa
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_page_metadata_free(ptr: *mut kreuzcrawl::PageMetadata) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -4307,6 +4805,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_title(ptr: *const kreuzcrawl::Page
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.title {
         Some(val) => match CString::new(val.to_string()) {
@@ -4327,6 +4826,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_description(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.description {
         Some(val) => match CString::new(val.to_string()) {
@@ -4347,6 +4847,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_canonical_url(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.canonical_url {
         Some(val) => match CString::new(val.to_string()) {
@@ -4365,6 +4866,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_keywords(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.keywords {
         Some(val) => match CString::new(val.to_string()) {
@@ -4383,6 +4885,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_author(ptr: *const kreuzcrawl::Pag
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.author {
         Some(val) => match CString::new(val.to_string()) {
@@ -4401,6 +4904,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_viewport(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.viewport {
         Some(val) => match CString::new(val.to_string()) {
@@ -4421,6 +4925,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_theme_color(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.theme_color {
         Some(val) => match CString::new(val.to_string()) {
@@ -4439,6 +4944,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_generator(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.generator {
         Some(val) => match CString::new(val.to_string()) {
@@ -4457,6 +4963,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_robots(ptr: *const kreuzcrawl::Pag
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.robots {
         Some(val) => match CString::new(val.to_string()) {
@@ -4475,6 +4982,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_html_lang(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.html_lang {
         Some(val) => match CString::new(val.to_string()) {
@@ -4493,6 +5001,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_html_dir(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.html_dir {
         Some(val) => match CString::new(val.to_string()) {
@@ -4511,6 +5020,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_title(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_title {
         Some(val) => match CString::new(val.to_string()) {
@@ -4529,6 +5039,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_type(ptr: *const kreuzcrawl::Pa
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_type {
         Some(val) => match CString::new(val.to_string()) {
@@ -4547,6 +5058,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_image(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_image {
         Some(val) => match CString::new(val.to_string()) {
@@ -4567,6 +5079,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_description(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_description {
         Some(val) => match CString::new(val.to_string()) {
@@ -4585,6 +5098,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_url(ptr: *const kreuzcrawl::Pag
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_url {
         Some(val) => match CString::new(val.to_string()) {
@@ -4605,6 +5119,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_site_name(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_site_name {
         Some(val) => match CString::new(val.to_string()) {
@@ -4623,6 +5138,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_locale(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_locale {
         Some(val) => match CString::new(val.to_string()) {
@@ -4641,6 +5157,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_video(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_video {
         Some(val) => match CString::new(val.to_string()) {
@@ -4659,6 +5176,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_audio(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_audio {
         Some(val) => match CString::new(val.to_string()) {
@@ -4679,6 +5197,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_og_locale_alternates(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.og_locale_alternates {
         Some(val) => match serde_json::to_string(&val) {
@@ -4702,6 +5221,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_card(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.twitter_card {
         Some(val) => match CString::new(val.to_string()) {
@@ -4722,6 +5242,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_title(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.twitter_title {
         Some(val) => match CString::new(val.to_string()) {
@@ -4742,6 +5263,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_description(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.twitter_description {
         Some(val) => match CString::new(val.to_string()) {
@@ -4762,6 +5284,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_image(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.twitter_image {
         Some(val) => match CString::new(val.to_string()) {
@@ -4782,6 +5305,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_site(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.twitter_site {
         Some(val) => match CString::new(val.to_string()) {
@@ -4802,6 +5326,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_twitter_creator(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.twitter_creator {
         Some(val) => match CString::new(val.to_string()) {
@@ -4820,6 +5345,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_title(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_title {
         Some(val) => match CString::new(val.to_string()) {
@@ -4840,6 +5366,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_creator(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_creator {
         Some(val) => match CString::new(val.to_string()) {
@@ -4860,6 +5387,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_subject(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_subject {
         Some(val) => match CString::new(val.to_string()) {
@@ -4880,6 +5408,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_description(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_description {
         Some(val) => match CString::new(val.to_string()) {
@@ -4900,6 +5429,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_publisher(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_publisher {
         Some(val) => match CString::new(val.to_string()) {
@@ -4918,6 +5448,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_date(ptr: *const kreuzcrawl::Pa
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_date {
         Some(val) => match CString::new(val.to_string()) {
@@ -4936,6 +5467,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_type(ptr: *const kreuzcrawl::Pa
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_type {
         Some(val) => match CString::new(val.to_string()) {
@@ -4954,6 +5486,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_format(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_format {
         Some(val) => match CString::new(val.to_string()) {
@@ -4974,6 +5507,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_identifier(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_identifier {
         Some(val) => match CString::new(val.to_string()) {
@@ -4994,6 +5528,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_language(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_language {
         Some(val) => match CString::new(val.to_string()) {
@@ -5012,6 +5547,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_dc_rights(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.dc_rights {
         Some(val) => match CString::new(val.to_string()) {
@@ -5032,6 +5568,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_article(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.article {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -5047,6 +5584,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_hreflangs(ptr: *const kreuzcrawl::
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.hreflangs {
         Some(val) => match serde_json::to_string(&val) {
@@ -5068,6 +5606,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_favicons(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.favicons {
         Some(val) => match serde_json::to_string(&val) {
@@ -5089,6 +5628,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_headings(ptr: *const kreuzcrawl::P
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.headings {
         Some(val) => match serde_json::to_string(&val) {
@@ -5110,6 +5650,7 @@ pub unsafe extern "C" fn kcrawl_page_metadata_word_count(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.word_count {
         Some(val) => *val,
@@ -5128,6 +5669,7 @@ pub unsafe extern "C" fn kcrawl_citation_result_from_json(json: *const c_char) -
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5155,6 +5697,7 @@ pub unsafe extern "C" fn kcrawl_citation_result_to_json(ptr: *const kreuzcrawl::
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -5177,6 +5720,7 @@ pub unsafe extern "C" fn kcrawl_citation_result_to_json(ptr: *const kreuzcrawl::
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_citation_result_free(ptr: *mut kreuzcrawl::CitationResult) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -5193,6 +5737,7 @@ pub unsafe extern "C" fn kcrawl_citation_result_content(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.content.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -5210,6 +5755,7 @@ pub unsafe extern "C" fn kcrawl_citation_result_references(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match serde_json::to_string(&obj.references) {
         Ok(s) => match CString::new(s) {
@@ -5233,6 +5779,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_from_json(
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5260,6 +5807,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_to_json(ptr: *const kreuzcraw
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -5282,6 +5830,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_to_json(ptr: *const kreuzcraw
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_citation_reference_free(ptr: *mut kreuzcrawl::CitationReference) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -5296,6 +5845,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_index(ptr: *const kreuzcrawl:
     if ptr.is_null() {
         return 0;
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     obj.index
 }
@@ -5310,6 +5860,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_url(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -5327,6 +5878,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_text(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.text.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -5340,6 +5892,7 @@ pub unsafe extern "C" fn kcrawl_citation_reference_text(
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_crawl_engine_handle_free(ptr: *mut kreuzcrawl::CrawlEngineHandle) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -5359,6 +5912,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_from_json(
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5386,6 +5940,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_to_json(ptr: *const kreuzcra
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -5408,6 +5963,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_to_json(ptr: *const kreuzcra
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_batch_scrape_result_free(ptr: *mut kreuzcrawl::BatchScrapeResult) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -5424,6 +5980,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_url(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -5441,6 +5998,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_result(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.result {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -5458,6 +6016,7 @@ pub unsafe extern "C" fn kcrawl_batch_scrape_result_error(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.error {
         Some(val) => match CString::new(val.to_string()) {
@@ -5479,6 +6038,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_from_json(json: *const c_char
         set_last_error(1, "Null pointer passed for JSON string");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees json is a valid pointer; string is valid UTF-8 from caller.
     let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5506,6 +6066,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_to_json(ptr: *const kreuzcraw
         set_last_error(1, "Null pointer passed to to_json");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let val = unsafe { &*ptr };
     match serde_json::to_string(val) {
         Ok(s) => match CString::new(s) {
@@ -5528,6 +6089,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_to_json(ptr: *const kreuzcraw
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kcrawl_batch_crawl_result_free(ptr: *mut kreuzcrawl::BatchCrawlResult) {
     if !ptr.is_null() {
+        // SAFETY: ptr was allocated by Box::into_raw; caller ensures no aliases.
         unsafe {
             drop(Box::from_raw(ptr));
         }
@@ -5544,6 +6106,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_url(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match CString::new(obj.url.to_string()) {
         Ok(cs) => cs.into_raw(),
@@ -5561,6 +6124,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_result(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.result {
         Some(val) => Box::into_raw(Box::new(val.clone())),
@@ -5578,6 +6142,7 @@ pub unsafe extern "C" fn kcrawl_batch_crawl_result_error(
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees ptr is a valid pointer.
     let obj = unsafe { &*ptr };
     match &obj.error {
         Some(val) => match CString::new(val.to_string()) {
@@ -5614,6 +6179,7 @@ pub unsafe extern "C" fn kcrawl_browser_mode_from_str(name: *const c_char) -> i3
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
+    // SAFETY: null check above guarantees name is a valid pointer; string is valid UTF-8 from caller.
     let s = match unsafe { CStr::from_ptr(name) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5658,6 +6224,7 @@ pub unsafe extern "C" fn kcrawl_browser_wait_from_str(name: *const c_char) -> i3
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
+    // SAFETY: null check above guarantees name is a valid pointer; string is valid UTF-8 from caller.
     let s = match unsafe { CStr::from_ptr(name) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5702,6 +6269,7 @@ pub unsafe extern "C" fn kcrawl_auth_config_from_str(name: *const c_char) -> i32
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
+    // SAFETY: null check above guarantees name is a valid pointer; string is valid UTF-8 from caller.
     let s = match unsafe { CStr::from_ptr(name) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5747,6 +6315,7 @@ pub unsafe extern "C" fn kcrawl_link_type_from_str(name: *const c_char) -> i32 {
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
+    // SAFETY: null check above guarantees name is a valid pointer; string is valid UTF-8 from caller.
     let s = match unsafe { CStr::from_ptr(name) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5793,6 +6362,7 @@ pub unsafe extern "C" fn kcrawl_image_source_from_str(name: *const c_char) -> i3
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
+    // SAFETY: null check above guarantees name is a valid pointer; string is valid UTF-8 from caller.
     let s = match unsafe { CStr::from_ptr(name) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5838,6 +6408,7 @@ pub unsafe extern "C" fn kcrawl_feed_type_from_str(name: *const c_char) -> i32 {
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
+    // SAFETY: null check above guarantees name is a valid pointer; string is valid UTF-8 from caller.
     let s = match unsafe { CStr::from_ptr(name) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5889,6 +6460,7 @@ pub unsafe extern "C" fn kcrawl_asset_category_from_str(name: *const c_char) -> 
         set_last_error(1, "Null pointer passed for enum name");
         return -1;
     }
+    // SAFETY: null check above guarantees name is a valid pointer; string is valid UTF-8 from caller.
     let s = match unsafe { CStr::from_ptr(name) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -5935,6 +6507,7 @@ pub unsafe extern "C" fn kcrawl_create_engine(
     let config_rs = if config.is_null() {
         None
     } else {
+        // SAFETY: null check above guarantees config is a valid pointer.
         Some(unsafe { &*config }.clone())
     };
     let result = kreuzcrawl::create_engine(config_rs);
@@ -5961,11 +6534,13 @@ pub unsafe extern "C" fn kcrawl_scrape(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees engine is a valid pointer.
     let engine_rs = unsafe { &*engine };
     if url.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'url'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees url is a valid pointer; string is valid UTF-8 from caller.
     let url_rs = match unsafe { CStr::from_ptr(url) }.to_str() {
         Ok(s) => s.to_string(),
         Err(_) => {
@@ -5997,11 +6572,13 @@ pub unsafe extern "C" fn kcrawl_crawl(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees engine is a valid pointer.
     let engine_rs = unsafe { &*engine };
     if url.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'url'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees url is a valid pointer; string is valid UTF-8 from caller.
     let url_rs = match unsafe { CStr::from_ptr(url) }.to_str() {
         Ok(s) => s.to_string(),
         Err(_) => {
@@ -6033,11 +6610,13 @@ pub unsafe extern "C" fn kcrawl_map_urls(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees engine is a valid pointer.
     let engine_rs = unsafe { &*engine };
     if url.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'url'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees url is a valid pointer; string is valid UTF-8 from caller.
     let url_rs = match unsafe { CStr::from_ptr(url) }.to_str() {
         Ok(s) => s.to_string(),
         Err(_) => {
@@ -6069,11 +6648,13 @@ pub unsafe extern "C" fn kcrawl_batch_scrape(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees engine is a valid pointer.
     let engine_rs = unsafe { &*engine };
     if urls.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'urls'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees urls is a valid pointer; string is valid UTF-8 from caller.
     let urls_rs_str = match unsafe { CStr::from_ptr(urls) }.to_str() {
         Ok(s) => s,
         Err(_) => {
@@ -6112,11 +6693,13 @@ pub unsafe extern "C" fn kcrawl_batch_crawl(
         set_last_error(1, "Null pointer passed for parameter 'engine'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees engine is a valid pointer.
     let engine_rs = unsafe { &*engine };
     if urls.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'urls'");
         return std::ptr::null_mut();
     }
+    // SAFETY: null check above guarantees urls is a valid pointer; string is valid UTF-8 from caller.
     let urls_rs_str = match unsafe { CStr::from_ptr(urls) }.to_str() {
         Ok(s) => s,
         Err(_) => {

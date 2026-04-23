@@ -12,8 +12,7 @@ use crate::{
 use std::path::Path;
 use std::time::Duration;
 
-const DATASET_API_BASE: &str =
-    "https://datasets-server.huggingface.co/rows?dataset=firecrawl/scrape-content-dataset-v1&config=default&split=train";
+const DATASET_API_BASE: &str = "https://datasets-server.huggingface.co/rows?dataset=firecrawl/scrape-content-dataset-v1&config=default&split=train";
 const PAGE_SIZE: u64 = 100;
 const OUTPUT_FILENAME: &str = "scrape-evals.json";
 const PARTIAL_FILENAME: &str = "scrape-evals.partial.json";
@@ -27,11 +26,7 @@ const MAX_PAGE_RETRIES: u32 = 3;
 /// # Errors
 ///
 /// Returns [`Error::Dataset`] if all attempts fail.
-async fn fetch_with_retry(
-    client: &reqwest::Client,
-    url: &str,
-    max_retries: u32,
-) -> Result<String> {
+async fn fetch_with_retry(client: &reqwest::Client, url: &str, max_retries: u32) -> Result<String> {
     let mut last_error: Option<String> = None;
     for attempt in 0..=max_retries {
         if attempt > 0 {
@@ -46,9 +41,10 @@ async fn fetch_with_retry(
         }
         match client.get(url).send().await {
             Ok(resp) if resp.status().is_success() => {
-                return resp.text().await.map_err(|e| {
-                    Error::Dataset(format!("failed to read response body: {e}"))
-                });
+                return resp
+                    .text()
+                    .await
+                    .map_err(|e| Error::Dataset(format!("failed to read response body: {e}")));
             }
             Ok(resp) => {
                 let status = resp.status();
@@ -140,10 +136,7 @@ pub async fn download_scrape_evals(output_dir: &Path, force: bool) -> Result<usi
     loop {
         let url = format!("{DATASET_API_BASE}&offset={offset}&length={PAGE_SIZE}");
 
-        eprintln!(
-            "scrape-evals: fetching rows {offset}–{} ...",
-            offset + PAGE_SIZE - 1
-        );
+        eprintln!("scrape-evals: fetching rows {offset}–{} ...", offset + PAGE_SIZE - 1);
 
         let body = fetch_with_retry(&client, &url, MAX_PAGE_RETRIES).await?;
         let page: HfResponse = serde_json::from_str(&body).map_err(|error| {
@@ -181,9 +174,7 @@ pub async fn download_scrape_evals(output_dir: &Path, force: bool) -> Result<usi
     if all_fixtures.is_empty() {
         // Clean up the partial file before returning an error.
         let _ = std::fs::remove_file(&partial_path);
-        return Err(Error::Dataset(
-            "no fixtures downloaded from HuggingFace API".to_owned(),
-        ));
+        return Err(Error::Dataset("no fixtures downloaded from HuggingFace API".to_owned()));
     }
 
     eprintln!(

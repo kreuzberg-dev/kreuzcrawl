@@ -25,23 +25,23 @@ async-trait = { workspace = true }
 chrono = { workspace = true }
 clap = { workspace = true }
 kreuzcrawl = { path = "../../crates/kreuzcrawl", features = ["browser"] }
+num_cpus = "1"
+
+pprof = { version = "0.15", features = ["flamegraph", "criterion"], optional = true }
 rayon = { workspace = true }
 regex = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha2 = { workspace = true }
+sysinfo = "0.38"
 tempfile = { workspace = true }
 thiserror = { workspace = true }
+tikv-jemalloc-ctl = { version = "0.6", features = ["stats"], optional = true }
+tikv-jemallocator = { version = "0.6", optional = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-num_cpus = "1"
-sysinfo = "0.38"
-
-pprof = { version = "0.15", features = ["flamegraph", "criterion"], optional = true }
-tikv-jemalloc-ctl = { version = "0.6", features = ["stats"], optional = true }
-tikv-jemallocator = { version = "0.6", optional = true }
 
 [lints]
 workspace = true

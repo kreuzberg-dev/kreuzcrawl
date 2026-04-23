@@ -97,6 +97,102 @@ impl ProxyConfig {
 
 #[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
+pub struct ContentConfig {
+    /// Output format: `"markdown"` (default), `"plain"`, `"djot"`.
+    #[pyo3(get)]
+    pub output_format: String,
+    /// Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`.
+    ///
+    /// - Minimal: only scripts/styles removed.
+    /// - Standard: also removes nav, nav-hinted headers/footers/asides, forms.
+    /// - Aggressive: removes all footers/asides unconditionally.
+    #[pyo3(get)]
+    pub preprocessing_preset: String,
+    /// Remove navigation elements (nav, breadcrumbs, menus). Default: `true`.
+    #[pyo3(get)]
+    pub remove_navigation: bool,
+    /// Remove form elements. Default: `true`.
+    #[pyo3(get)]
+    pub remove_forms: bool,
+    /// HTML tag names to strip (render children only, remove the tag wrapper).
+    /// Default: `["noscript"]`.
+    #[pyo3(get)]
+    pub strip_tags: Vec<String>,
+    /// HTML tag names to preserve as raw HTML in output.
+    #[pyo3(get)]
+    pub preserve_tags: Vec<String>,
+    /// CSS selectors for elements to exclude entirely (element + all content).
+    ///
+    /// Unlike `strip_tags` (which removes the wrapper but keeps children),
+    /// excluded elements and all descendants are dropped. Supports CSS selectors:
+    /// `.class`, `#id`, `[attribute]`, compound selectors.
+    ///
+    /// Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]`
+    #[pyo3(get)]
+    pub exclude_selectors: Vec<String>,
+    /// Skip image elements in output. Default: `false`.
+    #[pyo3(get)]
+    pub skip_images: bool,
+    /// Max DOM traversal depth. Prevents stack overflow on deeply nested HTML.
+    #[pyo3(get)]
+    pub max_depth: Option<usize>,
+    /// Enable line wrapping. Default: `false`.
+    #[pyo3(get)]
+    pub wrap: bool,
+    /// Wrap width when `wrap` is enabled. Default: `80`.
+    #[pyo3(get)]
+    pub wrap_width: usize,
+    /// Include document structure tree in output. Default: `true`.
+    #[pyo3(get)]
+    pub include_document_structure: bool,
+}
+
+#[pymethods]
+impl ContentConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    #[pyo3(signature = (output_format=None, preprocessing_preset=None, remove_navigation=None, remove_forms=None, strip_tags=None, preserve_tags=None, exclude_selectors=None, skip_images=None, wrap=None, wrap_width=None, include_document_structure=None, max_depth=None))]
+    #[new]
+    pub fn new(
+        output_format: Option<String>,
+        preprocessing_preset: Option<String>,
+        remove_navigation: Option<bool>,
+        remove_forms: Option<bool>,
+        strip_tags: Option<Vec<String>>,
+        preserve_tags: Option<Vec<String>>,
+        exclude_selectors: Option<Vec<String>>,
+        skip_images: Option<bool>,
+        wrap: Option<bool>,
+        wrap_width: Option<usize>,
+        include_document_structure: Option<bool>,
+        max_depth: Option<usize>,
+    ) -> Self {
+        Self {
+            output_format: output_format.unwrap_or_else(|| "markdown".to_string()),
+            preprocessing_preset: preprocessing_preset.unwrap_or_else(|| "standard".to_string()),
+            remove_navigation: remove_navigation.unwrap_or(true),
+            remove_forms: remove_forms.unwrap_or(true),
+            strip_tags: strip_tags.unwrap_or_default(),
+            preserve_tags: preserve_tags.unwrap_or_default(),
+            exclude_selectors: exclude_selectors.unwrap_or_default(),
+            skip_images: skip_images.unwrap_or(false),
+            max_depth,
+            wrap: wrap.unwrap_or(false),
+            wrap_width: wrap_width.unwrap_or(80),
+            include_document_structure: include_document_structure.unwrap_or(true),
+        }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    #[staticmethod]
+    #[pyo3(signature = ())]
+    pub fn default() -> ContentConfig {
+        kreuzcrawl::ContentConfig::default().into()
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
+#[pyclass(frozen, from_py_object)]
 pub struct BrowserConfig {
     /// When to use the headless browser fallback.
     #[pyo3(get)]
@@ -149,7 +245,7 @@ impl BrowserConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct CrawlConfig {
@@ -208,12 +304,12 @@ pub struct CrawlConfig {
     /// Maximum response body size in bytes.
     #[pyo3(get)]
     pub max_body_size: Option<usize>,
-    /// Whether to extract only the main content from HTML pages.
-    #[pyo3(get)]
-    pub main_content_only: bool,
     /// CSS selectors for tags to remove from HTML before processing.
     #[pyo3(get)]
     pub remove_tags: Vec<String>,
+    /// Content extraction and conversion configuration.
+    #[pyo3(get)]
+    pub content: ContentConfig,
     /// Maximum number of URLs to return from a map operation.
     #[pyo3(get)]
     pub map_limit: Option<usize>,
@@ -265,7 +361,7 @@ pub struct CrawlConfig {
 impl CrawlConfig {
     #[allow(clippy::too_many_arguments)]
     #[must_use]
-    #[pyo3(signature = (respect_robots_txt=None, stay_on_domain=None, allow_subdomains=None, include_paths=None, exclude_paths=None, custom_headers=None, request_timeout=None, max_redirects=None, retry_count=None, retry_codes=None, cookies_enabled=None, main_content_only=None, remove_tags=None, download_assets=None, asset_types=None, browser=None, user_agents=None, capture_screenshot=None, download_documents=None, document_mime_types=None, save_browser_profile=None, max_depth=None, max_pages=None, max_concurrent=None, user_agent=None, rate_limit_ms=None, auth=None, max_body_size=None, map_limit=None, map_search=None, max_asset_size=None, proxy=None, document_max_size=None, warc_output=None, browser_profile=None))]
+    #[pyo3(signature = (respect_robots_txt=None, stay_on_domain=None, allow_subdomains=None, include_paths=None, exclude_paths=None, custom_headers=None, request_timeout=None, max_redirects=None, retry_count=None, retry_codes=None, cookies_enabled=None, remove_tags=None, content=None, download_assets=None, asset_types=None, browser=None, user_agents=None, capture_screenshot=None, download_documents=None, document_mime_types=None, save_browser_profile=None, max_depth=None, max_pages=None, max_concurrent=None, user_agent=None, rate_limit_ms=None, auth=None, max_body_size=None, map_limit=None, map_search=None, max_asset_size=None, proxy=None, document_max_size=None, warc_output=None, browser_profile=None))]
     #[new]
     pub fn new(
         respect_robots_txt: Option<bool>,
@@ -279,8 +375,8 @@ impl CrawlConfig {
         retry_count: Option<usize>,
         retry_codes: Option<Vec<u16>>,
         cookies_enabled: Option<bool>,
-        main_content_only: Option<bool>,
         remove_tags: Option<Vec<String>>,
+        content: Option<ContentConfig>,
         download_assets: Option<bool>,
         asset_types: Option<Vec<AssetCategory>>,
         browser: Option<BrowserConfig>,
@@ -323,8 +419,8 @@ impl CrawlConfig {
             cookies_enabled: cookies_enabled.unwrap_or(false),
             auth,
             max_body_size,
-            main_content_only: main_content_only.unwrap_or(false),
             remove_tags: remove_tags.unwrap_or_default(),
+            content: content.unwrap_or_default(),
             map_limit,
             map_search,
             download_assets: download_assets.unwrap_or(false),
@@ -369,8 +465,8 @@ impl CrawlConfig {
             cookies_enabled: self.cookies_enabled,
             auth: self.auth.clone().map(Into::into),
             max_body_size: self.max_body_size,
-            main_content_only: self.main_content_only,
             remove_tags: self.remove_tags.clone(),
+            content: self.content.clone().into(),
             map_limit: self.map_limit,
             map_search: self.map_search.clone(),
             download_assets: self.download_assets,
@@ -508,9 +604,6 @@ pub struct ScrapeResult {
     /// The detected character set encoding.
     #[pyo3(get)]
     pub detected_charset: Option<String>,
-    /// Whether main_content_only was active during extraction.
-    #[pyo3(get)]
-    pub main_content_only: bool,
     /// Whether an authentication header was sent with the request.
     #[pyo3(get)]
     pub auth_header_sent: bool,
@@ -547,7 +640,7 @@ pub struct ScrapeResult {
 impl ScrapeResult {
     #[allow(clippy::too_many_arguments)]
     #[must_use]
-    #[pyo3(signature = (status_code=None, content_type=None, html=None, body_size=None, metadata=None, links=None, images=None, feeds=None, json_ld=None, is_allowed=None, noindex_detected=None, nofollow_detected=None, is_pdf=None, was_skipped=None, main_content_only=None, auth_header_sent=None, assets=None, js_render_hint=None, browser_used=None, crawl_delay=None, x_robots_tag=None, detected_charset=None, response_meta=None, markdown=None, extracted_data=None, extraction_meta=None, screenshot=None, downloaded_document=None))]
+    #[pyo3(signature = (status_code=None, content_type=None, html=None, body_size=None, metadata=None, links=None, images=None, feeds=None, json_ld=None, is_allowed=None, noindex_detected=None, nofollow_detected=None, is_pdf=None, was_skipped=None, auth_header_sent=None, assets=None, js_render_hint=None, browser_used=None, crawl_delay=None, x_robots_tag=None, detected_charset=None, response_meta=None, markdown=None, extracted_data=None, extraction_meta=None, screenshot=None, downloaded_document=None))]
     #[new]
     pub fn new(
         status_code: Option<u16>,
@@ -564,7 +657,6 @@ impl ScrapeResult {
         nofollow_detected: Option<bool>,
         is_pdf: Option<bool>,
         was_skipped: Option<bool>,
-        main_content_only: Option<bool>,
         auth_header_sent: Option<bool>,
         assets: Option<Vec<DownloadedAsset>>,
         js_render_hint: Option<bool>,
@@ -597,7 +689,6 @@ impl ScrapeResult {
             is_pdf: is_pdf.unwrap_or_default(),
             was_skipped: was_skipped.unwrap_or_default(),
             detected_charset,
-            main_content_only: main_content_only.unwrap_or_default(),
             auth_header_sent: auth_header_sent.unwrap_or_default(),
             response_meta,
             assets: assets.unwrap_or_default(),
@@ -1911,6 +2002,44 @@ impl From<kreuzcrawl::ProxyConfig> for ProxyConfig {
     }
 }
 
+impl From<ContentConfig> for kreuzcrawl::ContentConfig {
+    fn from(val: ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth,
+            wrap: val.wrap,
+            wrap_width: val.wrap_width,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ContentConfig> for ContentConfig {
+    fn from(val: kreuzcrawl::ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth,
+            wrap: val.wrap,
+            wrap_width: val.wrap_width,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
 #[allow(clippy::field_reassign_with_default)]
 impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: BrowserConfig) -> Self {
@@ -1965,8 +2094,8 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
         __result.cookies_enabled = val.cookies_enabled;
         __result.auth = val.auth.map(Into::into);
         __result.max_body_size = val.max_body_size;
-        __result.main_content_only = val.main_content_only;
         __result.remove_tags = val.remove_tags;
+        __result.content = val.content.into();
         __result.map_limit = val.map_limit;
         __result.map_search = val.map_search;
         __result.download_assets = val.download_assets;
@@ -2007,8 +2136,8 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             cookies_enabled: val.cookies_enabled,
             auth: val.auth.map(Into::into),
             max_body_size: val.max_body_size,
-            main_content_only: val.main_content_only,
             remove_tags: val.remove_tags,
+            content: val.content.into(),
             map_limit: val.map_limit,
             map_search: val.map_search,
             download_assets: val.download_assets,
@@ -2080,7 +2209,6 @@ impl From<ScrapeResult> for kreuzcrawl::ScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),
@@ -2115,7 +2243,6 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),
@@ -2856,6 +2983,7 @@ pub fn _kreuzcrawl(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(init_async_runtime, m)?)?;
     m.add_class::<ExtractionMeta>()?;
     m.add_class::<ProxyConfig>()?;
+    m.add_class::<ContentConfig>()?;
     m.add_class::<BrowserConfig>()?;
     m.add_class::<CrawlConfig>()?;
     m.add_class::<DownloadedDocument>()?;

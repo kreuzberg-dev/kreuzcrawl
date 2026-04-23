@@ -28,8 +28,8 @@ public class CrawlConfigBuilder {
 	private boolean cookiesEnabled = false;
 	private Optional<AuthConfig> auth = Optional.empty();
 	private Optional<Long> maxBodySize = Optional.empty();
-	private boolean mainContentOnly = false;
 	private List<String> removeTags = List.of();
+	private ContentConfig content = null;
 	private Optional<Long> mapLimit = Optional.empty();
 	private Optional<String> mapSearch = Optional.empty();
 	private boolean downloadAssets = false;
@@ -136,13 +136,13 @@ public class CrawlConfigBuilder {
 		return this;
 	}
 
-	public CrawlConfigBuilder withMainContentOnly(boolean value) {
-		this.mainContentOnly = value;
+	public CrawlConfigBuilder withRemoveTags(List<String> value) {
+		this.removeTags = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withRemoveTags(List<String> value) {
-		this.removeTags = value;
+	public CrawlConfigBuilder withContent(ContentConfig value) {
+		this.content = value;
 		return this;
 	}
 
@@ -224,8 +224,8 @@ public class CrawlConfigBuilder {
 	public CrawlConfig build() {
 		return new CrawlConfig(maxDepth, maxPages, maxConcurrent, respectRobotsTxt, userAgent, stayOnDomain,
 				allowSubdomains, includePaths, excludePaths, customHeaders, requestTimeout, rateLimitMs, maxRedirects,
-				retryCount, retryCodes, cookiesEnabled, auth, maxBodySize, mainContentOnly, removeTags, mapLimit,
-				mapSearch, downloadAssets, assetTypes, maxAssetSize, browser, proxy, userAgents, captureScreenshot,
+				retryCount, retryCodes, cookiesEnabled, auth, maxBodySize, removeTags, content, mapLimit, mapSearch,
+				downloadAssets, assetTypes, maxAssetSize, browser, proxy, userAgents, captureScreenshot,
 				downloadDocuments, documentMaxSize, documentMimeTypes, warcOutput, browserProfile, saveBrowserProfile);
 	}
 }

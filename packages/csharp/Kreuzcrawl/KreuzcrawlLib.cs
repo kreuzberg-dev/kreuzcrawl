@@ -30,7 +30,14 @@ public static class KreuzcrawlLib
         var result = NativeMethods.CreateEngine(
             configHandle
         );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+        if (result == IntPtr.Zero)
+        {
+            var err = GetLastError();
+            if (err.Code != 0)
+            {
+                throw err;
+            }
+        }
         var returnValue = new CrawlEngineHandle(result);
         NativeMethods.CrawlConfigFree(configHandle);
         return returnValue;
@@ -51,7 +58,14 @@ public static class KreuzcrawlLib
                 engine.Handle,
                 url
             );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+            if (result == IntPtr.Zero)
+            {
+                var err = GetLastError();
+                if (err.Code != 0)
+                {
+                    throw err;
+                }
+            }
             var jsonPtr = NativeMethods.ScrapeResultToJson(result);
             var json = Marshal.PtrToStringUTF8(jsonPtr);
             NativeMethods.FreeString(jsonPtr);
@@ -76,7 +90,14 @@ public static class KreuzcrawlLib
                 engine.Handle,
                 url
             );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+            if (result == IntPtr.Zero)
+            {
+                var err = GetLastError();
+                if (err.Code != 0)
+                {
+                    throw err;
+                }
+            }
             var jsonPtr = NativeMethods.CrawlResultToJson(result);
             var json = Marshal.PtrToStringUTF8(jsonPtr);
             NativeMethods.FreeString(jsonPtr);
@@ -101,7 +122,14 @@ public static class KreuzcrawlLib
                 engine.Handle,
                 url
             );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+            if (result == IntPtr.Zero)
+            {
+                var err = GetLastError();
+                if (err.Code != 0)
+                {
+                    throw err;
+                }
+            }
             var jsonPtr = NativeMethods.MapResultToJson(result);
             var json = Marshal.PtrToStringUTF8(jsonPtr);
             NativeMethods.FreeString(jsonPtr);
@@ -127,7 +155,14 @@ public static class KreuzcrawlLib
                 engine.Handle,
                 urlsHandle
             );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+            if (result == IntPtr.Zero)
+            {
+                var err = GetLastError();
+                if (err.Code != 0)
+                {
+                    throw err;
+                }
+            }
             var json = Marshal.PtrToStringUTF8(result);
             NativeMethods.FreeString(result);
             var returnValue = JsonSerializer.Deserialize<List<BatchScrapeResult>>(json ?? "null", JsonOptions)!;
@@ -152,13 +187,31 @@ public static class KreuzcrawlLib
                 engine.Handle,
                 urlsHandle
             );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+            if (result == IntPtr.Zero)
+            {
+                var err = GetLastError();
+                if (err.Code != 0)
+                {
+                    throw err;
+                }
+            }
             var json = Marshal.PtrToStringUTF8(result);
             NativeMethods.FreeString(result);
             var returnValue = JsonSerializer.Deserialize<List<BatchCrawlResult>>(json ?? "null", JsonOptions)!;
             Marshal.FreeHGlobal(urlsHandle);
             return returnValue;
         });
+    }
+
+    public static ContentConfig ContentConfigDefault()
+    {
+        var result = NativeMethods.ContentConfigDefault();
+        var jsonPtr = NativeMethods.ContentConfigToJson(result);
+        var json = Marshal.PtrToStringUTF8(jsonPtr);
+        NativeMethods.FreeString(jsonPtr);
+        NativeMethods.ContentConfigFree(result);
+        var returnValue = JsonSerializer.Deserialize<ContentConfig>(json ?? "null", JsonOptions)!;
+        return returnValue;
     }
 
     public static BrowserConfig BrowserConfigDefault()

@@ -92,6 +92,97 @@ impl ProxyConfig {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
+#[php(name = "Kreuzcrawl\\ContentConfig")]
+pub struct ContentConfig {
+    /// Output format: `"markdown"` (default), `"plain"`, `"djot"`.
+    #[php(prop, name = "output_format")]
+    pub output_format: String,
+    /// Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`.
+    ///
+    /// - Minimal: only scripts/styles removed.
+    /// - Standard: also removes nav, nav-hinted headers/footers/asides, forms.
+    /// - Aggressive: removes all footers/asides unconditionally.
+    #[php(prop, name = "preprocessing_preset")]
+    pub preprocessing_preset: String,
+    /// Remove navigation elements (nav, breadcrumbs, menus). Default: `true`.
+    #[php(prop, name = "remove_navigation")]
+    pub remove_navigation: bool,
+    /// Remove form elements. Default: `true`.
+    #[php(prop, name = "remove_forms")]
+    pub remove_forms: bool,
+    /// HTML tag names to strip (render children only, remove the tag wrapper).
+    /// Default: `["noscript"]`.
+    #[php(prop, name = "strip_tags")]
+    pub strip_tags: Vec<String>,
+    /// HTML tag names to preserve as raw HTML in output.
+    #[php(prop, name = "preserve_tags")]
+    pub preserve_tags: Vec<String>,
+    /// CSS selectors for elements to exclude entirely (element + all content).
+    ///
+    /// Unlike `strip_tags` (which removes the wrapper but keeps children),
+    /// excluded elements and all descendants are dropped. Supports CSS selectors:
+    /// `.class`, `#id`, `[attribute]`, compound selectors.
+    ///
+    /// Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]`
+    #[php(prop, name = "exclude_selectors")]
+    pub exclude_selectors: Vec<String>,
+    /// Skip image elements in output. Default: `false`.
+    #[php(prop, name = "skip_images")]
+    pub skip_images: bool,
+    /// Max DOM traversal depth. Prevents stack overflow on deeply nested HTML.
+    #[php(prop, name = "max_depth")]
+    pub max_depth: Option<i64>,
+    /// Enable line wrapping. Default: `false`.
+    #[php(prop, name = "wrap")]
+    pub wrap: bool,
+    /// Wrap width when `wrap` is enabled. Default: `80`.
+    #[php(prop, name = "wrap_width")]
+    pub wrap_width: i64,
+    /// Include document structure tree in output. Default: `true`.
+    #[php(prop, name = "include_document_structure")]
+    pub include_document_structure: bool,
+}
+
+#[php_impl]
+impl ContentConfig {
+    pub fn __construct(
+        output_format: Option<String>,
+        preprocessing_preset: Option<String>,
+        remove_navigation: Option<bool>,
+        remove_forms: Option<bool>,
+        strip_tags: Option<Vec<String>>,
+        preserve_tags: Option<Vec<String>>,
+        exclude_selectors: Option<Vec<String>>,
+        skip_images: Option<bool>,
+        max_depth: Option<i64>,
+        wrap: Option<bool>,
+        wrap_width: Option<i64>,
+        include_document_structure: Option<bool>,
+    ) -> Self {
+        Self {
+            output_format: output_format.unwrap_or("markdown".to_string()),
+            preprocessing_preset: preprocessing_preset.unwrap_or("standard".to_string()),
+            remove_navigation: remove_navigation.unwrap_or(true),
+            remove_forms: remove_forms.unwrap_or(true),
+            strip_tags: strip_tags.unwrap_or_default(),
+            preserve_tags: preserve_tags.unwrap_or_default(),
+            exclude_selectors: exclude_selectors.unwrap_or_default(),
+            skip_images: skip_images.unwrap_or(false),
+            max_depth,
+            wrap: wrap.unwrap_or(false),
+            wrap_width: wrap_width.unwrap_or(80),
+            include_document_structure: include_document_structure.unwrap_or(true),
+        }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ContentConfig {
+        kreuzcrawl::ContentConfig::default().into()
+    }
+}
+
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[php_class]
 #[php(name = "Kreuzcrawl\\BrowserConfig")]
 pub struct BrowserConfig {
     /// When to use the headless browser fallback.
@@ -185,12 +276,11 @@ pub struct CrawlConfig {
     /// Maximum response body size in bytes.
     #[php(prop, name = "max_body_size")]
     pub max_body_size: Option<i64>,
-    /// Whether to extract only the main content from HTML pages.
-    #[php(prop, name = "main_content_only")]
-    pub main_content_only: bool,
     /// CSS selectors for tags to remove from HTML before processing.
     #[php(prop, name = "remove_tags")]
     pub remove_tags: Vec<String>,
+    /// Content extraction and conversion configuration.
+    pub content: ContentConfig,
     /// Maximum number of URLs to return from a map operation.
     #[php(prop, name = "map_limit")]
     pub map_limit: Option<i64>,
@@ -248,6 +338,11 @@ impl CrawlConfig {
     }
 
     #[php(getter)]
+    pub fn get_content(&self) -> ContentConfig {
+        self.content.clone()
+    }
+
+    #[php(getter)]
     pub fn get_browser(&self) -> BrowserConfig {
         self.browser.clone()
     }
@@ -297,8 +392,8 @@ impl CrawlConfig {
                 },
             }),
             max_body_size: self.max_body_size.map(|v| v as usize),
-            main_content_only: self.main_content_only,
             remove_tags: self.remove_tags.clone(),
+            content: self.content.clone().into(),
             map_limit: self.map_limit.map(|v| v as usize),
             map_search: self.map_search.clone(),
             download_assets: self.download_assets,
@@ -453,9 +548,6 @@ pub struct ScrapeResult {
     /// The detected character set encoding.
     #[php(prop, name = "detected_charset")]
     pub detected_charset: Option<String>,
-    /// Whether main_content_only was active during extraction.
-    #[php(prop, name = "main_content_only")]
-    pub main_content_only: bool,
     /// Whether an authentication header was sent with the request.
     #[php(prop, name = "auth_header_sent")]
     pub auth_header_sent: bool,
@@ -1559,6 +1651,44 @@ impl From<kreuzcrawl::ProxyConfig> for ProxyConfig {
     }
 }
 
+impl From<ContentConfig> for kreuzcrawl::ContentConfig {
+    fn from(val: ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth.map(|v| v as usize),
+            wrap: val.wrap,
+            wrap_width: val.wrap_width as usize,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ContentConfig> for ContentConfig {
+    fn from(val: kreuzcrawl::ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth.map(|v| v as i64),
+            wrap: val.wrap,
+            wrap_width: val.wrap_width as i64,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
 impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: BrowserConfig) -> Self {
         let json = serde_json::to_string(&val).expect("alef: serialize binding type");
@@ -1618,8 +1748,8 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
                     .unwrap_or_default()
             }),
             max_body_size: val.max_body_size.map(|v| v as i64),
-            main_content_only: val.main_content_only,
             remove_tags: val.remove_tags,
+            content: val.content.into(),
             map_limit: val.map_limit.map(|v| v as i64),
             map_search: val.map_search,
             download_assets: val.download_assets,
@@ -1707,7 +1837,6 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),
@@ -2314,6 +2443,7 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
     module
         .class::<ExtractionMeta>()
         .class::<ProxyConfig>()
+        .class::<ContentConfig>()
         .class::<BrowserConfig>()
         .class::<CrawlConfig>()
         .class::<DownloadedDocument>()

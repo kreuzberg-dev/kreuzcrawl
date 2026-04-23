@@ -16,6 +16,7 @@ typedef struct KCRAWLBrowserMode KCRAWLBrowserMode;
 typedef struct KCRAWLBrowserWait KCRAWLBrowserWait;
 typedef struct KCRAWLCitationReference KCRAWLCitationReference;
 typedef struct KCRAWLCitationResult KCRAWLCitationResult;
+typedef struct KCRAWLContentConfig KCRAWLContentConfig;
 typedef struct KCRAWLCookieInfo KCRAWLCookieInfo;
 typedef struct KCRAWLCrawlConfig KCRAWLCrawlConfig;
 typedef struct KCRAWLCrawlEngineHandle KCRAWLCrawlEngineHandle;

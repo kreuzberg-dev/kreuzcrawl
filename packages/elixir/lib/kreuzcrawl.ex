@@ -9,7 +9,7 @@ defmodule Kreuzcrawl do
   end
 
   @doc "Create a new crawl engine with the given configuration."
-  @spec create_engine(String.t() | nil | nil) :: {:ok, reference()} | {:error, String.t()}
+  @spec create_engine(String.t() | nil) :: {:ok, reference()} | {:error, String.t()}
   def create_engine(config) do
     Kreuzcrawl.Native.create_engine(config)
   end
@@ -42,6 +42,12 @@ defmodule Kreuzcrawl do
   @spec batch_crawl_async(reference(), [String.t()]) :: [String.t() | nil]
   def batch_crawl_async(engine, urls) do
     Kreuzcrawl.Native.batch_crawl_async(engine, urls)
+  end
+
+  @doc "Method"
+  @spec contentconfig_default() :: String.t() | nil
+  def contentconfig_default do
+    Kreuzcrawl.Native.contentconfig_default()
   end
 
   @doc "Method"

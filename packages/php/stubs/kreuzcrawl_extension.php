@@ -69,6 +69,68 @@ namespace Kreuzcrawl {
     }
 
     /**
+     * Content extraction and conversion configuration.
+     *
+     * Controls how HTML is converted to the output format. Uses
+     * html-to-markdown-rs as the conversion engine for all formats
+     * (markdown, plain text, djot).
+     */
+    class ContentConfig
+    {
+        public string $output_format;
+        public string $preprocessing_preset;
+        public bool $remove_navigation;
+        public bool $remove_forms;
+        /** @var array<string> */
+        public array $strip_tags;
+        /** @var array<string> */
+        public array $preserve_tags;
+        /** @var array<string> */
+        public array $exclude_selectors;
+        public bool $skip_images;
+        public ?int $max_depth;
+        public bool $wrap;
+        public int $wrap_width;
+        public bool $include_document_structure;
+
+        /**
+         * @param array<string> $strip_tags
+         * @param array<string> $preserve_tags
+         * @param array<string> $exclude_selectors
+         */
+        public function __construct(
+            string $output_format,
+            string $preprocessing_preset,
+            bool $remove_navigation,
+            bool $remove_forms,
+            array $strip_tags,
+            array $preserve_tags,
+            array $exclude_selectors,
+            bool $skip_images,
+            bool $wrap,
+            int $wrap_width,
+            bool $include_document_structure,
+            ?int $max_depth = null
+        ) {}
+
+        public function getOutputFormat(): string {}
+        public function getPreprocessingPreset(): string {}
+        public function getRemoveNavigation(): bool {}
+        public function getRemoveForms(): bool {}
+        /** @return array<string> */
+        public function getStripTags(): array {}
+        /** @return array<string> */
+        public function getPreserveTags(): array {}
+        /** @return array<string> */
+        public function getExcludeSelectors(): array {}
+        public function getSkipImages(): bool {}
+        public function getMaxDepth(): ?int {}
+        public function getWrap(): bool {}
+        public function getWrapWidth(): int {}
+        public function getIncludeDocumentStructure(): bool {}
+    }
+
+    /**
      * Browser fallback configuration.
      */
     class BrowserConfig
@@ -124,9 +186,9 @@ namespace Kreuzcrawl {
         public bool $cookies_enabled;
         public ?AuthConfig $auth;
         public ?int $max_body_size;
-        public bool $main_content_only;
         /** @var array<string> */
         public array $remove_tags;
+        public ContentConfig $content;
         public ?int $map_limit;
         public ?string $map_search;
         public bool $download_assets;
@@ -168,8 +230,8 @@ namespace Kreuzcrawl {
             int $retry_count,
             array $retry_codes,
             bool $cookies_enabled,
-            bool $main_content_only,
             array $remove_tags,
+            ContentConfig $content,
             bool $download_assets,
             array $asset_types,
             BrowserConfig $browser,
@@ -216,9 +278,9 @@ namespace Kreuzcrawl {
         public function getCookiesEnabled(): bool {}
         public function getAuth(): ?AuthConfig {}
         public function getMaxBodySize(): ?int {}
-        public function getMainContentOnly(): bool {}
         /** @return array<string> */
         public function getRemoveTags(): array {}
+        public function getContent(): ContentConfig {}
         public function getMapLimit(): ?int {}
         public function getMapSearch(): ?string {}
         public function getDownloadAssets(): bool {}
@@ -306,7 +368,6 @@ namespace Kreuzcrawl {
         public bool $is_pdf;
         public bool $was_skipped;
         public ?string $detected_charset;
-        public bool $main_content_only;
         public bool $auth_header_sent;
         public ?ResponseMeta $response_meta;
         /** @var array<DownloadedAsset> */
@@ -341,7 +402,6 @@ namespace Kreuzcrawl {
             bool $nofollow_detected,
             bool $is_pdf,
             bool $was_skipped,
-            bool $main_content_only,
             bool $auth_header_sent,
             array $assets,
             bool $js_render_hint,
@@ -378,7 +438,6 @@ namespace Kreuzcrawl {
         public function getIsPdf(): bool {}
         public function getWasSkipped(): bool {}
         public function getDetectedCharset(): ?string {}
-        public function getMainContentOnly(): bool {}
         public function getAuthHeaderSent(): bool {}
         public function getResponseMeta(): ?ResponseMeta {}
         /** @return array<DownloadedAsset> */

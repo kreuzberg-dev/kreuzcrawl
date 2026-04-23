@@ -32,12 +32,10 @@ use regex::Regex;
 use crate::types::ScrapeQualityMetrics;
 
 /// Regex to strip markdown image syntax `![alt](url)` → `alt`
-static MD_IMAGE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"!\[([^\]]*)\]\([^)]*\)").expect("invalid regex"));
+static MD_IMAGE_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"!\[([^\]]*)\]\([^)]*\)").expect("invalid regex"));
 
 /// Regex to strip markdown link syntax `[text](url)` → `text`
-static MD_LINK_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"\[([^\]]*)\]\([^)]*\)").expect("invalid regex"));
+static MD_LINK_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\[([^\]]*)\]\([^)]*\)").expect("invalid regex"));
 
 /// Strip markdown link and image syntax so URL components do not become tokens.
 /// `![alt](url)` → `alt`, `[text](url)` → `text`.
@@ -487,8 +485,7 @@ mod tests {
     #[test]
     fn test_full_truth_match_no_lie() {
         // Exact match: extracted equals truth exactly.
-        let metrics =
-            compute_scrape_quality("quick brown fox", Some("quick brown fox"), None).unwrap();
+        let metrics = compute_scrape_quality("quick brown fox", Some("quick brown fox"), None).unwrap();
 
         assert!((metrics.f1_text - 1.0).abs() < 0.001);
         assert!((metrics.quality_score - 1.0).abs() < 0.01);
@@ -498,9 +495,7 @@ mod tests {
 
     #[test]
     fn test_no_truth_match() {
-        let metrics =
-            compute_scrape_quality("completely different text", Some("quick brown fox"), None)
-                .unwrap();
+        let metrics = compute_scrape_quality("completely different text", Some("quick brown fox"), None).unwrap();
 
         assert_eq!(metrics.f1_text, 0.0);
         assert_eq!(metrics.quality_score, 0.0);
@@ -512,8 +507,7 @@ mod tests {
         // extracted = "hello world foo", truth = "hello world bar"
         // intersection = {hello, world} = 2
         // precision = 2/3, recall = 2/3
-        let metrics =
-            compute_scrape_quality("hello world foo", Some("hello world bar"), None).unwrap();
+        let metrics = compute_scrape_quality("hello world foo", Some("hello world bar"), None).unwrap();
 
         assert!((metrics.precision - 2.0 / 3.0).abs() < 0.001);
         assert!((metrics.recall - 2.0 / 3.0).abs() < 0.001);
@@ -521,19 +515,14 @@ mod tests {
 
     #[test]
     fn test_noise_penalty_zero_when_no_lie() {
-        let metrics =
-            compute_scrape_quality("hello world", Some("hello world"), None).unwrap();
+        let metrics = compute_scrape_quality("hello world", Some("hello world"), None).unwrap();
         assert_eq!(metrics.noise_penalty, 0.0);
     }
 
     #[test]
     fn test_noise_penalty_zero_when_lie_absent_from_extraction() {
-        let metrics = compute_scrape_quality(
-            "good content here",
-            Some("good content"),
-            Some("spam garbage noise"),
-        )
-        .unwrap();
+        let metrics =
+            compute_scrape_quality("good content here", Some("good content"), Some("spam garbage noise")).unwrap();
 
         assert_eq!(metrics.noise_penalty, 0.0);
     }
@@ -555,12 +544,7 @@ mod tests {
     fn test_noise_penalty_partial() {
         // lie = "spam garbage" (2 tokens), extracted contains "spam" but not "garbage"
         // penalty = 1/2 = 0.5
-        let metrics = compute_scrape_quality(
-            "good content spam",
-            Some("good content"),
-            Some("spam garbage"),
-        )
-        .unwrap();
+        let metrics = compute_scrape_quality("good content spam", Some("good content"), Some("spam garbage")).unwrap();
 
         assert!((metrics.noise_penalty - 0.5).abs() < 0.001);
     }
@@ -568,28 +552,21 @@ mod tests {
     #[test]
     fn test_noise_penalty_empty_lie_text() {
         // Empty lie_text → penalty = 0.0
-        let metrics =
-            compute_scrape_quality("hello world", Some("hello world"), Some("")).unwrap();
+        let metrics = compute_scrape_quality("hello world", Some("hello world"), Some("")).unwrap();
         assert_eq!(metrics.noise_penalty, 0.0);
     }
 
     #[test]
     fn test_noise_penalty_case_insensitive() {
         // lie token "SPAM" should match "spam" in extracted (via tokenize lowercasing)
-        let metrics = compute_scrape_quality(
-            "good content spam",
-            Some("good content"),
-            Some("SPAM"),
-        )
-        .unwrap();
+        let metrics = compute_scrape_quality("good content spam", Some("good content"), Some("SPAM")).unwrap();
 
         assert!((metrics.noise_penalty - 1.0).abs() < 0.001);
     }
 
     #[test]
     fn test_missing_and_extra_tokens_populated() {
-        let metrics =
-            compute_scrape_quality("hello world foo", Some("hello world bar"), None).unwrap();
+        let metrics = compute_scrape_quality("hello world foo", Some("hello world bar"), None).unwrap();
 
         // "bar" is in truth but not extracted → missing
         assert!(metrics.missing_tokens.iter().any(|(t, _)| t == "bar"));
@@ -600,13 +577,11 @@ mod tests {
     #[test]
     fn test_correct_flag_threshold() {
         // Identical texts should have correct = true (quality_score = 1.0 >= 0.95)
-        let metrics =
-            compute_scrape_quality("hello world", Some("hello world"), None).unwrap();
+        let metrics = compute_scrape_quality("hello world", Some("hello world"), None).unwrap();
         assert!(metrics.correct);
 
         // Completely different → correct = false
-        let metrics =
-            compute_scrape_quality("alpha beta", Some("one two three"), None).unwrap();
+        let metrics = compute_scrape_quality("alpha beta", Some("one two three"), None).unwrap();
         assert!(!metrics.correct);
     }
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@kreuzberg/kreuzcrawl",
-	"version": "0.1.2",
+	"version": "0.2.0",
 	"description": "High-performance web crawling engine",
 	"license": "Elastic-2.0",
 	"main": "index.js",

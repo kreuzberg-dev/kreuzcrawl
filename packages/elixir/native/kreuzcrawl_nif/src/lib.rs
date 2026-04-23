@@ -61,6 +61,59 @@ impl ProxyConfig {
 }
 
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
+pub struct ContentConfig {
+    pub output_format: String,
+    pub preprocessing_preset: String,
+    pub remove_navigation: bool,
+    pub remove_forms: bool,
+    pub strip_tags: Vec<String>,
+    pub preserve_tags: Vec<String>,
+    pub exclude_selectors: Vec<String>,
+    pub skip_images: bool,
+    pub max_depth: Option<usize>,
+    pub wrap: bool,
+    pub wrap_width: usize,
+    pub include_document_structure: bool,
+}
+
+impl ContentConfig {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            output_format: opts
+                .get("output_format")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            preprocessing_preset: opts
+                .get("preprocessing_preset")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            remove_navigation: opts
+                .get("remove_navigation")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or(true),
+            remove_forms: opts.get("remove_forms").and_then(|t| t.decode().ok()).unwrap_or(true),
+            strip_tags: opts.get("strip_tags").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            preserve_tags: opts
+                .get("preserve_tags")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            exclude_selectors: opts
+                .get("exclude_selectors")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            skip_images: opts.get("skip_images").and_then(|t| t.decode().ok()).unwrap_or(false),
+            max_depth: opts.get("max_depth").and_then(|t| t.decode().ok()),
+            wrap: opts.get("wrap").and_then(|t| t.decode().ok()).unwrap_or(false),
+            wrap_width: opts.get("wrap_width").and_then(|t| t.decode().ok()).unwrap_or(80),
+            include_document_structure: opts
+                .get("include_document_structure")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or(true),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct BrowserConfig {
     pub mode: BrowserMode,
     pub endpoint: Option<String>,
@@ -103,8 +156,8 @@ pub struct CrawlConfig {
     pub cookies_enabled: bool,
     pub auth: Option<AuthConfig>,
     pub max_body_size: Option<usize>,
-    pub main_content_only: bool,
     pub remove_tags: Vec<String>,
+    pub content: ContentConfig,
     pub map_limit: Option<usize>,
     pub map_search: Option<String>,
     pub download_assets: bool,
@@ -170,14 +223,11 @@ impl CrawlConfig {
                 .unwrap_or(false),
             auth: opts.get("auth").and_then(|t| t.decode().ok()),
             max_body_size: opts.get("max_body_size").and_then(|t| t.decode().ok()),
-            main_content_only: opts
-                .get("main_content_only")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
             remove_tags: opts
                 .get("remove_tags")
                 .and_then(|t| t.decode().ok())
                 .unwrap_or_default(),
+            content: opts.get("content").and_then(|t| t.decode().ok()).unwrap_or_default(),
             map_limit: opts.get("map_limit").and_then(|t| t.decode().ok()),
             map_search: opts.get("map_search").and_then(|t| t.decode().ok()),
             download_assets: opts
@@ -265,7 +315,6 @@ pub struct ScrapeResult {
     pub is_pdf: bool,
     pub was_skipped: bool,
     pub detected_charset: Option<String>,
-    pub main_content_only: bool,
     pub auth_header_sent: bool,
     pub response_meta: Option<ResponseMeta>,
     pub assets: Vec<DownloadedAsset>,
@@ -313,10 +362,6 @@ impl ScrapeResult {
                 .and_then(|t| t.decode().ok())
                 .unwrap_or_default(),
             detected_charset: opts.get("detected_charset").and_then(|t| t.decode().ok()),
-            main_content_only: opts
-                .get("main_content_only")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
             auth_header_sent: opts
                 .get("auth_header_sent")
                 .and_then(|t| t.decode().ok())
@@ -1057,6 +1102,11 @@ pub fn batch_crawl_async(
 }
 
 #[rustler::nif]
+pub fn contentconfig_default() -> ContentConfig {
+    kreuzcrawl::ContentConfig::default().into()
+}
+
+#[rustler::nif]
 pub fn browserconfig_default() -> BrowserConfig {
     kreuzcrawl::BrowserConfig::default().into()
 }
@@ -1123,6 +1173,44 @@ impl From<kreuzcrawl::ProxyConfig> for ProxyConfig {
     }
 }
 
+impl From<ContentConfig> for kreuzcrawl::ContentConfig {
+    fn from(val: ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth,
+            wrap: val.wrap,
+            wrap_width: val.wrap_width,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ContentConfig> for ContentConfig {
+    fn from(val: kreuzcrawl::ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth,
+            wrap: val.wrap,
+            wrap_width: val.wrap_width,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
 impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: BrowserConfig) -> Self {
         Self {
@@ -1171,8 +1259,8 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             cookies_enabled: val.cookies_enabled,
             auth: val.auth.map(Into::into),
             max_body_size: val.max_body_size,
-            main_content_only: val.main_content_only,
             remove_tags: val.remove_tags,
+            content: val.content.into(),
             map_limit: val.map_limit,
             map_search: val.map_search,
             download_assets: val.download_assets,
@@ -1214,8 +1302,8 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             cookies_enabled: val.cookies_enabled,
             auth: val.auth.map(Into::into),
             max_body_size: val.max_body_size,
-            main_content_only: val.main_content_only,
             remove_tags: val.remove_tags,
+            content: val.content.into(),
             map_limit: val.map_limit,
             map_search: val.map_search,
             download_assets: val.download_assets,
@@ -1287,7 +1375,6 @@ impl From<ScrapeResult> for kreuzcrawl::ScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),
@@ -1322,7 +1409,6 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
 ### Breaking Changes
 
@@ -16,12 +16,23 @@
 - **Config**: `ContentConfig.preprocessing_preset` (`"minimal"`, `"standard"`, `"aggressive"`) for controlling noise removal aggressiveness
 - **Config**: Full h2m configuration exposed: `strip_tags`, `preserve_tags`, `skip_images`, `max_depth`, `wrap`, `wrap_width`
 - **Encoding**: Non-UTF-8 charset detection and re-decoding via `encoding_rs` (fixes Shift_JIS, EUC-JP, etc.)
-- **Benchmark**: Full benchmark harness at `tools/benchmark-harness/` — 1000-fixture scrape-evals dataset, quality scoring, CPU/memory profiling, flamegraphs, per-fixture output saving
+- **WAF**: Expanded WAF detection — AWS CloudFront, `awswaf.com` challenge scripts, "Verifying your connection" interstitials, "Just a moment" Cloudflare pages
+- **WAF**: WAF detection on HTTP 200 responses with challenge content (catches false-positive 200s from AWS WAF, Cloudflare)
+- **Browser**: Browser fallback on `Forbidden`, `Connection`, and generic errors (was `WafBlocked` only) — catches TLS fingerprint blocks and bot-detection responses
+- **Browser**: Unique user data directories per Chrome launch — prevents `SingletonLock` conflicts when multiple instances run concurrently or after crashes
+- **Benchmark**: Full benchmark harness at `tools/benchmark-harness/` with:
+  - Scrape-evals dataset (1000 fixtures from HuggingFace) with TF1 multiset F1 scoring
+  - Reachability benchmark (16 domains across e-commerce, social, professional, review) with content verification and false-positive detection
+  - CPU flamegraphs via pprof, real-time memory/CPU monitoring
+  - Per-fixture output saving, baseline comparison reports
+  - CLI with download, run, profile, report, validate commands
+- **CI**: Pinned alef to v0.5.3 in CI workflow
 
 ### Fixes
 
 - **Content**: Removed buggy `apply_remove_tags` that corrupted DOM on pages with repeated structural patterns — CSS selector exclusion now handled correctly by h2m during its DOM walk
 - **Content**: Removed duplicate plain text extraction — h2m's `OutputFormat::Plain` handles this natively with proper preprocessing
+- **Browser**: Clean up temporary user data directories after browser teardown and on launch failure
 
 ## 0.1.2
 

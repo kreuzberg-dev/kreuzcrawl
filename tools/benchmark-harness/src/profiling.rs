@@ -7,9 +7,9 @@
 
 use std::path::Path;
 
-use crate::error::Result;
 #[cfg(feature = "profiling")]
 use crate::error::Error;
+use crate::error::Result;
 
 /// A scoped CPU-profiling guard.
 ///

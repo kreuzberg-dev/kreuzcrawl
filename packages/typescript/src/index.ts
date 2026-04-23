@@ -20,6 +20,7 @@ export type {
 	JsBrowserWait,
 	JsCitationReference,
 	JsCitationResult,
+	JsContentConfig,
 	JsCookieInfo,
 	JsCrawlConfig,
 	JsCrawlEngineHandle,

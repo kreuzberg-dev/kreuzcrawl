@@ -20,6 +20,7 @@ typedef struct KCRAWLBrowserMode KCRAWLBrowserMode;
 typedef struct KCRAWLBrowserWait KCRAWLBrowserWait;
 typedef struct KCRAWLCitationReference KCRAWLCitationReference;
 typedef struct KCRAWLCitationResult KCRAWLCitationResult;
+typedef struct KCRAWLContentConfig KCRAWLContentConfig;
 typedef struct KCRAWLCookieInfo KCRAWLCookieInfo;
 typedef struct KCRAWLCrawlConfig KCRAWLCrawlConfig;
 typedef struct KCRAWLCrawlEngineHandle KCRAWLCrawlEngineHandle;
@@ -179,6 +180,120 @@ char *kcrawl_proxy_config_username(const KCRAWLProxyConfig *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 char *kcrawl_proxy_config_password(const KCRAWLProxyConfig *ptr);
+
+/**
+ * Create a `ContentConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_content_config_free`.
+ */
+KCRAWLContentConfig *kcrawl_content_config_from_json(const char *json);
+
+/**
+ * Serialize a `ContentConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_content_config_to_json(const KCRAWLContentConfig *ptr);
+
+/**
+ * Free a `ContentConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_content_config_free(KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `output_format` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_content_config_output_format(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `preprocessing_preset` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_content_config_preprocessing_preset(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `remove_navigation` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_content_config_remove_navigation(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `remove_forms` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_content_config_remove_forms(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `strip_tags` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_content_config_strip_tags(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `preserve_tags` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_content_config_preserve_tags(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `exclude_selectors` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_content_config_exclude_selectors(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `skip_images` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_content_config_skip_images(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `max_depth` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_content_config_max_depth(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `wrap` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_content_config_wrap(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `wrap_width` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_content_config_wrap_width(const KCRAWLContentConfig *ptr);
+
+/**
+ * Get the `include_document_structure` field from a `ContentConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_content_config_include_document_structure(const KCRAWLContentConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KCRAWLContentConfig *kcrawl_content_config_default(void);
 
 /**
  * Create a `BrowserConfig` from a JSON string. Returns null on failure.
@@ -402,18 +517,18 @@ KCRAWLAuthConfig *kcrawl_crawl_config_auth(const KCRAWLCrawlConfig *ptr);
 uintptr_t kcrawl_crawl_config_max_body_size(const KCRAWLCrawlConfig *ptr);
 
 /**
- * Get the `main_content_only` field from a `CrawlConfig`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kcrawl_crawl_config_main_content_only(const KCRAWLCrawlConfig *ptr);
-
-/**
  * Get the `remove_tags` field from a `CrawlConfig`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
 char *kcrawl_crawl_config_remove_tags(const KCRAWLCrawlConfig *ptr);
+
+/**
+ * Get the `content` field from a `CrawlConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KCRAWLContentConfig *kcrawl_crawl_config_content(const KCRAWLCrawlConfig *ptr);
 
 /**
  * Get the `map_limit` field from a `CrawlConfig`.
@@ -721,13 +836,6 @@ int32_t kcrawl_scrape_result_was_skipped(const KCRAWLScrapeResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 char *kcrawl_scrape_result_detected_charset(const KCRAWLScrapeResult *ptr);
-
-/**
- * Get the `main_content_only` field from a `ScrapeResult`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kcrawl_scrape_result_main_content_only(const KCRAWLScrapeResult *ptr);
 
 /**
  * Get the `auth_header_sent` field from a `ScrapeResult`.

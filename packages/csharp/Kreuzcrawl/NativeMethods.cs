@@ -23,6 +23,12 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_browser_config_free")]
     internal static extern void BrowserConfigFree(IntPtr ptr);
 
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_content_config_to_json")]
+    internal static extern IntPtr ContentConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_content_config_free")]
+    internal static extern void ContentConfigFree(IntPtr ptr);
+
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_crawl_config_to_json")]
     internal static extern IntPtr CrawlConfigToJson(IntPtr ptr);
 
@@ -78,6 +84,9 @@ internal static partial class NativeMethods
         IntPtr engine,
         IntPtr urls
     );
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_content_config_default")]
+    internal static extern IntPtr ContentConfigDefault();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kcrawl_browser_config_default")]
     internal static extern IntPtr BrowserConfigDefault();

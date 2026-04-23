@@ -11,6 +11,7 @@ use tokio::sync::Semaphore;
 use tokio::task::JoinSet;
 use tracing::{debug, info, warn};
 
+use crate::Result;
 use crate::adapter::ScrapeAdapter;
 use crate::cache::HtmlCache;
 use crate::config::BenchmarkConfig;
@@ -18,10 +19,9 @@ use crate::monitoring::{ResourceMetrics, ResourceMonitor, snapshot_resources};
 use crate::quality::compute_scrape_quality;
 use crate::stats::{calculate_variance, percentile_r7, sanitize_f64};
 use crate::types::{
-    DurationStatistics, ErrorKind, ExecutionMode, IterationResult, PerformanceMetrics,
-    ReachabilityResult, ScrapeBenchmarkResult, ScrapeFixture,
+    DurationStatistics, ErrorKind, ExecutionMode, IterationResult, PerformanceMetrics, ReachabilityResult,
+    ScrapeBenchmarkResult, ScrapeFixture,
 };
-use crate::Result;
 
 /// Orchestrates warmup and benchmark iterations for a set of fixtures.
 ///
@@ -89,9 +89,7 @@ impl BenchmarkRunner {
 
         // Start continuous resource monitoring before the iteration loop.
         let mut monitor = ResourceMonitor::new();
-        monitor
-            .start(Duration::from_millis(10))
-            .await;
+        monitor.start(Duration::from_millis(10)).await;
 
         // Per-fixture iteration records: indexed as [fixture_index][iteration_index].
         let mut iteration_records: Vec<Vec<IterationResult>> =
@@ -99,8 +97,7 @@ impl BenchmarkRunner {
 
         // Final scraped outputs keyed by fixture index — taken from the last
         // successful benchmark iteration so we have content for quality scoring.
-        let mut last_outputs: Vec<Option<crate::adapter::ScrapeOutput>> =
-            vec![None; fixture_count];
+        let mut last_outputs: Vec<Option<crate::adapter::ScrapeOutput>> = vec![None; fixture_count];
 
         // Bug 3 fix: create semaphore once so concurrency limit spans all iterations.
         let semaphore = Arc::new(Semaphore::new(self.config.max_concurrent));
@@ -153,12 +150,8 @@ impl BenchmarkRunner {
             );
 
             // Build work items: (fixture_index, fixture_clone).
-            let work: Vec<(usize, ScrapeFixture)> = self
-                .fixtures
-                .iter()
-                .enumerate()
-                .map(|(i, f)| (i, f.clone()))
-                .collect();
+            let work: Vec<(usize, ScrapeFixture)> =
+                self.fixtures.iter().enumerate().map(|(i, f)| (i, f.clone())).collect();
 
             let results = self
                 .run_iteration(work, Arc::clone(&semaphore), Arc::clone(&cached_html_map), iteration)
@@ -281,9 +274,7 @@ impl BenchmarkRunner {
 
                 let pre_snapshot = snapshot_resources();
                 let start = Instant::now();
-                let scrape_result = adapter
-                    .scrape(&fixture.url, cached_html.as_deref(), timeout)
-                    .await;
+                let scrape_result = adapter.scrape(&fixture.url, cached_html.as_deref(), timeout).await;
                 let duration_ms = start.elapsed().as_secs_f64() * 1_000.0;
                 let post_snapshot = snapshot_resources();
 
@@ -346,11 +337,7 @@ fn build_result(
     let error_kind = classify_error(error_message.as_deref());
 
     // Collect successful durations for statistics.
-    let mut durations: Vec<f64> = records
-        .iter()
-        .filter(|r| r.success)
-        .map(|r| r.duration_ms)
-        .collect();
+    let mut durations: Vec<f64> = records.iter().filter(|r| r.success).map(|r| r.duration_ms).collect();
 
     let mean_duration_ms = if durations.is_empty() {
         0.0
@@ -380,11 +367,7 @@ fn build_result(
         if let Some(output) = last_output {
             let quality = if measure_quality {
                 if let Some(content) = output.content.as_deref() {
-                    compute_scrape_quality(
-                        content,
-                        fixture.truth_text.as_deref(),
-                        fixture.lie_text.as_deref(),
-                    )
+                    compute_scrape_quality(content, fixture.truth_text.as_deref(), fixture.lie_text.as_deref())
                 } else {
                     None
                 }
@@ -392,12 +375,11 @@ fn build_result(
                 None
             };
 
-            let reachability =
-                if !fixture.verify_selectors.is_empty() || !fixture.verify_text.is_empty() {
-                    Some(crate::verify::verify_content(fixture, output))
-                } else {
-                    None
-                };
+            let reachability = if !fixture.verify_selectors.is_empty() || !fixture.verify_text.is_empty() {
+                Some(crate::verify::verify_content(fixture, output))
+            } else {
+                None
+            };
 
             (
                 Some(output.status_code),
@@ -409,19 +391,18 @@ fn build_result(
             )
         } else {
             // No output — produce a failed reachability result when rules exist.
-            let reachability =
-                if !fixture.verify_selectors.is_empty() || !fixture.verify_text.is_empty() {
-                    Some(ReachabilityResult {
-                        verified: false,
-                        selectors_found: 0,
-                        selectors_total: fixture.verify_selectors.len(),
-                        text_found: 0,
-                        text_total: fixture.verify_text.len(),
-                        is_false_positive: false,
-                    })
-                } else {
-                    None
-                };
+            let reachability = if !fixture.verify_selectors.is_empty() || !fixture.verify_text.is_empty() {
+                Some(ReachabilityResult {
+                    verified: false,
+                    selectors_found: 0,
+                    selectors_total: fixture.verify_selectors.len(),
+                    text_found: 0,
+                    text_total: fixture.verify_text.len(),
+                    is_false_positive: false,
+                })
+            } else {
+                None
+            };
             (None, false, false, 0, None, reachability)
         };
 
@@ -439,8 +420,7 @@ fn build_result(
     let (p50_memory_bytes, p95_memory_bytes, p99_memory_bytes) = if records.is_empty() {
         (0, 0, 0)
     } else {
-        let mut memory_samples: Vec<f64> =
-            records.iter().map(|r| r.memory_bytes as f64).collect();
+        let mut memory_samples: Vec<f64> = records.iter().map(|r| r.memory_bytes as f64).collect();
         let p50 = crate::stats::percentile_r7(&mut memory_samples, 0.5).unwrap_or(0.0) as u64;
         let p95 = crate::stats::percentile_r7(&mut memory_samples, 0.95).unwrap_or(0.0) as u64;
         let p99 = crate::stats::percentile_r7(&mut memory_samples, 0.99).unwrap_or(0.0) as u64;
@@ -584,30 +564,18 @@ mod tests {
     #[test]
     fn test_classify_timeout() {
         assert_eq!(classify_error(Some("request timed out")), ErrorKind::Timeout);
-        assert_eq!(
-            classify_error(Some("timeout after 30s")),
-            ErrorKind::Timeout
-        );
+        assert_eq!(classify_error(Some("timeout after 30s")), ErrorKind::Timeout);
     }
 
     #[test]
     fn test_classify_blocked() {
-        assert_eq!(
-            classify_error(Some("request blocked by WAF")),
-            ErrorKind::Blocked
-        );
-        assert_eq!(
-            classify_error(Some("BLOCKED by Cloudflare")),
-            ErrorKind::Blocked
-        );
+        assert_eq!(classify_error(Some("request blocked by WAF")), ErrorKind::Blocked);
+        assert_eq!(classify_error(Some("BLOCKED by Cloudflare")), ErrorKind::Blocked);
     }
 
     #[test]
     fn test_classify_empty_content() {
-        assert_eq!(
-            classify_error(Some("returned empty content")),
-            ErrorKind::EmptyContent
-        );
+        assert_eq!(classify_error(Some("returned empty content")), ErrorKind::EmptyContent);
     }
 
     #[test]

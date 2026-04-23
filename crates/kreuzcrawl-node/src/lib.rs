@@ -50,6 +50,34 @@ pub struct JsProxyConfig {
 
 #[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
+pub struct JsContentConfig {
+    #[napi(js_name = "outputFormat")]
+    pub output_format: Option<String>,
+    #[napi(js_name = "preprocessingPreset")]
+    pub preprocessing_preset: Option<String>,
+    #[napi(js_name = "removeNavigation")]
+    pub remove_navigation: Option<bool>,
+    #[napi(js_name = "removeForms")]
+    pub remove_forms: Option<bool>,
+    #[napi(js_name = "stripTags")]
+    pub strip_tags: Option<Vec<String>>,
+    #[napi(js_name = "preserveTags")]
+    pub preserve_tags: Option<Vec<String>>,
+    #[napi(js_name = "excludeSelectors")]
+    pub exclude_selectors: Option<Vec<String>>,
+    #[napi(js_name = "skipImages")]
+    pub skip_images: Option<bool>,
+    #[napi(js_name = "maxDepth")]
+    pub max_depth: Option<i64>,
+    pub wrap: Option<bool>,
+    #[napi(js_name = "wrapWidth")]
+    pub wrap_width: Option<i64>,
+    #[napi(js_name = "includeDocumentStructure")]
+    pub include_document_structure: Option<bool>,
+}
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
+#[napi(object)]
 pub struct JsBrowserConfig {
     pub mode: Option<JsBrowserMode>,
     pub endpoint: Option<String>,
@@ -99,10 +127,9 @@ pub struct JsCrawlConfig {
     pub auth: Option<JsAuthConfig>,
     #[napi(js_name = "maxBodySize")]
     pub max_body_size: Option<i64>,
-    #[napi(js_name = "mainContentOnly")]
-    pub main_content_only: Option<bool>,
     #[napi(js_name = "removeTags")]
     pub remove_tags: Option<Vec<String>>,
+    pub content: Option<JsContentConfig>,
     #[napi(js_name = "mapLimit")]
     pub map_limit: Option<i64>,
     #[napi(js_name = "mapSearch")]
@@ -179,8 +206,6 @@ pub struct JsScrapeResult {
     pub was_skipped: Option<bool>,
     #[napi(js_name = "detectedCharset")]
     pub detected_charset: Option<String>,
-    #[napi(js_name = "mainContentOnly")]
-    pub main_content_only: Option<bool>,
     #[napi(js_name = "authHeaderSent")]
     pub auth_header_sent: Option<bool>,
     #[napi(js_name = "responseMeta")]
@@ -734,6 +759,44 @@ impl From<kreuzcrawl::ProxyConfig> for JsProxyConfig {
     }
 }
 
+impl From<JsContentConfig> for kreuzcrawl::ContentConfig {
+    fn from(val: JsContentConfig) -> Self {
+        Self {
+            output_format: val.output_format.unwrap_or_default(),
+            preprocessing_preset: val.preprocessing_preset.unwrap_or_default(),
+            remove_navigation: val.remove_navigation.unwrap_or_default(),
+            remove_forms: val.remove_forms.unwrap_or_default(),
+            strip_tags: val.strip_tags.unwrap_or_default(),
+            preserve_tags: val.preserve_tags.unwrap_or_default(),
+            exclude_selectors: val.exclude_selectors.unwrap_or_default(),
+            skip_images: val.skip_images.unwrap_or_default(),
+            max_depth: val.max_depth.map(|v| v as usize),
+            wrap: val.wrap.unwrap_or_default(),
+            wrap_width: val.wrap_width.map(|v| v as usize).unwrap_or_default(),
+            include_document_structure: val.include_document_structure.unwrap_or_default(),
+        }
+    }
+}
+
+impl From<kreuzcrawl::ContentConfig> for JsContentConfig {
+    fn from(val: kreuzcrawl::ContentConfig) -> Self {
+        Self {
+            output_format: Some(val.output_format),
+            preprocessing_preset: Some(val.preprocessing_preset),
+            remove_navigation: Some(val.remove_navigation),
+            remove_forms: Some(val.remove_forms),
+            strip_tags: Some(val.strip_tags),
+            preserve_tags: Some(val.preserve_tags),
+            exclude_selectors: Some(val.exclude_selectors),
+            skip_images: Some(val.skip_images),
+            max_depth: val.max_depth.map(|v| v as i64),
+            wrap: Some(val.wrap),
+            wrap_width: Some(val.wrap_width as i64),
+            include_document_structure: Some(val.include_document_structure),
+        }
+    }
+}
+
 #[allow(clippy::field_reassign_with_default)]
 impl From<JsBrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: JsBrowserConfig) -> Self {
@@ -788,8 +851,8 @@ impl From<JsCrawlConfig> for kreuzcrawl::CrawlConfig {
         __result.cookies_enabled = val.cookies_enabled.unwrap_or_default();
         __result.auth = val.auth.map(Into::into);
         __result.max_body_size = val.max_body_size.map(|v| v as usize);
-        __result.main_content_only = val.main_content_only.unwrap_or_default();
         __result.remove_tags = val.remove_tags.unwrap_or_default();
+        __result.content = val.content.map(Into::into).unwrap_or_default();
         __result.map_limit = val.map_limit.map(|v| v as usize);
         __result.map_search = val.map_search;
         __result.download_assets = val.download_assets.unwrap_or_default();
@@ -833,8 +896,8 @@ impl From<kreuzcrawl::CrawlConfig> for JsCrawlConfig {
             cookies_enabled: Some(val.cookies_enabled),
             auth: val.auth.map(Into::into),
             max_body_size: val.max_body_size.map(|v| v as i64),
-            main_content_only: Some(val.main_content_only),
             remove_tags: Some(val.remove_tags),
+            content: Some(val.content.into()),
             map_limit: val.map_limit.map(|v| v as i64),
             map_search: val.map_search,
             download_assets: Some(val.download_assets),
@@ -919,7 +982,6 @@ impl From<JsScrapeResult> for kreuzcrawl::ScrapeResult {
             is_pdf: val.is_pdf.unwrap_or_default(),
             was_skipped: val.was_skipped.unwrap_or_default(),
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only.unwrap_or_default(),
             auth_header_sent: val.auth_header_sent.unwrap_or_default(),
             response_meta: val.response_meta.map(Into::into),
             assets: val
@@ -957,7 +1019,6 @@ impl From<kreuzcrawl::ScrapeResult> for JsScrapeResult {
             is_pdf: Some(val.is_pdf),
             was_skipped: Some(val.was_skipped),
             detected_charset: val.detected_charset,
-            main_content_only: Some(val.main_content_only),
             auth_header_sent: Some(val.auth_header_sent),
             response_meta: val.response_meta.map(Into::into),
             assets: Some(val.assets.into_iter().map(Into::into).collect()),

@@ -43,8 +43,6 @@ public record ScrapeResult(
 		@JsonProperty("was_skipped") boolean wasSkipped,
 		/** The detected character set encoding. */
 		@JsonProperty("detected_charset") Optional<String> detectedCharset,
-		/** Whether main_content_only was active during extraction. */
-		@JsonProperty("main_content_only") boolean mainContentOnly,
 		/** Whether an authentication header was sent with the request. */
 		@JsonProperty("auth_header_sent") boolean authHeaderSent,
 		/** Response metadata extracted from HTTP headers. */
