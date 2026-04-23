@@ -2,7 +2,7 @@
 title: "C# API Reference"
 ---
 
-## C# API Reference <span class="version-badge">v0.1.2</span>
+## C# API Reference <span class="version-badge">v0.2.0</span>
 
 ### Functions
 
@@ -240,6 +240,42 @@ Result of citation conversion.
 
 ---
 
+#### ContentConfig
+
+Content extraction and conversion configuration.
+
+Controls how HTML is converted to the output format. Uses
+html-to-markdown-rs as the conversion engine for all formats
+(markdown, plain text, djot).
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `OutputFormat` | `string` | `"markdown"` | Output format: `"markdown"` (default), `"plain"`, `"djot"`. |
+| `PreprocessingPreset` | `string` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
+| `RemoveNavigation` | `bool` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
+| `RemoveForms` | `bool` | `true` | Remove form elements. Default: `true`. |
+| `StripTags` | `List<string>` | `new List<string>()` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `PreserveTags` | `List<string>` | `new List<string>()` | HTML tag names to preserve as raw HTML in output. |
+| `ExcludeSelectors` | `List<string>` | `new List<string>()` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `SkipImages` | `bool` | `false` | Skip image elements in output. Default: `false`. |
+| `MaxDepth` | `nuint?` | `null` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
+| `Wrap` | `bool` | `false` | Enable line wrapping. Default: `false`. |
+| `WrapWidth` | `nuint` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
+| `IncludeDocumentStructure` | `bool` | `true` | Include document structure tree in output. Default: `true`. |
+
+##### Methods
+
+###### CreateDefault()
+
+**Signature:**
+
+```csharp
+public ContentConfig CreateDefault()
+```
+
+
+---
+
 #### CookieInfo
 
 Information about an HTTP cookie received from a response.
@@ -278,8 +314,8 @@ Configuration for crawl, scrape, and map operations.
 | `CookiesEnabled` | `bool` | `false` | Whether to enable cookie handling. |
 | `Auth` | `AuthConfig?` | `null` | Authentication configuration. |
 | `MaxBodySize` | `nuint?` | `null` | Maximum response body size in bytes. |
-| `MainContentOnly` | `bool` | `false` | Whether to extract only the main content from HTML pages. |
 | `RemoveTags` | `List<string>` | `new List<string>()` | CSS selectors for tags to remove from HTML before processing. |
+| `Content` | `ContentConfig` | — | Content extraction and conversion configuration. |
 | `MapLimit` | `nuint?` | `null` | Maximum number of URLs to return from a map operation. |
 | `MapSearch` | `string?` | `null` | Search filter for map results (case-insensitive substring match on URLs). |
 | `DownloadAssets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
@@ -667,7 +703,6 @@ The result of a single-page scrape operation.
 | `IsPdf` | `bool` | — | Whether the content is a PDF. |
 | `WasSkipped` | `bool` | — | Whether the page was skipped (binary or PDF content). |
 | `DetectedCharset` | `string?` | `null` | The detected character set encoding. |
-| `MainContentOnly` | `bool` | — | Whether main_content_only was active during extraction. |
 | `AuthHeaderSent` | `bool` | — | Whether an authentication header was sent with the request. |
 | `ResponseMeta` | `ResponseMeta?` | `null` | Response metadata extracted from HTTP headers. |
 | `Assets` | `List<DownloadedAsset>` | `new List<DownloadedAsset>()` | Downloaded assets from the page. |

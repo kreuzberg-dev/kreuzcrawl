@@ -2,7 +2,7 @@
 title: "TypeScript API Reference"
 ---
 
-## TypeScript API Reference <span class="version-badge">v0.1.2</span>
+## TypeScript API Reference <span class="version-badge">v0.2.0</span>
 
 ### Functions
 
@@ -240,6 +240,42 @@ Result of citation conversion.
 
 ---
 
+#### ContentConfig
+
+Content extraction and conversion configuration.
+
+Controls how HTML is converted to the output format. Uses
+html-to-markdown-rs as the conversion engine for all formats
+(markdown, plain text, djot).
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `outputFormat` | `string` | `"markdown"` | Output format: `"markdown"` (default), `"plain"`, `"djot"`. |
+| `preprocessingPreset` | `string` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
+| `removeNavigation` | `boolean` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
+| `removeForms` | `boolean` | `true` | Remove form elements. Default: `true`. |
+| `stripTags` | `Array<string>` | `[]` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `preserveTags` | `Array<string>` | `[]` | HTML tag names to preserve as raw HTML in output. |
+| `excludeSelectors` | `Array<string>` | `[]` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `skipImages` | `boolean` | `false` | Skip image elements in output. Default: `false`. |
+| `maxDepth` | `number | null` | `null` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
+| `wrap` | `boolean` | `false` | Enable line wrapping. Default: `false`. |
+| `wrapWidth` | `number` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
+| `includeDocumentStructure` | `boolean` | `true` | Include document structure tree in output. Default: `true`. |
+
+##### Methods
+
+###### default()
+
+**Signature:**
+
+```typescript
+static default(): ContentConfig
+```
+
+
+---
+
 #### CookieInfo
 
 Information about an HTTP cookie received from a response.
@@ -278,8 +314,8 @@ Configuration for crawl, scrape, and map operations.
 | `cookiesEnabled` | `boolean` | `false` | Whether to enable cookie handling. |
 | `auth` | `AuthConfig | null` | `null` | Authentication configuration. |
 | `maxBodySize` | `number | null` | `null` | Maximum response body size in bytes. |
-| `mainContentOnly` | `boolean` | `false` | Whether to extract only the main content from HTML pages. |
 | `removeTags` | `Array<string>` | `[]` | CSS selectors for tags to remove from HTML before processing. |
+| `content` | `ContentConfig` | — | Content extraction and conversion configuration. |
 | `mapLimit` | `number | null` | `null` | Maximum number of URLs to return from a map operation. |
 | `mapSearch` | `string | null` | `null` | Search filter for map results (case-insensitive substring match on URLs). |
 | `downloadAssets` | `boolean` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
@@ -667,7 +703,6 @@ The result of a single-page scrape operation.
 | `isPdf` | `boolean` | — | Whether the content is a PDF. |
 | `wasSkipped` | `boolean` | — | Whether the page was skipped (binary or PDF content). |
 | `detectedCharset` | `string | null` | `null` | The detected character set encoding. |
-| `mainContentOnly` | `boolean` | — | Whether main_content_only was active during extraction. |
 | `authHeaderSent` | `boolean` | — | Whether an authentication header was sent with the request. |
 | `responseMeta` | `ResponseMeta | null` | `null` | Response metadata extracted from HTTP headers. |
 | `assets` | `Array<DownloadedAsset>` | `[]` | Downloaded assets from the page. |
