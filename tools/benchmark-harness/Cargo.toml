@@ -6,6 +6,9 @@ rust-version.workspace = true
 license.workspace = true
 publish = false
 
+[package.metadata.cargo-machete]
+ignored = ["tikv-jemalloc-ctl"]
+
 [lib]
 name = "benchmark_harness"
 path = "src/lib.rs"
@@ -41,9 +44,6 @@ tikv-jemallocator = { version = "0.6", optional = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-
-[package.metadata.cargo-machete]
-ignored = ["tikv-jemalloc-ctl"]
 
 [lints]
 workspace = true
