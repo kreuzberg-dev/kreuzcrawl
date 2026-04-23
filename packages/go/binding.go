@@ -2498,15 +2498,6 @@ type CrawlEngineHandle struct {
 	ptr unsafe.Pointer
 }
 
-// NewCrawlEngineHandle creates a new CrawlEngineHandle by calling the C constructor.
-func NewCrawlEngineHandle() *CrawlEngineHandle {
-	ptr := C.kcrawl_crawl_engine_handle()
-	if ptr == nil {
-		return nil
-	}
-	return &CrawlEngineHandle{ptr: unsafe.Pointer(ptr)}
-}
-
 // Free releases the resources held by this handle.
 func (h *CrawlEngineHandle) Free() {
 	if h.ptr != nil {
