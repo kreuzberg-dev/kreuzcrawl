@@ -3,6 +3,8 @@
 
 module Kreuzcrawl
 
+  VERSION: String
+
   class ExtractionMeta
     # Metadata about an LLM extraction pass.
 
@@ -23,6 +25,30 @@ module Kreuzcrawl
     attr_accessor password: String
 
     def initialize: (url: String, ?username: String, ?password: String) -> void
+  end
+
+  class ContentConfig
+    # Content extraction and conversion configuration.
+    #
+    # Controls how HTML is converted to the output format. Uses
+    # html-to-markdown-rs as the conversion engine for all formats
+    # (markdown, plain text, djot).
+
+    attr_accessor output_format: String
+    attr_accessor preprocessing_preset: String
+    attr_accessor remove_navigation: bool
+    attr_accessor remove_forms: bool
+    attr_accessor strip_tags: Array[String]
+    attr_accessor preserve_tags: Array[String]
+    attr_accessor exclude_selectors: Array[String]
+    attr_accessor skip_images: bool
+    attr_accessor max_depth: Integer
+    attr_accessor wrap: bool
+    attr_accessor wrap_width: Integer
+    attr_accessor include_document_structure: bool
+
+    def initialize: (output_format: String, preprocessing_preset: String, remove_navigation: bool, remove_forms: bool, strip_tags: Array[String], preserve_tags: Array[String], exclude_selectors: Array[String], skip_images: bool, ?max_depth: Integer, wrap: bool, wrap_width: Integer, include_document_structure: bool) -> void
+    def self.default: () -> ContentConfig
   end
 
   class BrowserConfig
@@ -60,8 +86,8 @@ module Kreuzcrawl
     attr_accessor cookies_enabled: bool
     attr_accessor auth: AuthConfig
     attr_accessor max_body_size: Integer
-    attr_accessor main_content_only: bool
     attr_accessor remove_tags: Array[String]
+    attr_accessor content: ContentConfig
     attr_accessor map_limit: Integer
     attr_accessor map_search: String
     attr_accessor download_assets: bool
@@ -78,7 +104,7 @@ module Kreuzcrawl
     attr_accessor browser_profile: String
     attr_accessor save_browser_profile: bool
 
-    def initialize: (?max_depth: Integer, ?max_pages: Integer, ?max_concurrent: Integer, respect_robots_txt: bool, ?user_agent: String, stay_on_domain: bool, allow_subdomains: bool, include_paths: Array[String], exclude_paths: Array[String], custom_headers: Hash[String, String], request_timeout: Integer, ?rate_limit_ms: Integer, max_redirects: Integer, retry_count: Integer, retry_codes: Array[Integer], cookies_enabled: bool, ?auth: AuthConfig, ?max_body_size: Integer, main_content_only: bool, remove_tags: Array[String], ?map_limit: Integer, ?map_search: String, download_assets: bool, asset_types: Array[AssetCategory], ?max_asset_size: Integer, browser: BrowserConfig, ?proxy: ProxyConfig, user_agents: Array[String], capture_screenshot: bool, download_documents: bool, ?document_max_size: Integer, document_mime_types: Array[String], ?warc_output: String, ?browser_profile: String, save_browser_profile: bool) -> void
+    def initialize: (?max_depth: Integer, ?max_pages: Integer, ?max_concurrent: Integer, respect_robots_txt: bool, ?user_agent: String, stay_on_domain: bool, allow_subdomains: bool, include_paths: Array[String], exclude_paths: Array[String], custom_headers: Hash[String, String], request_timeout: Integer, ?rate_limit_ms: Integer, max_redirects: Integer, retry_count: Integer, retry_codes: Array[Integer], cookies_enabled: bool, ?auth: AuthConfig, ?max_body_size: Integer, remove_tags: Array[String], content: ContentConfig, ?map_limit: Integer, ?map_search: String, download_assets: bool, asset_types: Array[AssetCategory], ?max_asset_size: Integer, browser: BrowserConfig, ?proxy: ProxyConfig, user_agents: Array[String], capture_screenshot: bool, download_documents: bool, ?document_max_size: Integer, document_mime_types: Array[String], ?warc_output: String, ?browser_profile: String, save_browser_profile: bool) -> void
     def validate: () -> void
     def self.default: () -> CrawlConfig
   end
@@ -121,7 +147,6 @@ module Kreuzcrawl
     attr_accessor is_pdf: bool
     attr_accessor was_skipped: bool
     attr_accessor detected_charset: String
-    attr_accessor main_content_only: bool
     attr_accessor auth_header_sent: bool
     attr_accessor response_meta: ResponseMeta
     attr_accessor assets: Array[DownloadedAsset]
@@ -133,7 +158,7 @@ module Kreuzcrawl
     attr_accessor screenshot: String
     attr_accessor downloaded_document: DownloadedDocument
 
-    def initialize: (status_code: Integer, content_type: String, html: String, body_size: Integer, metadata: PageMetadata, links: Array[LinkInfo], images: Array[ImageInfo], feeds: Array[FeedInfo], json_ld: Array[JsonLdEntry], is_allowed: bool, ?crawl_delay: Integer, noindex_detected: bool, nofollow_detected: bool, ?x_robots_tag: String, is_pdf: bool, was_skipped: bool, ?detected_charset: String, main_content_only: bool, auth_header_sent: bool, ?response_meta: ResponseMeta, assets: Array[DownloadedAsset], js_render_hint: bool, browser_used: bool, ?markdown: MarkdownResult, ?extracted_data: untyped, ?extraction_meta: ExtractionMeta, ?screenshot: String, ?downloaded_document: DownloadedDocument) -> void
+    def initialize: (status_code: Integer, content_type: String, html: String, body_size: Integer, metadata: PageMetadata, links: Array[LinkInfo], images: Array[ImageInfo], feeds: Array[FeedInfo], json_ld: Array[JsonLdEntry], is_allowed: bool, ?crawl_delay: Integer, noindex_detected: bool, nofollow_detected: bool, ?x_robots_tag: String, is_pdf: bool, was_skipped: bool, ?detected_charset: String, auth_header_sent: bool, ?response_meta: ResponseMeta, assets: Array[DownloadedAsset], js_render_hint: bool, browser_used: bool, ?markdown: MarkdownResult, ?extracted_data: untyped, ?extraction_meta: ExtractionMeta, ?screenshot: String, ?downloaded_document: DownloadedDocument) -> void
   end
 
   class CrawlPageResult

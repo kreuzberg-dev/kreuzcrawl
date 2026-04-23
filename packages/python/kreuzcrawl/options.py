@@ -100,10 +100,51 @@ class ProxyConfig:
 
 
 @dataclass
+class ContentConfig:
+    """Content extraction and conversion configuration."""
+
+    output_format: str = "markdown"
+    """Output format: `"markdown"` (default), `"plain"`, `"djot"`."""
+
+    preprocessing_preset: str = "standard"
+    """Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`."""
+
+    remove_navigation: bool = True
+    """Remove navigation elements (nav, breadcrumbs, menus). Default: `true`."""
+
+    remove_forms: bool = True
+    """Remove form elements. Default: `true`."""
+
+    strip_tags: list[str] = field(default_factory=list)
+    """HTML tag names to strip (render children only, remove the tag wrapper)."""
+
+    preserve_tags: list[str] = field(default_factory=list)
+    """HTML tag names to preserve as raw HTML in output."""
+
+    exclude_selectors: list[str] = field(default_factory=list)
+    """CSS selectors for elements to exclude entirely (element + all content)."""
+
+    skip_images: bool = False
+    """Skip image elements in output. Default: `false`."""
+
+    max_depth: int | None = None
+    """Max DOM traversal depth. Prevents stack overflow on deeply nested HTML."""
+
+    wrap: bool = False
+    """Enable line wrapping. Default: `false`."""
+
+    wrap_width: int = 80
+    """Wrap width when `wrap` is enabled. Default: `80`."""
+
+    include_document_structure: bool = True
+    """Include document structure tree in output. Default: `true`."""
+
+
+@dataclass
 class BrowserConfig:
     """Browser fallback configuration."""
 
-    mode: str = "auto"
+    mode: BrowserMode | str = "auto"
     """When to use the headless browser fallback."""
 
     endpoint: str | None = None
@@ -112,7 +153,7 @@ class BrowserConfig:
     timeout: int = 30000
     """Timeout for browser page load and rendering (in milliseconds when serialized)."""
 
-    wait: str = "network_idle"
+    wait: BrowserWait | str = "network_idle"
     """Wait strategy after browser navigation."""
 
     wait_selector: str | None = None
@@ -180,11 +221,11 @@ class CrawlConfig:
     max_body_size: int | None = None
     """Maximum response body size in bytes."""
 
-    main_content_only: bool = False
-    """Whether to extract only the main content from HTML pages."""
-
     remove_tags: list[str] = field(default_factory=list)
     """CSS selectors for tags to remove from HTML before processing."""
+
+    content: ContentConfig | None = None
+    """Content extraction and conversion configuration."""
 
     map_limit: int | None = None
     """Maximum number of URLs to return from a map operation."""
@@ -195,16 +236,16 @@ class CrawlConfig:
     download_assets: bool = False
     """Whether to download assets (CSS, JS, images, etc.) from the page."""
 
-    asset_types: list[str] = field(default_factory=list)
+    asset_types: list[AssetCategory | str] = field(default_factory=list)
     """Filter for asset categories to download."""
 
     max_asset_size: int | None = None
     """Maximum size in bytes for individual asset downloads."""
 
-    browser: Any | None = None
+    browser: BrowserConfig | None = None
     """Browser configuration."""
 
-    proxy: Any | None = None
+    proxy: ProxyConfig | None = None
     """Proxy configuration for HTTP requests."""
 
     user_agents: list[str] = field(default_factory=list)
@@ -280,19 +321,19 @@ class CrawlPageResult:
     body_size: int = 0
     """The size of the response body in bytes."""
 
-    metadata: Any | None = None
+    metadata: PageMetadata | None = None
     """Extracted metadata from the page."""
 
-    links: list[Any] = field(default_factory=list)
+    links: list[LinkInfo] = field(default_factory=list)
     """Links found on the page."""
 
-    images: list[Any] = field(default_factory=list)
+    images: list[ImageInfo] = field(default_factory=list)
     """Images found on the page."""
 
-    feeds: list[Any] = field(default_factory=list)
+    feeds: list[FeedInfo] = field(default_factory=list)
     """Feed links found on the page."""
 
-    json_ld: list[Any] = field(default_factory=list)
+    json_ld: list[JsonLdEntry] = field(default_factory=list)
     """JSON-LD entries found on the page."""
 
     depth: int = 0
@@ -310,16 +351,16 @@ class CrawlPageResult:
     detected_charset: str | None = None
     """The detected character set encoding."""
 
-    markdown: Any | None = None
+    markdown: MarkdownResult | None = None
     """Markdown conversion of the page content."""
 
     extracted_data: str | None = None
     """Structured data extracted by LLM. Populated when extraction is configured."""
 
-    extraction_meta: Any | None = None
+    extraction_meta: ExtractionMeta | None = None
     """Metadata about the LLM extraction pass (cost, tokens, model)."""
 
-    downloaded_document: Any | None = None
+    downloaded_document: DownloadedDocument | None = None
     """Downloaded non-HTML document (PDF, DOCX, image, code, etc.)."""
 
 
@@ -356,7 +397,7 @@ class MarkdownResult:
     warnings: list[str] = field(default_factory=list)
     """Non-fatal processing warnings."""
 
-    citations: Any | None = None
+    citations: CitationResult | None = None
     """Content with links replaced by numbered citations."""
 
     fit_content: str | None = None
@@ -373,7 +414,7 @@ class LinkInfo:
     text: str = ""
     """The visible text of the link."""
 
-    link_type: str = "internal"
+    link_type: LinkType | str = "internal"
     """The classification of the link."""
 
     rel: str | None = None
@@ -399,7 +440,7 @@ class ImageInfo:
     height: int | None = None
     """The height attribute, if present and parseable."""
 
-    source: str = "img"
+    source: ImageSource | str = "img"
     """The source of the image reference."""
 
 
@@ -413,7 +454,7 @@ class FeedInfo:
     title: str | None = None
     """The feed title, if present."""
 
-    feed_type: str = "rss"
+    feed_type: FeedType | str = "rss"
     """The type of feed."""
 
 
@@ -464,7 +505,7 @@ class DownloadedAsset:
     size: int = 0
     """The size of the asset in bytes."""
 
-    asset_category: str = "image"
+    asset_category: AssetCategory | str = "image"
     """The category of the asset."""
 
     html_tag: str | None = None
@@ -674,16 +715,16 @@ class PageMetadata:
     dc_rights: str | None = None
     """Dublin Core rights."""
 
-    article: Any | None = None
+    article: ArticleMetadata | None = None
     """Article metadata from `article:*` Open Graph tags."""
 
-    hreflangs: list[Any] | None = None
+    hreflangs: list[HreflangEntry] | None = None
     """Hreflang alternate links."""
 
-    favicons: list[Any] | None = None
+    favicons: list[FaviconInfo] | None = None
     """Favicon and icon links."""
 
-    headings: list[Any] | None = None
+    headings: list[HeadingInfo] | None = None
     """Heading elements (h1-h6)."""
 
     word_count: int | None = None
@@ -706,7 +747,7 @@ class BatchScrapeResult:
     url: str = ""
     """The URL that was scraped."""
 
-    result: Any | None = None
+    result: ScrapeResult | None = None
     """The scrape result, if successful."""
 
     error: str | None = None
@@ -720,7 +761,7 @@ class BatchCrawlResult:
     url: str = ""
     """The seed URL that was crawled."""
 
-    result: Any | None = None
+    result: CrawlResult | None = None
     """The crawl result, if successful."""
 
     error: str | None = None

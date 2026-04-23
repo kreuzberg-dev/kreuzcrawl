@@ -175,6 +175,133 @@ impl ProxyConfig {
     }
 }
 
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[magnus::wrap(class = "Kreuzcrawl::ContentConfig")]
+#[serde(default)]
+pub struct ContentConfig {
+    pub output_format: String,
+    pub preprocessing_preset: String,
+    pub remove_navigation: bool,
+    pub remove_forms: bool,
+    pub strip_tags: Vec<String>,
+    pub preserve_tags: Vec<String>,
+    pub exclude_selectors: Vec<String>,
+    pub skip_images: bool,
+    pub max_depth: Option<usize>,
+    pub wrap: bool,
+    pub wrap_width: usize,
+    pub include_document_structure: bool,
+}
+
+unsafe impl IntoValueFromNative for ContentConfig {}
+
+impl magnus::TryConvert for ContentConfig {
+    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
+        let r: &ContentConfig = magnus::TryConvert::try_convert(val)?;
+        Ok(r.clone())
+    }
+}
+unsafe impl TryConvertOwned for ContentConfig {}
+
+impl Default for ContentConfig {
+    fn default() -> Self {
+        Self {
+            output_format: Default::default(),
+            preprocessing_preset: Default::default(),
+            remove_navigation: Default::default(),
+            remove_forms: Default::default(),
+            strip_tags: Default::default(),
+            preserve_tags: Default::default(),
+            exclude_selectors: Default::default(),
+            skip_images: Default::default(),
+            max_depth: Default::default(),
+            wrap: Default::default(),
+            wrap_width: Default::default(),
+            include_document_structure: Default::default(),
+        }
+    }
+}
+
+impl ContentConfig {
+    fn new(
+        output_format: Option<String>,
+        preprocessing_preset: Option<String>,
+        remove_navigation: Option<bool>,
+        remove_forms: Option<bool>,
+        strip_tags: Option<Vec<String>>,
+        preserve_tags: Option<Vec<String>>,
+        exclude_selectors: Option<Vec<String>>,
+        skip_images: Option<bool>,
+        max_depth: Option<usize>,
+        wrap: Option<bool>,
+        wrap_width: Option<usize>,
+        include_document_structure: Option<bool>,
+    ) -> Self {
+        Self {
+            output_format: output_format.unwrap_or("markdown".to_string()),
+            preprocessing_preset: preprocessing_preset.unwrap_or("standard".to_string()),
+            remove_navigation: remove_navigation.unwrap_or(true),
+            remove_forms: remove_forms.unwrap_or(true),
+            strip_tags: strip_tags.unwrap_or_default(),
+            preserve_tags: preserve_tags.unwrap_or_default(),
+            exclude_selectors: exclude_selectors.unwrap_or_default(),
+            skip_images: skip_images.unwrap_or(false),
+            max_depth,
+            wrap: wrap.unwrap_or(false),
+            wrap_width: wrap_width.unwrap_or(80),
+            include_document_structure: include_document_structure.unwrap_or(true),
+        }
+    }
+
+    fn output_format(&self) -> String {
+        self.output_format.clone()
+    }
+
+    fn preprocessing_preset(&self) -> String {
+        self.preprocessing_preset.clone()
+    }
+
+    fn remove_navigation(&self) -> bool {
+        self.remove_navigation
+    }
+
+    fn remove_forms(&self) -> bool {
+        self.remove_forms
+    }
+
+    fn strip_tags(&self) -> Vec<String> {
+        self.strip_tags.clone()
+    }
+
+    fn preserve_tags(&self) -> Vec<String> {
+        self.preserve_tags.clone()
+    }
+
+    fn exclude_selectors(&self) -> Vec<String> {
+        self.exclude_selectors.clone()
+    }
+
+    fn skip_images(&self) -> bool {
+        self.skip_images
+    }
+
+    fn max_depth(&self) -> Option<usize> {
+        self.max_depth
+    }
+
+    fn wrap(&self) -> bool {
+        self.wrap
+    }
+
+    fn wrap_width(&self) -> usize {
+        self.wrap_width
+    }
+
+    fn include_document_structure(&self) -> bool {
+        self.include_document_structure
+    }
+}
+
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzcrawl::BrowserConfig")]
 #[serde(default)]
@@ -263,8 +390,8 @@ pub struct CrawlConfig {
     pub cookies_enabled: bool,
     pub auth: Option<AuthConfig>,
     pub max_body_size: Option<usize>,
-    pub main_content_only: bool,
     pub remove_tags: Vec<String>,
+    pub content: ContentConfig,
     pub map_limit: Option<usize>,
     pub map_search: Option<String>,
     pub download_assets: bool,
@@ -361,13 +488,13 @@ impl CrawlConfig {
             max_body_size: kwargs
                 .get(ruby.to_symbol("max_body_size"))
                 .and_then(|v| usize::try_convert(v).ok()),
-            main_content_only: kwargs
-                .get(ruby.to_symbol("main_content_only"))
-                .and_then(|v| bool::try_convert(v).ok())
-                .unwrap_or(false),
             remove_tags: kwargs
                 .get(ruby.to_symbol("remove_tags"))
                 .and_then(|v| <Vec<String>>::try_convert(v).ok())
+                .unwrap_or_default(),
+            content: kwargs
+                .get(ruby.to_symbol("content"))
+                .and_then(|v| ContentConfig::try_convert(v).ok())
                 .unwrap_or_default(),
             map_limit: kwargs
                 .get(ruby.to_symbol("map_limit"))
@@ -497,12 +624,12 @@ impl CrawlConfig {
         self.max_body_size
     }
 
-    fn main_content_only(&self) -> bool {
-        self.main_content_only
-    }
-
     fn remove_tags(&self) -> Vec<String> {
         self.remove_tags.clone()
+    }
+
+    fn content(&self) -> ContentConfig {
+        self.content.clone()
     }
 
     fn map_limit(&self) -> Option<usize> {
@@ -586,8 +713,8 @@ impl CrawlConfig {
             cookies_enabled: self.cookies_enabled,
             auth: self.auth.clone().map(Into::into),
             max_body_size: self.max_body_size,
-            main_content_only: self.main_content_only,
             remove_tags: self.remove_tags.clone(),
+            content: self.content.clone().into(),
             map_limit: self.map_limit,
             map_search: self.map_search.clone(),
             download_assets: self.download_assets,
@@ -723,7 +850,6 @@ pub struct ScrapeResult {
     pub is_pdf: bool,
     pub was_skipped: bool,
     pub detected_charset: Option<String>,
-    pub main_content_only: bool,
     pub auth_header_sent: bool,
     pub response_meta: Option<ResponseMeta>,
     pub assets: Vec<DownloadedAsset>,
@@ -766,7 +892,6 @@ impl Default for ScrapeResult {
             is_pdf: Default::default(),
             was_skipped: Default::default(),
             detected_charset: Default::default(),
-            main_content_only: Default::default(),
             auth_header_sent: Default::default(),
             response_meta: Default::default(),
             assets: Default::default(),
@@ -850,10 +975,6 @@ impl ScrapeResult {
             detected_charset: kwargs
                 .get(ruby.to_symbol("detected_charset"))
                 .and_then(|v| String::try_convert(v).ok()),
-            main_content_only: kwargs
-                .get(ruby.to_symbol("main_content_only"))
-                .and_then(|v| bool::try_convert(v).ok())
-                .unwrap_or_default(),
             auth_header_sent: kwargs
                 .get(ruby.to_symbol("auth_header_sent"))
                 .and_then(|v| bool::try_convert(v).ok())
@@ -957,10 +1078,6 @@ impl ScrapeResult {
 
     fn detected_charset(&self) -> Option<String> {
         self.detected_charset.clone()
-    }
-
-    fn main_content_only(&self) -> bool {
-        self.main_content_only
     }
 
     fn auth_header_sent(&self) -> bool {
@@ -3314,6 +3431,44 @@ impl From<kreuzcrawl::ProxyConfig> for ProxyConfig {
     }
 }
 
+impl From<ContentConfig> for kreuzcrawl::ContentConfig {
+    fn from(val: ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth,
+            wrap: val.wrap,
+            wrap_width: val.wrap_width,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ContentConfig> for ContentConfig {
+    fn from(val: kreuzcrawl::ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth,
+            wrap: val.wrap,
+            wrap_width: val.wrap_width,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
 impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: BrowserConfig) -> Self {
         Self {
@@ -3362,8 +3517,8 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             cookies_enabled: val.cookies_enabled,
             auth: val.auth.map(Into::into),
             max_body_size: val.max_body_size,
-            main_content_only: val.main_content_only,
             remove_tags: val.remove_tags,
+            content: val.content.into(),
             map_limit: val.map_limit,
             map_search: val.map_search,
             download_assets: val.download_assets,
@@ -3405,8 +3560,8 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             cookies_enabled: val.cookies_enabled,
             auth: val.auth.map(Into::into),
             max_body_size: val.max_body_size,
-            main_content_only: val.main_content_only,
             remove_tags: val.remove_tags,
+            content: val.content.into(),
             map_limit: val.map_limit,
             map_search: val.map_search,
             download_assets: val.download_assets,
@@ -3478,7 +3633,6 @@ impl From<ScrapeResult> for kreuzcrawl::ScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),
@@ -3513,7 +3667,6 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),
@@ -4288,6 +4441,24 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("username", method!(ProxyConfig::username, 0))?;
     class.define_method("password", method!(ProxyConfig::password, 0))?;
 
+    let class = module.define_class("ContentConfig", ruby.class_object())?;
+    class.define_singleton_method("new", function!(ContentConfig::new, 12))?;
+    class.define_method("output_format", method!(ContentConfig::output_format, 0))?;
+    class.define_method("preprocessing_preset", method!(ContentConfig::preprocessing_preset, 0))?;
+    class.define_method("remove_navigation", method!(ContentConfig::remove_navigation, 0))?;
+    class.define_method("remove_forms", method!(ContentConfig::remove_forms, 0))?;
+    class.define_method("strip_tags", method!(ContentConfig::strip_tags, 0))?;
+    class.define_method("preserve_tags", method!(ContentConfig::preserve_tags, 0))?;
+    class.define_method("exclude_selectors", method!(ContentConfig::exclude_selectors, 0))?;
+    class.define_method("skip_images", method!(ContentConfig::skip_images, 0))?;
+    class.define_method("max_depth", method!(ContentConfig::max_depth, 0))?;
+    class.define_method("wrap", method!(ContentConfig::wrap, 0))?;
+    class.define_method("wrap_width", method!(ContentConfig::wrap_width, 0))?;
+    class.define_method(
+        "include_document_structure",
+        method!(ContentConfig::include_document_structure, 0),
+    )?;
+
     let class = module.define_class("BrowserConfig", ruby.class_object())?;
     class.define_singleton_method("new", function!(BrowserConfig::new, 6))?;
     class.define_method("mode", method!(BrowserConfig::mode, 0))?;
@@ -4317,8 +4488,8 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("cookies_enabled", method!(CrawlConfig::cookies_enabled, 0))?;
     class.define_method("auth", method!(CrawlConfig::auth, 0))?;
     class.define_method("max_body_size", method!(CrawlConfig::max_body_size, 0))?;
-    class.define_method("main_content_only", method!(CrawlConfig::main_content_only, 0))?;
     class.define_method("remove_tags", method!(CrawlConfig::remove_tags, 0))?;
+    class.define_method("content", method!(CrawlConfig::content, 0))?;
     class.define_method("map_limit", method!(CrawlConfig::map_limit, 0))?;
     class.define_method("map_search", method!(CrawlConfig::map_search, 0))?;
     class.define_method("download_assets", method!(CrawlConfig::download_assets, 0))?;
@@ -4365,7 +4536,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("is_pdf", method!(ScrapeResult::is_pdf, 0))?;
     class.define_method("was_skipped", method!(ScrapeResult::was_skipped, 0))?;
     class.define_method("detected_charset", method!(ScrapeResult::detected_charset, 0))?;
-    class.define_method("main_content_only", method!(ScrapeResult::main_content_only, 0))?;
     class.define_method("auth_header_sent", method!(ScrapeResult::auth_header_sent, 0))?;
     class.define_method("response_meta", method!(ScrapeResult::response_meta, 0))?;
     class.define_method("assets", method!(ScrapeResult::assets, 0))?;

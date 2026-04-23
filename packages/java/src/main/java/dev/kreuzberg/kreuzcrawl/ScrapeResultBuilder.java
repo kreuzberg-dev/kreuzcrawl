@@ -26,7 +26,6 @@ public class ScrapeResultBuilder {
 	private boolean isPdf = false;
 	private boolean wasSkipped = false;
 	private Optional<String> detectedCharset = Optional.empty();
-	private boolean mainContentOnly = false;
 	private boolean authHeaderSent = false;
 	private Optional<ResponseMeta> responseMeta = Optional.empty();
 	private List<DownloadedAsset> assets = List.of();
@@ -123,11 +122,6 @@ public class ScrapeResultBuilder {
 		return this;
 	}
 
-	public ScrapeResultBuilder withMainContentOnly(boolean value) {
-		this.mainContentOnly = value;
-		return this;
-	}
-
 	public ScrapeResultBuilder withAuthHeaderSent(boolean value) {
 		this.authHeaderSent = value;
 		return this;
@@ -181,7 +175,7 @@ public class ScrapeResultBuilder {
 	public ScrapeResult build() {
 		return new ScrapeResult(statusCode, contentType, html, bodySize, metadata, links, images, feeds, jsonLd,
 				isAllowed, crawlDelay, noindexDetected, nofollowDetected, xRobotsTag, isPdf, wasSkipped,
-				detectedCharset, mainContentOnly, authHeaderSent, responseMeta, assets, jsRenderHint, browserUsed,
-				markdown, extractedData, extractionMeta, screenshot, downloadedDocument);
+				detectedCharset, authHeaderSent, responseMeta, assets, jsRenderHint, browserUsed, markdown,
+				extractedData, extractionMeta, screenshot, downloadedDocument);
 	}
 }

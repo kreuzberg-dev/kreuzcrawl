@@ -185,9 +185,7 @@ async fn wait_for_ready(
 /// Each launch creates a unique user data directory to avoid Chrome's
 /// `SingletonLock` conflicts when multiple instances run concurrently
 /// or a previous instance crashed without cleanup.
-async fn launch_or_connect(
-    config: &CrawlConfig,
-) -> Result<(Browser, Handler, Option<std::path::PathBuf>), CrawlError> {
+async fn launch_or_connect(config: &CrawlConfig) -> Result<(Browser, Handler, Option<std::path::PathBuf>), CrawlError> {
     if let Some(ref endpoint) = config.browser.endpoint {
         let (browser, handler) = Browser::connect(endpoint)
             .await

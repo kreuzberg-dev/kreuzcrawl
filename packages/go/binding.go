@@ -10,47 +10,47 @@ package kreuzcrawl
 import "C"
 
 import (
-    "encoding/json"
-    "errors"
-    "fmt"
-    "unsafe"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"unsafe"
 )
 
 // lastError retrieves the last error from the FFI layer.
 func lastError() error {
-    code := int32(C.kcrawl_last_error_code())
-    if code == 0 {
-        return nil
-    }
-    ctx := C.kcrawl_last_error_context()
-    message := C.GoString(ctx)
-    return fmt.Errorf("[%d] %s", code, message)
+	code := int32(C.kcrawl_last_error_code())
+	if code == 0 {
+		return nil
+	}
+	ctx := C.kcrawl_last_error_context()
+	message := C.GoString(ctx)
+	return fmt.Errorf("[%d] %s", code, message)
 }
 
 var (
-    ErrNotFound = errors.New("not_found")
-    ErrUnauthorized = errors.New("unauthorized")
-    ErrForbidden = errors.New("forbidden")
-    ErrWafBlocked = errors.New("forbidden: waf/blocked")
-    ErrTimeout = errors.New("timeout")
-    ErrRateLimited = errors.New("rate_limited")
-    ErrServerError = errors.New("server_error")
-    ErrBadGateway = errors.New("bad_gateway")
-    ErrGone = errors.New("gone")
-    ErrConnection = errors.New("connection")
-    ErrDns = errors.New("dns")
-    ErrSsl = errors.New("ssl")
-    ErrDataLoss = errors.New("data_loss")
-    ErrBrowserError = errors.New("browser")
-    ErrBrowserTimeout = errors.New("browser_timeout")
-    ErrInvalidConfig = errors.New("invalid_config")
-    ErrOther = errors.New("other")
+	ErrNotFound = errors.New("not_found")
+	ErrUnauthorized = errors.New("unauthorized")
+	ErrForbidden = errors.New("forbidden")
+	ErrWafBlocked = errors.New("forbidden: waf/blocked")
+	ErrTimeout = errors.New("timeout")
+	ErrRateLimited = errors.New("rate_limited")
+	ErrServerError = errors.New("server_error")
+	ErrBadGateway = errors.New("bad_gateway")
+	ErrGone = errors.New("gone")
+	ErrConnection = errors.New("connection")
+	ErrDns = errors.New("dns")
+	ErrSsl = errors.New("ssl")
+	ErrDataLoss = errors.New("data_loss")
+	ErrBrowserError = errors.New("browser")
+	ErrBrowserTimeout = errors.New("browser_timeout")
+	ErrInvalidConfig = errors.New("invalid_config")
+	ErrOther = errors.New("other")
 )
 
 // CrawlError is a structured error type.
 type CrawlError struct {
-    Code    string
-    Message string
+	Code    string
+	Message string
 }
 
 func (e *CrawlError) Error() string { return e.Message }
@@ -59,12 +59,12 @@ func (e *CrawlError) Error() string { return e.Message }
 type BrowserMode string
 
 const (
-    // Automatically detect when JS rendering is needed and fall back to browser.
-    BrowserModeAuto BrowserMode = "auto"
-    // Always use the browser for every request.
-    BrowserModeAlways BrowserMode = "always"
-    // Never use the browser fallback.
-    BrowserModeNever BrowserMode = "never"
+	// Automatically detect when JS rendering is needed and fall back to browser.
+	BrowserModeAuto BrowserMode = "auto"
+	// Always use the browser for every request.
+	BrowserModeAlways BrowserMode = "always"
+	// Never use the browser fallback.
+	BrowserModeNever BrowserMode = "never"
 )
 
 
@@ -72,24 +72,24 @@ const (
 type BrowserWait string
 
 const (
-    // Wait until network activity is idle.
-    BrowserWaitNetworkIdle BrowserWait = "network_idle"
-    // Wait for a specific CSS selector to appear in the DOM.
-    BrowserWaitSelector BrowserWait = "selector"
-    // Wait for a fixed duration after navigation.
-    BrowserWaitFixed BrowserWait = "fixed"
+	// Wait until network activity is idle.
+	BrowserWaitNetworkIdle BrowserWait = "network_idle"
+	// Wait for a specific CSS selector to appear in the DOM.
+	BrowserWaitSelector BrowserWait = "selector"
+	// Wait for a fixed duration after navigation.
+	BrowserWaitFixed BrowserWait = "fixed"
 )
 
 
 // Authentication configuration.
 // Variants: Basic, Bearer, Header
 type AuthConfig struct {
-    Type string `json:"type"`
-    Username *string `json:"username,omitempty"`
-    Password *string `json:"password,omitempty"`
-    Token *string `json:"token,omitempty"`
-    Name *string `json:"name,omitempty"`
-    Value *string `json:"value,omitempty"`
+	Type string `json:"type"`
+	Username *string `json:"username,omitempty"`
+	Password *string `json:"password,omitempty"`
+	Token *string `json:"token,omitempty"`
+	Name *string `json:"name,omitempty"`
+	Value *string `json:"value,omitempty"`
 }
 
 
@@ -97,14 +97,14 @@ type AuthConfig struct {
 type LinkType string
 
 const (
-    // A link to the same domain.
-    LinkTypeInternal LinkType = "internal"
-    // A link to a different domain.
-    LinkTypeExternal LinkType = "external"
-    // A fragment-only link (e.g., `#section`).
-    LinkTypeAnchor LinkType = "anchor"
-    // A link to a downloadable document (PDF, DOC, etc.).
-    LinkTypeDocument LinkType = "document"
+	// A link to the same domain.
+	LinkTypeInternal LinkType = "internal"
+	// A link to a different domain.
+	LinkTypeExternal LinkType = "external"
+	// A fragment-only link (e.g., `#section`).
+	LinkTypeAnchor LinkType = "anchor"
+	// A link to a downloadable document (PDF, DOC, etc.).
+	LinkTypeDocument LinkType = "document"
 )
 
 
@@ -112,14 +112,14 @@ const (
 type ImageSource string
 
 const (
-    // An `<img>` tag.
-    ImageSourceImg ImageSource = "img"
-    // A `<source>` tag inside `<picture>`.
-    ImageSourcePictureSource ImageSource = "picture_source"
-    // An `og:image` meta tag.
-    ImageSourceOgImage ImageSource = "og:image"
-    // A `twitter:image` meta tag.
-    ImageSourceTwitterImage ImageSource = "twitter:image"
+	// An `<img>` tag.
+	ImageSourceImg ImageSource = "img"
+	// A `<source>` tag inside `<picture>`.
+	ImageSourcePictureSource ImageSource = "picture_source"
+	// An `og:image` meta tag.
+	ImageSourceOgImage ImageSource = "og:image"
+	// A `twitter:image` meta tag.
+	ImageSourceTwitterImage ImageSource = "twitter:image"
 )
 
 
@@ -127,12 +127,12 @@ const (
 type FeedType string
 
 const (
-    // RSS feed.
-    FeedTypeRss FeedType = "rss"
-    // Atom feed.
-    FeedTypeAtom FeedType = "atom"
-    // JSON Feed.
-    FeedTypeJsonFeed FeedType = "json_feed"
+	// RSS feed.
+	FeedTypeRss FeedType = "rss"
+	// Atom feed.
+	FeedTypeAtom FeedType = "atom"
+	// JSON Feed.
+	FeedTypeJsonFeed FeedType = "json_feed"
 )
 
 
@@ -140,41 +140,41 @@ const (
 type AssetCategory string
 
 const (
-    // A document file (PDF, DOC, etc.).
-    AssetCategoryDocument AssetCategory = "document"
-    // An image file.
-    AssetCategoryImage AssetCategory = "image"
-    // An audio file.
-    AssetCategoryAudio AssetCategory = "audio"
-    // A video file.
-    AssetCategoryVideo AssetCategory = "video"
-    // A font file.
-    AssetCategoryFont AssetCategory = "font"
-    // A CSS stylesheet.
-    AssetCategoryStylesheet AssetCategory = "stylesheet"
-    // A JavaScript file.
-    AssetCategoryScript AssetCategory = "script"
-    // An archive file (ZIP, TAR, etc.).
-    AssetCategoryArchive AssetCategory = "archive"
-    // A data file (JSON, XML, CSV, etc.).
-    AssetCategoryData AssetCategory = "data"
-    // An unrecognized asset type.
-    AssetCategoryOther AssetCategory = "other"
+	// A document file (PDF, DOC, etc.).
+	AssetCategoryDocument AssetCategory = "document"
+	// An image file.
+	AssetCategoryImage AssetCategory = "image"
+	// An audio file.
+	AssetCategoryAudio AssetCategory = "audio"
+	// A video file.
+	AssetCategoryVideo AssetCategory = "video"
+	// A font file.
+	AssetCategoryFont AssetCategory = "font"
+	// A CSS stylesheet.
+	AssetCategoryStylesheet AssetCategory = "stylesheet"
+	// A JavaScript file.
+	AssetCategoryScript AssetCategory = "script"
+	// An archive file (ZIP, TAR, etc.).
+	AssetCategoryArchive AssetCategory = "archive"
+	// A data file (JSON, XML, CSV, etc.).
+	AssetCategoryData AssetCategory = "data"
+	// An unrecognized asset type.
+	AssetCategoryOther AssetCategory = "other"
 )
 
 
 // Metadata about an LLM extraction pass.
 type ExtractionMeta struct {
-    // Estimated cost of the LLM call in USD.
-    Cost *float64 `json:"cost,omitempty"`
-    // Number of prompt (input) tokens consumed.
-    PromptTokens *uint64 `json:"prompt_tokens,omitempty"`
-    // Number of completion (output) tokens generated.
-    CompletionTokens *uint64 `json:"completion_tokens,omitempty"`
-    // The model identifier used for extraction.
-    Model *string `json:"model,omitempty"`
-    // Number of content chunks sent to the LLM.
-    ChunksProcessed uint `json:"chunks_processed"`
+	// Estimated cost of the LLM call in USD.
+	Cost *float64 `json:"cost,omitempty"`
+	// Number of prompt (input) tokens consumed.
+	PromptTokens *uint64 `json:"prompt_tokens,omitempty"`
+	// Number of completion (output) tokens generated.
+	CompletionTokens *uint64 `json:"completion_tokens,omitempty"`
+	// The model identifier used for extraction.
+	Model *string `json:"model,omitempty"`
+	// Number of content chunks sent to the LLM.
+	ChunksProcessed uint `json:"chunks_processed"`
 }
 
 
@@ -183,53 +183,53 @@ type ExtractionMetaOption func(*ExtractionMeta)
 
 // WithExtractionMetaCost sets the cost field.
 func WithExtractionMetaCost(v float64) ExtractionMetaOption {
-    return func(c *ExtractionMeta) { c.Cost = &v }
+	return func(c *ExtractionMeta) { c.Cost = &v }
 }
 
 // WithExtractionMetaPromptTokens sets the prompt_tokens field.
 func WithExtractionMetaPromptTokens(v uint64) ExtractionMetaOption {
-    return func(c *ExtractionMeta) { c.PromptTokens = &v }
+	return func(c *ExtractionMeta) { c.PromptTokens = &v }
 }
 
 // WithExtractionMetaCompletionTokens sets the completion_tokens field.
 func WithExtractionMetaCompletionTokens(v uint64) ExtractionMetaOption {
-    return func(c *ExtractionMeta) { c.CompletionTokens = &v }
+	return func(c *ExtractionMeta) { c.CompletionTokens = &v }
 }
 
 // WithExtractionMetaModel sets the model field.
 func WithExtractionMetaModel(v string) ExtractionMetaOption {
-    return func(c *ExtractionMeta) { c.Model = &v }
+	return func(c *ExtractionMeta) { c.Model = &v }
 }
 
 // WithExtractionMetaChunksProcessed sets the chunks_processed field.
 func WithExtractionMetaChunksProcessed(v uint) ExtractionMetaOption {
-    return func(c *ExtractionMeta) { c.ChunksProcessed = v }
+	return func(c *ExtractionMeta) { c.ChunksProcessed = v }
 }
 
 // NewExtractionMeta creates a ExtractionMeta with optional parameters.
 func NewExtractionMeta(opts ...ExtractionMetaOption) *ExtractionMeta {
-    c := &ExtractionMeta {
-        Cost: nil,
-        PromptTokens: nil,
-        CompletionTokens: nil,
-        Model: nil,
-        ChunksProcessed: 0,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &ExtractionMeta {
+		Cost: nil,
+		PromptTokens: nil,
+		CompletionTokens: nil,
+		Model: nil,
+		ChunksProcessed: 0,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Proxy configuration for HTTP requests.
 type ProxyConfig struct {
-    // Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").
-    Url string `json:"url"`
-    // Optional username for proxy authentication.
-    Username *string `json:"username,omitempty"`
-    // Optional password for proxy authentication.
-    Password *string `json:"password,omitempty"`
+	// Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").
+	Url string `json:"url"`
+	// Optional username for proxy authentication.
+	Username *string `json:"username,omitempty"`
+	// Optional password for proxy authentication.
+	Password *string `json:"password,omitempty"`
 }
 
 
@@ -238,47 +238,177 @@ type ProxyConfigOption func(*ProxyConfig)
 
 // WithProxyConfigUrl sets the url field.
 func WithProxyConfigUrl(v string) ProxyConfigOption {
-    return func(c *ProxyConfig) { c.Url = v }
+	return func(c *ProxyConfig) { c.Url = v }
 }
 
 // WithProxyConfigUsername sets the username field.
 func WithProxyConfigUsername(v string) ProxyConfigOption {
-    return func(c *ProxyConfig) { c.Username = &v }
+	return func(c *ProxyConfig) { c.Username = &v }
 }
 
 // WithProxyConfigPassword sets the password field.
 func WithProxyConfigPassword(v string) ProxyConfigOption {
-    return func(c *ProxyConfig) { c.Password = &v }
+	return func(c *ProxyConfig) { c.Password = &v }
 }
 
 // NewProxyConfig creates a ProxyConfig with optional parameters.
 func NewProxyConfig(opts ...ProxyConfigOption) *ProxyConfig {
-    c := &ProxyConfig {
-        Url: "",
-        Username: nil,
-        Password: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &ProxyConfig {
+		Url: "",
+		Username: nil,
+		Password: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
+}
+
+
+// Content extraction and conversion configuration.
+//
+// Controls how HTML is converted to the output format. Uses
+// html-to-markdown-rs as the conversion engine for all formats
+// (markdown, plain text, djot).
+type ContentConfig struct {
+	// Output format: `"markdown"` (default), `"plain"`, `"djot"`.
+	OutputFormat *string `json:"output_format,omitempty"`
+	// Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`.
+	//
+	// - Minimal: only scripts/styles removed.
+	// - Standard: also removes nav, nav-hinted headers/footers/asides, forms.
+	// - Aggressive: removes all footers/asides unconditionally.
+	PreprocessingPreset *string `json:"preprocessing_preset,omitempty"`
+	// Remove navigation elements (nav, breadcrumbs, menus). Default: `true`.
+	RemoveNavigation *bool `json:"remove_navigation,omitempty"`
+	// Remove form elements. Default: `true`.
+	RemoveForms *bool `json:"remove_forms,omitempty"`
+	// HTML tag names to strip (render children only, remove the tag wrapper).
+	// Default: `["noscript"]`.
+	StripTags []string `json:"strip_tags,omitempty"`
+	// HTML tag names to preserve as raw HTML in output.
+	PreserveTags []string `json:"preserve_tags,omitempty"`
+	// CSS selectors for elements to exclude entirely (element + all content).
+	//
+	// Unlike `strip_tags` (which removes the wrapper but keeps children),
+	// excluded elements and all descendants are dropped. Supports CSS selectors:
+	// `.class`, `#id`, `[attribute]`, compound selectors.
+	//
+	// Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]`
+	ExcludeSelectors []string `json:"exclude_selectors,omitempty"`
+	// Skip image elements in output. Default: `false`.
+	SkipImages bool `json:"skip_images"`
+	// Max DOM traversal depth. Prevents stack overflow on deeply nested HTML.
+	MaxDepth *uint `json:"max_depth,omitempty"`
+	// Enable line wrapping. Default: `false`.
+	Wrap bool `json:"wrap"`
+	// Wrap width when `wrap` is enabled. Default: `80`.
+	WrapWidth *uint `json:"wrap_width,omitempty"`
+	// Include document structure tree in output. Default: `true`.
+	IncludeDocumentStructure *bool `json:"include_document_structure,omitempty"`
+}
+
+
+// ContentConfig option function
+type ContentConfigOption func(*ContentConfig)
+
+// WithContentConfigOutputFormat sets the output_format field.
+func WithContentConfigOutputFormat(v string) ContentConfigOption {
+	return func(c *ContentConfig) { c.OutputFormat = &v }
+}
+
+// WithContentConfigPreprocessingPreset sets the preprocessing_preset field.
+func WithContentConfigPreprocessingPreset(v string) ContentConfigOption {
+	return func(c *ContentConfig) { c.PreprocessingPreset = &v }
+}
+
+// WithContentConfigRemoveNavigation sets the remove_navigation field.
+func WithContentConfigRemoveNavigation(v bool) ContentConfigOption {
+	return func(c *ContentConfig) { c.RemoveNavigation = &v }
+}
+
+// WithContentConfigRemoveForms sets the remove_forms field.
+func WithContentConfigRemoveForms(v bool) ContentConfigOption {
+	return func(c *ContentConfig) { c.RemoveForms = &v }
+}
+
+// WithContentConfigStripTags sets the strip_tags field.
+func WithContentConfigStripTags(v []string) ContentConfigOption {
+	return func(c *ContentConfig) { c.StripTags = v }
+}
+
+// WithContentConfigPreserveTags sets the preserve_tags field.
+func WithContentConfigPreserveTags(v []string) ContentConfigOption {
+	return func(c *ContentConfig) { c.PreserveTags = v }
+}
+
+// WithContentConfigExcludeSelectors sets the exclude_selectors field.
+func WithContentConfigExcludeSelectors(v []string) ContentConfigOption {
+	return func(c *ContentConfig) { c.ExcludeSelectors = v }
+}
+
+// WithContentConfigSkipImages sets the skip_images field.
+func WithContentConfigSkipImages(v bool) ContentConfigOption {
+	return func(c *ContentConfig) { c.SkipImages = v }
+}
+
+// WithContentConfigMaxDepth sets the max_depth field.
+func WithContentConfigMaxDepth(v uint) ContentConfigOption {
+	return func(c *ContentConfig) { c.MaxDepth = &v }
+}
+
+// WithContentConfigWrap sets the wrap field.
+func WithContentConfigWrap(v bool) ContentConfigOption {
+	return func(c *ContentConfig) { c.Wrap = v }
+}
+
+// WithContentConfigWrapWidth sets the wrap_width field.
+func WithContentConfigWrapWidth(v uint) ContentConfigOption {
+	return func(c *ContentConfig) { c.WrapWidth = &v }
+}
+
+// WithContentConfigIncludeDocumentStructure sets the include_document_structure field.
+func WithContentConfigIncludeDocumentStructure(v bool) ContentConfigOption {
+	return func(c *ContentConfig) { c.IncludeDocumentStructure = &v }
+}
+
+// NewContentConfig creates a ContentConfig with optional parameters.
+func NewContentConfig(opts ...ContentConfigOption) *ContentConfig {
+	c := &ContentConfig {
+		OutputFormat: nil,
+		PreprocessingPreset: nil,
+		RemoveNavigation: nil,
+		RemoveForms: nil,
+		StripTags: nil,
+		PreserveTags: nil,
+		ExcludeSelectors: nil,
+		SkipImages: false,
+		MaxDepth: nil,
+		Wrap: false,
+		WrapWidth: nil,
+		IncludeDocumentStructure: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Browser fallback configuration.
 type BrowserConfig struct {
-    // When to use the headless browser fallback.
-    Mode *BrowserMode `json:"mode,omitempty"`
-    // CDP WebSocket endpoint for connecting to an external browser instance.
-    Endpoint *string `json:"endpoint,omitempty"`
-    // Timeout for browser page load and rendering (in milliseconds when serialized).
-    Timeout *uint64 `json:"timeout,omitempty"`
-    // Wait strategy after browser navigation.
-    Wait BrowserWait `json:"wait,omitempty"`
-    // CSS selector to wait for when `wait` is `Selector`.
-    WaitSelector *string `json:"wait_selector,omitempty"`
-    // Extra time to wait after the wait condition is met.
-    ExtraWait *uint64 `json:"extra_wait,omitempty"`
+	// When to use the headless browser fallback.
+	Mode *BrowserMode `json:"mode,omitempty"`
+	// CDP WebSocket endpoint for connecting to an external browser instance.
+	Endpoint *string `json:"endpoint,omitempty"`
+	// Timeout for browser page load and rendering (in milliseconds when serialized).
+	Timeout *uint64 `json:"timeout,omitempty"`
+	// Wait strategy after browser navigation.
+	Wait BrowserWait `json:"wait,omitempty"`
+	// CSS selector to wait for when `wait` is `Selector`.
+	WaitSelector *string `json:"wait_selector,omitempty"`
+	// Extra time to wait after the wait condition is met.
+	ExtraWait *uint64 `json:"extra_wait,omitempty"`
 }
 
 
@@ -287,124 +417,124 @@ type BrowserConfigOption func(*BrowserConfig)
 
 // WithBrowserConfigMode sets the mode field.
 func WithBrowserConfigMode(v BrowserMode) BrowserConfigOption {
-    return func(c *BrowserConfig) { c.Mode = &v }
+	return func(c *BrowserConfig) { c.Mode = &v }
 }
 
 // WithBrowserConfigEndpoint sets the endpoint field.
 func WithBrowserConfigEndpoint(v string) BrowserConfigOption {
-    return func(c *BrowserConfig) { c.Endpoint = &v }
+	return func(c *BrowserConfig) { c.Endpoint = &v }
 }
 
 // WithBrowserConfigTimeout sets the timeout field.
 func WithBrowserConfigTimeout(v uint64) BrowserConfigOption {
-    return func(c *BrowserConfig) { c.Timeout = &v }
+	return func(c *BrowserConfig) { c.Timeout = &v }
 }
 
 // WithBrowserConfigWait sets the wait field.
 func WithBrowserConfigWait(v BrowserWait) BrowserConfigOption {
-    return func(c *BrowserConfig) { c.Wait = v }
+	return func(c *BrowserConfig) { c.Wait = v }
 }
 
 // WithBrowserConfigWaitSelector sets the wait_selector field.
 func WithBrowserConfigWaitSelector(v string) BrowserConfigOption {
-    return func(c *BrowserConfig) { c.WaitSelector = &v }
+	return func(c *BrowserConfig) { c.WaitSelector = &v }
 }
 
 // WithBrowserConfigExtraWait sets the extra_wait field.
 func WithBrowserConfigExtraWait(v uint64) BrowserConfigOption {
-    return func(c *BrowserConfig) { c.ExtraWait = &v }
+	return func(c *BrowserConfig) { c.ExtraWait = &v }
 }
 
 // NewBrowserConfig creates a BrowserConfig with optional parameters.
 func NewBrowserConfig(opts ...BrowserConfigOption) *BrowserConfig {
-    c := &BrowserConfig {
-        Mode: nil,
-        Endpoint: nil,
-        Timeout: nil,
-        Wait: "",
-        WaitSelector: nil,
-        ExtraWait: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &BrowserConfig {
+		Mode: nil,
+		Endpoint: nil,
+		Timeout: nil,
+		Wait: "",
+		WaitSelector: nil,
+		ExtraWait: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Configuration for crawl, scrape, and map operations.
 type CrawlConfig struct {
-    // Maximum crawl depth (number of link hops from the start URL).
-    MaxDepth *uint `json:"max_depth,omitempty"`
-    // Maximum number of pages to crawl.
-    MaxPages *uint `json:"max_pages,omitempty"`
-    // Maximum number of concurrent requests.
-    MaxConcurrent *uint `json:"max_concurrent,omitempty"`
-    // Whether to respect robots.txt directives.
-    RespectRobotsTxt bool `json:"respect_robots_txt"`
-    // Custom user-agent string.
-    UserAgent *string `json:"user_agent,omitempty"`
-    // Whether to restrict crawling to the same domain.
-    StayOnDomain bool `json:"stay_on_domain"`
-    // Whether to allow subdomains when `stay_on_domain` is true.
-    AllowSubdomains bool `json:"allow_subdomains"`
-    // Regex patterns for paths to include during crawling.
-    IncludePaths []string `json:"include_paths,omitempty"`
-    // Regex patterns for paths to exclude during crawling.
-    ExcludePaths []string `json:"exclude_paths,omitempty"`
-    // Custom HTTP headers to send with each request.
-    CustomHeaders map[string]string `json:"custom_headers,omitempty"`
-    // Timeout for individual HTTP requests (in milliseconds when serialized).
-    RequestTimeout *uint64 `json:"request_timeout,omitempty"`
-    // Per-domain rate limit in milliseconds. When set, enforces a minimum delay
-    // between requests to the same domain. Defaults to 200ms when `None`.
-    RateLimitMs *uint64 `json:"rate_limit_ms,omitempty"`
-    // Maximum number of redirects to follow.
-    MaxRedirects *uint `json:"max_redirects,omitempty"`
-    // Number of retry attempts for failed requests.
-    RetryCount uint `json:"retry_count"`
-    // HTTP status codes that should trigger a retry.
-    RetryCodes []uint16 `json:"retry_codes,omitempty"`
-    // Whether to enable cookie handling.
-    CookiesEnabled bool `json:"cookies_enabled"`
-    // Authentication configuration.
-    Auth *AuthConfig `json:"auth,omitempty"`
-    // Maximum response body size in bytes.
-    MaxBodySize *uint `json:"max_body_size,omitempty"`
-    // Whether to extract only the main content from HTML pages.
-    MainContentOnly bool `json:"main_content_only"`
-    // CSS selectors for tags to remove from HTML before processing.
-    RemoveTags []string `json:"remove_tags,omitempty"`
-    // Maximum number of URLs to return from a map operation.
-    MapLimit *uint `json:"map_limit,omitempty"`
-    // Search filter for map results (case-insensitive substring match on URLs).
-    MapSearch *string `json:"map_search,omitempty"`
-    // Whether to download assets (CSS, JS, images, etc.) from the page.
-    DownloadAssets bool `json:"download_assets"`
-    // Filter for asset categories to download.
-    AssetTypes []AssetCategory `json:"asset_types,omitempty"`
-    // Maximum size in bytes for individual asset downloads.
-    MaxAssetSize *uint `json:"max_asset_size,omitempty"`
-    // Browser configuration.
-    Browser BrowserConfig `json:"browser"`
-    // Proxy configuration for HTTP requests.
-    Proxy *ProxyConfig `json:"proxy,omitempty"`
-    // List of user-agent strings for rotation. If non-empty, overrides `user_agent`.
-    UserAgents []string `json:"user_agents,omitempty"`
-    // Whether to capture a screenshot when using the browser.
-    CaptureScreenshot bool `json:"capture_screenshot"`
-    // Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them.
-    DownloadDocuments *bool `json:"download_documents,omitempty"`
-    // Maximum size in bytes for document downloads. Defaults to 50 MB.
-    DocumentMaxSize *uint `json:"document_max_size,omitempty"`
-    // Allowlist of MIME types to download. If empty, uses built-in defaults.
-    DocumentMimeTypes []string `json:"document_mime_types,omitempty"`
-    // Path to write WARC output. If `None`, WARC output is disabled.
-    WarcOutput *string `json:"warc_output,omitempty"`
-    // Named browser profile for persistent sessions (cookies, localStorage).
-    BrowserProfile *string `json:"browser_profile,omitempty"`
-    // Whether to save changes back to the browser profile on exit.
-    SaveBrowserProfile bool `json:"save_browser_profile"`
+	// Maximum crawl depth (number of link hops from the start URL).
+	MaxDepth *uint `json:"max_depth,omitempty"`
+	// Maximum number of pages to crawl.
+	MaxPages *uint `json:"max_pages,omitempty"`
+	// Maximum number of concurrent requests.
+	MaxConcurrent *uint `json:"max_concurrent,omitempty"`
+	// Whether to respect robots.txt directives.
+	RespectRobotsTxt bool `json:"respect_robots_txt"`
+	// Custom user-agent string.
+	UserAgent *string `json:"user_agent,omitempty"`
+	// Whether to restrict crawling to the same domain.
+	StayOnDomain bool `json:"stay_on_domain"`
+	// Whether to allow subdomains when `stay_on_domain` is true.
+	AllowSubdomains bool `json:"allow_subdomains"`
+	// Regex patterns for paths to include during crawling.
+	IncludePaths []string `json:"include_paths,omitempty"`
+	// Regex patterns for paths to exclude during crawling.
+	ExcludePaths []string `json:"exclude_paths,omitempty"`
+	// Custom HTTP headers to send with each request.
+	CustomHeaders map[string]string `json:"custom_headers,omitempty"`
+	// Timeout for individual HTTP requests (in milliseconds when serialized).
+	RequestTimeout *uint64 `json:"request_timeout,omitempty"`
+	// Per-domain rate limit in milliseconds. When set, enforces a minimum delay
+	// between requests to the same domain. Defaults to 200ms when `None`.
+	RateLimitMs *uint64 `json:"rate_limit_ms,omitempty"`
+	// Maximum number of redirects to follow.
+	MaxRedirects *uint `json:"max_redirects,omitempty"`
+	// Number of retry attempts for failed requests.
+	RetryCount uint `json:"retry_count"`
+	// HTTP status codes that should trigger a retry.
+	RetryCodes []uint16 `json:"retry_codes,omitempty"`
+	// Whether to enable cookie handling.
+	CookiesEnabled bool `json:"cookies_enabled"`
+	// Authentication configuration.
+	Auth *AuthConfig `json:"auth,omitempty"`
+	// Maximum response body size in bytes.
+	MaxBodySize *uint `json:"max_body_size,omitempty"`
+	// CSS selectors for tags to remove from HTML before processing.
+	RemoveTags []string `json:"remove_tags,omitempty"`
+	// Content extraction and conversion configuration.
+	Content ContentConfig `json:"content"`
+	// Maximum number of URLs to return from a map operation.
+	MapLimit *uint `json:"map_limit,omitempty"`
+	// Search filter for map results (case-insensitive substring match on URLs).
+	MapSearch *string `json:"map_search,omitempty"`
+	// Whether to download assets (CSS, JS, images, etc.) from the page.
+	DownloadAssets bool `json:"download_assets"`
+	// Filter for asset categories to download.
+	AssetTypes []AssetCategory `json:"asset_types,omitempty"`
+	// Maximum size in bytes for individual asset downloads.
+	MaxAssetSize *uint `json:"max_asset_size,omitempty"`
+	// Browser configuration.
+	Browser BrowserConfig `json:"browser"`
+	// Proxy configuration for HTTP requests.
+	Proxy *ProxyConfig `json:"proxy,omitempty"`
+	// List of user-agent strings for rotation. If non-empty, overrides `user_agent`.
+	UserAgents []string `json:"user_agents,omitempty"`
+	// Whether to capture a screenshot when using the browser.
+	CaptureScreenshot bool `json:"capture_screenshot"`
+	// Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them.
+	DownloadDocuments *bool `json:"download_documents,omitempty"`
+	// Maximum size in bytes for document downloads. Defaults to 50 MB.
+	DocumentMaxSize *uint `json:"document_max_size,omitempty"`
+	// Allowlist of MIME types to download. If empty, uses built-in defaults.
+	DocumentMimeTypes []string `json:"document_mime_types,omitempty"`
+	// Path to write WARC output. If `None`, WARC output is disabled.
+	WarcOutput *string `json:"warc_output,omitempty"`
+	// Named browser profile for persistent sessions (cookies, localStorage).
+	BrowserProfile *string `json:"browser_profile,omitempty"`
+	// Whether to save changes back to the browser profile on exit.
+	SaveBrowserProfile bool `json:"save_browser_profile"`
 }
 
 
@@ -413,222 +543,222 @@ type CrawlConfigOption func(*CrawlConfig)
 
 // WithCrawlConfigMaxDepth sets the max_depth field.
 func WithCrawlConfigMaxDepth(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MaxDepth = &v }
+	return func(c *CrawlConfig) { c.MaxDepth = &v }
 }
 
 // WithCrawlConfigMaxPages sets the max_pages field.
 func WithCrawlConfigMaxPages(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MaxPages = &v }
+	return func(c *CrawlConfig) { c.MaxPages = &v }
 }
 
 // WithCrawlConfigMaxConcurrent sets the max_concurrent field.
 func WithCrawlConfigMaxConcurrent(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MaxConcurrent = &v }
+	return func(c *CrawlConfig) { c.MaxConcurrent = &v }
 }
 
 // WithCrawlConfigRespectRobotsTxt sets the respect_robots_txt field.
 func WithCrawlConfigRespectRobotsTxt(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.RespectRobotsTxt = v }
+	return func(c *CrawlConfig) { c.RespectRobotsTxt = v }
 }
 
 // WithCrawlConfigUserAgent sets the user_agent field.
 func WithCrawlConfigUserAgent(v string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.UserAgent = &v }
+	return func(c *CrawlConfig) { c.UserAgent = &v }
 }
 
 // WithCrawlConfigStayOnDomain sets the stay_on_domain field.
 func WithCrawlConfigStayOnDomain(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.StayOnDomain = v }
+	return func(c *CrawlConfig) { c.StayOnDomain = v }
 }
 
 // WithCrawlConfigAllowSubdomains sets the allow_subdomains field.
 func WithCrawlConfigAllowSubdomains(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.AllowSubdomains = v }
+	return func(c *CrawlConfig) { c.AllowSubdomains = v }
 }
 
 // WithCrawlConfigIncludePaths sets the include_paths field.
 func WithCrawlConfigIncludePaths(v []string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.IncludePaths = v }
+	return func(c *CrawlConfig) { c.IncludePaths = v }
 }
 
 // WithCrawlConfigExcludePaths sets the exclude_paths field.
 func WithCrawlConfigExcludePaths(v []string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.ExcludePaths = v }
+	return func(c *CrawlConfig) { c.ExcludePaths = v }
 }
 
 // WithCrawlConfigCustomHeaders sets the custom_headers field.
 func WithCrawlConfigCustomHeaders(v map[string]string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.CustomHeaders = v }
+	return func(c *CrawlConfig) { c.CustomHeaders = v }
 }
 
 // WithCrawlConfigRequestTimeout sets the request_timeout field.
 func WithCrawlConfigRequestTimeout(v uint64) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.RequestTimeout = &v }
+	return func(c *CrawlConfig) { c.RequestTimeout = &v }
 }
 
 // WithCrawlConfigRateLimitMs sets the rate_limit_ms field.
 func WithCrawlConfigRateLimitMs(v uint64) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.RateLimitMs = &v }
+	return func(c *CrawlConfig) { c.RateLimitMs = &v }
 }
 
 // WithCrawlConfigMaxRedirects sets the max_redirects field.
 func WithCrawlConfigMaxRedirects(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MaxRedirects = &v }
+	return func(c *CrawlConfig) { c.MaxRedirects = &v }
 }
 
 // WithCrawlConfigRetryCount sets the retry_count field.
 func WithCrawlConfigRetryCount(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.RetryCount = v }
+	return func(c *CrawlConfig) { c.RetryCount = v }
 }
 
 // WithCrawlConfigRetryCodes sets the retry_codes field.
 func WithCrawlConfigRetryCodes(v []uint16) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.RetryCodes = v }
+	return func(c *CrawlConfig) { c.RetryCodes = v }
 }
 
 // WithCrawlConfigCookiesEnabled sets the cookies_enabled field.
 func WithCrawlConfigCookiesEnabled(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.CookiesEnabled = v }
+	return func(c *CrawlConfig) { c.CookiesEnabled = v }
 }
 
 // WithCrawlConfigAuth sets the auth field.
 func WithCrawlConfigAuth(v AuthConfig) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.Auth = &v }
+	return func(c *CrawlConfig) { c.Auth = &v }
 }
 
 // WithCrawlConfigMaxBodySize sets the max_body_size field.
 func WithCrawlConfigMaxBodySize(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MaxBodySize = &v }
-}
-
-// WithCrawlConfigMainContentOnly sets the main_content_only field.
-func WithCrawlConfigMainContentOnly(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MainContentOnly = v }
+	return func(c *CrawlConfig) { c.MaxBodySize = &v }
 }
 
 // WithCrawlConfigRemoveTags sets the remove_tags field.
 func WithCrawlConfigRemoveTags(v []string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.RemoveTags = v }
+	return func(c *CrawlConfig) { c.RemoveTags = v }
+}
+
+// WithCrawlConfigContent sets the content field.
+func WithCrawlConfigContent(v ContentConfig) CrawlConfigOption {
+	return func(c *CrawlConfig) { c.Content = v }
 }
 
 // WithCrawlConfigMapLimit sets the map_limit field.
 func WithCrawlConfigMapLimit(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MapLimit = &v }
+	return func(c *CrawlConfig) { c.MapLimit = &v }
 }
 
 // WithCrawlConfigMapSearch sets the map_search field.
 func WithCrawlConfigMapSearch(v string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MapSearch = &v }
+	return func(c *CrawlConfig) { c.MapSearch = &v }
 }
 
 // WithCrawlConfigDownloadAssets sets the download_assets field.
 func WithCrawlConfigDownloadAssets(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.DownloadAssets = v }
+	return func(c *CrawlConfig) { c.DownloadAssets = v }
 }
 
 // WithCrawlConfigAssetTypes sets the asset_types field.
 func WithCrawlConfigAssetTypes(v []AssetCategory) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.AssetTypes = v }
+	return func(c *CrawlConfig) { c.AssetTypes = v }
 }
 
 // WithCrawlConfigMaxAssetSize sets the max_asset_size field.
 func WithCrawlConfigMaxAssetSize(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.MaxAssetSize = &v }
+	return func(c *CrawlConfig) { c.MaxAssetSize = &v }
 }
 
 // WithCrawlConfigBrowser sets the browser field.
 func WithCrawlConfigBrowser(v BrowserConfig) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.Browser = v }
+	return func(c *CrawlConfig) { c.Browser = v }
 }
 
 // WithCrawlConfigProxy sets the proxy field.
 func WithCrawlConfigProxy(v ProxyConfig) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.Proxy = &v }
+	return func(c *CrawlConfig) { c.Proxy = &v }
 }
 
 // WithCrawlConfigUserAgents sets the user_agents field.
 func WithCrawlConfigUserAgents(v []string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.UserAgents = v }
+	return func(c *CrawlConfig) { c.UserAgents = v }
 }
 
 // WithCrawlConfigCaptureScreenshot sets the capture_screenshot field.
 func WithCrawlConfigCaptureScreenshot(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.CaptureScreenshot = v }
+	return func(c *CrawlConfig) { c.CaptureScreenshot = v }
 }
 
 // WithCrawlConfigDownloadDocuments sets the download_documents field.
 func WithCrawlConfigDownloadDocuments(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.DownloadDocuments = &v }
+	return func(c *CrawlConfig) { c.DownloadDocuments = &v }
 }
 
 // WithCrawlConfigDocumentMaxSize sets the document_max_size field.
 func WithCrawlConfigDocumentMaxSize(v uint) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.DocumentMaxSize = &v }
+	return func(c *CrawlConfig) { c.DocumentMaxSize = &v }
 }
 
 // WithCrawlConfigDocumentMimeTypes sets the document_mime_types field.
 func WithCrawlConfigDocumentMimeTypes(v []string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.DocumentMimeTypes = v }
+	return func(c *CrawlConfig) { c.DocumentMimeTypes = v }
 }
 
 // WithCrawlConfigWarcOutput sets the warc_output field.
 func WithCrawlConfigWarcOutput(v string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.WarcOutput = &v }
+	return func(c *CrawlConfig) { c.WarcOutput = &v }
 }
 
 // WithCrawlConfigBrowserProfile sets the browser_profile field.
 func WithCrawlConfigBrowserProfile(v string) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.BrowserProfile = &v }
+	return func(c *CrawlConfig) { c.BrowserProfile = &v }
 }
 
 // WithCrawlConfigSaveBrowserProfile sets the save_browser_profile field.
 func WithCrawlConfigSaveBrowserProfile(v bool) CrawlConfigOption {
-    return func(c *CrawlConfig) { c.SaveBrowserProfile = v }
+	return func(c *CrawlConfig) { c.SaveBrowserProfile = v }
 }
 
 // NewCrawlConfig creates a CrawlConfig with optional parameters.
 func NewCrawlConfig(opts ...CrawlConfigOption) *CrawlConfig {
-    c := &CrawlConfig {
-        MaxDepth: nil,
-        MaxPages: nil,
-        MaxConcurrent: nil,
-        RespectRobotsTxt: false,
-        UserAgent: nil,
-        StayOnDomain: false,
-        AllowSubdomains: false,
-        IncludePaths: nil,
-        ExcludePaths: nil,
-        CustomHeaders: nil,
-        RequestTimeout: nil,
-        RateLimitMs: nil,
-        MaxRedirects: nil,
-        RetryCount: 0,
-        RetryCodes: nil,
-        CookiesEnabled: false,
-        Auth: nil,
-        MaxBodySize: nil,
-        MainContentOnly: false,
-        RemoveTags: nil,
-        MapLimit: nil,
-        MapSearch: nil,
-        DownloadAssets: false,
-        AssetTypes: nil,
-        MaxAssetSize: nil,
-        Browser: BrowserConfig{},
-        Proxy: nil,
-        UserAgents: nil,
-        CaptureScreenshot: false,
-        DownloadDocuments: nil,
-        DocumentMaxSize: nil,
-        DocumentMimeTypes: nil,
-        WarcOutput: nil,
-        BrowserProfile: nil,
-        SaveBrowserProfile: false,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &CrawlConfig {
+		MaxDepth: nil,
+		MaxPages: nil,
+		MaxConcurrent: nil,
+		RespectRobotsTxt: false,
+		UserAgent: nil,
+		StayOnDomain: false,
+		AllowSubdomains: false,
+		IncludePaths: nil,
+		ExcludePaths: nil,
+		CustomHeaders: nil,
+		RequestTimeout: nil,
+		RateLimitMs: nil,
+		MaxRedirects: nil,
+		RetryCount: 0,
+		RetryCodes: nil,
+		CookiesEnabled: false,
+		Auth: nil,
+		MaxBodySize: nil,
+		RemoveTags: nil,
+		Content: ContentConfig{},
+		MapLimit: nil,
+		MapSearch: nil,
+		DownloadAssets: false,
+		AssetTypes: nil,
+		MaxAssetSize: nil,
+		Browser: BrowserConfig{},
+		Proxy: nil,
+		UserAgents: nil,
+		CaptureScreenshot: false,
+		DownloadDocuments: nil,
+		DocumentMaxSize: nil,
+		DocumentMimeTypes: nil,
+		WarcOutput: nil,
+		BrowserProfile: nil,
+		SaveBrowserProfile: false,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
@@ -638,20 +768,20 @@ func NewCrawlConfig(opts ...CrawlConfigOption) *CrawlConfig {
 // enabled, it downloads the raw bytes and populates this struct instead of
 // skipping the resource.
 type DownloadedDocument struct {
-    // The URL the document was fetched from.
-    Url string `json:"url"`
-    // The MIME type from the Content-Type header.
-    MimeType string `json:"mime_type"`
-    // Raw document bytes. Skipped during JSON serialization.
-    Content []byte `json:"content"`
-    // Size of the document in bytes.
-    Size uint `json:"size"`
-    // Filename extracted from Content-Disposition or URL path.
-    Filename *string `json:"filename,omitempty"`
-    // SHA-256 hex digest of the content.
-    ContentHash string `json:"content_hash"`
-    // Selected response headers.
-    Headers map[string]string `json:"headers,omitempty"`
+	// The URL the document was fetched from.
+	Url string `json:"url"`
+	// The MIME type from the Content-Type header.
+	MimeType string `json:"mime_type"`
+	// Raw document bytes. Skipped during JSON serialization.
+	Content []byte `json:"content"`
+	// Size of the document in bytes.
+	Size uint `json:"size"`
+	// Filename extracted from Content-Disposition or URL path.
+	Filename *string `json:"filename,omitempty"`
+	// SHA-256 hex digest of the content.
+	ContentHash string `json:"content_hash"`
+	// Selected response headers.
+	Headers map[string]string `json:"headers,omitempty"`
 }
 
 
@@ -660,115 +790,113 @@ type DownloadedDocumentOption func(*DownloadedDocument)
 
 // WithDownloadedDocumentUrl sets the url field.
 func WithDownloadedDocumentUrl(v string) DownloadedDocumentOption {
-    return func(c *DownloadedDocument) { c.Url = v }
+	return func(c *DownloadedDocument) { c.Url = v }
 }
 
 // WithDownloadedDocumentMimeType sets the mime_type field.
 func WithDownloadedDocumentMimeType(v string) DownloadedDocumentOption {
-    return func(c *DownloadedDocument) { c.MimeType = v }
+	return func(c *DownloadedDocument) { c.MimeType = v }
 }
 
 // WithDownloadedDocumentContent sets the content field.
 func WithDownloadedDocumentContent(v []byte) DownloadedDocumentOption {
-    return func(c *DownloadedDocument) { c.Content = v }
+	return func(c *DownloadedDocument) { c.Content = v }
 }
 
 // WithDownloadedDocumentSize sets the size field.
 func WithDownloadedDocumentSize(v uint) DownloadedDocumentOption {
-    return func(c *DownloadedDocument) { c.Size = v }
+	return func(c *DownloadedDocument) { c.Size = v }
 }
 
 // WithDownloadedDocumentFilename sets the filename field.
 func WithDownloadedDocumentFilename(v string) DownloadedDocumentOption {
-    return func(c *DownloadedDocument) { c.Filename = &v }
+	return func(c *DownloadedDocument) { c.Filename = &v }
 }
 
 // WithDownloadedDocumentContentHash sets the content_hash field.
 func WithDownloadedDocumentContentHash(v string) DownloadedDocumentOption {
-    return func(c *DownloadedDocument) { c.ContentHash = v }
+	return func(c *DownloadedDocument) { c.ContentHash = v }
 }
 
 // WithDownloadedDocumentHeaders sets the headers field.
 func WithDownloadedDocumentHeaders(v map[string]string) DownloadedDocumentOption {
-    return func(c *DownloadedDocument) { c.Headers = v }
+	return func(c *DownloadedDocument) { c.Headers = v }
 }
 
 // NewDownloadedDocument creates a DownloadedDocument with optional parameters.
 func NewDownloadedDocument(opts ...DownloadedDocumentOption) *DownloadedDocument {
-    c := &DownloadedDocument {
-        Url: "",
-        MimeType: "",
-        Content: []byte{},
-        Size: 0,
-        Filename: nil,
-        ContentHash: "",
-        Headers: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &DownloadedDocument {
+		Url: "",
+		MimeType: "",
+		Content: []byte{},
+		Size: 0,
+		Filename: nil,
+		ContentHash: "",
+		Headers: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // The result of a single-page scrape operation.
 type ScrapeResult struct {
-    // The HTTP status code of the response.
-    StatusCode uint16 `json:"status_code"`
-    // The Content-Type header value.
-    ContentType string `json:"content_type"`
-    // The HTML body of the response.
-    Html string `json:"html"`
-    // The size of the response body in bytes.
-    BodySize uint `json:"body_size"`
-    // Extracted metadata from the page.
-    Metadata PageMetadata `json:"metadata"`
-    // Links found on the page.
-    Links []LinkInfo `json:"links,omitempty"`
-    // Images found on the page.
-    Images []ImageInfo `json:"images,omitempty"`
-    // Feed links found on the page.
-    Feeds []FeedInfo `json:"feeds,omitempty"`
-    // JSON-LD entries found on the page.
-    JsonLd []JsonLdEntry `json:"json_ld,omitempty"`
-    // Whether the URL is allowed by robots.txt.
-    IsAllowed bool `json:"is_allowed"`
-    // The crawl delay from robots.txt, in seconds.
-    CrawlDelay *uint64 `json:"crawl_delay,omitempty"`
-    // Whether a noindex directive was detected.
-    NoindexDetected bool `json:"noindex_detected"`
-    // Whether a nofollow directive was detected.
-    NofollowDetected bool `json:"nofollow_detected"`
-    // The X-Robots-Tag header value, if present.
-    XRobotsTag *string `json:"x_robots_tag,omitempty"`
-    // Whether the content is a PDF.
-    IsPdf bool `json:"is_pdf"`
-    // Whether the page was skipped (binary or PDF content).
-    WasSkipped bool `json:"was_skipped"`
-    // The detected character set encoding.
-    DetectedCharset *string `json:"detected_charset,omitempty"`
-    // Whether main_content_only was active during extraction.
-    MainContentOnly bool `json:"main_content_only"`
-    // Whether an authentication header was sent with the request.
-    AuthHeaderSent bool `json:"auth_header_sent"`
-    // Response metadata extracted from HTTP headers.
-    ResponseMeta *ResponseMeta `json:"response_meta,omitempty"`
-    // Downloaded assets from the page.
-    Assets []DownloadedAsset `json:"assets,omitempty"`
-    // Whether the page content suggests JavaScript rendering is needed.
-    JsRenderHint bool `json:"js_render_hint"`
-    // Whether the browser fallback was used to fetch this page.
-    BrowserUsed bool `json:"browser_used"`
-    // Markdown conversion of the page content.
-    Markdown *MarkdownResult `json:"markdown,omitempty"`
-    // Structured data extracted by LLM. Populated when extraction is configured.
-    ExtractedData *json.RawMessage `json:"extracted_data,omitempty"`
-    // Metadata about the LLM extraction pass (cost, tokens, model).
-    ExtractionMeta *ExtractionMeta `json:"extraction_meta,omitempty"`
-    // Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.
-    Screenshot *[]byte `json:"screenshot,omitempty"`
-    // Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
-    DownloadedDocument *DownloadedDocument `json:"downloaded_document,omitempty"`
+	// The HTTP status code of the response.
+	StatusCode uint16 `json:"status_code"`
+	// The Content-Type header value.
+	ContentType string `json:"content_type"`
+	// The HTML body of the response.
+	Html string `json:"html"`
+	// The size of the response body in bytes.
+	BodySize uint `json:"body_size"`
+	// Extracted metadata from the page.
+	Metadata PageMetadata `json:"metadata"`
+	// Links found on the page.
+	Links []LinkInfo `json:"links,omitempty"`
+	// Images found on the page.
+	Images []ImageInfo `json:"images,omitempty"`
+	// Feed links found on the page.
+	Feeds []FeedInfo `json:"feeds,omitempty"`
+	// JSON-LD entries found on the page.
+	JsonLd []JsonLdEntry `json:"json_ld,omitempty"`
+	// Whether the URL is allowed by robots.txt.
+	IsAllowed bool `json:"is_allowed"`
+	// The crawl delay from robots.txt, in seconds.
+	CrawlDelay *uint64 `json:"crawl_delay,omitempty"`
+	// Whether a noindex directive was detected.
+	NoindexDetected bool `json:"noindex_detected"`
+	// Whether a nofollow directive was detected.
+	NofollowDetected bool `json:"nofollow_detected"`
+	// The X-Robots-Tag header value, if present.
+	XRobotsTag *string `json:"x_robots_tag,omitempty"`
+	// Whether the content is a PDF.
+	IsPdf bool `json:"is_pdf"`
+	// Whether the page was skipped (binary or PDF content).
+	WasSkipped bool `json:"was_skipped"`
+	// The detected character set encoding.
+	DetectedCharset *string `json:"detected_charset,omitempty"`
+	// Whether an authentication header was sent with the request.
+	AuthHeaderSent bool `json:"auth_header_sent"`
+	// Response metadata extracted from HTTP headers.
+	ResponseMeta *ResponseMeta `json:"response_meta,omitempty"`
+	// Downloaded assets from the page.
+	Assets []DownloadedAsset `json:"assets,omitempty"`
+	// Whether the page content suggests JavaScript rendering is needed.
+	JsRenderHint bool `json:"js_render_hint"`
+	// Whether the browser fallback was used to fetch this page.
+	BrowserUsed bool `json:"browser_used"`
+	// Markdown conversion of the page content.
+	Markdown *MarkdownResult `json:"markdown,omitempty"`
+	// Structured data extracted by LLM. Populated when extraction is configured.
+	ExtractedData *json.RawMessage `json:"extracted_data,omitempty"`
+	// Metadata about the LLM extraction pass (cost, tokens, model).
+	ExtractionMeta *ExtractionMeta `json:"extraction_meta,omitempty"`
+	// Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.
+	Screenshot *[]byte `json:"screenshot,omitempty"`
+	// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
+	DownloadedDocument *DownloadedDocument `json:"downloaded_document,omitempty"`
 }
 
 
@@ -777,225 +905,219 @@ type ScrapeResultOption func(*ScrapeResult)
 
 // WithScrapeResultStatusCode sets the status_code field.
 func WithScrapeResultStatusCode(v uint16) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.StatusCode = v }
+	return func(c *ScrapeResult) { c.StatusCode = v }
 }
 
 // WithScrapeResultContentType sets the content_type field.
 func WithScrapeResultContentType(v string) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.ContentType = v }
+	return func(c *ScrapeResult) { c.ContentType = v }
 }
 
 // WithScrapeResultHtml sets the html field.
 func WithScrapeResultHtml(v string) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.Html = v }
+	return func(c *ScrapeResult) { c.Html = v }
 }
 
 // WithScrapeResultBodySize sets the body_size field.
 func WithScrapeResultBodySize(v uint) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.BodySize = v }
+	return func(c *ScrapeResult) { c.BodySize = v }
 }
 
 // WithScrapeResultMetadata sets the metadata field.
 func WithScrapeResultMetadata(v PageMetadata) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.Metadata = v }
+	return func(c *ScrapeResult) { c.Metadata = v }
 }
 
 // WithScrapeResultLinks sets the links field.
 func WithScrapeResultLinks(v []LinkInfo) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.Links = v }
+	return func(c *ScrapeResult) { c.Links = v }
 }
 
 // WithScrapeResultImages sets the images field.
 func WithScrapeResultImages(v []ImageInfo) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.Images = v }
+	return func(c *ScrapeResult) { c.Images = v }
 }
 
 // WithScrapeResultFeeds sets the feeds field.
 func WithScrapeResultFeeds(v []FeedInfo) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.Feeds = v }
+	return func(c *ScrapeResult) { c.Feeds = v }
 }
 
 // WithScrapeResultJsonLd sets the json_ld field.
 func WithScrapeResultJsonLd(v []JsonLdEntry) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.JsonLd = v }
+	return func(c *ScrapeResult) { c.JsonLd = v }
 }
 
 // WithScrapeResultIsAllowed sets the is_allowed field.
 func WithScrapeResultIsAllowed(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.IsAllowed = v }
+	return func(c *ScrapeResult) { c.IsAllowed = v }
 }
 
 // WithScrapeResultCrawlDelay sets the crawl_delay field.
 func WithScrapeResultCrawlDelay(v uint64) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.CrawlDelay = &v }
+	return func(c *ScrapeResult) { c.CrawlDelay = &v }
 }
 
 // WithScrapeResultNoindexDetected sets the noindex_detected field.
 func WithScrapeResultNoindexDetected(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.NoindexDetected = v }
+	return func(c *ScrapeResult) { c.NoindexDetected = v }
 }
 
 // WithScrapeResultNofollowDetected sets the nofollow_detected field.
 func WithScrapeResultNofollowDetected(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.NofollowDetected = v }
+	return func(c *ScrapeResult) { c.NofollowDetected = v }
 }
 
 // WithScrapeResultXRobotsTag sets the x_robots_tag field.
 func WithScrapeResultXRobotsTag(v string) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.XRobotsTag = &v }
+	return func(c *ScrapeResult) { c.XRobotsTag = &v }
 }
 
 // WithScrapeResultIsPdf sets the is_pdf field.
 func WithScrapeResultIsPdf(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.IsPdf = v }
+	return func(c *ScrapeResult) { c.IsPdf = v }
 }
 
 // WithScrapeResultWasSkipped sets the was_skipped field.
 func WithScrapeResultWasSkipped(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.WasSkipped = v }
+	return func(c *ScrapeResult) { c.WasSkipped = v }
 }
 
 // WithScrapeResultDetectedCharset sets the detected_charset field.
 func WithScrapeResultDetectedCharset(v string) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.DetectedCharset = &v }
-}
-
-// WithScrapeResultMainContentOnly sets the main_content_only field.
-func WithScrapeResultMainContentOnly(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.MainContentOnly = v }
+	return func(c *ScrapeResult) { c.DetectedCharset = &v }
 }
 
 // WithScrapeResultAuthHeaderSent sets the auth_header_sent field.
 func WithScrapeResultAuthHeaderSent(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.AuthHeaderSent = v }
+	return func(c *ScrapeResult) { c.AuthHeaderSent = v }
 }
 
 // WithScrapeResultResponseMeta sets the response_meta field.
 func WithScrapeResultResponseMeta(v ResponseMeta) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.ResponseMeta = &v }
+	return func(c *ScrapeResult) { c.ResponseMeta = &v }
 }
 
 // WithScrapeResultAssets sets the assets field.
 func WithScrapeResultAssets(v []DownloadedAsset) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.Assets = v }
+	return func(c *ScrapeResult) { c.Assets = v }
 }
 
 // WithScrapeResultJsRenderHint sets the js_render_hint field.
 func WithScrapeResultJsRenderHint(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.JsRenderHint = v }
+	return func(c *ScrapeResult) { c.JsRenderHint = v }
 }
 
 // WithScrapeResultBrowserUsed sets the browser_used field.
 func WithScrapeResultBrowserUsed(v bool) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.BrowserUsed = v }
+	return func(c *ScrapeResult) { c.BrowserUsed = v }
 }
 
 // WithScrapeResultMarkdown sets the markdown field.
 func WithScrapeResultMarkdown(v MarkdownResult) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.Markdown = &v }
+	return func(c *ScrapeResult) { c.Markdown = &v }
 }
 
 // WithScrapeResultExtractedData sets the extracted_data field.
 func WithScrapeResultExtractedData(v json.RawMessage) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.ExtractedData = &v }
+	return func(c *ScrapeResult) { c.ExtractedData = &v }
 }
 
 // WithScrapeResultExtractionMeta sets the extraction_meta field.
 func WithScrapeResultExtractionMeta(v ExtractionMeta) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.ExtractionMeta = &v }
+	return func(c *ScrapeResult) { c.ExtractionMeta = &v }
 }
 
 // WithScrapeResultScreenshot sets the screenshot field.
 func WithScrapeResultScreenshot(v []byte) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.Screenshot = &v }
+	return func(c *ScrapeResult) { c.Screenshot = &v }
 }
 
 // WithScrapeResultDownloadedDocument sets the downloaded_document field.
 func WithScrapeResultDownloadedDocument(v DownloadedDocument) ScrapeResultOption {
-    return func(c *ScrapeResult) { c.DownloadedDocument = &v }
+	return func(c *ScrapeResult) { c.DownloadedDocument = &v }
 }
 
 // NewScrapeResult creates a ScrapeResult with optional parameters.
 func NewScrapeResult(opts ...ScrapeResultOption) *ScrapeResult {
-    c := &ScrapeResult {
-        StatusCode: 0,
-        ContentType: "",
-        Html: "",
-        BodySize: 0,
-        Metadata: PageMetadata{},
-        Links: nil,
-        Images: nil,
-        Feeds: nil,
-        JsonLd: nil,
-        IsAllowed: false,
-        CrawlDelay: nil,
-        NoindexDetected: false,
-        NofollowDetected: false,
-        XRobotsTag: nil,
-        IsPdf: false,
-        WasSkipped: false,
-        DetectedCharset: nil,
-        MainContentOnly: false,
-        AuthHeaderSent: false,
-        ResponseMeta: nil,
-        Assets: nil,
-        JsRenderHint: false,
-        BrowserUsed: false,
-        Markdown: nil,
-        ExtractedData: nil,
-        ExtractionMeta: nil,
-        Screenshot: nil,
-        DownloadedDocument: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &ScrapeResult {
+		StatusCode: 0,
+		ContentType: "",
+		Html: "",
+		BodySize: 0,
+		Metadata: PageMetadata{},
+		Links: nil,
+		Images: nil,
+		Feeds: nil,
+		JsonLd: nil,
+		IsAllowed: false,
+		CrawlDelay: nil,
+		NoindexDetected: false,
+		NofollowDetected: false,
+		XRobotsTag: nil,
+		IsPdf: false,
+		WasSkipped: false,
+		DetectedCharset: nil,
+		AuthHeaderSent: false,
+		ResponseMeta: nil,
+		Assets: nil,
+		JsRenderHint: false,
+		BrowserUsed: false,
+		Markdown: nil,
+		ExtractedData: nil,
+		ExtractionMeta: nil,
+		Screenshot: nil,
+		DownloadedDocument: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // The result of crawling a single page during a crawl operation.
 type CrawlPageResult struct {
-    // The original URL of the page.
-    Url string `json:"url"`
-    // The normalized URL of the page.
-    NormalizedUrl string `json:"normalized_url"`
-    // The HTTP status code of the response.
-    StatusCode uint16 `json:"status_code"`
-    // The Content-Type header value.
-    ContentType string `json:"content_type"`
-    // The HTML body of the response.
-    Html string `json:"html"`
-    // The size of the response body in bytes.
-    BodySize uint `json:"body_size"`
-    // Extracted metadata from the page.
-    Metadata PageMetadata `json:"metadata"`
-    // Links found on the page.
-    Links []LinkInfo `json:"links,omitempty"`
-    // Images found on the page.
-    Images []ImageInfo `json:"images,omitempty"`
-    // Feed links found on the page.
-    Feeds []FeedInfo `json:"feeds,omitempty"`
-    // JSON-LD entries found on the page.
-    JsonLd []JsonLdEntry `json:"json_ld,omitempty"`
-    // The depth of this page from the start URL.
-    Depth uint `json:"depth"`
-    // Whether this page is on the same domain as the start URL.
-    StayedOnDomain bool `json:"stayed_on_domain"`
-    // Whether this page was skipped (binary or PDF content).
-    WasSkipped bool `json:"was_skipped"`
-    // Whether the content is a PDF.
-    IsPdf bool `json:"is_pdf"`
-    // The detected character set encoding.
-    DetectedCharset *string `json:"detected_charset,omitempty"`
-    // Markdown conversion of the page content.
-    Markdown *MarkdownResult `json:"markdown,omitempty"`
-    // Structured data extracted by LLM. Populated when extraction is configured.
-    ExtractedData *json.RawMessage `json:"extracted_data,omitempty"`
-    // Metadata about the LLM extraction pass (cost, tokens, model).
-    ExtractionMeta *ExtractionMeta `json:"extraction_meta,omitempty"`
-    // Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
-    DownloadedDocument *DownloadedDocument `json:"downloaded_document,omitempty"`
+	// The original URL of the page.
+	Url string `json:"url"`
+	// The normalized URL of the page.
+	NormalizedUrl string `json:"normalized_url"`
+	// The HTTP status code of the response.
+	StatusCode uint16 `json:"status_code"`
+	// The Content-Type header value.
+	ContentType string `json:"content_type"`
+	// The HTML body of the response.
+	Html string `json:"html"`
+	// The size of the response body in bytes.
+	BodySize uint `json:"body_size"`
+	// Extracted metadata from the page.
+	Metadata PageMetadata `json:"metadata"`
+	// Links found on the page.
+	Links []LinkInfo `json:"links,omitempty"`
+	// Images found on the page.
+	Images []ImageInfo `json:"images,omitempty"`
+	// Feed links found on the page.
+	Feeds []FeedInfo `json:"feeds,omitempty"`
+	// JSON-LD entries found on the page.
+	JsonLd []JsonLdEntry `json:"json_ld,omitempty"`
+	// The depth of this page from the start URL.
+	Depth uint `json:"depth"`
+	// Whether this page is on the same domain as the start URL.
+	StayedOnDomain bool `json:"stayed_on_domain"`
+	// Whether this page was skipped (binary or PDF content).
+	WasSkipped bool `json:"was_skipped"`
+	// Whether the content is a PDF.
+	IsPdf bool `json:"is_pdf"`
+	// The detected character set encoding.
+	DetectedCharset *string `json:"detected_charset,omitempty"`
+	// Markdown conversion of the page content.
+	Markdown *MarkdownResult `json:"markdown,omitempty"`
+	// Structured data extracted by LLM. Populated when extraction is configured.
+	ExtractedData *json.RawMessage `json:"extracted_data,omitempty"`
+	// Metadata about the LLM extraction pass (cost, tokens, model).
+	ExtractionMeta *ExtractionMeta `json:"extraction_meta,omitempty"`
+	// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
+	DownloadedDocument *DownloadedDocument `json:"downloaded_document,omitempty"`
 }
 
 
@@ -1004,151 +1126,151 @@ type CrawlPageResultOption func(*CrawlPageResult)
 
 // WithCrawlPageResultUrl sets the url field.
 func WithCrawlPageResultUrl(v string) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.Url = v }
+	return func(c *CrawlPageResult) { c.Url = v }
 }
 
 // WithCrawlPageResultNormalizedUrl sets the normalized_url field.
 func WithCrawlPageResultNormalizedUrl(v string) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.NormalizedUrl = v }
+	return func(c *CrawlPageResult) { c.NormalizedUrl = v }
 }
 
 // WithCrawlPageResultStatusCode sets the status_code field.
 func WithCrawlPageResultStatusCode(v uint16) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.StatusCode = v }
+	return func(c *CrawlPageResult) { c.StatusCode = v }
 }
 
 // WithCrawlPageResultContentType sets the content_type field.
 func WithCrawlPageResultContentType(v string) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.ContentType = v }
+	return func(c *CrawlPageResult) { c.ContentType = v }
 }
 
 // WithCrawlPageResultHtml sets the html field.
 func WithCrawlPageResultHtml(v string) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.Html = v }
+	return func(c *CrawlPageResult) { c.Html = v }
 }
 
 // WithCrawlPageResultBodySize sets the body_size field.
 func WithCrawlPageResultBodySize(v uint) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.BodySize = v }
+	return func(c *CrawlPageResult) { c.BodySize = v }
 }
 
 // WithCrawlPageResultMetadata sets the metadata field.
 func WithCrawlPageResultMetadata(v PageMetadata) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.Metadata = v }
+	return func(c *CrawlPageResult) { c.Metadata = v }
 }
 
 // WithCrawlPageResultLinks sets the links field.
 func WithCrawlPageResultLinks(v []LinkInfo) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.Links = v }
+	return func(c *CrawlPageResult) { c.Links = v }
 }
 
 // WithCrawlPageResultImages sets the images field.
 func WithCrawlPageResultImages(v []ImageInfo) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.Images = v }
+	return func(c *CrawlPageResult) { c.Images = v }
 }
 
 // WithCrawlPageResultFeeds sets the feeds field.
 func WithCrawlPageResultFeeds(v []FeedInfo) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.Feeds = v }
+	return func(c *CrawlPageResult) { c.Feeds = v }
 }
 
 // WithCrawlPageResultJsonLd sets the json_ld field.
 func WithCrawlPageResultJsonLd(v []JsonLdEntry) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.JsonLd = v }
+	return func(c *CrawlPageResult) { c.JsonLd = v }
 }
 
 // WithCrawlPageResultDepth sets the depth field.
 func WithCrawlPageResultDepth(v uint) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.Depth = v }
+	return func(c *CrawlPageResult) { c.Depth = v }
 }
 
 // WithCrawlPageResultStayedOnDomain sets the stayed_on_domain field.
 func WithCrawlPageResultStayedOnDomain(v bool) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.StayedOnDomain = v }
+	return func(c *CrawlPageResult) { c.StayedOnDomain = v }
 }
 
 // WithCrawlPageResultWasSkipped sets the was_skipped field.
 func WithCrawlPageResultWasSkipped(v bool) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.WasSkipped = v }
+	return func(c *CrawlPageResult) { c.WasSkipped = v }
 }
 
 // WithCrawlPageResultIsPdf sets the is_pdf field.
 func WithCrawlPageResultIsPdf(v bool) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.IsPdf = v }
+	return func(c *CrawlPageResult) { c.IsPdf = v }
 }
 
 // WithCrawlPageResultDetectedCharset sets the detected_charset field.
 func WithCrawlPageResultDetectedCharset(v string) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.DetectedCharset = &v }
+	return func(c *CrawlPageResult) { c.DetectedCharset = &v }
 }
 
 // WithCrawlPageResultMarkdown sets the markdown field.
 func WithCrawlPageResultMarkdown(v MarkdownResult) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.Markdown = &v }
+	return func(c *CrawlPageResult) { c.Markdown = &v }
 }
 
 // WithCrawlPageResultExtractedData sets the extracted_data field.
 func WithCrawlPageResultExtractedData(v json.RawMessage) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.ExtractedData = &v }
+	return func(c *CrawlPageResult) { c.ExtractedData = &v }
 }
 
 // WithCrawlPageResultExtractionMeta sets the extraction_meta field.
 func WithCrawlPageResultExtractionMeta(v ExtractionMeta) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.ExtractionMeta = &v }
+	return func(c *CrawlPageResult) { c.ExtractionMeta = &v }
 }
 
 // WithCrawlPageResultDownloadedDocument sets the downloaded_document field.
 func WithCrawlPageResultDownloadedDocument(v DownloadedDocument) CrawlPageResultOption {
-    return func(c *CrawlPageResult) { c.DownloadedDocument = &v }
+	return func(c *CrawlPageResult) { c.DownloadedDocument = &v }
 }
 
 // NewCrawlPageResult creates a CrawlPageResult with optional parameters.
 func NewCrawlPageResult(opts ...CrawlPageResultOption) *CrawlPageResult {
-    c := &CrawlPageResult {
-        Url: "",
-        NormalizedUrl: "",
-        StatusCode: 0,
-        ContentType: "",
-        Html: "",
-        BodySize: 0,
-        Metadata: PageMetadata{},
-        Links: nil,
-        Images: nil,
-        Feeds: nil,
-        JsonLd: nil,
-        Depth: 0,
-        StayedOnDomain: false,
-        WasSkipped: false,
-        IsPdf: false,
-        DetectedCharset: nil,
-        Markdown: nil,
-        ExtractedData: nil,
-        ExtractionMeta: nil,
-        DownloadedDocument: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &CrawlPageResult {
+		Url: "",
+		NormalizedUrl: "",
+		StatusCode: 0,
+		ContentType: "",
+		Html: "",
+		BodySize: 0,
+		Metadata: PageMetadata{},
+		Links: nil,
+		Images: nil,
+		Feeds: nil,
+		JsonLd: nil,
+		Depth: 0,
+		StayedOnDomain: false,
+		WasSkipped: false,
+		IsPdf: false,
+		DetectedCharset: nil,
+		Markdown: nil,
+		ExtractedData: nil,
+		ExtractionMeta: nil,
+		DownloadedDocument: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // The result of a multi-page crawl operation.
 type CrawlResult struct {
-    // The list of crawled pages.
-    Pages []CrawlPageResult `json:"pages,omitempty"`
-    // The final URL after following redirects.
-    FinalUrl string `json:"final_url"`
-    // The number of redirects followed.
-    RedirectCount uint `json:"redirect_count"`
-    // Whether any page was skipped during crawling.
-    WasSkipped bool `json:"was_skipped"`
-    // An error message, if the crawl encountered an issue.
-    Error *string `json:"error,omitempty"`
-    // Cookies collected during the crawl.
-    Cookies []CookieInfo `json:"cookies,omitempty"`
-    // Normalized URLs encountered during crawling (for deduplication counting).
-    NormalizedUrls []string `json:"normalized_urls,omitempty"`
+	// The list of crawled pages.
+	Pages []CrawlPageResult `json:"pages,omitempty"`
+	// The final URL after following redirects.
+	FinalUrl string `json:"final_url"`
+	// The number of redirects followed.
+	RedirectCount uint `json:"redirect_count"`
+	// Whether any page was skipped during crawling.
+	WasSkipped bool `json:"was_skipped"`
+	// An error message, if the crawl encountered an issue.
+	Error *string `json:"error,omitempty"`
+	// Cookies collected during the crawl.
+	Cookies []CookieInfo `json:"cookies,omitempty"`
+	// Normalized URLs encountered during crawling (for deduplication counting).
+	NormalizedUrls []string `json:"normalized_urls,omitempty"`
 }
 
 
@@ -1157,67 +1279,67 @@ type CrawlResultOption func(*CrawlResult)
 
 // WithCrawlResultPages sets the pages field.
 func WithCrawlResultPages(v []CrawlPageResult) CrawlResultOption {
-    return func(c *CrawlResult) { c.Pages = v }
+	return func(c *CrawlResult) { c.Pages = v }
 }
 
 // WithCrawlResultFinalUrl sets the final_url field.
 func WithCrawlResultFinalUrl(v string) CrawlResultOption {
-    return func(c *CrawlResult) { c.FinalUrl = v }
+	return func(c *CrawlResult) { c.FinalUrl = v }
 }
 
 // WithCrawlResultRedirectCount sets the redirect_count field.
 func WithCrawlResultRedirectCount(v uint) CrawlResultOption {
-    return func(c *CrawlResult) { c.RedirectCount = v }
+	return func(c *CrawlResult) { c.RedirectCount = v }
 }
 
 // WithCrawlResultWasSkipped sets the was_skipped field.
 func WithCrawlResultWasSkipped(v bool) CrawlResultOption {
-    return func(c *CrawlResult) { c.WasSkipped = v }
+	return func(c *CrawlResult) { c.WasSkipped = v }
 }
 
 // WithCrawlResultError sets the error field.
 func WithCrawlResultError(v string) CrawlResultOption {
-    return func(c *CrawlResult) { c.Error = &v }
+	return func(c *CrawlResult) { c.Error = &v }
 }
 
 // WithCrawlResultCookies sets the cookies field.
 func WithCrawlResultCookies(v []CookieInfo) CrawlResultOption {
-    return func(c *CrawlResult) { c.Cookies = v }
+	return func(c *CrawlResult) { c.Cookies = v }
 }
 
 // WithCrawlResultNormalizedUrls sets the normalized_urls field.
 func WithCrawlResultNormalizedUrls(v []string) CrawlResultOption {
-    return func(c *CrawlResult) { c.NormalizedUrls = v }
+	return func(c *CrawlResult) { c.NormalizedUrls = v }
 }
 
 // NewCrawlResult creates a CrawlResult with optional parameters.
 func NewCrawlResult(opts ...CrawlResultOption) *CrawlResult {
-    c := &CrawlResult {
-        Pages: nil,
-        FinalUrl: "",
-        RedirectCount: 0,
-        WasSkipped: false,
-        Error: nil,
-        Cookies: nil,
-        NormalizedUrls: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &CrawlResult {
+		Pages: nil,
+		FinalUrl: "",
+		RedirectCount: 0,
+		WasSkipped: false,
+		Error: nil,
+		Cookies: nil,
+		NormalizedUrls: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // A URL entry from a sitemap.
 type SitemapUrl struct {
-    // The URL.
-    Url string `json:"url"`
-    // The last modification date, if present.
-    Lastmod *string `json:"lastmod,omitempty"`
-    // The change frequency, if present.
-    Changefreq *string `json:"changefreq,omitempty"`
-    // The priority, if present.
-    Priority *string `json:"priority,omitempty"`
+	// The URL.
+	Url string `json:"url"`
+	// The last modification date, if present.
+	Lastmod *string `json:"lastmod,omitempty"`
+	// The change frequency, if present.
+	Changefreq *string `json:"changefreq,omitempty"`
+	// The priority, if present.
+	Priority *string `json:"priority,omitempty"`
 }
 
 
@@ -1226,43 +1348,43 @@ type SitemapUrlOption func(*SitemapUrl)
 
 // WithSitemapUrlUrl sets the url field.
 func WithSitemapUrlUrl(v string) SitemapUrlOption {
-    return func(c *SitemapUrl) { c.Url = v }
+	return func(c *SitemapUrl) { c.Url = v }
 }
 
 // WithSitemapUrlLastmod sets the lastmod field.
 func WithSitemapUrlLastmod(v string) SitemapUrlOption {
-    return func(c *SitemapUrl) { c.Lastmod = &v }
+	return func(c *SitemapUrl) { c.Lastmod = &v }
 }
 
 // WithSitemapUrlChangefreq sets the changefreq field.
 func WithSitemapUrlChangefreq(v string) SitemapUrlOption {
-    return func(c *SitemapUrl) { c.Changefreq = &v }
+	return func(c *SitemapUrl) { c.Changefreq = &v }
 }
 
 // WithSitemapUrlPriority sets the priority field.
 func WithSitemapUrlPriority(v string) SitemapUrlOption {
-    return func(c *SitemapUrl) { c.Priority = &v }
+	return func(c *SitemapUrl) { c.Priority = &v }
 }
 
 // NewSitemapUrl creates a SitemapUrl with optional parameters.
 func NewSitemapUrl(opts ...SitemapUrlOption) *SitemapUrl {
-    c := &SitemapUrl {
-        Url: "",
-        Lastmod: nil,
-        Changefreq: nil,
-        Priority: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &SitemapUrl {
+		Url: "",
+		Lastmod: nil,
+		Changefreq: nil,
+		Priority: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // The result of a map operation, containing discovered URLs.
 type MapResult struct {
-    // The list of discovered URLs.
-    Urls []SitemapUrl `json:"urls,omitempty"`
+	// The list of discovered URLs.
+	Urls []SitemapUrl `json:"urls,omitempty"`
 }
 
 
@@ -1271,35 +1393,35 @@ type MapResultOption func(*MapResult)
 
 // WithMapResultUrls sets the urls field.
 func WithMapResultUrls(v []SitemapUrl) MapResultOption {
-    return func(c *MapResult) { c.Urls = v }
+	return func(c *MapResult) { c.Urls = v }
 }
 
 // NewMapResult creates a MapResult with optional parameters.
 func NewMapResult(opts ...MapResultOption) *MapResult {
-    c := &MapResult {
-        Urls: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &MapResult {
+		Urls: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Rich markdown conversion result from HTML processing.
 type MarkdownResult struct {
-    // Converted markdown text.
-    Content string `json:"content"`
-    // Structured document tree with semantic nodes.
-    DocumentStructure *json.RawMessage `json:"document_structure,omitempty"`
-    // Extracted tables with structured cell data.
-    Tables []json.RawMessage `json:"tables,omitempty"`
-    // Non-fatal processing warnings.
-    Warnings []string `json:"warnings,omitempty"`
-    // Content with links replaced by numbered citations.
-    Citations *CitationResult `json:"citations,omitempty"`
-    // Content-filtered markdown optimized for LLM consumption.
-    FitContent *string `json:"fit_content,omitempty"`
+	// Converted markdown text.
+	Content string `json:"content"`
+	// Structured document tree with semantic nodes.
+	DocumentStructure *json.RawMessage `json:"document_structure,omitempty"`
+	// Extracted tables with structured cell data.
+	Tables []json.RawMessage `json:"tables,omitempty"`
+	// Non-fatal processing warnings.
+	Warnings []string `json:"warnings,omitempty"`
+	// Content with links replaced by numbered citations.
+	Citations *CitationResult `json:"citations,omitempty"`
+	// Content-filtered markdown optimized for LLM consumption.
+	FitContent *string `json:"fit_content,omitempty"`
 }
 
 
@@ -1308,63 +1430,63 @@ type MarkdownResultOption func(*MarkdownResult)
 
 // WithMarkdownResultContent sets the content field.
 func WithMarkdownResultContent(v string) MarkdownResultOption {
-    return func(c *MarkdownResult) { c.Content = v }
+	return func(c *MarkdownResult) { c.Content = v }
 }
 
 // WithMarkdownResultDocumentStructure sets the document_structure field.
 func WithMarkdownResultDocumentStructure(v json.RawMessage) MarkdownResultOption {
-    return func(c *MarkdownResult) { c.DocumentStructure = &v }
+	return func(c *MarkdownResult) { c.DocumentStructure = &v }
 }
 
 // WithMarkdownResultTables sets the tables field.
 func WithMarkdownResultTables(v []json.RawMessage) MarkdownResultOption {
-    return func(c *MarkdownResult) { c.Tables = v }
+	return func(c *MarkdownResult) { c.Tables = v }
 }
 
 // WithMarkdownResultWarnings sets the warnings field.
 func WithMarkdownResultWarnings(v []string) MarkdownResultOption {
-    return func(c *MarkdownResult) { c.Warnings = v }
+	return func(c *MarkdownResult) { c.Warnings = v }
 }
 
 // WithMarkdownResultCitations sets the citations field.
 func WithMarkdownResultCitations(v CitationResult) MarkdownResultOption {
-    return func(c *MarkdownResult) { c.Citations = &v }
+	return func(c *MarkdownResult) { c.Citations = &v }
 }
 
 // WithMarkdownResultFitContent sets the fit_content field.
 func WithMarkdownResultFitContent(v string) MarkdownResultOption {
-    return func(c *MarkdownResult) { c.FitContent = &v }
+	return func(c *MarkdownResult) { c.FitContent = &v }
 }
 
 // NewMarkdownResult creates a MarkdownResult with optional parameters.
 func NewMarkdownResult(opts ...MarkdownResultOption) *MarkdownResult {
-    c := &MarkdownResult {
-        Content: "",
-        DocumentStructure: nil,
-        Tables: nil,
-        Warnings: nil,
-        Citations: nil,
-        FitContent: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &MarkdownResult {
+		Content: "",
+		DocumentStructure: nil,
+		Tables: nil,
+		Warnings: nil,
+		Citations: nil,
+		FitContent: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Information about a link found on a page.
 type LinkInfo struct {
-    // The resolved URL of the link.
-    Url string `json:"url"`
-    // The visible text of the link.
-    Text string `json:"text"`
-    // The classification of the link.
-    LinkType LinkType `json:"link_type,omitempty"`
-    // The `rel` attribute value, if present.
-    Rel *string `json:"rel,omitempty"`
-    // Whether the link has `rel="nofollow"`.
-    Nofollow bool `json:"nofollow"`
+	// The resolved URL of the link.
+	Url string `json:"url"`
+	// The visible text of the link.
+	Text string `json:"text"`
+	// The classification of the link.
+	LinkType LinkType `json:"link_type,omitempty"`
+	// The `rel` attribute value, if present.
+	Rel *string `json:"rel,omitempty"`
+	// Whether the link has `rel="nofollow"`.
+	Nofollow bool `json:"nofollow"`
 }
 
 
@@ -1373,57 +1495,57 @@ type LinkInfoOption func(*LinkInfo)
 
 // WithLinkInfoUrl sets the url field.
 func WithLinkInfoUrl(v string) LinkInfoOption {
-    return func(c *LinkInfo) { c.Url = v }
+	return func(c *LinkInfo) { c.Url = v }
 }
 
 // WithLinkInfoText sets the text field.
 func WithLinkInfoText(v string) LinkInfoOption {
-    return func(c *LinkInfo) { c.Text = v }
+	return func(c *LinkInfo) { c.Text = v }
 }
 
 // WithLinkInfoLinkType sets the link_type field.
 func WithLinkInfoLinkType(v LinkType) LinkInfoOption {
-    return func(c *LinkInfo) { c.LinkType = v }
+	return func(c *LinkInfo) { c.LinkType = v }
 }
 
 // WithLinkInfoRel sets the rel field.
 func WithLinkInfoRel(v string) LinkInfoOption {
-    return func(c *LinkInfo) { c.Rel = &v }
+	return func(c *LinkInfo) { c.Rel = &v }
 }
 
 // WithLinkInfoNofollow sets the nofollow field.
 func WithLinkInfoNofollow(v bool) LinkInfoOption {
-    return func(c *LinkInfo) { c.Nofollow = v }
+	return func(c *LinkInfo) { c.Nofollow = v }
 }
 
 // NewLinkInfo creates a LinkInfo with optional parameters.
 func NewLinkInfo(opts ...LinkInfoOption) *LinkInfo {
-    c := &LinkInfo {
-        Url: "",
-        Text: "",
-        LinkType: "",
-        Rel: nil,
-        Nofollow: false,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &LinkInfo {
+		Url: "",
+		Text: "",
+		LinkType: "",
+		Rel: nil,
+		Nofollow: false,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Information about an image found on a page.
 type ImageInfo struct {
-    // The image URL.
-    Url string `json:"url"`
-    // The alt text, if present.
-    Alt *string `json:"alt,omitempty"`
-    // The width attribute, if present and parseable.
-    Width *uint32 `json:"width,omitempty"`
-    // The height attribute, if present and parseable.
-    Height *uint32 `json:"height,omitempty"`
-    // The source of the image reference.
-    Source ImageSource `json:"source,omitempty"`
+	// The image URL.
+	Url string `json:"url"`
+	// The alt text, if present.
+	Alt *string `json:"alt,omitempty"`
+	// The width attribute, if present and parseable.
+	Width *uint32 `json:"width,omitempty"`
+	// The height attribute, if present and parseable.
+	Height *uint32 `json:"height,omitempty"`
+	// The source of the image reference.
+	Source ImageSource `json:"source,omitempty"`
 }
 
 
@@ -1432,53 +1554,53 @@ type ImageInfoOption func(*ImageInfo)
 
 // WithImageInfoUrl sets the url field.
 func WithImageInfoUrl(v string) ImageInfoOption {
-    return func(c *ImageInfo) { c.Url = v }
+	return func(c *ImageInfo) { c.Url = v }
 }
 
 // WithImageInfoAlt sets the alt field.
 func WithImageInfoAlt(v string) ImageInfoOption {
-    return func(c *ImageInfo) { c.Alt = &v }
+	return func(c *ImageInfo) { c.Alt = &v }
 }
 
 // WithImageInfoWidth sets the width field.
 func WithImageInfoWidth(v uint32) ImageInfoOption {
-    return func(c *ImageInfo) { c.Width = &v }
+	return func(c *ImageInfo) { c.Width = &v }
 }
 
 // WithImageInfoHeight sets the height field.
 func WithImageInfoHeight(v uint32) ImageInfoOption {
-    return func(c *ImageInfo) { c.Height = &v }
+	return func(c *ImageInfo) { c.Height = &v }
 }
 
 // WithImageInfoSource sets the source field.
 func WithImageInfoSource(v ImageSource) ImageInfoOption {
-    return func(c *ImageInfo) { c.Source = v }
+	return func(c *ImageInfo) { c.Source = v }
 }
 
 // NewImageInfo creates a ImageInfo with optional parameters.
 func NewImageInfo(opts ...ImageInfoOption) *ImageInfo {
-    c := &ImageInfo {
-        Url: "",
-        Alt: nil,
-        Width: nil,
-        Height: nil,
-        Source: "",
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &ImageInfo {
+		Url: "",
+		Alt: nil,
+		Width: nil,
+		Height: nil,
+		Source: "",
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Information about a feed link found on a page.
 type FeedInfo struct {
-    // The feed URL.
-    Url string `json:"url"`
-    // The feed title, if present.
-    Title *string `json:"title,omitempty"`
-    // The type of feed.
-    FeedType FeedType `json:"feed_type,omitempty"`
+	// The feed URL.
+	Url string `json:"url"`
+	// The feed title, if present.
+	Title *string `json:"title,omitempty"`
+	// The type of feed.
+	FeedType FeedType `json:"feed_type,omitempty"`
 }
 
 
@@ -1487,41 +1609,41 @@ type FeedInfoOption func(*FeedInfo)
 
 // WithFeedInfoUrl sets the url field.
 func WithFeedInfoUrl(v string) FeedInfoOption {
-    return func(c *FeedInfo) { c.Url = v }
+	return func(c *FeedInfo) { c.Url = v }
 }
 
 // WithFeedInfoTitle sets the title field.
 func WithFeedInfoTitle(v string) FeedInfoOption {
-    return func(c *FeedInfo) { c.Title = &v }
+	return func(c *FeedInfo) { c.Title = &v }
 }
 
 // WithFeedInfoFeedType sets the feed_type field.
 func WithFeedInfoFeedType(v FeedType) FeedInfoOption {
-    return func(c *FeedInfo) { c.FeedType = v }
+	return func(c *FeedInfo) { c.FeedType = v }
 }
 
 // NewFeedInfo creates a FeedInfo with optional parameters.
 func NewFeedInfo(opts ...FeedInfoOption) *FeedInfo {
-    c := &FeedInfo {
-        Url: "",
-        Title: nil,
-        FeedType: "",
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &FeedInfo {
+		Url: "",
+		Title: nil,
+		FeedType: "",
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // A JSON-LD structured data entry found on a page.
 type JsonLdEntry struct {
-    // The `@type` value from the JSON-LD object.
-    SchemaType string `json:"schema_type"`
-    // The `name` value, if present.
-    Name *string `json:"name,omitempty"`
-    // The raw JSON-LD string.
-    Raw string `json:"raw"`
+	// The `@type` value from the JSON-LD object.
+	SchemaType string `json:"schema_type"`
+	// The `name` value, if present.
+	Name *string `json:"name,omitempty"`
+	// The raw JSON-LD string.
+	Raw string `json:"raw"`
 }
 
 
@@ -1530,43 +1652,43 @@ type JsonLdEntryOption func(*JsonLdEntry)
 
 // WithJsonLdEntrySchemaType sets the schema_type field.
 func WithJsonLdEntrySchemaType(v string) JsonLdEntryOption {
-    return func(c *JsonLdEntry) { c.SchemaType = v }
+	return func(c *JsonLdEntry) { c.SchemaType = v }
 }
 
 // WithJsonLdEntryName sets the name field.
 func WithJsonLdEntryName(v string) JsonLdEntryOption {
-    return func(c *JsonLdEntry) { c.Name = &v }
+	return func(c *JsonLdEntry) { c.Name = &v }
 }
 
 // WithJsonLdEntryRaw sets the raw field.
 func WithJsonLdEntryRaw(v string) JsonLdEntryOption {
-    return func(c *JsonLdEntry) { c.Raw = v }
+	return func(c *JsonLdEntry) { c.Raw = v }
 }
 
 // NewJsonLdEntry creates a JsonLdEntry with optional parameters.
 func NewJsonLdEntry(opts ...JsonLdEntryOption) *JsonLdEntry {
-    c := &JsonLdEntry {
-        SchemaType: "",
-        Name: nil,
-        Raw: "",
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &JsonLdEntry {
+		SchemaType: "",
+		Name: nil,
+		Raw: "",
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Information about an HTTP cookie received from a response.
 type CookieInfo struct {
-    // The cookie name.
-    Name string `json:"name"`
-    // The cookie value.
-    Value string `json:"value"`
-    // The cookie domain, if specified.
-    Domain *string `json:"domain,omitempty"`
-    // The cookie path, if specified.
-    Path *string `json:"path,omitempty"`
+	// The cookie name.
+	Name string `json:"name"`
+	// The cookie value.
+	Value string `json:"value"`
+	// The cookie domain, if specified.
+	Domain *string `json:"domain,omitempty"`
+	// The cookie path, if specified.
+	Path *string `json:"path,omitempty"`
 }
 
 
@@ -1575,53 +1697,53 @@ type CookieInfoOption func(*CookieInfo)
 
 // WithCookieInfoName sets the name field.
 func WithCookieInfoName(v string) CookieInfoOption {
-    return func(c *CookieInfo) { c.Name = v }
+	return func(c *CookieInfo) { c.Name = v }
 }
 
 // WithCookieInfoValue sets the value field.
 func WithCookieInfoValue(v string) CookieInfoOption {
-    return func(c *CookieInfo) { c.Value = v }
+	return func(c *CookieInfo) { c.Value = v }
 }
 
 // WithCookieInfoDomain sets the domain field.
 func WithCookieInfoDomain(v string) CookieInfoOption {
-    return func(c *CookieInfo) { c.Domain = &v }
+	return func(c *CookieInfo) { c.Domain = &v }
 }
 
 // WithCookieInfoPath sets the path field.
 func WithCookieInfoPath(v string) CookieInfoOption {
-    return func(c *CookieInfo) { c.Path = &v }
+	return func(c *CookieInfo) { c.Path = &v }
 }
 
 // NewCookieInfo creates a CookieInfo with optional parameters.
 func NewCookieInfo(opts ...CookieInfoOption) *CookieInfo {
-    c := &CookieInfo {
-        Name: "",
-        Value: "",
-        Domain: nil,
-        Path: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &CookieInfo {
+		Name: "",
+		Value: "",
+		Domain: nil,
+		Path: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // A downloaded asset from a page.
 type DownloadedAsset struct {
-    // The original URL of the asset.
-    Url string `json:"url"`
-    // The SHA-256 content hash of the asset.
-    ContentHash string `json:"content_hash"`
-    // The MIME type from the Content-Type header.
-    MimeType *string `json:"mime_type,omitempty"`
-    // The size of the asset in bytes.
-    Size uint `json:"size"`
-    // The category of the asset.
-    AssetCategory AssetCategory `json:"asset_category,omitempty"`
-    // The HTML tag that referenced this asset (e.g., "link", "script", "img").
-    HtmlTag *string `json:"html_tag,omitempty"`
+	// The original URL of the asset.
+	Url string `json:"url"`
+	// The SHA-256 content hash of the asset.
+	ContentHash string `json:"content_hash"`
+	// The MIME type from the Content-Type header.
+	MimeType *string `json:"mime_type,omitempty"`
+	// The size of the asset in bytes.
+	Size uint `json:"size"`
+	// The category of the asset.
+	AssetCategory AssetCategory `json:"asset_category,omitempty"`
+	// The HTML tag that referenced this asset (e.g., "link", "script", "img").
+	HtmlTag *string `json:"html_tag,omitempty"`
 }
 
 
@@ -1630,63 +1752,63 @@ type DownloadedAssetOption func(*DownloadedAsset)
 
 // WithDownloadedAssetUrl sets the url field.
 func WithDownloadedAssetUrl(v string) DownloadedAssetOption {
-    return func(c *DownloadedAsset) { c.Url = v }
+	return func(c *DownloadedAsset) { c.Url = v }
 }
 
 // WithDownloadedAssetContentHash sets the content_hash field.
 func WithDownloadedAssetContentHash(v string) DownloadedAssetOption {
-    return func(c *DownloadedAsset) { c.ContentHash = v }
+	return func(c *DownloadedAsset) { c.ContentHash = v }
 }
 
 // WithDownloadedAssetMimeType sets the mime_type field.
 func WithDownloadedAssetMimeType(v string) DownloadedAssetOption {
-    return func(c *DownloadedAsset) { c.MimeType = &v }
+	return func(c *DownloadedAsset) { c.MimeType = &v }
 }
 
 // WithDownloadedAssetSize sets the size field.
 func WithDownloadedAssetSize(v uint) DownloadedAssetOption {
-    return func(c *DownloadedAsset) { c.Size = v }
+	return func(c *DownloadedAsset) { c.Size = v }
 }
 
 // WithDownloadedAssetAssetCategory sets the asset_category field.
 func WithDownloadedAssetAssetCategory(v AssetCategory) DownloadedAssetOption {
-    return func(c *DownloadedAsset) { c.AssetCategory = v }
+	return func(c *DownloadedAsset) { c.AssetCategory = v }
 }
 
 // WithDownloadedAssetHtmlTag sets the html_tag field.
 func WithDownloadedAssetHtmlTag(v string) DownloadedAssetOption {
-    return func(c *DownloadedAsset) { c.HtmlTag = &v }
+	return func(c *DownloadedAsset) { c.HtmlTag = &v }
 }
 
 // NewDownloadedAsset creates a DownloadedAsset with optional parameters.
 func NewDownloadedAsset(opts ...DownloadedAssetOption) *DownloadedAsset {
-    c := &DownloadedAsset {
-        Url: "",
-        ContentHash: "",
-        MimeType: nil,
-        Size: 0,
-        AssetCategory: "",
-        HtmlTag: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &DownloadedAsset {
+		Url: "",
+		ContentHash: "",
+		MimeType: nil,
+		Size: 0,
+		AssetCategory: "",
+		HtmlTag: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Article metadata extracted from `article:*` Open Graph tags.
 type ArticleMetadata struct {
-    // The article publication time.
-    PublishedTime *string `json:"published_time,omitempty"`
-    // The article modification time.
-    ModifiedTime *string `json:"modified_time,omitempty"`
-    // The article author.
-    Author *string `json:"author,omitempty"`
-    // The article section.
-    Section *string `json:"section,omitempty"`
-    // The article tags.
-    Tags []string `json:"tags,omitempty"`
+	// The article publication time.
+	PublishedTime *string `json:"published_time,omitempty"`
+	// The article modification time.
+	ModifiedTime *string `json:"modified_time,omitempty"`
+	// The article author.
+	Author *string `json:"author,omitempty"`
+	// The article section.
+	Section *string `json:"section,omitempty"`
+	// The article tags.
+	Tags []string `json:"tags,omitempty"`
 }
 
 
@@ -1695,51 +1817,51 @@ type ArticleMetadataOption func(*ArticleMetadata)
 
 // WithArticleMetadataPublishedTime sets the published_time field.
 func WithArticleMetadataPublishedTime(v string) ArticleMetadataOption {
-    return func(c *ArticleMetadata) { c.PublishedTime = &v }
+	return func(c *ArticleMetadata) { c.PublishedTime = &v }
 }
 
 // WithArticleMetadataModifiedTime sets the modified_time field.
 func WithArticleMetadataModifiedTime(v string) ArticleMetadataOption {
-    return func(c *ArticleMetadata) { c.ModifiedTime = &v }
+	return func(c *ArticleMetadata) { c.ModifiedTime = &v }
 }
 
 // WithArticleMetadataAuthor sets the author field.
 func WithArticleMetadataAuthor(v string) ArticleMetadataOption {
-    return func(c *ArticleMetadata) { c.Author = &v }
+	return func(c *ArticleMetadata) { c.Author = &v }
 }
 
 // WithArticleMetadataSection sets the section field.
 func WithArticleMetadataSection(v string) ArticleMetadataOption {
-    return func(c *ArticleMetadata) { c.Section = &v }
+	return func(c *ArticleMetadata) { c.Section = &v }
 }
 
 // WithArticleMetadataTags sets the tags field.
 func WithArticleMetadataTags(v []string) ArticleMetadataOption {
-    return func(c *ArticleMetadata) { c.Tags = v }
+	return func(c *ArticleMetadata) { c.Tags = v }
 }
 
 // NewArticleMetadata creates a ArticleMetadata with optional parameters.
 func NewArticleMetadata(opts ...ArticleMetadataOption) *ArticleMetadata {
-    c := &ArticleMetadata {
-        PublishedTime: nil,
-        ModifiedTime: nil,
-        Author: nil,
-        Section: nil,
-        Tags: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &ArticleMetadata {
+		PublishedTime: nil,
+		ModifiedTime: nil,
+		Author: nil,
+		Section: nil,
+		Tags: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // An hreflang alternate link entry.
 type HreflangEntry struct {
-    // The language code (e.g., "en", "fr", "x-default").
-    Lang string `json:"lang"`
-    // The URL for this language variant.
-    Url string `json:"url"`
+	// The language code (e.g., "en", "fr", "x-default").
+	Lang string `json:"lang"`
+	// The URL for this language variant.
+	Url string `json:"url"`
 }
 
 
@@ -1748,37 +1870,37 @@ type HreflangEntryOption func(*HreflangEntry)
 
 // WithHreflangEntryLang sets the lang field.
 func WithHreflangEntryLang(v string) HreflangEntryOption {
-    return func(c *HreflangEntry) { c.Lang = v }
+	return func(c *HreflangEntry) { c.Lang = v }
 }
 
 // WithHreflangEntryUrl sets the url field.
 func WithHreflangEntryUrl(v string) HreflangEntryOption {
-    return func(c *HreflangEntry) { c.Url = v }
+	return func(c *HreflangEntry) { c.Url = v }
 }
 
 // NewHreflangEntry creates a HreflangEntry with optional parameters.
 func NewHreflangEntry(opts ...HreflangEntryOption) *HreflangEntry {
-    c := &HreflangEntry {
-        Lang: "",
-        Url: "",
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &HreflangEntry {
+		Lang: "",
+		Url: "",
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Information about a favicon or icon link.
 type FaviconInfo struct {
-    // The icon URL.
-    Url string `json:"url"`
-    // The `rel` attribute (e.g., "icon", "apple-touch-icon").
-    Rel string `json:"rel"`
-    // The `sizes` attribute, if present.
-    Sizes *string `json:"sizes,omitempty"`
-    // The MIME type, if present.
-    MimeType *string `json:"mime_type,omitempty"`
+	// The icon URL.
+	Url string `json:"url"`
+	// The `rel` attribute (e.g., "icon", "apple-touch-icon").
+	Rel string `json:"rel"`
+	// The `sizes` attribute, if present.
+	Sizes *string `json:"sizes,omitempty"`
+	// The MIME type, if present.
+	MimeType *string `json:"mime_type,omitempty"`
 }
 
 
@@ -1787,45 +1909,45 @@ type FaviconInfoOption func(*FaviconInfo)
 
 // WithFaviconInfoUrl sets the url field.
 func WithFaviconInfoUrl(v string) FaviconInfoOption {
-    return func(c *FaviconInfo) { c.Url = v }
+	return func(c *FaviconInfo) { c.Url = v }
 }
 
 // WithFaviconInfoRel sets the rel field.
 func WithFaviconInfoRel(v string) FaviconInfoOption {
-    return func(c *FaviconInfo) { c.Rel = v }
+	return func(c *FaviconInfo) { c.Rel = v }
 }
 
 // WithFaviconInfoSizes sets the sizes field.
 func WithFaviconInfoSizes(v string) FaviconInfoOption {
-    return func(c *FaviconInfo) { c.Sizes = &v }
+	return func(c *FaviconInfo) { c.Sizes = &v }
 }
 
 // WithFaviconInfoMimeType sets the mime_type field.
 func WithFaviconInfoMimeType(v string) FaviconInfoOption {
-    return func(c *FaviconInfo) { c.MimeType = &v }
+	return func(c *FaviconInfo) { c.MimeType = &v }
 }
 
 // NewFaviconInfo creates a FaviconInfo with optional parameters.
 func NewFaviconInfo(opts ...FaviconInfoOption) *FaviconInfo {
-    c := &FaviconInfo {
-        Url: "",
-        Rel: "",
-        Sizes: nil,
-        MimeType: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &FaviconInfo {
+		Url: "",
+		Rel: "",
+		Sizes: nil,
+		MimeType: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // A heading element extracted from the page.
 type HeadingInfo struct {
-    // The heading level (1-6).
-    Level uint8 `json:"level"`
-    // The heading text content.
-    Text string `json:"text"`
+	// The heading level (1-6).
+	Level uint8 `json:"level"`
+	// The heading text content.
+	Text string `json:"text"`
 }
 
 
@@ -1834,43 +1956,43 @@ type HeadingInfoOption func(*HeadingInfo)
 
 // WithHeadingInfoLevel sets the level field.
 func WithHeadingInfoLevel(v uint8) HeadingInfoOption {
-    return func(c *HeadingInfo) { c.Level = v }
+	return func(c *HeadingInfo) { c.Level = v }
 }
 
 // WithHeadingInfoText sets the text field.
 func WithHeadingInfoText(v string) HeadingInfoOption {
-    return func(c *HeadingInfo) { c.Text = v }
+	return func(c *HeadingInfo) { c.Text = v }
 }
 
 // NewHeadingInfo creates a HeadingInfo with optional parameters.
 func NewHeadingInfo(opts ...HeadingInfoOption) *HeadingInfo {
-    c := &HeadingInfo {
-        Level: 0,
-        Text: "",
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &HeadingInfo {
+		Level: 0,
+		Text: "",
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Response metadata extracted from HTTP headers.
 type ResponseMeta struct {
-    // The ETag header value.
-    Etag *string `json:"etag,omitempty"`
-    // The Last-Modified header value.
-    LastModified *string `json:"last_modified,omitempty"`
-    // The Cache-Control header value.
-    CacheControl *string `json:"cache_control,omitempty"`
-    // The Server header value.
-    Server *string `json:"server,omitempty"`
-    // The X-Powered-By header value.
-    XPoweredBy *string `json:"x_powered_by,omitempty"`
-    // The Content-Language header value.
-    ContentLanguage *string `json:"content_language,omitempty"`
-    // The Content-Encoding header value.
-    ContentEncoding *string `json:"content_encoding,omitempty"`
+	// The ETag header value.
+	Etag *string `json:"etag,omitempty"`
+	// The Last-Modified header value.
+	LastModified *string `json:"last_modified,omitempty"`
+	// The Cache-Control header value.
+	CacheControl *string `json:"cache_control,omitempty"`
+	// The Server header value.
+	Server *string `json:"server,omitempty"`
+	// The X-Powered-By header value.
+	XPoweredBy *string `json:"x_powered_by,omitempty"`
+	// The Content-Language header value.
+	ContentLanguage *string `json:"content_language,omitempty"`
+	// The Content-Encoding header value.
+	ContentEncoding *string `json:"content_encoding,omitempty"`
 }
 
 
@@ -1879,145 +2001,145 @@ type ResponseMetaOption func(*ResponseMeta)
 
 // WithResponseMetaEtag sets the etag field.
 func WithResponseMetaEtag(v string) ResponseMetaOption {
-    return func(c *ResponseMeta) { c.Etag = &v }
+	return func(c *ResponseMeta) { c.Etag = &v }
 }
 
 // WithResponseMetaLastModified sets the last_modified field.
 func WithResponseMetaLastModified(v string) ResponseMetaOption {
-    return func(c *ResponseMeta) { c.LastModified = &v }
+	return func(c *ResponseMeta) { c.LastModified = &v }
 }
 
 // WithResponseMetaCacheControl sets the cache_control field.
 func WithResponseMetaCacheControl(v string) ResponseMetaOption {
-    return func(c *ResponseMeta) { c.CacheControl = &v }
+	return func(c *ResponseMeta) { c.CacheControl = &v }
 }
 
 // WithResponseMetaServer sets the server field.
 func WithResponseMetaServer(v string) ResponseMetaOption {
-    return func(c *ResponseMeta) { c.Server = &v }
+	return func(c *ResponseMeta) { c.Server = &v }
 }
 
 // WithResponseMetaXPoweredBy sets the x_powered_by field.
 func WithResponseMetaXPoweredBy(v string) ResponseMetaOption {
-    return func(c *ResponseMeta) { c.XPoweredBy = &v }
+	return func(c *ResponseMeta) { c.XPoweredBy = &v }
 }
 
 // WithResponseMetaContentLanguage sets the content_language field.
 func WithResponseMetaContentLanguage(v string) ResponseMetaOption {
-    return func(c *ResponseMeta) { c.ContentLanguage = &v }
+	return func(c *ResponseMeta) { c.ContentLanguage = &v }
 }
 
 // WithResponseMetaContentEncoding sets the content_encoding field.
 func WithResponseMetaContentEncoding(v string) ResponseMetaOption {
-    return func(c *ResponseMeta) { c.ContentEncoding = &v }
+	return func(c *ResponseMeta) { c.ContentEncoding = &v }
 }
 
 // NewResponseMeta creates a ResponseMeta with optional parameters.
 func NewResponseMeta(opts ...ResponseMetaOption) *ResponseMeta {
-    c := &ResponseMeta {
-        Etag: nil,
-        LastModified: nil,
-        CacheControl: nil,
-        Server: nil,
-        XPoweredBy: nil,
-        ContentLanguage: nil,
-        ContentEncoding: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &ResponseMeta {
+		Etag: nil,
+		LastModified: nil,
+		CacheControl: nil,
+		Server: nil,
+		XPoweredBy: nil,
+		ContentLanguage: nil,
+		ContentEncoding: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 type PageMetadata struct {
-    // The page title from the `<title>` element.
-    Title *string `json:"title,omitempty"`
-    // The meta description.
-    Description *string `json:"description,omitempty"`
-    // The canonical URL from `<link rel="canonical">`.
-    CanonicalUrl *string `json:"canonical_url,omitempty"`
-    // Keywords from `<meta name="keywords">`.
-    Keywords *string `json:"keywords,omitempty"`
-    // Author from `<meta name="author">`.
-    Author *string `json:"author,omitempty"`
-    // Viewport content from `<meta name="viewport">`.
-    Viewport *string `json:"viewport,omitempty"`
-    // Theme color from `<meta name="theme-color">`.
-    ThemeColor *string `json:"theme_color,omitempty"`
-    // Generator from `<meta name="generator">`.
-    Generator *string `json:"generator,omitempty"`
-    // Robots content from `<meta name="robots">`.
-    Robots *string `json:"robots,omitempty"`
-    // The `lang` attribute from the `<html>` element.
-    HtmlLang *string `json:"html_lang,omitempty"`
-    // The `dir` attribute from the `<html>` element.
-    HtmlDir *string `json:"html_dir,omitempty"`
-    // Open Graph title.
-    OgTitle *string `json:"og_title,omitempty"`
-    // Open Graph type.
-    OgType *string `json:"og_type,omitempty"`
-    // Open Graph image URL.
-    OgImage *string `json:"og_image,omitempty"`
-    // Open Graph description.
-    OgDescription *string `json:"og_description,omitempty"`
-    // Open Graph URL.
-    OgUrl *string `json:"og_url,omitempty"`
-    // Open Graph site name.
-    OgSiteName *string `json:"og_site_name,omitempty"`
-    // Open Graph locale.
-    OgLocale *string `json:"og_locale,omitempty"`
-    // Open Graph video URL.
-    OgVideo *string `json:"og_video,omitempty"`
-    // Open Graph audio URL.
-    OgAudio *string `json:"og_audio,omitempty"`
-    // Open Graph locale alternates.
-    OgLocaleAlternates *[]string `json:"og_locale_alternates,omitempty"`
-    // Twitter card type.
-    TwitterCard *string `json:"twitter_card,omitempty"`
-    // Twitter title.
-    TwitterTitle *string `json:"twitter_title,omitempty"`
-    // Twitter description.
-    TwitterDescription *string `json:"twitter_description,omitempty"`
-    // Twitter image URL.
-    TwitterImage *string `json:"twitter_image,omitempty"`
-    // Twitter site handle.
-    TwitterSite *string `json:"twitter_site,omitempty"`
-    // Twitter creator handle.
-    TwitterCreator *string `json:"twitter_creator,omitempty"`
-    // Dublin Core title.
-    DcTitle *string `json:"dc_title,omitempty"`
-    // Dublin Core creator.
-    DcCreator *string `json:"dc_creator,omitempty"`
-    // Dublin Core subject.
-    DcSubject *string `json:"dc_subject,omitempty"`
-    // Dublin Core description.
-    DcDescription *string `json:"dc_description,omitempty"`
-    // Dublin Core publisher.
-    DcPublisher *string `json:"dc_publisher,omitempty"`
-    // Dublin Core date.
-    DcDate *string `json:"dc_date,omitempty"`
-    // Dublin Core type.
-    DcType *string `json:"dc_type,omitempty"`
-    // Dublin Core format.
-    DcFormat *string `json:"dc_format,omitempty"`
-    // Dublin Core identifier.
-    DcIdentifier *string `json:"dc_identifier,omitempty"`
-    // Dublin Core language.
-    DcLanguage *string `json:"dc_language,omitempty"`
-    // Dublin Core rights.
-    DcRights *string `json:"dc_rights,omitempty"`
-    // Article metadata from `article:*` Open Graph tags.
-    Article *ArticleMetadata `json:"article,omitempty"`
-    // Hreflang alternate links.
-    Hreflangs *[]HreflangEntry `json:"hreflangs,omitempty"`
-    // Favicon and icon links.
-    Favicons *[]FaviconInfo `json:"favicons,omitempty"`
-    // Heading elements (h1-h6).
-    Headings *[]HeadingInfo `json:"headings,omitempty"`
-    // Computed word count of the page body text.
-    WordCount *uint `json:"word_count,omitempty"`
+	// The page title from the `<title>` element.
+	Title *string `json:"title,omitempty"`
+	// The meta description.
+	Description *string `json:"description,omitempty"`
+	// The canonical URL from `<link rel="canonical">`.
+	CanonicalUrl *string `json:"canonical_url,omitempty"`
+	// Keywords from `<meta name="keywords">`.
+	Keywords *string `json:"keywords,omitempty"`
+	// Author from `<meta name="author">`.
+	Author *string `json:"author,omitempty"`
+	// Viewport content from `<meta name="viewport">`.
+	Viewport *string `json:"viewport,omitempty"`
+	// Theme color from `<meta name="theme-color">`.
+	ThemeColor *string `json:"theme_color,omitempty"`
+	// Generator from `<meta name="generator">`.
+	Generator *string `json:"generator,omitempty"`
+	// Robots content from `<meta name="robots">`.
+	Robots *string `json:"robots,omitempty"`
+	// The `lang` attribute from the `<html>` element.
+	HtmlLang *string `json:"html_lang,omitempty"`
+	// The `dir` attribute from the `<html>` element.
+	HtmlDir *string `json:"html_dir,omitempty"`
+	// Open Graph title.
+	OgTitle *string `json:"og_title,omitempty"`
+	// Open Graph type.
+	OgType *string `json:"og_type,omitempty"`
+	// Open Graph image URL.
+	OgImage *string `json:"og_image,omitempty"`
+	// Open Graph description.
+	OgDescription *string `json:"og_description,omitempty"`
+	// Open Graph URL.
+	OgUrl *string `json:"og_url,omitempty"`
+	// Open Graph site name.
+	OgSiteName *string `json:"og_site_name,omitempty"`
+	// Open Graph locale.
+	OgLocale *string `json:"og_locale,omitempty"`
+	// Open Graph video URL.
+	OgVideo *string `json:"og_video,omitempty"`
+	// Open Graph audio URL.
+	OgAudio *string `json:"og_audio,omitempty"`
+	// Open Graph locale alternates.
+	OgLocaleAlternates *[]string `json:"og_locale_alternates,omitempty"`
+	// Twitter card type.
+	TwitterCard *string `json:"twitter_card,omitempty"`
+	// Twitter title.
+	TwitterTitle *string `json:"twitter_title,omitempty"`
+	// Twitter description.
+	TwitterDescription *string `json:"twitter_description,omitempty"`
+	// Twitter image URL.
+	TwitterImage *string `json:"twitter_image,omitempty"`
+	// Twitter site handle.
+	TwitterSite *string `json:"twitter_site,omitempty"`
+	// Twitter creator handle.
+	TwitterCreator *string `json:"twitter_creator,omitempty"`
+	// Dublin Core title.
+	DcTitle *string `json:"dc_title,omitempty"`
+	// Dublin Core creator.
+	DcCreator *string `json:"dc_creator,omitempty"`
+	// Dublin Core subject.
+	DcSubject *string `json:"dc_subject,omitempty"`
+	// Dublin Core description.
+	DcDescription *string `json:"dc_description,omitempty"`
+	// Dublin Core publisher.
+	DcPublisher *string `json:"dc_publisher,omitempty"`
+	// Dublin Core date.
+	DcDate *string `json:"dc_date,omitempty"`
+	// Dublin Core type.
+	DcType *string `json:"dc_type,omitempty"`
+	// Dublin Core format.
+	DcFormat *string `json:"dc_format,omitempty"`
+	// Dublin Core identifier.
+	DcIdentifier *string `json:"dc_identifier,omitempty"`
+	// Dublin Core language.
+	DcLanguage *string `json:"dc_language,omitempty"`
+	// Dublin Core rights.
+	DcRights *string `json:"dc_rights,omitempty"`
+	// Article metadata from `article:*` Open Graph tags.
+	Article *ArticleMetadata `json:"article,omitempty"`
+	// Hreflang alternate links.
+	Hreflangs *[]HreflangEntry `json:"hreflangs,omitempty"`
+	// Favicon and icon links.
+	Favicons *[]FaviconInfo `json:"favicons,omitempty"`
+	// Heading elements (h1-h6).
+	Headings *[]HeadingInfo `json:"headings,omitempty"`
+	// Computed word count of the page body text.
+	WordCount *uint `json:"word_count,omitempty"`
 }
 
 
@@ -2026,279 +2148,279 @@ type PageMetadataOption func(*PageMetadata)
 
 // WithPageMetadataTitle sets the title field.
 func WithPageMetadataTitle(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.Title = &v }
+	return func(c *PageMetadata) { c.Title = &v }
 }
 
 // WithPageMetadataDescription sets the description field.
 func WithPageMetadataDescription(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.Description = &v }
+	return func(c *PageMetadata) { c.Description = &v }
 }
 
 // WithPageMetadataCanonicalUrl sets the canonical_url field.
 func WithPageMetadataCanonicalUrl(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.CanonicalUrl = &v }
+	return func(c *PageMetadata) { c.CanonicalUrl = &v }
 }
 
 // WithPageMetadataKeywords sets the keywords field.
 func WithPageMetadataKeywords(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.Keywords = &v }
+	return func(c *PageMetadata) { c.Keywords = &v }
 }
 
 // WithPageMetadataAuthor sets the author field.
 func WithPageMetadataAuthor(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.Author = &v }
+	return func(c *PageMetadata) { c.Author = &v }
 }
 
 // WithPageMetadataViewport sets the viewport field.
 func WithPageMetadataViewport(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.Viewport = &v }
+	return func(c *PageMetadata) { c.Viewport = &v }
 }
 
 // WithPageMetadataThemeColor sets the theme_color field.
 func WithPageMetadataThemeColor(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.ThemeColor = &v }
+	return func(c *PageMetadata) { c.ThemeColor = &v }
 }
 
 // WithPageMetadataGenerator sets the generator field.
 func WithPageMetadataGenerator(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.Generator = &v }
+	return func(c *PageMetadata) { c.Generator = &v }
 }
 
 // WithPageMetadataRobots sets the robots field.
 func WithPageMetadataRobots(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.Robots = &v }
+	return func(c *PageMetadata) { c.Robots = &v }
 }
 
 // WithPageMetadataHtmlLang sets the html_lang field.
 func WithPageMetadataHtmlLang(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.HtmlLang = &v }
+	return func(c *PageMetadata) { c.HtmlLang = &v }
 }
 
 // WithPageMetadataHtmlDir sets the html_dir field.
 func WithPageMetadataHtmlDir(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.HtmlDir = &v }
+	return func(c *PageMetadata) { c.HtmlDir = &v }
 }
 
 // WithPageMetadataOgTitle sets the og_title field.
 func WithPageMetadataOgTitle(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgTitle = &v }
+	return func(c *PageMetadata) { c.OgTitle = &v }
 }
 
 // WithPageMetadataOgType sets the og_type field.
 func WithPageMetadataOgType(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgType = &v }
+	return func(c *PageMetadata) { c.OgType = &v }
 }
 
 // WithPageMetadataOgImage sets the og_image field.
 func WithPageMetadataOgImage(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgImage = &v }
+	return func(c *PageMetadata) { c.OgImage = &v }
 }
 
 // WithPageMetadataOgDescription sets the og_description field.
 func WithPageMetadataOgDescription(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgDescription = &v }
+	return func(c *PageMetadata) { c.OgDescription = &v }
 }
 
 // WithPageMetadataOgUrl sets the og_url field.
 func WithPageMetadataOgUrl(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgUrl = &v }
+	return func(c *PageMetadata) { c.OgUrl = &v }
 }
 
 // WithPageMetadataOgSiteName sets the og_site_name field.
 func WithPageMetadataOgSiteName(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgSiteName = &v }
+	return func(c *PageMetadata) { c.OgSiteName = &v }
 }
 
 // WithPageMetadataOgLocale sets the og_locale field.
 func WithPageMetadataOgLocale(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgLocale = &v }
+	return func(c *PageMetadata) { c.OgLocale = &v }
 }
 
 // WithPageMetadataOgVideo sets the og_video field.
 func WithPageMetadataOgVideo(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgVideo = &v }
+	return func(c *PageMetadata) { c.OgVideo = &v }
 }
 
 // WithPageMetadataOgAudio sets the og_audio field.
 func WithPageMetadataOgAudio(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgAudio = &v }
+	return func(c *PageMetadata) { c.OgAudio = &v }
 }
 
 // WithPageMetadataOgLocaleAlternates sets the og_locale_alternates field.
 func WithPageMetadataOgLocaleAlternates(v []string) PageMetadataOption {
-    return func(c *PageMetadata) { c.OgLocaleAlternates = &v }
+	return func(c *PageMetadata) { c.OgLocaleAlternates = &v }
 }
 
 // WithPageMetadataTwitterCard sets the twitter_card field.
 func WithPageMetadataTwitterCard(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.TwitterCard = &v }
+	return func(c *PageMetadata) { c.TwitterCard = &v }
 }
 
 // WithPageMetadataTwitterTitle sets the twitter_title field.
 func WithPageMetadataTwitterTitle(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.TwitterTitle = &v }
+	return func(c *PageMetadata) { c.TwitterTitle = &v }
 }
 
 // WithPageMetadataTwitterDescription sets the twitter_description field.
 func WithPageMetadataTwitterDescription(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.TwitterDescription = &v }
+	return func(c *PageMetadata) { c.TwitterDescription = &v }
 }
 
 // WithPageMetadataTwitterImage sets the twitter_image field.
 func WithPageMetadataTwitterImage(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.TwitterImage = &v }
+	return func(c *PageMetadata) { c.TwitterImage = &v }
 }
 
 // WithPageMetadataTwitterSite sets the twitter_site field.
 func WithPageMetadataTwitterSite(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.TwitterSite = &v }
+	return func(c *PageMetadata) { c.TwitterSite = &v }
 }
 
 // WithPageMetadataTwitterCreator sets the twitter_creator field.
 func WithPageMetadataTwitterCreator(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.TwitterCreator = &v }
+	return func(c *PageMetadata) { c.TwitterCreator = &v }
 }
 
 // WithPageMetadataDcTitle sets the dc_title field.
 func WithPageMetadataDcTitle(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcTitle = &v }
+	return func(c *PageMetadata) { c.DcTitle = &v }
 }
 
 // WithPageMetadataDcCreator sets the dc_creator field.
 func WithPageMetadataDcCreator(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcCreator = &v }
+	return func(c *PageMetadata) { c.DcCreator = &v }
 }
 
 // WithPageMetadataDcSubject sets the dc_subject field.
 func WithPageMetadataDcSubject(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcSubject = &v }
+	return func(c *PageMetadata) { c.DcSubject = &v }
 }
 
 // WithPageMetadataDcDescription sets the dc_description field.
 func WithPageMetadataDcDescription(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcDescription = &v }
+	return func(c *PageMetadata) { c.DcDescription = &v }
 }
 
 // WithPageMetadataDcPublisher sets the dc_publisher field.
 func WithPageMetadataDcPublisher(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcPublisher = &v }
+	return func(c *PageMetadata) { c.DcPublisher = &v }
 }
 
 // WithPageMetadataDcDate sets the dc_date field.
 func WithPageMetadataDcDate(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcDate = &v }
+	return func(c *PageMetadata) { c.DcDate = &v }
 }
 
 // WithPageMetadataDcType sets the dc_type field.
 func WithPageMetadataDcType(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcType = &v }
+	return func(c *PageMetadata) { c.DcType = &v }
 }
 
 // WithPageMetadataDcFormat sets the dc_format field.
 func WithPageMetadataDcFormat(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcFormat = &v }
+	return func(c *PageMetadata) { c.DcFormat = &v }
 }
 
 // WithPageMetadataDcIdentifier sets the dc_identifier field.
 func WithPageMetadataDcIdentifier(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcIdentifier = &v }
+	return func(c *PageMetadata) { c.DcIdentifier = &v }
 }
 
 // WithPageMetadataDcLanguage sets the dc_language field.
 func WithPageMetadataDcLanguage(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcLanguage = &v }
+	return func(c *PageMetadata) { c.DcLanguage = &v }
 }
 
 // WithPageMetadataDcRights sets the dc_rights field.
 func WithPageMetadataDcRights(v string) PageMetadataOption {
-    return func(c *PageMetadata) { c.DcRights = &v }
+	return func(c *PageMetadata) { c.DcRights = &v }
 }
 
 // WithPageMetadataArticle sets the article field.
 func WithPageMetadataArticle(v ArticleMetadata) PageMetadataOption {
-    return func(c *PageMetadata) { c.Article = &v }
+	return func(c *PageMetadata) { c.Article = &v }
 }
 
 // WithPageMetadataHreflangs sets the hreflangs field.
 func WithPageMetadataHreflangs(v []HreflangEntry) PageMetadataOption {
-    return func(c *PageMetadata) { c.Hreflangs = &v }
+	return func(c *PageMetadata) { c.Hreflangs = &v }
 }
 
 // WithPageMetadataFavicons sets the favicons field.
 func WithPageMetadataFavicons(v []FaviconInfo) PageMetadataOption {
-    return func(c *PageMetadata) { c.Favicons = &v }
+	return func(c *PageMetadata) { c.Favicons = &v }
 }
 
 // WithPageMetadataHeadings sets the headings field.
 func WithPageMetadataHeadings(v []HeadingInfo) PageMetadataOption {
-    return func(c *PageMetadata) { c.Headings = &v }
+	return func(c *PageMetadata) { c.Headings = &v }
 }
 
 // WithPageMetadataWordCount sets the word_count field.
 func WithPageMetadataWordCount(v uint) PageMetadataOption {
-    return func(c *PageMetadata) { c.WordCount = &v }
+	return func(c *PageMetadata) { c.WordCount = &v }
 }
 
 // NewPageMetadata creates a PageMetadata with optional parameters.
 func NewPageMetadata(opts ...PageMetadataOption) *PageMetadata {
-    c := &PageMetadata {
-        Title: nil,
-        Description: nil,
-        CanonicalUrl: nil,
-        Keywords: nil,
-        Author: nil,
-        Viewport: nil,
-        ThemeColor: nil,
-        Generator: nil,
-        Robots: nil,
-        HtmlLang: nil,
-        HtmlDir: nil,
-        OgTitle: nil,
-        OgType: nil,
-        OgImage: nil,
-        OgDescription: nil,
-        OgUrl: nil,
-        OgSiteName: nil,
-        OgLocale: nil,
-        OgVideo: nil,
-        OgAudio: nil,
-        OgLocaleAlternates: nil,
-        TwitterCard: nil,
-        TwitterTitle: nil,
-        TwitterDescription: nil,
-        TwitterImage: nil,
-        TwitterSite: nil,
-        TwitterCreator: nil,
-        DcTitle: nil,
-        DcCreator: nil,
-        DcSubject: nil,
-        DcDescription: nil,
-        DcPublisher: nil,
-        DcDate: nil,
-        DcType: nil,
-        DcFormat: nil,
-        DcIdentifier: nil,
-        DcLanguage: nil,
-        DcRights: nil,
-        Article: nil,
-        Hreflangs: nil,
-        Favicons: nil,
-        Headings: nil,
-        WordCount: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &PageMetadata {
+		Title: nil,
+		Description: nil,
+		CanonicalUrl: nil,
+		Keywords: nil,
+		Author: nil,
+		Viewport: nil,
+		ThemeColor: nil,
+		Generator: nil,
+		Robots: nil,
+		HtmlLang: nil,
+		HtmlDir: nil,
+		OgTitle: nil,
+		OgType: nil,
+		OgImage: nil,
+		OgDescription: nil,
+		OgUrl: nil,
+		OgSiteName: nil,
+		OgLocale: nil,
+		OgVideo: nil,
+		OgAudio: nil,
+		OgLocaleAlternates: nil,
+		TwitterCard: nil,
+		TwitterTitle: nil,
+		TwitterDescription: nil,
+		TwitterImage: nil,
+		TwitterSite: nil,
+		TwitterCreator: nil,
+		DcTitle: nil,
+		DcCreator: nil,
+		DcSubject: nil,
+		DcDescription: nil,
+		DcPublisher: nil,
+		DcDate: nil,
+		DcType: nil,
+		DcFormat: nil,
+		DcIdentifier: nil,
+		DcLanguage: nil,
+		DcRights: nil,
+		Article: nil,
+		Hreflangs: nil,
+		Favicons: nil,
+		Headings: nil,
+		WordCount: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Result of citation conversion.
 type CitationResult struct {
-    // Markdown with links replaced by numbered citations.
-    Content string `json:"content"`
-    // Numbered reference list: (index, url, text).
-    References []CitationReference `json:"references,omitempty"`
+	// Markdown with links replaced by numbered citations.
+	Content string `json:"content"`
+	// Numbered reference list: (index, url, text).
+	References []CitationReference `json:"references,omitempty"`
 }
 
 
@@ -2307,32 +2429,32 @@ type CitationResultOption func(*CitationResult)
 
 // WithCitationResultContent sets the content field.
 func WithCitationResultContent(v string) CitationResultOption {
-    return func(c *CitationResult) { c.Content = v }
+	return func(c *CitationResult) { c.Content = v }
 }
 
 // WithCitationResultReferences sets the references field.
 func WithCitationResultReferences(v []CitationReference) CitationResultOption {
-    return func(c *CitationResult) { c.References = v }
+	return func(c *CitationResult) { c.References = v }
 }
 
 // NewCitationResult creates a CitationResult with optional parameters.
 func NewCitationResult(opts ...CitationResultOption) *CitationResult {
-    c := &CitationResult {
-        Content: "",
-        References: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &CitationResult {
+		Content: "",
+		References: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // CitationReference is a type.
 type CitationReference struct {
-    Index uint `json:"index"`
-    Url string `json:"url"`
-    Text string `json:"text"`
+	Index uint `json:"index"`
+	Url string `json:"url"`
+	Text string `json:"text"`
 }
 
 
@@ -2341,30 +2463,30 @@ type CitationReferenceOption func(*CitationReference)
 
 // WithCitationReferenceIndex sets the index field.
 func WithCitationReferenceIndex(v uint) CitationReferenceOption {
-    return func(c *CitationReference) { c.Index = v }
+	return func(c *CitationReference) { c.Index = v }
 }
 
 // WithCitationReferenceUrl sets the url field.
 func WithCitationReferenceUrl(v string) CitationReferenceOption {
-    return func(c *CitationReference) { c.Url = v }
+	return func(c *CitationReference) { c.Url = v }
 }
 
 // WithCitationReferenceText sets the text field.
 func WithCitationReferenceText(v string) CitationReferenceOption {
-    return func(c *CitationReference) { c.Text = v }
+	return func(c *CitationReference) { c.Text = v }
 }
 
 // NewCitationReference creates a CitationReference with optional parameters.
 func NewCitationReference(opts ...CitationReferenceOption) *CitationReference {
-    c := &CitationReference {
-        Index: 0,
-        Url: "",
-        Text: "",
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &CitationReference {
+		Index: 0,
+		Url: "",
+		Text: "",
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
@@ -2373,26 +2495,35 @@ func NewCitationReference(opts ...CitationReferenceOption) *CitationReference {
 // Constructed via [`create_engine`] with an optional [`CrawlConfig`].
 // Default implementations for all pluggable components are used internally.
 type CrawlEngineHandle struct {
-    ptr unsafe.Pointer
+	ptr unsafe.Pointer
+}
+
+// NewCrawlEngineHandle creates a new CrawlEngineHandle by calling the C constructor.
+func NewCrawlEngineHandle() *CrawlEngineHandle {
+	ptr := C.kcrawl_crawl_engine_handle()
+	if ptr == nil {
+		return nil
+	}
+	return &CrawlEngineHandle{ptr: unsafe.Pointer(ptr)}
 }
 
 // Free releases the resources held by this handle.
 func (h *CrawlEngineHandle) Free() {
-    if h.ptr != nil {
-        C.kcrawl_crawl_engine_handle_free((*C.KCRAWLCrawlEngineHandle)(h.ptr))
-        h.ptr = nil
-    }
+	if h.ptr != nil {
+		C.kcrawl_crawl_engine_handle_free((*C.KCRAWLCrawlEngineHandle)(h.ptr))
+		h.ptr = nil
+	}
 }
 
 
 // Result from a single URL in a batch scrape operation.
 type BatchScrapeResult struct {
-    // The URL that was scraped.
-    Url string `json:"url"`
-    // The scrape result, if successful.
-    Result *ScrapeResult `json:"result,omitempty"`
-    // The error message, if the scrape failed.
-    Error *string `json:"error,omitempty"`
+	// The URL that was scraped.
+	Url string `json:"url"`
+	// The scrape result, if successful.
+	Result *ScrapeResult `json:"result,omitempty"`
+	// The error message, if the scrape failed.
+	Error *string `json:"error,omitempty"`
 }
 
 
@@ -2401,41 +2532,41 @@ type BatchScrapeResultOption func(*BatchScrapeResult)
 
 // WithBatchScrapeResultUrl sets the url field.
 func WithBatchScrapeResultUrl(v string) BatchScrapeResultOption {
-    return func(c *BatchScrapeResult) { c.Url = v }
+	return func(c *BatchScrapeResult) { c.Url = v }
 }
 
 // WithBatchScrapeResultResult sets the result field.
 func WithBatchScrapeResultResult(v ScrapeResult) BatchScrapeResultOption {
-    return func(c *BatchScrapeResult) { c.Result = &v }
+	return func(c *BatchScrapeResult) { c.Result = &v }
 }
 
 // WithBatchScrapeResultError sets the error field.
 func WithBatchScrapeResultError(v string) BatchScrapeResultOption {
-    return func(c *BatchScrapeResult) { c.Error = &v }
+	return func(c *BatchScrapeResult) { c.Error = &v }
 }
 
 // NewBatchScrapeResult creates a BatchScrapeResult with optional parameters.
 func NewBatchScrapeResult(opts ...BatchScrapeResultOption) *BatchScrapeResult {
-    c := &BatchScrapeResult {
-        Url: "",
-        Result: nil,
-        Error: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &BatchScrapeResult {
+		Url: "",
+		Result: nil,
+		Error: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
 // Result from a single URL in a batch crawl operation.
 type BatchCrawlResult struct {
-    // The seed URL that was crawled.
-    Url string `json:"url"`
-    // The crawl result, if successful.
-    Result *CrawlResult `json:"result,omitempty"`
-    // The error message, if the crawl failed.
-    Error *string `json:"error,omitempty"`
+	// The seed URL that was crawled.
+	Url string `json:"url"`
+	// The crawl result, if successful.
+	Result *CrawlResult `json:"result,omitempty"`
+	// The error message, if the crawl failed.
+	Error *string `json:"error,omitempty"`
 }
 
 
@@ -2444,30 +2575,30 @@ type BatchCrawlResultOption func(*BatchCrawlResult)
 
 // WithBatchCrawlResultUrl sets the url field.
 func WithBatchCrawlResultUrl(v string) BatchCrawlResultOption {
-    return func(c *BatchCrawlResult) { c.Url = v }
+	return func(c *BatchCrawlResult) { c.Url = v }
 }
 
 // WithBatchCrawlResultResult sets the result field.
 func WithBatchCrawlResultResult(v CrawlResult) BatchCrawlResultOption {
-    return func(c *BatchCrawlResult) { c.Result = &v }
+	return func(c *BatchCrawlResult) { c.Result = &v }
 }
 
 // WithBatchCrawlResultError sets the error field.
 func WithBatchCrawlResultError(v string) BatchCrawlResultOption {
-    return func(c *BatchCrawlResult) { c.Error = &v }
+	return func(c *BatchCrawlResult) { c.Error = &v }
 }
 
 // NewBatchCrawlResult creates a BatchCrawlResult with optional parameters.
 func NewBatchCrawlResult(opts ...BatchCrawlResultOption) *BatchCrawlResult {
-    c := &BatchCrawlResult {
-        Url: "",
-        Result: nil,
-        Error: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+	c := &BatchCrawlResult {
+		Url: "",
+		Result: nil,
+		Error: nil,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 
@@ -2476,42 +2607,42 @@ func NewBatchCrawlResult(opts ...BatchCrawlResultOption) *BatchCrawlResult {
 // If `config` is `None`, uses [`CrawlConfig::default()`].
 // Returns an error if the configuration is invalid.
 func CreateEngine(config *CrawlConfig) (*CrawlEngineHandle, error) {
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kcrawl_crawl_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kcrawl_crawl_config_free(cConfig)
+	jsonBytescConfig, err := json.Marshal(config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal: %w", err)
+	}
+	tmpStrcConfig := C.CString(string(jsonBytescConfig))
+	cConfig := C.kcrawl_crawl_config_from_json(tmpStrcConfig)
+	C.free(unsafe.Pointer(tmpStrcConfig))
+	defer C.kcrawl_crawl_config_free(cConfig)
 
-    ptr := C.kcrawl_create_engine(cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kcrawl_crawl_engine_handle_free(ptr)
-        }
-        return nil, err
-    }
-    return &CrawlEngineHandle{ptr: unsafe.Pointer(ptr)}, nil
+	ptr := C.kcrawl_create_engine(cConfig)
+	if err := lastError(); err != nil {
+		if ptr != nil {
+			C.kcrawl_crawl_engine_handle_free(ptr)
+		}
+		return nil, err
+	}
+	return &CrawlEngineHandle{ptr: unsafe.Pointer(ptr)}, nil
 }
 
 
 // Scrape a single URL, returning extracted page data.
 func Scrape(engine *CrawlEngineHandle, url string) (*ScrapeResult, error) {
-    cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
-    cUrl := C.CString(url)
-    defer C.free(unsafe.Pointer(cUrl))
+	cUrl := C.CString(url)
+	defer C.free(unsafe.Pointer(cUrl))
 
-    ptr := C.kcrawl_scrape(cEngine, cUrl)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kcrawl_scrape_result_free(ptr)
-        }
-        return nil, err
-    }
-    defer C.kcrawl_scrape_result_free(ptr)
-    return func() *ScrapeResult {
+	ptr := C.kcrawl_scrape(cEngine, cUrl)
+	if err := lastError(); err != nil {
+		if ptr != nil {
+			C.kcrawl_scrape_result_free(ptr)
+		}
+		return nil, err
+	}
+	defer C.kcrawl_scrape_result_free(ptr)
+	return func() *ScrapeResult {
 	jsonPtr := C.kcrawl_scrape_result_to_json(ptr)
 	if jsonPtr == nil { return nil }
 	defer C.kcrawl_free_string(jsonPtr)
@@ -2524,20 +2655,20 @@ func Scrape(engine *CrawlEngineHandle, url string) (*ScrapeResult, error) {
 
 // Crawl a website starting from `url`, following links up to the configured depth.
 func Crawl(engine *CrawlEngineHandle, url string) (*CrawlResult, error) {
-    cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
-    cUrl := C.CString(url)
-    defer C.free(unsafe.Pointer(cUrl))
+	cUrl := C.CString(url)
+	defer C.free(unsafe.Pointer(cUrl))
 
-    ptr := C.kcrawl_crawl(cEngine, cUrl)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kcrawl_crawl_result_free(ptr)
-        }
-        return nil, err
-    }
-    defer C.kcrawl_crawl_result_free(ptr)
-    return func() *CrawlResult {
+	ptr := C.kcrawl_crawl(cEngine, cUrl)
+	if err := lastError(); err != nil {
+		if ptr != nil {
+			C.kcrawl_crawl_result_free(ptr)
+		}
+		return nil, err
+	}
+	defer C.kcrawl_crawl_result_free(ptr)
+	return func() *CrawlResult {
 	jsonPtr := C.kcrawl_crawl_result_to_json(ptr)
 	if jsonPtr == nil { return nil }
 	defer C.kcrawl_free_string(jsonPtr)
@@ -2550,20 +2681,20 @@ func Crawl(engine *CrawlEngineHandle, url string) (*CrawlResult, error) {
 
 // Discover all pages on a website by following links and sitemaps.
 func MapUrls(engine *CrawlEngineHandle, url string) (*MapResult, error) {
-    cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
-    cUrl := C.CString(url)
-    defer C.free(unsafe.Pointer(cUrl))
+	cUrl := C.CString(url)
+	defer C.free(unsafe.Pointer(cUrl))
 
-    ptr := C.kcrawl_map_urls(cEngine, cUrl)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kcrawl_map_result_free(ptr)
-        }
-        return nil, err
-    }
-    defer C.kcrawl_map_result_free(ptr)
-    return func() *MapResult {
+	ptr := C.kcrawl_map_urls(cEngine, cUrl)
+	if err := lastError(); err != nil {
+		if ptr != nil {
+			C.kcrawl_map_result_free(ptr)
+		}
+		return nil, err
+	}
+	defer C.kcrawl_map_result_free(ptr)
+	return func() *MapResult {
 	jsonPtr := C.kcrawl_map_result_to_json(ptr)
 	if jsonPtr == nil { return nil }
 	defer C.kcrawl_free_string(jsonPtr)
@@ -2576,17 +2707,17 @@ func MapUrls(engine *CrawlEngineHandle, url string) (*MapResult, error) {
 
 // Scrape multiple URLs concurrently.
 func BatchScrape(engine *CrawlEngineHandle, urls []string) (*[]BatchScrapeResult, error) {
-    cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
-    jsonBytescUrls, err := json.Marshal(urls)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    cUrls := C.CString(string(jsonBytescUrls))
-    defer C.free(unsafe.Pointer(cUrls))
+	jsonBytescUrls, err := json.Marshal(urls)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal: %w", err)
+	}
+	cUrls := C.CString(string(jsonBytescUrls))
+	defer C.free(unsafe.Pointer(cUrls))
 
-    ptr := C.kcrawl_batch_scrape(cEngine, cUrls)
-    return func() *[]BatchScrapeResult {
+	ptr := C.kcrawl_batch_scrape(cEngine, cUrls)
+	return func() *[]BatchScrapeResult {
 	if ptr == nil { return nil }
 	defer C.kcrawl_free_string(ptr)
 	var result []BatchScrapeResult
@@ -2598,17 +2729,17 @@ func BatchScrape(engine *CrawlEngineHandle, urls []string) (*[]BatchScrapeResult
 
 // Crawl multiple seed URLs concurrently, each following links to configured depth.
 func BatchCrawl(engine *CrawlEngineHandle, urls []string) (*[]BatchCrawlResult, error) {
-    cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
+	cEngine := (*C.KCRAWLCrawlEngineHandle)(unsafe.Pointer(engine.ptr))
 
-    jsonBytescUrls, err := json.Marshal(urls)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    cUrls := C.CString(string(jsonBytescUrls))
-    defer C.free(unsafe.Pointer(cUrls))
+	jsonBytescUrls, err := json.Marshal(urls)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal: %w", err)
+	}
+	cUrls := C.CString(string(jsonBytescUrls))
+	defer C.free(unsafe.Pointer(cUrls))
 
-    ptr := C.kcrawl_batch_crawl(cEngine, cUrls)
-    return func() *[]BatchCrawlResult {
+	ptr := C.kcrawl_batch_crawl(cEngine, cUrls)
+	return func() *[]BatchCrawlResult {
 	if ptr == nil { return nil }
 	defer C.kcrawl_free_string(ptr)
 	var result []BatchCrawlResult
@@ -2620,29 +2751,34 @@ func BatchCrawl(engine *CrawlEngineHandle, urls []string) (*[]BatchCrawlResult, 
 
 // Validate the configuration, returning an error if any values are invalid.
 func (r *CrawlConfig) Validate() error {
-    jsonBytesRecv, err := json.Marshal(r)
-    if err != nil {
-        return fmt.Errorf("failed to marshal receiver: %w", err)
-    }
-    tmpStrRecv := C.CString(string(jsonBytesRecv))
-    cRecv := C.kcrawl_crawl_config_from_json(tmpStrRecv)
-    C.free(unsafe.Pointer(tmpStrRecv))
-    defer C.kcrawl_crawl_config_free(cRecv)
-    C.kcrawl_crawl_config_validate (cRecv)
-    return lastError()
+	jsonBytesRecv, err := json.Marshal(r)
+	if err != nil {
+		return fmt.Errorf("failed to marshal receiver: %w", err)
+	}
+	tmpStrRecv := C.CString(string(jsonBytesRecv))
+	cRecv := C.kcrawl_crawl_config_from_json(tmpStrRecv)
+	C.free(unsafe.Pointer(tmpStrRecv))
+	defer C.kcrawl_crawl_config_free(cRecv)
+	C.kcrawl_crawl_config_validate(cRecv)
+	jsonPtrUpdated := C.kcrawl_crawl_config_to_json(cRecv)
+	if jsonPtrUpdated != nil {
+		_ = json.Unmarshal([]byte(C.GoString(jsonPtrUpdated)), r)
+		C.kcrawl_free_string(jsonPtrUpdated)
+	}
+	return lastError()
 }
 
 
 // Returns the count of unique normalized URLs encountered during crawling.
 func (r *CrawlResult) UniqueNormalizedUrls() (*uint, error) {
-    jsonBytesRecv, err := json.Marshal(r)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal receiver: %w", err)
-    }
-    tmpStrRecv := C.CString(string(jsonBytesRecv))
-    cRecv := C.kcrawl_crawl_result_from_json(tmpStrRecv)
-    C.free(unsafe.Pointer(tmpStrRecv))
-    defer C.kcrawl_crawl_result_free(cRecv)
-    ptr := C.kcrawl_crawl_result_unique_normalized_urls (cRecv)
-    return func() *uint { v := uint(ptr); return &v }(), nil
+	jsonBytesRecv, err := json.Marshal(r)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal receiver: %w", err)
+	}
+	tmpStrRecv := C.CString(string(jsonBytesRecv))
+	cRecv := C.kcrawl_crawl_result_from_json(tmpStrRecv)
+	C.free(unsafe.Pointer(tmpStrRecv))
+	defer C.kcrawl_crawl_result_free(cRecv)
+	ptr := C.kcrawl_crawl_result_unique_normalized_urls(cRecv)
+	return func() *uint { v := uint(ptr); return &v }(), nil
 }

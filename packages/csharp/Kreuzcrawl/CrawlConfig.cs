@@ -122,16 +122,16 @@ public sealed class CrawlConfig
     public ulong? MaxBodySize { get; set; } = null;
 
     /// <summary>
-    /// Whether to extract only the main content from HTML pages.
-    /// </summary>
-    [JsonPropertyName("main_content_only")]
-    public bool MainContentOnly { get; set; } = false;
-
-    /// <summary>
     /// CSS selectors for tags to remove from HTML before processing.
     /// </summary>
     [JsonPropertyName("remove_tags")]
     public List<string> RemoveTags { get; set; } = [];
+
+    /// <summary>
+    /// Content extraction and conversion configuration.
+    /// </summary>
+    [JsonPropertyName("content")]
+    public ContentConfig Content { get; set; } = default!;
 
     /// <summary>
     /// Maximum number of URLs to return from a map operation.

@@ -46,10 +46,10 @@ public record CrawlConfig(
 		Optional<AuthConfig> auth,
 		/** Maximum response body size in bytes. */
 		@JsonProperty("max_body_size") Optional<Long> maxBodySize,
-		/** Whether to extract only the main content from HTML pages. */
-		@JsonProperty("main_content_only") boolean mainContentOnly,
 		/** CSS selectors for tags to remove from HTML before processing. */
 		@JsonProperty("remove_tags") List<String> removeTags,
+		/** Content extraction and conversion configuration. */
+		ContentConfig content,
 		/** Maximum number of URLs to return from a map operation. */
 		@JsonProperty("map_limit") Optional<Long> mapLimit,
 		/** Search filter for map results (case-insensitive substring match on URLs). */

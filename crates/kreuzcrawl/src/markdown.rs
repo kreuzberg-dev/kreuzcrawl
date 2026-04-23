@@ -4,8 +4,7 @@ use crate::types::{ContentConfig, MarkdownResult};
 
 /// Perform the actual HTML-to-Markdown conversion (synchronous).
 fn convert_html_to_markdown(html: &str, config: &ContentConfig) -> Option<MarkdownResult> {
-    let preset =
-        html_to_markdown_rs::options::PreprocessingPreset::parse(&config.preprocessing_preset);
+    let preset = html_to_markdown_rs::options::PreprocessingPreset::parse(&config.preprocessing_preset);
 
     let output_format = match config.output_format.as_str() {
         "plain" | "plaintext" | "text" => html_to_markdown_rs::options::OutputFormat::Plain,
@@ -108,11 +107,7 @@ mod tests {
 
     #[tokio::test]
     async fn converts_link() {
-        let result = convert_to_markdown(
-            r#"<a href="https://example.com">Click</a>"#,
-            &ContentConfig::default(),
-        )
-        .await;
+        let result = convert_to_markdown(r#"<a href="https://example.com">Click</a>"#, &ContentConfig::default()).await;
         let result = result.expect("should produce markdown");
         assert!(
             result.content.contains("[Click](https://example.com)"),

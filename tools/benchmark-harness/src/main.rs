@@ -174,11 +174,7 @@ fn main() -> ExitCode {
     let cli = Cli::parse();
 
     let result = match cli.command {
-        Commands::Download {
-            dataset,
-            output,
-            force,
-        } => cmd_download(dataset, output, force),
+        Commands::Download { dataset, output, force } => cmd_download(dataset, output, force),
         Commands::Run {
             fixtures,
             mode,
@@ -255,14 +251,9 @@ fn quality_crawl_config() -> kreuzcrawl::CrawlConfig {
     }
 }
 
-fn cmd_download(
-    _dataset: String,
-    output: PathBuf,
-    force: bool,
-) -> benchmark_harness::Result<()> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| {
-        benchmark_harness::Error::Config(format!("failed to create tokio runtime: {e}"))
-    })?;
+fn cmd_download(_dataset: String, output: PathBuf, force: bool) -> benchmark_harness::Result<()> {
+    let rt = tokio::runtime::Runtime::new()
+        .map_err(|e| benchmark_harness::Error::Config(format!("failed to create tokio runtime: {e}")))?;
     let count = rt.block_on(benchmark_harness::dataset::download_scrape_evals(&output, force))?;
     eprintln!("Downloaded {count} fixtures to {}", output.display());
     Ok(())
@@ -300,15 +291,9 @@ fn cmd_run(
         }
     }
 
-    let parsed_shard = shard
-        .as_deref()
-        .map(parse_shard)
-        .transpose()?;
+    let parsed_shard = shard.as_deref().map(parse_shard).transpose()?;
 
-    let dataset_name = fixtures
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .map(str::to_owned);
+    let dataset_name = fixtures.file_stem().and_then(|s| s.to_str()).map(str::to_owned);
 
     let config = BenchmarkConfig {
         output_dir: output.clone(),
@@ -358,39 +343,34 @@ fn cmd_run(
         "quality" => quality_crawl_config(),
         "default" => kreuzcrawl::CrawlConfig::default(),
         other => {
-            return Err(benchmark_harness::Error::Config(
-                format!("unknown preset '{other}', expected 'default' or 'quality'"),
-            ));
+            return Err(benchmark_harness::Error::Config(format!(
+                "unknown preset '{other}', expected 'default' or 'quality'"
+            )));
         }
     };
-    let adapter: Arc<dyn benchmark_harness::adapter::ScrapeAdapter> =
-        Arc::new(benchmark_harness::adapters::native::NativeAdapter::with_config(crawl_config)?);
+    let adapter: Arc<dyn benchmark_harness::adapter::ScrapeAdapter> = Arc::new(
+        benchmark_harness::adapters::native::NativeAdapter::with_config(crawl_config)?,
+    );
 
     let fixture_entries = fm.entries().to_vec();
-    let mut runner =
-        benchmark_harness::runner::BenchmarkRunner::new(config.clone(), adapter.clone(), fixture_entries.clone(), cache);
+    let mut runner = benchmark_harness::runner::BenchmarkRunner::new(
+        config.clone(),
+        adapter.clone(),
+        fixture_entries.clone(),
+        cache,
+    );
 
-    let rt = tokio::runtime::Runtime::new().map_err(|e| {
-        benchmark_harness::Error::Config(format!("failed to create tokio runtime: {e}"))
-    })?;
+    let rt = tokio::runtime::Runtime::new()
+        .map_err(|e| benchmark_harness::Error::Config(format!("failed to create tokio runtime: {e}")))?;
     let (results, fixture_outputs) = rt.block_on(runner.run())?;
 
-    let output_data =
-        benchmark_harness::output::aggregate_results(&results, &fixture_entries, &config, adapter.name());
+    let output_data = benchmark_harness::output::aggregate_results(&results, &fixture_entries, &config, adapter.name());
     benchmark_harness::output::write_results(&output, &output_data)?;
-    benchmark_harness::output::write_fixture_outputs(
-        &output,
-        &results,
-        &fixture_outputs,
-        &fixture_entries,
-    )?;
+    benchmark_harness::output::write_fixture_outputs(&output, &results, &fixture_outputs, &fixture_entries)?;
     benchmark_harness::output::print_summary(&output_data);
 
     eprintln!("Results written to {}", output.join("results.json").display());
-    eprintln!(
-        "Fixture outputs written to {}",
-        output.join("fixtures").display()
-    );
+    eprintln!("Fixture outputs written to {}", output.join("fixtures").display());
     Ok(())
 }
 
@@ -440,12 +420,10 @@ fn cmd_profile(
     let flamegraph_path = output.join("flamegraph.svg");
     let guard = benchmark_harness::profiling::ProfileGuard::start(frequency, &flamegraph_path)?;
 
-    let mut runner =
-        benchmark_harness::runner::BenchmarkRunner::new(config, adapter, fixture_entries, None);
+    let mut runner = benchmark_harness::runner::BenchmarkRunner::new(config, adapter, fixture_entries, None);
 
-    let rt = tokio::runtime::Runtime::new().map_err(|e| {
-        benchmark_harness::Error::Config(format!("failed to create tokio runtime: {e}"))
-    })?;
+    let rt = tokio::runtime::Runtime::new()
+        .map_err(|e| benchmark_harness::Error::Config(format!("failed to create tokio runtime: {e}")))?;
     let (_results, _fixture_outputs) = rt.block_on(runner.run())?;
 
     guard.finish()?;
@@ -454,11 +432,7 @@ fn cmd_profile(
     Ok(())
 }
 
-fn cmd_report(
-    inputs: Vec<PathBuf>,
-    output: PathBuf,
-    baseline: String,
-) -> benchmark_harness::Result<()> {
+fn cmd_report(inputs: Vec<PathBuf>, output: PathBuf, baseline: String) -> benchmark_harness::Result<()> {
     eprintln!("Loading results from {} file(s)...", inputs.len());
 
     // Load every input file, keeping per-framework groupings intact.
@@ -484,9 +458,7 @@ fn cmd_report(
     // If 2+ files are provided, generate per-candidate comparison reports.
     if outputs.len() >= 2 {
         // Find the baseline run by framework name.
-        let baseline_output = outputs
-            .iter()
-            .find(|o| o.metadata.framework == baseline);
+        let baseline_output = outputs.iter().find(|o| o.metadata.framework == baseline);
 
         match baseline_output {
             None => {
@@ -506,17 +478,11 @@ fn cmd_report(
                     benchmark_harness::output::print_comparison(&report);
 
                     // Write the comparison JSON alongside the aggregate.
-                    let cand_name = candidate
-                        .metadata
-                        .framework
-                        .replace(['/', '\\', ' '], "_");
+                    let cand_name = candidate.metadata.framework.replace(['/', '\\', ' '], "_");
                     let comparison_path = output.join(format!("comparison_{cand_name}.json"));
                     let json = serde_json::to_string_pretty(&report)?;
                     std::fs::write(&comparison_path, json)?;
-                    eprintln!(
-                        "Comparison written to {}",
-                        comparison_path.display()
-                    );
+                    eprintln!("Comparison written to {}", comparison_path.display());
                 }
             }
         }
@@ -556,20 +522,20 @@ fn cmd_list_cache(cache_dir: PathBuf) -> benchmark_harness::Result<()> {
 fn parse_shard(s: &str) -> benchmark_harness::Result<(usize, usize)> {
     let parts: Vec<&str> = s.split('/').collect();
     if parts.len() != 2 {
-        return Err(benchmark_harness::Error::Config(
-            format!("invalid shard format '{s}', expected INDEX/TOTAL"),
-        ));
+        return Err(benchmark_harness::Error::Config(format!(
+            "invalid shard format '{s}', expected INDEX/TOTAL"
+        )));
     }
-    let index: usize = parts[0].parse().map_err(|_| {
-        benchmark_harness::Error::Config(format!("invalid shard index '{}'", parts[0]))
-    })?;
-    let total: usize = parts[1].parse().map_err(|_| {
-        benchmark_harness::Error::Config(format!("invalid shard total '{}'", parts[1]))
-    })?;
+    let index: usize = parts[0]
+        .parse()
+        .map_err(|_| benchmark_harness::Error::Config(format!("invalid shard index '{}'", parts[0])))?;
+    let total: usize = parts[1]
+        .parse()
+        .map_err(|_| benchmark_harness::Error::Config(format!("invalid shard total '{}'", parts[1])))?;
     if index >= total {
-        return Err(benchmark_harness::Error::Config(
-            format!("shard index {index} must be less than total {total}"),
-        ));
+        return Err(benchmark_harness::Error::Config(format!(
+            "shard index {index} must be less than total {total}"
+        )));
     }
     Ok((index, total))
 }

@@ -49,8 +49,7 @@ pub fn verify_content(fixture: &ScrapeFixture, output: &ScrapeOutput) -> Reachab
         .count();
 
     // Allow 1 missing selector (pages change minor elements).
-    let selector_ok =
-        selectors_total == 0 || selectors_found >= selectors_total.saturating_sub(1);
+    let selector_ok = selectors_total == 0 || selectors_found >= selectors_total.saturating_sub(1);
     let text_ok = text_total == 0 || text_found > 0;
     let verified = selector_ok && text_ok;
 
@@ -177,11 +176,7 @@ mod tests {
     #[test]
     fn test_class_selector_match() {
         let fixture = make_fixture(vec![".product-title"], vec![]);
-        let output = make_output(
-            r#"<h1 class="product-title">Laptop</h1>"#,
-            Some("Laptop"),
-            200,
-        );
+        let output = make_output(r#"<h1 class="product-title">Laptop</h1>"#, Some("Laptop"), 200);
         let result = verify_content(&fixture, &output);
         assert_eq!(result.selectors_found, 1);
         assert!(result.verified);
@@ -190,11 +185,7 @@ mod tests {
     #[test]
     fn test_id_selector_match() {
         let fixture = make_fixture(vec!["#productTitle"], vec![]);
-        let output = make_output(
-            r#"<span id="productTitle">Widget</span>"#,
-            Some("Widget"),
-            200,
-        );
+        let output = make_output(r#"<span id="productTitle">Widget</span>"#, Some("Widget"), 200);
         let result = verify_content(&fixture, &output);
         assert_eq!(result.selectors_found, 1);
         assert!(result.verified);
@@ -212,11 +203,7 @@ mod tests {
     #[test]
     fn test_attribute_selector_match() {
         let fixture = make_fixture(vec!["[data-testid='cart-button']"], vec![]);
-        let output = make_output(
-            r#"<button data-testid='cart-button'>Add</button>"#,
-            Some("Add"),
-            200,
-        );
+        let output = make_output(r#"<button data-testid='cart-button'>Add</button>"#, Some("Add"), 200);
         let result = verify_content(&fixture, &output);
         assert_eq!(result.selectors_found, 1);
         assert!(result.verified);
@@ -226,11 +213,7 @@ mod tests {
     fn test_one_missing_selector_still_verified() {
         // With 2 selectors defined, 1 found is still ok (saturating_sub(1) = 1).
         let fixture = make_fixture(vec![".exists", ".missing"], vec![]);
-        let output = make_output(
-            r#"<div class="exists">ok</div>"#,
-            Some("ok"),
-            200,
-        );
+        let output = make_output(r#"<div class="exists">ok</div>"#, Some("ok"), 200);
         let result = verify_content(&fixture, &output);
         assert_eq!(result.selectors_found, 1);
         assert_eq!(result.selectors_total, 2);

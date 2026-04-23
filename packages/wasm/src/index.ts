@@ -12,6 +12,7 @@ export {
 	WasmBrowserWait,
 	WasmCitationReference,
 	WasmCitationResult,
+	WasmContentConfig,
 	WasmCookieInfo,
 	WasmCrawlConfig,
 	WasmCrawlEngineHandle,

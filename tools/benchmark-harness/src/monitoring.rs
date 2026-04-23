@@ -336,6 +336,10 @@ mod tests {
 
         let metrics = monitor.metrics().await;
         // We expect at least a couple of samples given 250ms / 50ms interval.
-        assert!(metrics.sample_count >= 2, "expected >=2 samples, got {}", metrics.sample_count);
+        assert!(
+            metrics.sample_count >= 2,
+            "expected >=2 samples, got {}",
+            metrics.sample_count
+        );
     }
 }

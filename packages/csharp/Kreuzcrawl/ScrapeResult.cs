@@ -114,12 +114,6 @@ public sealed class ScrapeResult
     public string? DetectedCharset { get; set; } = null;
 
     /// <summary>
-    /// Whether main_content_only was active during extraction.
-    /// </summary>
-    [JsonPropertyName("main_content_only")]
-    public bool MainContentOnly { get; set; } = false;
-
-    /// <summary>
     /// Whether an authentication header was sent with the request.
     /// </summary>
     [JsonPropertyName("auth_header_sent")]

@@ -124,12 +124,8 @@ impl CrawlEngine {
             // Also retried on Forbidden and Connection errors which may be bot-detection.
             #[cfg(feature = "browser")]
             Err(
-                CrawlError::WafBlocked(_)
-                | CrawlError::Forbidden(_)
-                | CrawlError::Connection(_)
-                | CrawlError::Other(_),
-            ) if self.config.browser.mode == crate::types::BrowserMode::Auto =>
-            {
+                CrawlError::WafBlocked(_) | CrawlError::Forbidden(_) | CrawlError::Connection(_) | CrawlError::Other(_),
+            ) if self.config.browser.mode == crate::types::BrowserMode::Auto => {
                 let pool = self.config.browser_pool.as_deref();
                 let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
                 Ok((browser_http_to_crawl(http_resp), true))

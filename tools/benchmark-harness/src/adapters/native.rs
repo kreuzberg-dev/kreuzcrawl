@@ -5,8 +5,8 @@ use std::time::Duration;
 use async_trait::async_trait;
 use kreuzcrawl::{CrawlConfig, CrawlEngineHandle, create_engine};
 
-use crate::adapter::{ScrapeAdapter, ScrapeInput, ScrapeOutput};
 use crate::Result;
+use crate::adapter::{ScrapeAdapter, ScrapeInput, ScrapeOutput};
 
 /// Adapter that calls the native kreuzcrawl scraping engine in-process.
 ///
@@ -25,8 +25,8 @@ impl NativeAdapter {
 
     /// Create an adapter with a custom [`CrawlConfig`].
     pub fn with_config(config: CrawlConfig) -> Result<Self> {
-        let engine = create_engine(Some(config))
-            .map_err(|e| crate::Error::Adapter(format!("failed to create engine: {e}")))?;
+        let engine =
+            create_engine(Some(config)).map_err(|e| crate::Error::Adapter(format!("failed to create engine: {e}")))?;
         Ok(Self { engine })
     }
 }
@@ -53,12 +53,7 @@ impl ScrapeAdapter for NativeAdapter {
     /// `cached_html` is accepted for interface compatibility but ignored here:
     /// in cached mode the runner remaps URLs to a localhost server so the
     /// engine fetches pages normally.
-    async fn scrape(
-        &self,
-        url: &str,
-        _cached_html: Option<&str>,
-        timeout: Duration,
-    ) -> Result<ScrapeOutput> {
+    async fn scrape(&self, url: &str, _cached_html: Option<&str>, timeout: Duration) -> Result<ScrapeOutput> {
         let result = tokio::time::timeout(timeout, kreuzcrawl::scrape(&self.engine, url))
             .await
             .map_err(|_| crate::Error::Adapter(format!("scrape timed out after {timeout:?}")))?
@@ -78,11 +73,7 @@ impl ScrapeAdapter for NativeAdapter {
     ///
     /// The internal timeout is governed by the [`CrawlConfig`] passed at
     /// construction time — no additional wrapper is applied here.
-    async fn batch_scrape(
-        &self,
-        entries: &[ScrapeInput],
-        _timeout: Duration,
-    ) -> Result<Vec<ScrapeOutput>> {
+    async fn batch_scrape(&self, entries: &[ScrapeInput], _timeout: Duration) -> Result<Vec<ScrapeOutput>> {
         for entry in entries {
             if entry.cached_html.is_some() {
                 tracing::warn!(

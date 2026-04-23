@@ -150,6 +150,189 @@ impl WasmProxyConfig {
     }
 }
 
+/// Content extraction and conversion configuration.
+///
+/// Controls how HTML is converted to the output format. Uses
+/// html-to-markdown-rs as the conversion engine for all formats
+/// (markdown, plain text, djot).
+#[derive(Clone, Default)]
+#[wasm_bindgen]
+pub struct WasmContentConfig {
+    output_format: String,
+    preprocessing_preset: String,
+    remove_navigation: bool,
+    remove_forms: bool,
+    strip_tags: Vec<String>,
+    preserve_tags: Vec<String>,
+    exclude_selectors: Vec<String>,
+    skip_images: bool,
+    max_depth: Option<usize>,
+    wrap: bool,
+    wrap_width: usize,
+    include_document_structure: bool,
+}
+
+#[wasm_bindgen]
+impl WasmContentConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        output_format: Option<String>,
+        preprocessing_preset: Option<String>,
+        remove_navigation: Option<bool>,
+        remove_forms: Option<bool>,
+        strip_tags: Option<Vec<String>>,
+        preserve_tags: Option<Vec<String>>,
+        exclude_selectors: Option<Vec<String>>,
+        skip_images: Option<bool>,
+        wrap: Option<bool>,
+        wrap_width: Option<usize>,
+        include_document_structure: Option<bool>,
+        max_depth: Option<usize>,
+    ) -> WasmContentConfig {
+        WasmContentConfig {
+            output_format: output_format.unwrap_or_else(|| "markdown".to_string()),
+            preprocessing_preset: preprocessing_preset.unwrap_or_else(|| "standard".to_string()),
+            remove_navigation: remove_navigation.unwrap_or(true),
+            remove_forms: remove_forms.unwrap_or(true),
+            strip_tags: strip_tags.unwrap_or_default(),
+            preserve_tags: preserve_tags.unwrap_or_default(),
+            exclude_selectors: exclude_selectors.unwrap_or_default(),
+            skip_images: skip_images.unwrap_or(false),
+            max_depth,
+            wrap: wrap.unwrap_or(false),
+            wrap_width: wrap_width.unwrap_or(80),
+            include_document_structure: include_document_structure.unwrap_or(true),
+        }
+    }
+
+    #[wasm_bindgen(getter, js_name = "outputFormat")]
+    pub fn output_format(&self) -> String {
+        self.output_format.clone()
+    }
+
+    #[wasm_bindgen(setter, js_name = "outputFormat")]
+    pub fn set_output_format(&mut self, value: String) {
+        self.output_format = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "preprocessingPreset")]
+    pub fn preprocessing_preset(&self) -> String {
+        self.preprocessing_preset.clone()
+    }
+
+    #[wasm_bindgen(setter, js_name = "preprocessingPreset")]
+    pub fn set_preprocessing_preset(&mut self, value: String) {
+        self.preprocessing_preset = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "removeNavigation")]
+    pub fn remove_navigation(&self) -> bool {
+        self.remove_navigation
+    }
+
+    #[wasm_bindgen(setter, js_name = "removeNavigation")]
+    pub fn set_remove_navigation(&mut self, value: bool) {
+        self.remove_navigation = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "removeForms")]
+    pub fn remove_forms(&self) -> bool {
+        self.remove_forms
+    }
+
+    #[wasm_bindgen(setter, js_name = "removeForms")]
+    pub fn set_remove_forms(&mut self, value: bool) {
+        self.remove_forms = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "stripTags")]
+    pub fn strip_tags(&self) -> Vec<String> {
+        self.strip_tags.clone()
+    }
+
+    #[wasm_bindgen(setter, js_name = "stripTags")]
+    pub fn set_strip_tags(&mut self, value: Vec<String>) {
+        self.strip_tags = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "preserveTags")]
+    pub fn preserve_tags(&self) -> Vec<String> {
+        self.preserve_tags.clone()
+    }
+
+    #[wasm_bindgen(setter, js_name = "preserveTags")]
+    pub fn set_preserve_tags(&mut self, value: Vec<String>) {
+        self.preserve_tags = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "excludeSelectors")]
+    pub fn exclude_selectors(&self) -> Vec<String> {
+        self.exclude_selectors.clone()
+    }
+
+    #[wasm_bindgen(setter, js_name = "excludeSelectors")]
+    pub fn set_exclude_selectors(&mut self, value: Vec<String>) {
+        self.exclude_selectors = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "skipImages")]
+    pub fn skip_images(&self) -> bool {
+        self.skip_images
+    }
+
+    #[wasm_bindgen(setter, js_name = "skipImages")]
+    pub fn set_skip_images(&mut self, value: bool) {
+        self.skip_images = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "maxDepth")]
+    pub fn max_depth(&self) -> Option<usize> {
+        self.max_depth
+    }
+
+    #[wasm_bindgen(setter, js_name = "maxDepth")]
+    pub fn set_max_depth(&mut self, value: Option<usize>) {
+        self.max_depth = value;
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn wrap(&self) -> bool {
+        self.wrap
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_wrap(&mut self, value: bool) {
+        self.wrap = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "wrapWidth")]
+    pub fn wrap_width(&self) -> usize {
+        self.wrap_width
+    }
+
+    #[wasm_bindgen(setter, js_name = "wrapWidth")]
+    pub fn set_wrap_width(&mut self, value: usize) {
+        self.wrap_width = value;
+    }
+
+    #[wasm_bindgen(getter, js_name = "includeDocumentStructure")]
+    pub fn include_document_structure(&self) -> bool {
+        self.include_document_structure
+    }
+
+    #[wasm_bindgen(setter, js_name = "includeDocumentStructure")]
+    pub fn set_include_document_structure(&mut self, value: bool) {
+        self.include_document_structure = value;
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    #[wasm_bindgen]
+    pub fn default() -> WasmContentConfig {
+        kreuzcrawl::ContentConfig::default().into()
+    }
+}
+
 /// Browser fallback configuration.
 #[derive(Clone, Default)]
 #[wasm_bindgen]
@@ -272,8 +455,8 @@ pub struct WasmCrawlConfig {
     cookies_enabled: bool,
     auth: Option<WasmAuthConfig>,
     max_body_size: Option<usize>,
-    main_content_only: bool,
     remove_tags: Vec<String>,
+    content: WasmContentConfig,
     map_limit: Option<usize>,
     map_search: Option<String>,
     download_assets: bool,
@@ -307,8 +490,8 @@ impl WasmCrawlConfig {
         retry_count: Option<usize>,
         retry_codes: Option<Vec<u16>>,
         cookies_enabled: Option<bool>,
-        main_content_only: Option<bool>,
         remove_tags: Option<Vec<String>>,
+        content: Option<WasmContentConfig>,
         download_assets: Option<bool>,
         asset_types: Option<Vec<WasmAssetCategory>>,
         browser: Option<WasmBrowserConfig>,
@@ -351,8 +534,8 @@ impl WasmCrawlConfig {
             cookies_enabled: cookies_enabled.unwrap_or(false),
             auth,
             max_body_size,
-            main_content_only: main_content_only.unwrap_or(false),
             remove_tags: remove_tags.unwrap_or_default(),
+            content: content.unwrap_or_default(),
             map_limit,
             map_search,
             download_assets: download_assets.unwrap_or(false),
@@ -551,16 +734,6 @@ impl WasmCrawlConfig {
         self.max_body_size = value;
     }
 
-    #[wasm_bindgen(getter, js_name = "mainContentOnly")]
-    pub fn main_content_only(&self) -> bool {
-        self.main_content_only
-    }
-
-    #[wasm_bindgen(setter, js_name = "mainContentOnly")]
-    pub fn set_main_content_only(&mut self, value: bool) {
-        self.main_content_only = value;
-    }
-
     #[wasm_bindgen(getter, js_name = "removeTags")]
     pub fn remove_tags(&self) -> Vec<String> {
         self.remove_tags.clone()
@@ -569,6 +742,16 @@ impl WasmCrawlConfig {
     #[wasm_bindgen(setter, js_name = "removeTags")]
     pub fn set_remove_tags(&mut self, value: Vec<String>) {
         self.remove_tags = value;
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn content(&self) -> WasmContentConfig {
+        self.content.clone()
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_content(&mut self, value: WasmContentConfig) {
+        self.content = value;
     }
 
     #[wasm_bindgen(getter, js_name = "mapLimit")]
@@ -870,7 +1053,6 @@ pub struct WasmScrapeResult {
     is_pdf: bool,
     was_skipped: bool,
     detected_charset: Option<String>,
-    main_content_only: bool,
     auth_header_sent: bool,
     response_meta: Option<WasmResponseMeta>,
     assets: Vec<WasmDownloadedAsset>,
@@ -902,7 +1084,6 @@ impl WasmScrapeResult {
         nofollow_detected: Option<bool>,
         is_pdf: Option<bool>,
         was_skipped: Option<bool>,
-        main_content_only: Option<bool>,
         auth_header_sent: Option<bool>,
         assets: Option<Vec<WasmDownloadedAsset>>,
         js_render_hint: Option<bool>,
@@ -935,7 +1116,6 @@ impl WasmScrapeResult {
             is_pdf: is_pdf.unwrap_or_default(),
             was_skipped: was_skipped.unwrap_or_default(),
             detected_charset,
-            main_content_only: main_content_only.unwrap_or_default(),
             auth_header_sent: auth_header_sent.unwrap_or_default(),
             response_meta,
             assets: assets.unwrap_or_default(),
@@ -1117,16 +1297,6 @@ impl WasmScrapeResult {
     #[wasm_bindgen(setter, js_name = "detectedCharset")]
     pub fn set_detected_charset(&mut self, value: Option<String>) {
         self.detected_charset = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "mainContentOnly")]
-    pub fn main_content_only(&self) -> bool {
-        self.main_content_only
-    }
-
-    #[wasm_bindgen(setter, js_name = "mainContentOnly")]
-    pub fn set_main_content_only(&mut self, value: bool) {
-        self.main_content_only = value;
     }
 
     #[wasm_bindgen(getter, js_name = "authHeaderSent")]
@@ -3572,6 +3742,44 @@ impl From<kreuzcrawl::ProxyConfig> for WasmProxyConfig {
     }
 }
 
+impl From<WasmContentConfig> for kreuzcrawl::ContentConfig {
+    fn from(val: WasmContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth,
+            wrap: val.wrap,
+            wrap_width: val.wrap_width,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ContentConfig> for WasmContentConfig {
+    fn from(val: kreuzcrawl::ContentConfig) -> Self {
+        Self {
+            output_format: val.output_format,
+            preprocessing_preset: val.preprocessing_preset,
+            remove_navigation: val.remove_navigation,
+            remove_forms: val.remove_forms,
+            strip_tags: val.strip_tags,
+            preserve_tags: val.preserve_tags,
+            exclude_selectors: val.exclude_selectors,
+            skip_images: val.skip_images,
+            max_depth: val.max_depth,
+            wrap: val.wrap,
+            wrap_width: val.wrap_width,
+            include_document_structure: val.include_document_structure,
+        }
+    }
+}
+
 #[allow(clippy::field_reassign_with_default)]
 impl From<WasmBrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(val: WasmBrowserConfig) -> Self {
@@ -3626,8 +3834,8 @@ impl From<WasmCrawlConfig> for kreuzcrawl::CrawlConfig {
         __result.cookies_enabled = val.cookies_enabled;
         __result.auth = val.auth.map(Into::into);
         __result.max_body_size = val.max_body_size;
-        __result.main_content_only = val.main_content_only;
         __result.remove_tags = val.remove_tags;
+        __result.content = val.content.into();
         __result.map_limit = val.map_limit;
         __result.map_search = val.map_search;
         __result.download_assets = val.download_assets;
@@ -3668,8 +3876,8 @@ impl From<kreuzcrawl::CrawlConfig> for WasmCrawlConfig {
             cookies_enabled: val.cookies_enabled,
             auth: val.auth.map(Into::into),
             max_body_size: val.max_body_size,
-            main_content_only: val.main_content_only,
             remove_tags: val.remove_tags,
+            content: val.content.into(),
             map_limit: val.map_limit,
             map_search: val.map_search,
             download_assets: val.download_assets,
@@ -3737,7 +3945,6 @@ impl From<WasmScrapeResult> for kreuzcrawl::ScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),
@@ -3775,7 +3982,6 @@ impl From<kreuzcrawl::ScrapeResult> for WasmScrapeResult {
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
             detected_charset: val.detected_charset,
-            main_content_only: val.main_content_only,
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),

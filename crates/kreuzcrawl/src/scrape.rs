@@ -7,8 +7,8 @@ use crate::assets;
 use crate::browser_detect;
 use crate::error::CrawlError;
 use crate::html::{
-    detect_charset, detect_nofollow, detect_noindex, extract_page_data, is_binary_content_type,
-    is_binary_url, is_html_content, is_pdf_content,
+    detect_charset, detect_nofollow, detect_noindex, extract_page_data, is_binary_content_type, is_binary_url,
+    is_html_content, is_pdf_content,
 };
 use crate::http::{build_client, http_fetch};
 use crate::normalize::robots_url;

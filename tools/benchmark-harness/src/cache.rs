@@ -102,10 +102,7 @@ impl HtmlCache {
     /// Store a response in the cache and update the index on disk.
     pub fn insert(&mut self, response: &CachedResponse) -> Result<()> {
         let hash = url_hash(&response.url);
-        let response_path = self
-            .cache_dir
-            .join("responses")
-            .join(format!("{hash}.json"));
+        let response_path = self.cache_dir.join("responses").join(format!("{hash}.json"));
         let json = serde_json::to_string_pretty(response)?;
         std::fs::write(response_path, json)?;
 

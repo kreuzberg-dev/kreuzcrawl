@@ -71,27 +71,16 @@ pub trait ScrapeAdapter: Send + Sync {
     /// `cached_html` is `Some` when the harness is running in cached mode and
     /// the adapter should parse the supplied HTML instead of making a network
     /// request.
-    async fn scrape(
-        &self,
-        url: &str,
-        cached_html: Option<&str>,
-        timeout: Duration,
-    ) -> Result<ScrapeOutput>;
+    async fn scrape(&self, url: &str, cached_html: Option<&str>, timeout: Duration) -> Result<ScrapeOutput>;
 
     /// Scrape multiple URLs in a single adapter call.
     ///
     /// The default implementation serialises calls to [`scrape`](Self::scrape).
     /// Adapters that can parallelise internally should override this.
-    async fn batch_scrape(
-        &self,
-        entries: &[ScrapeInput],
-        timeout: Duration,
-    ) -> Result<Vec<ScrapeOutput>> {
+    async fn batch_scrape(&self, entries: &[ScrapeInput], timeout: Duration) -> Result<Vec<ScrapeOutput>> {
         let mut outputs = Vec::with_capacity(entries.len());
         for entry in entries {
-            let out = self
-                .scrape(&entry.url, entry.cached_html.as_deref(), timeout)
-                .await?;
+            let out = self.scrape(&entry.url, entry.cached_html.as_deref(), timeout).await?;
             outputs.push(out);
         }
         Ok(outputs)

@@ -20,6 +20,7 @@ defmodule Kreuzcrawl.Native do
   def map_urls_async(_engine, _url), do: :erlang.nif_error(:nif_not_loaded)
   def batch_scrape_async(_engine, _urls), do: :erlang.nif_error(:nif_not_loaded)
   def batch_crawl_async(_engine, _urls), do: :erlang.nif_error(:nif_not_loaded)
+  def contentconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def browserconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def crawlconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def crawlconfig_validate(_obj), do: :erlang.nif_error(:nif_not_loaded)

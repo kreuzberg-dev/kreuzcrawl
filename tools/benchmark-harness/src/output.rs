@@ -11,12 +11,11 @@ use crate::config::BenchmarkConfig;
 use crate::stats::{percentile_r7, sanitize_f64};
 use std::collections::HashMap;
 
+use crate::Result;
 use crate::types::{
     BenchmarkMetadata, BenchmarkOutput, CategoryReport, ComparisonReport, DatasetPerformanceReport,
-    DatasetQualityReport, ExecutionMode, FixtureComparison, ReachabilityReport,
-    ScrapeBenchmarkResult, ScrapeFixture,
+    DatasetQualityReport, ExecutionMode, FixtureComparison, ReachabilityReport, ScrapeBenchmarkResult, ScrapeFixture,
 };
-use crate::Result;
 
 /// Write the full benchmark output to `{output_dir}/results.json` as
 /// pretty-printed JSON.
@@ -76,8 +75,7 @@ pub fn write_fixture_outputs(
     // Index results and fixtures by fixture_id for O(1) lookup.
     let result_map: HashMap<&str, &ScrapeBenchmarkResult> =
         results.iter().map(|r| (r.fixture_id.as_str(), r)).collect();
-    let fixture_map: HashMap<&str, &ScrapeFixture> =
-        fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
+    let fixture_map: HashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
 
     for (fixture_id, maybe_output) in outputs {
         let Some(output) = maybe_output else {
@@ -91,9 +89,10 @@ pub fn write_fixture_outputs(
 
         // Write extracted content (format determined by CrawlConfig.content.output_format).
         let content_path = fixtures_dir.join(format!("{safe_id}.md"));
-        let content_str = output.content.as_deref().unwrap_or(
-            "<!-- content extraction was not available for this fixture -->\n",
-        );
+        let content_str = output
+            .content
+            .as_deref()
+            .unwrap_or("<!-- content extraction was not available for this fixture -->\n");
         std::fs::write(&content_path, content_str)?;
 
         // Write raw HTML.
@@ -173,14 +172,8 @@ pub fn print_summary(output: &BenchmarkOutput) {
     eprintln!("Latency p50 : {:.1} ms", perf.latency_p50_ms);
     eprintln!("Latency p95 : {:.1} ms", perf.latency_p95_ms);
     eprintln!("Latency p99 : {:.1} ms", perf.latency_p99_ms);
-    eprintln!(
-        "Throughput  : {:.2} pages/sec",
-        perf.throughput_pages_per_sec
-    );
-    eprintln!(
-        "Peak memory : {:.1} MB",
-        perf.peak_memory_bytes as f64 / 1_048_576.0
-    );
+    eprintln!("Throughput  : {:.2} pages/sec", perf.throughput_pages_per_sec);
+    eprintln!("Peak memory : {:.1} MB", perf.peak_memory_bytes as f64 / 1_048_576.0);
 
     if let Some(ref quality) = output.quality_report {
         eprintln!("---");
@@ -245,13 +238,7 @@ fn build_metadata(
     let dataset = config
         .dataset_name
         .clone()
-        .or_else(|| {
-            config
-                .cache_dir
-                .file_name()
-                .and_then(|n| n.to_str())
-                .map(str::to_owned)
-        })
+        .or_else(|| config.cache_dir.file_name().and_then(|n| n.to_str()).map(str::to_owned))
         .unwrap_or_else(|| "unknown".to_owned());
 
     BenchmarkMetadata {
@@ -278,11 +265,7 @@ fn build_performance_report(results: &[ScrapeBenchmarkResult]) -> DatasetPerform
     let latency_p95_ms = percentile_r7(&mut durations, 0.95).unwrap_or(0.0);
     let latency_p99_ms = percentile_r7(&mut durations, 0.99).unwrap_or(0.0);
 
-    let peak_memory_bytes = results
-        .iter()
-        .map(|r| r.metrics.peak_memory_bytes)
-        .max()
-        .unwrap_or(0);
+    let peak_memory_bytes = results.iter().map(|r| r.metrics.peak_memory_bytes).max().unwrap_or(0);
 
     // Throughput: total successful requests / total elapsed time (sum of durations).
     // Using sum-of-durations avoids the harmonic-mean mistake of averaging
@@ -315,13 +298,9 @@ fn build_performance_report(results: &[ScrapeBenchmarkResult]) -> DatasetPerform
 /// (those with `error.is_some()`) are excluded from the scoreable pool so they
 /// don't penalise coverage. Results with a non-2xx status code or zero content
 /// size are also excluded from scoring.
-fn build_quality_report(
-    results: &[ScrapeBenchmarkResult],
-    fixtures: &[ScrapeFixture],
-) -> DatasetQualityReport {
+fn build_quality_report(results: &[ScrapeBenchmarkResult], fixtures: &[ScrapeFixture]) -> DatasetQualityReport {
     // Build a lookup from fixture ID to fixture metadata when available.
-    let fixture_map: HashMap<&str, &ScrapeFixture> =
-        fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
+    let fixture_map: HashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
 
     // Count expected-failure fixtures so we can subtract them from total_urls.
     let expected_failure_count = if fixture_map.is_empty() {
@@ -353,9 +332,7 @@ fn build_quality_report(
                 return false;
             }
             // Skip non-2xx responses and empty content.
-            let is_success_status = r
-                .status_code
-                .is_some_and(|code| (200..=299).contains(&code));
+            let is_success_status = r.status_code.is_some_and(|code| (200..=299).contains(&code));
             if !is_success_status || r.content_size == 0 {
                 return false;
             }
@@ -372,32 +349,26 @@ fn build_quality_report(
         scored_urls as f64 / scoreable_urls as f64
     };
 
-    let (
-        mean_f1_text,
-        mean_f1_numeric,
-        mean_quality_score,
-        mean_precision,
-        mean_recall,
-        mean_noise_penalty,
-    ) = if scored_urls == 0 {
-        (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    } else {
-        let n = scored_urls as f64;
-        let sum_f1_text: f64 = scored.iter().map(|q| q.f1_text).sum();
-        let sum_f1_numeric: f64 = scored.iter().map(|q| q.f1_numeric).sum();
-        let sum_quality: f64 = scored.iter().map(|q| q.quality_score).sum();
-        let sum_precision: f64 = scored.iter().map(|q| q.precision).sum();
-        let sum_recall: f64 = scored.iter().map(|q| q.recall).sum();
-        let sum_noise: f64 = scored.iter().map(|q| q.noise_penalty).sum();
-        (
-            sanitize_f64(sum_f1_text / n),
-            sanitize_f64(sum_f1_numeric / n),
-            sanitize_f64(sum_quality / n),
-            sanitize_f64(sum_precision / n),
-            sanitize_f64(sum_recall / n),
-            sanitize_f64(sum_noise / n),
-        )
-    };
+    let (mean_f1_text, mean_f1_numeric, mean_quality_score, mean_precision, mean_recall, mean_noise_penalty) =
+        if scored_urls == 0 {
+            (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        } else {
+            let n = scored_urls as f64;
+            let sum_f1_text: f64 = scored.iter().map(|q| q.f1_text).sum();
+            let sum_f1_numeric: f64 = scored.iter().map(|q| q.f1_numeric).sum();
+            let sum_quality: f64 = scored.iter().map(|q| q.quality_score).sum();
+            let sum_precision: f64 = scored.iter().map(|q| q.precision).sum();
+            let sum_recall: f64 = scored.iter().map(|q| q.recall).sum();
+            let sum_noise: f64 = scored.iter().map(|q| q.noise_penalty).sum();
+            (
+                sanitize_f64(sum_f1_text / n),
+                sanitize_f64(sum_f1_numeric / n),
+                sanitize_f64(sum_quality / n),
+                sanitize_f64(sum_precision / n),
+                sanitize_f64(sum_recall / n),
+                sanitize_f64(sum_noise / n),
+            )
+        };
 
     DatasetQualityReport {
         coverage: sanitize_f64(coverage),
@@ -422,8 +393,7 @@ fn build_reachability_report(
     fixtures: &[ScrapeFixture],
 ) -> Option<ReachabilityReport> {
     // Only consider results that have a reachability record.
-    let reachable_results: Vec<&ScrapeBenchmarkResult> =
-        results.iter().filter(|r| r.reachability.is_some()).collect();
+    let reachable_results: Vec<&ScrapeBenchmarkResult> = results.iter().filter(|r| r.reachability.is_some()).collect();
 
     if reachable_results.is_empty() {
         return None;
@@ -436,18 +406,10 @@ fn build_reachability_report(
         .count();
     let false_positives = reachable_results
         .iter()
-        .filter(|r| {
-            r.reachability
-                .as_ref()
-                .is_some_and(|rr| rr.is_false_positive)
-        })
+        .filter(|r| r.reachability.as_ref().is_some_and(|rr| rr.is_false_positive))
         .count();
 
-    let success_rate = if total > 0 {
-        verified as f64 / total as f64
-    } else {
-        0.0
-    };
+    let success_rate = if total > 0 { verified as f64 / total as f64 } else { 0.0 };
     let false_positive_rate = if total > 0 {
         false_positives as f64 / total as f64
     } else {
@@ -455,20 +417,14 @@ fn build_reachability_report(
     };
 
     // Build per-category breakdown using fixture metadata.
-    let fixture_map: HashMap<&str, &ScrapeFixture> = fixtures
-        .iter()
-        .map(|f| (f.id.as_str(), f))
-        .collect();
+    let fixture_map: HashMap<&str, &ScrapeFixture> = fixtures.iter().map(|f| (f.id.as_str(), f)).collect();
     let mut category_map: HashMap<String, Vec<&ScrapeBenchmarkResult>> = HashMap::new();
     for result in &reachable_results {
         let cat = fixture_map
             .get(result.fixture_id.as_str())
             .and_then(|f| f.category.as_deref())
             .unwrap_or("uncategorized");
-        category_map
-            .entry(cat.to_owned())
-            .or_default()
-            .push(result);
+        category_map.entry(cat.to_owned()).or_default().push(result);
     }
 
     let categories: Vec<CategoryReport> = category_map
@@ -481,11 +437,7 @@ fn build_reachability_report(
                 .count();
             let cat_fp = cat_results
                 .iter()
-                .filter(|r| {
-                    r.reachability
-                        .as_ref()
-                        .is_some_and(|rr| rr.is_false_positive)
-                })
+                .filter(|r| r.reachability.as_ref().is_some_and(|rr| rr.is_false_positive))
                 .count();
             let cat_success_rate = if cat_total > 0 {
                 cat_verified as f64 / cat_total as f64
@@ -495,8 +447,7 @@ fn build_reachability_report(
             let avg_ms = if cat_results.is_empty() {
                 0.0
             } else {
-                cat_results.iter().map(|r| r.duration_ms).sum::<f64>()
-                    / cat_results.len() as f64
+                cat_results.iter().map(|r| r.duration_ms).sum::<f64>() / cat_results.len() as f64
             };
             CategoryReport {
                 category,
@@ -579,10 +530,8 @@ pub fn compare_results(
     candidate_name: &str,
 ) -> ComparisonReport {
     // Index baseline by fixture_id for O(1) lookup.
-    let baseline_map: HashMap<&str, &ScrapeBenchmarkResult> = baseline_results
-        .iter()
-        .map(|r| (r.fixture_id.as_str(), r))
-        .collect();
+    let baseline_map: HashMap<&str, &ScrapeBenchmarkResult> =
+        baseline_results.iter().map(|r| (r.fixture_id.as_str(), r)).collect();
 
     let mut fixture_comparisons: Vec<FixtureComparison> = Vec::new();
     let mut latency_deltas: Vec<f64> = Vec::new();
@@ -595,9 +544,7 @@ pub fn compare_results(
         };
 
         let latency_delta_pct = if baseline.duration_ms > 0.0 {
-            sanitize_f64(
-                (candidate.duration_ms - baseline.duration_ms) / baseline.duration_ms * 100.0,
-            )
+            sanitize_f64((candidate.duration_ms - baseline.duration_ms) / baseline.duration_ms * 100.0)
         } else {
             0.0
         };
@@ -637,13 +584,9 @@ pub fn compare_results(
 
     // Aggregate quality delta: mean(candidate) - mean(baseline) if both sets
     // are non-empty.
-    let quality_delta = if !baseline_quality_scores.is_empty()
-        && !candidate_quality_scores.is_empty()
-    {
-        let mean_baseline: f64 =
-            baseline_quality_scores.iter().sum::<f64>() / baseline_quality_scores.len() as f64;
-        let mean_candidate: f64 =
-            candidate_quality_scores.iter().sum::<f64>() / candidate_quality_scores.len() as f64;
+    let quality_delta = if !baseline_quality_scores.is_empty() && !candidate_quality_scores.is_empty() {
+        let mean_baseline: f64 = baseline_quality_scores.iter().sum::<f64>() / baseline_quality_scores.len() as f64;
+        let mean_candidate: f64 = candidate_quality_scores.iter().sum::<f64>() / candidate_quality_scores.len() as f64;
         Some(sanitize_f64(mean_candidate - mean_baseline))
     } else {
         None
@@ -700,10 +643,7 @@ pub fn print_comparison(report: &ComparisonReport) {
     } else {
         "unchanged"
     };
-    eprintln!(
-        "Latency    : {:+.1}% ({})",
-        report.latency_delta_pct, latency_label
-    );
+    eprintln!("Latency    : {:+.1}% ({})", report.latency_delta_pct, latency_label);
 
     let throughput_label = if report.throughput_delta_pct > 0.0 {
         "better"
@@ -724,10 +664,7 @@ pub fn print_comparison(report: &ComparisonReport) {
     } else {
         "unchanged"
     };
-    eprintln!(
-        "Memory     : {:+.1}% ({})",
-        report.memory_delta_pct, memory_label
-    );
+    eprintln!("Memory     : {:+.1}% ({})", report.memory_delta_pct, memory_label);
 
     if let Some(qd) = report.quality_delta {
         let quality_label = if qd > 0.0 {
@@ -748,21 +685,14 @@ pub fn print_comparison(report: &ComparisonReport) {
             .unwrap_or(std::cmp::Ordering::Equal)
     });
 
-    let regressions: Vec<_> = sorted
-        .iter()
-        .filter(|f| f.latency_delta_pct > 0.0)
-        .take(5)
-        .collect();
+    let regressions: Vec<_> = sorted.iter().filter(|f| f.latency_delta_pct > 0.0).take(5).collect();
     if !regressions.is_empty() {
         eprintln!("---");
         eprintln!("Top regressions (slowest):");
         for f in regressions {
             eprintln!(
                 "  {:+.1}%  {}  ({:.1} -> {:.1} ms)",
-                f.latency_delta_pct,
-                f.fixture_id,
-                f.baseline_duration_ms,
-                f.candidate_duration_ms,
+                f.latency_delta_pct, f.fixture_id, f.baseline_duration_ms, f.candidate_duration_ms,
             );
         }
     }
@@ -779,10 +709,7 @@ pub fn print_comparison(report: &ComparisonReport) {
         for f in improvements {
             eprintln!(
                 "  {:+.1}%  {}  ({:.1} -> {:.1} ms)",
-                f.latency_delta_pct,
-                f.fixture_id,
-                f.baseline_duration_ms,
-                f.candidate_duration_ms,
+                f.latency_delta_pct, f.fixture_id, f.baseline_duration_ms, f.candidate_duration_ms,
             );
         }
     }
@@ -795,11 +722,7 @@ mod tests {
     use super::*;
     use crate::types::{ErrorKind, ExecutionMode, IterationResult, PerformanceMetrics, ScrapeQualityMetrics};
 
-    fn make_result(
-        success: bool,
-        duration_ms: f64,
-        quality: Option<ScrapeQualityMetrics>,
-    ) -> ScrapeBenchmarkResult {
+    fn make_result(success: bool, duration_ms: f64, quality: Option<ScrapeQualityMetrics>) -> ScrapeBenchmarkResult {
         ScrapeBenchmarkResult {
             framework: "test".to_owned(),
             url: "https://example.com".to_owned(),
@@ -811,11 +734,7 @@ mod tests {
             metrics: PerformanceMetrics {
                 peak_memory_bytes: 1024 * 1024 * 100, // 100 MB
                 avg_cpu_percent: 0.0,
-                throughput_pages_per_sec: if duration_ms > 0.0 {
-                    1_000.0 / duration_ms
-                } else {
-                    0.0
-                },
+                throughput_pages_per_sec: if duration_ms > 0.0 { 1_000.0 / duration_ms } else { 0.0 },
                 p50_memory_bytes: 0,
                 p95_memory_bytes: 0,
                 p99_memory_bytes: 0,
@@ -967,10 +886,7 @@ mod tests {
     #[test]
     fn test_performance_report_latency_percentiles() {
         let durations = [100.0, 200.0, 300.0, 400.0, 500.0];
-        let results: Vec<_> = durations
-            .iter()
-            .map(|&d| make_result(true, d, None))
-            .collect();
+        let results: Vec<_> = durations.iter().map(|&d| make_result(true, d, None)).collect();
         let report = build_performance_report(&results);
 
         assert!((report.latency_p50_ms - 300.0).abs() < 1e-9);
@@ -980,10 +896,7 @@ mod tests {
 
     #[test]
     fn test_performance_report_peak_memory() {
-        let mut results = vec![
-            make_result(true, 100.0, None),
-            make_result(true, 200.0, None),
-        ];
+        let mut results = vec![make_result(true, 100.0, None), make_result(true, 200.0, None)];
         results[0].metrics.peak_memory_bytes = 50 * 1024 * 1024;
         results[1].metrics.peak_memory_bytes = 200 * 1024 * 1024;
         let report = build_performance_report(&results);
@@ -1156,9 +1069,9 @@ mod tests {
             make_result_named("f3", "base", 100.0, None, 0),
         ];
         let candidate = vec![
-            make_result_named("f1", "cand", 50.0, None, 0),   // -50%
-            make_result_named("f2", "cand", 100.0, None, 0),  //   0%
-            make_result_named("f3", "cand", 150.0, None, 0),  // +50%
+            make_result_named("f1", "cand", 50.0, None, 0),  // -50%
+            make_result_named("f2", "cand", 100.0, None, 0), //   0%
+            make_result_named("f3", "cand", 150.0, None, 0), // +50%
         ];
         let report = compare_results(&baseline, &candidate, "base", "cand");
         assert_eq!(report.fixture_comparisons.len(), 3);

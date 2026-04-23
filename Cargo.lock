@@ -338,7 +338,7 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
 
 [[package]]
 name = "benchmark-harness"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "ahash",
  "async-trait",
@@ -988,9 +988,9 @@ dependencies = [
 
 [[package]]
 name = "ctor"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95d0d11eb38e7642efca359c3cf6eb7b2e528182d09110165de70192b0352775"
+checksum = "83cf0d42651b16c6dfe68685716d18480d18a9c39c62d76e8cf3eb6ed5d8bcbf"
 dependencies = [
  "ctor-proc-macro",
  "dtor",
@@ -998,9 +998,9 @@ dependencies = [
 
 [[package]]
 name = "ctor-proc-macro"
-version = "0.0.12"
+version = "0.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7ab264ea985f1bd27887d7b21ea2bb046728e05d11909ca138d700c494730db"
+checksum = "7a949c44fcacbbbb7ada007dc7acb34603dd97cd47de5d054f2b6493ecebb483"
 
 [[package]]
 name = "darling"
@@ -1173,18 +1173,18 @@ dependencies = [
 
 [[package]]
 name = "dtor"
-version = "0.7.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17f72721db8027a4e96dd6fb50d2a1d32259c9d3da1b63dee612ccd981e14293"
+checksum = "edf234dd1594d6dd434a8fb8cada51ddbbc593e40e4a01556a0b31c62da2775b"
 dependencies = [
  "dtor-proc-macro",
 ]
 
 [[package]]
 name = "dtor-proc-macro"
-version = "0.0.12"
+version = "0.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c98b077c7463d01d22dde8a24378ddf1ca7263dc687cffbed38819ea6c21131"
+checksum = "2647271c92754afcb174e758003cfd1cbf1e43e5a7853d7b1813e63e19e39a73"
 
 [[package]]
 name = "dunce"
@@ -1260,9 +1260,9 @@ dependencies = [
 
 [[package]]
 name = "ext-php-rs"
-version = "0.15.11"
+version = "0.15.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e31d80d6762073b876fe2745820d2241f3309dd42227e26197fa40b54599a220"
+checksum = "0525834a3e26fdf0a60a8e7c27ec9521a35808eba8e41a15e135c22f670bc937"
 dependencies = [
  "anyhow",
  "bitflags 2.11.1",
@@ -1682,7 +1682,9 @@ dependencies = [
 
 [[package]]
 name = "html-to-markdown-rs"
-version = "3.2.6"
+version = "3.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca25dde2f7b549e18a8894c0e9cce6ea9468fef329573c002f401d2e3e72b019"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -2165,7 +2167,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -2207,14 +2209,14 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-bindings-common"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "kreuzcrawl",
 ]
 
 [[package]]
 name = "kreuzcrawl-cli"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "clap",
  "kreuzcrawl",
@@ -2224,7 +2226,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-e2e-generator"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "camino",
@@ -2237,7 +2239,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-e2e-rust"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "kreuzcrawl",
  "serde_json",
@@ -2246,7 +2248,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-ffi"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "cbindgen",
  "kreuzcrawl",
@@ -2256,7 +2258,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-node"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "kreuzcrawl",
  "napi",
@@ -2268,7 +2270,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-php"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "ext-php-rs",
  "kreuzcrawl",
@@ -2279,7 +2281,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-py"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "kreuzcrawl",
  "pyo3",
@@ -2290,7 +2292,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-wasm"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "getrandom 0.3.4",
  "getrandom 0.4.2",
@@ -2303,7 +2305,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl_nif"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "kreuzcrawl",
  "rustler",
@@ -2544,7 +2546,7 @@ dependencies = [
 
 [[package]]
 name = "mock-server"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "axum",
  "clap",
@@ -2852,9 +2854,9 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "pastey"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b867cad97c0791bbd3aaa6472142568c6c9e8f71937e98379f584cfb0cf35bec"
+checksum = "c5a797f0e07bdf071d15742978fc3128ec6c22891c31a3a931513263904c982a"
 
 [[package]]
 name = "pbkdf2"
@@ -3544,9 +3546,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.23.38"
+version = "0.23.39"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69f9466fb2c14ea04357e91413efb882e2a6d4a406e625449bc0a5d360d53a21"
+checksum = "7c2c118cb077cca2822033836dfb1b975355dfb784b5e8da48f7b6c5db74e60e"
 dependencies = [
  "aws-lc-rs",
  "once_cell",
@@ -3918,7 +3920,7 @@ checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
 
 [[package]]
 name = "snippet-runner"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "clap",
  "rayon",

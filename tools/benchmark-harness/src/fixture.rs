@@ -3,11 +3,7 @@
 //! Discovers, parses, and optionally shards [`ScrapeFixture`](crate::types::ScrapeFixture)
 //! entries from JSON fixture files on disk.
 
-use crate::{
-    Result,
-    error::Error,
-    types::ScrapeFixture,
-};
+use crate::{Result, error::Error, types::ScrapeFixture};
 use regex::Regex;
 use serde::Deserialize;
 use std::{fs, path::Path};
@@ -82,9 +78,7 @@ pub struct FixtureManager {
 impl FixtureManager {
     /// Create an empty fixture manager.
     pub fn new() -> Self {
-        Self {
-            entries: Vec::new(),
-        }
+        Self { entries: Vec::new() }
     }
 
     /// Load fixtures from a single JSON file.
@@ -97,16 +91,11 @@ impl FixtureManager {
     ///
     /// Returns [`Error::Fixture`] if the file cannot be read or parsed.
     pub fn load(&mut self, path: &Path) -> Result<usize> {
-        let content = fs::read_to_string(path).map_err(|error| {
-            Error::Fixture(format!("failed to read {}: {error}", path.display()))
-        })?;
+        let content = fs::read_to_string(path)
+            .map_err(|error| Error::Fixture(format!("failed to read {}: {error}", path.display())))?;
 
-        let value: serde_json::Value = serde_json::from_str(&content).map_err(|error| {
-            Error::Fixture(format!(
-                "failed to parse JSON from {}: {error}",
-                path.display()
-            ))
-        })?;
+        let value: serde_json::Value = serde_json::from_str(&content)
+            .map_err(|error| Error::Fixture(format!("failed to parse JSON from {}: {error}", path.display())))?;
 
         let fixtures: Vec<ScrapeFixture> = if value.is_array() {
             // Direct array format.
@@ -169,8 +158,7 @@ impl FixtureManager {
     ///
     /// Fixtures with no `split` set are always dropped when filtering is active.
     pub fn filter_split(&mut self, split: &str) {
-        self.entries
-            .retain(|entry| entry.split.as_deref() == Some(split));
+        self.entries.retain(|entry| entry.split.as_deref() == Some(split));
     }
 
     /// Retain only fixtures whose URL matches the given regex `pattern`.
@@ -179,9 +167,8 @@ impl FixtureManager {
     ///
     /// Returns [`Error::Fixture`] if `pattern` is not a valid regular expression.
     pub fn filter_url(&mut self, pattern: &str) -> Result<()> {
-        let regex = Regex::new(pattern).map_err(|error| {
-            Error::Fixture(format!("invalid URL filter regex {pattern:?}: {error}"))
-        })?;
+        let regex = Regex::new(pattern)
+            .map_err(|error| Error::Fixture(format!("invalid URL filter regex {pattern:?}: {error}")))?;
         self.entries.retain(|entry| regex.is_match(&entry.url));
         Ok(())
     }
@@ -206,12 +193,11 @@ impl FixtureManager {
         if total == 0 {
             return;
         }
-        self.entries.sort_by(|a, b| {
-            match (a.id.parse::<u64>(), b.id.parse::<u64>()) {
+        self.entries
+            .sort_by(|a, b| match (a.id.parse::<u64>(), b.id.parse::<u64>()) {
                 (Ok(ai), Ok(bi)) => ai.cmp(&bi),
                 _ => a.id.cmp(&b.id),
-            }
-        });
+            });
         self.entries = self
             .entries
             .drain(..)
@@ -251,27 +237,16 @@ fn collect_json_files(dir: &Path) -> Result<Vec<std::path::PathBuf>> {
 }
 
 fn collect_json_files_inner(dir: &Path, files: &mut Vec<std::path::PathBuf>) -> Result<()> {
-    let read = fs::read_dir(dir).map_err(|error| {
-        Error::Fixture(format!(
-            "failed to read directory {}: {error}",
-            dir.display()
-        ))
-    })?;
+    let read = fs::read_dir(dir)
+        .map_err(|error| Error::Fixture(format!("failed to read directory {}: {error}", dir.display())))?;
 
     for entry in read {
-        let entry = entry.map_err(|error| {
-            Error::Fixture(format!(
-                "failed to read directory entry in {}: {error}",
-                dir.display()
-            ))
-        })?;
+        let entry = entry
+            .map_err(|error| Error::Fixture(format!("failed to read directory entry in {}: {error}", dir.display())))?;
         let path = entry.path();
-        let file_type = entry.file_type().map_err(|error| {
-            Error::Fixture(format!(
-                "failed to stat {}: {error}",
-                path.display()
-            ))
-        })?;
+        let file_type = entry
+            .file_type()
+            .map_err(|error| Error::Fixture(format!("failed to stat {}: {error}", path.display())))?;
 
         if file_type.is_dir() {
             collect_json_files_inner(&path, files)?;
@@ -417,11 +392,7 @@ mod tests {
         let subdir = dir.path().join("sub");
         fs::create_dir(&subdir).unwrap();
 
-        fs::write(
-            dir.path().join("a.json"),
-            r#"[{"id": "1", "url": "https://a.com"}]"#,
-        )
-        .unwrap();
+        fs::write(dir.path().join("a.json"), r#"[{"id": "1", "url": "https://a.com"}]"#).unwrap();
         fs::write(
             subdir.join("b.json"),
             r#"[{"id": "2", "url": "https://b.com"}, {"id": "3", "url": "https://c.com"}]"#,

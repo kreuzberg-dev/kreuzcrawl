@@ -19,7 +19,6 @@ defmodule Kreuzcrawl.ScrapeResult do
             is_pdf: false,
             was_skipped: false,
             detected_charset: "",
-            main_content_only: false,
             auth_header_sent: false,
             response_meta: nil,
             assets: [],
