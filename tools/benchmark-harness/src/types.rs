@@ -22,6 +22,66 @@ pub struct ScrapeFixture {
     pub tags: Vec<String>,
     /// Expected HTTP status code.
     pub expected_status: Option<u16>,
+    /// CSS selectors that must be present in the HTML for verified success.
+    #[serde(default)]
+    pub verify_selectors: Vec<String>,
+    /// Text strings that must appear in the extracted content (case-insensitive).
+    #[serde(default)]
+    pub verify_text: Vec<String>,
+    /// Domain category (e.g. "e-commerce", "social", "professional").
+    #[serde(default)]
+    pub category: Option<String>,
+}
+
+/// Result of content verification for a single fixture.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReachabilityResult {
+    /// Whether the content was verified as real (not blocked/captcha).
+    pub verified: bool,
+    /// Number of verify_selectors found in the HTML.
+    pub selectors_found: usize,
+    /// Total verify_selectors defined.
+    pub selectors_total: usize,
+    /// Number of verify_text strings found in content.
+    pub text_found: usize,
+    /// Total verify_text strings defined.
+    pub text_total: usize,
+    /// HTTP 200 but content was blocked (captcha, WAF page).
+    pub is_false_positive: bool,
+}
+
+/// Per-category reachability statistics.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CategoryReport {
+    /// Category label (e.g. "e-commerce", "social").
+    pub category: String,
+    /// Total fixtures in this category.
+    pub total: usize,
+    /// Number of verified fixtures.
+    pub verified: usize,
+    /// Number of false positives (HTTP 200, content blocked).
+    pub false_positives: usize,
+    /// Fraction of verified fixtures.
+    pub success_rate: f64,
+    /// Mean response time across fixtures in this category, in milliseconds.
+    pub avg_response_time_ms: f64,
+}
+
+/// Aggregate reachability report across all fixtures that have verification rules.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReachabilityReport {
+    /// Overall verified success rate (verified / total).
+    pub success_rate: f64,
+    /// False positive rate (false_positives / total).
+    pub false_positive_rate: f64,
+    /// Per-category breakdown.
+    pub categories: Vec<CategoryReport>,
+    /// Total fixtures tested (those with at least one verification rule).
+    pub total: usize,
+    /// Total verified.
+    pub verified: usize,
+    /// Total false positives.
+    pub false_positives: usize,
 }
 
 /// Quality metrics computed for a single scrape result against a fixture.
@@ -174,6 +234,8 @@ pub struct ScrapeBenchmarkResult {
     pub statistics: Option<DurationStatistics>,
     /// How pages were obtained during this run.
     pub execution_mode: ExecutionMode,
+    /// Content verification result, present when the fixture defines verification rules.
+    pub reachability: Option<ReachabilityResult>,
 }
 
 /// Aggregate quality summary over a full dataset run.
@@ -225,6 +287,8 @@ pub struct BenchmarkOutput {
     pub quality_report: Option<DatasetQualityReport>,
     /// Performance summary for the full run.
     pub performance_report: DatasetPerformanceReport,
+    /// Reachability summary, present when any fixture defines verification rules.
+    pub reachability_report: Option<ReachabilityReport>,
     /// Per-URL results.
     pub results: Vec<ScrapeBenchmarkResult>,
 }

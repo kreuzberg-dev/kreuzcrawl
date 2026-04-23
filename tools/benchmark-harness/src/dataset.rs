@@ -218,6 +218,9 @@ mod tests {
             split: None,
             tags: Vec::new(),
             expected_status: None,
+            verify_selectors: Vec::new(),
+            verify_text: Vec::new(),
+            category: None,
         };
         let fixture = raw_to_fixture(raw);
         assert_eq!(fixture.id, "99");
@@ -235,6 +238,9 @@ mod tests {
             split: None,
             tags: Vec::new(),
             expected_status: None,
+            verify_selectors: Vec::new(),
+            verify_text: Vec::new(),
+            category: None,
         };
         let fixture = raw_to_fixture(raw);
         assert_eq!(fixture.id, "abc-123");
@@ -255,6 +261,9 @@ mod tests {
             split: Some(String::from("train")),
             tags: Vec::new(),
             expected_status: None,
+            verify_selectors: Vec::new(),
+            verify_text: Vec::new(),
+            category: None,
         }];
         std::fs::write(&output_path, serde_json::to_string(&fixtures).unwrap()).unwrap();
 

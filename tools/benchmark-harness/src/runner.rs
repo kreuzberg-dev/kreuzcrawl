@@ -19,7 +19,7 @@ use crate::quality::compute_scrape_quality;
 use crate::stats::{calculate_variance, percentile_r7, sanitize_f64};
 use crate::types::{
     DurationStatistics, ErrorKind, ExecutionMode, IterationResult, PerformanceMetrics,
-    ScrapeBenchmarkResult, ScrapeFixture,
+    ReachabilityResult, ScrapeBenchmarkResult, ScrapeFixture,
 };
 use crate::Result;
 
@@ -376,7 +376,7 @@ fn build_result(
         None
     };
 
-    let (status_code, browser_used, js_render_hint, content_size, quality) =
+    let (status_code, browser_used, js_render_hint, content_size, quality, reachability) =
         if let Some(output) = last_output {
             let quality = if measure_quality {
                 if let Some(content) = output.content.as_deref() {
@@ -391,15 +391,38 @@ fn build_result(
             } else {
                 None
             };
+
+            let reachability =
+                if !fixture.verify_selectors.is_empty() || !fixture.verify_text.is_empty() {
+                    Some(crate::verify::verify_content(fixture, output))
+                } else {
+                    None
+                };
+
             (
                 Some(output.status_code),
                 output.browser_used,
                 output.js_render_hint,
                 output.content_size,
                 quality,
+                reachability,
             )
         } else {
-            (None, false, false, 0, None)
+            // No output — produce a failed reachability result when rules exist.
+            let reachability =
+                if !fixture.verify_selectors.is_empty() || !fixture.verify_text.is_empty() {
+                    Some(ReachabilityResult {
+                        verified: false,
+                        selectors_found: 0,
+                        selectors_total: fixture.verify_selectors.len(),
+                        text_found: 0,
+                        text_total: fixture.verify_text.len(),
+                        is_false_positive: false,
+                    })
+                } else {
+                    None
+                };
+            (None, false, false, 0, None, reachability)
         };
 
     let throughput = if mean_duration_ms > 0.0 {
@@ -450,6 +473,7 @@ fn build_result(
         iterations: records.to_vec(),
         statistics,
         execution_mode,
+        reachability,
     }
 }
 
@@ -633,6 +657,9 @@ mod tests {
             split: None,
             tags: vec![],
             expected_status: None,
+            verify_selectors: vec![],
+            verify_text: vec![],
+            category: None,
         };
 
         let result = build_result(
@@ -661,6 +688,9 @@ mod tests {
             split: None,
             tags: vec![],
             expected_status: None,
+            verify_selectors: vec![],
+            verify_text: vec![],
+            category: None,
         };
 
         let records = vec![IterationResult {
@@ -700,6 +730,9 @@ mod tests {
             split: None,
             tags: vec![],
             expected_status: None,
+            verify_selectors: vec![],
+            verify_text: vec![],
+            category: None,
         };
 
         let records = vec![IterationResult {
