@@ -13,26 +13,31 @@ public class FaviconInfoBuilder {
 	private Optional<String> sizes = Optional.empty();
 	private Optional<String> mimeType = Optional.empty();
 
-	public FaviconInfoBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public FaviconInfoBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public FaviconInfoBuilder withRel(String value) {
+	/** Sets the rel field. */
+	public FaviconInfoBuilder withRel(final String value) {
 		this.rel = value;
 		return this;
 	}
 
-	public FaviconInfoBuilder withSizes(Optional<String> value) {
+	/** Sets the sizes field. */
+	public FaviconInfoBuilder withSizes(final Optional<String> value) {
 		this.sizes = value;
 		return this;
 	}
 
-	public FaviconInfoBuilder withMimeType(Optional<String> value) {
+	/** Sets the mimeType field. */
+	public FaviconInfoBuilder withMimeType(final Optional<String> value) {
 		this.mimeType = value;
 		return this;
 	}
 
+	/** Builds the FaviconInfo instance. */
 	public FaviconInfo build() {
 		return new FaviconInfo(url, rel, sizes, mimeType);
 	}

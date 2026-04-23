@@ -14,31 +14,37 @@ public class ExtractionMetaBuilder {
 	private Optional<String> model = Optional.empty();
 	private long chunksProcessed = 0;
 
-	public ExtractionMetaBuilder withCost(Optional<Double> value) {
+	/** Sets the cost field. */
+	public ExtractionMetaBuilder withCost(final Optional<Double> value) {
 		this.cost = value;
 		return this;
 	}
 
-	public ExtractionMetaBuilder withPromptTokens(Optional<Long> value) {
+	/** Sets the promptTokens field. */
+	public ExtractionMetaBuilder withPromptTokens(final Optional<Long> value) {
 		this.promptTokens = value;
 		return this;
 	}
 
-	public ExtractionMetaBuilder withCompletionTokens(Optional<Long> value) {
+	/** Sets the completionTokens field. */
+	public ExtractionMetaBuilder withCompletionTokens(final Optional<Long> value) {
 		this.completionTokens = value;
 		return this;
 	}
 
-	public ExtractionMetaBuilder withModel(Optional<String> value) {
+	/** Sets the model field. */
+	public ExtractionMetaBuilder withModel(final Optional<String> value) {
 		this.model = value;
 		return this;
 	}
 
-	public ExtractionMetaBuilder withChunksProcessed(long value) {
+	/** Sets the chunksProcessed field. */
+	public ExtractionMetaBuilder withChunksProcessed(final long value) {
 		this.chunksProcessed = value;
 		return this;
 	}
 
+	/** Builds the ExtractionMeta instance. */
 	public ExtractionMeta build() {
 		return new ExtractionMeta(cost, promptTokens, completionTokens, model, chunksProcessed);
 	}

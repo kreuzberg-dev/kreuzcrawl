@@ -6,11 +6,13 @@ package dev.kreuzberg.kreuzcrawl;
  * indicators).
  */
 public class WafBlockedException extends CrawlErrorException {
-	public WafBlockedException(String message) {
+	/** Creates a new WafBlockedException with the given message. */
+	public WafBlockedException(final String message) {
 		super(message);
 	}
 
-	public WafBlockedException(String message, Throwable cause) {
+	/** Creates a new WafBlockedException with the given message and cause. */
+	public WafBlockedException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

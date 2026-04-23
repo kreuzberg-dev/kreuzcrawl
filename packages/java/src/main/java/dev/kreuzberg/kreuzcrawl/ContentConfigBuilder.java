@@ -25,66 +25,79 @@ public class ContentConfigBuilder {
 	private long wrapWidth = 0;
 	private boolean includeDocumentStructure = false;
 
-	public ContentConfigBuilder withOutputFormat(String value) {
+	/** Sets the outputFormat field. */
+	public ContentConfigBuilder withOutputFormat(final String value) {
 		this.outputFormat = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withPreprocessingPreset(String value) {
+	/** Sets the preprocessingPreset field. */
+	public ContentConfigBuilder withPreprocessingPreset(final String value) {
 		this.preprocessingPreset = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withRemoveNavigation(boolean value) {
+	/** Sets the removeNavigation field. */
+	public ContentConfigBuilder withRemoveNavigation(final boolean value) {
 		this.removeNavigation = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withRemoveForms(boolean value) {
+	/** Sets the removeForms field. */
+	public ContentConfigBuilder withRemoveForms(final boolean value) {
 		this.removeForms = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withStripTags(List<String> value) {
+	/** Sets the stripTags field. */
+	public ContentConfigBuilder withStripTags(final List<String> value) {
 		this.stripTags = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withPreserveTags(List<String> value) {
+	/** Sets the preserveTags field. */
+	public ContentConfigBuilder withPreserveTags(final List<String> value) {
 		this.preserveTags = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withExcludeSelectors(List<String> value) {
+	/** Sets the excludeSelectors field. */
+	public ContentConfigBuilder withExcludeSelectors(final List<String> value) {
 		this.excludeSelectors = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withSkipImages(boolean value) {
+	/** Sets the skipImages field. */
+	public ContentConfigBuilder withSkipImages(final boolean value) {
 		this.skipImages = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withMaxDepth(Optional<Long> value) {
+	/** Sets the maxDepth field. */
+	public ContentConfigBuilder withMaxDepth(final Optional<Long> value) {
 		this.maxDepth = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withWrap(boolean value) {
+	/** Sets the wrap field. */
+	public ContentConfigBuilder withWrap(final boolean value) {
 		this.wrap = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withWrapWidth(long value) {
+	/** Sets the wrapWidth field. */
+	public ContentConfigBuilder withWrapWidth(final long value) {
 		this.wrapWidth = value;
 		return this;
 	}
 
-	public ContentConfigBuilder withIncludeDocumentStructure(boolean value) {
+	/** Sets the includeDocumentStructure field. */
+	public ContentConfigBuilder withIncludeDocumentStructure(final boolean value) {
 		this.includeDocumentStructure = value;
 		return this;
 	}
 
+	/** Builds the ContentConfig instance. */
 	public ContentConfig build() {
 		return new ContentConfig(outputFormat, preprocessingPreset, removeNavigation, removeForms, stripTags,
 				preserveTags, excludeSelectors, skipImages, maxDepth, wrap, wrapWidth, includeDocumentStructure);

@@ -9,16 +9,19 @@ public class HeadingInfoBuilder {
 	private byte level = 0;
 	private String text = "";
 
-	public HeadingInfoBuilder withLevel(byte value) {
+	/** Sets the level field. */
+	public HeadingInfoBuilder withLevel(final byte value) {
 		this.level = value;
 		return this;
 	}
 
-	public HeadingInfoBuilder withText(String value) {
+	/** Sets the text field. */
+	public HeadingInfoBuilder withText(final String value) {
 		this.text = value;
 		return this;
 	}
 
+	/** Builds the HeadingInfo instance. */
 	public HeadingInfo build() {
 		return new HeadingInfo(level, text);
 	}

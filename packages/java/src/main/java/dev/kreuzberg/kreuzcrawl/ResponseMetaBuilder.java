@@ -16,41 +16,49 @@ public class ResponseMetaBuilder {
 	private Optional<String> contentLanguage = Optional.empty();
 	private Optional<String> contentEncoding = Optional.empty();
 
-	public ResponseMetaBuilder withEtag(Optional<String> value) {
+	/** Sets the etag field. */
+	public ResponseMetaBuilder withEtag(final Optional<String> value) {
 		this.etag = value;
 		return this;
 	}
 
-	public ResponseMetaBuilder withLastModified(Optional<String> value) {
+	/** Sets the lastModified field. */
+	public ResponseMetaBuilder withLastModified(final Optional<String> value) {
 		this.lastModified = value;
 		return this;
 	}
 
-	public ResponseMetaBuilder withCacheControl(Optional<String> value) {
+	/** Sets the cacheControl field. */
+	public ResponseMetaBuilder withCacheControl(final Optional<String> value) {
 		this.cacheControl = value;
 		return this;
 	}
 
-	public ResponseMetaBuilder withServer(Optional<String> value) {
+	/** Sets the server field. */
+	public ResponseMetaBuilder withServer(final Optional<String> value) {
 		this.server = value;
 		return this;
 	}
 
-	public ResponseMetaBuilder withXPoweredBy(Optional<String> value) {
+	/** Sets the xPoweredBy field. */
+	public ResponseMetaBuilder withXPoweredBy(final Optional<String> value) {
 		this.xPoweredBy = value;
 		return this;
 	}
 
-	public ResponseMetaBuilder withContentLanguage(Optional<String> value) {
+	/** Sets the contentLanguage field. */
+	public ResponseMetaBuilder withContentLanguage(final Optional<String> value) {
 		this.contentLanguage = value;
 		return this;
 	}
 
-	public ResponseMetaBuilder withContentEncoding(Optional<String> value) {
+	/** Sets the contentEncoding field. */
+	public ResponseMetaBuilder withContentEncoding(final Optional<String> value) {
 		this.contentEncoding = value;
 		return this;
 	}
 
+	/** Builds the ResponseMeta instance. */
 	public ResponseMeta build() {
 		return new ResponseMeta(etag, lastModified, cacheControl, server, xPoweredBy, contentLanguage, contentEncoding);
 	}

@@ -17,19 +17,22 @@ public enum ImageSource {
 	/** A {@code twitter:image} meta tag. */
 	TwitterImage("twitter:image");
 
+	/** The string value. */
 	private final String value;
 
-	ImageSource(String value) {
+	ImageSource(final String value) {
 		this.value = value;
 	}
 
+	/** Returns the string value. */
 	@JsonValue
 	public String getValue() {
 		return value;
 	}
 
+	/** Creates an instance from a string value. */
 	@JsonCreator
-	public static ImageSource fromValue(String value) {
+	public static ImageSource fromValue(final String value) {
 		for (ImageSource e : values()) {
 			if (e.value.equalsIgnoreCase(value)) {
 				return e;

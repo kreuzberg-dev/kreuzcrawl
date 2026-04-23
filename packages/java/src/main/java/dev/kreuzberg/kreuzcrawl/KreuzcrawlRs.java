@@ -11,7 +11,7 @@ public final class KreuzcrawlRs {
 	private KreuzcrawlRs() {
 	}
 
-	public static CrawlEngineHandle createEngine(CrawlConfig config) throws KreuzcrawlRsException {
+	public static CrawlEngineHandle createEngine(final CrawlConfig config) throws KreuzcrawlRsException {
 		try (var arena = Arena.ofConfined()) {
 			var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
 			var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
@@ -32,7 +32,7 @@ public final class KreuzcrawlRs {
 		}
 	}
 
-	public static ScrapeResult scrape(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
+	public static ScrapeResult scrape(final CrawlEngineHandle engine, final String url) throws KreuzcrawlRsException {
 		try (var arena = Arena.ofConfined()) {
 			var cengine = engine.handle();
 			var curl = arena.allocateFrom(url);
@@ -55,7 +55,7 @@ public final class KreuzcrawlRs {
 		}
 	}
 
-	public static CompletableFuture<ScrapeResult> scrapeAsync(CrawlEngineHandle engine, String url) {
+	public static CompletableFuture<ScrapeResult> scrapeAsync(final CrawlEngineHandle engine, final String url) {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				return scrape(engine, url);
@@ -65,7 +65,7 @@ public final class KreuzcrawlRs {
 		});
 	}
 
-	public static CrawlResult crawl(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
+	public static CrawlResult crawl(final CrawlEngineHandle engine, final String url) throws KreuzcrawlRsException {
 		try (var arena = Arena.ofConfined()) {
 			var cengine = engine.handle();
 			var curl = arena.allocateFrom(url);
@@ -88,7 +88,7 @@ public final class KreuzcrawlRs {
 		}
 	}
 
-	public static CompletableFuture<CrawlResult> crawlAsync(CrawlEngineHandle engine, String url) {
+	public static CompletableFuture<CrawlResult> crawlAsync(final CrawlEngineHandle engine, final String url) {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				return crawl(engine, url);
@@ -98,7 +98,7 @@ public final class KreuzcrawlRs {
 		});
 	}
 
-	public static MapResult mapUrls(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
+	public static MapResult mapUrls(final CrawlEngineHandle engine, final String url) throws KreuzcrawlRsException {
 		try (var arena = Arena.ofConfined()) {
 			var cengine = engine.handle();
 			var curl = arena.allocateFrom(url);
@@ -121,7 +121,7 @@ public final class KreuzcrawlRs {
 		}
 	}
 
-	public static CompletableFuture<MapResult> mapUrlsAsync(CrawlEngineHandle engine, String url) {
+	public static CompletableFuture<MapResult> mapUrlsAsync(final CrawlEngineHandle engine, final String url) {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				return mapUrls(engine, url);
@@ -131,7 +131,7 @@ public final class KreuzcrawlRs {
 		});
 	}
 
-	public static List<BatchScrapeResult> batchScrape(CrawlEngineHandle engine, List<String> urls)
+	public static List<BatchScrapeResult> batchScrape(final CrawlEngineHandle engine, final List<String> urls)
 			throws KreuzcrawlRsException {
 		try (var arena = Arena.ofConfined()) {
 			var cengine = engine.handle();
@@ -151,8 +151,8 @@ public final class KreuzcrawlRs {
 		}
 	}
 
-	public static CompletableFuture<List<BatchScrapeResult>> batchScrapeAsync(CrawlEngineHandle engine,
-			List<String> urls) {
+	public static CompletableFuture<List<BatchScrapeResult>> batchScrapeAsync(final CrawlEngineHandle engine,
+			final List<String> urls) {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				return batchScrape(engine, urls);
@@ -162,7 +162,7 @@ public final class KreuzcrawlRs {
 		});
 	}
 
-	public static List<BatchCrawlResult> batchCrawl(CrawlEngineHandle engine, List<String> urls)
+	public static List<BatchCrawlResult> batchCrawl(final CrawlEngineHandle engine, final List<String> urls)
 			throws KreuzcrawlRsException {
 		try (var arena = Arena.ofConfined()) {
 			var cengine = engine.handle();
@@ -182,8 +182,8 @@ public final class KreuzcrawlRs {
 		}
 	}
 
-	public static CompletableFuture<List<BatchCrawlResult>> batchCrawlAsync(CrawlEngineHandle engine,
-			List<String> urls) {
+	public static CompletableFuture<List<BatchCrawlResult>> batchCrawlAsync(final CrawlEngineHandle engine,
+			final List<String> urls) {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				return batchCrawl(engine, urls);

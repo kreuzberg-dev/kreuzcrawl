@@ -14,31 +14,37 @@ public class ImageInfoBuilder {
 	private Optional<Integer> height = Optional.empty();
 	private ImageSource source = null;
 
-	public ImageInfoBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public ImageInfoBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public ImageInfoBuilder withAlt(Optional<String> value) {
+	/** Sets the alt field. */
+	public ImageInfoBuilder withAlt(final Optional<String> value) {
 		this.alt = value;
 		return this;
 	}
 
-	public ImageInfoBuilder withWidth(Optional<Integer> value) {
+	/** Sets the width field. */
+	public ImageInfoBuilder withWidth(final Optional<Integer> value) {
 		this.width = value;
 		return this;
 	}
 
-	public ImageInfoBuilder withHeight(Optional<Integer> value) {
+	/** Sets the height field. */
+	public ImageInfoBuilder withHeight(final Optional<Integer> value) {
 		this.height = value;
 		return this;
 	}
 
-	public ImageInfoBuilder withSource(ImageSource value) {
+	/** Sets the source field. */
+	public ImageInfoBuilder withSource(final ImageSource value) {
 		this.source = value;
 		return this;
 	}
 
+	/** Builds the ImageInfo instance. */
 	public ImageInfo build() {
 		return new ImageInfo(url, alt, width, height, source);
 	}

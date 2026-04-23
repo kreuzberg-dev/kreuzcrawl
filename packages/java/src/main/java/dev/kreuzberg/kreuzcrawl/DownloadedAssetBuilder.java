@@ -15,36 +15,43 @@ public class DownloadedAssetBuilder {
 	private AssetCategory assetCategory = null;
 	private Optional<String> htmlTag = Optional.empty();
 
-	public DownloadedAssetBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public DownloadedAssetBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public DownloadedAssetBuilder withContentHash(String value) {
+	/** Sets the contentHash field. */
+	public DownloadedAssetBuilder withContentHash(final String value) {
 		this.contentHash = value;
 		return this;
 	}
 
-	public DownloadedAssetBuilder withMimeType(Optional<String> value) {
+	/** Sets the mimeType field. */
+	public DownloadedAssetBuilder withMimeType(final Optional<String> value) {
 		this.mimeType = value;
 		return this;
 	}
 
-	public DownloadedAssetBuilder withSize(long value) {
+	/** Sets the size field. */
+	public DownloadedAssetBuilder withSize(final long value) {
 		this.size = value;
 		return this;
 	}
 
-	public DownloadedAssetBuilder withAssetCategory(AssetCategory value) {
+	/** Sets the assetCategory field. */
+	public DownloadedAssetBuilder withAssetCategory(final AssetCategory value) {
 		this.assetCategory = value;
 		return this;
 	}
 
-	public DownloadedAssetBuilder withHtmlTag(Optional<String> value) {
+	/** Sets the htmlTag field. */
+	public DownloadedAssetBuilder withHtmlTag(final Optional<String> value) {
 		this.htmlTag = value;
 		return this;
 	}
 
+	/** Builds the DownloadedAsset instance. */
 	public DownloadedAsset build() {
 		return new DownloadedAsset(url, contentHash, mimeType, size, assetCategory, htmlTag);
 	}

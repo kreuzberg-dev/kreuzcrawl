@@ -14,31 +14,37 @@ public class LinkInfoBuilder {
 	private Optional<String> rel = Optional.empty();
 	private boolean nofollow = false;
 
-	public LinkInfoBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public LinkInfoBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public LinkInfoBuilder withText(String value) {
+	/** Sets the text field. */
+	public LinkInfoBuilder withText(final String value) {
 		this.text = value;
 		return this;
 	}
 
-	public LinkInfoBuilder withLinkType(LinkType value) {
+	/** Sets the linkType field. */
+	public LinkInfoBuilder withLinkType(final LinkType value) {
 		this.linkType = value;
 		return this;
 	}
 
-	public LinkInfoBuilder withRel(Optional<String> value) {
+	/** Sets the rel field. */
+	public LinkInfoBuilder withRel(final Optional<String> value) {
 		this.rel = value;
 		return this;
 	}
 
-	public LinkInfoBuilder withNofollow(boolean value) {
+	/** Sets the nofollow field. */
+	public LinkInfoBuilder withNofollow(final boolean value) {
 		this.nofollow = value;
 		return this;
 	}
 
+	/** Builds the LinkInfo instance. */
 	public LinkInfo build() {
 		return new LinkInfo(url, text, linkType, rel, nofollow);
 	}

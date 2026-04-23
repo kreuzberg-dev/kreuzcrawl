@@ -3,11 +3,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** A bad gateway error occurred (HTTP 502). */
 public class BadGatewayException extends CrawlErrorException {
-	public BadGatewayException(String message) {
+	/** Creates a new BadGatewayException with the given message. */
+	public BadGatewayException(final String message) {
 		super(message);
 	}
 
-	public BadGatewayException(String message, Throwable cause) {
+	/** Creates a new BadGatewayException with the given message and cause. */
+	public BadGatewayException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

@@ -15,19 +15,22 @@ public enum FeedType {
 	/** JSON Feed. */
 	JsonFeed("json_feed");
 
+	/** The string value. */
 	private final String value;
 
-	FeedType(String value) {
+	FeedType(final String value) {
 		this.value = value;
 	}
 
+	/** Returns the string value. */
 	@JsonValue
 	public String getValue() {
 		return value;
 	}
 
+	/** Creates an instance from a string value. */
 	@JsonCreator
-	public static FeedType fromValue(String value) {
+	public static FeedType fromValue(final String value) {
 		for (FeedType e : values()) {
 			if (e.value.equalsIgnoreCase(value)) {
 				return e;

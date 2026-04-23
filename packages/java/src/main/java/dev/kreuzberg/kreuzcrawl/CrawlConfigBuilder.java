@@ -46,181 +46,217 @@ public class CrawlConfigBuilder {
 	private Optional<String> browserProfile = Optional.empty();
 	private boolean saveBrowserProfile = false;
 
-	public CrawlConfigBuilder withMaxDepth(Optional<Long> value) {
+	/** Sets the maxDepth field. */
+	public CrawlConfigBuilder withMaxDepth(final Optional<Long> value) {
 		this.maxDepth = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withMaxPages(Optional<Long> value) {
+	/** Sets the maxPages field. */
+	public CrawlConfigBuilder withMaxPages(final Optional<Long> value) {
 		this.maxPages = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withMaxConcurrent(Optional<Long> value) {
+	/** Sets the maxConcurrent field. */
+	public CrawlConfigBuilder withMaxConcurrent(final Optional<Long> value) {
 		this.maxConcurrent = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withRespectRobotsTxt(boolean value) {
+	/** Sets the respectRobotsTxt field. */
+	public CrawlConfigBuilder withRespectRobotsTxt(final boolean value) {
 		this.respectRobotsTxt = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withUserAgent(Optional<String> value) {
+	/** Sets the userAgent field. */
+	public CrawlConfigBuilder withUserAgent(final Optional<String> value) {
 		this.userAgent = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withStayOnDomain(boolean value) {
+	/** Sets the stayOnDomain field. */
+	public CrawlConfigBuilder withStayOnDomain(final boolean value) {
 		this.stayOnDomain = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withAllowSubdomains(boolean value) {
+	/** Sets the allowSubdomains field. */
+	public CrawlConfigBuilder withAllowSubdomains(final boolean value) {
 		this.allowSubdomains = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withIncludePaths(List<String> value) {
+	/** Sets the includePaths field. */
+	public CrawlConfigBuilder withIncludePaths(final List<String> value) {
 		this.includePaths = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withExcludePaths(List<String> value) {
+	/** Sets the excludePaths field. */
+	public CrawlConfigBuilder withExcludePaths(final List<String> value) {
 		this.excludePaths = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withCustomHeaders(Map<String, String> value) {
+	/** Sets the customHeaders field. */
+	public CrawlConfigBuilder withCustomHeaders(final Map<String, String> value) {
 		this.customHeaders = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withRequestTimeout(Long value) {
+	/** Sets the requestTimeout field. */
+	public CrawlConfigBuilder withRequestTimeout(final Long value) {
 		this.requestTimeout = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withRateLimitMs(Optional<Long> value) {
+	/** Sets the rateLimitMs field. */
+	public CrawlConfigBuilder withRateLimitMs(final Optional<Long> value) {
 		this.rateLimitMs = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withMaxRedirects(long value) {
+	/** Sets the maxRedirects field. */
+	public CrawlConfigBuilder withMaxRedirects(final long value) {
 		this.maxRedirects = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withRetryCount(long value) {
+	/** Sets the retryCount field. */
+	public CrawlConfigBuilder withRetryCount(final long value) {
 		this.retryCount = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withRetryCodes(List<Short> value) {
+	/** Sets the retryCodes field. */
+	public CrawlConfigBuilder withRetryCodes(final List<Short> value) {
 		this.retryCodes = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withCookiesEnabled(boolean value) {
+	/** Sets the cookiesEnabled field. */
+	public CrawlConfigBuilder withCookiesEnabled(final boolean value) {
 		this.cookiesEnabled = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withAuth(Optional<AuthConfig> value) {
+	/** Sets the auth field. */
+	public CrawlConfigBuilder withAuth(final Optional<AuthConfig> value) {
 		this.auth = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withMaxBodySize(Optional<Long> value) {
+	/** Sets the maxBodySize field. */
+	public CrawlConfigBuilder withMaxBodySize(final Optional<Long> value) {
 		this.maxBodySize = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withRemoveTags(List<String> value) {
+	/** Sets the removeTags field. */
+	public CrawlConfigBuilder withRemoveTags(final List<String> value) {
 		this.removeTags = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withContent(ContentConfig value) {
+	/** Sets the content field. */
+	public CrawlConfigBuilder withContent(final ContentConfig value) {
 		this.content = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withMapLimit(Optional<Long> value) {
+	/** Sets the mapLimit field. */
+	public CrawlConfigBuilder withMapLimit(final Optional<Long> value) {
 		this.mapLimit = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withMapSearch(Optional<String> value) {
+	/** Sets the mapSearch field. */
+	public CrawlConfigBuilder withMapSearch(final Optional<String> value) {
 		this.mapSearch = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withDownloadAssets(boolean value) {
+	/** Sets the downloadAssets field. */
+	public CrawlConfigBuilder withDownloadAssets(final boolean value) {
 		this.downloadAssets = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withAssetTypes(List<AssetCategory> value) {
+	/** Sets the assetTypes field. */
+	public CrawlConfigBuilder withAssetTypes(final List<AssetCategory> value) {
 		this.assetTypes = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withMaxAssetSize(Optional<Long> value) {
+	/** Sets the maxAssetSize field. */
+	public CrawlConfigBuilder withMaxAssetSize(final Optional<Long> value) {
 		this.maxAssetSize = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withBrowser(BrowserConfig value) {
+	/** Sets the browser field. */
+	public CrawlConfigBuilder withBrowser(final BrowserConfig value) {
 		this.browser = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withProxy(Optional<ProxyConfig> value) {
+	/** Sets the proxy field. */
+	public CrawlConfigBuilder withProxy(final Optional<ProxyConfig> value) {
 		this.proxy = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withUserAgents(List<String> value) {
+	/** Sets the userAgents field. */
+	public CrawlConfigBuilder withUserAgents(final List<String> value) {
 		this.userAgents = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withCaptureScreenshot(boolean value) {
+	/** Sets the captureScreenshot field. */
+	public CrawlConfigBuilder withCaptureScreenshot(final boolean value) {
 		this.captureScreenshot = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withDownloadDocuments(boolean value) {
+	/** Sets the downloadDocuments field. */
+	public CrawlConfigBuilder withDownloadDocuments(final boolean value) {
 		this.downloadDocuments = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withDocumentMaxSize(Optional<Long> value) {
+	/** Sets the documentMaxSize field. */
+	public CrawlConfigBuilder withDocumentMaxSize(final Optional<Long> value) {
 		this.documentMaxSize = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withDocumentMimeTypes(List<String> value) {
+	/** Sets the documentMimeTypes field. */
+	public CrawlConfigBuilder withDocumentMimeTypes(final List<String> value) {
 		this.documentMimeTypes = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withWarcOutput(Optional<java.nio.file.Path> value) {
+	/** Sets the warcOutput field. */
+	public CrawlConfigBuilder withWarcOutput(final Optional<java.nio.file.Path> value) {
 		this.warcOutput = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withBrowserProfile(Optional<String> value) {
+	/** Sets the browserProfile field. */
+	public CrawlConfigBuilder withBrowserProfile(final Optional<String> value) {
 		this.browserProfile = value;
 		return this;
 	}
 
-	public CrawlConfigBuilder withSaveBrowserProfile(boolean value) {
+	/** Sets the saveBrowserProfile field. */
+	public CrawlConfigBuilder withSaveBrowserProfile(final boolean value) {
 		this.saveBrowserProfile = value;
 		return this;
 	}
 
+	/** Builds the CrawlConfig instance. */
 	public CrawlConfig build() {
 		return new CrawlConfig(maxDepth, maxPages, maxConcurrent, respectRobotsTxt, userAgent, stayOnDomain,
 				allowSubdomains, includePaths, excludePaths, customHeaders, requestTimeout, rateLimitMs, maxRedirects,

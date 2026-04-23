@@ -13,7 +13,7 @@ public final class Kreuzcrawl {
 	 * If `config` is `None`, uses [`CrawlConfig::default()`]. Returns an error if
 	 * the configuration is invalid.
 	 */
-	public static CrawlEngineHandle createEngine(CrawlConfig config) throws KreuzcrawlRsException {
+	public static CrawlEngineHandle createEngine(final CrawlConfig config) throws KreuzcrawlRsException {
 		return KreuzcrawlRs.createEngine(config);
 	}
 
@@ -24,7 +24,7 @@ public final class Kreuzcrawl {
 	/**
 	 * Scrape a single URL, returning extracted page data.
 	 */
-	public static ScrapeResult scrape(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
+	public static ScrapeResult scrape(final CrawlEngineHandle engine, final String url) throws KreuzcrawlRsException {
 		java.util.Objects.requireNonNull(engine, "engine must not be null");
 		java.util.Objects.requireNonNull(url, "url must not be null");
 		return KreuzcrawlRs.scrape(engine, url);
@@ -34,7 +34,7 @@ public final class Kreuzcrawl {
 	 * Crawl a website starting from `url`, following links up to the configured
 	 * depth.
 	 */
-	public static CrawlResult crawl(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
+	public static CrawlResult crawl(final CrawlEngineHandle engine, final String url) throws KreuzcrawlRsException {
 		java.util.Objects.requireNonNull(engine, "engine must not be null");
 		java.util.Objects.requireNonNull(url, "url must not be null");
 		return KreuzcrawlRs.crawl(engine, url);
@@ -43,7 +43,7 @@ public final class Kreuzcrawl {
 	/**
 	 * Discover all pages on a website by following links and sitemaps.
 	 */
-	public static MapResult mapUrls(CrawlEngineHandle engine, String url) throws KreuzcrawlRsException {
+	public static MapResult mapUrls(final CrawlEngineHandle engine, final String url) throws KreuzcrawlRsException {
 		java.util.Objects.requireNonNull(engine, "engine must not be null");
 		java.util.Objects.requireNonNull(url, "url must not be null");
 		return KreuzcrawlRs.mapUrls(engine, url);
@@ -52,7 +52,7 @@ public final class Kreuzcrawl {
 	/**
 	 * Scrape multiple URLs concurrently.
 	 */
-	public static List<BatchScrapeResult> batchScrape(CrawlEngineHandle engine, List<String> urls)
+	public static List<BatchScrapeResult> batchScrape(final CrawlEngineHandle engine, final List<String> urls)
 			throws KreuzcrawlRsException {
 		java.util.Objects.requireNonNull(engine, "engine must not be null");
 		java.util.Objects.requireNonNull(urls, "urls must not be null");
@@ -63,7 +63,7 @@ public final class Kreuzcrawl {
 	 * Crawl multiple seed URLs concurrently, each following links to configured
 	 * depth.
 	 */
-	public static List<BatchCrawlResult> batchCrawl(CrawlEngineHandle engine, List<String> urls)
+	public static List<BatchCrawlResult> batchCrawl(final CrawlEngineHandle engine, final List<String> urls)
 			throws KreuzcrawlRsException {
 		java.util.Objects.requireNonNull(engine, "engine must not be null");
 		java.util.Objects.requireNonNull(urls, "urls must not be null");

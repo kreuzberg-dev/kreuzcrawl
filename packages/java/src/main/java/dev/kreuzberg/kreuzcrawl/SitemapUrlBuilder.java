@@ -13,26 +13,31 @@ public class SitemapUrlBuilder {
 	private Optional<String> changefreq = Optional.empty();
 	private Optional<String> priority = Optional.empty();
 
-	public SitemapUrlBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public SitemapUrlBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public SitemapUrlBuilder withLastmod(Optional<String> value) {
+	/** Sets the lastmod field. */
+	public SitemapUrlBuilder withLastmod(final Optional<String> value) {
 		this.lastmod = value;
 		return this;
 	}
 
-	public SitemapUrlBuilder withChangefreq(Optional<String> value) {
+	/** Sets the changefreq field. */
+	public SitemapUrlBuilder withChangefreq(final Optional<String> value) {
 		this.changefreq = value;
 		return this;
 	}
 
-	public SitemapUrlBuilder withPriority(Optional<String> value) {
+	/** Sets the priority field. */
+	public SitemapUrlBuilder withPriority(final Optional<String> value) {
 		this.priority = value;
 		return this;
 	}
 
+	/** Builds the SitemapUrl instance. */
 	public SitemapUrl build() {
 		return new SitemapUrl(url, lastmod, changefreq, priority);
 	}

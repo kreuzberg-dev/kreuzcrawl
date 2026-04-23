@@ -17,19 +17,22 @@ public enum BrowserMode {
 	/** Never use the browser fallback. */
 	Never("never");
 
+	/** The string value. */
 	private final String value;
 
-	BrowserMode(String value) {
+	BrowserMode(final String value) {
 		this.value = value;
 	}
 
+	/** Returns the string value. */
 	@JsonValue
 	public String getValue() {
 		return value;
 	}
 
+	/** Creates an instance from a string value. */
 	@JsonCreator
-	public static BrowserMode fromValue(String value) {
+	public static BrowserMode fromValue(final String value) {
 		for (BrowserMode e : values()) {
 			if (e.value.equalsIgnoreCase(value)) {
 				return e;

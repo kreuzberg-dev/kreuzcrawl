@@ -37,141 +37,169 @@ public class ScrapeResultBuilder {
 	private Optional<byte[]> screenshot = Optional.empty();
 	private Optional<DownloadedDocument> downloadedDocument = Optional.empty();
 
-	public ScrapeResultBuilder withStatusCode(short value) {
+	/** Sets the statusCode field. */
+	public ScrapeResultBuilder withStatusCode(final short value) {
 		this.statusCode = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withContentType(String value) {
+	/** Sets the contentType field. */
+	public ScrapeResultBuilder withContentType(final String value) {
 		this.contentType = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withHtml(String value) {
+	/** Sets the html field. */
+	public ScrapeResultBuilder withHtml(final String value) {
 		this.html = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withBodySize(long value) {
+	/** Sets the bodySize field. */
+	public ScrapeResultBuilder withBodySize(final long value) {
 		this.bodySize = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withMetadata(PageMetadata value) {
+	/** Sets the metadata field. */
+	public ScrapeResultBuilder withMetadata(final PageMetadata value) {
 		this.metadata = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withLinks(List<LinkInfo> value) {
+	/** Sets the links field. */
+	public ScrapeResultBuilder withLinks(final List<LinkInfo> value) {
 		this.links = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withImages(List<ImageInfo> value) {
+	/** Sets the images field. */
+	public ScrapeResultBuilder withImages(final List<ImageInfo> value) {
 		this.images = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withFeeds(List<FeedInfo> value) {
+	/** Sets the feeds field. */
+	public ScrapeResultBuilder withFeeds(final List<FeedInfo> value) {
 		this.feeds = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withJsonLd(List<JsonLdEntry> value) {
+	/** Sets the jsonLd field. */
+	public ScrapeResultBuilder withJsonLd(final List<JsonLdEntry> value) {
 		this.jsonLd = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withIsAllowed(boolean value) {
+	/** Sets the isAllowed field. */
+	public ScrapeResultBuilder withIsAllowed(final boolean value) {
 		this.isAllowed = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withCrawlDelay(Optional<Long> value) {
+	/** Sets the crawlDelay field. */
+	public ScrapeResultBuilder withCrawlDelay(final Optional<Long> value) {
 		this.crawlDelay = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withNoindexDetected(boolean value) {
+	/** Sets the noindexDetected field. */
+	public ScrapeResultBuilder withNoindexDetected(final boolean value) {
 		this.noindexDetected = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withNofollowDetected(boolean value) {
+	/** Sets the nofollowDetected field. */
+	public ScrapeResultBuilder withNofollowDetected(final boolean value) {
 		this.nofollowDetected = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withXRobotsTag(Optional<String> value) {
+	/** Sets the xRobotsTag field. */
+	public ScrapeResultBuilder withXRobotsTag(final Optional<String> value) {
 		this.xRobotsTag = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withIsPdf(boolean value) {
+	/** Sets the isPdf field. */
+	public ScrapeResultBuilder withIsPdf(final boolean value) {
 		this.isPdf = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withWasSkipped(boolean value) {
+	/** Sets the wasSkipped field. */
+	public ScrapeResultBuilder withWasSkipped(final boolean value) {
 		this.wasSkipped = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withDetectedCharset(Optional<String> value) {
+	/** Sets the detectedCharset field. */
+	public ScrapeResultBuilder withDetectedCharset(final Optional<String> value) {
 		this.detectedCharset = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withAuthHeaderSent(boolean value) {
+	/** Sets the authHeaderSent field. */
+	public ScrapeResultBuilder withAuthHeaderSent(final boolean value) {
 		this.authHeaderSent = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withResponseMeta(Optional<ResponseMeta> value) {
+	/** Sets the responseMeta field. */
+	public ScrapeResultBuilder withResponseMeta(final Optional<ResponseMeta> value) {
 		this.responseMeta = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withAssets(List<DownloadedAsset> value) {
+	/** Sets the assets field. */
+	public ScrapeResultBuilder withAssets(final List<DownloadedAsset> value) {
 		this.assets = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withJsRenderHint(boolean value) {
+	/** Sets the jsRenderHint field. */
+	public ScrapeResultBuilder withJsRenderHint(final boolean value) {
 		this.jsRenderHint = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withBrowserUsed(boolean value) {
+	/** Sets the browserUsed field. */
+	public ScrapeResultBuilder withBrowserUsed(final boolean value) {
 		this.browserUsed = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withMarkdown(Optional<MarkdownResult> value) {
+	/** Sets the markdown field. */
+	public ScrapeResultBuilder withMarkdown(final Optional<MarkdownResult> value) {
 		this.markdown = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withExtractedData(Optional<Object> value) {
+	/** Sets the extractedData field. */
+	public ScrapeResultBuilder withExtractedData(final Optional<Object> value) {
 		this.extractedData = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withExtractionMeta(Optional<ExtractionMeta> value) {
+	/** Sets the extractionMeta field. */
+	public ScrapeResultBuilder withExtractionMeta(final Optional<ExtractionMeta> value) {
 		this.extractionMeta = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withScreenshot(Optional<byte[]> value) {
+	/** Sets the screenshot field. */
+	public ScrapeResultBuilder withScreenshot(final Optional<byte[]> value) {
 		this.screenshot = value;
 		return this;
 	}
 
-	public ScrapeResultBuilder withDownloadedDocument(Optional<DownloadedDocument> value) {
+	/** Sets the downloadedDocument field. */
+	public ScrapeResultBuilder withDownloadedDocument(final Optional<DownloadedDocument> value) {
 		this.downloadedDocument = value;
 		return this;
 	}
 
+	/** Builds the ScrapeResult instance. */
 	public ScrapeResult build() {
 		return new ScrapeResult(statusCode, contentType, html, bodySize, metadata, links, images, feeds, jsonLd,
 				isAllowed, crawlDelay, noindexDetected, nofollowDetected, xRobotsTag, isPdf, wasSkipped,

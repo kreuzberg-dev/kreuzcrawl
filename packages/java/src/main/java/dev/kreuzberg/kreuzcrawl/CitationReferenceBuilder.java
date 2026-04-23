@@ -7,21 +7,25 @@ public class CitationReferenceBuilder {
 	private String url = "";
 	private String text = "";
 
-	public CitationReferenceBuilder withIndex(long value) {
+	/** Sets the index field. */
+	public CitationReferenceBuilder withIndex(final long value) {
 		this.index = value;
 		return this;
 	}
 
-	public CitationReferenceBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public CitationReferenceBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public CitationReferenceBuilder withText(String value) {
+	/** Sets the text field. */
+	public CitationReferenceBuilder withText(final String value) {
 		this.text = value;
 		return this;
 	}
 
+	/** Builds the CitationReference instance. */
 	public CitationReference build() {
 		return new CitationReference(index, url, text);
 	}

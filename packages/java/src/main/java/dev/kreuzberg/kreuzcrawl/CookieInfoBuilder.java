@@ -13,26 +13,31 @@ public class CookieInfoBuilder {
 	private Optional<String> domain = Optional.empty();
 	private Optional<String> path = Optional.empty();
 
-	public CookieInfoBuilder withName(String value) {
+	/** Sets the name field. */
+	public CookieInfoBuilder withName(final String value) {
 		this.name = value;
 		return this;
 	}
 
-	public CookieInfoBuilder withValue(String value) {
+	/** Sets the value field. */
+	public CookieInfoBuilder withValue(final String value) {
 		this.value = value;
 		return this;
 	}
 
-	public CookieInfoBuilder withDomain(Optional<String> value) {
+	/** Sets the domain field. */
+	public CookieInfoBuilder withDomain(final Optional<String> value) {
 		this.domain = value;
 		return this;
 	}
 
-	public CookieInfoBuilder withPath(Optional<String> value) {
+	/** Sets the path field. */
+	public CookieInfoBuilder withPath(final Optional<String> value) {
 		this.path = value;
 		return this;
 	}
 
+	/** Builds the CookieInfo instance. */
 	public CookieInfo build() {
 		return new CookieInfo(name, value, domain, path);
 	}
