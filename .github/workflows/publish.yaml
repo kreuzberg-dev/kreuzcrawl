@@ -3259,7 +3259,7 @@ jobs:
       needs.upload-homebrew-bottles.result == 'success'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6

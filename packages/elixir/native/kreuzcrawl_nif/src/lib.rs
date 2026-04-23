@@ -15,7 +15,6 @@
     clippy::unnecessary_fallible_conversions
 )]
 
-use rustler::Encoder;
 use rustler::ResourceArc;
 use std::collections::HashMap;
 use std::sync::Arc;
