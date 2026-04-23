@@ -10,6 +10,12 @@ export PKG_CONFIG_PATH="$root/crates/kreuzcrawl-ffi:${PKG_CONFIG_PATH:-}"
 export DYLD_LIBRARY_PATH="$root/target/release:$root/target/debug:${DYLD_LIBRARY_PATH:-}"
 export LD_LIBRARY_PATH="$root/target/release:$root/target/debug:${LD_LIBRARY_PATH:-}"
 
+# Ensure FFI library is built (Go bindings link against it via cgo).
+if [ ! -f "$root/target/release/libkreuzcrawl_ffi.dylib" ] && [ ! -f "$root/target/release/libkreuzcrawl_ffi.so" ] && [ ! -f "$root/target/debug/libkreuzcrawl_ffi.dylib" ] && [ ! -f "$root/target/debug/libkreuzcrawl_ffi.so" ]; then
+  echo "==> Building kreuzcrawl-ffi (required by Go bindings)..."
+  cargo build -p kreuzcrawl-ffi 2>/dev/null
+fi
+
 # Go module directories in go.work
 workspace_dirs=(
   packages/go/v4
