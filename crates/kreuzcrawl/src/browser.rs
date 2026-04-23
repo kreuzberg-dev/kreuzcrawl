@@ -33,7 +33,7 @@ pub(crate) async fn browser_fetch(
         pooled.close().await;
         result
     } else {
-        let (browser, mut handler) = launch_or_connect(config).await?;
+        let (browser, mut handler, data_dir) = launch_or_connect(config).await?;
         let handler_handle = tokio::spawn(async move { while handler.next().await.is_some() {} });
 
         let page = browser
@@ -45,6 +45,11 @@ pub(crate) async fn browser_fetch(
 
         drop(browser);
         let _ = tokio::time::timeout(Duration::from_secs(5), handler_handle).await;
+
+        // Clean up the temporary user data directory.
+        if let Some(dir) = data_dir {
+            let _ = std::fs::remove_dir_all(&dir);
+        }
 
         result
     }
@@ -176,20 +181,42 @@ async fn wait_for_ready(
 }
 
 /// Launch a new managed browser or connect to an external CDP endpoint.
-async fn launch_or_connect(config: &CrawlConfig) -> Result<(Browser, Handler), CrawlError> {
+///
+/// Each launch creates a unique user data directory to avoid Chrome's
+/// `SingletonLock` conflicts when multiple instances run concurrently
+/// or a previous instance crashed without cleanup.
+async fn launch_or_connect(
+    config: &CrawlConfig,
+) -> Result<(Browser, Handler, Option<std::path::PathBuf>), CrawlError> {
     if let Some(ref endpoint) = config.browser.endpoint {
-        Browser::connect(endpoint)
+        let (browser, handler) = Browser::connect(endpoint)
             .await
-            .map_err(|e| CrawlError::BrowserError(format!("failed to connect to {endpoint}: {e}")))
+            .map_err(|e| CrawlError::BrowserError(format!("failed to connect to {endpoint}: {e}")))?;
+        Ok((browser, handler, None))
     } else {
+        // Use a unique temp directory per launch to avoid SingletonLock conflicts.
+        use std::sync::atomic::{AtomicU64, Ordering as AtomicOrdering};
+        static LAUNCH_COUNTER: AtomicU64 = AtomicU64::new(0);
+        let user_data_dir = std::env::temp_dir().join(format!(
+            "kreuzcrawl-browser-{}-{}",
+            std::process::id(),
+            LAUNCH_COUNTER.fetch_add(1, AtomicOrdering::Relaxed),
+        ));
+
         let browser_config = ChromeBrowserConfig::builder()
             .no_sandbox()
             .new_headless_mode()
+            .user_data_dir(&user_data_dir)
             .build()
             .map_err(|e| CrawlError::BrowserError(format!("invalid browser config: {e}")))?;
 
-        Browser::launch(browser_config)
-            .await
-            .map_err(|e| CrawlError::BrowserError(format!("failed to launch browser: {e}")))
+        match Browser::launch(browser_config).await {
+            Ok((browser, handler)) => Ok((browser, handler, Some(user_data_dir))),
+            Err(e) => {
+                // Clean up the temp dir on failure so it doesn't leak.
+                let _ = std::fs::remove_dir_all(&user_data_dir);
+                Err(CrawlError::BrowserError(format!("failed to launch browser: {e}")))
+            }
+        }
     }
 }
