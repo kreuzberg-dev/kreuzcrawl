@@ -2,7 +2,7 @@
 title: "Python API Reference"
 ---
 
-## Python API Reference <span class="version-badge">v0.1.2</span>
+## Python API Reference <span class="version-badge">v0.2.0</span>
 
 ### Functions
 
@@ -241,6 +241,43 @@ Result of citation conversion.
 
 ---
 
+#### ContentConfig
+
+Content extraction and conversion configuration.
+
+Controls how HTML is converted to the output format. Uses
+html-to-markdown-rs as the conversion engine for all formats
+(markdown, plain text, djot).
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `output_format` | `str` | `"markdown"` | Output format: `"markdown"` (default), `"plain"`, `"djot"`. |
+| `preprocessing_preset` | `str` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
+| `remove_navigation` | `bool` | `True` | Remove navigation elements (nav, breadcrumbs, menus). Default: `True`. |
+| `remove_forms` | `bool` | `True` | Remove form elements. Default: `True`. |
+| `strip_tags` | `list[str]` | `[]` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `preserve_tags` | `list[str]` | `[]` | HTML tag names to preserve as raw HTML in output. |
+| `exclude_selectors` | `list[str]` | `[]` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `skip_images` | `bool` | `False` | Skip image elements in output. Default: `False`. |
+| `max_depth` | `int | None` | `None` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
+| `wrap` | `bool` | `False` | Enable line wrapping. Default: `False`. |
+| `wrap_width` | `int` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
+| `include_document_structure` | `bool` | `True` | Include document structure tree in output. Default: `True`. |
+
+##### Methods
+
+###### default()
+
+**Signature:**
+
+```python
+@staticmethod
+def default() -> ContentConfig
+```
+
+
+---
+
 #### CookieInfo
 
 Information about an HTTP cookie received from a response.
@@ -279,8 +316,8 @@ Configuration for crawl, scrape, and map operations.
 | `cookies_enabled` | `bool` | `False` | Whether to enable cookie handling. |
 | `auth` | `AuthConfig | None` | `None` | Authentication configuration. |
 | `max_body_size` | `int | None` | `None` | Maximum response body size in bytes. |
-| `main_content_only` | `bool` | `False` | Whether to extract only the main content from HTML pages. |
 | `remove_tags` | `list[str]` | `[]` | CSS selectors for tags to remove from HTML before processing. |
+| `content` | `ContentConfig` | — | Content extraction and conversion configuration. |
 | `map_limit` | `int | None` | `None` | Maximum number of URLs to return from a map operation. |
 | `map_search` | `str | None` | `None` | Search filter for map results (case-insensitive substring match on URLs). |
 | `download_assets` | `bool` | `False` | Whether to download assets (CSS, JS, images, etc.) from the page. |
@@ -669,7 +706,6 @@ The result of a single-page scrape operation.
 | `is_pdf` | `bool` | — | Whether the content is a PDF. |
 | `was_skipped` | `bool` | — | Whether the page was skipped (binary or PDF content). |
 | `detected_charset` | `str | None` | `None` | The detected character set encoding. |
-| `main_content_only` | `bool` | — | Whether main_content_only was active during extraction. |
 | `auth_header_sent` | `bool` | — | Whether an authentication header was sent with the request. |
 | `response_meta` | `ResponseMeta | None` | `None` | Response metadata extracted from HTTP headers. |
 | `assets` | `list[DownloadedAsset]` | `[]` | Downloaded assets from the page. |

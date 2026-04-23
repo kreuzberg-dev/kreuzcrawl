@@ -2,7 +2,7 @@
 title: "Ruby API Reference"
 ---
 
-## Ruby API Reference <span class="version-badge">v0.1.2</span>
+## Ruby API Reference <span class="version-badge">v0.2.0</span>
 
 ### Functions
 
@@ -240,6 +240,42 @@ Result of citation conversion.
 
 ---
 
+#### ContentConfig
+
+Content extraction and conversion configuration.
+
+Controls how HTML is converted to the output format. Uses
+html-to-markdown-rs as the conversion engine for all formats
+(markdown, plain text, djot).
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `output_format` | `String` | `"markdown"` | Output format: `"markdown"` (default), `"plain"`, `"djot"`. |
+| `preprocessing_preset` | `String` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
+| `remove_navigation` | `Boolean` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
+| `remove_forms` | `Boolean` | `true` | Remove form elements. Default: `true`. |
+| `strip_tags` | `Array<String>` | `[]` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `preserve_tags` | `Array<String>` | `[]` | HTML tag names to preserve as raw HTML in output. |
+| `exclude_selectors` | `Array<String>` | `[]` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `skip_images` | `Boolean` | `false` | Skip image elements in output. Default: `false`. |
+| `max_depth` | `Integer?` | `nil` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
+| `wrap` | `Boolean` | `false` | Enable line wrapping. Default: `false`. |
+| `wrap_width` | `Integer` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
+| `include_document_structure` | `Boolean` | `true` | Include document structure tree in output. Default: `true`. |
+
+##### Methods
+
+###### default()
+
+**Signature:**
+
+```ruby
+def self.default()
+```
+
+
+---
+
 #### CookieInfo
 
 Information about an HTTP cookie received from a response.
@@ -278,8 +314,8 @@ Configuration for crawl, scrape, and map operations.
 | `cookies_enabled` | `Boolean` | `false` | Whether to enable cookie handling. |
 | `auth` | `AuthConfig?` | `nil` | Authentication configuration. |
 | `max_body_size` | `Integer?` | `nil` | Maximum response body size in bytes. |
-| `main_content_only` | `Boolean` | `false` | Whether to extract only the main content from HTML pages. |
 | `remove_tags` | `Array<String>` | `[]` | CSS selectors for tags to remove from HTML before processing. |
+| `content` | `ContentConfig` | — | Content extraction and conversion configuration. |
 | `map_limit` | `Integer?` | `nil` | Maximum number of URLs to return from a map operation. |
 | `map_search` | `String?` | `nil` | Search filter for map results (case-insensitive substring match on URLs). |
 | `download_assets` | `Boolean` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
@@ -667,7 +703,6 @@ The result of a single-page scrape operation.
 | `is_pdf` | `Boolean` | — | Whether the content is a PDF. |
 | `was_skipped` | `Boolean` | — | Whether the page was skipped (binary or PDF content). |
 | `detected_charset` | `String?` | `nil` | The detected character set encoding. |
-| `main_content_only` | `Boolean` | — | Whether main_content_only was active during extraction. |
 | `auth_header_sent` | `Boolean` | — | Whether an authentication header was sent with the request. |
 | `response_meta` | `ResponseMeta?` | `nil` | Response metadata extracted from HTTP headers. |
 | `assets` | `Array<DownloadedAsset>` | `[]` | Downloaded assets from the page. |

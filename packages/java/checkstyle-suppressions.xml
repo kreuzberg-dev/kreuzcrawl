@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <!-- Allow star imports in test files -->
+    <suppress checks="AvoidStarImport" files=".*Test\.java"/>
+
+    <!-- Allow magic numbers in tests -->
+    <suppress checks="MagicNumber" files=".*Test\.java"/>
+</suppressions>

@@ -2,7 +2,7 @@
 title: "Rust API Reference"
 ---
 
-## Rust API Reference <span class="version-badge">v0.1.2</span>
+## Rust API Reference <span class="version-badge">v0.2.0</span>
 
 ### Functions
 
@@ -240,6 +240,42 @@ Result of citation conversion.
 
 ---
 
+#### ContentConfig
+
+Content extraction and conversion configuration.
+
+Controls how HTML is converted to the output format. Uses
+html-to-markdown-rs as the conversion engine for all formats
+(markdown, plain text, djot).
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `output_format` | `String` | `"markdown"` | Output format: `"markdown"` (default), `"plain"`, `"djot"`. |
+| `preprocessing_preset` | `String` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
+| `remove_navigation` | `bool` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
+| `remove_forms` | `bool` | `true` | Remove form elements. Default: `true`. |
+| `strip_tags` | `Vec<String>` | `vec![]` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `preserve_tags` | `Vec<String>` | `vec![]` | HTML tag names to preserve as raw HTML in output. |
+| `exclude_selectors` | `Vec<String>` | `vec![]` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `skip_images` | `bool` | `false` | Skip image elements in output. Default: `false`. |
+| `max_depth` | `Option<usize>` | `None` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
+| `wrap` | `bool` | `false` | Enable line wrapping. Default: `false`. |
+| `wrap_width` | `usize` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
+| `include_document_structure` | `bool` | `true` | Include document structure tree in output. Default: `true`. |
+
+##### Methods
+
+###### default()
+
+**Signature:**
+
+```rust
+pub fn default() -> ContentConfig
+```
+
+
+---
+
 #### CookieInfo
 
 Information about an HTTP cookie received from a response.
@@ -278,8 +314,8 @@ Configuration for crawl, scrape, and map operations.
 | `cookies_enabled` | `bool` | `false` | Whether to enable cookie handling. |
 | `auth` | `Option<AuthConfig>` | `None` | Authentication configuration. |
 | `max_body_size` | `Option<usize>` | `None` | Maximum response body size in bytes. |
-| `main_content_only` | `bool` | `false` | Whether to extract only the main content from HTML pages. |
 | `remove_tags` | `Vec<String>` | `vec![]` | CSS selectors for tags to remove from HTML before processing. |
+| `content` | `ContentConfig` | — | Content extraction and conversion configuration. |
 | `map_limit` | `Option<usize>` | `None` | Maximum number of URLs to return from a map operation. |
 | `map_search` | `Option<String>` | `None` | Search filter for map results (case-insensitive substring match on URLs). |
 | `download_assets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
@@ -667,7 +703,6 @@ The result of a single-page scrape operation.
 | `is_pdf` | `bool` | — | Whether the content is a PDF. |
 | `was_skipped` | `bool` | — | Whether the page was skipped (binary or PDF content). |
 | `detected_charset` | `Option<String>` | `Default::default()` | The detected character set encoding. |
-| `main_content_only` | `bool` | — | Whether main_content_only was active during extraction. |
 | `auth_header_sent` | `bool` | — | Whether an authentication header was sent with the request. |
 | `response_meta` | `Option<ResponseMeta>` | `Default::default()` | Response metadata extracted from HTTP headers. |
 | `assets` | `Vec<DownloadedAsset>` | `vec![]` | Downloaded assets from the page. |

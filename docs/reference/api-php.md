@@ -2,7 +2,7 @@
 title: "PHP API Reference"
 ---
 
-## PHP API Reference <span class="version-badge">v0.1.2</span>
+## PHP API Reference <span class="version-badge">v0.2.0</span>
 
 ### Functions
 
@@ -240,6 +240,42 @@ Result of citation conversion.
 
 ---
 
+#### ContentConfig
+
+Content extraction and conversion configuration.
+
+Controls how HTML is converted to the output format. Uses
+html-to-markdown-rs as the conversion engine for all formats
+(markdown, plain text, djot).
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `outputFormat` | `string` | `"markdown"` | Output format: `"markdown"` (default), `"plain"`, `"djot"`. |
+| `preprocessingPreset` | `string` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
+| `removeNavigation` | `bool` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
+| `removeForms` | `bool` | `true` | Remove form elements. Default: `true`. |
+| `stripTags` | `array<string>` | `[]` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `preserveTags` | `array<string>` | `[]` | HTML tag names to preserve as raw HTML in output. |
+| `excludeSelectors` | `array<string>` | `[]` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `skipImages` | `bool` | `false` | Skip image elements in output. Default: `false`. |
+| `maxDepth` | `?int` | `null` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
+| `wrap` | `bool` | `false` | Enable line wrapping. Default: `false`. |
+| `wrapWidth` | `int` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
+| `includeDocumentStructure` | `bool` | `true` | Include document structure tree in output. Default: `true`. |
+
+##### Methods
+
+###### default()
+
+**Signature:**
+
+```php
+public static function default(): ContentConfig
+```
+
+
+---
+
 #### CookieInfo
 
 Information about an HTTP cookie received from a response.
@@ -278,8 +314,8 @@ Configuration for crawl, scrape, and map operations.
 | `cookiesEnabled` | `bool` | `false` | Whether to enable cookie handling. |
 | `auth` | `?AuthConfig` | `null` | Authentication configuration. |
 | `maxBodySize` | `?int` | `null` | Maximum response body size in bytes. |
-| `mainContentOnly` | `bool` | `false` | Whether to extract only the main content from HTML pages. |
 | `removeTags` | `array<string>` | `[]` | CSS selectors for tags to remove from HTML before processing. |
+| `content` | `ContentConfig` | — | Content extraction and conversion configuration. |
 | `mapLimit` | `?int` | `null` | Maximum number of URLs to return from a map operation. |
 | `mapSearch` | `?string` | `null` | Search filter for map results (case-insensitive substring match on URLs). |
 | `downloadAssets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
@@ -667,7 +703,6 @@ The result of a single-page scrape operation.
 | `isPdf` | `bool` | — | Whether the content is a PDF. |
 | `wasSkipped` | `bool` | — | Whether the page was skipped (binary or PDF content). |
 | `detectedCharset` | `?string` | `null` | The detected character set encoding. |
-| `mainContentOnly` | `bool` | — | Whether main_content_only was active during extraction. |
 | `authHeaderSent` | `bool` | — | Whether an authentication header was sent with the request. |
 | `responseMeta` | `?ResponseMeta` | `null` | Response metadata extracted from HTTP headers. |
 | `assets` | `array<DownloadedAsset>` | `[]` | Downloaded assets from the page. |
