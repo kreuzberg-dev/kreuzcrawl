@@ -23,6 +23,13 @@ _TO_RUST_BROWSERMODE_MAP = {
 }
 
 
+_TO_RUST_BROWSERWAIT_MAP = {
+    "network_idle": _rust.BrowserWait.NetworkIdle,
+    "selector": _rust.BrowserWait.Selector,
+    "fixed": _rust.BrowserWait.Fixed,
+}
+
+
 _TO_RUST_ASSETCATEGORY_MAP = {
     "document": _rust.AssetCategory.Document,
     "image": _rust.AssetCategory.Image,
@@ -34,13 +41,6 @@ _TO_RUST_ASSETCATEGORY_MAP = {
     "archive": _rust.AssetCategory.Archive,
     "data": _rust.AssetCategory.Data,
     "other": _rust.AssetCategory.Other,
-}
-
-
-_TO_RUST_BROWSERWAIT_MAP = {
-    "network_idle": _rust.BrowserWait.NetworkIdle,
-    "selector": _rust.BrowserWait.Selector,
-    "fixed": _rust.BrowserWait.Fixed,
 }
 
 

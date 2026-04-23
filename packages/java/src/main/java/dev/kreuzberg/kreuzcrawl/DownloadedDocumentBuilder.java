@@ -21,41 +21,49 @@ public class DownloadedDocumentBuilder {
 	private String contentHash = "";
 	private Map<String, String> headers = Map.of();
 
-	public DownloadedDocumentBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public DownloadedDocumentBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public DownloadedDocumentBuilder withMimeType(String value) {
+	/** Sets the mimeType field. */
+	public DownloadedDocumentBuilder withMimeType(final String value) {
 		this.mimeType = value;
 		return this;
 	}
 
-	public DownloadedDocumentBuilder withContent(byte[] value) {
+	/** Sets the content field. */
+	public DownloadedDocumentBuilder withContent(final byte[] value) {
 		this.content = value;
 		return this;
 	}
 
-	public DownloadedDocumentBuilder withSize(long value) {
+	/** Sets the size field. */
+	public DownloadedDocumentBuilder withSize(final long value) {
 		this.size = value;
 		return this;
 	}
 
-	public DownloadedDocumentBuilder withFilename(Optional<String> value) {
+	/** Sets the filename field. */
+	public DownloadedDocumentBuilder withFilename(final Optional<String> value) {
 		this.filename = value;
 		return this;
 	}
 
-	public DownloadedDocumentBuilder withContentHash(String value) {
+	/** Sets the contentHash field. */
+	public DownloadedDocumentBuilder withContentHash(final String value) {
 		this.contentHash = value;
 		return this;
 	}
 
-	public DownloadedDocumentBuilder withHeaders(Map<String, String> value) {
+	/** Sets the headers field. */
+	public DownloadedDocumentBuilder withHeaders(final Map<String, String> value) {
 		this.headers = value;
 		return this;
 	}
 
+	/** Builds the DownloadedDocument instance. */
 	public DownloadedDocument build() {
 		return new DownloadedDocument(url, mimeType, content, size, filename, contentHash, headers);
 	}

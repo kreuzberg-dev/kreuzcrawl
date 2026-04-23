@@ -15,31 +15,37 @@ public class ArticleMetadataBuilder {
 	private Optional<String> section = Optional.empty();
 	private List<String> tags = List.of();
 
-	public ArticleMetadataBuilder withPublishedTime(Optional<String> value) {
+	/** Sets the publishedTime field. */
+	public ArticleMetadataBuilder withPublishedTime(final Optional<String> value) {
 		this.publishedTime = value;
 		return this;
 	}
 
-	public ArticleMetadataBuilder withModifiedTime(Optional<String> value) {
+	/** Sets the modifiedTime field. */
+	public ArticleMetadataBuilder withModifiedTime(final Optional<String> value) {
 		this.modifiedTime = value;
 		return this;
 	}
 
-	public ArticleMetadataBuilder withAuthor(Optional<String> value) {
+	/** Sets the author field. */
+	public ArticleMetadataBuilder withAuthor(final Optional<String> value) {
 		this.author = value;
 		return this;
 	}
 
-	public ArticleMetadataBuilder withSection(Optional<String> value) {
+	/** Sets the section field. */
+	public ArticleMetadataBuilder withSection(final Optional<String> value) {
 		this.section = value;
 		return this;
 	}
 
-	public ArticleMetadataBuilder withTags(List<String> value) {
+	/** Sets the tags field. */
+	public ArticleMetadataBuilder withTags(final List<String> value) {
 		this.tags = value;
 		return this;
 	}
 
+	/** Builds the ArticleMetadata instance. */
 	public ArticleMetadata build() {
 		return new ArticleMetadata(publishedTime, modifiedTime, author, section, tags);
 	}

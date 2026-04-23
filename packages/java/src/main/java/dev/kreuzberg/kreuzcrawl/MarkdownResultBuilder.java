@@ -16,36 +16,43 @@ public class MarkdownResultBuilder {
 	private Optional<CitationResult> citations = Optional.empty();
 	private Optional<String> fitContent = Optional.empty();
 
-	public MarkdownResultBuilder withContent(String value) {
+	/** Sets the content field. */
+	public MarkdownResultBuilder withContent(final String value) {
 		this.content = value;
 		return this;
 	}
 
-	public MarkdownResultBuilder withDocumentStructure(Optional<Object> value) {
+	/** Sets the documentStructure field. */
+	public MarkdownResultBuilder withDocumentStructure(final Optional<Object> value) {
 		this.documentStructure = value;
 		return this;
 	}
 
-	public MarkdownResultBuilder withTables(List<Object> value) {
+	/** Sets the tables field. */
+	public MarkdownResultBuilder withTables(final List<Object> value) {
 		this.tables = value;
 		return this;
 	}
 
-	public MarkdownResultBuilder withWarnings(List<String> value) {
+	/** Sets the warnings field. */
+	public MarkdownResultBuilder withWarnings(final List<String> value) {
 		this.warnings = value;
 		return this;
 	}
 
-	public MarkdownResultBuilder withCitations(Optional<CitationResult> value) {
+	/** Sets the citations field. */
+	public MarkdownResultBuilder withCitations(final Optional<CitationResult> value) {
 		this.citations = value;
 		return this;
 	}
 
-	public MarkdownResultBuilder withFitContent(Optional<String> value) {
+	/** Sets the fitContent field. */
+	public MarkdownResultBuilder withFitContent(final Optional<String> value) {
 		this.fitContent = value;
 		return this;
 	}
 
+	/** Builds the MarkdownResult instance. */
 	public MarkdownResult build() {
 		return new MarkdownResult(content, documentStructure, tables, warnings, citations, fitContent);
 	}

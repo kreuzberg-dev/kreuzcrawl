@@ -17,19 +17,22 @@ public enum LinkType {
 	/** A link to a downloadable document (PDF, DOC, etc.). */
 	Document("document");
 
+	/** The string value. */
 	private final String value;
 
-	LinkType(String value) {
+	LinkType(final String value) {
 		this.value = value;
 	}
 
+	/** Returns the string value. */
 	@JsonValue
 	public String getValue() {
 		return value;
 	}
 
+	/** Creates an instance from a string value. */
 	@JsonCreator
-	public static LinkType fromValue(String value) {
+	public static LinkType fromValue(final String value) {
 		for (LinkType e : values()) {
 			if (e.value.equalsIgnoreCase(value)) {
 				return e;

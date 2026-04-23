@@ -3,11 +3,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** An SSL/TLS error occurred. */
 public class SslException extends CrawlErrorException {
-	public SslException(String message) {
+	/** Creates a new SslException with the given message. */
+	public SslException(final String message) {
 		super(message);
 	}
 
-	public SslException(String message, Throwable cause) {
+	/** Creates a new SslException with the given message and cause. */
+	public SslException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

@@ -15,19 +15,22 @@ public enum BrowserWait {
 	/** Wait for a fixed duration after navigation. */
 	Fixed("fixed");
 
+	/** The string value. */
 	private final String value;
 
-	BrowserWait(String value) {
+	BrowserWait(final String value) {
 		this.value = value;
 	}
 
+	/** Returns the string value. */
 	@JsonValue
 	public String getValue() {
 		return value;
 	}
 
+	/** Creates an instance from a string value. */
 	@JsonCreator
-	public static BrowserWait fromValue(String value) {
+	public static BrowserWait fromValue(final String value) {
 		for (BrowserWait e : values()) {
 			if (e.value.equalsIgnoreCase(value)) {
 				return e;

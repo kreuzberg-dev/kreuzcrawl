@@ -12,21 +12,25 @@ public class JsonLdEntryBuilder {
 	private Optional<String> name = Optional.empty();
 	private String raw = "";
 
-	public JsonLdEntryBuilder withSchemaType(String value) {
+	/** Sets the schemaType field. */
+	public JsonLdEntryBuilder withSchemaType(final String value) {
 		this.schemaType = value;
 		return this;
 	}
 
-	public JsonLdEntryBuilder withName(Optional<String> value) {
+	/** Sets the name field. */
+	public JsonLdEntryBuilder withName(final Optional<String> value) {
 		this.name = value;
 		return this;
 	}
 
-	public JsonLdEntryBuilder withRaw(String value) {
+	/** Sets the raw field. */
+	public JsonLdEntryBuilder withRaw(final String value) {
 		this.raw = value;
 		return this;
 	}
 
+	/** Builds the JsonLdEntry instance. */
 	public JsonLdEntry build() {
 		return new JsonLdEntry(schemaType, name, raw);
 	}

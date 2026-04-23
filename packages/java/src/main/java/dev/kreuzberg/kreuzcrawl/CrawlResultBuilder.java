@@ -17,41 +17,49 @@ public class CrawlResultBuilder {
 	private List<CookieInfo> cookies = List.of();
 	private List<String> normalizedUrls = List.of();
 
-	public CrawlResultBuilder withPages(List<CrawlPageResult> value) {
+	/** Sets the pages field. */
+	public CrawlResultBuilder withPages(final List<CrawlPageResult> value) {
 		this.pages = value;
 		return this;
 	}
 
-	public CrawlResultBuilder withFinalUrl(String value) {
+	/** Sets the finalUrl field. */
+	public CrawlResultBuilder withFinalUrl(final String value) {
 		this.finalUrl = value;
 		return this;
 	}
 
-	public CrawlResultBuilder withRedirectCount(long value) {
+	/** Sets the redirectCount field. */
+	public CrawlResultBuilder withRedirectCount(final long value) {
 		this.redirectCount = value;
 		return this;
 	}
 
-	public CrawlResultBuilder withWasSkipped(boolean value) {
+	/** Sets the wasSkipped field. */
+	public CrawlResultBuilder withWasSkipped(final boolean value) {
 		this.wasSkipped = value;
 		return this;
 	}
 
-	public CrawlResultBuilder withError(Optional<String> value) {
+	/** Sets the error field. */
+	public CrawlResultBuilder withError(final Optional<String> value) {
 		this.error = value;
 		return this;
 	}
 
-	public CrawlResultBuilder withCookies(List<CookieInfo> value) {
+	/** Sets the cookies field. */
+	public CrawlResultBuilder withCookies(final List<CookieInfo> value) {
 		this.cookies = value;
 		return this;
 	}
 
-	public CrawlResultBuilder withNormalizedUrls(List<String> value) {
+	/** Sets the normalizedUrls field. */
+	public CrawlResultBuilder withNormalizedUrls(final List<String> value) {
 		this.normalizedUrls = value;
 		return this;
 	}
 
+	/** Builds the CrawlResult instance. */
 	public CrawlResult build() {
 		return new CrawlResult(pages, finalUrl, redirectCount, wasSkipped, error, cookies, normalizedUrls);
 	}

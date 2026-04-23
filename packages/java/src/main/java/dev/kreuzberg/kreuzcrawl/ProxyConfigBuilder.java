@@ -12,21 +12,25 @@ public class ProxyConfigBuilder {
 	private Optional<String> username = Optional.empty();
 	private Optional<String> password = Optional.empty();
 
-	public ProxyConfigBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public ProxyConfigBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public ProxyConfigBuilder withUsername(Optional<String> value) {
+	/** Sets the username field. */
+	public ProxyConfigBuilder withUsername(final Optional<String> value) {
 		this.username = value;
 		return this;
 	}
 
-	public ProxyConfigBuilder withPassword(Optional<String> value) {
+	/** Sets the password field. */
+	public ProxyConfigBuilder withPassword(final Optional<String> value) {
 		this.password = value;
 		return this;
 	}
 
+	/** Builds the ProxyConfig instance. */
 	public ProxyConfig build() {
 		return new ProxyConfig(url, username, password);
 	}

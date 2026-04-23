@@ -11,16 +11,19 @@ public class CitationResultBuilder {
 	private String content = "";
 	private List<CitationReference> references = List.of();
 
-	public CitationResultBuilder withContent(String value) {
+	/** Sets the content field. */
+	public CitationResultBuilder withContent(final String value) {
 		this.content = value;
 		return this;
 	}
 
-	public CitationResultBuilder withReferences(List<CitationReference> value) {
+	/** Sets the references field. */
+	public CitationResultBuilder withReferences(final List<CitationReference> value) {
 		this.references = value;
 		return this;
 	}
 
+	/** Builds the CitationResult instance. */
 	public CitationResult build() {
 		return new CitationResult(content, references);
 	}

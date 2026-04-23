@@ -12,21 +12,25 @@ public class BatchCrawlResultBuilder {
 	private Optional<CrawlResult> result = Optional.empty();
 	private Optional<String> error = Optional.empty();
 
-	public BatchCrawlResultBuilder withUrl(String value) {
+	/** Sets the url field. */
+	public BatchCrawlResultBuilder withUrl(final String value) {
 		this.url = value;
 		return this;
 	}
 
-	public BatchCrawlResultBuilder withResult(Optional<CrawlResult> value) {
+	/** Sets the result field. */
+	public BatchCrawlResultBuilder withResult(final Optional<CrawlResult> value) {
 		this.result = value;
 		return this;
 	}
 
-	public BatchCrawlResultBuilder withError(Optional<String> value) {
+	/** Sets the error field. */
+	public BatchCrawlResultBuilder withError(final Optional<String> value) {
 		this.error = value;
 		return this;
 	}
 
+	/** Builds the BatchCrawlResult instance. */
 	public BatchCrawlResult build() {
 		return new BatchCrawlResult(url, result, error);
 	}

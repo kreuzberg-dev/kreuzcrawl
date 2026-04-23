@@ -3,11 +3,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** A connection error occurred. */
 public class ConnectionException extends CrawlErrorException {
-	public ConnectionException(String message) {
+	/** Creates a new ConnectionException with the given message. */
+	public ConnectionException(final String message) {
 		super(message);
 	}
 
-	public ConnectionException(String message, Throwable cause) {
+	/** Creates a new ConnectionException with the given message and cause. */
+	public ConnectionException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

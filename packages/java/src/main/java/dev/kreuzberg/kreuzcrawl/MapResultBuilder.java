@@ -10,11 +10,13 @@ public class MapResultBuilder {
 
 	private List<SitemapUrl> urls = List.of();
 
-	public MapResultBuilder withUrls(List<SitemapUrl> value) {
+	/** Sets the urls field. */
+	public MapResultBuilder withUrls(final List<SitemapUrl> value) {
 		this.urls = value;
 		return this;
 	}
 
+	/** Builds the MapResult instance. */
 	public MapResult build() {
 		return new MapResult(urls);
 	}

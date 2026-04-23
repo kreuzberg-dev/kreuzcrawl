@@ -15,36 +15,43 @@ public class BrowserConfigBuilder {
 	private Optional<String> waitSelector = Optional.empty();
 	private Optional<Long> extraWait = Optional.empty();
 
-	public BrowserConfigBuilder withMode(BrowserMode value) {
+	/** Sets the mode field. */
+	public BrowserConfigBuilder withMode(final BrowserMode value) {
 		this.mode = value;
 		return this;
 	}
 
-	public BrowserConfigBuilder withEndpoint(Optional<String> value) {
+	/** Sets the endpoint field. */
+	public BrowserConfigBuilder withEndpoint(final Optional<String> value) {
 		this.endpoint = value;
 		return this;
 	}
 
-	public BrowserConfigBuilder withTimeout(Long value) {
+	/** Sets the timeout field. */
+	public BrowserConfigBuilder withTimeout(final Long value) {
 		this.timeout = value;
 		return this;
 	}
 
-	public BrowserConfigBuilder withWait(BrowserWait value) {
+	/** Sets the waitValue field. */
+	public BrowserConfigBuilder withWait(final BrowserWait value) {
 		this.waitValue = value;
 		return this;
 	}
 
-	public BrowserConfigBuilder withWaitSelector(Optional<String> value) {
+	/** Sets the waitSelector field. */
+	public BrowserConfigBuilder withWaitSelector(final Optional<String> value) {
 		this.waitSelector = value;
 		return this;
 	}
 
-	public BrowserConfigBuilder withExtraWait(Optional<Long> value) {
+	/** Sets the extraWait field. */
+	public BrowserConfigBuilder withExtraWait(final Optional<Long> value) {
 		this.extraWait = value;
 		return this;
 	}
 
+	/** Builds the BrowserConfig instance. */
 	public BrowserConfig build() {
 		return new BrowserConfig(mode, endpoint, timeout, waitValue, waitSelector, extraWait);
 	}

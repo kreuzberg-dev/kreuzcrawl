@@ -3,11 +3,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** The request was forbidden (HTTP 403). */
 public class ForbiddenException extends CrawlErrorException {
-	public ForbiddenException(String message) {
+	/** Creates a new ForbiddenException with the given message. */
+	public ForbiddenException(final String message) {
 		super(message);
 	}
 
-	public ForbiddenException(String message, Throwable cause) {
+	/** Creates a new ForbiddenException with the given message and cause. */
+	public ForbiddenException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }
