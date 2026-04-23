@@ -173,6 +173,23 @@ async fn do_fetch(
 
     let body = String::from_utf8_lossy(&body_vec).into_owned();
 
+    // WAF challenge detection on 200 responses.
+    // Some WAFs (AWS WAF, Akamai) return 200 with a challenge page instead of 403.
+    // Check short bodies for WAF patterns to catch these false positives.
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let server = headers
+            .get("server")
+            .and_then(|v| v.first())
+            .map(|s| s.to_lowercase())
+            .unwrap_or_default();
+        if status == 200 && body.len() < 5000 && crate::http::is_waf_blocked(&server, &body, &headers) {
+            return Err(CrawlError::WafBlocked(format!(
+                "waf/blocked: {status} with challenge content"
+            )));
+        }
+    }
+
     Ok(CrawlResponse {
         status,
         content_type,

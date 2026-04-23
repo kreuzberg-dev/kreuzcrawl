@@ -300,6 +300,15 @@ fn waf_pattern_match(server_lower: &str, body_lower: &str) -> bool {
         || body_lower.contains("x-sucuri-id")
         || server_lower.contains("big-ip")
         || body_lower.contains("bigipserver")
+        // AWS CloudFront + WAF
+        || server_lower.contains("cloudfront")
+        || body_lower.contains("awswaf.com")
+        || body_lower.contains("verifying your connection")
+        || body_lower.contains("challenge.js")
+        // Additional common patterns
+        || body_lower.contains("please verify you are human")
+        || body_lower.contains("checking your browser")
+        || body_lower.contains("just a moment") // Cloudflare "Just a moment..."
 }
 
 fn is_waf_blocked_headermap(server_lower: &str, body: &str, headers: &HeaderMap) -> bool {
