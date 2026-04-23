@@ -7,6 +7,8 @@
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
+use ahash::AHashMap;
+
 use tokio::sync::Semaphore;
 use tokio::task::JoinSet;
 use tracing::{debug, info, warn};
@@ -104,7 +106,7 @@ impl BenchmarkRunner {
 
         // Bug 4 fix: pre-load cached HTML for all fixture URLs before the loop so
         // we never do blocking file I/O on the async executor inside spawned tasks.
-        let cached_html_map: std::collections::HashMap<String, String> = self
+        let cached_html_map: AHashMap<String, String> = self
             .fixtures
             .iter()
             .filter_map(|f| {
@@ -245,7 +247,7 @@ impl BenchmarkRunner {
         &self,
         work: Vec<(usize, ScrapeFixture)>,
         semaphore: Arc<Semaphore>,
-        cached_html_map: Arc<std::collections::HashMap<String, String>>,
+        cached_html_map: Arc<AHashMap<String, String>>,
         iteration_number: usize,
     ) -> Vec<(usize, IterationResult, Option<crate::adapter::ScrapeOutput>)> {
         let mut join_set = JoinSet::new();
