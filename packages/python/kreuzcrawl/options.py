@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ._kreuzcrawl import (
@@ -222,7 +222,7 @@ class CrawlConfig:
     cookies_enabled: bool = False
     """Whether to enable cookie handling."""
 
-    auth: AuthConfig | None = None
+    auth: dict[str, Any] | None = None
     """Authentication configuration."""
 
     max_body_size: int | None = None
@@ -773,7 +773,3 @@ class BatchCrawlResult:
 
     error: str | None = None
     """The error message, if the crawl failed."""
-
-
-# Authentication configuration.
-AuthConfig = str

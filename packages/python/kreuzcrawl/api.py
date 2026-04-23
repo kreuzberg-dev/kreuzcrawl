@@ -16,6 +16,13 @@ from ._kreuzcrawl import (
     ScrapeResult,
 )
 
+_TO_RUST_BROWSERWAIT_MAP = {
+    "network_idle": _rust.BrowserWait.NetworkIdle,
+    "selector": _rust.BrowserWait.Selector,
+    "fixed": _rust.BrowserWait.Fixed,
+}
+
+
 _TO_RUST_ASSETCATEGORY_MAP = {
     "document": _rust.AssetCategory.Document,
     "image": _rust.AssetCategory.Image,
@@ -34,13 +41,6 @@ _TO_RUST_BROWSERMODE_MAP = {
     "auto": _rust.BrowserMode.Auto,
     "always": _rust.BrowserMode.Always,
     "never": _rust.BrowserMode.Never,
-}
-
-
-_TO_RUST_BROWSERWAIT_MAP = {
-    "network_idle": _rust.BrowserWait.NetworkIdle,
-    "selector": _rust.BrowserWait.Selector,
-    "fixed": _rust.BrowserWait.Fixed,
 }
 
 
