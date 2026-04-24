@@ -6,7 +6,7 @@ name = 'Kreuzcrawl'
 description = 'Web crawler with Rust core and Python/TypeScript bindings'
 gitignore = true
 presets = ['claude', 'copilot', 'cursor', 'antigravity', 'codex']
-builtins = ['rust', 'python', 'typescript', 'go', 'java', 'ruby', 'php', 'csharp', 'elixir', 'security', 'git-workflow', 'code-quality', 'testing', 'token-efficiency', 'default-commands']
+builtins = ['rust', 'python', 'typescript', 'go', 'java', 'ruby', 'php', 'csharp', 'elixir', 'default-commands']
 
 [header]
 style = 'minimal'
