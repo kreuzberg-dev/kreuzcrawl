@@ -56,13 +56,19 @@
 Node.js bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Powered by
 NAPI-RS with full TypeScript types, async/await support, and native performance.
 
+
 ## Installation
+
+
 
 ```bash
 npm install @kreuzberg/kreuzcrawl
 ```
 
+
+
 ## Quick Start
+
 
 ```typescript
 import { createEngine, scrape } from "@kreuzberg/kreuzcrawl";
@@ -76,6 +82,7 @@ console.log(`Title: ${result.metadata.title}`);
 console.log(`Status: ${result.statusCode}`);
 console.log(`Links: ${result.links.length}`);
 ```
+
 
 ## API Reference
 
