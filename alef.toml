@@ -1,6 +1,4 @@
-[alef]
-version = "0.7.6"
-
+version = "0.7.7"
 languages = ["python", "node", "ruby", "php", "ffi", "go", "java", "csharp", "elixir", "wasm"]
 
 [crate]
@@ -608,15 +606,15 @@ format = "mvn -f packages/java/pom.xml spotless:apply -q"
 check = "mvn -f packages/java/pom.xml spotless:check -q"
 
 [lint.csharp]
-format = "dotnet format packages/csharp"
-check = "dotnet format packages/csharp --verify-no-changes"
+format = "dotnet format packages/csharp/Kreuzcrawl.slnx"
+check = "dotnet format packages/csharp/Kreuzcrawl.slnx --verify-no-changes"
 
 [lint.wasm]
 format = "npx oxfmt packages/wasm/"
 check = "npx oxlint packages/wasm/"
 
 [lint.ffi]
-precondition = "test -d crates/kreuzcrawl-ffi/src"
+precondition = "test -d crates/kreuzcrawl-ffi/tests"
 format = "find crates/kreuzcrawl-ffi/tests -name '*.c' -o -name '*.h' | xargs clang-format -i"
 check = "cppcheck --std=c11 --enable=warning,style,performance --suppress=missingIncludeSystem --suppress=unusedStructMember crates/kreuzcrawl-ffi/tests/"
 
