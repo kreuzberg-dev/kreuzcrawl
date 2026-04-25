@@ -139,7 +139,7 @@ mod tests {
 
     #[test]
     fn sanitize_f64_finite_passes_through() {
-        assert_eq!(sanitize_f64(3.14), 3.14);
+        assert_eq!(sanitize_f64(3.5), 3.5);
         assert_eq!(sanitize_f64(0.0), 0.0);
         assert_eq!(sanitize_f64(-1.0), -1.0);
     }
