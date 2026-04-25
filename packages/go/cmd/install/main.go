@@ -50,18 +50,18 @@ const (
 
 // PlatformMapping maps Go's GOOS/GOARCH to release artifact names
 var PlatformMapping = map[string]string{
-	"darwin/arm64":   "macos-arm64",
-	"linux/amd64":    "linux-x86_64",
-	"linux/arm64":    "linux-aarch64",
-	"windows/amd64":  "windows-x86_64",
+	"darwin/arm64":  "macos-arm64",
+	"linux/amd64":   "linux-x86_64",
+	"linux/arm64":   "linux-aarch64",
+	"windows/amd64": "windows-x86_64",
 }
 
 // GoDir maps platform to Go-style directory names
 var GoDir = map[string]string{
-	"darwin/arm64":   "darwin_arm64",
-	"linux/amd64":    "linux_amd64",
-	"linux/arm64":    "linux_arm64",
-	"windows/amd64":  "windows_amd64",
+	"darwin/arm64":  "darwin_arm64",
+	"linux/amd64":   "linux_amd64",
+	"linux/arm64":   "linux_arm64",
+	"windows/amd64": "windows_amd64",
 }
 
 // versionRegex validates semantic versioning format

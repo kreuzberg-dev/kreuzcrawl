@@ -566,3 +566,70 @@ extra_paths = [
     "crates/kreuzcrawl-node/package.json",
     "packages/ruby/ext/kreuzcrawl_rb/src/kreuzcrawl/version.rb",
 ]
+
+# ---------------------------------------------------------------------------
+# Lint
+# ---------------------------------------------------------------------------
+[lint.python]
+before = "cd packages/python && uv sync"
+format = "ruff format packages/python"
+check = "ruff check --fix packages/python"
+typecheck = "cd packages/python && uv run mypy ."
+
+[lint.node]
+format = "npx oxfmt packages/typescript/"
+check = "npx oxlint packages/typescript/"
+
+[lint.ruby]
+before = "cd packages/ruby && bundle install"
+format = "cd packages/ruby && bundle exec rubocop -a ."
+check = "cd packages/ruby && bundle exec rubocop ."
+
+[lint.php]
+before = "cd packages/php && composer install"
+format = "cd packages/php && vendor/bin/php-cs-fixer fix ."
+check = "cd packages/php && vendor/bin/phpstan --configuration=phpstan.neon --memory-limit=512M"
+
+[lint.go]
+before = "cargo build --release -p kreuzcrawl-ffi"
+format = "gofmt -w packages/go"
+check = "cd packages/go && golangci-lint run ./..."
+
+[lint.elixir]
+before = "cd packages/elixir && mix deps.get"
+format = "cd packages/elixir && mix format"
+check = "cd packages/elixir && mix credo"
+
+[lint.java]
+format = "mvn -f packages/java/pom.xml spotless:apply -q"
+check = "mvn -f packages/java/pom.xml spotless:check -q"
+
+[lint.csharp]
+format = "dotnet format packages/csharp"
+check = "dotnet format packages/csharp --verify-no-changes"
+
+[lint.wasm]
+format = "npx oxfmt packages/wasm/"
+check = "npx oxlint packages/wasm/"
+
+[lint.ffi]
+precondition = "test -d crates/kreuzcrawl-ffi/src"
+format = "find crates/kreuzcrawl-ffi/tests -name '*.c' -o -name '*.h' | xargs clang-format -i"
+check = "cppcheck --std=c11 --enable=warning,style,performance --suppress=missingIncludeSystem --suppress=unusedStructMember crates/kreuzcrawl-ffi/tests/"
+
+# ---------------------------------------------------------------------------
+# Publish
+# ---------------------------------------------------------------------------
+[publish]
+core_crate = "crates/kreuzcrawl"
+
+[publish.languages.ruby]
+vendor_mode = "core-only"
+
+[publish.languages.elixir]
+vendor_mode = "core-only"
+nif_versions = ["2.16", "2.17"]
+
+[publish.languages.ffi]
+pkg_config = true
+cmake_config = true

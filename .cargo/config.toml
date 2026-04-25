@@ -1,3 +1,6 @@
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=+bulk-memory", "--cfg", "getrandom_backend=\"wasm_js\""]
+
 [net]
 git-fetch-with-cli = true
 
