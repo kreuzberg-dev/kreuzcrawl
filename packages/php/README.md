@@ -56,19 +56,13 @@
 PHP bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Native PHP
 extension via ext-php-rs with typed properties, PHP 8.2+ support, and PHPStan type stubs.
 
-
 ## Installation
-
-
 
 ```bash
 composer require kreuzberg-dev/kreuzcrawl
 ```
 
-
-
 ## Quick Start
-
 
 ```php
 <?php
@@ -83,7 +77,6 @@ echo "Title: " . $result->metadata->title . "\n";
 echo "Status: " . $result->status_code . "\n";
 echo "Links: " . count($result->links) . "\n";
 ```
-
 
 ## API Reference
 

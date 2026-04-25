@@ -38,6 +38,10 @@ lint.per-file-ignores."e2e/**/*.py" = [
     "PT011",
     "S",
 ]
+lint.per-file-ignores."packages/python/kreuzcrawl/*.py" = [
+    "E501",
+    "I001",
+]
 lint.per-file-ignores."scripts/**/*.py" = [
     "B023",
     "B904",

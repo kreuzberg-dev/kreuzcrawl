@@ -56,10 +56,7 @@
 Elixir bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses Rustler
 NIFs for native BEAM integration with OTP-compatible error tuples and ResourceArc handles.
 
-
 ## Installation
-
-
 
 ```bash
 def deps do
@@ -67,10 +64,7 @@ def deps do
 end
 ```
 
-
-
 ## Quick Start
-
 
 ```elixir
 # Create engine with default settings
@@ -82,7 +76,6 @@ IO.puts("Title: #{result.metadata.title}")
 IO.puts("Status: #{result.status_code}")
 IO.puts("Links: #{length(result.links)}")
 ```
-
 
 ## API Reference
 

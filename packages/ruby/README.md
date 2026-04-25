@@ -56,19 +56,13 @@
 Ruby bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Powered by
 Magnus with native Ruby objects, full metadata extraction, and Markdown conversion.
 
-
 ## Installation
-
-
 
 ```bash
 gem install kreuzcrawl
 ```
 
-
-
 ## Quick Start
-
 
 ```ruby
 require 'kreuzcrawl'
@@ -82,7 +76,6 @@ puts "Title: #{result.metadata.title}"
 puts "Status: #{result.status_code}"
 puts "Links: #{result.links.length}"
 ```
-
 
 ## API Reference
 

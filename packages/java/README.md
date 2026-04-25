@@ -56,10 +56,7 @@
 Java bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses the
 Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 
-
 ## Installation
-
-
 
 ```bash
 <dependency>
@@ -69,10 +66,7 @@ Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 </dependency>
 ```
 
-
-
 ## Quick Start
-
 
 ```java
 import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
@@ -87,7 +81,6 @@ System.out.println("Title: " + result.metadata().title());
 System.out.println("Status: " + result.statusCode());
 System.out.println("Links: " + result.links().size());
 ```
-
 
 ## API Reference
 

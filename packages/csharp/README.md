@@ -56,19 +56,13 @@
 C# / .NET bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses
 P/Invoke with the C FFI layer, supporting .NET 8+ with async/await and nullable reference types.
 
-
 ## Installation
-
-
 
 ```bash
 dotnet add package Kreuzcrawl
 ```
 
-
-
 ## Quick Start
-
 
 ```csharp
 using Kreuzcrawl;
@@ -82,7 +76,6 @@ Console.WriteLine($"Title: {result.Metadata.Title}");
 Console.WriteLine($"Status: {result.StatusCode}");
 Console.WriteLine($"Links: {result.Links.Count}");
 ```
-
 
 ## API Reference
 

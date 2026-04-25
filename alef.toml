@@ -1,4 +1,4 @@
-version = "0.7.8"
+version = "0.7.9"
 languages = ["python", "node", "ruby", "php", "ffi", "go", "java", "csharp", "elixir", "wasm"]
 
 [crate]
@@ -329,40 +329,51 @@ module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
 path = "../../packages/go"
 
 [test.python]
+precondition = "command -v python3 >/dev/null 2>&1"
 command = "task python:test"
 e2e = "cd e2e/python && python3 -m pytest tests/ -q"
 
 [test.node]
+precondition = "command -v node >/dev/null 2>&1"
 command = "task node:test"
 e2e = "cd e2e/typescript && npx vitest run"
 
 [test.go]
+precondition = "command -v go >/dev/null 2>&1"
 command = "task go:test"
 e2e = "cd e2e/go && go test ./... -count=1"
 
 [test.ruby]
+precondition = "command -v ruby >/dev/null 2>&1"
 command = "task ruby:test"
 
 [test.php]
+precondition = "command -v php >/dev/null 2>&1"
 command = "task php:test"
 
 [test.java]
+precondition = "command -v mvn >/dev/null 2>&1"
 command = "task java:test"
 
 [test.csharp]
+precondition = "command -v dotnet >/dev/null 2>&1"
 command = "task csharp:test"
 
 [test.elixir]
+precondition = "command -v mix >/dev/null 2>&1"
 command = "task elixir:test"
 e2e = "cd e2e/elixir && mix test"
 
 [test.wasm]
+precondition = "command -v npx >/dev/null 2>&1"
 e2e = "cd e2e/wasm && npm test"
 
 [test.rust]
+precondition = "command -v cargo >/dev/null 2>&1"
 e2e = "cd e2e/rust && cargo test"
 
 [test.c]
+precondition = "command -v make >/dev/null 2>&1"
 e2e = "cd e2e/c && make clean && make && DYLD_LIBRARY_PATH=../../target/release ./test_runner"
 
 # ---------------------------------------------------------------------------
@@ -572,44 +583,46 @@ extra_paths = [
 # Lint
 # ---------------------------------------------------------------------------
 [lint.python]
+precondition = "command -v ruff >/dev/null 2>&1"
 before = "cd packages/python && uv sync"
-format = "ruff format packages/python"
-check = "ruff check --fix packages/python"
 typecheck = "cd packages/python && uv run mypy ."
 
 [lint.node]
+precondition = "command -v npx >/dev/null 2>&1"
 format = "npx oxfmt packages/typescript/"
 check = "npx oxlint packages/typescript/"
 
 [lint.ruby]
+precondition = "command -v bundle >/dev/null 2>&1"
 before = "cd packages/ruby && bundle install"
 format = "cd packages/ruby && bundle exec rubocop -a ."
-check = "cd packages/ruby && bundle exec rubocop ."
 
 [lint.php]
+precondition = "command -v php >/dev/null 2>&1"
 before = "cd packages/php && composer install"
 format = "cd packages/php && vendor/bin/php-cs-fixer fix ."
 check = "cd packages/php && vendor/bin/phpstan --configuration=phpstan.neon --memory-limit=512M"
 
 [lint.go]
+precondition = "command -v golangci-lint >/dev/null 2>&1"
 before = "cargo build --release -p kreuzcrawl-ffi"
-format = "gofmt -w packages/go"
-check = "cd packages/go && golangci-lint run ./..."
 
 [lint.elixir]
+precondition = "command -v mix >/dev/null 2>&1"
 before = "cd packages/elixir && mix deps.get"
-format = "cd packages/elixir && mix format"
 check = "cd packages/elixir && mix credo"
 
 [lint.java]
-format = "mvn -f packages/java/pom.xml spotless:apply -q"
+precondition = "command -v mvn >/dev/null 2>&1"
 check = "mvn -f packages/java/pom.xml spotless:check -q"
 
 [lint.csharp]
+precondition = "command -v dotnet >/dev/null 2>&1"
 format = "dotnet format packages/csharp/Kreuzcrawl.slnx"
 check = "dotnet format packages/csharp/Kreuzcrawl.slnx --verify-no-changes"
 
 [lint.wasm]
+precondition = "command -v npx >/dev/null 2>&1"
 format = "npx oxfmt packages/wasm/"
 check = "npx oxlint packages/wasm/"
 

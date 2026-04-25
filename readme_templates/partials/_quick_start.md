@@ -1,5 +1,5 @@
-{% if snippets and snippets.basic_usage %}
+{% if snippets and snippets.basic_usage -%}
 {{ snippets.basic_usage | include_snippet(language) }}
-{% else %}
+{%- else -%}
 See the [API Reference](https://docs.kreuzcrawl.dev) for detailed usage.
-{% endif %}
+{%- endif %}
