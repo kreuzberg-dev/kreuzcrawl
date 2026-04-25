@@ -57,19 +57,13 @@ Python bindings for **kreuzcrawl** — a high-performance Rust web crawling engi
 data extraction. Powered by PyO3, with async support, full metadata extraction, and Markdown
 conversion. Wheels published for Linux, macOS, and Windows.
 
-
 ## Installation
-
-
 
 ```bash
 pip install kreuzcrawl
 ```
 
-
-
 ## Quick Start
-
 
 ```python
 from kreuzcrawl import create_engine, scrape
@@ -83,7 +77,6 @@ print(f"Title: {result.metadata.title}")
 print(f"Status: {result.status_code}")
 print(f"Links: {len(result.links)}")
 ```
-
 
 ## API Reference
 

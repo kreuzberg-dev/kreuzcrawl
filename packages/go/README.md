@@ -56,19 +56,13 @@
 Go bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses cgo with
 the C FFI layer for native performance with idiomatic Go error handling.
 
-
 ## Installation
-
-
 
 ```bash
 go get github.com/kreuzberg-dev/kreuzcrawl/packages/go
 ```
 
-
-
 ## Quick Start
-
 
 ```go
 package main
@@ -95,7 +89,6 @@ func main() {
     fmt.Printf("Links: %d\n", len(result.Links))
 }
 ```
-
 
 ## API Reference
 

@@ -2,7 +2,7 @@
 
 {% include 'partials/_badges.md' %}
 
-{{ description }}
+{{ description | trim }}
 
 ## Installation
 
