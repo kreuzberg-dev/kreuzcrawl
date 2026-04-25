@@ -939,8 +939,10 @@ mod tests {
 
     #[test]
     fn test_aggregate_results_quality_present_when_enabled() {
-        let mut config = BenchmarkConfig::default();
-        config.measure_quality = true;
+        let config = BenchmarkConfig {
+            measure_quality: true,
+            ..Default::default()
+        };
         let results = vec![make_result(true, 100.0, Some(make_quality(0.9, 0.8, 0.847)))];
         let output = aggregate_results(&results, &[], &config, "test");
         assert!(output.quality_report.is_some());
@@ -948,8 +950,10 @@ mod tests {
 
     #[test]
     fn test_aggregate_results_quality_absent_when_disabled() {
-        let mut config = BenchmarkConfig::default();
-        config.measure_quality = false;
+        let config = BenchmarkConfig {
+            measure_quality: false,
+            ..Default::default()
+        };
         let results = vec![make_result(true, 100.0, Some(make_quality(0.9, 0.8, 0.847)))];
         let output = aggregate_results(&results, &[], &config, "test");
         assert!(output.quality_report.is_none());
