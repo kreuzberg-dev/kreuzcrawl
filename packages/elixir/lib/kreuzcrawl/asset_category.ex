@@ -6,17 +6,7 @@
 defmodule Kreuzcrawl.AssetCategory do
   @moduledoc "The category of a downloaded asset."
 
-  @type t ::
-          :document
-          | :image
-          | :audio
-          | :video
-          | :font
-          | :stylesheet
-          | :script
-          | :archive
-          | :data
-          | :other
+  @type t :: :document | :image | :audio | :video | :font | :stylesheet | :script | :archive | :data | :other
 
   @document :document
   @image :image
