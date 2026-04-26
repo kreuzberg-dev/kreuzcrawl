@@ -1012,7 +1012,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     permissions:
-      contents: read
+      contents: write
     strategy:
       fail-fast: false
       matrix:

@@ -2,6 +2,7 @@
 members = ["crates/*", "packages/elixir/native/kreuzcrawl_nif", "tools/*"]
 exclude = [
     ".claude",
+    "e2e/rust",
     "packages/ruby/ext/kreuzcrawl_rb",
     "packages/ruby/ext/src_rb",
     "packages/ruby/tmp",
