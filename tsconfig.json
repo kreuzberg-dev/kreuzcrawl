@@ -31,10 +31,5 @@
 		"verbatimModuleSyntax": true,
 		"noEmit": true
 	},
-	"files": [],
-	"references": [
-		{ "path": "./crates/kreuzcrawl-node" },
-		{ "path": "./crates/kreuzcrawl-wasm" },
-		{ "path": "./packages/typescript" }
-	]
+	"include": ["packages/typescript/src/**/*.ts"]
 }
