@@ -120,33 +120,16 @@ tasks:
       - task: c:test
 
   update:
-    desc: Update all dependencies to latest versions
+    desc: Update all dependencies within current major versions (no breaking changes)
     cmds:
-      - echo "Updating Rust dependencies..."
-      - task: rust:update
-      - echo "Updating Python dependencies..."
-      - task: python:update
-      - echo "Updating TypeScript dependencies..."
-      - task: node:update
-      - echo "Updating WASM dependencies..."
-      - task: wasm:update
-      - echo "Updating Ruby dependencies..."
-      - task: ruby:update
-      - echo "Updating Java dependencies..."
-      - task: java:update
-      - echo "Updating Go dependencies..."
-      - task: go:update
-      - echo "Updating C# dependencies..."
-      - task: csharp:update
-      - echo "Updating PHP dependencies..."
-      - task: php:update
-      - echo "Updating Elixir dependencies..."
-      - task: elixir:update
-      - echo "Updating C dependencies..."
-      - task: c:update
-      - echo "Updating prek dependencies..."
+      - alef update
       - prek autoupdate
-      - echo "All dependencies updated"
+
+  upgrade:
+    desc: Upgrade all dependencies to latest versions including cross-major bumps
+    cmds:
+      - alef update --latest
+      - prek autoupdate
 
   clean:
     desc: Clean all build artifacts
