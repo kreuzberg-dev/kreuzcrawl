@@ -2,6 +2,6 @@ module e2e_go
 
 go 1.26
 
-require github.com/kreuzberg-dev/kreuzcrawl/packages/go v0.2.0
+require github.com/kreuzberg-dev/kreuzcrawl/packages/go v0.3.0-rc.1
 
 replace github.com/kreuzberg-dev/kreuzcrawl/packages/go => ../../packages/go

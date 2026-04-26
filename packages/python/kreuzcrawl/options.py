@@ -750,7 +750,6 @@ class CitationReference:
     url: str = ""
     text: str = ""
 
-
 @dataclass
 class BatchScrapeResult:
     """Result from a single URL in a batch scrape operation."""

@@ -25,7 +25,7 @@ func Test_EncodingDoubleEncoded(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if len(result.Links) < 1 {
@@ -44,7 +44,7 @@ func Test_EncodingMixedCharsetPage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 }
@@ -60,7 +60,7 @@ func Test_EncodingPercentEncodedPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if len(result.Links) < 2 {
@@ -79,7 +79,7 @@ func Test_EncodingUnicodeUrl(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 }

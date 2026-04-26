@@ -30,8 +30,8 @@ func Test_Content204NoContent(t *testing.T) {
 	if result.StatusCode != 204 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(result.HTML) != 0 {
-		t.Errorf("expected empty value, got %v", result.HTML)
+	if len(result.Html) != 0 {
+		t.Errorf("expected empty value, got %v", result.Html)
 	}
 }
 
@@ -94,7 +94,7 @@ func Test_ContentGzipCompressed(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if result.StatusCode != 200 {
@@ -174,7 +174,7 @@ func Test_ContentRemoveTags(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 }
@@ -201,7 +201,7 @@ func Test_ContentUtf8Bom(t *testing.T) {
 	if strings.TrimSpace(detectedCharset) != `utf-8` {
 		t.Errorf("equals mismatch: got %v", detectedCharset)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 }

@@ -28,3 +28,15 @@ tasks:
     cmds:
       - alef sync-versions --bump patch
       - task: sync
+
+  check:
+    desc: "Check if versions are synchronized (dry-run)"
+    cmds:
+      - cmd: grep -m 1 'version = ' Cargo.toml | sed 's/version = "\(.*\)"/\1/'
+        silent: false
+
+  show:
+    desc: "Show current version from Cargo.toml"
+    cmds:
+      - cmd: grep -m 1 'version = ' Cargo.toml | sed 's/version = "\(.*\)"/\1/'
+        silent: false

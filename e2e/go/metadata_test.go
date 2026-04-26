@@ -127,12 +127,12 @@ func Test_MetadataKeywordsAuthor(t *testing.T) {
 		metadataRobots = *result.Metadata.Robots
 	}
 	var metadataHTMLLang string
-	if result.Metadata.HTMLLang != nil {
-		metadataHTMLLang = *result.Metadata.HTMLLang
+	if result.Metadata.HtmlLang != nil {
+		metadataHTMLLang = *result.Metadata.HtmlLang
 	}
 	var metadataHTMLDir string
-	if result.Metadata.HTMLDir != nil {
-		metadataHTMLDir = *result.Metadata.HTMLDir
+	if result.Metadata.HtmlDir != nil {
+		metadataHTMLDir = *result.Metadata.HtmlDir
 	}
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
@@ -140,7 +140,7 @@ func Test_MetadataKeywordsAuthor(t *testing.T) {
 	if strings.TrimSpace(metadataTitle) != `Comprehensive Metadata Test Page` {
 		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
-	if result.Metadata.CanonicalURL == nil || len(*result.Metadata.CanonicalURL) == 0 {
+	if result.Metadata.CanonicalUrl == nil || len(*result.Metadata.CanonicalUrl) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if len(metadataKeywords) == 0 {
