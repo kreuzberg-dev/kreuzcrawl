@@ -296,7 +296,7 @@ tasks:
     env:
       PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
     cmds:
-      - cargo clippy -p kreuzcrawl-e2e-rust -- -D warnings
+      - cargo clippy --manifest-path e2e/rust/Cargo.toml -- -D warnings
 
   e2e:test:
     desc: Run Rust E2E tests
@@ -304,7 +304,7 @@ tasks:
       PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
       RUST_TEST_THREADS: "1"
     cmds:
-      - cargo test -p kreuzcrawl-e2e-rust --release
+      - cargo test --manifest-path e2e/rust/Cargo.toml --release
 
   e2e:verify:
     desc: Regenerate and validate Rust E2E suite (generate + format + lint + test)

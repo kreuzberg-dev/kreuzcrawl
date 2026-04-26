@@ -7,7 +7,18 @@
 
 import kreuzcrawl._kreuzcrawl as _rust
 
-from ._kreuzcrawl import ContentConfig, ScrapeResult, BrowserConfig, ProxyConfig, CrawlConfig, CrawlEngineHandle, BatchCrawlResult, BatchScrapeResult, CrawlResult, MapResult
+from ._kreuzcrawl import (
+    ContentConfig,
+    ScrapeResult,
+    BrowserConfig,
+    ProxyConfig,
+    CrawlConfig,
+    CrawlEngineHandle,
+    BatchCrawlResult,
+    BatchScrapeResult,
+    CrawlResult,
+    MapResult,
+)
 
 
 def _to_rust_content_config(value: ContentConfig | None) -> _rust.ContentConfig | None:
@@ -76,7 +87,9 @@ def _to_rust_crawl_config(value: CrawlConfig | None) -> _rust.CrawlConfig | None
         retry_count=value.retry_count,
         retry_codes=value.retry_codes,
         cookies_enabled=value.cookies_enabled,
-        auth=(value.auth if isinstance(value.auth, _rust.AuthConfig) else _rust.AuthConfig(value.auth)) if value.auth is not None else None,
+        auth=(value.auth if isinstance(value.auth, _rust.AuthConfig) else _rust.AuthConfig(value.auth))
+        if value.auth is not None
+        else None,
         max_body_size=value.max_body_size,
         remove_tags=value.remove_tags,
         content=_to_rust_content_config(value.content),
