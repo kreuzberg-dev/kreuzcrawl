@@ -48,8 +48,8 @@ func Test_LinksBaseTag(t *testing.T) {
 		t.Errorf("expected > 2, got %v", len(result.Links))
 	}
 	if len(result.Links) > 0 {
-		if !strings.Contains(string(result.Links[0].URL), `example.com`) {
-			t.Errorf("expected to contain %s, got %v", `example.com`, result.Links[0].URL)
+		if !strings.Contains(string(result.Links[0].Url), `example.com`) {
+			t.Errorf("expected to contain %s, got %v", `example.com`, result.Links[0].Url)
 		}
 	}
 }
@@ -87,8 +87,8 @@ func Test_LinksEmptyHref(t *testing.T) {
 		t.Errorf("expected > 0, got %v", len(result.Links))
 	}
 	if len(result.Links) > 0 {
-		if !strings.Contains(string(result.Links[0].URL), `/valid`) {
-			t.Errorf("expected to contain %s, got %v", `/valid`, result.Links[0].URL)
+		if !strings.Contains(string(result.Links[0].Url), `/valid`) {
+			t.Errorf("expected to contain %s, got %v", `/valid`, result.Links[0].Url)
 		}
 	}
 }
@@ -108,7 +108,7 @@ func Test_LinksInternalExternalClassification(t *testing.T) {
 		t.Errorf("expected > 4, got %v", len(result.Links))
 	}
 	if len(result.Links) > 0 {
-		if len(result.Links[0].URL) == 0 {
+		if len(result.Links[0].Url) == 0 {
 			t.Errorf("expected non-empty value")
 		}
 	}
@@ -129,8 +129,8 @@ func Test_LinksMailtoJavascriptSkip(t *testing.T) {
 		t.Errorf("expected > 0, got %v", len(result.Links))
 	}
 	if len(result.Links) > 0 {
-		if strings.Contains(string(result.Links[0].URL), `mailto:`) {
-			t.Errorf("expected NOT to contain %s, got %v", `mailto:`, result.Links[0].URL)
+		if strings.Contains(string(result.Links[0].Url), `mailto:`) {
+			t.Errorf("expected NOT to contain %s, got %v", `mailto:`, result.Links[0].Url)
 		}
 	}
 }
@@ -150,8 +150,8 @@ func Test_LinksProtocolRelative(t *testing.T) {
 		t.Errorf("expected > 1, got %v", len(result.Links))
 	}
 	if len(result.Links) > 0 {
-		if !strings.Contains(string(result.Links[0].URL), `//`) {
-			t.Errorf("expected to contain %s, got %v", `//`, result.Links[0].URL)
+		if !strings.Contains(string(result.Links[0].Url), `//`) {
+			t.Errorf("expected to contain %s, got %v", `//`, result.Links[0].Url)
 		}
 	}
 }

@@ -124,7 +124,7 @@ func Test_ScrapeBasicHtmlPage(t *testing.T) {
 	if strings.TrimSpace(result.ContentType) != `text/html` {
 		t.Errorf("equals mismatch: got %v", result.ContentType)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if strings.TrimSpace(metadataTitle) != `Example Domain` {
@@ -133,7 +133,7 @@ func Test_ScrapeBasicHtmlPage(t *testing.T) {
 	if !strings.Contains(string(metadataDescription), `illustrative examples`) {
 		t.Errorf("expected to contain %s, got %v", `illustrative examples`, metadataDescription)
 	}
-	if result.Metadata.CanonicalURL == nil || len(*result.Metadata.CanonicalURL) == 0 {
+	if result.Metadata.CanonicalUrl == nil || len(*result.Metadata.CanonicalUrl) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if len(result.Links) < 1 {
@@ -170,7 +170,7 @@ func Test_ScrapeComplexLinks(t *testing.T) {
 		t.Errorf("expected > 9, got %v", len(result.Links))
 	}
 	if len(result.Links) > 0 {
-		if len(result.Links[0].URL) == 0 {
+		if len(result.Links[0].Url) == 0 {
 			t.Errorf("expected non-empty value")
 		}
 	}
@@ -310,7 +310,7 @@ func Test_ScrapeJsHeavySpa(t *testing.T) {
 	if err != nil {
 		t.Fatalf("call failed: %v", err)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 }
@@ -327,18 +327,18 @@ func Test_ScrapeJsonLd(t *testing.T) {
 		t.Fatalf("call failed: %v", err)
 	}
 	var jsonLdName string
-	if result.JSONLd[0].Name != nil {
-		jsonLdName = *result.JSONLd[0].Name
+	if result.JsonLd[0].Name != nil {
+		jsonLdName = *result.JsonLd[0].Name
 	}
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(result.JSONLd) == 0 {
+	if len(result.JsonLd) == 0 {
 		t.Errorf("expected non-empty value")
 	}
-	if len(result.JSONLd) > 0 {
-		if strings.TrimSpace(result.JSONLd[0].SchemaType) != `Recipe` {
-			t.Errorf("equals mismatch: got %v", result.JSONLd[0].SchemaType)
+	if len(result.JsonLd) > 0 {
+		if strings.TrimSpace(result.JsonLd[0].SchemaType) != `Recipe` {
+			t.Errorf("equals mismatch: got %v", result.JsonLd[0].SchemaType)
 		}
 	}
 	if strings.TrimSpace(jsonLdName) != `Best Chocolate Cake` {
@@ -364,7 +364,7 @@ func Test_ScrapeMalformedHtml(t *testing.T) {
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if !strings.Contains(string(metadataDescription), `broken HTML`) {

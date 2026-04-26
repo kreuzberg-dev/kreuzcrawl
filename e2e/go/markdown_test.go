@@ -37,7 +37,7 @@ func Test_MarkdownBasicConversion(t *testing.T) {
 	if strings.TrimSpace(metadataTitle) != `Test` {
 		t.Errorf("equals mismatch: got %v", metadataTitle)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if result.Markdown != nil {
@@ -128,7 +128,7 @@ func Test_MarkdownLinksConverted(t *testing.T) {
 	if result.StatusCode != 200 {
 		t.Errorf("equals mismatch: got %v", result.StatusCode)
 	}
-	if len(result.HTML) == 0 {
+	if len(result.Html) == 0 {
 		t.Errorf("expected non-empty value")
 	}
 	if result.Markdown != nil {
