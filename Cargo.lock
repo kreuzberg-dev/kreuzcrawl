@@ -2237,15 +2237,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kreuzcrawl-e2e-rust"
-version = "0.3.0-rc.1"
-dependencies = [
- "kreuzcrawl",
- "serde_json",
- "tokio",
-]
-
-[[package]]
 name = "kreuzcrawl-ffi"
 version = "0.3.0-rc.1"
 dependencies = [

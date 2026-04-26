@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*", "e2e/rust", "packages/elixir/native/kreuzcrawl_nif", "tools/*"]
+members = ["crates/*", "packages/elixir/native/kreuzcrawl_nif", "tools/*"]
 exclude = [
     ".claude",
     "packages/ruby/ext/kreuzcrawl_rb",
