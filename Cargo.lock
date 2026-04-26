@@ -2284,11 +2284,11 @@ dependencies = [
 name = "kreuzcrawl-wasm"
 version = "0.3.0-rc.2"
 dependencies = [
- "getrandom 0.3.4",
- "getrandom 0.4.2",
+ "futures-util",
  "js-sys",
  "kreuzcrawl",
  "serde-wasm-bindgen",
+ "serde_json",
  "wasm-bindgen",
  "wasm-bindgen-futures",
 ]
