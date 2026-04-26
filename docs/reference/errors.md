@@ -31,3 +31,4 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `Other` | other: {0} | An unclassified error occurred. |
 
 ---
+
