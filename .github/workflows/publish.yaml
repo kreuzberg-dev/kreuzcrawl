@@ -1324,7 +1324,7 @@ jobs:
             build_features: default
           - os: windows-latest
             label: windows-x86_64
-            target: x86_64-pc-windows-gnu
+            target: x86_64-pc-windows-msvc
             build_features: ""
     steps:
       - name: Checkout
@@ -1342,87 +1342,27 @@ jobs:
         if: runner.os == 'Linux'
         run: scripts/publish/ubuntu/free-disk-space.sh
 
-      - name: Configure Windows GNU toolchain
-        if: matrix.settings.os == 'windows-latest'
-        shell: bash
-        run: scripts/publish/go/configure-windows-gnu-toolchain.sh
-
       - name: Setup Rust
         uses: kreuzberg-dev/actions/setup-rust@v1
         with:
-          cache-key-prefix: ${{ matrix.settings.os == 'windows-latest' && 'publish-go-windows-gnu' || format('publish-go-{0}', matrix.settings.os) }}
-          use-sccache: ${{ matrix.settings.os != 'windows-latest' }}
+          cache-key-prefix: publish-go-${{ matrix.settings.label }}
+          use-sccache: ${{ runner.os != 'Windows' }}
           target: ${{ matrix.settings.target }}
-          toolchain: ${{ matrix.settings.os == 'windows-latest' && 'stable-x86_64-pc-windows-gnu' || '' }}
 
-      - name: Set GNU as default (Windows)
-        if: matrix.settings.os == 'windows-latest'
-        shell: pwsh
-        run: rustup default stable-x86_64-pc-windows-gnu
+      - name: Install alef
+        uses: kreuzberg-dev/actions/install-alef@v1
 
-      - name: Setup MSYS2 (Windows)
-        if: matrix.settings.os == 'windows-latest'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: UCRT64
-          update: true
-          install: >-
-            mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-cmake
-            mingw-w64-ucrt-x86_64-pkg-config
-            mingw-w64-ucrt-x86_64-nasm
-            mingw-w64-ucrt-x86_64-zstd
-            mingw-w64-ucrt-x86_64-binutils
-
-      - name: Verify MSYS2 toolchain and add to PATH (Windows)
-        if: matrix.settings.os == 'windows-latest'
-        shell: pwsh
-        run: scripts/ci/go/setup-msys2-windows.ps1
-
-      - name: Install Task
-        uses: kreuzberg-dev/actions/install-task@v1
-
-      - name: Build FFI library (Windows)
-        if: matrix.settings.os == 'windows-latest'
+      - name: Build and package Go FFI library
         shell: bash
-        run: task rust:ffi:build
-
-      - name: Build FFI library (Unix)
-        if: matrix.settings.os != 'windows-latest'
-        shell: bash
-        run: task rust:ffi:build
-
-      - name: Create artifact staging directory
-        shell: bash
-        run: scripts/publish/go/create-artifact-staging-dir.sh
-
-      - name: Stage FFI artifacts (Unix)
-        if: matrix.settings.os != 'windows-latest'
-        shell: bash
-        run: scripts/ci/go/stage-ffi-artifacts.sh artifact-staging/kreuzcrawl-ffi "${{ matrix.settings.build_features }}"
-
-      - name: Stage FFI artifacts (Windows)
-        if: matrix.settings.os == 'windows-latest'
-        shell: pwsh
-        run: scripts/ci/go/stage-ffi-artifacts-windows.ps1 "artifact-staging\kreuzcrawl-ffi"
-
-      - name: Generate installation README
-        shell: bash
-        run: scripts/ci/go/generate-install-readme.sh artifact-staging/kreuzcrawl-ffi/README.md
-
-      - name: Package FFI library
-        shell: bash
-        run: tar -czf "go-ffi-${{ matrix.settings.label }}.tar.gz" -C artifact-staging kreuzcrawl-ffi/
-
-      - name: Verify artifact completeness
-        shell: bash
-        run: scripts/ci/go/verify-ffi-artifact.sh "go-ffi-${{ matrix.settings.label }}.tar.gz"
+        run: |
+          alef publish build --lang ffi --target ${{ matrix.settings.target }}
+          alef publish package --lang go --target ${{ matrix.settings.target }} -o dist/go-ffi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: go-ffi-${{ matrix.settings.label }}
-          path: go-ffi-${{ matrix.settings.label }}.tar.gz
+          path: dist/go-ffi
           retention-days: 14
 
   java-natives:
@@ -1648,16 +1588,20 @@ jobs:
           - os: ubuntu-latest
             label: linux-x86_64
             platform: linux-x86_64
+            target: x86_64-unknown-linux-gnu
           - os: ubuntu-24.04-arm
             label: linux-arm64
             platform: linux-arm64
+            target: aarch64-unknown-linux-gnu
           - os: macos-latest
             label: macos-arm64
             platform: macos-arm64
+            target: aarch64-apple-darwin
           # Windows-GNU disabled: ort-sys 2.0.0-rc.12 build-dep lzma-rust2 0.15.x has crc version collision on windows-gnu target
           # - os: windows-latest
           #   label: windows-x86_64
           #   platform: windows-x86_64
+          #   target: x86_64-pc-windows-gnu
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -1683,35 +1627,14 @@ jobs:
           cache-key-prefix: publish-php-${{ matrix.settings.label }}
           use-sccache: ${{ runner.os != 'Windows' }}
 
-      - name: Detect partial cache hit and clean stale fingerprints
+      - name: Install alef
+        uses: kreuzberg-dev/actions/install-alef@v1
+
+      - name: Build and package PHP extension
         shell: bash
         run: |
-          # Check if cache was a partial hit (restored from fallback key)
-          # For now, we'll do a more conservative check: always clean before build
-          # since the current Cargo.lock changes frequently
-          echo "Preparing clean Rust build environment..."
-          cargo clean --release -p kreuzcrawl-php 2>/dev/null || true
-          cargo clean --release -p kreuzcrawl 2>/dev/null || true
-
-      - name: Install Task
-        uses: kreuzberg-dev/actions/install-task@v1
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
-          extensions: mbstring, xml
-          coverage: none
-
-      - name: Build PHP extension (kreuzcrawl-php)
-        shell: bash
-        run: task php:build
-
-      - name: Build PIE package
-        shell: bash
-        env:
-          VERSION: ${{ needs.prepare.outputs.version }}
-        run: scripts/publish/php/build-pie-package.sh "${{ matrix.settings.platform }}" "dist/php"
+          alef publish build --lang php --target ${{ matrix.settings.target }}
+          alef publish package --lang php --target ${{ matrix.settings.target }} -o dist/php
 
       - name: Upload PHP PIE package artifact
         uses: actions/upload-artifact@v7
@@ -2040,7 +1963,7 @@ jobs:
             build_features: default
           - os: windows-latest
             label: windows-x86_64
-            target: x86_64-pc-windows-gnu
+            target: x86_64-pc-windows-msvc
             build_features: ""
     steps:
       - name: Checkout
@@ -2060,54 +1983,27 @@ jobs:
         shell: bash
         run: scripts/publish/ubuntu/free-disk-space.sh
 
-      - name: Configure Windows GNU toolchain
-        if: matrix.settings.os == 'windows-latest'
-        shell: bash
-        run: scripts/publish/go/configure-windows-gnu-toolchain.sh
-
       - name: Setup Rust
         uses: kreuzberg-dev/actions/setup-rust@v1
         with:
-          cache-key-prefix: ${{ matrix.settings.os == 'windows-latest' && 'publish-c-ffi-windows-gnu' || format('publish-c-ffi-{0}', matrix.settings.os) }}
-          use-sccache: ${{ matrix.settings.os != 'windows-latest' }}
+          cache-key-prefix: publish-c-ffi-${{ matrix.settings.label }}
+          use-sccache: ${{ runner.os != 'Windows' }}
           target: ${{ matrix.settings.target }}
-          toolchain: ${{ matrix.settings.os == 'windows-latest' && 'stable-x86_64-pc-windows-gnu' || '' }}
 
-      - name: Set GNU as default (Windows)
-        if: matrix.settings.os == 'windows-latest'
-        shell: pwsh
-        run: rustup default stable-x86_64-pc-windows-gnu
+      - name: Install alef
+        uses: kreuzberg-dev/actions/install-alef@v1
 
-      - name: Setup MSYS2 (Windows)
-        if: matrix.settings.os == 'windows-latest'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: UCRT64
-          update: true
-          install: >-
-            mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-cmake
-            mingw-w64-ucrt-x86_64-pkg-config
-            mingw-w64-ucrt-x86_64-nasm
-            mingw-w64-ucrt-x86_64-zstd
-            mingw-w64-ucrt-x86_64-binutils
-
-      - name: Verify MSYS2 toolchain and add to PATH (Windows)
-        if: matrix.settings.os == 'windows-latest'
-        shell: pwsh
-        run: scripts/ci/go/setup-msys2-windows.ps1
-
-      - name: Package C FFI distribution
+      - name: Build and package C FFI distribution
         shell: bash
-        env:
-          BUILD_FEATURES: ${{ matrix.settings.build_features }}
-        run: scripts/publish/c-ffi/package-c-ffi.sh "${{ matrix.settings.label }}" "${{ needs.prepare.outputs.version }}" dist
+        run: |
+          alef publish build --lang ffi --target ${{ matrix.settings.target }}
+          alef publish package --lang ffi --target ${{ matrix.settings.target }} -o dist/c-ffi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: c-ffi-${{ matrix.settings.label }}
-          path: dist/c-ffi-${{ matrix.settings.label }}.tar.gz
+          path: dist/c-ffi
           retention-days: 14
 
   upload-c-ffi-release:
