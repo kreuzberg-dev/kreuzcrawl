@@ -496,3 +496,4 @@ Result from a single URL in a batch crawl operation.
 | `error` | `str | None` | `None` | The error message, if the crawl failed. |
 
 ---
+
