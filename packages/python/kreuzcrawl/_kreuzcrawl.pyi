@@ -637,7 +637,7 @@ class AuthConfigHeaderVariant(TypedDict):
     name: str
     value: str
 
-AuthConfig = AuthConfigBasicVariant | AuthConfigBearerVariant | AuthConfigHeaderVariant
+AuthConfig: TypeAlias = AuthConfigBasicVariant | AuthConfigBearerVariant | AuthConfigHeaderVariant
 
 class LinkType:
     Internal: LinkType = ...
