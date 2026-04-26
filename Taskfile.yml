@@ -58,38 +58,22 @@ includes:
 vars:
   RUST_LOG: info
 
+# Preconditions for task setup:
+# - Rust toolchain (rustup) — install via https://rustup.rs
+# - alef CLI — install via cargo install --git https://github.com/kreuzberg-dev/alef
+# - prek — install via cargo install prek
+# - Per-language tools auto-skipped via alef preconditions; install as needed:
+#   - Python: uv, Node: pnpm (corepack enable), Ruby: bundle, PHP: composer
+#   - Go: go, Java: mvn (use sdkman if needed), C#: dotnet, Elixir: mix
+
 tasks:
   setup:
-    desc: "Install all dependencies and initialize project. Idempotent - safe to re-run anytime."
+    desc: "Install all dependencies and dev tools"
     cmds:
-      - cmd: >-
-          bash -c '
-          echo "Setting up sdkman...";
-          if [ ! -d "$HOME/.sdkman" ]; then
-            echo "Installing sdkman...";
-            curl -s "https://get.sdkman.io" | bash;
-          else
-            echo "sdkman is already installed";
-          fi;
-          echo "Loading sdkman and installing tools from .sdkmanrc...";
-          source "$HOME/.sdkman/bin/sdkman-init.sh";
-          sdk env install;
-          '
-        platforms: [linux, darwin]
-      - cmd: echo "Setting up sdkman (skipped on Windows - use scoop or manual installation)..."
-        platforms: [windows]
-      - echo "Installing language tools..."
       - task: rust:install
-      - task: python:install
-      - task: node:install
-      - task: ruby:install
-      - task: java:install
-      - task: go:install
-      - task: elixir:install
-      - task: csharp:install
-      - task: php:install
-      - task: c:install
-      - echo "Setup complete - safe to re-run anytime"
+      - alef setup
+      - prek install
+      - prek install --hook-type commit-msg
 
   build:
     desc: Build core libraries and language bindings
