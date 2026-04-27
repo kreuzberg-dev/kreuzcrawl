@@ -14,7 +14,7 @@ npm install kreuzcrawl-wasm
 import init from 'kreuzcrawl-wasm';
 
 await init();
-// TODO: add usage example
+// See https://github.com/kreuzberg-dev/kreuzcrawl for usage examples.
 ```
 
 ## Documentation
