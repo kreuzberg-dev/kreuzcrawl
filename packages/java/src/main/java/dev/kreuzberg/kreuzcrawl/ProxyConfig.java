@@ -11,7 +11,7 @@ import java.util.Optional;
  * Proxy configuration for HTTP requests.
  */
 public record ProxyConfig(String url, Optional<String> username, Optional<String> password) {
-	public static ProxyConfigBuilder builder() {
-		return new ProxyConfigBuilder();
-	}
+    public static ProxyConfigBuilder builder() {
+        return new ProxyConfigBuilder();
+    }
 }

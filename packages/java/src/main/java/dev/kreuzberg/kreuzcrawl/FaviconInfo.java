@@ -12,14 +12,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Information about a favicon or icon link.
  */
 public record FaviconInfo(
-		/** The icon URL. */
-		String url,
-		/** The {@code rel} attribute (e.g., "icon", "apple-touch-icon"). */
-		String rel,
-		/** The {@code sizes} attribute, if present. */
-		Optional<String> sizes, /** The MIME type, if present. */
-		@JsonProperty("mime_type") Optional<String> mimeType) {
-	public static FaviconInfoBuilder builder() {
-		return new FaviconInfoBuilder();
-	}
+    /** The icon URL. */
+    String url,
+    /** The {@code rel} attribute (e.g., "icon", "apple-touch-icon"). */
+    String rel,
+    /** The {@code sizes} attribute, if present. */
+    Optional<String> sizes,
+    /** The MIME type, if present. */
+    @JsonProperty("mime_type") Optional<String> mimeType
+) {
+    public static FaviconInfoBuilder builder() {
+        return new FaviconInfoBuilder();
+    }
 }

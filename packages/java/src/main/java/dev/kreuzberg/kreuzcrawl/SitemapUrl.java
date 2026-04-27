@@ -11,14 +11,16 @@ import java.util.Optional;
  * A URL entry from a sitemap.
  */
 public record SitemapUrl(
-		/** The URL. */
-		String url,
-		/** The last modification date, if present. */
-		Optional<String> lastmod,
-		/** The change frequency, if present. */
-		Optional<String> changefreq, /** The priority, if present. */
-		Optional<String> priority) {
-	public static SitemapUrlBuilder builder() {
-		return new SitemapUrlBuilder();
-	}
+    /** The URL. */
+    String url,
+    /** The last modification date, if present. */
+    Optional<String> lastmod,
+    /** The change frequency, if present. */
+    Optional<String> changefreq,
+    /** The priority, if present. */
+    Optional<String> priority
+) {
+    public static SitemapUrlBuilder builder() {
+        return new SitemapUrlBuilder();
+    }
 }

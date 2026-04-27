@@ -12,12 +12,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Information about a feed link found on a page.
  */
 public record FeedInfo(
-		/** The feed URL. */
-		String url,
-		/** The feed title, if present. */
-		Optional<String> title, /** The type of feed. */
-		@JsonProperty("feed_type") FeedType feedType) {
-	public static FeedInfoBuilder builder() {
-		return new FeedInfoBuilder();
-	}
+    /** The feed URL. */
+    String url,
+    /** The feed title, if present. */
+    Optional<String> title,
+    /** The type of feed. */
+    @JsonProperty("feed_type") FeedType feedType
+) {
+    public static FeedInfoBuilder builder() {
+        return new FeedInfoBuilder();
+    }
 }

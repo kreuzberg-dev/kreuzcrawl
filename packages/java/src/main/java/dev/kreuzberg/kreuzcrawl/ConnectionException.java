@@ -4,13 +4,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** A connection error occurred. */
 public class ConnectionException extends CrawlErrorException {
-	/** Creates a new ConnectionException with the given message. */
-	public ConnectionException(final String message) {
-		super(message);
-	}
+    /** Creates a new ConnectionException with the given message. */
+    public ConnectionException(final String message) {
+        super(message);
+    }
 
-	/** Creates a new ConnectionException with the given message and cause. */
-	public ConnectionException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    /** Creates a new ConnectionException with the given message and cause. */
+    public ConnectionException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

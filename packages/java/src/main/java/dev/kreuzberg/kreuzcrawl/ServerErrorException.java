@@ -4,13 +4,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** A server error occurred (HTTP 5xx). */
 public class ServerErrorException extends CrawlErrorException {
-	/** Creates a new ServerErrorException with the given message. */
-	public ServerErrorException(final String message) {
-		super(message);
-	}
+    /** Creates a new ServerErrorException with the given message. */
+    public ServerErrorException(final String message) {
+        super(message);
+    }
 
-	/** Creates a new ServerErrorException with the given message and cause. */
-	public ServerErrorException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    /** Creates a new ServerErrorException with the given message and cause. */
+    public ServerErrorException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

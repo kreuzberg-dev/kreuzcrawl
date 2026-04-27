@@ -12,30 +12,34 @@ import java.util.Optional;
  */
 public class BatchScrapeResultBuilder {
 
-	private String url = "";
-	private Optional<ScrapeResult> result = Optional.empty();
-	private Optional<String> error = Optional.empty();
+    private String url = "";
+    private Optional<ScrapeResult> result = Optional.empty();
+    private Optional<String> error = Optional.empty();
 
-	/** Sets the url field. */
-	public BatchScrapeResultBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    public BatchScrapeResultBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the result field. */
-	public BatchScrapeResultBuilder withResult(final Optional<ScrapeResult> value) {
-		this.result = value;
-		return this;
-	}
+    /** Sets the result field. */
+    public BatchScrapeResultBuilder withResult(final Optional<ScrapeResult> value) {
+        this.result = value;
+        return this;
+    }
 
-	/** Sets the error field. */
-	public BatchScrapeResultBuilder withError(final Optional<String> value) {
-		this.error = value;
-		return this;
-	}
+    /** Sets the error field. */
+    public BatchScrapeResultBuilder withError(final Optional<String> value) {
+        this.error = value;
+        return this;
+    }
 
-	/** Builds the BatchScrapeResult instance. */
-	public BatchScrapeResult build() {
-		return new BatchScrapeResult(url, result, error);
-	}
+    /** Builds the BatchScrapeResult instance. */
+    public BatchScrapeResult build() {
+        return new BatchScrapeResult(
+            url,
+            result,
+            error
+        );
+    }
 }

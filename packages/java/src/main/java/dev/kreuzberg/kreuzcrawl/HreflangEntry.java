@@ -5,11 +5,12 @@
 // Issues & docs: https://github.com/kreuzberg-dev/alef
 package dev.kreuzberg.kreuzcrawl;
 
+
 /**
  * An hreflang alternate link entry.
  */
 public record HreflangEntry(String lang, String url) {
-	public static HreflangEntryBuilder builder() {
-		return new HreflangEntryBuilder();
-	}
+    public static HreflangEntryBuilder builder() {
+        return new HreflangEntryBuilder();
+    }
 }

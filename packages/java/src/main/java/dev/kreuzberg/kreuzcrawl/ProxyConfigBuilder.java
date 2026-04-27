@@ -12,30 +12,34 @@ import java.util.Optional;
  */
 public class ProxyConfigBuilder {
 
-	private String url = "";
-	private Optional<String> username = Optional.empty();
-	private Optional<String> password = Optional.empty();
+    private String url = "";
+    private Optional<String> username = Optional.empty();
+    private Optional<String> password = Optional.empty();
 
-	/** Sets the url field. */
-	public ProxyConfigBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    public ProxyConfigBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the username field. */
-	public ProxyConfigBuilder withUsername(final Optional<String> value) {
-		this.username = value;
-		return this;
-	}
+    /** Sets the username field. */
+    public ProxyConfigBuilder withUsername(final Optional<String> value) {
+        this.username = value;
+        return this;
+    }
 
-	/** Sets the password field. */
-	public ProxyConfigBuilder withPassword(final Optional<String> value) {
-		this.password = value;
-		return this;
-	}
+    /** Sets the password field. */
+    public ProxyConfigBuilder withPassword(final Optional<String> value) {
+        this.password = value;
+        return this;
+    }
 
-	/** Builds the ProxyConfig instance. */
-	public ProxyConfig build() {
-		return new ProxyConfig(url, username, password);
-	}
+    /** Builds the ProxyConfig instance. */
+    public ProxyConfig build() {
+        return new ProxyConfig(
+            url,
+            username,
+            password
+        );
+    }
 }

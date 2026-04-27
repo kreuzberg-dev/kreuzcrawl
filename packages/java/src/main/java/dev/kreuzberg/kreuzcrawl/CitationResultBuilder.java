@@ -12,23 +12,26 @@ import java.util.List;
  */
 public class CitationResultBuilder {
 
-	private String content = "";
-	private List<CitationReference> references = List.of();
+    private String content = "";
+    private List<CitationReference> references = List.of();
 
-	/** Sets the content field. */
-	public CitationResultBuilder withContent(final String value) {
-		this.content = value;
-		return this;
-	}
+    /** Sets the content field. */
+    public CitationResultBuilder withContent(final String value) {
+        this.content = value;
+        return this;
+    }
 
-	/** Sets the references field. */
-	public CitationResultBuilder withReferences(final List<CitationReference> value) {
-		this.references = value;
-		return this;
-	}
+    /** Sets the references field. */
+    public CitationResultBuilder withReferences(final List<CitationReference> value) {
+        this.references = value;
+        return this;
+    }
 
-	/** Builds the CitationResult instance. */
-	public CitationResult build() {
-		return new CitationResult(content, references);
-	}
+    /** Builds the CitationResult instance. */
+    public CitationResult build() {
+        return new CitationResult(
+            content,
+            references
+        );
+    }
 }

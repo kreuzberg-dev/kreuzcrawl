@@ -12,44 +12,50 @@ import java.util.Optional;
  */
 public class ExtractionMetaBuilder {
 
-	private Optional<Double> cost = Optional.empty();
-	private Optional<Long> promptTokens = Optional.empty();
-	private Optional<Long> completionTokens = Optional.empty();
-	private Optional<String> model = Optional.empty();
-	private long chunksProcessed = 0;
+    private Optional<Double> cost = Optional.empty();
+    private Optional<Long> promptTokens = Optional.empty();
+    private Optional<Long> completionTokens = Optional.empty();
+    private Optional<String> model = Optional.empty();
+    private long chunksProcessed = 0;
 
-	/** Sets the cost field. */
-	public ExtractionMetaBuilder withCost(final Optional<Double> value) {
-		this.cost = value;
-		return this;
-	}
+    /** Sets the cost field. */
+    public ExtractionMetaBuilder withCost(final Optional<Double> value) {
+        this.cost = value;
+        return this;
+    }
 
-	/** Sets the promptTokens field. */
-	public ExtractionMetaBuilder withPromptTokens(final Optional<Long> value) {
-		this.promptTokens = value;
-		return this;
-	}
+    /** Sets the promptTokens field. */
+    public ExtractionMetaBuilder withPromptTokens(final Optional<Long> value) {
+        this.promptTokens = value;
+        return this;
+    }
 
-	/** Sets the completionTokens field. */
-	public ExtractionMetaBuilder withCompletionTokens(final Optional<Long> value) {
-		this.completionTokens = value;
-		return this;
-	}
+    /** Sets the completionTokens field. */
+    public ExtractionMetaBuilder withCompletionTokens(final Optional<Long> value) {
+        this.completionTokens = value;
+        return this;
+    }
 
-	/** Sets the model field. */
-	public ExtractionMetaBuilder withModel(final Optional<String> value) {
-		this.model = value;
-		return this;
-	}
+    /** Sets the model field. */
+    public ExtractionMetaBuilder withModel(final Optional<String> value) {
+        this.model = value;
+        return this;
+    }
 
-	/** Sets the chunksProcessed field. */
-	public ExtractionMetaBuilder withChunksProcessed(final long value) {
-		this.chunksProcessed = value;
-		return this;
-	}
+    /** Sets the chunksProcessed field. */
+    public ExtractionMetaBuilder withChunksProcessed(final long value) {
+        this.chunksProcessed = value;
+        return this;
+    }
 
-	/** Builds the ExtractionMeta instance. */
-	public ExtractionMeta build() {
-		return new ExtractionMeta(cost, promptTokens, completionTokens, model, chunksProcessed);
-	}
+    /** Builds the ExtractionMeta instance. */
+    public ExtractionMeta build() {
+        return new ExtractionMeta(
+            cost,
+            promptTokens,
+            completionTokens,
+            model,
+            chunksProcessed
+        );
+    }
 }

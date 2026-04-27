@@ -11,12 +11,14 @@ import java.util.Optional;
  * Result from a single URL in a batch scrape operation.
  */
 public record BatchScrapeResult(
-		/** The URL that was scraped. */
-		String url,
-		/** The scrape result, if successful. */
-		Optional<ScrapeResult> result, /** The error message, if the scrape failed. */
-		Optional<String> error) {
-	public static BatchScrapeResultBuilder builder() {
-		return new BatchScrapeResultBuilder();
-	}
+    /** The URL that was scraped. */
+    String url,
+    /** The scrape result, if successful. */
+    Optional<ScrapeResult> result,
+    /** The error message, if the scrape failed. */
+    Optional<String> error
+) {
+    public static BatchScrapeResultBuilder builder() {
+        return new BatchScrapeResultBuilder();
+    }
 }

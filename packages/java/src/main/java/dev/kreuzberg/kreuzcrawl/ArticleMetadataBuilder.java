@@ -13,44 +13,50 @@ import java.util.Optional;
  */
 public class ArticleMetadataBuilder {
 
-	private Optional<String> publishedTime = Optional.empty();
-	private Optional<String> modifiedTime = Optional.empty();
-	private Optional<String> author = Optional.empty();
-	private Optional<String> section = Optional.empty();
-	private List<String> tags = List.of();
+    private Optional<String> publishedTime = Optional.empty();
+    private Optional<String> modifiedTime = Optional.empty();
+    private Optional<String> author = Optional.empty();
+    private Optional<String> section = Optional.empty();
+    private List<String> tags = List.of();
 
-	/** Sets the publishedTime field. */
-	public ArticleMetadataBuilder withPublishedTime(final Optional<String> value) {
-		this.publishedTime = value;
-		return this;
-	}
+    /** Sets the publishedTime field. */
+    public ArticleMetadataBuilder withPublishedTime(final Optional<String> value) {
+        this.publishedTime = value;
+        return this;
+    }
 
-	/** Sets the modifiedTime field. */
-	public ArticleMetadataBuilder withModifiedTime(final Optional<String> value) {
-		this.modifiedTime = value;
-		return this;
-	}
+    /** Sets the modifiedTime field. */
+    public ArticleMetadataBuilder withModifiedTime(final Optional<String> value) {
+        this.modifiedTime = value;
+        return this;
+    }
 
-	/** Sets the author field. */
-	public ArticleMetadataBuilder withAuthor(final Optional<String> value) {
-		this.author = value;
-		return this;
-	}
+    /** Sets the author field. */
+    public ArticleMetadataBuilder withAuthor(final Optional<String> value) {
+        this.author = value;
+        return this;
+    }
 
-	/** Sets the section field. */
-	public ArticleMetadataBuilder withSection(final Optional<String> value) {
-		this.section = value;
-		return this;
-	}
+    /** Sets the section field. */
+    public ArticleMetadataBuilder withSection(final Optional<String> value) {
+        this.section = value;
+        return this;
+    }
 
-	/** Sets the tags field. */
-	public ArticleMetadataBuilder withTags(final List<String> value) {
-		this.tags = value;
-		return this;
-	}
+    /** Sets the tags field. */
+    public ArticleMetadataBuilder withTags(final List<String> value) {
+        this.tags = value;
+        return this;
+    }
 
-	/** Builds the ArticleMetadata instance. */
-	public ArticleMetadata build() {
-		return new ArticleMetadata(publishedTime, modifiedTime, author, section, tags);
-	}
+    /** Builds the ArticleMetadata instance. */
+    public ArticleMetadata build() {
+        return new ArticleMetadata(
+            publishedTime,
+            modifiedTime,
+            author,
+            section,
+            tags
+        );
+    }
 }

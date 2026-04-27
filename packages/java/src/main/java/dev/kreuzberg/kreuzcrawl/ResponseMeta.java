@@ -12,20 +12,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Response metadata extracted from HTTP headers.
  */
 public record ResponseMeta(
-		/** The ETag header value. */
-		Optional<String> etag,
-		/** The Last-Modified header value. */
-		@JsonProperty("last_modified") Optional<String> lastModified,
-		/** The Cache-Control header value. */
-		@JsonProperty("cache_control") Optional<String> cacheControl,
-		/** The Server header value. */
-		Optional<String> server,
-		/** The X-Powered-By header value. */
-		@JsonProperty("x_powered_by") Optional<String> xPoweredBy,
-		/** The Content-Language header value. */
-		@JsonProperty("content_language") Optional<String> contentLanguage, /** The Content-Encoding header value. */
-		@JsonProperty("content_encoding") Optional<String> contentEncoding) {
-	public static ResponseMetaBuilder builder() {
-		return new ResponseMetaBuilder();
-	}
+    /** The ETag header value. */
+    Optional<String> etag,
+    /** The Last-Modified header value. */
+    @JsonProperty("last_modified") Optional<String> lastModified,
+    /** The Cache-Control header value. */
+    @JsonProperty("cache_control") Optional<String> cacheControl,
+    /** The Server header value. */
+    Optional<String> server,
+    /** The X-Powered-By header value. */
+    @JsonProperty("x_powered_by") Optional<String> xPoweredBy,
+    /** The Content-Language header value. */
+    @JsonProperty("content_language") Optional<String> contentLanguage,
+    /** The Content-Encoding header value. */
+    @JsonProperty("content_encoding") Optional<String> contentEncoding
+) {
+    public static ResponseMetaBuilder builder() {
+        return new ResponseMetaBuilder();
+    }
 }
