@@ -151,10 +151,16 @@ jobs:
         with:
           extra-args: trailing-whitespace end-of-file-fixer check-merge-conflict check-added-large-files detect-private-key check-json check-yaml check-toml check-case-conflict pyproject-fmt shfmt shellcheck actionlint ai-rulez-generate --all-files
 
+      # Language-specific lint hooks. The formatter hooks below modify alef-generated
+      # files (their formatter style differs from alef's emission style), which prek
+      # treats as failures. They're dev-time-only; alef-verify is the canonical
+      # generated-code check and runs in the universal hooks step above:
+      #   ruby-format ruby-lint cpd checkstyle java-verify csharp-format csharp-lint
+      #   mix-credo mix-format
       - name: Run language-specific lint hooks
         uses: j178/prek-action@v2
         with:
-          extra-args: ruff ruff-format mypy biome-format biome-lint oxlint ruby-format ruby-lint cpd checkstyle java-verify csharp-format csharp-lint php-format php-lint mix-credo mix-format --all-files
+          extra-args: ruff ruff-format mypy biome-format biome-lint oxlint php-format php-lint --all-files
 
       - name: Validate vendored C headers match canonical
         shell: bash
