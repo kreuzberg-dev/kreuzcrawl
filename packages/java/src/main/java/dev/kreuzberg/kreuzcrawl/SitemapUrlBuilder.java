@@ -12,37 +12,42 @@ import java.util.Optional;
  */
 public class SitemapUrlBuilder {
 
-	private String url = "";
-	private Optional<String> lastmod = Optional.empty();
-	private Optional<String> changefreq = Optional.empty();
-	private Optional<String> priority = Optional.empty();
+    private String url = "";
+    private Optional<String> lastmod = Optional.empty();
+    private Optional<String> changefreq = Optional.empty();
+    private Optional<String> priority = Optional.empty();
 
-	/** Sets the url field. */
-	public SitemapUrlBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    public SitemapUrlBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the lastmod field. */
-	public SitemapUrlBuilder withLastmod(final Optional<String> value) {
-		this.lastmod = value;
-		return this;
-	}
+    /** Sets the lastmod field. */
+    public SitemapUrlBuilder withLastmod(final Optional<String> value) {
+        this.lastmod = value;
+        return this;
+    }
 
-	/** Sets the changefreq field. */
-	public SitemapUrlBuilder withChangefreq(final Optional<String> value) {
-		this.changefreq = value;
-		return this;
-	}
+    /** Sets the changefreq field. */
+    public SitemapUrlBuilder withChangefreq(final Optional<String> value) {
+        this.changefreq = value;
+        return this;
+    }
 
-	/** Sets the priority field. */
-	public SitemapUrlBuilder withPriority(final Optional<String> value) {
-		this.priority = value;
-		return this;
-	}
+    /** Sets the priority field. */
+    public SitemapUrlBuilder withPriority(final Optional<String> value) {
+        this.priority = value;
+        return this;
+    }
 
-	/** Builds the SitemapUrl instance. */
-	public SitemapUrl build() {
-		return new SitemapUrl(url, lastmod, changefreq, priority);
-	}
+    /** Builds the SitemapUrl instance. */
+    public SitemapUrl build() {
+        return new SitemapUrl(
+            url,
+            lastmod,
+            changefreq,
+            priority
+        );
+    }
 }

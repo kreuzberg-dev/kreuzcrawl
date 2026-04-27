@@ -14,83 +14,78 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Configuration for crawl, scrape, and map operations.
  */
 public record CrawlConfig(
-		/** Maximum crawl depth (number of link hops from the start URL). */
-		@JsonProperty("max_depth") Optional<Long> maxDepth,
-		/** Maximum number of pages to crawl. */
-		@JsonProperty("max_pages") Optional<Long> maxPages,
-		/** Maximum number of concurrent requests. */
-		@JsonProperty("max_concurrent") Optional<Long> maxConcurrent,
-		/** Whether to respect robots.txt directives. */
-		@JsonProperty("respect_robots_txt") boolean respectRobotsTxt,
-		/** Custom user-agent string. */
-		@JsonProperty("user_agent") Optional<String> userAgent,
-		/** Whether to restrict crawling to the same domain. */
-		@JsonProperty("stay_on_domain") boolean stayOnDomain,
-		/** Whether to allow subdomains when {@code stay_on_domain} is true. */
-		@JsonProperty("allow_subdomains") boolean allowSubdomains,
-		/** Regex patterns for paths to include during crawling. */
-		@JsonProperty("include_paths") List<String> includePaths,
-		/** Regex patterns for paths to exclude during crawling. */
-		@JsonProperty("exclude_paths") List<String> excludePaths,
-		/** Custom HTTP headers to send with each request. */
-		@JsonProperty("custom_headers") Map<String, String> customHeaders,
-		/** Timeout for individual HTTP requests (in milliseconds when serialized). */
-		@JsonProperty("request_timeout") Long requestTimeout,
-		/** Per-domain rate limit in milliseconds. When set, enforces a minimum delay */
-		@JsonProperty("rate_limit_ms") Optional<Long> rateLimitMs,
-		/** Maximum number of redirects to follow. */
-		@JsonProperty("max_redirects") long maxRedirects,
-		/** Number of retry attempts for failed requests. */
-		@JsonProperty("retry_count") long retryCount,
-		/** HTTP status codes that should trigger a retry. */
-		@JsonProperty("retry_codes") List<Short> retryCodes,
-		/** Whether to enable cookie handling. */
-		@JsonProperty("cookies_enabled") boolean cookiesEnabled,
-		/** Authentication configuration. */
-		Optional<AuthConfig> auth,
-		/** Maximum response body size in bytes. */
-		@JsonProperty("max_body_size") Optional<Long> maxBodySize,
-		/** CSS selectors for tags to remove from HTML before processing. */
-		@JsonProperty("remove_tags") List<String> removeTags,
-		/** Content extraction and conversion configuration. */
-		ContentConfig content,
-		/** Maximum number of URLs to return from a map operation. */
-		@JsonProperty("map_limit") Optional<Long> mapLimit,
-		/** Search filter for map results (case-insensitive substring match on URLs). */
-		@JsonProperty("map_search") Optional<String> mapSearch,
-		/** Whether to download assets (CSS, JS, images, etc.) from the page. */
-		@JsonProperty("download_assets") boolean downloadAssets,
-		/** Filter for asset categories to download. */
-		@JsonProperty("asset_types") List<AssetCategory> assetTypes,
-		/** Maximum size in bytes for individual asset downloads. */
-		@JsonProperty("max_asset_size") Optional<Long> maxAssetSize,
-		/** Browser configuration. */
-		BrowserConfig browser,
-		/** Proxy configuration for HTTP requests. */
-		Optional<ProxyConfig> proxy,
-		/**
-		 * List of user-agent strings for rotation. If non-empty, overrides
-		 * {@code user_agent}.
-		 */
-		@JsonProperty("user_agents") List<String> userAgents,
-		/** Whether to capture a screenshot when using the browser. */
-		@JsonProperty("capture_screenshot") boolean captureScreenshot,
-		/**
-		 * Whether to download non-HTML documents (PDF, DOCX, images, code, etc.)
-		 * instead of skipping them.
-		 */
-		@JsonProperty("download_documents") boolean downloadDocuments,
-		/** Maximum size in bytes for document downloads. Defaults to 50 MB. */
-		@JsonProperty("document_max_size") Optional<Long> documentMaxSize,
-		/** Allowlist of MIME types to download. If empty, uses built-in defaults. */
-		@JsonProperty("document_mime_types") List<String> documentMimeTypes,
-		/** Path to write WARC output. If {@code None}, WARC output is disabled. */
-		@JsonProperty("warc_output") Optional<java.nio.file.Path> warcOutput,
-		/** Named browser profile for persistent sessions (cookies, localStorage). */
-		@JsonProperty("browser_profile") Optional<String> browserProfile,
-		/** Whether to save changes back to the browser profile on exit. */
-		@JsonProperty("save_browser_profile") boolean saveBrowserProfile) {
-	public static CrawlConfigBuilder builder() {
-		return new CrawlConfigBuilder();
-	}
+    /** Maximum crawl depth (number of link hops from the start URL). */
+    @JsonProperty("max_depth") Optional<Long> maxDepth,
+    /** Maximum number of pages to crawl. */
+    @JsonProperty("max_pages") Optional<Long> maxPages,
+    /** Maximum number of concurrent requests. */
+    @JsonProperty("max_concurrent") Optional<Long> maxConcurrent,
+    /** Whether to respect robots.txt directives. */
+    @JsonProperty("respect_robots_txt") boolean respectRobotsTxt,
+    /** Custom user-agent string. */
+    @JsonProperty("user_agent") Optional<String> userAgent,
+    /** Whether to restrict crawling to the same domain. */
+    @JsonProperty("stay_on_domain") boolean stayOnDomain,
+    /** Whether to allow subdomains when {@code stay_on_domain} is true. */
+    @JsonProperty("allow_subdomains") boolean allowSubdomains,
+    /** Regex patterns for paths to include during crawling. */
+    @JsonProperty("include_paths") List<String> includePaths,
+    /** Regex patterns for paths to exclude during crawling. */
+    @JsonProperty("exclude_paths") List<String> excludePaths,
+    /** Custom HTTP headers to send with each request. */
+    @JsonProperty("custom_headers") Map<String, String> customHeaders,
+    /** Timeout for individual HTTP requests (in milliseconds when serialized). */
+    @JsonProperty("request_timeout") Long requestTimeout,
+    /** Per-domain rate limit in milliseconds. When set, enforces a minimum delay */
+    @JsonProperty("rate_limit_ms") Optional<Long> rateLimitMs,
+    /** Maximum number of redirects to follow. */
+    @JsonProperty("max_redirects") long maxRedirects,
+    /** Number of retry attempts for failed requests. */
+    @JsonProperty("retry_count") long retryCount,
+    /** HTTP status codes that should trigger a retry. */
+    @JsonProperty("retry_codes") List<Short> retryCodes,
+    /** Whether to enable cookie handling. */
+    @JsonProperty("cookies_enabled") boolean cookiesEnabled,
+    /** Authentication configuration. */
+    Optional<AuthConfig> auth,
+    /** Maximum response body size in bytes. */
+    @JsonProperty("max_body_size") Optional<Long> maxBodySize,
+    /** CSS selectors for tags to remove from HTML before processing. */
+    @JsonProperty("remove_tags") List<String> removeTags,
+    /** Content extraction and conversion configuration. */
+    ContentConfig content,
+    /** Maximum number of URLs to return from a map operation. */
+    @JsonProperty("map_limit") Optional<Long> mapLimit,
+    /** Search filter for map results (case-insensitive substring match on URLs). */
+    @JsonProperty("map_search") Optional<String> mapSearch,
+    /** Whether to download assets (CSS, JS, images, etc.) from the page. */
+    @JsonProperty("download_assets") boolean downloadAssets,
+    /** Filter for asset categories to download. */
+    @JsonProperty("asset_types") List<AssetCategory> assetTypes,
+    /** Maximum size in bytes for individual asset downloads. */
+    @JsonProperty("max_asset_size") Optional<Long> maxAssetSize,
+    /** Browser configuration. */
+    BrowserConfig browser,
+    /** Proxy configuration for HTTP requests. */
+    Optional<ProxyConfig> proxy,
+    /** List of user-agent strings for rotation. If non-empty, overrides {@code user_agent}. */
+    @JsonProperty("user_agents") List<String> userAgents,
+    /** Whether to capture a screenshot when using the browser. */
+    @JsonProperty("capture_screenshot") boolean captureScreenshot,
+    /** Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them. */
+    @JsonProperty("download_documents") boolean downloadDocuments,
+    /** Maximum size in bytes for document downloads. Defaults to 50 MB. */
+    @JsonProperty("document_max_size") Optional<Long> documentMaxSize,
+    /** Allowlist of MIME types to download. If empty, uses built-in defaults. */
+    @JsonProperty("document_mime_types") List<String> documentMimeTypes,
+    /** Path to write WARC output. If {@code None}, WARC output is disabled. */
+    @JsonProperty("warc_output") Optional<java.nio.file.Path> warcOutput,
+    /** Named browser profile for persistent sessions (cookies, localStorage). */
+    @JsonProperty("browser_profile") Optional<String> browserProfile,
+    /** Whether to save changes back to the browser profile on exit. */
+    @JsonProperty("save_browser_profile") boolean saveBrowserProfile
+) {
+    public static CrawlConfigBuilder builder() {
+        return new CrawlConfigBuilder();
+    }
 }

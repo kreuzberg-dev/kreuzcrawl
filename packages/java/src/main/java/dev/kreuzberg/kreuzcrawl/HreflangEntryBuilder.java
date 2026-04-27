@@ -5,28 +5,32 @@
 // Issues & docs: https://github.com/kreuzberg-dev/alef
 package dev.kreuzberg.kreuzcrawl;
 
+
 /**
  * An hreflang alternate link entry.
  */
 public class HreflangEntryBuilder {
 
-	private String lang = "";
-	private String url = "";
+    private String lang = "";
+    private String url = "";
 
-	/** Sets the lang field. */
-	public HreflangEntryBuilder withLang(final String value) {
-		this.lang = value;
-		return this;
-	}
+    /** Sets the lang field. */
+    public HreflangEntryBuilder withLang(final String value) {
+        this.lang = value;
+        return this;
+    }
 
-	/** Sets the url field. */
-	public HreflangEntryBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    public HreflangEntryBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Builds the HreflangEntry instance. */
-	public HreflangEntry build() {
-		return new HreflangEntry(lang, url);
-	}
+    /** Builds the HreflangEntry instance. */
+    public HreflangEntry build() {
+        return new HreflangEntry(
+            lang,
+            url
+        );
+    }
 }

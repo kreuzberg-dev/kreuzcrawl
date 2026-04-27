@@ -5,8 +5,9 @@
 // Issues & docs: https://github.com/kreuzberg-dev/alef
 package dev.kreuzberg.kreuzcrawl;
 
+
 public record CitationReference(long index, String url, String text) {
-	public static CitationReferenceBuilder builder() {
-		return new CitationReferenceBuilder();
-	}
+    public static CitationReferenceBuilder builder() {
+        return new CitationReferenceBuilder();
+    }
 }

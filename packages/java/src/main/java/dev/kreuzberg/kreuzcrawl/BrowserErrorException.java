@@ -4,13 +4,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** The browser failed to launch, connect, or navigate. */
 public class BrowserErrorException extends CrawlErrorException {
-	/** Creates a new BrowserErrorException with the given message. */
-	public BrowserErrorException(final String message) {
-		super(message);
-	}
+    /** Creates a new BrowserErrorException with the given message. */
+    public BrowserErrorException(final String message) {
+        super(message);
+    }
 
-	/** Creates a new BrowserErrorException with the given message and cause. */
-	public BrowserErrorException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    /** Creates a new BrowserErrorException with the given message and cause. */
+    public BrowserErrorException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

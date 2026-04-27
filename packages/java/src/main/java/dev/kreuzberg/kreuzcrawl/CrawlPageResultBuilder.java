@@ -13,151 +13,170 @@ import java.util.Optional;
  */
 public class CrawlPageResultBuilder {
 
-	private String url = "";
-	private String normalizedUrl = "";
-	private short statusCode = 0;
-	private String contentType = "";
-	private String html = "";
-	private long bodySize = 0;
-	private PageMetadata metadata = null;
-	private List<LinkInfo> links = List.of();
-	private List<ImageInfo> images = List.of();
-	private List<FeedInfo> feeds = List.of();
-	private List<JsonLdEntry> jsonLd = List.of();
-	private long depth = 0;
-	private boolean stayedOnDomain = false;
-	private boolean wasSkipped = false;
-	private boolean isPdf = false;
-	private Optional<String> detectedCharset = Optional.empty();
-	private Optional<MarkdownResult> markdown = Optional.empty();
-	private Optional<Object> extractedData = Optional.empty();
-	private Optional<ExtractionMeta> extractionMeta = Optional.empty();
-	private Optional<DownloadedDocument> downloadedDocument = Optional.empty();
+    private String url = "";
+    private String normalizedUrl = "";
+    private short statusCode = 0;
+    private String contentType = "";
+    private String html = "";
+    private long bodySize = 0;
+    private PageMetadata metadata = null;
+    private List<LinkInfo> links = List.of();
+    private List<ImageInfo> images = List.of();
+    private List<FeedInfo> feeds = List.of();
+    private List<JsonLdEntry> jsonLd = List.of();
+    private long depth = 0;
+    private boolean stayedOnDomain = false;
+    private boolean wasSkipped = false;
+    private boolean isPdf = false;
+    private Optional<String> detectedCharset = Optional.empty();
+    private Optional<MarkdownResult> markdown = Optional.empty();
+    private Optional<Object> extractedData = Optional.empty();
+    private Optional<ExtractionMeta> extractionMeta = Optional.empty();
+    private Optional<DownloadedDocument> downloadedDocument = Optional.empty();
 
-	/** Sets the url field. */
-	public CrawlPageResultBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    public CrawlPageResultBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the normalizedUrl field. */
-	public CrawlPageResultBuilder withNormalizedUrl(final String value) {
-		this.normalizedUrl = value;
-		return this;
-	}
+    /** Sets the normalizedUrl field. */
+    public CrawlPageResultBuilder withNormalizedUrl(final String value) {
+        this.normalizedUrl = value;
+        return this;
+    }
 
-	/** Sets the statusCode field. */
-	public CrawlPageResultBuilder withStatusCode(final short value) {
-		this.statusCode = value;
-		return this;
-	}
+    /** Sets the statusCode field. */
+    public CrawlPageResultBuilder withStatusCode(final short value) {
+        this.statusCode = value;
+        return this;
+    }
 
-	/** Sets the contentType field. */
-	public CrawlPageResultBuilder withContentType(final String value) {
-		this.contentType = value;
-		return this;
-	}
+    /** Sets the contentType field. */
+    public CrawlPageResultBuilder withContentType(final String value) {
+        this.contentType = value;
+        return this;
+    }
 
-	/** Sets the html field. */
-	public CrawlPageResultBuilder withHtml(final String value) {
-		this.html = value;
-		return this;
-	}
+    /** Sets the html field. */
+    public CrawlPageResultBuilder withHtml(final String value) {
+        this.html = value;
+        return this;
+    }
 
-	/** Sets the bodySize field. */
-	public CrawlPageResultBuilder withBodySize(final long value) {
-		this.bodySize = value;
-		return this;
-	}
+    /** Sets the bodySize field. */
+    public CrawlPageResultBuilder withBodySize(final long value) {
+        this.bodySize = value;
+        return this;
+    }
 
-	/** Sets the metadata field. */
-	public CrawlPageResultBuilder withMetadata(final PageMetadata value) {
-		this.metadata = value;
-		return this;
-	}
+    /** Sets the metadata field. */
+    public CrawlPageResultBuilder withMetadata(final PageMetadata value) {
+        this.metadata = value;
+        return this;
+    }
 
-	/** Sets the links field. */
-	public CrawlPageResultBuilder withLinks(final List<LinkInfo> value) {
-		this.links = value;
-		return this;
-	}
+    /** Sets the links field. */
+    public CrawlPageResultBuilder withLinks(final List<LinkInfo> value) {
+        this.links = value;
+        return this;
+    }
 
-	/** Sets the images field. */
-	public CrawlPageResultBuilder withImages(final List<ImageInfo> value) {
-		this.images = value;
-		return this;
-	}
+    /** Sets the images field. */
+    public CrawlPageResultBuilder withImages(final List<ImageInfo> value) {
+        this.images = value;
+        return this;
+    }
 
-	/** Sets the feeds field. */
-	public CrawlPageResultBuilder withFeeds(final List<FeedInfo> value) {
-		this.feeds = value;
-		return this;
-	}
+    /** Sets the feeds field. */
+    public CrawlPageResultBuilder withFeeds(final List<FeedInfo> value) {
+        this.feeds = value;
+        return this;
+    }
 
-	/** Sets the jsonLd field. */
-	public CrawlPageResultBuilder withJsonLd(final List<JsonLdEntry> value) {
-		this.jsonLd = value;
-		return this;
-	}
+    /** Sets the jsonLd field. */
+    public CrawlPageResultBuilder withJsonLd(final List<JsonLdEntry> value) {
+        this.jsonLd = value;
+        return this;
+    }
 
-	/** Sets the depth field. */
-	public CrawlPageResultBuilder withDepth(final long value) {
-		this.depth = value;
-		return this;
-	}
+    /** Sets the depth field. */
+    public CrawlPageResultBuilder withDepth(final long value) {
+        this.depth = value;
+        return this;
+    }
 
-	/** Sets the stayedOnDomain field. */
-	public CrawlPageResultBuilder withStayedOnDomain(final boolean value) {
-		this.stayedOnDomain = value;
-		return this;
-	}
+    /** Sets the stayedOnDomain field. */
+    public CrawlPageResultBuilder withStayedOnDomain(final boolean value) {
+        this.stayedOnDomain = value;
+        return this;
+    }
 
-	/** Sets the wasSkipped field. */
-	public CrawlPageResultBuilder withWasSkipped(final boolean value) {
-		this.wasSkipped = value;
-		return this;
-	}
+    /** Sets the wasSkipped field. */
+    public CrawlPageResultBuilder withWasSkipped(final boolean value) {
+        this.wasSkipped = value;
+        return this;
+    }
 
-	/** Sets the isPdf field. */
-	public CrawlPageResultBuilder withIsPdf(final boolean value) {
-		this.isPdf = value;
-		return this;
-	}
+    /** Sets the isPdf field. */
+    public CrawlPageResultBuilder withIsPdf(final boolean value) {
+        this.isPdf = value;
+        return this;
+    }
 
-	/** Sets the detectedCharset field. */
-	public CrawlPageResultBuilder withDetectedCharset(final Optional<String> value) {
-		this.detectedCharset = value;
-		return this;
-	}
+    /** Sets the detectedCharset field. */
+    public CrawlPageResultBuilder withDetectedCharset(final Optional<String> value) {
+        this.detectedCharset = value;
+        return this;
+    }
 
-	/** Sets the markdown field. */
-	public CrawlPageResultBuilder withMarkdown(final Optional<MarkdownResult> value) {
-		this.markdown = value;
-		return this;
-	}
+    /** Sets the markdown field. */
+    public CrawlPageResultBuilder withMarkdown(final Optional<MarkdownResult> value) {
+        this.markdown = value;
+        return this;
+    }
 
-	/** Sets the extractedData field. */
-	public CrawlPageResultBuilder withExtractedData(final Optional<Object> value) {
-		this.extractedData = value;
-		return this;
-	}
+    /** Sets the extractedData field. */
+    public CrawlPageResultBuilder withExtractedData(final Optional<Object> value) {
+        this.extractedData = value;
+        return this;
+    }
 
-	/** Sets the extractionMeta field. */
-	public CrawlPageResultBuilder withExtractionMeta(final Optional<ExtractionMeta> value) {
-		this.extractionMeta = value;
-		return this;
-	}
+    /** Sets the extractionMeta field. */
+    public CrawlPageResultBuilder withExtractionMeta(final Optional<ExtractionMeta> value) {
+        this.extractionMeta = value;
+        return this;
+    }
 
-	/** Sets the downloadedDocument field. */
-	public CrawlPageResultBuilder withDownloadedDocument(final Optional<DownloadedDocument> value) {
-		this.downloadedDocument = value;
-		return this;
-	}
+    /** Sets the downloadedDocument field. */
+    public CrawlPageResultBuilder withDownloadedDocument(final Optional<DownloadedDocument> value) {
+        this.downloadedDocument = value;
+        return this;
+    }
 
-	/** Builds the CrawlPageResult instance. */
-	public CrawlPageResult build() {
-		return new CrawlPageResult(url, normalizedUrl, statusCode, contentType, html, bodySize, metadata, links, images,
-				feeds, jsonLd, depth, stayedOnDomain, wasSkipped, isPdf, detectedCharset, markdown, extractedData,
-				extractionMeta, downloadedDocument);
-	}
+    /** Builds the CrawlPageResult instance. */
+    public CrawlPageResult build() {
+        return new CrawlPageResult(
+            url,
+            normalizedUrl,
+            statusCode,
+            contentType,
+            html,
+            bodySize,
+            metadata,
+            links,
+            images,
+            feeds,
+            jsonLd,
+            depth,
+            stayedOnDomain,
+            wasSkipped,
+            isPdf,
+            detectedCharset,
+            markdown,
+            extractedData,
+            extractionMeta,
+            downloadedDocument
+        );
+    }
 }

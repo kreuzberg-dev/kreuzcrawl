@@ -12,44 +12,50 @@ import java.util.Optional;
  */
 public class ImageInfoBuilder {
 
-	private String url = "";
-	private Optional<String> alt = Optional.empty();
-	private Optional<Integer> width = Optional.empty();
-	private Optional<Integer> height = Optional.empty();
-	private ImageSource source = null;
+    private String url = "";
+    private Optional<String> alt = Optional.empty();
+    private Optional<Integer> width = Optional.empty();
+    private Optional<Integer> height = Optional.empty();
+    private ImageSource source = null;
 
-	/** Sets the url field. */
-	public ImageInfoBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    public ImageInfoBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the alt field. */
-	public ImageInfoBuilder withAlt(final Optional<String> value) {
-		this.alt = value;
-		return this;
-	}
+    /** Sets the alt field. */
+    public ImageInfoBuilder withAlt(final Optional<String> value) {
+        this.alt = value;
+        return this;
+    }
 
-	/** Sets the width field. */
-	public ImageInfoBuilder withWidth(final Optional<Integer> value) {
-		this.width = value;
-		return this;
-	}
+    /** Sets the width field. */
+    public ImageInfoBuilder withWidth(final Optional<Integer> value) {
+        this.width = value;
+        return this;
+    }
 
-	/** Sets the height field. */
-	public ImageInfoBuilder withHeight(final Optional<Integer> value) {
-		this.height = value;
-		return this;
-	}
+    /** Sets the height field. */
+    public ImageInfoBuilder withHeight(final Optional<Integer> value) {
+        this.height = value;
+        return this;
+    }
 
-	/** Sets the source field. */
-	public ImageInfoBuilder withSource(final ImageSource value) {
-		this.source = value;
-		return this;
-	}
+    /** Sets the source field. */
+    public ImageInfoBuilder withSource(final ImageSource value) {
+        this.source = value;
+        return this;
+    }
 
-	/** Builds the ImageInfo instance. */
-	public ImageInfo build() {
-		return new ImageInfo(url, alt, width, height, source);
-	}
+    /** Builds the ImageInfo instance. */
+    public ImageInfo build() {
+        return new ImageInfo(
+            url,
+            alt,
+            width,
+            height,
+            source
+        );
+    }
 }

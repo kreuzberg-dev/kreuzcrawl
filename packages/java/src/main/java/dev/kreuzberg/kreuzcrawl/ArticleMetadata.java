@@ -13,16 +13,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Article metadata extracted from {@code article:*} Open Graph tags.
  */
 public record ArticleMetadata(
-		/** The article publication time. */
-		@JsonProperty("published_time") Optional<String> publishedTime,
-		/** The article modification time. */
-		@JsonProperty("modified_time") Optional<String> modifiedTime,
-		/** The article author. */
-		Optional<String> author,
-		/** The article section. */
-		Optional<String> section, /** The article tags. */
-		List<String> tags) {
-	public static ArticleMetadataBuilder builder() {
-		return new ArticleMetadataBuilder();
-	}
+    /** The article publication time. */
+    @JsonProperty("published_time") Optional<String> publishedTime,
+    /** The article modification time. */
+    @JsonProperty("modified_time") Optional<String> modifiedTime,
+    /** The article author. */
+    Optional<String> author,
+    /** The article section. */
+    Optional<String> section,
+    /** The article tags. */
+    List<String> tags
+) {
+    public static ArticleMetadataBuilder builder() {
+        return new ArticleMetadataBuilder();
+    }
 }

@@ -12,16 +12,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Information about a link found on a page.
  */
 public record LinkInfo(
-		/** The resolved URL of the link. */
-		String url,
-		/** The visible text of the link. */
-		String text,
-		/** The classification of the link. */
-		@JsonProperty("link_type") LinkType linkType,
-		/** The {@code rel} attribute value, if present. */
-		Optional<String> rel, /** Whether the link has {@code rel="nofollow"}. */
-		boolean nofollow) {
-	public static LinkInfoBuilder builder() {
-		return new LinkInfoBuilder();
-	}
+    /** The resolved URL of the link. */
+    String url,
+    /** The visible text of the link. */
+    String text,
+    /** The classification of the link. */
+    @JsonProperty("link_type") LinkType linkType,
+    /** The {@code rel} attribute value, if present. */
+    Optional<String> rel,
+    /** Whether the link has {@code rel="nofollow"}. */
+    boolean nofollow
+) {
+    public static LinkInfoBuilder builder() {
+        return new LinkInfoBuilder();
+    }
 }

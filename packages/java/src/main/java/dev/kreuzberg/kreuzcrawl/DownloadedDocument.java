@@ -12,25 +12,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
  *
- * When the crawler encounters non-HTML content and {@code download_documents}
- * is enabled, it downloads the raw bytes and populates this struct instead of
+ * When the crawler encounters non-HTML content and {@code download_documents} is
+ * enabled, it downloads the raw bytes and populates this struct instead of
  * skipping the resource.
  */
 public record DownloadedDocument(
-		/** The URL the document was fetched from. */
-		String url,
-		/** The MIME type from the Content-Type header. */
-		@JsonProperty("mime_type") String mimeType,
-		/** Raw document bytes. Skipped during JSON serialization. */
-		byte[] content,
-		/** Size of the document in bytes. */
-		long size,
-		/** Filename extracted from Content-Disposition or URL path. */
-		Optional<String> filename,
-		/** SHA-256 hex digest of the content. */
-		@JsonProperty("content_hash") String contentHash, /** Selected response headers. */
-		Map<String, String> headers) {
-	public static DownloadedDocumentBuilder builder() {
-		return new DownloadedDocumentBuilder();
-	}
+    /** The URL the document was fetched from. */
+    String url,
+    /** The MIME type from the Content-Type header. */
+    @JsonProperty("mime_type") String mimeType,
+    /** Raw document bytes. Skipped during JSON serialization. */
+    byte[] content,
+    /** Size of the document in bytes. */
+    long size,
+    /** Filename extracted from Content-Disposition or URL path. */
+    Optional<String> filename,
+    /** SHA-256 hex digest of the content. */
+    @JsonProperty("content_hash") String contentHash,
+    /** Selected response headers. */
+    Map<String, String> headers
+) {
+    public static DownloadedDocumentBuilder builder() {
+        return new DownloadedDocumentBuilder();
+    }
 }

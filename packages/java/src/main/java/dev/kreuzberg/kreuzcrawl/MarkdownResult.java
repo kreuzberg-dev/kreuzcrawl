@@ -13,18 +13,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Rich markdown conversion result from HTML processing.
  */
 public record MarkdownResult(
-		/** Converted markdown text. */
-		String content,
-		/** Structured document tree with semantic nodes. */
-		@JsonProperty("document_structure") Optional<Object> documentStructure,
-		/** Extracted tables with structured cell data. */
-		List<Object> tables,
-		/** Non-fatal processing warnings. */
-		List<String> warnings,
-		/** Content with links replaced by numbered citations. */
-		Optional<CitationResult> citations, /** Content-filtered markdown optimized for LLM consumption. */
-		@JsonProperty("fit_content") Optional<String> fitContent) {
-	public static MarkdownResultBuilder builder() {
-		return new MarkdownResultBuilder();
-	}
+    /** Converted markdown text. */
+    String content,
+    /** Structured document tree with semantic nodes. */
+    @JsonProperty("document_structure") Optional<Object> documentStructure,
+    /** Extracted tables with structured cell data. */
+    List<Object> tables,
+    /** Non-fatal processing warnings. */
+    List<String> warnings,
+    /** Content with links replaced by numbered citations. */
+    Optional<CitationResult> citations,
+    /** Content-filtered markdown optimized for LLM consumption. */
+    @JsonProperty("fit_content") Optional<String> fitContent
+) {
+    public static MarkdownResultBuilder builder() {
+        return new MarkdownResultBuilder();
+    }
 }

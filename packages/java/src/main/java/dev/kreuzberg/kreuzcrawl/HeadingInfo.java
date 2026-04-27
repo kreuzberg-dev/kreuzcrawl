@@ -5,11 +5,12 @@
 // Issues & docs: https://github.com/kreuzberg-dev/alef
 package dev.kreuzberg.kreuzcrawl;
 
+
 /**
  * A heading element extracted from the page.
  */
 public record HeadingInfo(byte level, String text) {
-	public static HeadingInfoBuilder builder() {
-		return new HeadingInfoBuilder();
-	}
+    public static HeadingInfoBuilder builder() {
+        return new HeadingInfoBuilder();
+    }
 }

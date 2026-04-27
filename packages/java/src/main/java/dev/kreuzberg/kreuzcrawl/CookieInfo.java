@@ -11,14 +11,16 @@ import java.util.Optional;
  * Information about an HTTP cookie received from a response.
  */
 public record CookieInfo(
-		/** The cookie name. */
-		String name,
-		/** The cookie value. */
-		String value,
-		/** The cookie domain, if specified. */
-		Optional<String> domain, /** The cookie path, if specified. */
-		Optional<String> path) {
-	public static CookieInfoBuilder builder() {
-		return new CookieInfoBuilder();
-	}
+    /** The cookie name. */
+    String name,
+    /** The cookie value. */
+    String value,
+    /** The cookie domain, if specified. */
+    Optional<String> domain,
+    /** The cookie path, if specified. */
+    Optional<String> path
+) {
+    public static CookieInfoBuilder builder() {
+        return new CookieInfoBuilder();
+    }
 }

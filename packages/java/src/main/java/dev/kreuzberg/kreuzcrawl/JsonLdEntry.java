@@ -12,12 +12,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * A JSON-LD structured data entry found on a page.
  */
 public record JsonLdEntry(
-		/** The {@code @type} value from the JSON-LD object. */
-		@JsonProperty("schema_type") String schemaType,
-		/** The {@code name} value, if present. */
-		Optional<String> name, /** The raw JSON-LD string. */
-		String raw) {
-	public static JsonLdEntryBuilder builder() {
-		return new JsonLdEntryBuilder();
-	}
+    /** The {@code @type} value from the JSON-LD object. */
+    @JsonProperty("schema_type") String schemaType,
+    /** The {@code name} value, if present. */
+    Optional<String> name,
+    /** The raw JSON-LD string. */
+    String raw
+) {
+    public static JsonLdEntryBuilder builder() {
+        return new JsonLdEntryBuilder();
+    }
 }

@@ -4,13 +4,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** The request was unauthorized (HTTP 401). */
 public class UnauthorizedException extends CrawlErrorException {
-	/** Creates a new UnauthorizedException with the given message. */
-	public UnauthorizedException(final String message) {
-		super(message);
-	}
+    /** Creates a new UnauthorizedException with the given message. */
+    public UnauthorizedException(final String message) {
+        super(message);
+    }
 
-	/** Creates a new UnauthorizedException with the given message and cause. */
-	public UnauthorizedException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    /** Creates a new UnauthorizedException with the given message and cause. */
+    public UnauthorizedException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -4,13 +4,13 @@ package dev.kreuzberg.kreuzcrawl;
 
 /** Data was lost or truncated during transfer. */
 public class DataLossException extends CrawlErrorException {
-	/** Creates a new DataLossException with the given message. */
-	public DataLossException(final String message) {
-		super(message);
-	}
+    /** Creates a new DataLossException with the given message. */
+    public DataLossException(final String message) {
+        super(message);
+    }
 
-	/** Creates a new DataLossException with the given message and cause. */
-	public DataLossException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    /** Creates a new DataLossException with the given message and cause. */
+    public DataLossException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }
