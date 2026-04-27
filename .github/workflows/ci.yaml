@@ -203,11 +203,7 @@ jobs:
         run: task c:lint:check
 
       - name: Install alef
-        run: cargo install --git https://github.com/kreuzberg-dev/alef --tag v0.6.0 --locked --bin alef
-        env:
-          CARGO_INSTALL_ROOT: ${{ runner.temp }}/alef
-      - name: Add alef to PATH
-        run: echo "${{ runner.temp }}/alef/bin" >> "$GITHUB_PATH"
+        uses: kreuzberg-dev/actions/install-alef@v1
 
       - name: Check README freshness
         run: |
