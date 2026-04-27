@@ -96,7 +96,7 @@ repos:
         args: ["check"]
 
   - repo: https://github.com/oxc-project/mirrors-oxlint
-    rev: v1.60.0
+    rev: v1.61.0
     hooks:
       - id: oxlint
         args: ["--fix"]
@@ -151,7 +151,7 @@ repos:
 
   # Markdown: linting
   - repo: https://github.com/rvben/rumdl-pre-commit
-    rev: "v0.1.81"
+    rev: "v0.1.83"
     hooks:
       - id: rumdl-fmt
         exclude: '^(test_apps/|tools/benchmark-harness/vendored/|docs/index\.md|docs/getting-started/installation\.md|readme_templates/)'
@@ -197,7 +197,7 @@ repos:
 
   # Alef: format, lint, verify bindings, sync versions
   - repo: https://github.com/kreuzberg-dev/alef
-    rev: v0.8.4
+    rev: v0.8.6
     hooks:
       - id: alef-verify
       - id: alef-sync-versions
