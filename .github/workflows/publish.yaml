@@ -1634,6 +1634,13 @@ jobs:
           cache-key-prefix: publish-php-${{ matrix.settings.label }}
           use-sccache: ${{ runner.os != 'Windows' }}
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          tools: composer:2.9.1
+          coverage: none
+
       - name: Install alef
         uses: kreuzberg-dev/actions/install-alef@v1
 
