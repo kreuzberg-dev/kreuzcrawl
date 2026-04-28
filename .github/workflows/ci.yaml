@@ -151,6 +151,11 @@ jobs:
         with:
           go-version: "1.26"
 
+      - name: Install golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          install-only: true
+
       - name: Install alef
         uses: kreuzberg-dev/actions/install-alef@v1
 
