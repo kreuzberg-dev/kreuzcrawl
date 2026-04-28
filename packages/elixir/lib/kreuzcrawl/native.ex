@@ -9,7 +9,8 @@ defmodule Kreuzcrawl.Native do
       "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v#{Mix.Project.config()[:version]}",
     version: Mix.Project.config()[:version],
     force_build:
-      System.get_env("KREUZCRAWL_BUILD") in ["1", "true"] or Mix.env() in [:test, :dev],
+      System.get_env("KREUZCRAWL_BUILD") in ["1", "true"] or Mix.env() in [:test, :dev] or
+        Application.compile_env(:rustler_precompiled, :force_build)[:kreuzcrawl],
     targets:
       ~w(aarch64-apple-darwin aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu x86_64-pc-windows-gnu),
     nif_versions: ["2.16", "2.17"]
