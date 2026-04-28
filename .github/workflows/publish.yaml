@@ -376,6 +376,7 @@ jobs:
           version: ${{ needs.prepare.outputs.version }}
           tag: ${{ needs.prepare.outputs.tag }}
           asset-prefix: libkreuzcrawl_nif-
+          repo: ${{ github.repository }}
 
   check-cratesio:
     name: Check if Rust crate exists on crates.io
