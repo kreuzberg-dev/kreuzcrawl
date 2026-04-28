@@ -149,7 +149,11 @@ jobs:
       - name: Run universal prek hooks
         uses: j178/prek-action@v2
         with:
-          extra-args: trailing-whitespace end-of-file-fixer check-merge-conflict check-added-large-files detect-private-key check-json check-yaml check-toml check-case-conflict pyproject-fmt shfmt shellcheck actionlint ai-rulez-generate --all-files
+          # ai-rulez-generate excluded because its Source-Hash is non-deterministic
+          # across environments (4.0.8) and the hook always rewrites the header.
+          # Generation runs locally via `prek install`; the committed output is
+          # what consumers see.
+          extra-args: trailing-whitespace end-of-file-fixer check-merge-conflict check-added-large-files detect-private-key check-json check-yaml check-toml check-case-conflict pyproject-fmt shfmt shellcheck actionlint --all-files
 
       - name: Run language-specific lint hooks
         uses: j178/prek-action@v2
