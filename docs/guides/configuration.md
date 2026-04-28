@@ -20,7 +20,7 @@ let engine: CrawlEngineHandle = create_engine(Some(CrawlConfig {
 ```
 
 !!! note "Custom strategy and filter types"
-    Alternative crawl strategies (`BestFirstStrategy`, `DfsStrategy`, `AdaptiveStrategy`) and content filters (`Bm25Filter`) exist in the crate's `defaults` module, but that module is not part of the public API. If you need custom crawl behaviour, implement the `CrawlStrategy` or `ContentFilter` traits directly — both are defined in the `kreuzcrawl::traits` module (not yet re-exported; track [#42](https://github.com/kreuzberg-dev/kreuzcrawl/issues/42) for the public traits surface).
+    Alternative crawl strategies (`BestFirstStrategy`, `DfsStrategy`, `AdaptiveStrategy`) and content filters (`Bm25Filter`) exist in the crate's `defaults` module, but that module is not part of the public API. If you need custom crawl behaviour, implement the `CrawlStrategy` or `ContentFilter` traits directly — both are defined in the `kreuzcrawl::traits` module, which is not yet re-exported at the crate root.
 
 ### Builder methods (internal reference)
 
