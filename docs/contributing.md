@@ -50,13 +50,13 @@ cargo build --features api,mcp
 
 ## Tests
 
-Unit tests, no network needed:
+To run all tests across the workspace (this includes both unit tests and integration tests, which may hit the network):
 
 ```bash
 cargo test --workspace
 ```
 
-Integration tests hit real websites:
+To run *only* the integration test binaries:
 
 ```bash
 cargo test --workspace --test '*'
