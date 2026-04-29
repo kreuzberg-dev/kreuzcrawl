@@ -55,7 +55,7 @@ All traits are `Send + Sync` and use `async_trait` (except `CrawlStrategy`, whic
 let engine = create_engine(Some(config))?;
 ```
 
-For the uncommon case of injecting custom trait implementations, the internal builder is accessible inside a crate that depends on `kreuzcrawl` as a path dependency. The traits module is not yet re-exported at the crate root.
+For the uncommon case of injecting custom trait implementations, the internal builder is only reachable from within this crate (e.g. as a workspace member or fork). External projects cannot inject custom trait implementations until the relevant items are re-exported.
 
 The builder calls `config.validate()` before constructing the engine and returns `Result<CrawlEngine, CrawlError>`.
 
