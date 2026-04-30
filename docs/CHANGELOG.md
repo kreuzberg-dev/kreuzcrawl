@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixes
+
+- **Elixir**: `:force_build` now respects `config :rustler_precompiled, :force_build, kreuzcrawl: true` in addition to the `KREUZCRAWL_BUILD` env var, fixing the documented workaround that was previously ignored when users hit precompiled checksum errors (#7). Bumps alef pin to 0.12.7.
+
 ## 0.2.0
 
 ### Breaking Changes
