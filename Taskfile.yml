@@ -181,6 +181,11 @@ tasks:
     cmds:
       - prek run --all-files
 
+  format:
+    desc: Format all code
+    cmds:
+      - alef fmt
+
   check:
     desc: Run all linting and formatting checks via prek
     cmds:
