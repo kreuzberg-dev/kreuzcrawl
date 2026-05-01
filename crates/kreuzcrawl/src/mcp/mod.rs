@@ -22,7 +22,7 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use kreuzcrawl::mcp::start_mcp_server;
+//! use kreuzcrawl::start_mcp_server;
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
