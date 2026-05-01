@@ -1581,37 +1581,33 @@ jobs:
           retention-days: 14
 
   php-package:
-    name: Build PHP PIE package (${{ matrix.settings.label }})
+    name: Build PHP PIE binary (php${{ matrix.php }} ${{ matrix.platform.label }})
     needs: [prepare, check-packagist]
     if: ${{ needs.prepare.outputs.release_php == 'true' && needs.check-packagist.outputs.exists != 'true' }}
-    runs-on: ${{ matrix.settings.os }}
+    runs-on: ${{ matrix.platform.os }}
     timeout-minutes: 60
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        settings:
+        php: ["8.2", "8.3", "8.4", "8.5"]
+        platform:
           - os: ubuntu-latest
             label: linux-x86_64
-            platform: linux-x86_64
             target: x86_64-unknown-linux-gnu
           - os: ubuntu-24.04-arm
             label: linux-arm64
-            platform: linux-arm64
             target: aarch64-unknown-linux-gnu
           - os: macos-latest
             label: macos-arm64
-            platform: macos-arm64
             target: aarch64-apple-darwin
-          # Windows-GNU disabled: ort-sys 2.0.0-rc.12 build-dep lzma-rust2 0.15.x has crc version collision on windows-gnu target
-          # - os: windows-latest
-          #   label: windows-x86_64
-          #   platform: windows-x86_64
-          #   target: x86_64-pc-windows-gnu
+          - os: windows-latest
+            label: windows-x86_64
+            target: x86_64-pc-windows-msvc
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6 # v6
         with:
           ref: ${{ needs.prepare.outputs.checkout_ref }}
           fetch-depth: 0
@@ -1619,7 +1615,10 @@ jobs:
 
       - name: Ensure target commit
         if: ${{ needs.prepare.outputs.target_sha != '' }}
-        run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
+        env:
+          TARGET_SHA: ${{ needs.prepare.outputs.target_sha }}
+        run: scripts/publish/common/ensure-target-commit.sh
+        shell: bash
 
       - name: Free up disk space (Linux)
         if: runner.os == 'Linux'
@@ -1628,33 +1627,61 @@ jobs:
       - name: Setup OpenSSL
         uses: kreuzberg-dev/actions/setup-openssl@v1
 
-      - name: Setup Rust
-        uses: kreuzberg-dev/actions/setup-rust@v1
-        with:
-          cache-key-prefix: publish-php-${{ matrix.settings.label }}
-          use-sccache: ${{ runner.os != 'Windows' }}
-
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: kreuzberg-dev/actions/setup-php@v1 # v1
         with:
-          php-version: "8.4"
-          tools: composer:2.9.1
-          coverage: none
+          php-version: ${{ matrix.php }}
+
+      - name: Setup Rust
+        uses: kreuzberg-dev/actions/setup-rust@v1 # v1
+        with:
+          cache-key-prefix: publish-php-${{ matrix.platform.label }}-php${{ matrix.php }}
+          toolchain: stable
 
       - name: Install alef
-        uses: kreuzberg-dev/actions/install-alef@v1
+        uses: kreuzberg-dev/actions/install-alef@v1 # v1
 
-      - name: Build and package PHP extension
-        shell: bash
+      - name: Build PHP extension
+        uses: kreuzberg-dev/actions/build-php-extension@v1 # v1
+        with:
+          crate-name: kreuzcrawl-php
+          lib-name: kreuzcrawl_php
+          php-version: ${{ matrix.php }}
+          php-ts: nts
+
+      - name: Determine Windows compiler
+        if: runner.os == 'Windows'
+        id: wincompiler
+        shell: pwsh
         run: |
-          alef publish build --lang php --target ${{ matrix.settings.target }}
-          alef publish package --lang php --target ${{ matrix.settings.target }} -o dist/php
+          $compiler = switch ('${{ matrix.php }}') {
+            '8.2' { 'vs16' }
+            '8.3' { 'vs16' }
+            '8.4' { 'vs17' }
+            '8.5' { 'vs17' }
+            default { 'vs17' }
+          }
+          "compiler=$compiler" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Package PIE archive
+        uses: kreuzberg-dev/actions/package-php-pie@v1 # v1
+        with:
+          php-version: ${{ matrix.php }}
+          php-ts: nts
+          target: ${{ matrix.platform.target }}
+          windows-compiler: ${{ steps.wincompiler.outputs.compiler }}
+          version: ${{ needs.prepare.outputs.version }}
+          output-dir: dist/php-package
 
       - name: Upload PHP PIE package artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7 # v7
         with:
-          name: php-pie-${{ matrix.settings.label }}
-          path: dist/php/kreuzcrawl-*.tar.gz*
+          name: php-package-${{ matrix.platform.label }}-php${{ matrix.php }}
+          path: |
+            dist/php-package/php_*.tgz
+            dist/php-package/php_*.tgz.sha256
+            dist/php-package/php_*.zip
+            dist/php-package/php_*.zip.sha256
           retention-days: 14
 
   csharp-package:
@@ -3085,15 +3112,15 @@ jobs:
           ref: ${{ needs.prepare.outputs.tag }}
           fetch-depth: 0
 
-      - name: Download PHP PIE package artifacts
-        uses: actions/download-artifact@v8
+      - name: Download PHP package artifacts
+        uses: actions/download-artifact@v8 # v8
         with:
-          pattern: php-pie-*
-          path: dist/php
+          pattern: php-package-*
+          path: dist/php-package
           merge-multiple: true
 
       - name: List PHP artifacts
-        run: ls -lah dist/php/
+        run: ls -lah dist/php-package/
 
       - name: Re-check Packagist before publish
         id: recheck
@@ -3121,20 +3148,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: scripts/publish/ensure-github-release-exists.sh "${{ needs.prepare.outputs.tag }}"
 
-      - name: Upload PIE packages to GitHub release
+      - name: Upload PHP PIE packages
         if: ${{ steps.recheck.outputs.exists != 'true' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.prepare.outputs.tag }}
-        run: |
-          echo "Uploading PHP PIE packages to GitHub release ${TAG}..."
-          for file in dist/php/kreuzcrawl-*.tar.gz*; do
-            if [ -f "$file" ]; then
-              echo "Uploading: $file"
-              gh release upload "$TAG" "$file" --clobber
-            fi
-          done
-          echo "PHP PIE packages uploaded to GitHub release" >> "$GITHUB_STEP_SUMMARY"
+        run: scripts/publish/upload-php-pie.sh
+        shell: bash
 
       - name: Generate release summary
         if: ${{ steps.recheck.outputs.exists != 'true' }}
@@ -3151,7 +3171,7 @@ jobs:
             echo ""
             echo "The following platform-specific PIE packages are available:"
             echo ""
-            find dist/php -maxdepth 1 -name 'kreuzcrawl-*.tar.gz' -print0 | while IFS= read -r -d '' file; do
+            find dist/php-package -maxdepth 1 -name 'php_*.tgz' -print0 | while IFS= read -r -d '' file; do
               basename "$file"
             done | sed 's/^/- /'
           } >> "$GITHUB_STEP_SUMMARY"
