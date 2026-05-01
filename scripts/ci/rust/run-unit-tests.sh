@@ -23,7 +23,7 @@ echo "  CARGO_TERM_COLOR: ${CARGO_TERM_COLOR:-not set}"
 
 echo "Workspace information:"
 echo "  Repository: $REPO_ROOT"
-echo "  Excluded packages: kreuzcrawl-e2e-generator, kreuzcrawl-py, kreuzcrawl-node (+ benchmark-harness on Windows, + kreuzcrawl-php on macOS)"
+echo "  Excluded packages: kreuzcrawl-e2e-generator, kreuzcrawl-py, kreuzcrawl-node (+ benchmark-harness on Windows, + kreuzcrawl-php when 'php' is unavailable)"
 
 if [ ! -d "$TESSDATA_PREFIX" ]; then
   echo "WARNING: TESSDATA_PREFIX directory not found: $TESSDATA_PREFIX"
@@ -68,9 +68,9 @@ if ! {
     extra_excludes+=(--exclude benchmark-harness)
   fi
   # kreuzcrawl-php depends on ext-php-rs which requires a `php` executable at build time.
-  # macOS GitHub runners don't have PHP installed by default and we don't run setup-php
-  # in this job — exclude the PHP binding crate from the workspace test there.
-  if [[ "$(uname -s)" == "Darwin" ]]; then
+  # macOS and Linux ARM GitHub runners don't have PHP installed by default and we don't run
+  # setup-php in this job — exclude the PHP binding crate when `php` is unavailable.
+  if ! command -v php >/dev/null 2>&1; then
     extra_excludes+=(--exclude kreuzcrawl-php)
   fi
   RUST_BACKTRACE=full cargo test \
