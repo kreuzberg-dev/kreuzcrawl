@@ -143,7 +143,7 @@ impl CrawlEngine {
         let client = build_client(&self.config)?;
         let base_host = parsed_url.host_str().unwrap_or("").to_owned();
         let base_host_suffix = format!(".{base_host}");
-        let max_depth = self.config.max_depth.unwrap_or(0);
+        let max_depth = self.config.max_depth.unwrap_or(usize::MAX);
         let max_pages = self.config.max_pages.unwrap_or(usize::MAX);
         let max_redirects = self.config.max_redirects;
 
