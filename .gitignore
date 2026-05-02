@@ -180,6 +180,12 @@ pkg/
 .lycheecache
 .benchmark_results/
 
+
+# E2E mock-server runtime state
+.mock-server.env
+.mock-server.out
+.mock-server.pid
+
 # BEGIN ai-rulez (DO NOT EDIT - managed by ai-rulez)
 .agents/
 .cursor/
