@@ -191,21 +191,25 @@ tasks:
     cmds:
       - task: lint
 
-  test:e2e:
-    desc: Generate and run e2e tests across all bindings
-    cmds:
-      - alef e2e generate
-      - alef test --e2e
-
-  e2e:generate:
+  e2e:generate:all:
     desc: Generate E2E tests for all languages from fixtures
     cmds:
       - alef e2e generate
 
-  e2e:test:
-    desc: Run E2E tests for all languages (alias for test:e2e)
+  e2e:test:all:
+    desc: Run e2e tests across all bindings (mock server auto-managed)
     cmds:
-      - task: test:e2e
+      - task: _e2e_wf:test:all
+
+  e2e:test:quick:
+    desc: Quick e2e (Rust only — fastest feedback)
+    cmds:
+      - task: _e2e_wf:test:quick
+
+  e2e:verify:all:
+    desc: Full e2e pipeline — generate, lint, test all suites
+    cmds:
+      - task: _e2e_wf:verify:all
 
   e2e:lint:all:
     desc: Lint all generated E2E test code
@@ -221,3 +225,29 @@ tasks:
       - task: ruby:e2e:lint
       - task: php:e2e:lint
       - task: c:e2e:lint
+
+  mock-server:start:
+    desc: Start the e2e mock HTTP server (background)
+    cmds:
+      - task: _e2e_wf:mock-server:start
+
+  mock-server:stop:
+    desc: Stop the e2e mock HTTP server
+    cmds:
+      - task: _e2e_wf:mock-server:stop
+
+  # Backward-compat aliases (legacy task names).
+  test:e2e:
+    desc: "Alias for e2e:test:all"
+    cmds:
+      - task: e2e:test:all
+
+  e2e:generate:
+    desc: "Alias for e2e:generate:all"
+    cmds:
+      - task: e2e:generate:all
+
+  e2e:test:
+    desc: "Alias for e2e:test:all"
+    cmds:
+      - task: e2e:test:all

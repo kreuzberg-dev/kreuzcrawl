@@ -223,6 +223,7 @@ function = "scrape"
 module = "kreuzcrawl"
 result_var = "result"
 async = true
+returns_result = true
 
 [[e2e.call.args]]
 name = "engine"
