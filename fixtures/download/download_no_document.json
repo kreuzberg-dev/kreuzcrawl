@@ -5,7 +5,6 @@
 	"input": {
 		"mock_responses": [
 			{
-				"path": "/page.html",
 				"status_code": 200,
 				"headers": {
 					"content-type": "text/html; charset=utf-8"

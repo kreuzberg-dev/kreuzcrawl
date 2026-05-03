@@ -5,20 +5,11 @@
 	"input": {
 		"mock_responses": [
 			{
-				"path": "/document.pdf",
 				"status_code": 200,
 				"headers": {
 					"content-type": "application/pdf"
 				},
 				"body_file": "pdf/sample.pdf"
-			},
-			{
-				"path": "/document.docx",
-				"status_code": 200,
-				"headers": {
-					"content-type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-				},
-				"body_inline": "DOCX content placeholder"
 			}
 		],
 		"config": {

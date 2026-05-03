@@ -5,7 +5,6 @@
 	"input": {
 		"mock_responses": [
 			{
-				"path": "/large_document.pdf",
 				"status_code": 200,
 				"headers": {
 					"content-type": "application/pdf"
