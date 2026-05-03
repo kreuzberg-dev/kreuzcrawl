@@ -22,7 +22,7 @@ public record BrowserConfig(
 		 */
 		Long timeout,
 		/** Wait strategy after browser navigation. */
-		BrowserWait waitValue,
+		@JsonProperty("wait") BrowserWait waitValue,
 		/** CSS selector to wait for when {@code wait} is {@code Selector}. */
 		@JsonProperty("wait_selector") Optional<String> waitSelector,
 		/** Extra time to wait after the wait condition is met. */
