@@ -186,13 +186,7 @@ repos:
       - id: cpd
         exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzcrawl-wasm/e2e/)
       - id: checkstyle
-        args:
-          [
-            "-c",
-            "packages/java/checkstyle.xml",
-            "-p",
-            "packages/java/checkstyle.properties",
-          ]
+        args: ["-c", "packages/java/checkstyle.xml", "-p", "packages/java/checkstyle.properties"]
         exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzcrawl-wasm/e2e/|packages/java/src/)
 
   # Alef: format, lint, verify bindings, sync versions

@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.13.6"
+alef_version = "0.14.10"
 languages = ["python", "node", "ruby", "php", "ffi", "go", "java", "csharp", "elixir", "wasm"]
 
 # Java is formatted by Spotless (Eclipse 4.31) via maven verify in prek's
@@ -14,9 +14,9 @@ command = "mvn -f packages/java/pom.xml -B -DskipTests -Dgpg.skip=true -Dskip.ru
 # ---------------------------------------------------------------------------
 [workspace.sync]
 extra_paths = [
-    "package.json",
-    "crates/kreuzcrawl-node/package.json",
-    "packages/ruby/ext/kreuzcrawl_rb/src/kreuzcrawl/version.rb",
+  "package.json",
+  "crates/kreuzcrawl-node/package.json",
+  "packages/ruby/ext/kreuzcrawl_rb/src/kreuzcrawl/version.rb",
 ]
 
 # kreuzcrawl-cli depends on kreuzcrawl via a path; cargo publish requires
@@ -31,13 +31,13 @@ replace = 'kreuzcrawl = { path = "../kreuzcrawl", version = "={version}"'
 name = "kreuzcrawl"
 core_import = "kreuzcrawl"
 sources = [
-    "crates/kreuzcrawl/src/types/config.rs",
-    "crates/kreuzcrawl/src/types/results.rs",
-    "crates/kreuzcrawl/src/types/discovery.rs",
-    "crates/kreuzcrawl/src/types/metadata.rs",
-    "crates/kreuzcrawl/src/error.rs",
-    "crates/kreuzcrawl/src/citations.rs",
-    "crates/kreuzcrawl/src/bindings.rs",
+  "crates/kreuzcrawl/src/types/config.rs",
+  "crates/kreuzcrawl/src/types/results.rs",
+  "crates/kreuzcrawl/src/types/discovery.rs",
+  "crates/kreuzcrawl/src/types/metadata.rs",
+  "crates/kreuzcrawl/src/error.rs",
+  "crates/kreuzcrawl/src/citations.rs",
+  "crates/kreuzcrawl/src/bindings.rs",
 ]
 version_from = "Cargo.toml"
 workspace_root = "."
@@ -98,9 +98,9 @@ before = "cd packages/python && uv sync"
 typecheck = "cd packages/python && uv run mypy ."
 
 [crates.lint.node]
-precondition = "command -v npx >/dev/null 2>&1"
-format = "npx oxfmt packages/typescript/"
-check = "npx oxlint packages/typescript/"
+precondition = "command -v pnpm >/dev/null 2>&1"
+format = "pnpm dlx oxfmt packages/typescript/"
+check = "pnpm dlx oxlint packages/typescript/"
 
 [crates.lint.ruby]
 precondition = "command -v bundle >/dev/null 2>&1"
@@ -132,9 +132,9 @@ format = "dotnet format packages/csharp/Kreuzcrawl.slnx"
 check = "dotnet format packages/csharp/Kreuzcrawl.slnx --verify-no-changes"
 
 [crates.lint.wasm]
-precondition = "command -v npx >/dev/null 2>&1"
-format = "npx oxfmt packages/wasm/"
-check = "npx oxlint packages/wasm/"
+precondition = "command -v pnpm >/dev/null 2>&1"
+format = "pnpm dlx oxfmt packages/wasm/"
+check = "pnpm dlx oxlint packages/wasm/"
 
 [crates.lint.ffi]
 precondition = "test -d crates/kreuzcrawl-ffi/tests"
@@ -149,7 +149,7 @@ e2e = "cd e2e/python && python3 -m pytest tests/ -q"
 [crates.test.node]
 precondition = "command -v node >/dev/null 2>&1"
 command = "task node:test"
-e2e = "cd e2e/typescript && npx vitest run"
+e2e = "cd e2e/typescript && pnpm dlx vitest run"
 
 [crates.test.go]
 precondition = "command -v go >/dev/null 2>&1"
@@ -178,8 +178,8 @@ command = "task elixir:test"
 e2e = "cd e2e/elixir && mix test"
 
 [crates.test.wasm]
-precondition = "command -v npx >/dev/null 2>&1"
-e2e = "cd e2e/wasm && npm test"
+precondition = "command -v pnpm >/dev/null 2>&1"
+e2e = "cd e2e/wasm && pnpm test"
 
 [crates.test.rust]
 precondition = "command -v cargo >/dev/null 2>&1"
@@ -207,123 +207,123 @@ cmake_config = true
 fixtures = "fixtures"
 output = "e2e"
 languages = [
-    "rust",
-    "python",
-    "node",
-    "go",
-    "java",
-    "csharp",
-    "php",
-    "ruby",
-    "elixir",
-    "wasm",
-    "brew",
+  "rust",
+  "python",
+  "node",
+  "go",
+  "java",
+  "csharp",
+  "php",
+  "ruby",
+  "elixir",
+  "wasm",
+  "brew",
 ]
 fields_optional = [
-    "markdown",
-    "metadata.title",
-    "metadata.description",
-    "metadata.canonical_url",
-    "metadata.keywords",
-    "metadata.author",
-    "metadata.viewport",
-    "metadata.theme_color",
-    "metadata.generator",
-    "metadata.robots",
-    "metadata.html_lang",
-    "metadata.html_dir",
-    "metadata.og_title",
-    "metadata.og_type",
-    "metadata.og_image",
-    "metadata.og_description",
-    "metadata.og_url",
-    "metadata.og_site_name",
-    "metadata.og_locale",
-    "metadata.og_video",
-    "metadata.og_audio",
-    "metadata.og_locale_alternates",
-    "metadata.twitter_card",
-    "metadata.twitter_title",
-    "metadata.twitter_description",
-    "metadata.twitter_image",
-    "metadata.twitter_site",
-    "metadata.twitter_creator",
-    "metadata.dc_title",
-    "metadata.dc_creator",
-    "metadata.dc_subject",
-    "metadata.dc_description",
-    "metadata.dc_publisher",
-    "metadata.dc_date",
-    "metadata.dc_type",
-    "metadata.dc_format",
-    "metadata.dc_identifier",
-    "metadata.dc_language",
-    "metadata.dc_rights",
-    "metadata.article",
-    "metadata.headings",
-    "metadata.hreflangs",
-    "metadata.favicons",
-    "metadata.word_count",
-    "response_meta",
-    "extracted_data",
-    "extraction_meta",
-    "screenshot",
-    "downloaded_document",
-    "detected_charset",
-    "crawl_delay",
-    "x_robots_tag",
-    "markdown.document_structure",
-    "markdown.citations",
-    "markdown.fit_content",
-    "json_ld[].name",
-    "json_ld.name",
-    "links[].rel",
-    "links.rel",
-    "feeds[].title",
-    "feeds.title",
-    "images[].alt",
-    "images.alt",
-    "assets[].mime_type",
-    "assets.mime_type",
-    "assets[].html_tag",
-    "assets.html_tag",
+  "markdown",
+  "metadata.title",
+  "metadata.description",
+  "metadata.canonical_url",
+  "metadata.keywords",
+  "metadata.author",
+  "metadata.viewport",
+  "metadata.theme_color",
+  "metadata.generator",
+  "metadata.robots",
+  "metadata.html_lang",
+  "metadata.html_dir",
+  "metadata.og_title",
+  "metadata.og_type",
+  "metadata.og_image",
+  "metadata.og_description",
+  "metadata.og_url",
+  "metadata.og_site_name",
+  "metadata.og_locale",
+  "metadata.og_video",
+  "metadata.og_audio",
+  "metadata.og_locale_alternates",
+  "metadata.twitter_card",
+  "metadata.twitter_title",
+  "metadata.twitter_description",
+  "metadata.twitter_image",
+  "metadata.twitter_site",
+  "metadata.twitter_creator",
+  "metadata.dc_title",
+  "metadata.dc_creator",
+  "metadata.dc_subject",
+  "metadata.dc_description",
+  "metadata.dc_publisher",
+  "metadata.dc_date",
+  "metadata.dc_type",
+  "metadata.dc_format",
+  "metadata.dc_identifier",
+  "metadata.dc_language",
+  "metadata.dc_rights",
+  "metadata.article",
+  "metadata.headings",
+  "metadata.hreflangs",
+  "metadata.favicons",
+  "metadata.word_count",
+  "response_meta",
+  "extracted_data",
+  "extraction_meta",
+  "screenshot",
+  "downloaded_document",
+  "detected_charset",
+  "crawl_delay",
+  "x_robots_tag",
+  "markdown.document_structure",
+  "markdown.citations",
+  "markdown.fit_content",
+  "json_ld[].name",
+  "json_ld.name",
+  "links[].rel",
+  "links.rel",
+  "feeds[].title",
+  "feeds.title",
+  "images[].alt",
+  "images.alt",
+  "assets[].mime_type",
+  "assets.mime_type",
+  "assets[].html_tag",
+  "assets.html_tag",
 ]
 fields_array = ["links", "images", "feeds", "json_ld", "assets"]
 fields_enum = [
-    "links[].link_type",
-    "browser.js_render_hint",
-    "browser.browser_used",
-    "assets[].category",
+  "links[].link_type",
+  "browser.js_render_hint",
+  "browser.browser_used",
+  "assets[].category",
 ]
 result_fields = [
-    "status_code",
-    "content_type",
-    "html",
-    "body_size",
-    "metadata",
-    "links",
-    "images",
-    "feeds",
-    "json_ld",
-    "is_allowed",
-    "crawl_delay",
-    "noindex_detected",
-    "nofollow_detected",
-    "x_robots_tag",
-    "is_pdf",
-    "was_skipped",
-    "detected_charset",
-    "main_content_only",
-    "auth_header_sent",
-    "response_meta",
-    "assets",
-    "js_render_hint",
-    "browser_used",
-    "markdown",
-    "extracted_data",
-    "extraction_meta",
-    "screenshot",
-    "downloaded_document",
+  "status_code",
+  "content_type",
+  "html",
+  "body_size",
+  "metadata",
+  "links",
+  "images",
+  "feeds",
+  "json_ld",
+  "is_allowed",
+  "crawl_delay",
+  "noindex_detected",
+  "nofollow_detected",
+  "x_robots_tag",
+  "is_pdf",
+  "was_skipped",
+  "detected_charset",
+  "main_content_only",
+  "auth_header_sent",
+  "response_meta",
+  "assets",
+  "js_render_hint",
+  "browser_used",
+  "markdown",
+  "extracted_data",
+  "extraction_meta",
+  "screenshot",
+  "downloaded_document",
 ]
 
 [crates.e2e.format]
@@ -350,7 +350,7 @@ optional = false
 name = "url"
 field = "url"
 type = "mock_url"
-optional = false
+optional = true
 
 [crates.e2e.call.overrides.python]
 module = "kreuzcrawl"
@@ -537,9 +537,9 @@ basic_usage = "getting-started/basic_usage.md"
 name = "TypeScript (Node.js)"
 template = "language_package.md"
 output_path = "packages/typescript/README.md"
-package_manager = ["npm"]
+package_manager = ["pnpm"]
 package_name = "@kreuzberg/kreuzcrawl"
-install_command = "npm install @kreuzberg/kreuzcrawl"
+install_command = "pnpm add @kreuzberg/kreuzcrawl"
 description = """
 Node.js bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Powered by
 NAPI-RS with full TypeScript types, async/await support, and native performance.
@@ -633,9 +633,9 @@ basic_usage = "getting-started/basic_usage.md"
 name = "WebAssembly"
 template = "language_package.md"
 output_path = "crates/kreuzcrawl-wasm/README.md"
-package_manager = ["npm"]
+package_manager = ["pnpm"]
 package_name = "@kreuzberg/kreuzcrawl-wasm"
-install_command = "npm install @kreuzberg/kreuzcrawl-wasm"
+install_command = "pnpm add @kreuzberg/kreuzcrawl-wasm"
 description = """
 WebAssembly bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Built with
 wasm-bindgen for use in browsers and Node.js. Single-threaded; features requiring `std::thread`
