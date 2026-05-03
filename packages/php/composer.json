@@ -13,7 +13,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Kreuzcrawl\\\\": "src/"
+			"Kreuzcrawl\\": "src/"
 		}
 	},
 	"scripts": {
