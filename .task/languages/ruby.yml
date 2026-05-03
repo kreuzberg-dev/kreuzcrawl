@@ -150,6 +150,8 @@ tasks:
   e2e:test:
     desc: Run Ruby E2E tests
     dir: e2e/ruby
+    env:
+      MOCK_SERVER_URL: "{{.MOCK_SERVER_URL}}"
     cmds:
       - BUNDLE_GEMFILE="../../packages/ruby/Gemfile" {{.BUNDLE}} exec rspec
 
