@@ -380,6 +380,9 @@ crate_name = "kreuzcrawl"
 handle_struct_type = "CrawlConfig"
 handle_atom_list_fields = ["asset_types"]
 
+[crates.e2e.call.overrides.php]
+function = "scrape"
+
 [crates.e2e.call.overrides.wasm]
 handle_config_type = "WasmCrawlConfig"
 

@@ -7,7 +7,6 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "esbuild": "^0.28.0",
     "kreuzcrawl": "file:../../crates/kreuzcrawl-wasm/pkg",
     "rollup": "^4.53.3",
     "vite-plugin-top-level-await": "^1.4.0",
