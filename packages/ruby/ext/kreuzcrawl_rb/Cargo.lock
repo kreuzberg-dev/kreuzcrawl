@@ -1174,7 +1174,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0-rc.2"
+version = "0.3.0-rc.19"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1183,6 +1183,7 @@ dependencies = [
  "chrono",
  "encoding_rs",
  "flate2",
+ "getrandom 0.3.4",
  "getrandom 0.4.2",
  "html-to-markdown-rs",
  "memchr",
@@ -1201,7 +1202,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-rb"
-version = "0.3.0-rc.2"
+version = "0.3.0-rc.19"
 dependencies = [
  "kreuzcrawl",
  "magnus",

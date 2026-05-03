@@ -1,7 +1,33 @@
-version = "0.13.6"
+[workspace]
+alef_version = "0.13.6"
 languages = ["python", "node", "ruby", "php", "ffi", "go", "java", "csharp", "elixir", "wasm"]
 
-[crate]
+# Java is formatted by Spotless (Eclipse 4.31) via maven verify in prek's
+# `java-verify` hook. alef's default `google-java-format` produces different
+# output, breaking alef-verify. Use Spotless directly so the two pipelines
+# agree on byte-for-byte output.
+[workspace.format_overrides.java]
+command = "mvn -f packages/java/pom.xml -B -DskipTests -Dgpg.skip=true -Dskip.rust.ffi=true spotless:apply"
+
+# ---------------------------------------------------------------------------
+# Version Sync
+# ---------------------------------------------------------------------------
+[workspace.sync]
+extra_paths = [
+    "package.json",
+    "crates/kreuzcrawl-node/package.json",
+    "packages/ruby/ext/kreuzcrawl_rb/src/kreuzcrawl/version.rb",
+]
+
+# kreuzcrawl-cli depends on kreuzcrawl via a path; cargo publish requires
+# the dep also declares a version. Keep that version in lockstep with the
+# workspace bump so every rc tag stays publishable.
+[[workspace.sync.text_replacements]]
+path = "crates/kreuzcrawl-cli/Cargo.toml"
+search = 'kreuzcrawl = \{ path = "../kreuzcrawl", version = "=[^"]*"'
+replace = 'kreuzcrawl = { path = "../kreuzcrawl", version = "={version}"'
+
+[[crates]]
 name = "kreuzcrawl"
 core_import = "kreuzcrawl"
 sources = [
@@ -17,12 +43,41 @@ version_from = "Cargo.toml"
 workspace_root = "."
 path_mappings = { "kreuzcrawl::citations" = "kreuzcrawl", "kreuzcrawl::bindings" = "kreuzcrawl" }
 
-[exclude]
-types = ["CachedPage", "InteractionResult", "ActionResult", "CrawlEvent"]
-functions = ["generate_citations"]
-methods = ["CrawlResult.new"]
+[crates.python]
+module_name = "_kreuzcrawl"
 
-[output]
+[crates.python.stubs]
+output = "packages/python/kreuzcrawl/"
+
+[crates.node]
+package_name = "@kreuzberg/kreuzcrawl"
+
+[crates.ruby]
+gem_name = "kreuzcrawl"
+
+[crates.ruby.stubs]
+output = "packages/ruby/sig/"
+
+[crates.elixir]
+app_name = "kreuzcrawl"
+
+[crates.ffi]
+prefix = "kcrawl"
+header_name = "kreuzcrawl.h"
+lib_name = "kreuzcrawl_ffi"
+visitor_callbacks = false
+
+[crates.go]
+module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+package_name = "kreuzcrawl"
+
+[crates.java]
+package = "dev.kreuzberg.kreuzcrawl"
+
+[crates.csharp]
+namespace = "Kreuzcrawl"
+
+[crates.output]
 python = "crates/kreuzcrawl-py/src/"
 node = "crates/kreuzcrawl-node/src/"
 ruby = "packages/ruby/ext/kreuzcrawl_rb/src/"
@@ -32,52 +87,123 @@ go = "packages/go/"
 elixir = "packages/elixir/native/kreuzcrawl_nif/src/"
 wasm = "crates/kreuzcrawl-wasm/src/"
 
-[python]
-module_name = "_kreuzcrawl"
+[crates.exclude]
+types = ["CachedPage", "InteractionResult", "ActionResult", "CrawlEvent"]
+functions = ["generate_citations"]
+methods = ["CrawlResult.new"]
 
-[python.stubs]
-output = "packages/python/kreuzcrawl/"
+[crates.lint.python]
+precondition = "command -v ruff >/dev/null 2>&1"
+before = "cd packages/python && uv sync"
+typecheck = "cd packages/python && uv run mypy ."
 
-[node]
-package_name = "@kreuzberg/kreuzcrawl"
+[crates.lint.node]
+precondition = "command -v npx >/dev/null 2>&1"
+format = "npx oxfmt packages/typescript/"
+check = "npx oxlint packages/typescript/"
 
-[ffi]
-prefix = "kcrawl"
-header_name = "kreuzcrawl.h"
-lib_name = "kreuzcrawl_ffi"
-visitor_callbacks = false
+[crates.lint.ruby]
+precondition = "command -v bundle >/dev/null 2>&1"
+before = "cd packages/ruby && bundle install"
+format = "cd packages/ruby && bundle exec rubocop -a ."
 
-[go]
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
-package_name = "kreuzcrawl"
+[crates.lint.php]
+precondition = "command -v php >/dev/null 2>&1"
+before = "cd packages/php && composer install"
+format = "cd packages/php && vendor/bin/php-cs-fixer fix ."
+check = "cd packages/php && vendor/bin/phpstan --configuration=phpstan.neon --memory-limit=512M"
 
-[java]
-package = "dev.kreuzberg.kreuzcrawl"
+[crates.lint.go]
+precondition = "command -v golangci-lint >/dev/null 2>&1"
+before = "cargo build --release -p kreuzcrawl-ffi"
 
-[csharp]
-namespace = "Kreuzcrawl"
+[crates.lint.elixir]
+precondition = "command -v mix >/dev/null 2>&1"
+before = "cd packages/elixir && mix deps.get"
+check = "cd packages/elixir && mix credo"
 
-[ruby]
-gem_name = "kreuzcrawl"
+[crates.lint.java]
+precondition = "command -v mvn >/dev/null 2>&1"
+check = "mvn -f packages/java/pom.xml spotless:check -q"
 
-[ruby.stubs]
-output = "packages/ruby/sig/"
+[crates.lint.csharp]
+precondition = "command -v dotnet >/dev/null 2>&1"
+format = "dotnet format packages/csharp/Kreuzcrawl.slnx"
+check = "dotnet format packages/csharp/Kreuzcrawl.slnx --verify-no-changes"
 
-[elixir]
-app_name = "kreuzcrawl"
+[crates.lint.wasm]
+precondition = "command -v npx >/dev/null 2>&1"
+format = "npx oxfmt packages/wasm/"
+check = "npx oxlint packages/wasm/"
 
-[scaffold]
-description = "High-performance web crawling engine"
-license = "Elastic-2.0"
-repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
-authors = ["Kreuzberg Team"]
-keywords = ["crawl", "scrape", "web", "spider"]
+[crates.lint.ffi]
+precondition = "test -d crates/kreuzcrawl-ffi/tests"
+format = "find crates/kreuzcrawl-ffi/tests -name '*.c' -o -name '*.h' | xargs clang-format -i"
+check = "cppcheck --std=c11 --enable=warning,style,performance --suppress=missingIncludeSystem --suppress=unusedStructMember crates/kreuzcrawl-ffi/tests/"
 
-# Opt in to alef-managed workspace .cargo/config.toml. Empty section uses
-# canonical defaults (6-target template + macOS dynamic_lookup rustflag).
-[scaffold.cargo]
+[crates.test.python]
+precondition = "command -v python3 >/dev/null 2>&1"
+command = "task python:test"
+e2e = "cd e2e/python && python3 -m pytest tests/ -q"
 
-[e2e]
+[crates.test.node]
+precondition = "command -v node >/dev/null 2>&1"
+command = "task node:test"
+e2e = "cd e2e/typescript && npx vitest run"
+
+[crates.test.go]
+precondition = "command -v go >/dev/null 2>&1"
+command = "task go:test"
+e2e = "cd e2e/go && go test ./... -count=1"
+
+[crates.test.ruby]
+precondition = "command -v ruby >/dev/null 2>&1"
+command = "task ruby:test"
+
+[crates.test.php]
+precondition = "command -v php >/dev/null 2>&1"
+command = "task php:test"
+
+[crates.test.java]
+precondition = "command -v mvn >/dev/null 2>&1"
+command = "task java:test"
+
+[crates.test.csharp]
+precondition = "command -v dotnet >/dev/null 2>&1"
+command = "task csharp:test"
+
+[crates.test.elixir]
+precondition = "command -v mix >/dev/null 2>&1"
+command = "task elixir:test"
+e2e = "cd e2e/elixir && mix test"
+
+[crates.test.wasm]
+precondition = "command -v npx >/dev/null 2>&1"
+e2e = "cd e2e/wasm && npm test"
+
+[crates.test.rust]
+precondition = "command -v cargo >/dev/null 2>&1"
+e2e = "cd e2e/rust && cargo test"
+
+[crates.test.c]
+precondition = "command -v make >/dev/null 2>&1"
+e2e = "cd e2e/c && make clean && make && DYLD_LIBRARY_PATH=../../target/release ./test_runner"
+
+[crates.publish]
+core_crate = "crates/kreuzcrawl"
+
+[crates.publish.languages.ruby]
+vendor_mode = "core-only"
+
+[crates.publish.languages.elixir]
+vendor_mode = "core-only"
+nif_versions = ["2.16", "2.17"]
+
+[crates.publish.languages.ffi]
+pkg_config = true
+cmake_config = true
+
+[crates.e2e]
 fixtures = "fixtures"
 output = "e2e"
 languages = [
@@ -93,7 +219,6 @@ languages = [
     "wasm",
     "brew",
 ]
-
 fields_optional = [
     "markdown",
     "metadata.title",
@@ -201,97 +326,80 @@ result_fields = [
     "downloaded_document",
 ]
 
-# Format e2e directories with the same tooling prek runs in `task <lang>:format` /
-# `task <lang>:lint`. Without these the prek hooks autofix files post-finalisation
-# and break alef-verify (the embedded `alef:hash` is computed before the autofix).
-[e2e.format]
+[crates.e2e.format]
 rust = "(cd {dir} && cargo fmt --all)"
 python = "ruff check --fix {dir} && ruff format {dir}"
 go = "gofmt -w {dir}"
 ruby = "(cd {dir} && bundle exec rubocop --config .rubocop.yaml --autocorrect-all .)"
 php = "(cd {dir} && ../../packages/php/vendor/bin/php-cs-fixer fix --rules='@PSR12,@PHP82Migration' --path-mode=override .)"
 
-# Java is formatted by Spotless (Eclipse 4.31) via maven verify in prek's
-# `java-verify` hook. alef's default `google-java-format` produces different
-# output, breaking alef-verify. Use Spotless directly so the two pipelines
-# agree on byte-for-byte output.
-[format_overrides.java]
-command = "mvn -f packages/java/pom.xml -B -DskipTests -Dgpg.skip=true -Dskip.rust.ffi=true spotless:apply"
-
-[e2e.call]
+[crates.e2e.call]
 function = "scrape"
 module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
 
-[[e2e.call.args]]
+[[crates.e2e.call.args]]
 name = "engine"
 field = "config"
 type = "handle"
 optional = false
 
-[[e2e.call.args]]
+[[crates.e2e.call.args]]
 name = "url"
 field = "url"
 type = "mock_url"
 optional = false
 
-[e2e.call.overrides.python]
+[crates.e2e.call.overrides.python]
 module = "kreuzcrawl"
 function = "scrape"
 handle_dict_types = ["auth"]
 
-[e2e.call.overrides.python.handle_nested_types]
+[crates.e2e.call.overrides.python.handle_nested_types]
 browser = "BrowserConfig"
 proxy = "ProxyConfig"
 auth = "AuthConfig"
 
-[e2e.call.overrides.node]
+[crates.e2e.call.overrides.node]
 module = "@kreuzberg/kreuzcrawl"
 function = "scrape"
 
-[e2e.call.overrides.go]
+[crates.e2e.call.overrides.go]
 module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
 function = "Scrape"
 
-[e2e.call.overrides.java]
+[crates.e2e.call.overrides.java]
 class = "dev.kreuzberg.kreuzcrawl.Kreuzcrawl"
 
-[e2e.call.overrides.rust]
+[crates.e2e.call.overrides.rust]
 crate_name = "kreuzcrawl"
 
-[e2e.call.overrides.elixir]
+[crates.e2e.call.overrides.elixir]
 handle_struct_type = "CrawlConfig"
 handle_atom_list_fields = ["asset_types"]
 
-[e2e.call.overrides.wasm]
+[crates.e2e.call.overrides.wasm]
 handle_config_type = "WasmCrawlConfig"
 
-[e2e.call.overrides.brew]
+[crates.e2e.call.overrides.brew]
 function = "scrape"
 cli_args = ["--format", "json"]
 
-[e2e.fields]
-# Existing
-"title" = "metadata.title"
-"description" = "metadata.description"
-
-# robots.* → direct ScrapeResult fields
+[crates.e2e.fields]
+title = "metadata.title"
+description = "metadata.description"
 "robots.is_allowed" = "is_allowed"
 "robots.crawl_delay" = "crawl_delay"
 "robots.noindex_detected" = "noindex_detected"
 "robots.nofollow_detected" = "nofollow_detected"
 "robots.x_robots_tag" = "x_robots_tag"
-
-# content.* → direct ScrapeResult fields
 "content.body_size" = "body_size"
 "content.detected_charset" = "detected_charset"
 "content.is_pdf" = "is_pdf"
 "content.main_content_only" = "main_content_only"
 "content.was_skipped" = "was_skipped"
-
-# og.* → metadata.og_* fields
 "og.title" = "metadata.og_title"
 "og.type" = "metadata.og_type"
 "og.image" = "metadata.og_image"
@@ -302,8 +410,6 @@ cli_args = ["--format", "json"]
 "og.video" = "metadata.og_video"
 "og.audio" = "metadata.og_audio"
 "og.locale_alternate" = "metadata.og_locale_alternates"
-
-# twitter.* → metadata.twitter_* fields
 "twitter.card" = "metadata.twitter_card"
 "twitter.card_type" = "metadata.twitter_card"
 "twitter.title" = "metadata.twitter_title"
@@ -311,8 +417,6 @@ cli_args = ["--format", "json"]
 "twitter.image" = "metadata.twitter_image"
 "twitter.site" = "metadata.twitter_site"
 "twitter.creator" = "metadata.twitter_creator"
-
-# dublin_core.* → metadata.dc_* fields
 "dublin_core.title" = "metadata.dc_title"
 "dublin_core.creator" = "metadata.dc_creator"
 "dublin_core.subject" = "metadata.dc_subject"
@@ -324,89 +428,93 @@ cli_args = ["--format", "json"]
 "dublin_core.identifier" = "metadata.dc_identifier"
 "dublin_core.language" = "metadata.dc_language"
 "dublin_core.rights" = "metadata.dc_rights"
-
-# metadata field name corrections
 "metadata.lang" = "metadata.html_lang"
 "metadata.dir" = "metadata.html_dir"
-
-# json_ld field corrections
 "json_ld[].type" = "json_ld[].schema_type"
 "json_ld.type" = "json_ld[].schema_type"
-
-# asset field corrections
 "assets[].category" = "assets[].asset_category"
 
-[e2e.packages.rust]
+[crates.e2e.packages.rust]
 path = "../../crates/kreuzcrawl"
 
-[e2e.packages.python]
+[crates.e2e.packages.python]
 name = "kreuzcrawl"
 path = "../../packages/python"
 
-[e2e.packages.node]
+[crates.e2e.packages.node]
 name = "@kreuzberg/kreuzcrawl"
 path = "../../crates/kreuzcrawl-node"
 
-[e2e.packages.go]
+[crates.e2e.packages.go]
 module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
 path = "../../packages/go"
 
-[test.python]
-precondition = "command -v python3 >/dev/null 2>&1"
-command = "task python:test"
-e2e = "cd e2e/python && python3 -m pytest tests/ -q"
+[crates.e2e.registry]
+output = "test_apps"
+categories = ["scrape", "markdown", "metadata"]
 
-[test.node]
-precondition = "command -v node >/dev/null 2>&1"
-command = "task node:test"
-e2e = "cd e2e/typescript && npx vitest run"
+[crates.e2e.registry.packages.python]
+name = "kreuzcrawl"
+version = ">=0.1.0rc9"
 
-[test.go]
-precondition = "command -v go >/dev/null 2>&1"
-command = "task go:test"
-e2e = "cd e2e/go && go test ./... -count=1"
+[crates.e2e.registry.packages.node]
+name = "@kreuzberg/kreuzcrawl"
+version = "^0.1.0-rc.9"
 
-[test.ruby]
-precondition = "command -v ruby >/dev/null 2>&1"
-command = "task ruby:test"
+[crates.e2e.registry.packages.rust]
+name = "kreuzcrawl"
+version = "0.1.0-rc.9"
 
-[test.php]
-precondition = "command -v php >/dev/null 2>&1"
-command = "task php:test"
+[crates.e2e.registry.packages.go]
+module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+version = "v0.1.0-rc.9"
 
-[test.java]
-precondition = "command -v mvn >/dev/null 2>&1"
-command = "task java:test"
+[crates.e2e.registry.packages.java]
+name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
+version = "0.1.0-rc.9"
 
-[test.csharp]
-precondition = "command -v dotnet >/dev/null 2>&1"
-command = "task csharp:test"
+[crates.e2e.registry.packages.csharp]
+name = "Kreuzcrawl"
+version = "0.1.0-rc.9"
 
-[test.elixir]
-precondition = "command -v mix >/dev/null 2>&1"
-command = "task elixir:test"
-e2e = "cd e2e/elixir && mix test"
+[crates.e2e.registry.packages.php]
+name = "kreuzberg-dev/kreuzcrawl"
+version = ">=0.1.0-rc.9"
 
-[test.wasm]
-precondition = "command -v npx >/dev/null 2>&1"
-e2e = "cd e2e/wasm && npm test"
+[crates.e2e.registry.packages.ruby]
+name = "kreuzcrawl"
+version = ">= 0.1.0.pre.rc.9"
 
-[test.rust]
-precondition = "command -v cargo >/dev/null 2>&1"
-e2e = "cd e2e/rust && cargo test"
+[crates.e2e.registry.packages.elixir]
+name = "kreuzcrawl"
+version = "~> 0.1.0-rc.9"
 
-[test.c]
-precondition = "command -v make >/dev/null 2>&1"
-e2e = "cd e2e/c && make clean && make && DYLD_LIBRARY_PATH=../../target/release ./test_runner"
+[crates.e2e.registry.packages.wasm]
+name = "@kreuzberg/kreuzcrawl-wasm"
+version = "^0.1.0-rc.9"
 
-# ---------------------------------------------------------------------------
-# README Generation
-# ---------------------------------------------------------------------------
-[readme]
+[crates.e2e.registry.packages.brew]
+name = "kreuzcrawl"
+version = "0.1.0-rc.9"
+
+[crates.e2e.registry.packages.c]
+name = "kreuzcrawl-ffi"
+version = "0.1.0-rc.9"
+
+[crates.scaffold]
+description = "High-performance web crawling engine"
+license = "Elastic-2.0"
+repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
+authors = ["Kreuzberg Team"]
+keywords = ["crawl", "scrape", "web", "spider"]
+
+[crates.scaffold.cargo]
+
+[crates.readme]
 template_dir = "readme_templates"
 snippets_dir = "docs/snippets"
 
-[readme.languages.python]
+[crates.readme.languages.python]
 name = "Python"
 template = "language_package.md"
 output_path = "packages/python/README.md"
@@ -419,10 +527,10 @@ data extraction. Powered by PyO3, with async support, full metadata extraction, 
 conversion. Wheels published for Linux, macOS, and Windows.
 """
 
-[readme.languages.python.snippets]
+[crates.readme.languages.python.snippets]
 basic_usage = "getting-started/basic_usage.md"
 
-[readme.languages.typescript]
+[crates.readme.languages.typescript]
 name = "TypeScript (Node.js)"
 template = "language_package.md"
 output_path = "packages/typescript/README.md"
@@ -434,10 +542,10 @@ Node.js bindings for **kreuzcrawl** — a high-performance Rust web crawling eng
 NAPI-RS with full TypeScript types, async/await support, and native performance.
 """
 
-[readme.languages.typescript.snippets]
+[crates.readme.languages.typescript.snippets]
 basic_usage = "getting-started/basic_usage.md"
 
-[readme.languages.ruby]
+[crates.readme.languages.ruby]
 name = "Ruby"
 template = "language_package.md"
 output_path = "packages/ruby/README.md"
@@ -449,10 +557,10 @@ Ruby bindings for **kreuzcrawl** — a high-performance Rust web crawling engine
 Magnus with native Ruby objects, full metadata extraction, and Markdown conversion.
 """
 
-[readme.languages.ruby.snippets]
+[crates.readme.languages.ruby.snippets]
 basic_usage = "getting-started/basic_usage.md"
 
-[readme.languages.go]
+[crates.readme.languages.go]
 name = "Go"
 template = "language_package.md"
 output_path = "packages/go/README.md"
@@ -464,10 +572,10 @@ Go bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. 
 the C FFI layer for native performance with idiomatic Go error handling.
 """
 
-[readme.languages.go.snippets]
+[crates.readme.languages.go.snippets]
 basic_usage = "getting-started/basic_usage.md"
 
-[readme.languages.java]
+[crates.readme.languages.java]
 name = "Java"
 template = "language_package.md"
 output_path = "packages/java/README.md"
@@ -485,10 +593,10 @@ Java bindings for **kreuzcrawl** — a high-performance Rust web crawling engine
 Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 """
 
-[readme.languages.java.snippets]
+[crates.readme.languages.java.snippets]
 basic_usage = "getting-started/basic_usage.md"
 
-[readme.languages.csharp]
+[crates.readme.languages.csharp]
 name = "C#"
 template = "language_package.md"
 output_path = "packages/csharp/README.md"
@@ -500,10 +608,10 @@ C# / .NET bindings for **kreuzcrawl** — a high-performance Rust web crawling e
 P/Invoke with the C FFI layer, supporting .NET 8+ with async/await and nullable reference types.
 """
 
-[readme.languages.csharp.snippets]
+[crates.readme.languages.csharp.snippets]
 basic_usage = "getting-started/basic_usage.md"
 
-[readme.languages.php]
+[crates.readme.languages.php]
 name = "PHP"
 template = "language_package.md"
 output_path = "packages/php/README.md"
@@ -515,10 +623,10 @@ PHP bindings for **kreuzcrawl** — a high-performance Rust web crawling engine.
 extension via ext-php-rs with typed properties, PHP 8.2+ support, and PHPStan type stubs.
 """
 
-[readme.languages.php.snippets]
+[crates.readme.languages.php.snippets]
 basic_usage = "getting-started/basic_usage.md"
 
-[readme.languages.wasm]
+[crates.readme.languages.wasm]
 name = "WebAssembly"
 template = "language_package.md"
 output_path = "crates/kreuzcrawl-wasm/README.md"
@@ -531,10 +639,10 @@ wasm-bindgen for use in browsers and Node.js. Single-threaded; features requirin
 are not available.
 """
 
-[readme.languages.wasm.snippets]
+[crates.readme.languages.wasm.snippets]
 basic_usage = "getting-started/basic_usage.md"
 
-[readme.languages.elixir]
+[crates.readme.languages.elixir]
 name = "Elixir"
 template = "language_package.md"
 output_path = "packages/elixir/README.md"
@@ -550,147 +658,5 @@ Elixir bindings for **kreuzcrawl** — a high-performance Rust web crawling engi
 NIFs for native BEAM integration with OTP-compatible error tuples and ResourceArc handles.
 """
 
-[readme.languages.elixir.snippets]
+[crates.readme.languages.elixir.snippets]
 basic_usage = "getting-started/basic_usage.md"
-
-# ---------------------------------------------------------------------------
-# Registry Test Apps (test published packages from registries)
-# ---------------------------------------------------------------------------
-[e2e.registry]
-output = "test_apps"
-categories = ["scrape", "markdown", "metadata"]
-
-[e2e.registry.packages.python]
-name = "kreuzcrawl"
-version = ">=0.1.0rc9"
-
-[e2e.registry.packages.node]
-name = "@kreuzberg/kreuzcrawl"
-version = "^0.1.0-rc.9"
-
-[e2e.registry.packages.rust]
-name = "kreuzcrawl"
-version = "0.1.0-rc.9"
-
-[e2e.registry.packages.go]
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
-version = "v0.1.0-rc.9"
-
-[e2e.registry.packages.java]
-name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
-version = "0.1.0-rc.9"
-
-[e2e.registry.packages.csharp]
-name = "Kreuzcrawl"
-version = "0.1.0-rc.9"
-
-[e2e.registry.packages.php]
-name = "kreuzberg-dev/kreuzcrawl"
-version = ">=0.1.0-rc.9"
-
-[e2e.registry.packages.ruby]
-name = "kreuzcrawl"
-version = ">= 0.1.0.pre.rc.9"
-
-[e2e.registry.packages.elixir]
-name = "kreuzcrawl"
-version = "~> 0.1.0-rc.9"
-
-[e2e.registry.packages.wasm]
-name = "@kreuzberg/kreuzcrawl-wasm"
-version = "^0.1.0-rc.9"
-
-[e2e.registry.packages.brew]
-name = "kreuzcrawl"
-version = "0.1.0-rc.9"
-
-[e2e.registry.packages.c]
-name = "kreuzcrawl-ffi"
-version = "0.1.0-rc.9"
-
-# ---------------------------------------------------------------------------
-# Version Sync
-# ---------------------------------------------------------------------------
-[sync]
-extra_paths = [
-    "package.json",
-    "crates/kreuzcrawl-node/package.json",
-    "packages/ruby/ext/kreuzcrawl_rb/src/kreuzcrawl/version.rb",
-]
-
-# kreuzcrawl-cli depends on kreuzcrawl via a path; cargo publish requires
-# the dep also declares a version. Keep that version in lockstep with the
-# workspace bump so every rc tag stays publishable.
-[[sync.text_replacements]]
-path = "crates/kreuzcrawl-cli/Cargo.toml"
-search = 'kreuzcrawl = \{ path = "../kreuzcrawl", version = "=[^"]*"'
-replace = 'kreuzcrawl = { path = "../kreuzcrawl", version = "={version}"'
-
-# ---------------------------------------------------------------------------
-# Lint
-# ---------------------------------------------------------------------------
-[lint.python]
-precondition = "command -v ruff >/dev/null 2>&1"
-before = "cd packages/python && uv sync"
-typecheck = "cd packages/python && uv run mypy ."
-
-[lint.node]
-precondition = "command -v npx >/dev/null 2>&1"
-format = "npx oxfmt packages/typescript/"
-check = "npx oxlint packages/typescript/"
-
-[lint.ruby]
-precondition = "command -v bundle >/dev/null 2>&1"
-before = "cd packages/ruby && bundle install"
-format = "cd packages/ruby && bundle exec rubocop -a ."
-
-[lint.php]
-precondition = "command -v php >/dev/null 2>&1"
-before = "cd packages/php && composer install"
-format = "cd packages/php && vendor/bin/php-cs-fixer fix ."
-check = "cd packages/php && vendor/bin/phpstan --configuration=phpstan.neon --memory-limit=512M"
-
-[lint.go]
-precondition = "command -v golangci-lint >/dev/null 2>&1"
-before = "cargo build --release -p kreuzcrawl-ffi"
-
-[lint.elixir]
-precondition = "command -v mix >/dev/null 2>&1"
-before = "cd packages/elixir && mix deps.get"
-check = "cd packages/elixir && mix credo"
-
-[lint.java]
-precondition = "command -v mvn >/dev/null 2>&1"
-check = "mvn -f packages/java/pom.xml spotless:check -q"
-
-[lint.csharp]
-precondition = "command -v dotnet >/dev/null 2>&1"
-format = "dotnet format packages/csharp/Kreuzcrawl.slnx"
-check = "dotnet format packages/csharp/Kreuzcrawl.slnx --verify-no-changes"
-
-[lint.wasm]
-precondition = "command -v npx >/dev/null 2>&1"
-format = "npx oxfmt packages/wasm/"
-check = "npx oxlint packages/wasm/"
-
-[lint.ffi]
-precondition = "test -d crates/kreuzcrawl-ffi/tests"
-format = "find crates/kreuzcrawl-ffi/tests -name '*.c' -o -name '*.h' | xargs clang-format -i"
-check = "cppcheck --std=c11 --enable=warning,style,performance --suppress=missingIncludeSystem --suppress=unusedStructMember crates/kreuzcrawl-ffi/tests/"
-
-# ---------------------------------------------------------------------------
-# Publish
-# ---------------------------------------------------------------------------
-[publish]
-core_crate = "crates/kreuzcrawl"
-
-[publish.languages.ruby]
-vendor_mode = "core-only"
-
-[publish.languages.elixir]
-vendor_mode = "core-only"
-nif_versions = ["2.16", "2.17"]
-
-[publish.languages.ffi]
-pkg_config = true
-cmake_config = true
