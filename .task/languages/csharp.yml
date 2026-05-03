@@ -150,6 +150,8 @@ tasks:
 
   e2e:test:
     desc: Run C# E2E tests
+    env:
+      MOCK_SERVER_URL: "{{.MOCK_SERVER_URL}}"
     cmds:
       - cmd: bash scripts/e2e/csharp/test.sh
         platforms: [linux, darwin]

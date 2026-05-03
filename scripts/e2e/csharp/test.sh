@@ -28,6 +28,12 @@ cd "${REPO_ROOT}/e2e/csharp"
 results_dir="${REPO_ROOT}/target/test-results/csharp-e2e"
 mkdir -p "$results_dir"
 
+# Source the mock server URL from the running mock server
+if [ -f "${REPO_ROOT}/.mock-server.env" ]; then
+  source "${REPO_ROOT}/.mock-server.env"
+  echo "✓ Mock server URL: $MOCK_SERVER_URL"
+fi
+
 dotnet test Kreuzcrawl.E2eTests.csproj \
   -c Release \
   --logger "console;verbosity=diagnostic" \
