@@ -76,7 +76,7 @@ tasks:
     desc: Run Python tests in CI mode with coverage
     dir: packages/python
     env:
-      RUST_BACKTRACE: '1'
+      RUST_BACKTRACE: "1"
     cmds:
       - uv run pytest --cov --cov-report=html -vv -s --tb=long --log-cli-level=DEBUG
 

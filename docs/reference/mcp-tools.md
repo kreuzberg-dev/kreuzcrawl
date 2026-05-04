@@ -4,12 +4,12 @@ Kreuzcrawl implements a [Model Context Protocol](https://modelcontextprotocol.io
 
 ## Server Info
 
-| Field | Value |
-|-------|-------|
-| Name | `kreuzcrawl-mcp` |
-| Title | Kreuzcrawl Web Crawling MCP Server |
-| Transport | stdio |
-| Capabilities | Tools |
+| Field        | Value                              |
+| ------------ | ---------------------------------- |
+| Name         | `kreuzcrawl-mcp`                   |
+| Title        | Kreuzcrawl Web Crawling MCP Server |
+| Transport    | stdio                              |
+| Capabilities | Tools                              |
 
 ## Tools
 
@@ -21,11 +21,11 @@ Scrape a single URL and extract content as markdown or JSON.
 
 **Parameters:**
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `url` | `string` | Yes | -- | URL to scrape (must start with `http://` or `https://`) |
-| `format` | `string` | No | `"markdown"` | Output format: `"markdown"` or `"json"` |
-| `use_browser` | `boolean` | No | `false` | Force browser rendering instead of HTTP fetch (requires `browser` feature) |
+| Parameter     | Type      | Required | Default      | Description                                                                |
+| ------------- | --------- | -------- | ------------ | -------------------------------------------------------------------------- |
+| `url`         | `string`  | Yes      | --           | URL to scrape (must start with `http://` or `https://`)                    |
+| `format`      | `string`  | No       | `"markdown"` | Output format: `"markdown"` or `"json"`                                    |
+| `use_browser` | `boolean` | No       | `false`      | Force browser rendering instead of HTTP fetch (requires `browser` feature) |
 
 **Returns:** Text content containing the page content in the requested format. Markdown format includes the converted page content. JSON format includes the full `ScrapeResult` as structured JSON.
 
@@ -39,13 +39,13 @@ Crawl a website following links up to a configured depth.
 
 **Parameters:**
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `url` | `string` | Yes | -- | Starting URL for the crawl |
-| `max_depth` | `integer` | No | Engine default | Maximum link depth from the start URL (max: 100) |
-| `max_pages` | `integer` | No | Engine default | Maximum number of pages to crawl (1--100,000) |
-| `format` | `string` | No | `"markdown"` | Output format: `"markdown"` or `"json"` |
-| `stay_on_domain` | `boolean` | No | Engine default | Restrict crawling to the same domain |
+| Parameter        | Type      | Required | Default        | Description                                      |
+| ---------------- | --------- | -------- | -------------- | ------------------------------------------------ |
+| `url`            | `string`  | Yes      | --             | Starting URL for the crawl                       |
+| `max_depth`      | `integer` | No       | Engine default | Maximum link depth from the start URL (max: 100) |
+| `max_pages`      | `integer` | No       | Engine default | Maximum number of pages to crawl (1--100,000)    |
+| `format`         | `string`  | No       | `"markdown"`   | Output format: `"markdown"` or `"json"`          |
+| `stay_on_domain` | `boolean` | No       | Engine default | Restrict crawling to the same domain             |
 
 **Returns:** Text content with results for all discovered pages. In markdown format, each page is separated by `---`. In JSON format, each page is a structured object.
 
@@ -64,12 +64,12 @@ Discover all pages on a website via links and sitemaps.
 
 **Parameters:**
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `url` | `string` | Yes | -- | URL of the website to map |
-| `limit` | `integer` | No | No limit | Maximum number of URLs to return |
-| `search` | `string` | No | -- | Case-insensitive substring filter for discovered URLs |
-| `respect_robots_txt` | `boolean` | No | Engine default | Whether to respect robots.txt directives |
+| Parameter            | Type      | Required | Default        | Description                                           |
+| -------------------- | --------- | -------- | -------------- | ----------------------------------------------------- |
+| `url`                | `string`  | Yes      | --             | URL of the website to map                             |
+| `limit`              | `integer` | No       | No limit       | Maximum number of URLs to return                      |
+| `search`             | `string`  | No       | --             | Case-insensitive substring filter for discovered URLs |
+| `respect_robots_txt` | `boolean` | No       | Engine default | Whether to respect robots.txt directives              |
 
 **Returns:** Text content with the list of discovered URLs and their sitemap metadata (last modified, change frequency, priority).
 
@@ -83,11 +83,11 @@ Scrape multiple URLs concurrently.
 
 **Parameters:**
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `urls` | `string[]` | Yes | -- | List of URLs to scrape (must not be empty) |
-| `format` | `string` | No | `"markdown"` | Output format: `"markdown"` or `"json"` |
-| `concurrency` | `integer` | No | Engine default | Maximum number of concurrent requests |
+| Parameter     | Type       | Required | Default        | Description                                |
+| ------------- | ---------- | -------- | -------------- | ------------------------------------------ |
+| `urls`        | `string[]` | Yes      | --             | List of URLs to scrape (must not be empty) |
+| `format`      | `string`   | No       | `"markdown"`   | Output format: `"markdown"` or `"json"`    |
+| `concurrency` | `integer`  | No       | Engine default | Maximum number of concurrent requests      |
 
 **Returns:** Text content with results for each URL, separated by `---`. Failed URLs include an error message.
 
@@ -101,10 +101,10 @@ Download a document from a URL.
 
 **Parameters:**
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `url` | `string` | Yes | -- | URL to download |
-| `max_size` | `integer` | No | 50 MB | Maximum document size in bytes |
+| Parameter  | Type      | Required | Default | Description                    |
+| ---------- | --------- | -------- | ------- | ------------------------------ |
+| `url`      | `string`  | Yes      | --      | URL to download                |
+| `max_size` | `integer` | No       | 50 MB   | Maximum document size in bytes |
 
 **Returns:** JSON text with document metadata:
 
@@ -150,10 +150,10 @@ Capture a screenshot of a URL.
 
 **Requires:** `browser` feature
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `url` | `string` | Yes | URL to capture |
-| `full_page` | `boolean` | No | Capture full page vs viewport only |
+| Parameter   | Type      | Required | Description                        |
+| ----------- | --------- | -------- | ---------------------------------- |
+| `url`       | `string`  | Yes      | URL to capture                     |
+| `full_page` | `boolean` | No       | Capture full page vs viewport only |
 
 ### interact
 
@@ -161,10 +161,10 @@ Execute browser actions on a page (click, type, scroll, etc.).
 
 **Requires:** `interact` feature
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `url` | `string` | Yes | URL to navigate to before executing actions |
-| `actions` | `object[]` | Yes | Sequence of browser actions |
+| Parameter | Type       | Required | Description                                 |
+| --------- | ---------- | -------- | ------------------------------------------- |
+| `url`     | `string`   | Yes      | URL to navigate to before executing actions |
+| `actions` | `object[]` | Yes      | Sequence of browser actions                 |
 
 ### research
 
@@ -172,20 +172,20 @@ AI-driven research across multiple pages.
 
 **Requires:** `ai` feature
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `query` | `string` | Yes | Research query or question |
-| `max_depth` | `integer` | No | Maximum crawl depth per seed URL |
-| `max_pages` | `integer` | No | Maximum total pages to visit |
-| `seed_urls` | `string[]` | No | Optional seed URLs to start from |
+| Parameter   | Type       | Required | Description                      |
+| ----------- | ---------- | -------- | -------------------------------- |
+| `query`     | `string`   | Yes      | Research query or question       |
+| `max_depth` | `integer`  | No       | Maximum crawl depth per seed URL |
+| `max_pages` | `integer`  | No       | Maximum total pages to visit     |
+| `seed_urls` | `string[]` | No       | Optional seed URLs to start from |
 
 ### crawl_status
 
 Check the status of a crawl job.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `job_id` | `string` | No | Job ID to check status for |
+| Parameter | Type     | Required | Description                |
+| --------- | -------- | -------- | -------------------------- |
+| `job_id`  | `string` | No       | Job ID to check status for |
 
 ---
 
@@ -193,9 +193,9 @@ Check the status of a crawl job.
 
 MCP tool errors are mapped from `CrawlError` variants:
 
-| CrawlError Variant | MCP Error Code | Description |
-|---------------------|----------------|-------------|
-| `InvalidConfig` | `-32602` (INVALID_PARAMS) | Invalid configuration parameter |
+| CrawlError Variant | MCP Error Code            | Description                                                 |
+| ------------------ | ------------------------- | ----------------------------------------------------------- |
+| `InvalidConfig`    | `-32602` (INVALID_PARAMS) | Invalid configuration parameter                             |
 | All other variants | `-32603` (INTERNAL_ERROR) | Network, browser, or server errors with descriptive context |
 
 Error messages preserve the original context to aid debugging.

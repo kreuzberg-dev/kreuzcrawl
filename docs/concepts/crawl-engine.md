@@ -28,16 +28,16 @@ let engine = CrawlEngine::builder()
 
 Every builder method accepts any type that implements the corresponding trait. Unset fields default to:
 
-| Field | Default |
-|-------|---------|
-| `config` | `CrawlConfig::default()` |
-| `frontier` | `InMemoryFrontier::new()` |
-| `rate_limiter` | `PerDomainThrottle::new(200ms)` |
-| `store` | `NoopStore` |
-| `event_emitter` | `NoopEmitter` |
-| `strategy` | `BfsStrategy` |
-| `content_filter` | `NoopFilter` |
-| `cache` | `NoopCache` |
+| Field            | Default                         |
+| ---------------- | ------------------------------- |
+| `config`         | `CrawlConfig::default()`        |
+| `frontier`       | `InMemoryFrontier::new()`       |
+| `rate_limiter`   | `PerDomainThrottle::new(200ms)` |
+| `store`          | `NoopStore`                     |
+| `event_emitter`  | `NoopEmitter`                   |
+| `strategy`       | `BfsStrategy`                   |
+| `content_filter` | `NoopFilter`                    |
+| `cache`          | `NoopCache`                     |
 
 The `build()` method validates the configuration and returns `Result<CrawlEngine, CrawlError>`.
 

@@ -3,7 +3,7 @@
 Kreuzcrawl can extract structured data from crawled pages using LLM providers. The `LlmExtractor` integrates as a `ContentFilter`, processing each page through an LLM to produce typed JSON output with full cost tracking.
 
 !!! note "Feature flag required"
-    LLM extraction requires the `ai` feature flag: `kreuzcrawl = { version = "...", features = ["ai"] }`
+LLM extraction requires the `ai` feature flag: `kreuzcrawl = { version = "...", features = ["ai"] }`
 
 ## LlmExtractor setup
 
@@ -52,24 +52,24 @@ for page in &result.pages {
 
 ## Constructor parameters
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `api_key` | `&str` | Yes | API key for the LLM provider. |
-| `model` | `&str` | Yes | Model identifier in `provider/model` format. |
-| `schema` | `Option<Value>` | No | JSON Schema for structured extraction. When provided, the LLM is constrained to output conforming JSON. |
-| `instruction` | `Option<String>` | No | Natural language instruction describing what to extract. |
-| `prompt_template` | `Option<String>` | No | Custom Jinja2 template for the prompt. Overrides the default template when provided. |
+| Parameter         | Type             | Required | Description                                                                                             |
+| ----------------- | ---------------- | -------- | ------------------------------------------------------------------------------------------------------- |
+| `api_key`         | `&str`           | Yes      | API key for the LLM provider.                                                                           |
+| `model`           | `&str`           | Yes      | Model identifier in `provider/model` format.                                                            |
+| `schema`          | `Option<Value>`  | No       | JSON Schema for structured extraction. When provided, the LLM is constrained to output conforming JSON. |
+| `instruction`     | `Option<String>` | No       | Natural language instruction describing what to extract.                                                |
+| `prompt_template` | `Option<String>` | No       | Custom Jinja2 template for the prompt. Overrides the default template when provided.                    |
 
 ## Multi-provider support
 
 The `LlmExtractor` uses [liter-llm](https://github.com/kreuzberg-dev/liter-llm) for provider routing. Model identifiers follow the `provider/model` format:
 
-| Provider | Example model | Notes |
-|---|---|---|
-| OpenAI | `openai/gpt-4o-mini` | Supports JSON schema response format with strict mode. |
-| Anthropic | `anthropic/claude-sonnet-4-20250514` | |
-| Google | `google/gemini-2.0-flash` | |
-| Mistral | `mistral/mistral-large-latest` | |
+| Provider  | Example model                        | Notes                                                  |
+| --------- | ------------------------------------ | ------------------------------------------------------ |
+| OpenAI    | `openai/gpt-4o-mini`                 | Supports JSON schema response format with strict mode. |
+| Anthropic | `anthropic/claude-sonnet-4-20250514` |                                                        |
+| Google    | `google/gemini-2.0-flash`            |                                                        |
+| Mistral   | `mistral/mistral-large-latest`       |                                                        |
 
 The provider is inferred from the model string prefix. The API key must be valid for the specified provider.
 
@@ -104,7 +104,7 @@ The schema is passed to the LLM as a `response_format` constraint with `strict: 
 
 The default prompt template is a Jinja2 template that includes the extraction instruction, JSON schema, and page content. You can override it with a custom template:
 
-```rust
+````rust
 let custom_template = r#"You are analyzing a web page.
 
 URL: {{ url }}
@@ -118,7 +118,7 @@ Task: {{ instruction }}
 Output JSON schema:
 ```json
 {{ schema }}
-```
+````
 
 {% endif %}
 
@@ -126,14 +126,14 @@ Page content:
 {{ content }}"#;
 
 let extractor = LlmExtractor::new(
-    api_key,
-    "openai/gpt-4o-mini",
-    Some(schema),
-    Some("Extract key data points.".into()),
-    Some(custom_template.to_string()),
+api_key,
+"openai/gpt-4o-mini",
+Some(schema),
+Some("Extract key data points.".into()),
+Some(custom_template.to_string()),
 )?;
 
-```text
+````text
 
 ### Template variables
 
@@ -159,17 +159,17 @@ for page in &result.pages {
         println!("Chunks processed: {}", meta.chunks_processed);
     }
 }
-```
+````
 
 ### ExtractionMeta fields
 
-| Field | Type | Description |
-|---|---|---|
-| `cost` | `Option<f64>` | Estimated cost of the LLM call in USD. |
-| `prompt_tokens` | `Option<u64>` | Number of input tokens consumed. |
-| `completion_tokens` | `Option<u64>` | Number of output tokens generated. |
-| `model` | `Option<String>` | The model identifier used for extraction. |
-| `chunks_processed` | `usize` | Number of content chunks sent to the LLM (currently always 1). |
+| Field               | Type             | Description                                                    |
+| ------------------- | ---------------- | -------------------------------------------------------------- |
+| `cost`              | `Option<f64>`    | Estimated cost of the LLM call in USD.                         |
+| `prompt_tokens`     | `Option<u64>`    | Number of input tokens consumed.                               |
+| `completion_tokens` | `Option<u64>`    | Number of output tokens generated.                             |
+| `model`             | `Option<String>` | The model identifier used for extraction.                      |
+| `chunks_processed`  | `usize`          | Number of content chunks sent to the LLM (currently always 1). |
 
 ### Aggregating costs across a crawl
 
@@ -207,7 +207,7 @@ The `LlmExtractor` implements the `ContentFilter` trait, which means it runs dur
 - LLM calls are made concurrently, bounded by `max_concurrent`
 
 !!! warning "Cost awareness"
-    Each page in a crawl triggers an LLM API call. A crawl with `max_pages: Some(100)` using GPT-4o-mini will make 100 API calls. Monitor costs using the `ExtractionMeta` fields and set appropriate `max_pages` limits.
+Each page in a crawl triggers an LLM API call. A crawl with `max_pages: Some(100)` using GPT-4o-mini will make 100 API calls. Monitor costs using the `ExtractionMeta` fields and set appropriate `max_pages` limits.
 
 ## Error handling
 

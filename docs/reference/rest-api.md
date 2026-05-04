@@ -31,12 +31,12 @@ On failure:
 
 ## Server Configuration
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Host | `0.0.0.0` | IP address to bind to |
-| Port | `3000` | Port number |
-| Max request body | 10 MB | Request body size limit |
-| Request timeout | 5 minutes | Global handler timeout (returns `408` on expiry) |
+| Setting          | Default   | Description                                      |
+| ---------------- | --------- | ------------------------------------------------ |
+| Host             | `0.0.0.0` | IP address to bind to                            |
+| Port             | `3000`    | Port number                                      |
+| Max request body | 10 MB     | Request body size limit                          |
+| Request timeout  | 5 minutes | Global handler timeout (returns `408` on expiry) |
 
 The server includes CORS (allow all origins), gzip compression, request ID propagation (`x-request-id`), and panic recovery middleware.
 
@@ -50,14 +50,14 @@ Scrape a single URL and extract content synchronously.
 
 **Request Body:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `url` | `string` | Yes | -- | URL to scrape (must start with `http://` or `https://`, max 8192 chars) |
-| `formats` | `string[]` | No | `["markdown"]` | Output formats to return (e.g. `["markdown", "html"]`) |
-| `onlyMainContent` | `boolean` | No | `false` | Extract only the main content of the page |
-| `includeTags` | `string[]` | No | `[]` | CSS selectors to include |
-| `excludeTags` | `string[]` | No | `[]` | CSS selectors to exclude |
-| `timeout` | `integer` | No | `30000` | Request timeout in milliseconds |
+| Field             | Type       | Required | Default        | Description                                                             |
+| ----------------- | ---------- | -------- | -------------- | ----------------------------------------------------------------------- |
+| `url`             | `string`   | Yes      | --             | URL to scrape (must start with `http://` or `https://`, max 8192 chars) |
+| `formats`         | `string[]` | No       | `["markdown"]` | Output formats to return (e.g. `["markdown", "html"]`)                  |
+| `onlyMainContent` | `boolean`  | No       | `false`        | Extract only the main content of the page                               |
+| `includeTags`     | `string[]` | No       | `[]`           | CSS selectors to include                                                |
+| `excludeTags`     | `string[]` | No       | `[]`           | CSS selectors to exclude                                                |
+| `timeout`         | `integer`  | No       | `30000`        | Request timeout in milliseconds                                         |
 
 **Response:** `200 OK`
 
@@ -90,14 +90,14 @@ Start an asynchronous crawl job. Returns a job ID for polling.
 
 **Request Body:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `url` | `string` | Yes | -- | Seed URL to start crawling from |
-| `maxDepth` | `integer` | No | Engine default | Maximum link depth to follow |
-| `maxPages` | `integer` | No | Engine default | Maximum number of pages to crawl |
-| `includePaths` | `string[]` | No | `[]` | URL path patterns to include (regex) |
-| `excludePaths` | `string[]` | No | `[]` | URL path patterns to exclude (regex) |
-| `onlyMainContent` | `boolean` | No | `false` | Extract only main content |
+| Field             | Type       | Required | Default        | Description                          |
+| ----------------- | ---------- | -------- | -------------- | ------------------------------------ |
+| `url`             | `string`   | Yes      | --             | Seed URL to start crawling from      |
+| `maxDepth`        | `integer`  | No       | Engine default | Maximum link depth to follow         |
+| `maxPages`        | `integer`  | No       | Engine default | Maximum number of pages to crawl     |
+| `includePaths`    | `string[]` | No       | `[]`           | URL path patterns to include (regex) |
+| `excludePaths`    | `string[]` | No       | `[]`           | URL path patterns to exclude (regex) |
+| `onlyMainContent` | `boolean`  | No       | `false`        | Extract only main content            |
 
 **Response:** `202 Accepted`
 
@@ -118,9 +118,9 @@ Poll the status of a crawl job.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `id` | `string` (UUID) | Job identifier returned by `POST /v1/crawl` |
+| Parameter | Type            | Description                                 |
+| --------- | --------------- | ------------------------------------------- |
+| `id`      | `string` (UUID) | Job identifier returned by `POST /v1/crawl` |
 
 **Response:** `200 OK`
 
@@ -146,13 +146,13 @@ Poll the status of a crawl job.
 
 **Job Statuses:**
 
-| Status | Description |
-|--------|-------------|
-| `pending` | Job created, not yet started |
-| `in_progress` | Crawl is running |
-| `completed` | Crawl finished successfully; `data` contains page results |
-| `failed` | Crawl failed; `error` contains the message |
-| `cancelled` | Job was cancelled via `DELETE` |
+| Status        | Description                                               |
+| ------------- | --------------------------------------------------------- |
+| `pending`     | Job created, not yet started                              |
+| `in_progress` | Crawl is running                                          |
+| `completed`   | Crawl finished successfully; `data` contains page results |
+| `failed`      | Crawl failed; `error` contains the message                |
+| `cancelled`   | Job was cancelled via `DELETE`                            |
 
 **Error Responses:** `400` (invalid UUID), `404` (job not found)
 
@@ -164,9 +164,9 @@ Cancel a running crawl job.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `id` | `string` (UUID) | Job identifier |
+| Parameter | Type            | Description    |
+| --------- | --------------- | -------------- |
+| `id`      | `string` (UUID) | Job identifier |
 
 **Response:** `200 OK`
 
@@ -187,11 +187,11 @@ Discover all URLs on a website via sitemaps and link extraction. Synchronous.
 
 **Request Body:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `url` | `string` | Yes | -- | URL to discover links from |
-| `limit` | `integer` | No | No limit | Maximum number of URLs to return |
-| `search` | `string` | No | -- | Case-insensitive substring filter for discovered URLs |
+| Field    | Type      | Required | Default  | Description                                           |
+| -------- | --------- | -------- | -------- | ----------------------------------------------------- |
+| `url`    | `string`  | Yes      | --       | URL to discover links from                            |
+| `limit`  | `integer` | No       | No limit | Maximum number of URLs to return                      |
+| `search` | `string`  | No       | --       | Case-insensitive substring filter for discovered URLs |
 
 **Response:** `200 OK`
 
@@ -200,7 +200,12 @@ Discover all URLs on a website via sitemaps and link extraction. Synchronous.
   "success": true,
   "data": {
     "urls": [
-      { "url": "https://example.com/", "lastmod": "2025-01-01", "changefreq": "daily", "priority": "1.0" },
+      {
+        "url": "https://example.com/",
+        "lastmod": "2025-01-01",
+        "changefreq": "daily",
+        "priority": "1.0"
+      },
       { "url": "https://example.com/about", "lastmod": null, "changefreq": null, "priority": null }
     ]
   }
@@ -217,11 +222,11 @@ Start an asynchronous batch scrape job for multiple URLs.
 
 **Request Body:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `urls` | `string[]` | Yes | -- | URLs to scrape (must not be empty) |
-| `formats` | `string[]` | No | `["markdown"]` | Output formats |
-| `onlyMainContent` | `boolean` | No | `false` | Extract only main content |
+| Field             | Type       | Required | Default        | Description                        |
+| ----------------- | ---------- | -------- | -------------- | ---------------------------------- |
+| `urls`            | `string[]` | Yes      | --             | URLs to scrape (must not be empty) |
+| `formats`         | `string[]` | No       | `["markdown"]` | Output formats                     |
+| `onlyMainContent` | `boolean`  | No       | `false`        | Extract only main content          |
 
 **Response:** `202 Accepted`
 
@@ -242,9 +247,9 @@ Poll the status of a batch scrape job. Response format is the same as `GET /v1/c
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `id` | `string` (UUID) | Batch job identifier |
+| Parameter | Type            | Description          |
+| --------- | --------------- | -------------------- |
+| `id`      | `string` (UUID) | Batch job identifier |
 
 **Response:** `200 OK` -- Same structure as crawl job status. Each item in `data` is either a `ScrapeResult` or an object with `url` and `error` fields.
 
@@ -258,10 +263,10 @@ Download a document from a URL. Uses the scrape pipeline internally, which handl
 
 **Request Body:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `url` | `string` | Yes | -- | URL to download from |
-| `maxSize` | `integer` | No | 50 MB | Maximum download size in bytes |
+| Field     | Type      | Required | Default | Description                    |
+| --------- | --------- | -------- | ------- | ------------------------------ |
+| `url`     | `string`  | Yes      | --      | URL to download from           |
+| `maxSize` | `integer` | No       | 50 MB   | Maximum download size in bytes |
 
 **Response:** `200 OK` -- Returns the full `ScrapeResult`, which includes a `downloaded_document` field for non-HTML content.
 

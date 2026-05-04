@@ -60,7 +60,7 @@ are not available.
 ## Installation
 
 ```bash
-npm install @kreuzberg/kreuzcrawl-wasm
+pnpm add @kreuzberg/kreuzcrawl-wasm
 ```
 
 ## Quick Start

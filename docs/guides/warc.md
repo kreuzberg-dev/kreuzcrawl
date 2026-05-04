@@ -55,8 +55,8 @@ The `write_response` method returns the WARC-Record-ID assigned to the record, w
 callers can use for cross-referencing.
 
 !!! note "Header validation"
-    Header names and values are validated to reject CR/LF characters, preventing
-    header injection attacks. Invalid headers cause `CrawlError::InvalidConfig`.
+Header names and values are validated to reject CR/LF characters, preventing
+header injection attacks. Invalid headers cause `CrawlError::InvalidConfig`.
 
 ## Integration with crawl
 
@@ -104,6 +104,6 @@ etc.) and uses `"Unknown"` for unrecognized codes. The response block is stored 
 in the WARC payload, preserving the original content encoding.
 
 !!! tip "File size"
-    WARC files can grow large for deep crawls. Consider post-processing with gzip
-    compression (`.warc.gz`) using external tools. Kreuzcrawl does not compress WARC
-    output natively.
+WARC files can grow large for deep crawls. Consider post-processing with gzip
+compression (`.warc.gz`) using external tools. Kreuzcrawl does not compress WARC
+output natively.

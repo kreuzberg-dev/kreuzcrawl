@@ -75,6 +75,8 @@ TestResults/
 # Elixir
 packages/elixir/_build/
 packages/elixir/deps/
+e2e/elixir/_build/
+e2e/elixir/deps/
 .nox/
 
 # C FFI

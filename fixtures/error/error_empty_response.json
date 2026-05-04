@@ -1,26 +1,30 @@
 {
-	"id": "error_empty_response",
-	"description": "Handles 200 with completely empty body gracefully",
-	"tags": ["error", "edge-case"],
-	"input": {
-		"mock_responses": [
-			{
-				"status_code": 200,
-				"headers": {},
-				"body_inline": ""
-			}
-		]
-	},
-	"assertions": [
-		{
-			"type": "equals",
-			"field": "html_not_empty",
-			"value": false
-		},
-		{
-			"type": "equals",
-			"field": "error.is_error",
-			"value": false
-		}
-	]
+  "id": "error_empty_response",
+  "description": "Handles 200 with completely empty body gracefully",
+  "tags": [
+    "error",
+    "edge-case"
+  ],
+  "input": {
+    "config": {},
+    "mock_responses": [
+      {
+        "status_code": 200,
+        "headers": {},
+        "body_inline": ""
+      }
+    ]
+  },
+  "assertions": [
+    {
+      "type": "equals",
+      "field": "html_not_empty",
+      "value": false
+    },
+    {
+      "type": "equals",
+      "field": "error.is_error",
+      "value": false
+    }
+  ]
 }

@@ -18,21 +18,21 @@ kreuzcrawl scrape <URL> [OPTIONS]
 
 **Arguments:**
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `URL` | Yes | URL to scrape |
+| Argument | Required | Description   |
+| -------- | -------- | ------------- |
+| `URL`    | Yes      | URL to scrape |
 
 **Options:**
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--format <FORMAT>` | `json` | Output format: `json` or `markdown` |
-| `--proxy <URL>` | -- | Proxy URL |
-| `--user-agent <STRING>` | -- | Custom user agent |
-| `--timeout <MS>` | `30000` | Request timeout in milliseconds |
-| `--respect-robots-txt` | `false` | Respect robots.txt |
-| `--browser-mode <MODE>` | `auto` | Browser mode: `auto`, `always`, or `never` |
-| `--browser-endpoint <WS_URL>` | -- | CDP WebSocket endpoint for an external browser |
+| Flag                          | Default | Description                                    |
+| ----------------------------- | ------- | ---------------------------------------------- |
+| `--format <FORMAT>`           | `json`  | Output format: `json` or `markdown`            |
+| `--proxy <URL>`               | --      | Proxy URL                                      |
+| `--user-agent <STRING>`       | --      | Custom user agent                              |
+| `--timeout <MS>`              | `30000` | Request timeout in milliseconds                |
+| `--respect-robots-txt`        | `false` | Respect robots.txt                             |
+| `--browser-mode <MODE>`       | `auto`  | Browser mode: `auto`, `always`, or `never`     |
+| `--browser-endpoint <WS_URL>` | --      | CDP WebSocket endpoint for an external browser |
 
 **Examples:**
 
@@ -70,26 +70,26 @@ kreuzcrawl crawl <URL>... [OPTIONS]
 
 **Arguments:**
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `URL` | Yes (one or more) | Seed URL(s) to crawl. Multiple URLs triggers batch mode. |
+| Argument | Required          | Description                                              |
+| -------- | ----------------- | -------------------------------------------------------- |
+| `URL`    | Yes (one or more) | Seed URL(s) to crawl. Multiple URLs triggers batch mode. |
 
 **Options:**
 
-| Flag | Short | Default | Description |
-|------|-------|---------|-------------|
-| `--depth <N>` | `-d` | `2` | Maximum crawl depth |
-| `--max-pages <N>` | `-n` | -- | Maximum pages to crawl |
-| `--concurrent <N>` | `-c` | `10` | Maximum concurrent requests |
-| `--rate-limit <MS>` | -- | `200` | Rate limit delay between requests per domain (ms) |
-| `--format <FORMAT>` | -- | `json` | Output format: `json` or `markdown` |
-| `--proxy <URL>` | -- | -- | Proxy URL |
-| `--user-agent <STRING>` | -- | -- | Custom user agent |
-| `--timeout <MS>` | -- | `30000` | Request timeout in milliseconds |
-| `--respect-robots-txt` | -- | `false` | Respect robots.txt |
-| `--stay-on-domain` | -- | `false` | Stay on the same domain |
-| `--browser-mode <MODE>` | -- | `auto` | Browser mode: `auto`, `always`, or `never` |
-| `--browser-endpoint <WS_URL>` | -- | -- | CDP WebSocket endpoint for an external browser |
+| Flag                          | Short | Default | Description                                       |
+| ----------------------------- | ----- | ------- | ------------------------------------------------- |
+| `--depth <N>`                 | `-d`  | `2`     | Maximum crawl depth                               |
+| `--max-pages <N>`             | `-n`  | --      | Maximum pages to crawl                            |
+| `--concurrent <N>`            | `-c`  | `10`    | Maximum concurrent requests                       |
+| `--rate-limit <MS>`           | --    | `200`   | Rate limit delay between requests per domain (ms) |
+| `--format <FORMAT>`           | --    | `json`  | Output format: `json` or `markdown`               |
+| `--proxy <URL>`               | --    | --      | Proxy URL                                         |
+| `--user-agent <STRING>`       | --    | --      | Custom user agent                                 |
+| `--timeout <MS>`              | --    | `30000` | Request timeout in milliseconds                   |
+| `--respect-robots-txt`        | --    | `false` | Respect robots.txt                                |
+| `--stay-on-domain`            | --    | `false` | Stay on the same domain                           |
+| `--browser-mode <MODE>`       | --    | `auto`  | Browser mode: `auto`, `always`, or `never`        |
+| `--browser-endpoint <WS_URL>` | --    | --      | CDP WebSocket endpoint for an external browser    |
 
 **Examples:**
 
@@ -130,16 +130,16 @@ kreuzcrawl map <URL> [OPTIONS]
 **Arguments:**
 
 | Argument | Required | Description |
-|----------|----------|-------------|
-| `URL` | Yes | URL to map |
+| -------- | -------- | ----------- |
+| `URL`    | Yes      | URL to map  |
 
 **Options:**
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--limit <N>` | -- | Maximum URLs to return |
-| `--search <STRING>` | -- | Filter URLs by substring |
-| `--respect-robots-txt` | `false` | Respect robots.txt |
+| Flag                   | Default | Description              |
+| ---------------------- | ------- | ------------------------ |
+| `--limit <N>`          | --      | Maximum URLs to return   |
+| `--search <STRING>`    | --      | Filter URLs by substring |
+| `--respect-robots-txt` | `false` | Respect robots.txt       |
 
 **Examples:**
 
@@ -165,10 +165,10 @@ kreuzcrawl serve [OPTIONS]
 
 **Options:**
 
-| Flag | Default | Description |
-|------|---------|-------------|
+| Flag               | Default   | Description             |
+| ------------------ | --------- | ----------------------- |
 | `--host <ADDRESS>` | `0.0.0.0` | Host address to bind to |
-| `--port <PORT>` | `3000` | Port to listen on |
+| `--port <PORT>`    | `3000`    | Port to listen on       |
 
 **Examples:**
 
@@ -213,9 +213,9 @@ Add to `claude_desktop_config.json`:
 
 ## Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| `0` | Success |
-| `1` | Error (scrape/crawl/map failure, server startup failure) |
+| Code | Meaning                                                  |
+| ---- | -------------------------------------------------------- |
+| `0`  | Success                                                  |
+| `1`  | Error (scrape/crawl/map failure, server startup failure) |
 
 Errors are printed to stderr. Successful output goes to stdout.

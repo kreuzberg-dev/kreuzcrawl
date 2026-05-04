@@ -18,14 +18,14 @@ The conversion runs in a blocking task (`tokio::task::spawn_blocking`) to avoid 
 
 ## MarkdownResult structure
 
-| Field | Type | Description |
-|---|---|---|
-| `content` | `String` | The converted Markdown text. |
-| `document_structure` | `Option<Value>` | JSON representation of the document's semantic structure tree. |
-| `tables` | `Vec<Value>` | Extracted tables as structured JSON with cell data. |
-| `warnings` | `Vec<String>` | Non-fatal processing warnings from the conversion. |
-| `citations` | `Option<CitationResult>` | Content with inline links replaced by numbered citations. |
-| `fit_content` | `Option<String>` | Pruned Markdown optimized for LLM consumption. |
+| Field                | Type                     | Description                                                    |
+| -------------------- | ------------------------ | -------------------------------------------------------------- |
+| `content`            | `String`                 | The converted Markdown text.                                   |
+| `document_structure` | `Option<Value>`          | JSON representation of the document's semantic structure tree. |
+| `tables`             | `Vec<Value>`             | Extracted tables as structured JSON with cell data.            |
+| `warnings`           | `Vec<String>`            | Non-fatal processing warnings from the conversion.             |
+| `citations`          | `Option<CitationResult>` | Content with inline links replaced by numbered citations.      |
+| `fit_content`        | `Option<String>`         | Pruned Markdown optimized for LLM consumption.                 |
 
 All fields are populated in a single pass during conversion.
 
@@ -77,25 +77,25 @@ Visit Rust[1] and Tokio[2] for more.
 
 With a reference list:
 
-| Index | URL | Text |
-|---|---|---|
-| 1 | `https://www.rust-lang.org` | Rust |
-| 2 | `https://tokio.rs` | Tokio |
+| Index | URL                         | Text  |
+| ----- | --------------------------- | ----- |
+| 1     | `https://www.rust-lang.org` | Rust  |
+| 2     | `https://tokio.rs`          | Tokio |
 
 ### CitationResult structure
 
-| Field | Type | Description |
-|---|---|---|
-| `content` | `String` | Markdown with links replaced by numbered citations (e.g., `text[1]`). |
-| `references` | `Vec<CitationReference>` | The numbered reference list. |
+| Field        | Type                     | Description                                                           |
+| ------------ | ------------------------ | --------------------------------------------------------------------- |
+| `content`    | `String`                 | Markdown with links replaced by numbered citations (e.g., `text[1]`). |
+| `references` | `Vec<CitationReference>` | The numbered reference list.                                          |
 
 ### CitationReference fields
 
-| Field | Type | Description |
-|---|---|---|
-| `index` | `usize` | The 1-based citation number. |
-| `url` | `String` | The link URL. |
-| `text` | `String` | The original link text. |
+| Field   | Type     | Description                  |
+| ------- | -------- | ---------------------------- |
+| `index` | `usize`  | The 1-based citation number. |
+| `url`   | `String` | The link URL.                |
+| `text`  | `String` | The original link text.      |
 
 ### Citation behavior
 
@@ -133,14 +133,14 @@ if let Some(ref md) = result.markdown {
 
 The pruning algorithm applies these heuristics line by line:
 
-| Rule | Description |
-|---|---|
+| Rule                        | Description                                                                                                                 |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | **Navigation link removal** | Lines where more than 70% of characters are part of Markdown links (and the line is longer than 20 characters) are removed. |
-| **Short line removal** | Non-heading lines shorter than 5 characters are removed (catches breadcrumbs, separators). |
-| **Boilerplate detection** | Lines containing common boilerplate phrases are removed. |
-| **Code block preservation** | Content inside fenced code blocks (` ``` ` or `~~~`) is always preserved, even if individual lines are short. |
-| **Heading preservation** | Lines starting with `#` are always kept regardless of length. |
-| **Paragraph spacing** | Consecutive empty lines are collapsed to a single blank line. |
+| **Short line removal**      | Non-heading lines shorter than 5 characters are removed (catches breadcrumbs, separators).                                  |
+| **Boilerplate detection**   | Lines containing common boilerplate phrases are removed.                                                                    |
+| **Code block preservation** | Content inside fenced code blocks (` ``` ` or `~~~`) is always preserved, even if individual lines are short.               |
+| **Heading preservation**    | Lines starting with `#` are always kept regardless of length.                                                               |
+| **Paragraph spacing**       | Consecutive empty lines are collapsed to a single blank line.                                                               |
 
 ### Detected boilerplate phrases
 
@@ -155,13 +155,13 @@ The following phrases trigger line removal (case-insensitive):
 
 ### When to use fit content
 
-| Use case | Recommended field |
-|---|---|
-| Full-fidelity conversion | `content` |
-| LLM prompts and summarization | `fit_content` |
-| RAG indexing | `fit_content` or `citations.content` |
-| Link analysis | `content` (preserves inline links) |
-| Citation-style references | `citations.content` + `citations.references` |
+| Use case                      | Recommended field                            |
+| ----------------------------- | -------------------------------------------- |
+| Full-fidelity conversion      | `content`                                    |
+| LLM prompts and summarization | `fit_content`                                |
+| RAG indexing                  | `fit_content` or `citations.content`         |
+| Link analysis                 | `content` (preserves inline links)           |
+| Citation-style references     | `citations.content` + `citations.references` |
 
 ## Warnings
 

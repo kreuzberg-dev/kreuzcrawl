@@ -155,7 +155,6 @@ jobs:
           EXPECTED_VERSION: ${{ needs.prepare.outputs.version }}
         run: scripts/publish/validate-version-consistency.sh
 
-
   check-pypi:
     name: Check if Python package exists on PyPI
     needs: prepare
@@ -494,12 +493,12 @@ jobs:
           root-reserve-mb: 2048
           temp-reserve-mb: 512
           swap-size-mb: 4096
-          overprovision-lvm: 'true'
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
+          overprovision-lvm: "true"
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
 
       - name: Checkout
         uses: actions/checkout@v6
@@ -602,7 +601,7 @@ jobs:
         if: matrix.label == 'macos-arm64'
         uses: actions/setup-python@v6
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install wheel CLI (macOS)
         if: matrix.label == 'macos-arm64'
@@ -622,7 +621,7 @@ jobs:
       - name: Setup Python for smoke test
         uses: actions/setup-python@v6
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Smoke test wheel
         shell: bash
@@ -752,7 +751,7 @@ jobs:
         uses: kreuzberg-dev/actions/setup-rust@v1
         with:
           cache-key-prefix: publish-node-${{ matrix.settings.target }}
-          use-sccache: 'false'
+          use-sccache: "false"
 
       - name: Add Rust target
         if: ${{ matrix.settings.rust_target != '' }}
@@ -1536,9 +1535,9 @@ jobs:
         uses: actions/setup-java@v5
         id: setup-java
         with:
-          distribution: 'temurin'
-          java-version: '25'
-          cache: 'maven'
+          distribution: "temurin"
+          java-version: "25"
+          cache: "maven"
 
       - name: Setup Maven 3.9.11
         uses: kreuzberg-dev/actions/setup-maven@v1
@@ -2647,7 +2646,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4'
+          ruby-version: "3.4"
           bundler: none
           bundler-cache: false
 
@@ -2992,7 +2991,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '25'
+          java-version: "25"
           cache: maven
           server-id: ossrh
           server-username: MAVEN_USERNAME

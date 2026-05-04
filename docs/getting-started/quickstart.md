@@ -207,16 +207,16 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 
 Key `CrawlConfig` fields for crawling:
 
-| Field | Default | Description |
-|-------|---------|-------------|
-| `max_depth` | `None` (0) | Maximum link hops from the start URL |
-| `max_pages` | `None` (unlimited) | Maximum number of pages to crawl |
-| `max_concurrent` | `None` (10) | Maximum parallel requests |
-| `stay_on_domain` | `false` | Restrict crawling to the same domain |
-| `allow_subdomains` | `false` | Allow subdomains when `stay_on_domain` is true |
-| `respect_robots_txt` | `false` | Honor robots.txt directives |
-| `include_paths` | `[]` | Regex patterns for paths to include |
-| `exclude_paths` | `[]` | Regex patterns for paths to exclude |
+| Field                | Default            | Description                                    |
+| -------------------- | ------------------ | ---------------------------------------------- |
+| `max_depth`          | `None` (0)         | Maximum link hops from the start URL           |
+| `max_pages`          | `None` (unlimited) | Maximum number of pages to crawl               |
+| `max_concurrent`     | `None` (10)        | Maximum parallel requests                      |
+| `stay_on_domain`     | `false`            | Restrict crawling to the same domain           |
+| `allow_subdomains`   | `false`            | Allow subdomains when `stay_on_domain` is true |
+| `respect_robots_txt` | `false`            | Honor robots.txt directives                    |
+| `include_paths`      | `[]`               | Regex patterns for paths to include            |
+| `exclude_paths`      | `[]`               | Regex patterns for paths to exclude            |
 
 ---
 

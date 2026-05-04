@@ -13,53 +13,53 @@ Kreuzcrawl extracts metadata, converts HTML to markdown, supports LLM-powered st
 
 <div class="grid cards" markdown>
 
--   :material-spider-web: **Web Crawling**
+- :material-spider-web: **Web Crawling**
 
-    ---
+  ***
 
-    BFS, DFS, BestFirst, and Adaptive traversal strategies with concurrent fetching, streaming events, and batch operations.
+  BFS, DFS, BestFirst, and Adaptive traversal strategies with concurrent fetching, streaming events, and batch operations.
 
--   :material-text-box-outline: **Markdown Conversion**
+- :material-text-box-outline: **Markdown Conversion**
 
-    ---
+  ***
 
-    Always-on HTML-to-markdown with document structure preservation, numbered citations, and LLM-optimized content pruning.
+  Always-on HTML-to-markdown with document structure preservation, numbered citations, and LLM-optimized content pruning.
 
--   :material-database-search: **Metadata Extraction**
+- :material-database-search: **Metadata Extraction**
 
-    ---
+  ***
 
-    40+ metadata fields including Open Graph, Twitter Card, Dublin Core, JSON-LD, feeds, favicons, and hreflang links.
+  40+ metadata fields including Open Graph, Twitter Card, Dublin Core, JSON-LD, feeds, favicons, and hreflang links.
 
--   :material-robot: **AI / LLM Integration**
+- :material-robot: **AI / LLM Integration**
 
-    ---
+  ***
 
-    Multi-provider LLM extraction via liter-llm with JSON schema support, cost tracking, and token usage counters.
+  Multi-provider LLM extraction via liter-llm with JSON schema support, cost tracking, and token usage counters.
 
--   :material-web: **Browser Automation**
+- :material-web: **Browser Automation**
 
-    ---
+  ***
 
-    Headless Chrome fallback via chromiumoxide with WAF detection for 8 vendors, browser pooling, and persistent profiles.
+  Headless Chrome fallback via chromiumoxide with WAF detection for 8 vendors, browser pooling, and persistent profiles.
 
--   :material-server: **MCP & REST API**
+- :material-server: **MCP & REST API**
 
-    ---
+  ***
 
-    Built-in MCP server and REST API for integrating crawl capabilities into AI agent workflows and web services.
+  Built-in MCP server and REST API for integrating crawl capabilities into AI agent workflows and web services.
 
--   :material-archive: **WARC Output**
+- :material-archive: **WARC Output**
 
-    ---
+  ***
 
-    Standards-compliant WARC archiving for web preservation and compliance workflows.
+  Standards-compliant WARC archiving for web preservation and compliance workflows.
 
--   :material-translate: **11 Language Bindings**
+- :material-translate: **11 Language Bindings**
 
-    ---
+  ***
 
-    Native bindings for Rust, Python, TypeScript, Ruby, Go, Java, C#, PHP, Elixir, WebAssembly, and C FFI.
+  Native bindings for Rust, Python, TypeScript, Ruby, Go, Java, C#, PHP, Elixir, WebAssembly, and C FFI.
 
 </div>
 

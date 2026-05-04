@@ -78,8 +78,8 @@ Execute arbitrary JavaScript in the page context.
 ```
 
 !!! warning "Security"
-    The script runs with full page privileges. Only execute scripts from trusted sources.
-    The maximum script length is 1 MB.
+The script runs with full page privileges. Only execute scripts from trusted sources.
+The maximum script length is 1 MB.
 
 ### Scrape
 
@@ -93,15 +93,15 @@ Capture the current page HTML at this point in the action sequence.
 
 All action sequences are validated before execution. The following limits are enforced:
 
-| Constraint | Limit |
-|-----------|-------|
-| Maximum actions per sequence | 100 |
-| Maximum total wait time | 300 seconds (5 minutes) |
-| Maximum single wait duration | 300,000 ms (5 minutes) |
-| Maximum CSS selector length | 4,096 bytes |
-| Maximum JavaScript script length | 1,048,576 bytes (1 MB) |
-| Maximum text length (Type action) | 1,048,576 bytes (1 MB) |
-| Maximum scroll amount | 100,000 pixels |
+| Constraint                        | Limit                   |
+| --------------------------------- | ----------------------- |
+| Maximum actions per sequence      | 100                     |
+| Maximum total wait time           | 300 seconds (5 minutes) |
+| Maximum single wait duration      | 300,000 ms (5 minutes)  |
+| Maximum CSS selector length       | 4,096 bytes             |
+| Maximum JavaScript script length  | 1,048,576 bytes (1 MB)  |
+| Maximum text length (Type action) | 1,048,576 bytes (1 MB)  |
+| Maximum scroll amount             | 100,000 pixels          |
 
 Additional validations:
 
@@ -184,6 +184,6 @@ pub struct ActionResult {
 ```
 
 !!! tip "Combining with browser profiles"
-    Use a `BrowserProfile` to persist the session across multiple interaction runs.
-    This avoids re-authenticating on every crawl. See the
-    [Browser Automation guide](browser.md#browser-profiles-persistent-sessions) for details.
+Use a `BrowserProfile` to persist the session across multiple interaction runs.
+This avoids re-authenticating on every crawl. See the
+[Browser Automation guide](browser.md#browser-profiles-persistent-sessions) for details.

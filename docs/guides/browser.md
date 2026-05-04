@@ -8,11 +8,11 @@ via the `chromiumoxide` crate.
 
 The `BrowserMode` enum controls when the headless browser is used instead of a plain HTTP fetch.
 
-| Mode | Behaviour |
-|------|-----------|
+| Mode             | Behaviour                                                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Auto` (default) | Kreuzcrawl first tries an HTTP fetch. If the response looks like it needs JS rendering (e.g. WAF challenge page), it automatically falls back to the browser. |
-| `Always` | Every request goes through the headless browser. Useful for single-page applications or sites that rely entirely on client-side rendering. |
-| `Never` | The browser is never launched. Only plain HTTP fetches are performed. |
+| `Always`         | Every request goes through the headless browser. Useful for single-page applications or sites that rely entirely on client-side rendering.                    |
+| `Never`          | The browser is never launched. Only plain HTTP fetches are performed.                                                                                         |
 
 Set the mode in `CrawlConfig`:
 
@@ -133,8 +133,8 @@ profile.delete()?;
 ```
 
 !!! warning "Unix permissions"
-    On Unix, `profile.create()` sets the directory to mode `0o700` (owner-only access).
-    Never store profiles in world-readable locations.
+On Unix, `profile.create()` sets the directory to mode `0o700` (owner-only access).
+Never store profiles in world-readable locations.
 
 ## WAF detection
 
@@ -144,16 +144,16 @@ responses and browser-rendered pages.
 
 Detected vendors:
 
-| Vendor | Detection signal |
-|--------|-----------------|
-| Cloudflare | `Server: cloudflare`, `cf-browser-verification`, `cf-chl-` body markers |
-| Akamai | `Server: AkamaiGHost` |
-| Imperva (Incapsula) | `incapsula`, `_incap_ses_` body markers |
-| DataDome | `datadome` body marker, `x-datadome` header |
-| PerimeterX | `perimeterx`, `px-captcha` body markers, `x-px-*` headers |
-| Sucuri | `sucuri` body marker, `x-sucuri-id` header |
-| F5 BIG-IP | `Server: big-ip` |
-| AWS WAF | `awselb`, `x-amzn-waf` body markers, `x-amzn-waf-action` header |
+| Vendor              | Detection signal                                                        |
+| ------------------- | ----------------------------------------------------------------------- |
+| Cloudflare          | `Server: cloudflare`, `cf-browser-verification`, `cf-chl-` body markers |
+| Akamai              | `Server: AkamaiGHost`                                                   |
+| Imperva (Incapsula) | `incapsula`, `_incap_ses_` body markers                                 |
+| DataDome            | `datadome` body marker, `x-datadome` header                             |
+| PerimeterX          | `perimeterx`, `px-captcha` body markers, `x-px-*` headers               |
+| Sucuri              | `sucuri` body marker, `x-sucuri-id` header                              |
+| F5 BIG-IP           | `Server: big-ip`                                                        |
+| AWS WAF             | `awselb`, `x-amzn-waf` body markers, `x-amzn-waf-action` header         |
 
 In `Auto` browser mode, a WAF challenge triggers an automatic browser fallback so that
 JavaScript challenges can be solved client-side.
@@ -163,11 +163,11 @@ JavaScript challenges can be solved client-side.
 After the browser navigates to a URL, it needs to wait for the page to finish rendering.
 The `BrowserWait` enum controls this behaviour.
 
-| Strategy | Behaviour | Default wait |
-|----------|-----------|-------------|
-| `NetworkIdle` (default) | Waits for a 500 ms settle period after initial page load, giving client-side JS time to execute. | 500 ms |
-| `Selector` | Waits until a specific CSS selector appears in the DOM. Falls back to 500 ms if no `wait_selector` is configured. | Varies |
-| `Fixed` | Waits a fixed 2-second duration after navigation completes. | 2 s |
+| Strategy                | Behaviour                                                                                                         | Default wait |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------ |
+| `NetworkIdle` (default) | Waits for a 500 ms settle period after initial page load, giving client-side JS time to execute.                  | 500 ms       |
+| `Selector`              | Waits until a specific CSS selector appears in the DOM. Falls back to 500 ms if no `wait_selector` is configured. | Varies       |
+| `Fixed`                 | Waits a fixed 2-second duration after navigation completes.                                                       | 2 s          |
 
 Configure in `BrowserConfig`:
 
@@ -183,11 +183,11 @@ let browser = BrowserConfig {
 };
 ```
 
-The `extra_wait` field adds additional sleep time *after* the wait condition is met.
+The `extra_wait` field adds additional sleep time _after_ the wait condition is met.
 The `timeout` field is the hard cap on the entire navigation-plus-wait cycle; if exceeded,
 `CrawlError::BrowserTimeout` is returned.
 
 !!! tip "Choosing a strategy"
-    Use `NetworkIdle` for most sites. Switch to `Selector` when you know the exact element
-    that signals the page is ready (e.g. a data table or main content div). Use `Fixed`
-    only as a last resort for unpredictable sites.
+Use `NetworkIdle` for most sites. Switch to `Selector` when you know the exact element
+that signals the page is ready (e.g. a data table or main content div). Use `Fixed`
+only as a last resort for unpredictable sites.

@@ -31,27 +31,27 @@ The configuration file defines all languages, their metadata, and customization 
 ```yaml
 languages:
   python:
-    name: Python                                    # Display name
-    package_manager: [pip]                          # Installation methods
-    package_name: kreuzcrawl                         # Package identifier
-    badge_url: https://img.shields.io/...          # Package badge
-    docs_url: https://kreuzcrawl.dev/               # Documentation link
-    description: |                                  # Language-specific description
+    name: Python # Display name
+    package_manager: [pip] # Installation methods
+    package_name: kreuzcrawl # Package identifier
+    badge_url: https://img.shields.io/... # Package badge
+    docs_url: https://kreuzcrawl.dev/ # Documentation link
+    description: | # Language-specific description
       High-performance document intelligence...
-    features:                                       # Feature flags
+    features: # Feature flags
       ocr: true
       async: true
       plugin_system: true
       embeddings: true
-    ocr_backends:                                   # Available OCR backends
+    ocr_backends: # Available OCR backends
       - tesseract
       - easyocr
       - paddleocr
-    optional_sections:                              # Conditional sections to include
+    optional_sections: # Conditional sections to include
       - async_vs_sync_performance
       - ocr_backends
       - system_requirements
-    snippets:                                       # Code snippet references
+    snippets: # Code snippet references
       basic_extraction: docs/snippets/python/getting-started/01_basic_extraction.py
       async_extraction: docs/snippets/python/getting-started/02_async_extraction.py
       batch_processing: docs/snippets/python/getting-started/03_batch_processing.py
@@ -233,45 +233,45 @@ languages:                          # Required: language definitions
 #### Language Entry Details
 
 ```yaml
-  python:
-    # Basic Metadata
-    name: Python
-    package_manager: [pip]
-    package_name: kreuzcrawl
-    badge_url: https://img.shields.io/pypi/v/kreuzcrawl?label=Python
-    docs_url: https://kreuzcrawl.dev/
+python:
+  # Basic Metadata
+  name: Python
+  package_manager: [pip]
+  package_name: kreuzcrawl
+  badge_url: https://img.shields.io/pypi/v/kreuzcrawl?label=Python
+  docs_url: https://kreuzcrawl.dev/
 
-    # Multi-line description (preserve formatting with |)
-    description: |
-      High-performance document intelligence for Python.
-      Extract text, metadata, and structured information...
+  # Multi-line description (preserve formatting with |)
+  description: |
+    High-performance document intelligence for Python.
+    Extract text, metadata, and structured information...
 
-    # Feature Availability
-    features:
-      ocr: true                     # OCR support available
-      async: true                   # Async/await available
-      plugin_system: true           # Plugin system available
-      embeddings: true              # Embeddings support
+  # Feature Availability
+  features:
+    ocr: true # OCR support available
+    async: true # Async/await available
+    plugin_system: true # Plugin system available
+    embeddings: true # Embeddings support
 
-    # OCR Backend Options
-    ocr_backends:
-      - tesseract
-      - easyocr
-      - paddleocr
+  # OCR Backend Options
+  ocr_backends:
+    - tesseract
+    - easyocr
+    - paddleocr
 
-    # Sections to include (filters README content)
-    optional_sections:
-      - async_vs_sync_performance   # Include async/sync comparison
-      - ocr_backends                # Show OCR configuration
-      - system_requirements         # List system dependencies
+  # Sections to include (filters README content)
+  optional_sections:
+    - async_vs_sync_performance # Include async/sync comparison
+    - ocr_backends # Show OCR configuration
+    - system_requirements # List system dependencies
 
-    # Code Examples
-    snippets:
-      basic_extraction: docs/snippets/python/getting-started/01_basic_extraction.py
-      async_extraction: docs/snippets/python/getting-started/02_async_extraction.py
-      batch_processing: docs/snippets/python/getting-started/03_batch_processing.py
-      ocr_configuration: docs/snippets/python/ocr/01_tesseract.py
-      table_extraction: docs/snippets/python/config/01_table_extraction.py
+  # Code Examples
+  snippets:
+    basic_extraction: docs/snippets/python/getting-started/01_basic_extraction.py
+    async_extraction: docs/snippets/python/getting-started/02_async_extraction.py
+    batch_processing: docs/snippets/python/getting-started/03_batch_processing.py
+    ocr_configuration: docs/snippets/python/ocr/01_tesseract.py
+    table_extraction: docs/snippets/python/config/01_table_extraction.py
 ```
 
 ### Adding a New Language
@@ -567,7 +567,7 @@ The `include_snippet` filter is a custom Jinja2 filter that loads and formats co
 
 **Markdown Files (`.md`):**
 
-```markdown
+````markdown
 # Getting Started
 
 This is a guide to basic extraction.
@@ -578,9 +578,9 @@ from kreuzcrawl import extract_file_sync
 result = extract_file_sync("document.pdf")
 print(result.content)
 ```
+````
 
-
-```text
+````text
 
 ```text
 
@@ -595,7 +595,7 @@ print(result.content)
 ```text
 
 Filter extracts the code block:
-```
+````
 
 ```python
 from kreuzcrawl import extract_file_sync
@@ -604,7 +604,7 @@ result = extract_file_sync("document.pdf")
 print(result.content)
 ```
 
-```text
+````text
 
 **Raw Code Files (`.py`, `.go`, `.ts`, etc.):**
 ```python
@@ -612,19 +612,19 @@ from kreuzcrawl import extract_file_sync
 
 result = extract_file_sync("document.pdf")
 print(result.content)
-```
+````
 
 Filter wraps it automatically:
 
-```text
+````text
 ```python
 from kreuzcrawl import extract_file_sync
 
 result = extract_file_sync("document.pdf")
 print(result.content)
-```
+````
 
-```text
+````text
 
 #### Extension Mapping
 
@@ -644,7 +644,7 @@ The filter automatically detects language from file extensions:
     '.ex': 'elixir',
     '.exs': 'elixir',
 }
-```
+````
 
 #### Error Handling
 
@@ -706,9 +706,9 @@ The `optional_sections` configuration list specifies which sections should be in
 ```yaml
 python:
   optional_sections:
-    - async_vs_sync_performance  # Custom section for Python
-    - ocr_backends               # Language-specific OCR docs
-    - system_requirements        # Dependencies specific to Python
+    - async_vs_sync_performance # Custom section for Python
+    - ocr_backends # Language-specific OCR docs
+    - system_requirements # Dependencies specific to Python
 ```
 
 ### Using Optional Sections in Templates
@@ -835,7 +835,7 @@ docs/snippets/
 
 Best for documentation with explanation:
 
-```markdown
+````markdown
 # Basic Extraction Example
 
 This example shows how to extract text from a PDF file.
@@ -849,9 +849,9 @@ result = extract_file_sync("document.pdf")
 # Access the extracted content
 print(result.content)
 ```
+````
 
-
-```text
+````text
 
 ```text
 
@@ -879,7 +879,7 @@ from kreuzcrawl import extract_file_sync
 
 result = extract_file_sync("document.pdf")
 print(result.content)
-```
+````
 
 The filter automatically wraps this in markdown fences.
 
@@ -1142,7 +1142,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: pip install pyyaml jinja2
@@ -1258,7 +1258,7 @@ Ensure file contains code wrapped in triple backticks
 
 **Solution:** Ensure markdown files have proper code blocks:
 
-```markdown
+````markdown
 # Title
 
 Description here.
@@ -1267,9 +1267,9 @@ Description here.
 # Code must be wrapped in triple backticks
 print("hello")
 ```
+````
 
-
-```text
+````text
 
 ```text
 
@@ -1291,11 +1291,11 @@ Correct format:
 
 #### Issue: YAML parsing error
 
-```
+````
 
 ValueError: Failed to parse YAML configuration: mapping values are not allowed here
 
-```text
+````text
 
 **Solution:** Check YAML syntax in `readme_config.yaml`:
 ```bash
@@ -1307,7 +1307,7 @@ python -c "import yaml; yaml.safe_load(open('scripts/readme_config.yaml'))"
 # - Missing colons after keys
 # - Unquoted special characters in strings
 # - Invalid list format
-```
+````
 
 #### Issue: Jinja2 undefined variable
 

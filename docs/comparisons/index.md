@@ -22,45 +22,45 @@ The fundamental difference: **Firecrawl is a service you call; Kreuzcrawl is a l
 
 ## Feature Comparison
 
-| Feature | Kreuzcrawl | Firecrawl |
-|---|---|---|
-| **Language** | Rust | TypeScript |
-| **License** | Elastic-2.0 | AGPL-3.0 |
-| **Distribution** | Library + CLI | SaaS + Self-hosted |
-| **Headless browser** | chromiumoxide | Playwright |
-| **Traversal strategies** | BFS, DFS, BestFirst, Adaptive | BFS |
-| **Concurrent fetching** | JoinSet + Semaphore | Bull queue workers |
-| **Streaming events** | Real-time | SSE / polling |
-| **Batch operations** | `batch_crawl()` | Async API |
-| **Sitemap parsing** | XML, gzip, index | Yes |
-| **robots.txt** | RFC 9309 | Yes |
-| **Markdown conversion** | Always-on + structure preservation | Primary output |
-| **Fit markdown (LLM-pruned)** | BM25 + heuristic | No |
-| **Metadata fields** | 40+ (OG, DC, Twitter, Article, JSON-LD) | Basic |
-| **JSON-LD extraction** | Full | No |
-| **Feed discovery** | RSS, Atom, JSON Feed | No |
-| **Link-to-citations** | Numbered refs | No |
-| **LLM extraction** | Multi-provider (liter-llm) | 10+ providers |
-| **Cost tracking** | USD + tokens | Yes |
-| **PDF extraction** | No | Yes (FirePDF) |
-| **WAF detection** | 8 vendors | Cloud only |
-| **Stealth / anti-detect** | UA rotation | Stealth injection |
-| **Proxy support** | HTTP/HTTPS/SOCKS5 | Rotating proxies |
-| **Screenshot capture** | Stub | Yes |
-| **Page interaction** | No | Click, scroll, type |
-| **REST API server** | No | Yes (primary interface) |
-| **MCP server** | No | Yes |
-| **CLI** | scrape/crawl/map | No |
-| **Language SDKs** | Rust only | Python, JS, Go, Java, Elixir, Rust |
-| **Disk cache** | blake3 + TTL | Redis |
-| **Per-domain rate limiting** | Tower layer | Global RPS |
-| **HTTP caching (ETag)** | Yes | No |
-| **Pluggable traits** | 7 traits | No |
-| **Middleware stack** | Tower services | No |
-| **Config validation** | serde strict | No |
-| **BM25 relevance scoring** | Yes | No |
-| **Adaptive crawling** | Term saturation | No |
-| **Search integration** | No | Yes |
+| Feature                       | Kreuzcrawl                              | Firecrawl                          |
+| ----------------------------- | --------------------------------------- | ---------------------------------- |
+| **Language**                  | Rust                                    | TypeScript                         |
+| **License**                   | Elastic-2.0                             | AGPL-3.0                           |
+| **Distribution**              | Library + CLI                           | SaaS + Self-hosted                 |
+| **Headless browser**          | chromiumoxide                           | Playwright                         |
+| **Traversal strategies**      | BFS, DFS, BestFirst, Adaptive           | BFS                                |
+| **Concurrent fetching**       | JoinSet + Semaphore                     | Bull queue workers                 |
+| **Streaming events**          | Real-time                               | SSE / polling                      |
+| **Batch operations**          | `batch_crawl()`                         | Async API                          |
+| **Sitemap parsing**           | XML, gzip, index                        | Yes                                |
+| **robots.txt**                | RFC 9309                                | Yes                                |
+| **Markdown conversion**       | Always-on + structure preservation      | Primary output                     |
+| **Fit markdown (LLM-pruned)** | BM25 + heuristic                        | No                                 |
+| **Metadata fields**           | 40+ (OG, DC, Twitter, Article, JSON-LD) | Basic                              |
+| **JSON-LD extraction**        | Full                                    | No                                 |
+| **Feed discovery**            | RSS, Atom, JSON Feed                    | No                                 |
+| **Link-to-citations**         | Numbered refs                           | No                                 |
+| **LLM extraction**            | Multi-provider (liter-llm)              | 10+ providers                      |
+| **Cost tracking**             | USD + tokens                            | Yes                                |
+| **PDF extraction**            | No                                      | Yes (FirePDF)                      |
+| **WAF detection**             | 8 vendors                               | Cloud only                         |
+| **Stealth / anti-detect**     | UA rotation                             | Stealth injection                  |
+| **Proxy support**             | HTTP/HTTPS/SOCKS5                       | Rotating proxies                   |
+| **Screenshot capture**        | Stub                                    | Yes                                |
+| **Page interaction**          | No                                      | Click, scroll, type                |
+| **REST API server**           | No                                      | Yes (primary interface)            |
+| **MCP server**                | No                                      | Yes                                |
+| **CLI**                       | scrape/crawl/map                        | No                                 |
+| **Language SDKs**             | Rust only                               | Python, JS, Go, Java, Elixir, Rust |
+| **Disk cache**                | blake3 + TTL                            | Redis                              |
+| **Per-domain rate limiting**  | Tower layer                             | Global RPS                         |
+| **HTTP caching (ETag)**       | Yes                                     | No                                 |
+| **Pluggable traits**          | 7 traits                                | No                                 |
+| **Middleware stack**          | Tower services                          | No                                 |
+| **Config validation**         | serde strict                            | No                                 |
+| **BM25 relevance scoring**    | Yes                                     | No                                 |
+| **Adaptive crawling**         | Term saturation                         | No                                 |
+| **Search integration**        | No                                      | Yes                                |
 
 ---
 
@@ -123,13 +123,13 @@ The fundamental difference: **Firecrawl is a service you call; Kreuzcrawl is a l
 
 ## License Comparison
 
-| | Kreuzcrawl | Firecrawl |
-|---|---|---|
-| **License** | Elastic-2.0 | AGPL-3.0 |
-| **Commercial use** | Yes | Yes |
-| **Modification** | Yes | Yes, but must open-source if hosting |
-| **Hosting restriction** | Cannot provide as a managed crawling service | Must open-source all modifications when hosting |
-| **Embedding in proprietary software** | Yes | Requires AGPL compliance (copyleft) |
+|                                       | Kreuzcrawl                                   | Firecrawl                                       |
+| ------------------------------------- | -------------------------------------------- | ----------------------------------------------- |
+| **License**                           | Elastic-2.0                                  | AGPL-3.0                                        |
+| **Commercial use**                    | Yes                                          | Yes                                             |
+| **Modification**                      | Yes                                          | Yes, but must open-source if hosting            |
+| **Hosting restriction**               | Cannot provide as a managed crawling service | Must open-source all modifications when hosting |
+| **Embedding in proprietary software** | Yes                                          | Requires AGPL compliance (copyleft)             |
 
 Firecrawl's AGPL-3.0 license requires that any modifications to the software be open-sourced when the software is offered as a network service. This has significant implications for companies that want to self-host a modified version. Kreuzcrawl's Elastic-2.0 license allows proprietary modifications but prohibits offering Kreuzcrawl itself as a managed service.
 
@@ -151,48 +151,48 @@ Both Kreuzcrawl and Spider are Rust-native crawling libraries, making this the m
 
 ## Feature Comparison
 
-| Feature | Kreuzcrawl | Spider |
-|---|---|---|
-| **Language** | Rust | Rust |
-| **License** | Elastic-2.0 | MIT |
-| **Distribution** | Library + CLI | Library + CLI + SaaS |
-| **Headless browser** | chromiumoxide | chromey / WebDriver |
-| **Traversal strategies** | BFS, DFS, BestFirst, Adaptive | BFS |
-| **Concurrent fetching** | JoinSet + Semaphore | Tokio multi-thread + AIMD |
-| **Streaming events** | Real-time | Subscriber channels |
-| **Batch operations** | `batch_crawl()` | No |
-| **Sitemap parsing** | XML, gzip, index | Yes |
-| **robots.txt** | RFC 9309 | Yes, with caching |
-| **Markdown conversion** | Always-on + structure preservation | Yes |
-| **Fit markdown (LLM-pruned)** | BM25 + heuristic | No |
-| **Metadata fields** | 40+ (OG, DC, Twitter, Article, JSON-LD) | Basic |
-| **JSON-LD extraction** | Full | No |
-| **Feed discovery** | RSS, Atom, JSON Feed | No |
-| **Link-to-citations** | Numbered refs | No |
-| **LLM extraction** | Multi-provider (liter-llm) | OpenAI, Gemini |
-| **Cost tracking** | USD + tokens | No |
-| **PDF extraction** | No | No |
-| **WAF detection** | 8 vendors | Smart mode (auto-escalate) |
-| **Stealth / anti-detect** | UA rotation | ua_generator |
-| **Proxy support** | HTTP/HTTPS/SOCKS5 | HTTP/HTTPS/SOCKS + Cloud |
-| **User-Agent rotation** | Tower layer | Yes |
-| **Screenshot capture** | Stub | Yes |
-| **Page interaction** | No | Agent automation |
-| **REST API server** | No | No |
-| **MCP server** | No | Yes |
-| **CLI** | scrape/crawl/map | Yes |
-| **Language SDKs** | Rust only | Rust, Python, Node.js |
-| **Disk cache** | blake3 + TTL | SQLite |
-| **Per-domain rate limiting** | Tower layer | Token bucket + auto-throttle |
-| **HTTP caching (ETag)** | Yes | Yes |
-| **Pluggable traits** | 7 traits | No |
-| **Middleware stack** | Tower services | No |
-| **Config validation** | serde strict | No |
-| **BM25 relevance scoring** | Yes | No |
-| **Adaptive crawling** | Term saturation | No |
-| **Asset download + dedup** | SHA-256 | No |
-| **Search integration** | No | Serper, Brave, Bing, Tavily |
-| **WARC output** | No | Yes |
+| Feature                       | Kreuzcrawl                              | Spider                       |
+| ----------------------------- | --------------------------------------- | ---------------------------- |
+| **Language**                  | Rust                                    | Rust                         |
+| **License**                   | Elastic-2.0                             | MIT                          |
+| **Distribution**              | Library + CLI                           | Library + CLI + SaaS         |
+| **Headless browser**          | chromiumoxide                           | chromey / WebDriver          |
+| **Traversal strategies**      | BFS, DFS, BestFirst, Adaptive           | BFS                          |
+| **Concurrent fetching**       | JoinSet + Semaphore                     | Tokio multi-thread + AIMD    |
+| **Streaming events**          | Real-time                               | Subscriber channels          |
+| **Batch operations**          | `batch_crawl()`                         | No                           |
+| **Sitemap parsing**           | XML, gzip, index                        | Yes                          |
+| **robots.txt**                | RFC 9309                                | Yes, with caching            |
+| **Markdown conversion**       | Always-on + structure preservation      | Yes                          |
+| **Fit markdown (LLM-pruned)** | BM25 + heuristic                        | No                           |
+| **Metadata fields**           | 40+ (OG, DC, Twitter, Article, JSON-LD) | Basic                        |
+| **JSON-LD extraction**        | Full                                    | No                           |
+| **Feed discovery**            | RSS, Atom, JSON Feed                    | No                           |
+| **Link-to-citations**         | Numbered refs                           | No                           |
+| **LLM extraction**            | Multi-provider (liter-llm)              | OpenAI, Gemini               |
+| **Cost tracking**             | USD + tokens                            | No                           |
+| **PDF extraction**            | No                                      | No                           |
+| **WAF detection**             | 8 vendors                               | Smart mode (auto-escalate)   |
+| **Stealth / anti-detect**     | UA rotation                             | ua_generator                 |
+| **Proxy support**             | HTTP/HTTPS/SOCKS5                       | HTTP/HTTPS/SOCKS + Cloud     |
+| **User-Agent rotation**       | Tower layer                             | Yes                          |
+| **Screenshot capture**        | Stub                                    | Yes                          |
+| **Page interaction**          | No                                      | Agent automation             |
+| **REST API server**           | No                                      | No                           |
+| **MCP server**                | No                                      | Yes                          |
+| **CLI**                       | scrape/crawl/map                        | Yes                          |
+| **Language SDKs**             | Rust only                               | Rust, Python, Node.js        |
+| **Disk cache**                | blake3 + TTL                            | SQLite                       |
+| **Per-domain rate limiting**  | Tower layer                             | Token bucket + auto-throttle |
+| **HTTP caching (ETag)**       | Yes                                     | Yes                          |
+| **Pluggable traits**          | 7 traits                                | No                           |
+| **Middleware stack**          | Tower services                          | No                           |
+| **Config validation**         | serde strict                            | No                           |
+| **BM25 relevance scoring**    | Yes                                     | No                           |
+| **Adaptive crawling**         | Term saturation                         | No                           |
+| **Asset download + dedup**    | SHA-256                                 | No                           |
+| **Search integration**        | No                                      | Serper, Brave, Bing, Tavily  |
+| **WARC output**               | No                                      | Yes                          |
 
 ---
 
@@ -258,13 +258,13 @@ Both Kreuzcrawl and Spider are Rust-native crawling libraries, making this the m
 
 ## License Comparison
 
-| | Kreuzcrawl | Spider |
-|---|---|---|
-| **License** | Elastic-2.0 | MIT |
-| **Commercial use** | Yes | Yes |
-| **Modification** | Yes | Yes |
-| **Hosting restriction** | Cannot provide as a managed crawling service | None |
-| **Embedding in proprietary software** | Yes | Yes |
+|                                       | Kreuzcrawl                                   | Spider |
+| ------------------------------------- | -------------------------------------------- | ------ |
+| **License**                           | Elastic-2.0                                  | MIT    |
+| **Commercial use**                    | Yes                                          | Yes    |
+| **Modification**                      | Yes                                          | Yes    |
+| **Hosting restriction**               | Cannot provide as a managed crawling service | None   |
+| **Embedding in proprietary software** | Yes                                          | Yes    |
 
 Spider's MIT license is maximally permissive -- there are no restrictions on use, modification, or distribution. Kreuzcrawl's Elastic-2.0 license allows all commercial use and modification but prohibits offering Kreuzcrawl itself as a managed crawling service. For most use cases (embedding in applications, internal tooling, commercial products), both licenses work. The distinction matters only if you plan to offer a hosted crawling API as a product.
 
@@ -286,46 +286,46 @@ The core difference is the language runtime: **Kreuzcrawl is compiled Rust with 
 
 ## Feature Comparison
 
-| Feature | Kreuzcrawl | Crawl4AI |
-|---|---|---|
-| **Language** | Rust | Python |
-| **License** | Elastic-2.0 | Apache-2.0 |
-| **Distribution** | Library + CLI | Library + CLI + API |
-| **Headless browser** | chromiumoxide | Playwright |
-| **Traversal strategies** | BFS, DFS, BestFirst, Adaptive | BFS, DFS, BestFirst |
-| **Concurrent fetching** | JoinSet + Semaphore | asyncio browser pool |
-| **Streaming events** | Real-time | Yes |
-| **Batch operations** | `batch_crawl()` | Deep crawl |
-| **Sitemap parsing** | XML, gzip, index | No |
-| **robots.txt** | RFC 9309 | Basic |
-| **Markdown conversion** | Always-on + structure preservation | Yes |
-| **Fit markdown (LLM-pruned)** | BM25 + heuristic | BM25/LLM-based |
-| **Metadata fields** | 40+ (OG, DC, Twitter, Article, JSON-LD) | Basic |
-| **JSON-LD extraction** | Full | No |
-| **Feed discovery** | RSS, Atom, JSON Feed | No |
-| **Link-to-citations** | Numbered refs | Yes |
-| **LLM extraction** | Multi-provider (liter-llm) | litellm |
-| **Cost tracking** | USD + tokens | Yes |
-| **PDF extraction** | No | Yes |
-| **WAF detection** | 8 vendors | 3-tier detection |
-| **Stealth / anti-detect** | UA rotation | Playwright Stealth |
-| **Proxy support** | HTTP/HTTPS/SOCKS5 | Yes, with escalation |
-| **User-Agent rotation** | Tower layer | Yes |
-| **Screenshot capture** | Stub | Yes |
-| **Page interaction** | No | JS execution |
-| **REST API server** | No | FastAPI |
-| **MCP server** | No | Yes |
-| **CLI** | scrape/crawl/map | `crwl` |
-| **Language SDKs** | Rust only | Python |
-| **Disk cache** | blake3 + TTL | SQLite |
-| **Per-domain rate limiting** | Tower layer | Adaptive |
-| **HTTP caching (ETag)** | Yes | No |
-| **Pluggable traits** | 7 traits | Partial (strategies) |
-| **Middleware stack** | Tower services | No |
-| **Config validation** | serde strict | No |
-| **BM25 relevance scoring** | Yes | Yes |
-| **Adaptive crawling** | Term saturation | Pattern learning |
-| **Search integration** | No | Google |
+| Feature                       | Kreuzcrawl                              | Crawl4AI             |
+| ----------------------------- | --------------------------------------- | -------------------- |
+| **Language**                  | Rust                                    | Python               |
+| **License**                   | Elastic-2.0                             | Apache-2.0           |
+| **Distribution**              | Library + CLI                           | Library + CLI + API  |
+| **Headless browser**          | chromiumoxide                           | Playwright           |
+| **Traversal strategies**      | BFS, DFS, BestFirst, Adaptive           | BFS, DFS, BestFirst  |
+| **Concurrent fetching**       | JoinSet + Semaphore                     | asyncio browser pool |
+| **Streaming events**          | Real-time                               | Yes                  |
+| **Batch operations**          | `batch_crawl()`                         | Deep crawl           |
+| **Sitemap parsing**           | XML, gzip, index                        | No                   |
+| **robots.txt**                | RFC 9309                                | Basic                |
+| **Markdown conversion**       | Always-on + structure preservation      | Yes                  |
+| **Fit markdown (LLM-pruned)** | BM25 + heuristic                        | BM25/LLM-based       |
+| **Metadata fields**           | 40+ (OG, DC, Twitter, Article, JSON-LD) | Basic                |
+| **JSON-LD extraction**        | Full                                    | No                   |
+| **Feed discovery**            | RSS, Atom, JSON Feed                    | No                   |
+| **Link-to-citations**         | Numbered refs                           | Yes                  |
+| **LLM extraction**            | Multi-provider (liter-llm)              | litellm              |
+| **Cost tracking**             | USD + tokens                            | Yes                  |
+| **PDF extraction**            | No                                      | Yes                  |
+| **WAF detection**             | 8 vendors                               | 3-tier detection     |
+| **Stealth / anti-detect**     | UA rotation                             | Playwright Stealth   |
+| **Proxy support**             | HTTP/HTTPS/SOCKS5                       | Yes, with escalation |
+| **User-Agent rotation**       | Tower layer                             | Yes                  |
+| **Screenshot capture**        | Stub                                    | Yes                  |
+| **Page interaction**          | No                                      | JS execution         |
+| **REST API server**           | No                                      | FastAPI              |
+| **MCP server**                | No                                      | Yes                  |
+| **CLI**                       | scrape/crawl/map                        | `crwl`               |
+| **Language SDKs**             | Rust only                               | Python               |
+| **Disk cache**                | blake3 + TTL                            | SQLite               |
+| **Per-domain rate limiting**  | Tower layer                             | Adaptive             |
+| **HTTP caching (ETag)**       | Yes                                     | No                   |
+| **Pluggable traits**          | 7 traits                                | Partial (strategies) |
+| **Middleware stack**          | Tower services                          | No                   |
+| **Config validation**         | serde strict                            | No                   |
+| **BM25 relevance scoring**    | Yes                                     | Yes                  |
+| **Adaptive crawling**         | Term saturation                         | Pattern learning     |
+| **Search integration**        | No                                      | Google               |
 
 ---
 
@@ -393,14 +393,14 @@ The core difference is the language runtime: **Kreuzcrawl is compiled Rust with 
 
 ## License Comparison
 
-| | Kreuzcrawl | Crawl4AI |
-|---|---|---|
-| **License** | Elastic-2.0 | Apache-2.0 |
-| **Commercial use** | Yes | Yes |
-| **Modification** | Yes | Yes |
-| **Hosting restriction** | Cannot provide as a managed crawling service | None |
-| **Patent grant** | No | Yes (explicit patent grant) |
-| **Embedding in proprietary software** | Yes | Yes |
+|                                       | Kreuzcrawl                                   | Crawl4AI                    |
+| ------------------------------------- | -------------------------------------------- | --------------------------- |
+| **License**                           | Elastic-2.0                                  | Apache-2.0                  |
+| **Commercial use**                    | Yes                                          | Yes                         |
+| **Modification**                      | Yes                                          | Yes                         |
+| **Hosting restriction**               | Cannot provide as a managed crawling service | None                        |
+| **Patent grant**                      | No                                           | Yes (explicit patent grant) |
+| **Embedding in proprietary software** | Yes                                          | Yes                         |
 
 Crawl4AI's Apache-2.0 license is highly permissive with an explicit patent grant, meaning contributors cannot later assert patent claims against users. Kreuzcrawl's Elastic-2.0 license allows all commercial use and modification but prohibits offering Kreuzcrawl itself as a managed crawling service. For embedding in applications or internal use, both licenses work well.
 
@@ -422,47 +422,47 @@ The core architectural difference: **Webclaw is browserless by design; Kreuzcraw
 
 ## Feature Comparison
 
-| Feature | Kreuzcrawl | Webclaw |
-|---|---|---|
-| **Language** | Rust | Rust |
-| **License** | Elastic-2.0 | AGPL-3.0 |
-| **Distribution** | Library + CLI | Library + CLI + MCP |
-| **Headless browser** | chromiumoxide | None (TLS fingerprint) |
-| **Traversal strategies** | BFS, DFS, BestFirst, Adaptive | BFS |
-| **Concurrent fetching** | JoinSet + Semaphore | Tokio |
-| **Streaming events** | Real-time | No |
-| **Batch operations** | `batch_crawl()` | Yes |
-| **Sitemap parsing** | XML, gzip, index | Yes |
-| **robots.txt** | RFC 9309 | Yes |
-| **Markdown conversion** | Always-on + structure preservation | Yes |
-| **Fit markdown (LLM-pruned)** | BM25 + heuristic | Token-optimized |
-| **Metadata fields** | 40+ (OG, DC, Twitter, Article, JSON-LD) | Moderate |
-| **JSON-LD extraction** | Full | Data islands |
-| **Feed discovery** | RSS, Atom, JSON Feed | No |
-| **Link-to-citations** | Numbered refs | No |
-| **LLM extraction** | Multi-provider (liter-llm) | Ollama (local) |
-| **Cost tracking** | USD + tokens | No |
-| **PDF extraction** | No | Yes |
-| **WAF detection** | 8 vendors | No |
-| **Stealth / anti-detect** | UA rotation | TLS fingerprinting |
-| **Proxy support** | HTTP/HTTPS/SOCKS5 | Yes |
-| **User-Agent rotation** | Tower layer | No |
-| **Screenshot capture** | Stub | No |
-| **Page interaction** | No | No |
-| **REST API server** | No | No |
-| **MCP server** | No | Yes |
-| **CLI** | scrape/crawl/map | Yes |
-| **Language SDKs** | Rust only | Rust |
-| **Disk cache** | blake3 + TTL | No |
-| **Per-domain rate limiting** | Tower layer | No |
-| **HTTP caching (ETag)** | Yes | No |
-| **Pluggable traits** | 7 traits | No |
-| **Middleware stack** | Tower services | No |
-| **Config validation** | serde strict | No |
-| **BM25 relevance scoring** | Yes | No |
-| **Adaptive crawling** | Term saturation | No |
-| **Asset download + dedup** | SHA-256 | No |
-| **Search integration** | No | API key |
+| Feature                       | Kreuzcrawl                              | Webclaw                |
+| ----------------------------- | --------------------------------------- | ---------------------- |
+| **Language**                  | Rust                                    | Rust                   |
+| **License**                   | Elastic-2.0                             | AGPL-3.0               |
+| **Distribution**              | Library + CLI                           | Library + CLI + MCP    |
+| **Headless browser**          | chromiumoxide                           | None (TLS fingerprint) |
+| **Traversal strategies**      | BFS, DFS, BestFirst, Adaptive           | BFS                    |
+| **Concurrent fetching**       | JoinSet + Semaphore                     | Tokio                  |
+| **Streaming events**          | Real-time                               | No                     |
+| **Batch operations**          | `batch_crawl()`                         | Yes                    |
+| **Sitemap parsing**           | XML, gzip, index                        | Yes                    |
+| **robots.txt**                | RFC 9309                                | Yes                    |
+| **Markdown conversion**       | Always-on + structure preservation      | Yes                    |
+| **Fit markdown (LLM-pruned)** | BM25 + heuristic                        | Token-optimized        |
+| **Metadata fields**           | 40+ (OG, DC, Twitter, Article, JSON-LD) | Moderate               |
+| **JSON-LD extraction**        | Full                                    | Data islands           |
+| **Feed discovery**            | RSS, Atom, JSON Feed                    | No                     |
+| **Link-to-citations**         | Numbered refs                           | No                     |
+| **LLM extraction**            | Multi-provider (liter-llm)              | Ollama (local)         |
+| **Cost tracking**             | USD + tokens                            | No                     |
+| **PDF extraction**            | No                                      | Yes                    |
+| **WAF detection**             | 8 vendors                               | No                     |
+| **Stealth / anti-detect**     | UA rotation                             | TLS fingerprinting     |
+| **Proxy support**             | HTTP/HTTPS/SOCKS5                       | Yes                    |
+| **User-Agent rotation**       | Tower layer                             | No                     |
+| **Screenshot capture**        | Stub                                    | No                     |
+| **Page interaction**          | No                                      | No                     |
+| **REST API server**           | No                                      | No                     |
+| **MCP server**                | No                                      | Yes                    |
+| **CLI**                       | scrape/crawl/map                        | Yes                    |
+| **Language SDKs**             | Rust only                               | Rust                   |
+| **Disk cache**                | blake3 + TTL                            | No                     |
+| **Per-domain rate limiting**  | Tower layer                             | No                     |
+| **HTTP caching (ETag)**       | Yes                                     | No                     |
+| **Pluggable traits**          | 7 traits                                | No                     |
+| **Middleware stack**          | Tower services                          | No                     |
+| **Config validation**         | serde strict                            | No                     |
+| **BM25 relevance scoring**    | Yes                                     | No                     |
+| **Adaptive crawling**         | Term saturation                         | No                     |
+| **Asset download + dedup**    | SHA-256                                 | No                     |
+| **Search integration**        | No                                      | API key                |
 
 ---
 
@@ -530,13 +530,13 @@ The core architectural difference: **Webclaw is browserless by design; Kreuzcraw
 
 ## License Comparison
 
-| | Kreuzcrawl | Webclaw |
-|---|---|---|
-| **License** | Elastic-2.0 | AGPL-3.0 |
-| **Commercial use** | Yes | Yes |
-| **Modification** | Yes | Yes, but must open-source if hosting |
-| **Hosting restriction** | Cannot provide as a managed crawling service | Must open-source all modifications when hosting |
-| **Embedding in proprietary software** | Yes | Requires AGPL compliance (copyleft) |
+|                                       | Kreuzcrawl                                   | Webclaw                                         |
+| ------------------------------------- | -------------------------------------------- | ----------------------------------------------- |
+| **License**                           | Elastic-2.0                                  | AGPL-3.0                                        |
+| **Commercial use**                    | Yes                                          | Yes                                             |
+| **Modification**                      | Yes                                          | Yes, but must open-source if hosting            |
+| **Hosting restriction**               | Cannot provide as a managed crawling service | Must open-source all modifications when hosting |
+| **Embedding in proprietary software** | Yes                                          | Requires AGPL compliance (copyleft)             |
 
 Webclaw's AGPL-3.0 license has strong copyleft requirements: if you modify Webclaw and offer it as a network service, you must release your modifications under AGPL. This also applies to software that links against Webclaw in some interpretations. Kreuzcrawl's Elastic-2.0 license allows proprietary modifications but prohibits offering Kreuzcrawl itself as a managed service. For embedding in a proprietary application, Elastic-2.0 is less restrictive than AGPL.
 
@@ -558,47 +558,47 @@ The key distinction: **CRW focuses on being a simple, Firecrawl-compatible serve
 
 ## Feature Comparison
 
-| Feature | Kreuzcrawl | CRW |
-|---|---|---|
-| **Language** | Rust | Rust |
-| **License** | Elastic-2.0 | AGPL-3.0 |
-| **Distribution** | Library + CLI | CLI + MCP + API |
-| **Headless browser** | chromiumoxide | LightPanda / Chrome |
-| **Traversal strategies** | BFS, DFS, BestFirst, Adaptive | BFS |
-| **Concurrent fetching** | JoinSet + Semaphore | Tokio |
-| **Streaming events** | Real-time | No |
-| **Batch operations** | `batch_crawl()` | Yes |
-| **Sitemap parsing** | XML, gzip, index | Yes |
-| **robots.txt** | RFC 9309 | Yes |
-| **Markdown conversion** | Always-on + structure preservation | Yes |
-| **Fit markdown (LLM-pruned)** | BM25 + heuristic | No |
-| **Metadata fields** | 40+ (OG, DC, Twitter, Article, JSON-LD) | Basic |
-| **JSON-LD extraction** | Full | No |
-| **Feed discovery** | RSS, Atom, JSON Feed | No |
-| **Link-to-citations** | Numbered refs | No |
-| **LLM extraction** | Multi-provider (liter-llm) | Claude, OpenAI |
-| **Cost tracking** | USD + tokens | No |
-| **PDF extraction** | No | Yes |
-| **WAF detection** | 8 vendors | No |
-| **Stealth / anti-detect** | UA rotation | Stealth injection |
-| **Proxy support** | HTTP/HTTPS/SOCKS5 | HTTP/SOCKS5 |
-| **User-Agent rotation** | Tower layer | Yes |
-| **Screenshot capture** | Stub | No |
-| **Page interaction** | No | No |
-| **REST API server** | No | Yes (Firecrawl-compatible) |
-| **MCP server** | No | Yes |
-| **CLI** | scrape/crawl/map | Yes |
-| **Language SDKs** | Rust only | Rust |
-| **Disk cache** | blake3 + TTL | No |
-| **Per-domain rate limiting** | Tower layer | Global RPS |
-| **HTTP caching (ETag)** | Yes | No |
-| **Pluggable traits** | 7 traits | No |
-| **Middleware stack** | Tower services | No |
-| **Config validation** | serde strict | No |
-| **BM25 relevance scoring** | Yes | No |
-| **Adaptive crawling** | Term saturation | No |
-| **Asset download + dedup** | SHA-256 | No |
-| **Search integration** | No | API key |
+| Feature                       | Kreuzcrawl                              | CRW                        |
+| ----------------------------- | --------------------------------------- | -------------------------- |
+| **Language**                  | Rust                                    | Rust                       |
+| **License**                   | Elastic-2.0                             | AGPL-3.0                   |
+| **Distribution**              | Library + CLI                           | CLI + MCP + API            |
+| **Headless browser**          | chromiumoxide                           | LightPanda / Chrome        |
+| **Traversal strategies**      | BFS, DFS, BestFirst, Adaptive           | BFS                        |
+| **Concurrent fetching**       | JoinSet + Semaphore                     | Tokio                      |
+| **Streaming events**          | Real-time                               | No                         |
+| **Batch operations**          | `batch_crawl()`                         | Yes                        |
+| **Sitemap parsing**           | XML, gzip, index                        | Yes                        |
+| **robots.txt**                | RFC 9309                                | Yes                        |
+| **Markdown conversion**       | Always-on + structure preservation      | Yes                        |
+| **Fit markdown (LLM-pruned)** | BM25 + heuristic                        | No                         |
+| **Metadata fields**           | 40+ (OG, DC, Twitter, Article, JSON-LD) | Basic                      |
+| **JSON-LD extraction**        | Full                                    | No                         |
+| **Feed discovery**            | RSS, Atom, JSON Feed                    | No                         |
+| **Link-to-citations**         | Numbered refs                           | No                         |
+| **LLM extraction**            | Multi-provider (liter-llm)              | Claude, OpenAI             |
+| **Cost tracking**             | USD + tokens                            | No                         |
+| **PDF extraction**            | No                                      | Yes                        |
+| **WAF detection**             | 8 vendors                               | No                         |
+| **Stealth / anti-detect**     | UA rotation                             | Stealth injection          |
+| **Proxy support**             | HTTP/HTTPS/SOCKS5                       | HTTP/SOCKS5                |
+| **User-Agent rotation**       | Tower layer                             | Yes                        |
+| **Screenshot capture**        | Stub                                    | No                         |
+| **Page interaction**          | No                                      | No                         |
+| **REST API server**           | No                                      | Yes (Firecrawl-compatible) |
+| **MCP server**                | No                                      | Yes                        |
+| **CLI**                       | scrape/crawl/map                        | Yes                        |
+| **Language SDKs**             | Rust only                               | Rust                       |
+| **Disk cache**                | blake3 + TTL                            | No                         |
+| **Per-domain rate limiting**  | Tower layer                             | Global RPS                 |
+| **HTTP caching (ETag)**       | Yes                                     | No                         |
+| **Pluggable traits**          | 7 traits                                | No                         |
+| **Middleware stack**          | Tower services                          | No                         |
+| **Config validation**         | serde strict                            | No                         |
+| **BM25 relevance scoring**    | Yes                                     | No                         |
+| **Adaptive crawling**         | Term saturation                         | No                         |
+| **Asset download + dedup**    | SHA-256                                 | No                         |
+| **Search integration**        | No                                      | API key                    |
 
 ---
 
@@ -662,13 +662,13 @@ The key distinction: **CRW focuses on being a simple, Firecrawl-compatible serve
 
 ## License Comparison
 
-| | Kreuzcrawl | CRW |
-|---|---|---|
-| **License** | Elastic-2.0 | AGPL-3.0 |
-| **Commercial use** | Yes | Yes |
-| **Modification** | Yes | Yes, but must open-source if hosting |
-| **Hosting restriction** | Cannot provide as a managed crawling service | Must open-source all modifications when hosting |
-| **Embedding in proprietary software** | Yes | Requires AGPL compliance (copyleft) |
+|                                       | Kreuzcrawl                                   | CRW                                             |
+| ------------------------------------- | -------------------------------------------- | ----------------------------------------------- |
+| **License**                           | Elastic-2.0                                  | AGPL-3.0                                        |
+| **Commercial use**                    | Yes                                          | Yes                                             |
+| **Modification**                      | Yes                                          | Yes, but must open-source if hosting            |
+| **Hosting restriction**               | Cannot provide as a managed crawling service | Must open-source all modifications when hosting |
+| **Embedding in proprietary software** | Yes                                          | Requires AGPL compliance (copyleft)             |
 
 CRW's AGPL-3.0 license requires that modifications be open-sourced when the software is offered as a network service. Since CRW is primarily a server, this means any customizations to a hosted CRW instance must be released under AGPL. Kreuzcrawl's Elastic-2.0 license allows proprietary modifications but prohibits offering Kreuzcrawl itself as a managed crawling service. For embedding in proprietary applications, Elastic-2.0 is less restrictive.
 
@@ -690,47 +690,47 @@ The fundamental difference: **ScrapeGraphAI is LLM-native -- the LLM is the extr
 
 ## Feature Comparison
 
-| Feature | Kreuzcrawl | ScrapeGraphAI |
-|---|---|---|
-| **Language** | Rust | Python |
-| **License** | Elastic-2.0 | MIT |
-| **Distribution** | Library + CLI | Library + SaaS API |
-| **Headless browser** | chromiumoxide | Playwright |
-| **Traversal strategies** | BFS, DFS, BestFirst, Adaptive | LLM-driven graph |
-| **Concurrent fetching** | JoinSet + Semaphore | asyncio |
-| **Streaming events** | Real-time | No |
-| **Batch operations** | `batch_crawl()` | No |
-| **Sitemap parsing** | XML, gzip, index | No |
-| **robots.txt** | RFC 9309 | No |
-| **Markdown conversion** | Always-on + structure preservation | Yes |
-| **Fit markdown (LLM-pruned)** | BM25 + heuristic | No |
-| **Metadata fields** | 40+ (OG, DC, Twitter, Article, JSON-LD) | No |
-| **JSON-LD extraction** | Full | No |
-| **Feed discovery** | RSS, Atom, JSON Feed | No |
-| **Link-to-citations** | Numbered refs | No |
-| **LLM extraction** | Multi-provider (liter-llm) | LangChain (core) |
-| **Cost tracking** | USD + tokens | Token counting |
-| **PDF extraction** | No | Yes |
-| **WAF detection** | 8 vendors | No |
-| **Stealth / anti-detect** | UA rotation | Undetected Playwright |
-| **Proxy support** | HTTP/HTTPS/SOCKS5 | Via Playwright |
-| **User-Agent rotation** | Tower layer | No |
-| **Screenshot capture** | Stub | Yes |
-| **Page interaction** | No | No |
-| **REST API server** | No | SaaS API |
-| **MCP server** | No | Yes (via Toolhouse) |
-| **CLI** | scrape/crawl/map | No |
-| **Language SDKs** | Rust only | Python, Node.js |
-| **Disk cache** | blake3 + TTL | No |
-| **Per-domain rate limiting** | Tower layer | No |
-| **HTTP caching (ETag)** | Yes | No |
-| **Pluggable traits** | 7 traits | Graph nodes |
-| **Middleware stack** | Tower services | No |
-| **Config validation** | serde strict | No |
-| **BM25 relevance scoring** | Yes | No |
-| **Adaptive crawling** | Term saturation | No |
-| **Asset download + dedup** | SHA-256 | No |
-| **Search integration** | No | DuckDuckGo |
+| Feature                       | Kreuzcrawl                              | ScrapeGraphAI         |
+| ----------------------------- | --------------------------------------- | --------------------- |
+| **Language**                  | Rust                                    | Python                |
+| **License**                   | Elastic-2.0                             | MIT                   |
+| **Distribution**              | Library + CLI                           | Library + SaaS API    |
+| **Headless browser**          | chromiumoxide                           | Playwright            |
+| **Traversal strategies**      | BFS, DFS, BestFirst, Adaptive           | LLM-driven graph      |
+| **Concurrent fetching**       | JoinSet + Semaphore                     | asyncio               |
+| **Streaming events**          | Real-time                               | No                    |
+| **Batch operations**          | `batch_crawl()`                         | No                    |
+| **Sitemap parsing**           | XML, gzip, index                        | No                    |
+| **robots.txt**                | RFC 9309                                | No                    |
+| **Markdown conversion**       | Always-on + structure preservation      | Yes                   |
+| **Fit markdown (LLM-pruned)** | BM25 + heuristic                        | No                    |
+| **Metadata fields**           | 40+ (OG, DC, Twitter, Article, JSON-LD) | No                    |
+| **JSON-LD extraction**        | Full                                    | No                    |
+| **Feed discovery**            | RSS, Atom, JSON Feed                    | No                    |
+| **Link-to-citations**         | Numbered refs                           | No                    |
+| **LLM extraction**            | Multi-provider (liter-llm)              | LangChain (core)      |
+| **Cost tracking**             | USD + tokens                            | Token counting        |
+| **PDF extraction**            | No                                      | Yes                   |
+| **WAF detection**             | 8 vendors                               | No                    |
+| **Stealth / anti-detect**     | UA rotation                             | Undetected Playwright |
+| **Proxy support**             | HTTP/HTTPS/SOCKS5                       | Via Playwright        |
+| **User-Agent rotation**       | Tower layer                             | No                    |
+| **Screenshot capture**        | Stub                                    | Yes                   |
+| **Page interaction**          | No                                      | No                    |
+| **REST API server**           | No                                      | SaaS API              |
+| **MCP server**                | No                                      | Yes (via Toolhouse)   |
+| **CLI**                       | scrape/crawl/map                        | No                    |
+| **Language SDKs**             | Rust only                               | Python, Node.js       |
+| **Disk cache**                | blake3 + TTL                            | No                    |
+| **Per-domain rate limiting**  | Tower layer                             | No                    |
+| **HTTP caching (ETag)**       | Yes                                     | No                    |
+| **Pluggable traits**          | 7 traits                                | Graph nodes           |
+| **Middleware stack**          | Tower services                          | No                    |
+| **Config validation**         | serde strict                            | No                    |
+| **BM25 relevance scoring**    | Yes                                     | No                    |
+| **Adaptive crawling**         | Term saturation                         | No                    |
+| **Asset download + dedup**    | SHA-256                                 | No                    |
+| **Search integration**        | No                                      | DuckDuckGo            |
 
 ---
 
@@ -799,13 +799,13 @@ The fundamental difference: **ScrapeGraphAI is LLM-native -- the LLM is the extr
 
 ## License Comparison
 
-| | Kreuzcrawl | ScrapeGraphAI |
-|---|---|---|
-| **License** | Elastic-2.0 | MIT |
-| **Commercial use** | Yes | Yes |
-| **Modification** | Yes | Yes |
-| **Hosting restriction** | Cannot provide as a managed crawling service | None |
-| **Embedding in proprietary software** | Yes | Yes |
+|                                       | Kreuzcrawl                                   | ScrapeGraphAI |
+| ------------------------------------- | -------------------------------------------- | ------------- |
+| **License**                           | Elastic-2.0                                  | MIT           |
+| **Commercial use**                    | Yes                                          | Yes           |
+| **Modification**                      | Yes                                          | Yes           |
+| **Hosting restriction**               | Cannot provide as a managed crawling service | None          |
+| **Embedding in proprietary software** | Yes                                          | Yes           |
 
 ScrapeGraphAI's MIT license is maximally permissive with no restrictions. Kreuzcrawl's Elastic-2.0 license allows all commercial use and modification but prohibits offering Kreuzcrawl itself as a managed crawling service. For most use cases, both licenses are compatible with commercial development.
 
@@ -815,12 +815,12 @@ ScrapeGraphAI's MIT license is maximally permissive with no restrictions. Kreuzc
 
 The cost difference between these tools deserves special attention because their architectures create fundamentally different cost profiles:
 
-| Scenario | Kreuzcrawl | ScrapeGraphAI |
-|---|---|---|
-| **10,000 pages, metadata only** | Compute only (~$0) | ~$50-200 in LLM API costs |
-| **10,000 pages, structured extraction** | Compute + LLM costs (opt-in) | ~$50-200 in LLM API costs |
-| **100,000 pages, basic crawl** | Compute only (~$0) | ~$500-2,000 in LLM API costs |
-| **Latency per page** | Milliseconds (no LLM) | Seconds (LLM round-trip) |
+| Scenario                                | Kreuzcrawl                   | ScrapeGraphAI                |
+| --------------------------------------- | ---------------------------- | ---------------------------- |
+| **10,000 pages, metadata only**         | Compute only (~$0)           | ~$50-200 in LLM API costs    |
+| **10,000 pages, structured extraction** | Compute + LLM costs (opt-in) | ~$50-200 in LLM API costs    |
+| **100,000 pages, basic crawl**          | Compute only (~$0)           | ~$500-2,000 in LLM API costs |
+| **Latency per page**                    | Milliseconds (no LLM)        | Seconds (LLM round-trip)     |
 
 These are rough estimates and vary significantly by LLM provider, model, and page complexity. The key point is that Kreuzcrawl's cost scales with compute only for standard extraction, while ScrapeGraphAI's cost scales linearly with page count due to per-page LLM calls.
 

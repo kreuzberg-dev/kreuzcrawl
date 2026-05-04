@@ -27,55 +27,55 @@ The `ScrapeResult` struct contains everything extracted from a single page:
 
 ### Core response data
 
-| Field | Type | Description |
-|---|---|---|
-| `status_code` | `u16` | HTTP response status code. |
-| `content_type` | `String` | The Content-Type header value. |
-| `html` | `String` | The response body (possibly truncated by `max_body_size` or filtered by `main_content_only`). |
-| `body_size` | `usize` | Size of the response body in bytes. |
-| `detected_charset` | `Option<String>` | Character encoding detected from Content-Type header or HTML meta tags. |
-| `is_pdf` | `bool` | Whether the content was detected as PDF. |
-| `was_skipped` | `bool` | Whether extraction was skipped (binary or PDF content). |
+| Field              | Type             | Description                                                                                   |
+| ------------------ | ---------------- | --------------------------------------------------------------------------------------------- |
+| `status_code`      | `u16`            | HTTP response status code.                                                                    |
+| `content_type`     | `String`         | The Content-Type header value.                                                                |
+| `html`             | `String`         | The response body (possibly truncated by `max_body_size` or filtered by `main_content_only`). |
+| `body_size`        | `usize`          | Size of the response body in bytes.                                                           |
+| `detected_charset` | `Option<String>` | Character encoding detected from Content-Type header or HTML meta tags.                       |
+| `is_pdf`           | `bool`           | Whether the content was detected as PDF.                                                      |
+| `was_skipped`      | `bool`           | Whether extraction was skipped (binary or PDF content).                                       |
 
 ### Robots and directives
 
-| Field | Type | Description |
-|---|---|---|
-| `is_allowed` | `bool` | Whether the URL is permitted by robots.txt (always `true` when `respect_robots_txt` is `false`). |
-| `crawl_delay` | `Option<u64>` | The Crawl-delay value from robots.txt, in seconds. |
-| `noindex_detected` | `bool` | Whether a `noindex` directive was found in meta robots or X-Robots-Tag. |
-| `nofollow_detected` | `bool` | Whether a `nofollow` directive was found in meta robots or X-Robots-Tag. |
-| `x_robots_tag` | `Option<String>` | The raw X-Robots-Tag header value, if present. |
+| Field               | Type             | Description                                                                                      |
+| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------ |
+| `is_allowed`        | `bool`           | Whether the URL is permitted by robots.txt (always `true` when `respect_robots_txt` is `false`). |
+| `crawl_delay`       | `Option<u64>`    | The Crawl-delay value from robots.txt, in seconds.                                               |
+| `noindex_detected`  | `bool`           | Whether a `noindex` directive was found in meta robots or X-Robots-Tag.                          |
+| `nofollow_detected` | `bool`           | Whether a `nofollow` directive was found in meta robots or X-Robots-Tag.                         |
+| `x_robots_tag`      | `Option<String>` | The raw X-Robots-Tag header value, if present.                                                   |
 
 ### Extracted content
 
-| Field | Type | Description |
-|---|---|---|
-| `metadata` | `PageMetadata` | Rich metadata from meta tags, OG, Twitter, Dublin Core, and more. |
-| `links` | `Vec<LinkInfo>` | All links found on the page, classified by type. |
-| `images` | `Vec<ImageInfo>` | All images found, including OG and Twitter images. |
-| `feeds` | `Vec<FeedInfo>` | RSS, Atom, and JSON Feed links. |
-| `json_ld` | `Vec<JsonLdEntry>` | JSON-LD structured data entries. |
+| Field      | Type                     | Description                                                                      |
+| ---------- | ------------------------ | -------------------------------------------------------------------------------- |
+| `metadata` | `PageMetadata`           | Rich metadata from meta tags, OG, Twitter, Dublin Core, and more.                |
+| `links`    | `Vec<LinkInfo>`          | All links found on the page, classified by type.                                 |
+| `images`   | `Vec<ImageInfo>`         | All images found, including OG and Twitter images.                               |
+| `feeds`    | `Vec<FeedInfo>`          | RSS, Atom, and JSON Feed links.                                                  |
+| `json_ld`  | `Vec<JsonLdEntry>`       | JSON-LD structured data entries.                                                 |
 | `markdown` | `Option<MarkdownResult>` | Markdown conversion with document structure, tables, citations, and fit content. |
 
 ### Engine state
 
-| Field | Type | Description |
-|---|---|---|
-| `main_content_only` | `bool` | Whether main content extraction was active. |
-| `auth_header_sent` | `bool` | Whether an authentication header was sent. |
-| `response_meta` | `Option<ResponseMeta>` | HTTP headers: ETag, Last-Modified, Cache-Control, Server, etc. |
-| `assets` | `Vec<DownloadedAsset>` | Downloaded page assets (when `download_assets` is enabled). |
-| `js_render_hint` | `bool` | Whether the page content suggests JavaScript rendering is needed. |
-| `browser_used` | `bool` | Whether the headless browser fallback was used. |
-| `screenshot` | `Option<Vec<u8>>` | PNG screenshot bytes (when browser is used and `capture_screenshot` is enabled). |
-| `downloaded_document` | `Option<DownloadedDocument>` | Non-HTML document data (PDF, DOCX, etc.) when `download_documents` is enabled. |
+| Field                 | Type                         | Description                                                                      |
+| --------------------- | ---------------------------- | -------------------------------------------------------------------------------- |
+| `main_content_only`   | `bool`                       | Whether main content extraction was active.                                      |
+| `auth_header_sent`    | `bool`                       | Whether an authentication header was sent.                                       |
+| `response_meta`       | `Option<ResponseMeta>`       | HTTP headers: ETag, Last-Modified, Cache-Control, Server, etc.                   |
+| `assets`              | `Vec<DownloadedAsset>`       | Downloaded page assets (when `download_assets` is enabled).                      |
+| `js_render_hint`      | `bool`                       | Whether the page content suggests JavaScript rendering is needed.                |
+| `browser_used`        | `bool`                       | Whether the headless browser fallback was used.                                  |
+| `screenshot`          | `Option<Vec<u8>>`            | PNG screenshot bytes (when browser is used and `capture_screenshot` is enabled). |
+| `downloaded_document` | `Option<DownloadedDocument>` | Non-HTML document data (PDF, DOCX, etc.) when `download_documents` is enabled.   |
 
 ### LLM extraction
 
-| Field | Type | Description |
-|---|---|---|
-| `extracted_data` | `Option<Value>` | Structured JSON extracted by LLM (populated when using `LlmExtractor`). |
+| Field             | Type                     | Description                                                                     |
+| ----------------- | ------------------------ | ------------------------------------------------------------------------------- |
+| `extracted_data`  | `Option<Value>`          | Structured JSON extracted by LLM (populated when using `LlmExtractor`).         |
 | `extraction_meta` | `Option<ExtractionMeta>` | LLM cost tracking: estimated cost in USD, prompt/completion tokens, model name. |
 
 ## Metadata extraction
@@ -117,45 +117,45 @@ The `PageMetadata` struct extracts 40+ fields from HTML meta tags:
 
 Each `LinkInfo` includes:
 
-| Field | Type | Description |
-|---|---|---|
-| `url` | `String` | The resolved absolute URL. |
-| `text` | `String` | The visible link text. |
-| `link_type` | `LinkType` | Classification: `Internal`, `External`, `Anchor`, or `Document`. |
-| `rel` | `Option<String>` | The `rel` attribute value. |
-| `nofollow` | `bool` | Whether the link has `rel="nofollow"`. |
+| Field       | Type             | Description                                                      |
+| ----------- | ---------------- | ---------------------------------------------------------------- |
+| `url`       | `String`         | The resolved absolute URL.                                       |
+| `text`      | `String`         | The visible link text.                                           |
+| `link_type` | `LinkType`       | Classification: `Internal`, `External`, `Anchor`, or `Document`. |
+| `rel`       | `Option<String>` | The `rel` attribute value.                                       |
+| `nofollow`  | `bool`           | Whether the link has `rel="nofollow"`.                           |
 
 ## Image extraction
 
 Each `ImageInfo` includes:
 
-| Field | Type | Description |
-|---|---|---|
-| `url` | `String` | The image URL. |
-| `alt` | `Option<String>` | Alt text. |
-| `width` | `Option<u32>` | Width attribute. |
-| `height` | `Option<u32>` | Height attribute. |
-| `source` | `ImageSource` | Where the image was found: `Img`, `PictureSource`, `OgImage`, or `TwitterImage`. |
+| Field    | Type             | Description                                                                      |
+| -------- | ---------------- | -------------------------------------------------------------------------------- |
+| `url`    | `String`         | The image URL.                                                                   |
+| `alt`    | `Option<String>` | Alt text.                                                                        |
+| `width`  | `Option<u32>`    | Width attribute.                                                                 |
+| `height` | `Option<u32>`    | Height attribute.                                                                |
+| `source` | `ImageSource`    | Where the image was found: `Img`, `PictureSource`, `OgImage`, or `TwitterImage`. |
 
 ## Feed extraction
 
 Discovered RSS, Atom, and JSON Feed links:
 
-| Field | Type | Description |
-|---|---|---|
-| `url` | `String` | The feed URL. |
-| `title` | `Option<String>` | The feed title from the link element. |
-| `feed_type` | `FeedType` | `Rss`, `Atom`, or `JsonFeed`. |
+| Field       | Type             | Description                           |
+| ----------- | ---------------- | ------------------------------------- |
+| `url`       | `String`         | The feed URL.                         |
+| `title`     | `Option<String>` | The feed title from the link element. |
+| `feed_type` | `FeedType`       | `Rss`, `Atom`, or `JsonFeed`.         |
 
 ## JSON-LD extraction
 
 Each `JsonLdEntry` contains:
 
-| Field | Type | Description |
-|---|---|---|
-| `schema_type` | `String` | The `@type` value (e.g., `"Article"`, `"Product"`). |
-| `name` | `Option<String>` | The `name` field, if present. |
-| `raw` | `String` | The raw JSON-LD string for full access. |
+| Field         | Type             | Description                                         |
+| ------------- | ---------------- | --------------------------------------------------- |
+| `schema_type` | `String`         | The `@type` value (e.g., `"Article"`, `"Product"`). |
+| `name`        | `Option<String>` | The `name` field, if present.                       |
+| `raw`         | `String`         | The raw JSON-LD string for full access.             |
 
 ## Robots.txt compliance
 
@@ -172,7 +172,7 @@ CrawlConfig {
 The scrape result includes `is_allowed`, `crawl_delay`, and any `noindex`/`nofollow` directives detected from both meta tags and X-Robots-Tag headers.
 
 !!! note
-    When `respect_robots_txt` is `false` (the default), `is_allowed` is always `true` and robots.txt is not fetched.
+When `respect_robots_txt` is `false` (the default), `is_allowed` is always `true` and robots.txt is not fetched.
 
 ## Main content only mode
 
@@ -208,15 +208,15 @@ Tag removal runs before main content extraction and before the metadata pipeline
 
 The `ResponseMeta` struct captures HTTP response headers:
 
-| Field | Type | Description |
-|---|---|---|
-| `etag` | `Option<String>` | ETag header for cache validation. |
-| `last_modified` | `Option<String>` | Last-Modified header. |
-| `cache_control` | `Option<String>` | Cache-Control directives. |
-| `server` | `Option<String>` | Server software identifier. |
-| `x_powered_by` | `Option<String>` | X-Powered-By header. |
-| `content_language` | `Option<String>` | Content-Language header. |
-| `content_encoding` | `Option<String>` | Content-Encoding header. |
+| Field              | Type             | Description                       |
+| ------------------ | ---------------- | --------------------------------- |
+| `etag`             | `Option<String>` | ETag header for cache validation. |
+| `last_modified`    | `Option<String>` | Last-Modified header.             |
+| `cache_control`    | `Option<String>` | Cache-Control directives.         |
+| `server`           | `Option<String>` | Server software identifier.       |
+| `x_powered_by`     | `Option<String>` | X-Powered-By header.              |
+| `content_language` | `Option<String>` | Content-Language header.          |
+| `content_encoding` | `Option<String>` | Content-Encoding header.          |
 
 ## Authentication
 
@@ -235,11 +235,11 @@ CrawlConfig {
 
 Three authentication modes are supported:
 
-| Mode | Fields | Header sent |
-|---|---|---|
-| `Basic` | `username`, `password` | `Authorization: Basic <base64>` |
-| `Bearer` | `token` | `Authorization: Bearer <token>` |
-| `Header` | `name`, `value` | Custom header with the specified name and value |
+| Mode     | Fields                 | Header sent                                     |
+| -------- | ---------------------- | ----------------------------------------------- |
+| `Basic`  | `username`, `password` | `Authorization: Basic <base64>`                 |
+| `Bearer` | `token`                | `Authorization: Bearer <token>`                 |
+| `Header` | `name`, `value`        | Custom header with the specified name and value |
 
 ## Document downloads
 

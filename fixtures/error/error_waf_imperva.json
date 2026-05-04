@@ -1,26 +1,30 @@
 {
-	"id": "error_waf_imperva",
-	"description": "Imperva/Incapsula WAF detection",
-	"tags": ["error", "waf"],
-	"input": {
-		"mock_responses": [
-			{
-				"status_code": 403,
-				"headers": {
-					"content-type": "text/html"
-				},
-				"body_inline": "<html><body>Powered by Incapsula. _incap_ses_ cookie required.</body></html>"
-			}
-		]
-	},
-	"assertions": [
-		{
-			"type": "error"
-		},
-		{
-			"type": "equals",
-			"field": "error.is_waf_blocked",
-			"value": true
-		}
-	]
+  "id": "error_waf_imperva",
+  "description": "Imperva/Incapsula WAF detection",
+  "tags": [
+    "error",
+    "waf"
+  ],
+  "input": {
+    "config": {},
+    "mock_responses": [
+      {
+        "status_code": 403,
+        "headers": {
+          "content-type": "text/html"
+        },
+        "body_inline": "<html><body>Powered by Incapsula. _incap_ses_ cookie required.</body></html>"
+      }
+    ]
+  },
+  "assertions": [
+    {
+      "type": "error"
+    },
+    {
+      "type": "equals",
+      "field": "error.is_waf_blocked",
+      "value": true
+    }
+  ]
 }

@@ -1,23 +1,27 @@
 {
-	"id": "sitemap_empty",
-	"description": "Handles empty sitemap gracefully",
-	"tags": ["sitemap", "edge-case"],
-	"input": {
-		"mock_responses": [
-			{
-				"status_code": 200,
-				"headers": {
-					"content-type": "application/xml"
-				},
-				"body_inline": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"></urlset>"
-			}
-		]
-	},
-	"assertions": [
-		{
-			"type": "equals",
-			"field": "urls.length",
-			"value": 0
-		}
-	]
+  "id": "sitemap_empty",
+  "description": "Handles empty sitemap gracefully",
+  "tags": [
+    "sitemap",
+    "edge-case"
+  ],
+  "input": {
+    "config": {},
+    "mock_responses": [
+      {
+        "status_code": 200,
+        "headers": {
+          "content-type": "application/xml"
+        },
+        "body_inline": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"></urlset>"
+      }
+    ]
+  },
+  "assertions": [
+    {
+      "type": "equals",
+      "field": "urls.length",
+      "value": 0
+    }
+  ]
 }

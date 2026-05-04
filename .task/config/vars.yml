@@ -13,7 +13,6 @@ vars:
 
   BUILD_PROFILE: '{{.BUILD_PROFILE | default "release"}}'
 
-
   ROOT: "{{.ROOT}}"
   CRATES_DIR: "{{.ROOT}}/crates"
   PACKAGES_DIR: "{{.ROOT}}/packages"

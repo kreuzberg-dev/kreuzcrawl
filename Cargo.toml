@@ -72,13 +72,7 @@ tl = { package = "astral-tl", version = "0.7" }
 tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1"
 toml = "1.1"
-tower = { version = "0.5", features = [
-    "timeout",
-    "retry",
-    "limit",
-    "util",
-    "make",
-] }
+tower = { version = "0.5", features = ["timeout", "retry", "limit", "util", "make"] }
 tower-http = { version = "0.6", features = [
     "cors",
     "compression-full",

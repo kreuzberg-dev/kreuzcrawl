@@ -31,20 +31,20 @@ A request flows through the engine as follows:
 
 The engine is composed of seven pluggable trait objects, each held behind `Arc<dyn Trait>`:
 
-| Trait | Responsibility | Default Implementation |
-|-------|---------------|----------------------|
-| `Frontier` | URL queue and deduplication | `InMemoryFrontier` (VecDeque + AHashSet) |
-| `RateLimiter` | Per-domain request throttling | `PerDomainThrottle` (200ms default delay) |
-| `CrawlStore` | Persistence for crawl results | `NoopStore` (discards all data) |
-| `EventEmitter` | Crawl lifecycle event hooks | `NoopEmitter` (silent) |
-| `CrawlStrategy` | URL selection and scoring | `BfsStrategy` (breadth-first) |
-| `ContentFilter` | Post-extraction page filtering | `NoopFilter` (pass-through) |
-| `CrawlCache` | HTTP response caching | `NoopCache` (no caching) |
+| Trait           | Responsibility                 | Default Implementation                    |
+| --------------- | ------------------------------ | ----------------------------------------- |
+| `Frontier`      | URL queue and deduplication    | `InMemoryFrontier` (VecDeque + AHashSet)  |
+| `RateLimiter`   | Per-domain request throttling  | `PerDomainThrottle` (200ms default delay) |
+| `CrawlStore`    | Persistence for crawl results  | `NoopStore` (discards all data)           |
+| `EventEmitter`  | Crawl lifecycle event hooks    | `NoopEmitter` (silent)                    |
+| `CrawlStrategy` | URL selection and scoring      | `BfsStrategy` (breadth-first)             |
+| `ContentFilter` | Post-extraction page filtering | `NoopFilter` (pass-through)               |
+| `CrawlCache`    | HTTP response caching          | `NoopCache` (no caching)                  |
 
 All traits are `Send + Sync` and use `async_trait` (except `CrawlStrategy`, which is synchronous).
 
 !!! warning "Default implementations are internal"
-    The types named in the "Default Implementation" column (`InMemoryFrontier`, `PerDomainThrottle`, `BfsStrategy`, etc.) live in the `defaults` module, which is `pub(crate)`. You cannot import them directly. To use the defaults, call `create_engine(config)` — it wires up all seven traits automatically. If you need a custom implementation, implement the relevant trait on your own type and pass it through the builder (see the [configuration guide](../guides/configuration.md#builder-pattern)).
+The types named in the "Default Implementation" column (`InMemoryFrontier`, `PerDomainThrottle`, `BfsStrategy`, etc.) live in the `defaults` module, which is `pub(crate)`. You cannot import them directly. To use the defaults, call `create_engine(config)` — it wires up all seven traits automatically. If you need a custom implementation, implement the relevant trait on your own type and pass it through the builder (see the [configuration guide](../guides/configuration.md#builder-pattern)).
 
 ## Builder Pattern
 
@@ -73,16 +73,16 @@ The HTTP fetch pipeline is a Tower `Service<CrawlRequest, Response = CrawlRespon
 
 Kreuzcrawl uses Cargo feature flags to keep the default build minimal:
 
-| Feature | Dependencies | Capability |
-|---------|-------------|------------|
-| `browser` | `chromiumoxide` | Headless browser rendering for JS-heavy pages |
-| `ai` | `liter-llm`, `minijinja` | LLM-powered structured data extraction |
-| `tracing` | `tracing` | OpenTelemetry-compatible request tracing |
-| `interact` | `chromiumoxide` (implies `browser`) | Page interaction actions (click, type, scroll) |
-| `mcp` | `rmcp`, `schemars` | Model Context Protocol server |
-| `api` | `axum`, `tower-http`, `utoipa`, `uuid`, `dashmap`, `base64` | REST API server with OpenAPI docs |
-| `mcp-http` | (implies `mcp` + `api`) | MCP over HTTP transport |
-| `warc` | `uuid` | WARC archive output format |
+| Feature    | Dependencies                                                | Capability                                     |
+| ---------- | ----------------------------------------------------------- | ---------------------------------------------- |
+| `browser`  | `chromiumoxide`                                             | Headless browser rendering for JS-heavy pages  |
+| `ai`       | `liter-llm`, `minijinja`                                    | LLM-powered structured data extraction         |
+| `tracing`  | `tracing`                                                   | OpenTelemetry-compatible request tracing       |
+| `interact` | `chromiumoxide` (implies `browser`)                         | Page interaction actions (click, type, scroll) |
+| `mcp`      | `rmcp`, `schemars`                                          | Model Context Protocol server                  |
+| `api`      | `axum`, `tower-http`, `utoipa`, `uuid`, `dashmap`, `base64` | REST API server with OpenAPI docs              |
+| `mcp-http` | (implies `mcp` + `api`)                                     | MCP over HTTP transport                        |
+| `warc`     | `uuid`                                                      | WARC archive output format                     |
 
 The default feature set is empty -- no optional dependencies are included unless explicitly enabled.
 

@@ -1,30 +1,33 @@
 {
-	"id": "error_410_gone",
-	"description": "Handles 410 Gone response correctly",
-	"tags": ["error"],
-	"input": {
-		"mock_responses": [
-			{
-				"status_code": 410,
-				"headers": {
-					"content-type": "text/html; charset=utf-8"
-				},
-				"body_inline": "<html><body><h1>410 Gone</h1></body></html>"
-			}
-		]
-	},
-	"assertions": [
-		{
-			"type": "equals",
-			"field": "status_code",
-			"value": 410
-		},
-		{
-			"type": "error"
-		},
-		{
-			"type": "error",
-			"value": "gone"
-		}
-	]
+  "id": "error_410_gone",
+  "description": "Handles 410 Gone response correctly",
+  "tags": [
+    "error"
+  ],
+  "input": {
+    "config": {},
+    "mock_responses": [
+      {
+        "status_code": 410,
+        "headers": {
+          "content-type": "text/html; charset=utf-8"
+        },
+        "body_inline": "<html><body><h1>410 Gone</h1></body></html>"
+      }
+    ]
+  },
+  "assertions": [
+    {
+      "type": "equals",
+      "field": "status_code",
+      "value": 410
+    },
+    {
+      "type": "error"
+    },
+    {
+      "type": "error",
+      "value": "gone"
+    }
+  ]
 }

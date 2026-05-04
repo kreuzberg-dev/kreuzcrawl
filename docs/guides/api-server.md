@@ -11,10 +11,10 @@ is feature-gated behind `api`.
 kreuzcrawl serve --host 0.0.0.0 --port 3000
 ```
 
-| Flag | Default | Description |
-|------|---------|-------------|
+| Flag     | Default   | Description            |
+| -------- | --------- | ---------------------- |
 | `--host` | `0.0.0.0` | IP address to bind to. |
-| `--port` | `3000` | TCP port to listen on. |
+| `--port` | `3000`    | TCP port to listen on. |
 
 ### Programmatic
 
@@ -260,9 +260,9 @@ POST request  -->  pending  -->  in_progress  -->  completed
 Jobs are stored in an in-memory `DashMap` registry. A background task runs every 60 seconds
 and evicts jobs older than the configured maximum age.
 
-| Setting | Value |
-|---------|-------|
-| Default job TTL | 1 hour |
+| Setting           | Value      |
+| ----------------- | ---------- |
+| Default job TTL   | 1 hour     |
 | Eviction interval | 60 seconds |
 
 Once evicted, a job ID returns 404. There is no persistent job storage; jobs are lost
@@ -284,17 +284,17 @@ All error responses follow the same structure:
 
 Error codes map to HTTP status codes:
 
-| Error code | HTTP status | Condition |
-|-----------|-------------|-----------|
-| `BAD_REQUEST` | 400 | Invalid input (missing URL, bad config) |
-| `NOT_FOUND` | 404 | Job or resource not found |
-| `UNAUTHORIZED` | 401 | Authentication required |
-| `FORBIDDEN` | 403 | Access denied |
-| `WAF_BLOCKED` | 403 | Blocked by WAF/bot protection |
-| `TIMEOUT` | 504 | Request or browser timed out |
-| `RATE_LIMITED` | 429 | Rate limit exceeded |
-| `SERVER_ERROR` | 502 | Upstream server error |
-| `INTERNAL_ERROR` | 500 | Unexpected internal error |
+| Error code       | HTTP status | Condition                               |
+| ---------------- | ----------- | --------------------------------------- |
+| `BAD_REQUEST`    | 400         | Invalid input (missing URL, bad config) |
+| `NOT_FOUND`      | 404         | Job or resource not found               |
+| `UNAUTHORIZED`   | 401         | Authentication required                 |
+| `FORBIDDEN`      | 403         | Access denied                           |
+| `WAF_BLOCKED`    | 403         | Blocked by WAF/bot protection           |
+| `TIMEOUT`        | 504         | Request or browser timed out            |
+| `RATE_LIMITED`   | 429         | Rate limit exceeded                     |
+| `SERVER_ERROR`   | 502         | Upstream server error                   |
+| `INTERNAL_ERROR` | 500         | Unexpected internal error               |
 
 !!! note "Feature gate"
-    The server requires the `api` Cargo feature. Add `features = ["api"]` to your `Cargo.toml` dependency, or pass `--features api` to `cargo run`.
+The server requires the `api` Cargo feature. Add `features = ["api"]` to your `Cargo.toml` dependency, or pass `--features api` to `cargo run`.

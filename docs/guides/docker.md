@@ -37,9 +37,9 @@ docker build -t kreuzcrawl-cli:latest -f docker/Dockerfile.cli .
 ```
 
 !!! tip "BuildKit caches"
-    Both Dockerfiles use `--mount=type=cache` for the Cargo registry, git index, and
-    build target directory. Ensure BuildKit is enabled (`DOCKER_BUILDKIT=1`) for
-    significantly faster rebuilds.
+Both Dockerfiles use `--mount=type=cache` for the Cargo registry, git index, and
+build target directory. Ensure BuildKit is enabled (`DOCKER_BUILDKIT=1`) for
+significantly faster rebuilds.
 
 ## Running
 
@@ -85,9 +85,9 @@ The MCP server uses stdio transport, so the container must run with `-i` (intera
 
 ## Environment variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `RUST_LOG` | `info` | Log level filter. Supports `tracing` EnvFilter syntax (e.g. `debug`, `kreuzcrawl=trace`). |
+| Variable   | Default | Description                                                                               |
+| ---------- | ------- | ----------------------------------------------------------------------------------------- |
+| `RUST_LOG` | `info`  | Log level filter. Supports `tracing` EnvFilter syntax (e.g. `debug`, `kreuzcrawl=trace`). |
 
 ## Health checks
 
@@ -176,5 +176,5 @@ browser.endpoint = "ws://chrome:9222/devtools/browser/..."
 ```
 
 !!! warning "CLI image has no browser"
-    The CLI image (`Dockerfile.cli`) does not include Chrome or Chromium.
-    For browser-based features, use the API server image with an external browser endpoint.
+The CLI image (`Dockerfile.cli`) does not include Chrome or Chromium.
+For browser-based features, use the API server image with an external browser endpoint.

@@ -4,27 +4,27 @@ on:
   push:
     branches: [main]
     paths:
-      - 'docs/**'
-      - 'pyproject.toml'
-      - 'zensical.toml'
-      - '.typos.toml'
-      - '.lychee.toml'
-      - '.textlintrc.json'
-      - '.github/workflows/docs.yaml'
-      - 'scripts/ci/docs/**'
-      - 'tools/snippet-runner/**'
+      - "docs/**"
+      - "pyproject.toml"
+      - "zensical.toml"
+      - ".typos.toml"
+      - ".lychee.toml"
+      - ".textlintrc.json"
+      - ".github/workflows/docs.yaml"
+      - "scripts/ci/docs/**"
+      - "tools/snippet-runner/**"
   pull_request:
     branches: [main]
     paths:
-      - 'docs/**'
-      - 'pyproject.toml'
-      - 'zensical.toml'
-      - '.typos.toml'
-      - '.lychee.toml'
-      - '.textlintrc.json'
-      - '.github/workflows/docs.yaml'
-      - 'scripts/ci/docs/**'
-      - 'tools/snippet-runner/**'
+      - "docs/**"
+      - "pyproject.toml"
+      - "zensical.toml"
+      - ".typos.toml"
+      - ".lychee.toml"
+      - ".textlintrc.json"
+      - ".github/workflows/docs.yaml"
+      - "scripts/ci/docs/**"
+      - "tools/snippet-runner/**"
   workflow_dispatch:
 
 permissions:
@@ -44,7 +44,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: "3.13"
       - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
@@ -65,7 +65,7 @@ jobs:
           use-sccache: "true"
       - uses: actions/setup-go@v6
         with:
-          go-version: '1.26'
+          go-version: "1.26"
       - name: Build and run snippet validation
         run: cargo run --release -p snippet-runner -- validate --snippets docs/snippets --reference docs/reference --level syntax --timeout 120
 
@@ -77,7 +77,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
       - name: Install textlint and rules
         run: |
           npm install --no-save \
@@ -110,7 +110,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: "3.13"
       - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
@@ -140,7 +140,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: "3.13"
       - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true

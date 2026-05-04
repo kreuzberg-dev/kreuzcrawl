@@ -1,31 +1,35 @@
 {
-	"id": "error_rate_limited",
-	"description": "Handles 429 rate limiting with Retry-After",
-	"tags": ["error", "rate-limit"],
-	"input": {
-		"mock_responses": [
-			{
-				"status_code": 429,
-				"headers": {
-					"content-type": "text/html",
-					"retry-after": "60"
-				},
-				"body_inline": "<html><body><h1>Too Many Requests</h1></body></html>"
-			}
-		]
-	},
-	"assertions": [
-		{
-			"type": "equals",
-			"field": "status_code",
-			"value": 429
-		},
-		{
-			"type": "error"
-		},
-		{
-			"type": "error",
-			"value": "rate_limited"
-		}
-	]
+  "id": "error_rate_limited",
+  "description": "Handles 429 rate limiting with Retry-After",
+  "tags": [
+    "error",
+    "rate-limit"
+  ],
+  "input": {
+    "config": {},
+    "mock_responses": [
+      {
+        "status_code": 429,
+        "headers": {
+          "content-type": "text/html",
+          "retry-after": "60"
+        },
+        "body_inline": "<html><body><h1>Too Many Requests</h1></body></html>"
+      }
+    ]
+  },
+  "assertions": [
+    {
+      "type": "equals",
+      "field": "status_code",
+      "value": 429
+    },
+    {
+      "type": "error"
+    },
+    {
+      "type": "error",
+      "value": "rate_limited"
+    }
+  ]
 }

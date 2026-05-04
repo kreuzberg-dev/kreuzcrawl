@@ -28,19 +28,19 @@ The `extract_metadata` function pulls structured metadata from `<meta>` tags, `<
 
 ### Standard HTML Meta
 
-| Field | Source |
-|-------|--------|
-| `title` | `<title>` element |
-| `description` | `<meta name="description">` |
-| `canonical_url` | `<link rel="canonical">` |
-| `keywords` | `<meta name="keywords">` |
-| `author` | `<meta name="author">` |
-| `viewport` | `<meta name="viewport">` |
-| `theme_color` | `<meta name="theme-color">` |
-| `generator` | `<meta name="generator">` |
-| `robots` | `<meta name="robots">` |
-| `html_lang` | `<html lang="...">` attribute |
-| `html_dir` | `<html dir="...">` attribute |
+| Field           | Source                        |
+| --------------- | ----------------------------- |
+| `title`         | `<title>` element             |
+| `description`   | `<meta name="description">`   |
+| `canonical_url` | `<link rel="canonical">`      |
+| `keywords`      | `<meta name="keywords">`      |
+| `author`        | `<meta name="author">`        |
+| `viewport`      | `<meta name="viewport">`      |
+| `theme_color`   | `<meta name="theme-color">`   |
+| `generator`     | `<meta name="generator">`     |
+| `robots`        | `<meta name="robots">`        |
+| `html_lang`     | `<html lang="...">` attribute |
+| `html_dir`      | `<html dir="...">` attribute  |
 
 ### Open Graph
 
@@ -83,14 +83,14 @@ pub(crate) async fn convert_to_markdown(html: &str) -> Option<MarkdownResult>
 
 The `MarkdownResult` struct contains:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `content` | `String` | The converted Markdown text |
-| `document_structure` | `Option<Value>` | Serialized document structure (headings, sections) |
-| `tables` | `Vec<Value>` | Extracted table data as structured JSON |
-| `warnings` | `Vec<String>` | Conversion warnings (e.g., unsupported elements) |
-| `citations` | `Option<CitationResult>` | Extracted references and bibliography |
-| `fit_content` | `Option<String>` | Pruned markdown for LLM consumption |
+| Field                | Type                     | Description                                        |
+| -------------------- | ------------------------ | -------------------------------------------------- |
+| `content`            | `String`                 | The converted Markdown text                        |
+| `document_structure` | `Option<Value>`          | Serialized document structure (headings, sections) |
+| `tables`             | `Vec<Value>`             | Extracted table data as structured JSON            |
+| `warnings`           | `Vec<String>`            | Conversion warnings (e.g., unsupported elements)   |
+| `citations`          | `Option<CitationResult>` | Extracted references and bibliography              |
+| `fit_content`        | `Option<String>`         | Pruned markdown for LLM consumption                |
 
 ### Citations
 
@@ -104,10 +104,10 @@ The `generate_fit_markdown` function produces a pruned version of the Markdown t
 
 The extraction pipeline discovers syndication feeds from `<link rel="alternate">` elements:
 
-| Feed Type | MIME Type |
-|-----------|-----------|
-| `FeedType::Rss` | `application/rss+xml` |
-| `FeedType::Atom` | `application/atom+xml` |
+| Feed Type            | MIME Type                                     |
+| -------------------- | --------------------------------------------- |
+| `FeedType::Rss`      | `application/rss+xml`                         |
+| `FeedType::Atom`     | `application/atom+xml`                        |
 | `FeedType::JsonFeed` | `application/json` or `application/feed+json` |
 
 Each `FeedInfo` includes the feed URL, optional title, and feed type.

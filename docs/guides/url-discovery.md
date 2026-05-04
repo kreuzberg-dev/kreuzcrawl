@@ -93,15 +93,15 @@ When the URL returns an HTML page, the engine extracts all `<a>` links and class
 
 Each discovered URL is returned as a `SitemapUrl`:
 
-| Field | Type | Description |
-|---|---|---|
-| `url` | `String` | The discovered URL. |
-| `lastmod` | `Option<String>` | Last modification date from the sitemap, if present. |
+| Field        | Type             | Description                                                           |
+| ------------ | ---------------- | --------------------------------------------------------------------- |
+| `url`        | `String`         | The discovered URL.                                                   |
+| `lastmod`    | `Option<String>` | Last modification date from the sitemap, if present.                  |
 | `changefreq` | `Option<String>` | Change frequency hint from the sitemap (e.g., `"weekly"`, `"daily"`). |
-| `priority` | `Option<String>` | Priority value from the sitemap (e.g., `"0.8"`). |
+| `priority`   | `Option<String>` | Priority value from the sitemap (e.g., `"0.8"`).                      |
 
 !!! note
-    The `lastmod`, `changefreq`, and `priority` fields are only populated when URLs are discovered through XML sitemaps. URLs discovered through HTML link extraction have these fields set to `None`.
+The `lastmod`, `changefreq`, and `priority` fields are only populated when URLs are discovered through XML sitemaps. URLs discovered through HTML link extraction have these fields set to `None`.
 
 ## Search filter
 
@@ -143,7 +143,7 @@ CrawlConfig {
 Each pattern is matched against the URL's path component. URLs matching any exclude pattern are removed from the result.
 
 !!! warning
-    `include_paths` does not apply to map operations. Use `map_search` or `exclude_paths` for filtering map results.
+`include_paths` does not apply to map operations. Use `map_search` or `exclude_paths` for filtering map results.
 
 ## Filter application order
 
@@ -155,12 +155,12 @@ Filters are applied in this order:
 
 ## Configuration reference
 
-| Field | Type | Default | Description |
-|---|---|---|---|
-| `map_limit` | `Option<usize>` | `None` (unlimited) | Maximum number of URLs to return. |
-| `map_search` | `Option<String>` | `None` | Case-insensitive substring filter on URLs. |
-| `exclude_paths` | `Vec<String>` | `[]` | Regex patterns to exclude by URL path. |
-| `respect_robots_txt` | `bool` | `false` | Whether to check robots.txt for sitemap directives. |
+| Field                | Type             | Default            | Description                                         |
+| -------------------- | ---------------- | ------------------ | --------------------------------------------------- |
+| `map_limit`          | `Option<usize>`  | `None` (unlimited) | Maximum number of URLs to return.                   |
+| `map_search`         | `Option<String>` | `None`             | Case-insensitive substring filter on URLs.          |
+| `exclude_paths`      | `Vec<String>`    | `[]`               | Regex patterns to exclude by URL path.              |
+| `respect_robots_txt` | `bool`           | `false`            | Whether to check robots.txt for sitemap directives. |
 
 ## Combining with crawl
 

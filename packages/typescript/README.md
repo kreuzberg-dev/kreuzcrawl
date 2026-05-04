@@ -59,7 +59,7 @@ NAPI-RS with full TypeScript types, async/await support, and native performance.
 ## Installation
 
 ```bash
-npm install @kreuzberg/kreuzcrawl
+pnpm add @kreuzberg/kreuzcrawl
 ```
 
 ## Quick Start

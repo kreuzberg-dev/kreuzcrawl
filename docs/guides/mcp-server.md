@@ -54,11 +54,11 @@ for future feature-gated functionality.
 
 Scrape a single URL and extract content as markdown or JSON.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `url` | string | yes | URL to scrape (http/https only). |
-| `format` | string | no | `"markdown"` (default) or `"json"`. |
-| `use_browser` | boolean | no | Force browser rendering (requires `browser` feature). |
+| Parameter     | Type    | Required | Description                                           |
+| ------------- | ------- | -------- | ----------------------------------------------------- |
+| `url`         | string  | yes      | URL to scrape (http/https only).                      |
+| `format`      | string  | no       | `"markdown"` (default) or `"json"`.                   |
+| `use_browser` | boolean | no       | Force browser rendering (requires `browser` feature). |
 
 Example:
 
@@ -73,13 +73,13 @@ Example:
 
 Crawl a website following links up to a configured depth.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `url` | string | yes | Starting URL. |
-| `max_depth` | integer | no | Maximum link depth (max 100). |
-| `max_pages` | integer | no | Maximum pages to crawl (1--100,000). |
-| `format` | string | no | `"markdown"` (default) or `"json"`. |
-| `stay_on_domain` | boolean | no | Restrict crawling to the same domain. |
+| Parameter        | Type    | Required | Description                           |
+| ---------------- | ------- | -------- | ------------------------------------- |
+| `url`            | string  | yes      | Starting URL.                         |
+| `max_depth`      | integer | no       | Maximum link depth (max 100).         |
+| `max_pages`      | integer | no       | Maximum pages to crawl (1--100,000).  |
+| `format`         | string  | no       | `"markdown"` (default) or `"json"`.   |
+| `stay_on_domain` | boolean | no       | Restrict crawling to the same domain. |
 
 Example:
 
@@ -96,12 +96,12 @@ Example:
 
 Discover all pages on a website via links and sitemaps.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `url` | string | yes | Website URL. |
-| `limit` | integer | no | Maximum URLs to return. |
-| `search` | string | no | Case-insensitive substring filter. |
-| `respect_robots_txt` | boolean | no | Whether to respect robots.txt directives. |
+| Parameter            | Type    | Required | Description                               |
+| -------------------- | ------- | -------- | ----------------------------------------- |
+| `url`                | string  | yes      | Website URL.                              |
+| `limit`              | integer | no       | Maximum URLs to return.                   |
+| `search`             | string  | no       | Case-insensitive substring filter.        |
+| `respect_robots_txt` | boolean | no       | Whether to respect robots.txt directives. |
 
 Example:
 
@@ -117,11 +117,11 @@ Example:
 
 Scrape multiple URLs concurrently.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `urls` | array of strings | yes | URLs to scrape (must not be empty). |
-| `format` | string | no | `"markdown"` (default) or `"json"`. |
-| `concurrency` | integer | no | Maximum concurrent requests. |
+| Parameter     | Type             | Required | Description                         |
+| ------------- | ---------------- | -------- | ----------------------------------- |
+| `urls`        | array of strings | yes      | URLs to scrape (must not be empty). |
+| `format`      | string           | no       | `"markdown"` (default) or `"json"`. |
+| `concurrency` | integer          | no       | Maximum concurrent requests.        |
 
 Example:
 
@@ -137,10 +137,10 @@ Example:
 
 Download a document from a URL and return metadata.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `url` | string | yes | Document URL. |
-| `max_size` | integer | no | Maximum document size in bytes. |
+| Parameter  | Type    | Required | Description                     |
+| ---------- | ------- | -------- | ------------------------------- |
+| `url`      | string  | yes      | Document URL.                   |
+| `max_size` | integer | no       | Maximum document size in bytes. |
 
 Returns JSON with `url`, `mime_type`, `size`, `filename`, and `content_hash` for
 documents, or page metadata if the URL returns HTML.
@@ -154,12 +154,12 @@ Return the kreuzcrawl library version. Takes no parameters.
 These tools are registered so that clients can discover them, but return placeholder
 messages until their backing features are implemented:
 
-| Tool | Required feature | Description |
-|------|-----------------|-------------|
-| `screenshot` | `browser` | Capture a screenshot of a URL. |
-| `interact` | `interact` | Execute browser actions on a page. |
-| `research` | `ai` | AI-driven research across multiple pages. |
-| `crawl_status` | (job registry) | Check the status of a crawl job. |
+| Tool           | Required feature | Description                               |
+| -------------- | ---------------- | ----------------------------------------- |
+| `screenshot`   | `browser`        | Capture a screenshot of a URL.            |
+| `interact`     | `interact`       | Execute browser actions on a page.        |
+| `research`     | `ai`             | AI-driven research across multiple pages. |
+| `crawl_status` | (job registry)   | Check the status of a crawl job.          |
 
 ## Integration with AI assistants
 
@@ -247,12 +247,12 @@ All content-returning tools support two output formats:
 
 Tool errors are mapped to MCP error responses:
 
-| Crawl error | MCP error |
-|-------------|-----------|
-| Invalid URL | `invalid_params` |
-| Invalid config (bad max_depth, etc.) | `invalid_params` |
-| WAF blocked | `internal_error` (Blocked by WAF/bot protection) |
-| Timeout | `internal_error` (Request timed out) |
-| Network error | `internal_error` |
+| Crawl error                          | MCP error                                        |
+| ------------------------------------ | ------------------------------------------------ |
+| Invalid URL                          | `invalid_params`                                 |
+| Invalid config (bad max_depth, etc.) | `invalid_params`                                 |
+| WAF blocked                          | `internal_error` (Blocked by WAF/bot protection) |
+| Timeout                              | `internal_error` (Request timed out)             |
+| Network error                        | `internal_error`                                 |
 
 All errors include descriptive messages to help the AI assistant understand what went wrong.

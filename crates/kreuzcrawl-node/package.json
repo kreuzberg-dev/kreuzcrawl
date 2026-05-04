@@ -1,37 +1,37 @@
 {
-	"name": "@kreuzberg/kreuzcrawl",
-	"version": "0.3.0-rc.19",
-	"main": "index.js",
-	"types": "index.d.ts",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/kreuzberg-dev/kreuzcrawl.git"
-	},
-	"license": "Elastic-2.0",
-	"napi": {
-		"binaryName": "kreuzcrawl-node",
-		"package": {
-			"name": "@kreuzberg/kreuzcrawl"
-		},
-		"targets": [
-			"aarch64-apple-darwin",
-			"aarch64-unknown-linux-gnu",
-			"aarch64-unknown-linux-musl",
-			"x86_64-pc-windows-msvc",
-			"x86_64-unknown-linux-gnu",
-			"x86_64-unknown-linux-musl"
-		]
-	},
-	"scripts": {
-		"artifacts": "napi artifacts",
-		"build": "napi build --platform --release",
-		"build:debug": "napi build --platform",
-		"build:ts": "echo 'No TypeScript wrapper layer — using NAPI-RS generated bindings directly'",
-		"prepublishOnly": "napi prepublish -t npm",
-		"universal": "napi universal",
-		"version": "napi version"
-	},
-	"devDependencies": {
-		"@napi-rs/cli": "^3.6.2"
-	}
+  "name": "@kreuzberg/kreuzcrawl",
+  "version": "0.3.0-rc.19",
+  "license": "Elastic-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kreuzberg-dev/kreuzcrawl.git"
+  },
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "build:ts": "echo 'No TypeScript wrapper layer — using NAPI-RS generated bindings directly'",
+    "prepublishOnly": "napi prepublish -t npm",
+    "universal": "napi universal",
+    "version": "napi version"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.6.2"
+  },
+  "napi": {
+    "binaryName": "kreuzcrawl-node",
+    "package": {
+      "name": "@kreuzberg/kreuzcrawl"
+    },
+    "targets": [
+      "aarch64-apple-darwin",
+      "aarch64-unknown-linux-gnu",
+      "aarch64-unknown-linux-musl",
+      "x86_64-pc-windows-msvc",
+      "x86_64-unknown-linux-gnu",
+      "x86_64-unknown-linux-musl"
+    ]
+  }
 }

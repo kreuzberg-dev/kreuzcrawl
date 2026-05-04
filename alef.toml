@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.14.10"
+alef_version = "0.14.13"
 languages = ["python", "node", "ruby", "php", "ffi", "go", "java", "csharp", "elixir", "wasm"]
 
 # Java is formatted by Spotless (Eclipse 4.31) via maven verify in prek's
@@ -76,6 +76,7 @@ package = "dev.kreuzberg.kreuzcrawl"
 
 [crates.csharp]
 namespace = "Kreuzcrawl"
+project_file = "packages/csharp/Kreuzcrawl.slnx"
 
 [crates.output]
 python = "crates/kreuzcrawl-py/src/"
@@ -84,6 +85,7 @@ ruby = "packages/ruby/ext/kreuzcrawl_rb/src/"
 php = "crates/kreuzcrawl-php/src/"
 ffi = "crates/kreuzcrawl-ffi/src/"
 go = "packages/go/"
+java = "packages/java/src/main/java/"
 elixir = "packages/elixir/native/kreuzcrawl_nif/src/"
 wasm = "crates/kreuzcrawl-wasm/src/"
 
@@ -288,7 +290,16 @@ fields_optional = [
   "assets[].html_tag",
   "assets.html_tag",
 ]
-fields_array = ["links", "images", "feeds", "json_ld", "assets", "metadata.headings", "metadata.hreflangs", "metadata.favicons"]
+fields_array = [
+  "links",
+  "images",
+  "feeds",
+  "json_ld",
+  "assets",
+  "metadata.headings",
+  "metadata.hreflangs",
+  "metadata.favicons",
+]
 fields_enum = [
   "links[].link_type",
   "browser.js_render_hint",

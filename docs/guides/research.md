@@ -55,18 +55,18 @@ println!("{}", result.synthesis);
 
 ## ResearchConfig
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `query` | `String` | (required) | The research question or topic. |
-| `max_steps` | `usize` | 10 | Maximum number of plan-crawl cycles before forcing synthesis. |
-| `max_pages_per_step` | `usize` | 5 | Maximum pages the crawler visits per step. |
-| `max_depth` | `usize` | 3 | Maximum link-hop depth for each crawl step. |
-| `seed_urls` | `Vec<String>` | `[]` | Starting URLs. The planner crawls these in order. |
+| Field                | Type          | Default    | Description                                                   |
+| -------------------- | ------------- | ---------- | ------------------------------------------------------------- |
+| `query`              | `String`      | (required) | The research question or topic.                               |
+| `max_steps`          | `usize`       | 10         | Maximum number of plan-crawl cycles before forcing synthesis. |
+| `max_pages_per_step` | `usize`       | 5          | Maximum pages the crawler visits per step.                    |
+| `max_depth`          | `usize`       | 3          | Maximum link-hop depth for each crawl step.                   |
+| `seed_urls`          | `Vec<String>` | `[]`       | Starting URLs. The planner crawls these in order.             |
 
 !!! tip "Choosing seed URLs"
-    Provide 3--5 high-quality seed URLs that cover different facets of the topic.
-    The agent currently does not discover new seed URLs on its own, so the seed list
-    directly determines which sites are visited.
+Provide 3--5 high-quality seed URLs that cover different facets of the topic.
+The agent currently does not discover new seed URLs on its own, so the seed list
+directly determines which sites are visited.
 
 ## ResearchResult structure
 
@@ -151,8 +151,8 @@ For example, the query `"rust async patterns"` against a page containing "Rust h
 useful patterns" would score `2/3 = 0.667` (matching "rust" and "patterns", missing "async").
 
 !!! note "Future improvements"
-    The keyword-match scorer is a placeholder. Future iterations will use LLM-based
-    relevance evaluation and semantic similarity for more accurate ranking.
+The keyword-match scorer is a placeholder. Future iterations will use LLM-based
+relevance evaluation and semantic similarity for more accurate ranking.
 
 ## Crawl configuration
 

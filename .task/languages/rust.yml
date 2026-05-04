@@ -39,7 +39,7 @@ tasks:
   install:taplo:
     desc: Install taplo for TOML formatting
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - echo "Installing taplo for TOML formatting..."
       # macOS: use brew
@@ -58,7 +58,7 @@ tasks:
   install:cargo-deny:
     desc: Install cargo-deny for license checking
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - echo "Installing cargo-deny for license checking..."
       # All platforms: use cargo install (Windows now works with MSVC PATH fix)
@@ -73,8 +73,8 @@ tasks:
   build:dev:
     desc: Build all Rust crates in debug mode
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
     cmds:
       - cmd: cargo build --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [linux, darwin]
@@ -84,8 +84,8 @@ tasks:
   build:release:
     desc: Build all Rust crates in release mode (optimized)
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
     cmds:
       - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [linux, darwin]
@@ -95,9 +95,9 @@ tasks:
   build:ci:
     desc: Build all Rust crates in CI mode (with debug info)
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
-      RUSTFLAGS: '-C debuginfo=2'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
+      RUSTFLAGS: "-C debuginfo=2"
     cmds:
       - cmd: cargo build --release --workspace --all-features --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
         platforms: [linux, darwin]
@@ -107,59 +107,59 @@ tasks:
   build:profiling:
     desc: Build all Rust crates with profiling features (for flamegraph generation)
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
-      ENABLE_PROFILING: 'true'
-      RUSTFLAGS: '-g'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
+      ENABLE_PROFILING: "true"
+      RUSTFLAGS: "-g"
     cmds:
       - cargo build --workspace --release --features full,profiling,api,mcp,otel --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
 
   cli:build:
     desc: Build CLI binary
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
     cmds:
       - cargo build --release --package kreuzcrawl-cli {{if .TARGET}}--target {{.TARGET}}{{end}}
 
   cli:build:dev:
     desc: Build CLI binary in debug mode
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
     cmds:
       - cargo build --package kreuzcrawl-cli
 
   cli:install:
     desc: Install CLI binary
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
     cmds:
       - cargo install --path crates/kreuzcrawl-cli
 
   ffi:build:
     desc: Build FFI library for language bindings
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
     cmds:
       - cargo build --release --package kreuzcrawl-ffi {{.CARGO_ARGS | default ""}}
 
   ffi:build:dev:
     desc: Build FFI library in debug mode
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
     cmds:
       - cargo build --package kreuzcrawl-ffi {{.CARGO_ARGS | default ""}}
 
   ffi:build:ci:
     desc: Build FFI library in CI mode (with debug info)
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
-      CMAKE: '{{.CMAKE_PATH}}'
-      RUSTFLAGS: '-C debuginfo=2'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
+      CMAKE: "{{.CMAKE_PATH}}"
+      RUSTFLAGS: "-C debuginfo=2"
     cmds:
       - cargo build --release --package kreuzcrawl-ffi {{.CARGO_ARGS | default ""}}
 
@@ -172,8 +172,8 @@ tasks:
   test:ci:
     desc: Run Rust tests in CI mode with tessdata setup
     env:
-      RUST_BACKTRACE: '1'
-      CARGO_TERM_COLOR: 'always'
+      RUST_BACKTRACE: "1"
+      CARGO_TERM_COLOR: "always"
     cmds:
       - cmd: bash scripts/ci/rust/run-unit-tests.sh
         platforms: [linux, darwin]
@@ -181,14 +181,14 @@ tasks:
   test:quick:
     desc: Run fast Rust tests (unit tests only)
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo test --lib --workspace --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
 
   lint:
     desc: Auto-fix Rust code linting (cargo fmt + clippy)
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo fmt --all
       - cargo clippy --workspace --fix --allow-dirty --allow-staged --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm
@@ -196,7 +196,7 @@ tasks:
   lint:check:
     desc: Check Rust code linting without modifications
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo fmt --all -- --check
       - cargo clippy --workspace --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm -- -D warnings
@@ -204,35 +204,35 @@ tasks:
   format:
     desc: Format Rust code with modifications (cargo fmt)
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo fmt --all
 
   format:check:
     desc: Check Rust code formatting without modifications
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo fmt --all -- --check
 
   licenses:
     desc: Check Rust dependency licenses with cargo-deny
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo deny check licenses
 
   doc:
     desc: Generate Rust documentation and open in browser
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo doc --no-deps --open
 
   doc:build:
     desc: Build Rust documentation (without opening)
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo doc --no-deps
 
@@ -263,7 +263,7 @@ tasks:
   update:
     desc: Update Rust dependencies
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - echo "Updating Rust dependencies (main workspace)..."
       - cargo upgrade --incompatible
@@ -287,21 +287,21 @@ tasks:
   e2e:format:
     desc: Format generated Rust E2E sources
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo fmt --manifest-path e2e/rust/Cargo.toml
 
   e2e:lint:
     desc: Lint Rust E2E crate with clippy
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
     cmds:
       - cargo clippy --manifest-path e2e/rust/Cargo.toml -- -D warnings
 
   e2e:test:
     desc: Run Rust E2E tests
     env:
-      PATH: '{{.CARGO_PATH_PREFIX}}{{.PATH}}'
+      PATH: "{{.CARGO_PATH_PREFIX}}{{.PATH}}"
       RUST_TEST_THREADS: "1"
     cmds:
       - cargo test --manifest-path e2e/rust/Cargo.toml --release

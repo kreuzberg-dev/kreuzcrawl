@@ -696,6 +696,13 @@ uint8_t *kcrawl_downloaded_document_content(const KCRAWLDownloadedDocument *ptr,
 uintptr_t kcrawl_downloaded_document_size(const KCRAWLDownloadedDocument *ptr);
 
 /**
+ * Get the `headers` field from a `DownloadedDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_downloaded_document_headers(const KCRAWLDownloadedDocument *ptr);
+
+/**
  * Create a `ScrapeResult` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.

@@ -101,11 +101,11 @@ pub trait EventEmitter: Send + Sync {
 
 Event types:
 
-| Event | Fields |
-|-------|--------|
-| `PageEvent` | `url`, `status_code`, `depth` |
-| `ErrorEvent` | `url`, `error` |
-| `CompleteEvent` | `pages_crawled` |
+| Event           | Fields                        |
+| --------------- | ----------------------------- |
+| `PageEvent`     | `url`, `status_code`, `depth` |
+| `ErrorEvent`    | `url`, `error`                |
+| `CompleteEvent` | `pages_crawled`               |
 
 **Default:** `NoopEmitter` -- silently discards all events.
 
@@ -131,12 +131,12 @@ pub trait CrawlStrategy: Send + Sync {
 
 **Built-in strategies:**
 
-| Strategy | Selection Behavior |
-|----------|-------------------|
-| `BfsStrategy` | First candidate (FIFO / breadth-first) |
-| `DfsStrategy` | Last candidate (LIFO / depth-first) |
-| `BestFirstStrategy` | Highest `priority` value |
-| `AdaptiveStrategy` | BFS with term-saturation early stopping |
+| Strategy            | Selection Behavior                      |
+| ------------------- | --------------------------------------- |
+| `BfsStrategy`       | First candidate (FIFO / breadth-first)  |
+| `DfsStrategy`       | Last candidate (LIFO / depth-first)     |
+| `BestFirstStrategy` | Highest `priority` value                |
+| `AdaptiveStrategy`  | BFS with term-saturation early stopping |
 
 **When to customize:** topic-focused crawling, link-graph-aware selection, or ML-based URL scoring.
 

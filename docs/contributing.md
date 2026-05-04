@@ -31,16 +31,16 @@ pre-commit run --all-files
 
 The default build has no optional dependencies. Add features as needed:
 
-| Feature | What it adds |
-|---------|-------------|
-| `browser` | Headless Chrome via chromiumoxide |
-| `ai` | LLM extraction via liter-llm |
-| `api` | REST API server via Axum |
-| `mcp` | Model Context Protocol server |
-| `mcp-http` | MCP over HTTP (implies `mcp` + `api`) |
-| `tracing` | OpenTelemetry spans |
+| Feature    | What it adds                                               |
+| ---------- | ---------------------------------------------------------- |
+| `browser`  | Headless Chrome via chromiumoxide                          |
+| `ai`       | LLM extraction via liter-llm                               |
+| `api`      | REST API server via Axum                                   |
+| `mcp`      | Model Context Protocol server                              |
+| `mcp-http` | MCP over HTTP (implies `mcp` + `api`)                      |
+| `tracing`  | OpenTelemetry spans                                        |
 | `interact` | Page interaction — click, type, scroll (implies `browser`) |
-| `warc` | WARC archive output |
+| `warc`     | WARC archive output                                        |
 
 ```bash
 cargo build --features api,mcp
@@ -56,7 +56,7 @@ To run all tests across the workspace (this includes both unit tests and integra
 cargo test --workspace
 ```
 
-To run *only* the integration test binaries:
+To run _only_ the integration test binaries:
 
 ```bash
 cargo test --workspace --test '*'
