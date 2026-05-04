@@ -12,7 +12,8 @@ defmodule E2eElixir.MixProject do
 
   defp deps do
     [
-
+      {:rustler, "~> 0.37.0", optional: true, runtime: false},
+      {:kreuzcrawl, path: "../../packages/elixir"}
     ]
   end
 end
