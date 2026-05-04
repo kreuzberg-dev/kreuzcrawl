@@ -288,7 +288,7 @@ fields_optional = [
   "assets[].html_tag",
   "assets.html_tag",
 ]
-fields_array = ["links", "images", "feeds", "json_ld", "assets"]
+fields_array = ["links", "images", "feeds", "json_ld", "assets", "metadata.headings", "metadata.hreflangs", "metadata.favicons"]
 fields_enum = [
   "links[].link_type",
   "browser.js_render_hint",
