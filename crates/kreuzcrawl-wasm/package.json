@@ -30,9 +30,9 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "lint": "biome check typescript",
-    "lint:fix": "biome check --write typescript",
-    "format": "biome format --write typescript",
+    "lint": "cd ../.. && prek run oxlint --all-files",
+    "lint:fix": "cd ../.. && prek run oxlint --all-files",
+    "format": "cd ../.. && prek run oxfmt --all-files",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf pkg dist"
   }

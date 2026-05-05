@@ -4,6 +4,13 @@ default_install_hook_types:
 exclude: ^docs/snippets/|vendor/|node_modules/|target/|invalid*|dist/|artifacts/|test_documents/|test_apps/|scripts/ci/|packages/.*/tools/vendor-
 
 repos:
+  # AI-Rulez: auto-generate AI assistant configuration files
+  - repo: https://github.com/Goldziher/ai-rulez
+    rev: v4.1.6
+    hooks:
+      - id: ai-rulez-validate
+      - id: ai-rulez-generate
+
   # Commit message linting
   - repo: https://github.com/Goldziher/gitfluff
     rev: v0.8.0
@@ -11,13 +18,6 @@ repos:
       - id: gitfluff-lint
         args: ["--write"]
         stages: [commit-msg]
-
-  # AI-Rulez: auto-generate AI assistant configuration files
-  - repo: https://github.com/Goldziher/ai-rulez
-    rev: v4.1.4
-    hooks:
-      - id: ai-rulez-validate
-      - id: ai-rulez-generate
 
   # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -28,7 +28,7 @@ repos:
         exclude: ^docs/reference/
       - id: check-merge-conflict
       - id: check-added-large-files
-        exclude: uv.lock|docs/benchmarks/app/|crates/kreuzcrawl-pdfium-render/
+        exclude: uv.lock|docs/benchmarks/app/
       - id: detect-private-key
       - id: check-json
       - id: check-yaml
@@ -38,17 +38,11 @@ repos:
 
   # TOML formatting
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: "v2.21.1"
+    rev: "v2.21.2"
     hooks:
       - id: pyproject-fmt
 
-  - repo: https://github.com/DevinR528/cargo-sort
-    rev: "v2.1.4"
-    hooks:
-      - id: cargo-sort
-        args: [-w]
-
-  # Python: ruff (linting + formatting) + mypy (type checking)
+  # Python: ruff (linting + formatting)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.12
     hooks:
@@ -56,19 +50,22 @@ repos:
         args: [--fix]
       - id: ruff-format
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.20.2
+  # Shared polyrepo hooks
+  - repo: https://github.com/kreuzberg-dev/pre-commit-hooks
+    rev: v1.0.0
     hooks:
-      - id: mypy
-        exclude: "e2e/|scripts/|test_apps/|tests/|benchmarks/"
-
-  # Rust: formatting, linting, and license checking
-  - repo: https://github.com/AndrejOrsula/pre-commit-cargo
-    rev: 0.5.0
-    hooks:
+      - id: cargo-sort
+        args: [-w]
       - id: cargo-fmt
         args: ["--all"]
-        types: [rust]
+      - id: cargo-check
+        args:
+          [
+            "--workspace",
+            "--exclude=kreuzcrawl-php",
+            "--all-features",
+            "--all-targets",
+          ]
       - id: cargo-clippy
         args:
           [
@@ -83,95 +80,70 @@ repos:
             "-D",
             "warnings",
           ]
-
-  - repo: https://github.com/bnjbvr/cargo-machete
-    rev: v0.9.2
-    hooks:
       - id: cargo-machete
-
-  - repo: https://github.com/EmbarkStudios/cargo-deny
-    rev: 0.19.4
-    hooks:
       - id: cargo-deny
         args: ["check"]
-
-  - repo: https://github.com/oxc-project/mirrors-oxlint
-    rev: v1.62.0
-    hooks:
-      - id: oxlint
-        args: ["--fix"]
-        exclude: ^(tools/benchmark-harness/fixtures/|docs/snippets/)
-
-  # C/C++: formatting and linting
-  - repo: https://github.com/pocc/pre-commit-hooks
-    rev: v1.3.5
-    hooks:
-      - id: clang-format
-        args: [--style=file]
-        files: (^crates/kreuzcrawl-ffi/tests/c/|^tools/benchmark-harness/scripts/.*\.c$)
-      - id: cppcheck
-        args:
-          [
-            "--std=c11",
-            "--enable=warning,style,performance",
-            "--suppress=missingIncludeSystem",
-            "--suppress=unusedStructMember",
-            "--suppress=normalCheckLevelMaxBranches",
-          ]
-        files: (^crates/kreuzcrawl-ffi/tests/c/|^tools/benchmark-harness/scripts/.*\.c$)
-
-  - repo: https://github.com/checkmake/checkmake
-    rev: v0.3.2
-    hooks:
-      - id: checkmake
-
-  # Go: formatting and linting (runs per Go module via Taskfile)
-  - repo: local
-    hooks:
-      - id: golangci-lint-full
-        name: golangci-lint (all Go modules)
-        entry: task go:lint
-        language: system
-        files: \.go$
-        pass_filenames: false
-
-  # Shell scripts: formatting and linting
-  - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.13.1-1
-    hooks:
       - id: shfmt
         args: ["-w", "-i", "2"]
-
-  - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.11.0
-    hooks:
       - id: shellcheck
-        args: ["-x"]
-        exclude: ^test_apps/docker/tests/
-
-  # Markdown: linting
-  - repo: https://github.com/rvben/rumdl-pre-commit
-    rev: "v0.1.85"
-    hooks:
-      - id: rumdl-fmt
-        exclude: '^(test_apps/|tools/benchmark-harness/vendored/|docs/index\.md|docs/getting-started/installation\.md|readme_templates/)'
-
-  # Markdown prose linting: textlint
-  - repo: local
-    hooks:
+      - id: clang-format
+        args: ["--style=file"]
+        files: ^crates/kreuzcrawl-ffi/tests/c/
+      - id: clang-tidy
+        files: ^crates/kreuzcrawl-ffi/tests/c/
+      - id: checkstyle
+        args: ["-c", "packages/java/checkstyle.xml", "-p", "packages/java/checkstyle.properties"]
+        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|packages/java/src/)
+      - id: java-verify
+        files: ^packages/java/
+      - id: mypy
+        exclude: "e2e/|tests/|scripts/|^packages/r/"
+      - id: go-fmt
+        exclude: ^(e2e/|test_apps/)
+      - id: golangci-lint
+        exclude: ^(e2e/|test_apps/)
+        env:
+          KREUZBERG_GO_MOD_DIRS: "packages/go"
+      - id: govulncheck
+        exclude: ^(e2e/|test_apps/)
+      - id: rubocop
+        files: ^packages/ruby/.*\.rb$
+        exclude: ^packages/ruby/ext/
+      - id: rubocop-lint
+        files: ^packages/ruby/.*\.(rb|rbs)$
+        exclude: ^packages/ruby/ext/
+      - id: steep
+        files: ^packages/ruby/.*\.(rb|rbs)$
+        exclude: ^packages/ruby/ext/
+      - id: dotnet-format
+        files: ^packages/csharp/.*\.cs$
+      - id: dotnet-format-check
+        files: ^packages/csharp/.*\.cs$
+      - id: php-cs-fixer
+        files: ^packages/php/.*\.php$
+      - id: phpstan
+        files: ^packages/php/(src|tests|stubs)/.*\.php$
+        args: ["analyse", "--no-progress", "--configuration", "packages/php/phpstan.neon"]
+      - id: mix-format
+        files: ^packages/elixir/
+      - id: mix-credo
+        files: ^packages/elixir/
       - id: textlint
-        name: textlint (docs prose)
-        entry: npx textlint
-        language: node
         files: ^docs/.*\.md$
-        pass_filenames: true
+        exclude: ^docs/(reference/|api-|snippets/|migration/)
+        args: ["--fix", "--config", ".textlintrc.json"]
+      - id: oxlint
+      - id: oxfmt
+      - id: cppcheck
+      - id: rumdl-fmt
+      - id: cpd
 
-  # Spelling: fast Rust-based spell checker
-  - repo: https://github.com/crate-ci/typos
-    rev: v1.46.0
+  # Alef: verify bindings and sync versions
+  - repo: https://github.com/kreuzberg-dev/alef
+    rev: v0.14.23
     hooks:
-      - id: typos
-        args: [--force-exclude]
+      - id: alef-verify
+      - id: alef-sync-versions
 
   # GitHub Actions: linting
   - repo: https://github.com/rhysd/actionlint
@@ -179,102 +151,9 @@ repos:
     hooks:
       - id: actionlint
 
-  # Java: copy-paste detection and style checking
-  - repo: https://github.com/gherynos/pre-commit-java
-    rev: v0.6.37
+  # Spelling: fast Rust-based spell checker
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.46.0
     hooks:
-      - id: cpd
-        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzcrawl-wasm/e2e/|packages/java/src/)
-      - id: checkstyle
-        args: ["-c", "packages/java/checkstyle.xml", "-p", "packages/java/checkstyle.properties"]
-        exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|tools/e2e-generator/e2e/|crates/kreuzcrawl-wasm/e2e/|packages/java/src/)
-
-  # Alef: format, lint, verify bindings, sync versions
-  - repo: https://github.com/kreuzberg-dev/alef
-    rev: v0.12.10
-    hooks:
-      - id: alef-verify
-      - id: alef-sync-versions
-
-  # Local hooks for unsupported languages (Ruby, Java, C#, PHP, Elixir, R) and custom configurations
-  - repo: local
-    hooks:
-      # Ruby
-      - id: ruby-format
-        name: Ruby formatting (rubocop)
-        entry: task ruby:format
-        language: system
-        files: \.rb$
-        pass_filenames: false
-        require_serial: true
-        stages: [commit]
-
-      - id: ruby-lint
-        name: Ruby linting (rubocop + steep)
-        entry: task ruby:lint
-        language: system
-        files: \.(rb|rbs)$
-        pass_filenames: false
-        require_serial: true
-        stages: [commit]
-
-      # Java (maven verify — cpd/checkstyle handled by pre-commit-java above)
-      - id: java-verify
-        name: maven verify (java)
-        entry: bash -lc 'if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk env; fi; MAVEN_OPTS="${MAVEN_OPTS:-} --enable-native-access=ALL-UNNAMED -Dsun.misc.unsafe.memory.access=allow" mvn -f packages/java/pom.xml -B -DskipTests -Dgpg.skip=true -Dskip.rust.ffi=true verify'
-        language: system
-        files: ^packages/java/
-        pass_filenames: false
-
-      # C#
-      - id: csharp-format
-        name: C# formatting (dotnet format)
-        entry: task csharp:format
-        language: system
-        files: \.cs$
-        pass_filenames: false
-        require_serial: true
-        stages: [commit]
-
-      - id: csharp-lint
-        name: C# linting (dotnet format)
-        entry: task csharp:lint
-        language: system
-        files: \.cs$
-        pass_filenames: false
-        require_serial: true
-        stages: [commit]
-
-      # PHP
-      - id: php-format
-        name: PHP formatting (php-cs-fixer)
-        entry: task php:format
-        language: system
-        files: \.php$
-        pass_filenames: false
-        require_serial: true
-        stages: [commit]
-
-      - id: php-lint
-        name: PHP linting (phpstan + php-cs-fixer)
-        entry: task php:lint
-        language: system
-        files: \.php$
-        pass_filenames: false
-        require_serial: true
-        stages: [commit]
-
-      # Elixir
-      - id: mix-credo
-        name: mix credo
-        entry: bash -c 'cd packages/elixir && MIX_ENV=dev mix credo --strict'
-        language: system
-        files: ^packages/elixir/
-        pass_filenames: false
-
-      - id: mix-format
-        name: mix format
-        entry: bash -c 'cd packages/elixir && MIX_ENV=dev mix format --check-formatted'
-        language: system
-        files: ^packages/elixir/
-        pass_filenames: false
+      - id: typos
+        args: [--force-exclude]
