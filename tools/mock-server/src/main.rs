@@ -31,11 +31,6 @@ struct Cli {
     /// Port to listen on (0 = random available port).
     #[arg(long, default_value_t = 0)]
     port: u16,
-
-    /// Positional alternative to `--fixtures` accepted for compatibility with the
-    /// alef-generated conftest which spawns `mock-server <fixtures-dir>`. The flag
-    /// takes precedence when both are supplied.
-    fixtures_positional: Option<PathBuf>,
 }
 
 /// A single mock route extracted from a fixture.
@@ -269,13 +264,8 @@ async fn main() {
     tracing_subscriber::fmt::init();
 
     let cli = Cli::parse();
-    let fixtures_path = if cli.fixtures.as_os_str() == "./fixtures" {
-        cli.fixtures_positional.as_ref().unwrap_or(&cli.fixtures)
-    } else {
-        &cli.fixtures
-    };
 
-    let routes = load_fixtures(fixtures_path);
+    let routes = load_fixtures(&cli.fixtures);
     let route_count = routes.len();
     let state = Arc::new(routes);
 
