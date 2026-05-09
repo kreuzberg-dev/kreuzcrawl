@@ -112,8 +112,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.meta.outputs.tag }}
           IS_PRERELEASE: ${{ steps.meta.outputs.is_prerelease }}
-        # Inline: simple idempotent gh-release create that needs the metadata
-        # outputs we just produced. No shared action equivalent.
+        # Inline: `gh release create` requires `--target <sha>` to anchor the
+        # release to the current commit when the tag does not yet exist on the
+        # remote. The shared `publish-github-release` action does not yet
+        # support a `target` input, so we keep the inline version.
         run: |
           if gh release view "${TAG}" >/dev/null 2>&1; then
             echo "Release ${TAG} already exists"

@@ -75,26 +75,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v4
+      - name: Install textlint and rules
+        uses: kreuzberg-dev/actions/setup-textlint@v1
         with:
           node-version: "22"
-      - name: Install textlint and rules
-        run: |
-          npm install --no-save \
-            textlint \
-            textlint-rule-no-todo \
-            textlint-rule-no-start-duplicated-conjunction \
-            textlint-rule-no-empty-section \
-            textlint-rule-terminology \
-            textlint-rule-no-zero-width-spaces \
-            @textlint-rule/textlint-rule-no-invalid-control-character \
-            textlint-rule-no-surrogate-pair \
-            @textlint-rule/textlint-rule-no-unmatched-pair \
-            textlint-rule-write-good \
-            textlint-rule-common-misspellings \
-            textlint-rule-stop-words \
-            textlint-filter-rule-comments \
-            textlint-filter-rule-node-types
       - name: Run textlint
         run: scripts/ci/docs/textlint.sh
         continue-on-error: true
