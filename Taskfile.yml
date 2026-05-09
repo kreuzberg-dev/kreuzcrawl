@@ -27,6 +27,8 @@ includes:
     taskfile: .task/languages/elixir.yml
   c:
     taskfile: .task/languages/c.yml
+  brew:
+    taskfile: .task/languages/brew.yml
 
   _build_wf:
     taskfile: .task/workflows/build.yml
@@ -220,11 +222,11 @@ tasks:
       - task: go:e2e:lint
       - task: java:e2e:lint
       - task: csharp:e2e:lint
-      - task: wasm:e2e:deno:lint
-      - task: wasm:e2e:workers:lint
+      - task: wasm:e2e:lint
       - task: ruby:e2e:lint
       - task: php:e2e:lint
       - task: c:e2e:lint
+      - task: brew:e2e:lint
 
   mock-server:start:
     desc: Start the e2e mock HTTP server (background)

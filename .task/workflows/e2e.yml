@@ -43,11 +43,11 @@ tasks:
       - task: go:e2e:generate
       - task: java:e2e:generate
       - task: csharp:e2e:generate
-      - task: wasm:e2e:deno:generate
-      - task: wasm:e2e:workers:generate
+      - task: wasm:e2e:generate
       - task: ruby:e2e:generate
       - task: php:e2e:generate
       - task: c:e2e:generate
+      - task: brew:e2e:generate
 
   test:all:
     desc: Run all E2E tests across all supported languages (builds bindings, starts mock server)
@@ -79,16 +79,16 @@ tasks:
           MOCK_SERVER_URL="$MOCK_SERVER_URL" task php:e2e:test     || overall=$?
           MOCK_SERVER_URL="$MOCK_SERVER_URL" task elixir:e2e:test  || overall=$?
           if command -v pnpm >/dev/null 2>&1; then
-            MOCK_SERVER_URL="$MOCK_SERVER_URL" task wasm:e2e:deno:test    || overall=$?
-            MOCK_SERVER_URL="$MOCK_SERVER_URL" task wasm:e2e:workers:test || overall=$?
+            MOCK_SERVER_URL="$MOCK_SERVER_URL" task wasm:e2e:test || overall=$?
           else
             echo "skip: wasm e2e (pnpm not found)"
           fi
           if command -v cc >/dev/null 2>&1 && command -v make >/dev/null 2>&1; then
-            MOCK_SERVER_URL="$MOCK_SERVER_URL" task c:e2e:test         || overall=$?
+            MOCK_SERVER_URL="$MOCK_SERVER_URL" task c:e2e:test || overall=$?
           else
             echo "skip: c e2e (cc/make not found)"
           fi
+          MOCK_SERVER_URL="$MOCK_SERVER_URL" task brew:e2e:test || overall=$?
           exit $overall
       - defer: { task: mock-server:stop }
 
@@ -119,11 +119,11 @@ tasks:
       - task: go:e2e:lint
       - task: java:e2e:lint
       - task: csharp:e2e:lint
-      - task: wasm:e2e:deno:lint
-      - task: wasm:e2e:workers:lint
+      - task: wasm:e2e:lint
       - task: ruby:e2e:lint
       - task: php:e2e:lint
       - task: c:e2e:lint
+      - task: brew:e2e:lint
 
   rust:generate:
     desc: Generate Rust E2E tests from fixtures
@@ -240,55 +240,25 @@ tasks:
       - task: csharp:e2e:generate
       - task: csharp:e2e:test
 
-  wasm:deno:generate:
-    desc: Generate Deno WASM E2E tests from fixtures
+  wasm:generate:
+    desc: Generate WASM E2E tests from fixtures (alef-driven, vitest-style)
     cmds:
-      - task: wasm:e2e:deno:generate
+      - task: wasm:e2e:generate
 
-  wasm:deno:lint:
-    desc: Lint Deno WASM E2E code
+  wasm:lint:
+    desc: Lint generated WASM E2E TypeScript
     cmds:
-      - task: wasm:e2e:deno:lint
+      - task: wasm:e2e:lint
 
-  wasm:deno:test:
-    desc: Run Deno WASM E2E tests
+  wasm:test:
+    desc: Run WASM E2E tests (Node/vitest)
     cmds:
-      - task: wasm:e2e:deno:test
-
-  wasm:deno:verify:
-    desc: Full Deno WASM E2E pipeline (build + generate + test)
-    cmds:
-      - task: wasm:build:deno
-      - task: wasm:e2e:deno:generate
-      - task: wasm:e2e:deno:test
-
-  wasm:workers:generate:
-    desc: Generate Cloudflare Workers WASM E2E tests from fixtures
-    cmds:
-      - task: wasm:e2e:workers:generate
-
-  wasm:workers:lint:
-    desc: Lint Cloudflare Workers WASM E2E code
-    cmds:
-      - task: wasm:e2e:workers:lint
-
-  wasm:workers:test:
-    desc: Run Cloudflare Workers WASM E2E tests
-    cmds:
-      - task: wasm:e2e:workers:test
-
-  wasm:workers:verify:
-    desc: Full Cloudflare Workers E2E pipeline (build + generate + test)
-    cmds:
-      - task: wasm:build
-      - task: wasm:e2e:workers:generate
-      - task: wasm:e2e:workers:test
+      - task: wasm:e2e:test
 
   wasm:verify:
-    desc: Verify all WASM test suites (Deno + Workers)
+    desc: Regenerate and validate WASM E2E suite (generate + lint + test)
     cmds:
-      - task: wasm:deno:verify
-      - task: wasm:workers:verify
+      - task: wasm:e2e:verify
 
   php:generate:
     desc: Generate PHP E2E tests from fixtures
@@ -347,18 +317,6 @@ tasks:
       - task: java:e2e:verify
       - task: csharp:e2e:verify
       - task: php:e2e:verify
-
-  wasm:all:
-    desc: Run all WASM E2E tests (Deno + Workers)
-    cmds:
-      - task: wasm:e2e:deno:test
-      - task: wasm:e2e:workers:test
-
-  wasm:all:verify:
-    desc: Full WASM E2E pipeline (both Deno and Workers)
-    cmds:
-      - task: wasm:deno:verify
-      - task: wasm:workers:verify
 
   ruby:generate:
     desc: Generate Ruby E2E tests from fixtures

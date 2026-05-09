@@ -1,0 +1,30 @@
+version: "3"
+
+tasks:
+  e2e:generate:
+    desc: Generate brew (CLI) E2E shell tests from fixtures
+    cmds:
+      - alef e2e generate
+
+  e2e:lint:
+    desc: Lint generated brew E2E shell scripts
+    dir: e2e/brew
+    cmds:
+      - shellcheck *.sh
+
+  e2e:test:
+    desc: Run brew E2E tests (kreuzcrawl CLI; auto-builds and prepends to PATH)
+    deps:
+      - task: :rust:cli:build
+    dir: e2e/brew
+    env:
+      PATH: "{{.ROOT_DIR}}/target/release:{{.PATH}}"
+    cmds:
+      - bash run_tests.sh
+
+  e2e:verify:
+    desc: Full brew E2E pipeline (generate + lint + test)
+    cmds:
+      - task: e2e:generate
+      - task: e2e:lint
+      - task: e2e:test
