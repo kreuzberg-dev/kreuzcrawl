@@ -3353,3 +3353,39 @@ jobs:
           RESULT_UPLOAD_GO_RELEASE: ${{ needs.upload-go-release.result }}
           RESULT_UPLOAD_C_FFI_RELEASE: ${{ needs.upload-c-ffi-release.result }}
         run: python3 scripts/publish/aggregate-release-status.py
+
+  announce-discord:
+    name: Announce release on Discord
+    needs:
+      - prepare
+      - publish-crates
+      - publish-pypi
+      - publish-rubygems
+      - publish-node
+      - publish-wasm
+      - publish-maven
+      - publish-nuget
+      - publish-php
+      - publish-hex
+      - publish-homebrew
+      - upload-cli-release
+      - upload-go-release
+      - upload-c-ffi-release
+      - upload-elixir-release
+      - upload-homebrew-bottles
+      - release-finalize
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.prepare.outputs.is_tag == 'true' &&
+      needs.prepare.outputs.dry_run != 'true' &&
+      !contains(needs.*.result, 'failure')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: kreuzberg-dev/actions/announce-release-discord@v1
+        with:
+          tag: ${{ needs.prepare.outputs.tag }}
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          project-name: kreuzcrawl
