@@ -292,6 +292,7 @@ languages = [
 exclude_categories = [
   "cache",
   "concurrent",
+  "download",
   "filter",
   "interaction",
   "middleware",
@@ -480,7 +481,12 @@ handle_config_type = "WasmCrawlConfig"
 
 [crates.e2e.call.overrides.brew]
 function = "scrape"
-cli_args = ["--format", "json"]
+cli_args = ["--format", "json", "--browser-mode", "never"]
+
+[crates.e2e.call.overrides.c]
+function = "scrape"
+result_type = "ScrapeResult"
+c_engine_factory = "CrawlConfig"
 
 [crates.e2e.fields]
 title = "metadata.title"
@@ -527,7 +533,41 @@ description = "metadata.description"
 "metadata.dir" = "metadata.html_dir"
 "json_ld[].type" = "json_ld[].schema_type"
 "json_ld.type" = "json_ld[].schema_type"
+"json_ld.name" = "json_ld[].name"
 "assets[].category" = "assets[].asset_category"
+
+[crates.e2e.fields_c_types]
+# ScrapeResult primitive fields (non-char* return types from the FFI)
+"scrape_result.status_code" = "uint16_t"
+"scrape_result.body_size" = "uintptr_t"
+"scrape_result.is_allowed" = "int32_t"
+"scrape_result.crawl_delay" = "uint64_t"
+"scrape_result.noindex_detected" = "int32_t"
+"scrape_result.nofollow_detected" = "int32_t"
+"scrape_result.is_pdf" = "int32_t"
+"scrape_result.was_skipped" = "int32_t"
+"scrape_result.main_content_only" = "int32_t"
+"scrape_result.auth_header_sent" = "int32_t"
+"scrape_result.js_render_hint" = "int32_t"
+"scrape_result.browser_used" = "int32_t"
+# ScrapeResult JSON array fields (char* — use alef_json_array_count for .length)
+"scrape_result.links" = "char*"
+"scrape_result.assets" = "char*"
+"scrape_result.images" = "char*"
+"scrape_result.feeds" = "char*"
+"scrape_result.json_ld" = "char*"
+# ScrapeResult nested opaque handle fields
+"scrape_result.metadata" = "PageMetadata"
+"scrape_result.response_meta" = "ResponseMeta"
+"scrape_result.markdown" = "MarkdownResult"
+"scrape_result.extraction_meta" = "ExtractionMeta"
+"scrape_result.downloaded_document" = "DownloadedDocument"
+# PageMetadata primitive fields
+"page_metadata.word_count" = "uintptr_t"
+# PageMetadata JSON array fields (char* — use alef_json_array_count for .length)
+"page_metadata.headings" = "char*"
+"page_metadata.hreflangs" = "char*"
+"page_metadata.favicons" = "char*"
 
 [crates.e2e.packages.rust]
 path = "../../crates/kreuzcrawl"
