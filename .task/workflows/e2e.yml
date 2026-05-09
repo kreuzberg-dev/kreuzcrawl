@@ -78,6 +78,17 @@ tasks:
           MOCK_SERVER_URL="$MOCK_SERVER_URL" task ruby:e2e:test    || overall=$?
           MOCK_SERVER_URL="$MOCK_SERVER_URL" task php:e2e:test     || overall=$?
           MOCK_SERVER_URL="$MOCK_SERVER_URL" task elixir:e2e:test  || overall=$?
+          if command -v pnpm >/dev/null 2>&1; then
+            MOCK_SERVER_URL="$MOCK_SERVER_URL" task wasm:e2e:deno:test    || overall=$?
+            MOCK_SERVER_URL="$MOCK_SERVER_URL" task wasm:e2e:workers:test || overall=$?
+          else
+            echo "skip: wasm e2e (pnpm not found)"
+          fi
+          if command -v cc >/dev/null 2>&1 && command -v make >/dev/null 2>&1; then
+            MOCK_SERVER_URL="$MOCK_SERVER_URL" task c:e2e:test         || overall=$?
+          else
+            echo "skip: c e2e (cc/make not found)"
+          fi
           exit $overall
       - defer: { task: mock-server:stop }
 

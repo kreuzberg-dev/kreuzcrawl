@@ -59,13 +59,7 @@ repos:
       - id: cargo-fmt
         args: ["--all"]
       - id: cargo-check
-        args:
-          [
-            "--workspace",
-            "--exclude=kreuzcrawl-php",
-            "--all-features",
-            "--all-targets",
-          ]
+        args: ["--workspace", "--exclude=kreuzcrawl-php", "--all-features", "--all-targets"]
       - id: cargo-clippy
         args:
           [

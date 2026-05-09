@@ -1,6 +1,27 @@
 [workspace]
-alef_version = "0.14.19"
+alef_version = "0.15.9"
 languages = ["python", "node", "ruby", "php", "ffi", "go", "java", "csharp", "elixir", "wasm"]
+
+# ---------------------------------------------------------------------------
+# Tool selection
+# ---------------------------------------------------------------------------
+[workspace.tools]
+python_package_manager = "uv"
+node_package_manager = "pnpm"
+
+# ---------------------------------------------------------------------------
+# DTO styles
+# ---------------------------------------------------------------------------
+[workspace.dto]
+python = "dataclass"
+python_output = "typed-dict"
+node = "interface"
+ruby = "struct"
+php = "readonly-class"
+elixir = "struct"
+go = "struct"
+java = "record"
+csharp = "record"
 
 # Java is formatted by Spotless (Eclipse 4.31) via maven verify in prek's
 # `java-verify` hook. alef's default `google-java-format` produces different
@@ -93,6 +114,48 @@ wasm = "crates/kreuzcrawl-wasm/src/"
 types = ["CachedPage", "InteractionResult", "ActionResult", "CrawlEvent"]
 functions = ["generate_citations"]
 methods = ["CrawlResult.new"]
+
+[crates.include]
+types = [
+  "ExtractionMeta",
+  "BrowserMode",
+  "BrowserWait",
+  "ProxyConfig",
+  "AuthConfig",
+  "ContentConfig",
+  "BrowserConfig",
+  "CrawlConfig",
+  "DownloadedDocument",
+  "ScrapeResult",
+  "CrawlPageResult",
+  "CrawlResult",
+  "SitemapUrl",
+  "MapResult",
+  "MarkdownResult",
+  "LinkType",
+  "LinkInfo",
+  "ImageSource",
+  "ImageInfo",
+  "FeedType",
+  "FeedInfo",
+  "JsonLdEntry",
+  "CookieInfo",
+  "DownloadedAsset",
+  "AssetCategory",
+  "ArticleMetadata",
+  "HreflangEntry",
+  "FaviconInfo",
+  "HeadingInfo",
+  "ResponseMeta",
+  "PageMetadata",
+  "CitationResult",
+  "CitationReference",
+  "CrawlEngineHandle",
+  "BatchScrapeResult",
+  "BatchCrawlResult",
+  "CrawlError",
+]
+functions = ["create_engine", "scrape", "crawl", "map_urls", "batch_scrape", "batch_crawl"]
 
 [crates.lint.python]
 precondition = "command -v ruff >/dev/null 2>&1"
@@ -220,6 +283,24 @@ languages = [
   "elixir",
   "wasm",
   "brew",
+  "c",
+]
+# Fixture categories that exercise internal middleware (cache, proxy, rate-limit,
+# stream, etc.) which the binding surface does not expose. Skipped by every
+# per-language e2e generator — fixtures stay on disk for the Rust integration
+# suite inside `crates/kreuzcrawl/tests/`.
+exclude_categories = [
+  "cache",
+  "concurrent",
+  "filter",
+  "interaction",
+  "middleware",
+  "proxy",
+  "rate_limit",
+  "stealth",
+  "strategy",
+  "stream",
+  "warc",
 ]
 fields_optional = [
   "markdown",
