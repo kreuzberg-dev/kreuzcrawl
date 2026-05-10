@@ -1,23 +1,32 @@
 {
-  "id": "error_timeout",
-  "description": "Handles request timeout",
-  "tags": [
-    "error"
-  ],
-  "assertions": [
-    {
-      "type": "error"
-    },
-    {
-      "type": "error",
-      "value": "timeout"
-    }
-  ],
-  "mock_response": {
-    "status": 200,
-    "body": "<html><body><h1>Delayed</h1></body></html>",
-    "headers": {
-      "content-type": "text/html; charset=utf-8"
-    }
-  }
+	"id": "error_timeout",
+	"description": "Mock server delays response longer than request_timeout, surfacing a timeout error",
+	"tags": [
+		"error"
+	],
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><h1>delayed</h1></body></html>",
+				"delay_ms": 5000
+			}
+		],
+		"config": {
+			"request_timeout": 500
+		}
+	},
+	"assertions": [
+		{
+			"type": "error"
+		},
+		{
+			"type": "error",
+			"value": "timeout"
+		}
+	]
 }
