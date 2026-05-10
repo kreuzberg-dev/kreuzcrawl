@@ -121,11 +121,13 @@ impl CrawlEngine {
             }
             // WAF/access fallback: delegate to browser when mode is Auto.
             // Browser has a legitimate Chrome TLS fingerprint and bypasses most WAFs.
-            // Also retried on Forbidden and Connection errors which may be bot-detection.
+            // Only WAF-blocked and 403 Forbidden responses are retried via browser;
+            // network-level errors (Connection, Dns, Ssl, Timeout, Proxy, Other) propagate
+            // directly so callers can observe the [network:<kind>] tag in the error message.
             #[cfg(feature = "browser")]
-            Err(
-                CrawlError::WafBlocked(_) | CrawlError::Forbidden(_) | CrawlError::Connection(_) | CrawlError::Other(_),
-            ) if self.config.browser.mode == crate::types::BrowserMode::Auto => {
+            Err(CrawlError::WafBlocked(_) | CrawlError::Forbidden(_))
+                if self.config.browser.mode == crate::types::BrowserMode::Auto =>
+            {
                 let pool = self.config.browser_pool.as_deref();
                 let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
                 Ok((browser_http_to_crawl(http_resp), true))
@@ -296,5 +298,68 @@ impl CrawlEngine {
             results.push((url.to_string(), result));
         }
         results
+    }
+}
+
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod tests {
+    use super::*;
+
+    /// Verify that a connection-refused error propagates with [network:connection] tag
+    /// rather than being swallowed by browser fallback. The engine's BrowserMode::Auto
+    /// arm must not include Connection errors.
+    #[tokio::test]
+    async fn connection_refused_propagates_network_tag() {
+        use crate::error::classify_reqwest_error;
+        use std::time::Duration;
+
+        let client = reqwest::Client::builder()
+            .timeout(Duration::from_millis(500))
+            .build()
+            .expect("client build must not fail");
+
+        // Port 1 is universally closed; this reliably produces a connection error.
+        let raw_err = client
+            .get("http://127.0.0.1:1/")
+            .send()
+            .await
+            .expect_err("expected connection error");
+
+        let err = classify_reqwest_error(&raw_err);
+        let msg = err.to_string();
+        assert!(
+            msg.contains("[network:connection]"),
+            "expected [network:connection] in '{msg}'"
+        );
+        assert!(
+            matches!(err, CrawlError::Connection(_)),
+            "expected CrawlError::Connection, got {err:?}"
+        );
+    }
+
+    /// Verify that a DNS resolution failure propagates with [network:dns] tag.
+    #[tokio::test]
+    async fn dns_failure_propagates_network_tag() {
+        use crate::error::classify_reqwest_error;
+        use std::time::Duration;
+
+        let client = reqwest::Client::builder()
+            .timeout(Duration::from_millis(1000))
+            .build()
+            .expect("client build must not fail");
+
+        let raw_err = client
+            .get("http://this-host-does-not-exist-kreuzcrawl-engine-test.invalid/")
+            .send()
+            .await
+            .expect_err("expected dns error");
+
+        let err = classify_reqwest_error(&raw_err);
+        let msg = err.to_string();
+        assert!(msg.contains("[network:dns]"), "expected [network:dns] in '{msg}'");
+        assert!(
+            matches!(err, CrawlError::Dns(_)),
+            "expected CrawlError::Dns, got {err:?}"
+        );
     }
 }
