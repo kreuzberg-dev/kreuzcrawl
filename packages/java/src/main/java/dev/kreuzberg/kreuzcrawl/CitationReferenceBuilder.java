@@ -10,34 +10,30 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonPOJOBuilder(withPrefix = "with")
 public class CitationReferenceBuilder {
 
-    private long index = 0;
-    private String url = "";
-    private String text = "";
+	private long index = 0;
+	private String url = "";
+	private String text = "";
 
-    /** Sets the index field. */
-    public CitationReferenceBuilder withIndex(final long value) {
-        this.index = value;
-        return this;
-    }
+	/** Sets the index field. */
+	public CitationReferenceBuilder withIndex(final long value) {
+		this.index = value;
+		return this;
+	}
 
-    /** Sets the url field. */
-    public CitationReferenceBuilder withUrl(final String value) {
-        this.url = value;
-        return this;
-    }
+	/** Sets the url field. */
+	public CitationReferenceBuilder withUrl(final String value) {
+		this.url = value;
+		return this;
+	}
 
-    /** Sets the text field. */
-    public CitationReferenceBuilder withText(final String value) {
-        this.text = value;
-        return this;
-    }
+	/** Sets the text field. */
+	public CitationReferenceBuilder withText(final String value) {
+		this.text = value;
+		return this;
+	}
 
-    /** Builds the CitationReference instance. */
-    public CitationReference build() {
-        return new CitationReference(
-            index,
-            url,
-            text
-        );
-    }
+	/** Builds the CitationReference instance. */
+	public CitationReference build() {
+		return new CitationReference(index, url, text);
+	}
 }

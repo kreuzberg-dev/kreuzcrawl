@@ -12,48 +12,48 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * The category of a downloaded asset.
  */
 public enum AssetCategory {
-    /** A document file (PDF, DOC, etc.). */
-    Document("document"),
-    /** An image file. */
-    Image("image"),
-    /** An audio file. */
-    Audio("audio"),
-    /** A video file. */
-    Video("video"),
-    /** A font file. */
-    Font("font"),
-    /** A CSS stylesheet. */
-    Stylesheet("stylesheet"),
-    /** A JavaScript file. */
-    Script("script"),
-    /** An archive file (ZIP, TAR, etc.). */
-    Archive("archive"),
-    /** A data file (JSON, XML, CSV, etc.). */
-    Data("data"),
-    /** An unrecognized asset type. */
-    Other("other");
+	/** A document file (PDF, DOC, etc.). */
+	Document("document"),
+	/** An image file. */
+	Image("image"),
+	/** An audio file. */
+	Audio("audio"),
+	/** A video file. */
+	Video("video"),
+	/** A font file. */
+	Font("font"),
+	/** A CSS stylesheet. */
+	Stylesheet("stylesheet"),
+	/** A JavaScript file. */
+	Script("script"),
+	/** An archive file (ZIP, TAR, etc.). */
+	Archive("archive"),
+	/** A data file (JSON, XML, CSV, etc.). */
+	Data("data"),
+	/** An unrecognized asset type. */
+	Other("other");
 
-    /** The string value. */
-    private final String value;
+	/** The string value. */
+	private final String value;
 
-    AssetCategory(final String value) {
-        this.value = value;
-    }
+	AssetCategory(final String value) {
+		this.value = value;
+	}
 
-    /** Returns the string value. */
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
+	/** Returns the string value. */
+	@JsonValue
+	public String getValue() {
+		return value;
+	}
 
-    /** Creates an instance from a string value. */
-    @JsonCreator
-    public static AssetCategory fromValue(final String value) {
-        for (AssetCategory e : values()) {
-            if (e.value.equalsIgnoreCase(value)) {
-                return e;
-            }
-        }
-        throw new IllegalArgumentException("Unknown value: " + value);
-    }
+	/** Creates an instance from a string value. */
+	@JsonCreator
+	public static AssetCategory fromValue(final String value) {
+		for (AssetCategory e : values()) {
+			if (e.value.equalsIgnoreCase(value)) {
+				return e;
+			}
+		}
+		throw new IllegalArgumentException("Unknown value: " + value);
+	}
 }

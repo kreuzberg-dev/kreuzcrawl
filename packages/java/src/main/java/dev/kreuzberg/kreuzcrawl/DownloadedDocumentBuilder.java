@@ -13,75 +13,67 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
  *
- * When the crawler encounters non-HTML content and {@code download_documents} is
- * enabled, it downloads the raw bytes and populates this struct instead of
+ * When the crawler encounters non-HTML content and {@code download_documents}
+ * is enabled, it downloads the raw bytes and populates this struct instead of
  * skipping the resource.
  */
 @JsonPOJOBuilder(withPrefix = "with")
 public class DownloadedDocumentBuilder {
 
-    private String url = "";
-    @JsonProperty("mime_type")
-    private String mimeType = "";
-    private byte[] content = new byte[0];
-    private long size = 0;
-    private Optional<String> filename = Optional.empty();
-    @JsonProperty("content_hash")
-    private String contentHash = "";
-    private Map<String, String> headers = Map.of();
+	private String url = "";
+	@JsonProperty("mime_type")
+	private String mimeType = "";
+	private byte[] content = new byte[0];
+	private long size = 0;
+	private Optional<String> filename = Optional.empty();
+	@JsonProperty("content_hash")
+	private String contentHash = "";
+	private Map<String, String> headers = Map.of();
 
-    /** Sets the url field. */
-    public DownloadedDocumentBuilder withUrl(final String value) {
-        this.url = value;
-        return this;
-    }
+	/** Sets the url field. */
+	public DownloadedDocumentBuilder withUrl(final String value) {
+		this.url = value;
+		return this;
+	}
 
-    /** Sets the mimeType field. */
-    public DownloadedDocumentBuilder withMimeType(final String value) {
-        this.mimeType = value;
-        return this;
-    }
+	/** Sets the mimeType field. */
+	public DownloadedDocumentBuilder withMimeType(final String value) {
+		this.mimeType = value;
+		return this;
+	}
 
-    /** Sets the content field. */
-    public DownloadedDocumentBuilder withContent(final byte[] value) {
-        this.content = value;
-        return this;
-    }
+	/** Sets the content field. */
+	public DownloadedDocumentBuilder withContent(final byte[] value) {
+		this.content = value;
+		return this;
+	}
 
-    /** Sets the size field. */
-    public DownloadedDocumentBuilder withSize(final long value) {
-        this.size = value;
-        return this;
-    }
+	/** Sets the size field. */
+	public DownloadedDocumentBuilder withSize(final long value) {
+		this.size = value;
+		return this;
+	}
 
-    /** Sets the filename field. */
-    public DownloadedDocumentBuilder withFilename(final Optional<String> value) {
-        this.filename = value;
-        return this;
-    }
+	/** Sets the filename field. */
+	public DownloadedDocumentBuilder withFilename(final Optional<String> value) {
+		this.filename = value;
+		return this;
+	}
 
-    /** Sets the contentHash field. */
-    public DownloadedDocumentBuilder withContentHash(final String value) {
-        this.contentHash = value;
-        return this;
-    }
+	/** Sets the contentHash field. */
+	public DownloadedDocumentBuilder withContentHash(final String value) {
+		this.contentHash = value;
+		return this;
+	}
 
-    /** Sets the headers field. */
-    public DownloadedDocumentBuilder withHeaders(final Map<String, String> value) {
-        this.headers = value;
-        return this;
-    }
+	/** Sets the headers field. */
+	public DownloadedDocumentBuilder withHeaders(final Map<String, String> value) {
+		this.headers = value;
+		return this;
+	}
 
-    /** Builds the DownloadedDocument instance. */
-    public DownloadedDocument build() {
-        return new DownloadedDocument(
-            url,
-            mimeType,
-            content,
-            size,
-            filename.orElse(null),
-            contentHash,
-            headers
-        );
-    }
+	/** Builds the DownloadedDocument instance. */
+	public DownloadedDocument build() {
+		return new DownloadedDocument(url, mimeType, content, size, filename.orElse(null), contentHash, headers);
+	}
 }

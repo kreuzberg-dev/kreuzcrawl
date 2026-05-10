@@ -16,34 +16,32 @@ import org.jspecify.annotations.Nullable;
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ArticleMetadataBuilder.class)
-public record ArticleMetadata(
-    @Nullable @JsonProperty("published_time") String publishedTime,
-    @Nullable @JsonProperty("modified_time") String modifiedTime,
-    @Nullable String author,
-    @Nullable String section,
-    @JsonInclude(JsonInclude.Include.NON_NULL) List<String> tags
-) {
-    public static ArticleMetadataBuilder builder() {
-        return new ArticleMetadataBuilder();
-    }
+public record ArticleMetadata(@Nullable @JsonProperty("published_time") String publishedTime,
+		@Nullable @JsonProperty("modified_time") String modifiedTime, @Nullable String author, @Nullable String section,
+		@JsonInclude(JsonInclude.Include.NON_NULL) List<String> tags) {
+	public static ArticleMetadataBuilder builder() {
+		return new ArticleMetadataBuilder();
+	}
 
-    /**
-     * Parse a {@code ArticleMetadata} from a JSON string.
-     *
-     * @param json JSON serialisation matching the Rust-side field names (snake_case).
-     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
-     */
-    public static ArticleMetadata fromJson(String json) throws KreuzcrawlRsException {
-        try {
-            return new com.fasterxml.jackson.databind.ObjectMapper()
-                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
-                .findAndRegisterModules()
-                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-                .readValue(json, ArticleMetadata.class);
-        } catch (Exception e) {
-            throw new KreuzcrawlRsException("Failed to parse ArticleMetadata from JSON: " + e.getMessage(), e);
-        }
-    }
+	/**
+	 * Parse a {@code ArticleMetadata} from a JSON string.
+	 *
+	 * @param json
+	 *            JSON serialisation matching the Rust-side field names
+	 *            (snake_case).
+	 * @throws KreuzcrawlRsException
+	 *             if the JSON cannot be deserialised.
+	 */
+	public static ArticleMetadata fromJson(String json) throws KreuzcrawlRsException {
+		try {
+			return new com.fasterxml.jackson.databind.ObjectMapper()
+					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
+					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+					.readValue(json, ArticleMetadata.class);
+		} catch (Exception e) {
+			throw new KreuzcrawlRsException("Failed to parse ArticleMetadata from JSON: " + e.getMessage(), e);
+		}
+	}
 }

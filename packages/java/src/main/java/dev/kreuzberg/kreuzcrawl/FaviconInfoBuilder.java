@@ -15,43 +15,38 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class FaviconInfoBuilder {
 
-    private String url = "";
-    private String rel = "";
-    private Optional<String> sizes = Optional.empty();
-    @JsonProperty("mime_type")
-    private Optional<String> mimeType = Optional.empty();
+	private String url = "";
+	private String rel = "";
+	private Optional<String> sizes = Optional.empty();
+	@JsonProperty("mime_type")
+	private Optional<String> mimeType = Optional.empty();
 
-    /** Sets the url field. */
-    public FaviconInfoBuilder withUrl(final String value) {
-        this.url = value;
-        return this;
-    }
+	/** Sets the url field. */
+	public FaviconInfoBuilder withUrl(final String value) {
+		this.url = value;
+		return this;
+	}
 
-    /** Sets the rel field. */
-    public FaviconInfoBuilder withRel(final String value) {
-        this.rel = value;
-        return this;
-    }
+	/** Sets the rel field. */
+	public FaviconInfoBuilder withRel(final String value) {
+		this.rel = value;
+		return this;
+	}
 
-    /** Sets the sizes field. */
-    public FaviconInfoBuilder withSizes(final Optional<String> value) {
-        this.sizes = value;
-        return this;
-    }
+	/** Sets the sizes field. */
+	public FaviconInfoBuilder withSizes(final Optional<String> value) {
+		this.sizes = value;
+		return this;
+	}
 
-    /** Sets the mimeType field. */
-    public FaviconInfoBuilder withMimeType(final Optional<String> value) {
-        this.mimeType = value;
-        return this;
-    }
+	/** Sets the mimeType field. */
+	public FaviconInfoBuilder withMimeType(final Optional<String> value) {
+		this.mimeType = value;
+		return this;
+	}
 
-    /** Builds the FaviconInfo instance. */
-    public FaviconInfo build() {
-        return new FaviconInfo(
-            url,
-            rel,
-            sizes.orElse(null),
-            mimeType.orElse(null)
-        );
-    }
+	/** Builds the FaviconInfo instance. */
+	public FaviconInfo build() {
+		return new FaviconInfo(url, rel, sizes.orElse(null), mimeType.orElse(null));
+	}
 }

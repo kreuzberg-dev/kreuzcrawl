@@ -15,71 +15,65 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class ResponseMetaBuilder {
 
-    private Optional<String> etag = Optional.empty();
-    @JsonProperty("last_modified")
-    private Optional<String> lastModified = Optional.empty();
-    @JsonProperty("cache_control")
-    private Optional<String> cacheControl = Optional.empty();
-    private Optional<String> server = Optional.empty();
-    @JsonProperty("x_powered_by")
-    private Optional<String> xPoweredBy = Optional.empty();
-    @JsonProperty("content_language")
-    private Optional<String> contentLanguage = Optional.empty();
-    @JsonProperty("content_encoding")
-    private Optional<String> contentEncoding = Optional.empty();
+	private Optional<String> etag = Optional.empty();
+	@JsonProperty("last_modified")
+	private Optional<String> lastModified = Optional.empty();
+	@JsonProperty("cache_control")
+	private Optional<String> cacheControl = Optional.empty();
+	private Optional<String> server = Optional.empty();
+	@JsonProperty("x_powered_by")
+	private Optional<String> xPoweredBy = Optional.empty();
+	@JsonProperty("content_language")
+	private Optional<String> contentLanguage = Optional.empty();
+	@JsonProperty("content_encoding")
+	private Optional<String> contentEncoding = Optional.empty();
 
-    /** Sets the etag field. */
-    public ResponseMetaBuilder withEtag(final Optional<String> value) {
-        this.etag = value;
-        return this;
-    }
+	/** Sets the etag field. */
+	public ResponseMetaBuilder withEtag(final Optional<String> value) {
+		this.etag = value;
+		return this;
+	}
 
-    /** Sets the lastModified field. */
-    public ResponseMetaBuilder withLastModified(final Optional<String> value) {
-        this.lastModified = value;
-        return this;
-    }
+	/** Sets the lastModified field. */
+	public ResponseMetaBuilder withLastModified(final Optional<String> value) {
+		this.lastModified = value;
+		return this;
+	}
 
-    /** Sets the cacheControl field. */
-    public ResponseMetaBuilder withCacheControl(final Optional<String> value) {
-        this.cacheControl = value;
-        return this;
-    }
+	/** Sets the cacheControl field. */
+	public ResponseMetaBuilder withCacheControl(final Optional<String> value) {
+		this.cacheControl = value;
+		return this;
+	}
 
-    /** Sets the server field. */
-    public ResponseMetaBuilder withServer(final Optional<String> value) {
-        this.server = value;
-        return this;
-    }
+	/** Sets the server field. */
+	public ResponseMetaBuilder withServer(final Optional<String> value) {
+		this.server = value;
+		return this;
+	}
 
-    /** Sets the xPoweredBy field. */
-    public ResponseMetaBuilder withXPoweredBy(final Optional<String> value) {
-        this.xPoweredBy = value;
-        return this;
-    }
+	/** Sets the xPoweredBy field. */
+	public ResponseMetaBuilder withXPoweredBy(final Optional<String> value) {
+		this.xPoweredBy = value;
+		return this;
+	}
 
-    /** Sets the contentLanguage field. */
-    public ResponseMetaBuilder withContentLanguage(final Optional<String> value) {
-        this.contentLanguage = value;
-        return this;
-    }
+	/** Sets the contentLanguage field. */
+	public ResponseMetaBuilder withContentLanguage(final Optional<String> value) {
+		this.contentLanguage = value;
+		return this;
+	}
 
-    /** Sets the contentEncoding field. */
-    public ResponseMetaBuilder withContentEncoding(final Optional<String> value) {
-        this.contentEncoding = value;
-        return this;
-    }
+	/** Sets the contentEncoding field. */
+	public ResponseMetaBuilder withContentEncoding(final Optional<String> value) {
+		this.contentEncoding = value;
+		return this;
+	}
 
-    /** Builds the ResponseMeta instance. */
-    public ResponseMeta build() {
-        return new ResponseMeta(
-            etag.orElse(null),
-            lastModified.orElse(null),
-            cacheControl.orElse(null),
-            server.orElse(null),
-            xPoweredBy.orElse(null),
-            contentLanguage.orElse(null),
-            contentEncoding.orElse(null)
-        );
-    }
+	/** Builds the ResponseMeta instance. */
+	public ResponseMeta build() {
+		return new ResponseMeta(etag.orElse(null), lastModified.orElse(null), cacheControl.orElse(null),
+				server.orElse(null), xPoweredBy.orElse(null), contentLanguage.orElse(null),
+				contentEncoding.orElse(null));
+	}
 }

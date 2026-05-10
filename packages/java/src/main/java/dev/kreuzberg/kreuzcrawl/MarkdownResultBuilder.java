@@ -16,60 +16,54 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class MarkdownResultBuilder {
 
-    private String content = "";
-    @JsonProperty("document_structure")
-    private Optional<Object> documentStructure = Optional.empty();
-    private List<Object> tables = List.of();
-    private List<String> warnings = List.of();
-    private Optional<CitationResult> citations = Optional.empty();
-    @JsonProperty("fit_content")
-    private Optional<String> fitContent = Optional.empty();
+	private String content = "";
+	@JsonProperty("document_structure")
+	private Optional<Object> documentStructure = Optional.empty();
+	private List<Object> tables = List.of();
+	private List<String> warnings = List.of();
+	private Optional<CitationResult> citations = Optional.empty();
+	@JsonProperty("fit_content")
+	private Optional<String> fitContent = Optional.empty();
 
-    /** Sets the content field. */
-    public MarkdownResultBuilder withContent(final String value) {
-        this.content = value;
-        return this;
-    }
+	/** Sets the content field. */
+	public MarkdownResultBuilder withContent(final String value) {
+		this.content = value;
+		return this;
+	}
 
-    /** Sets the documentStructure field. */
-    public MarkdownResultBuilder withDocumentStructure(final Optional<Object> value) {
-        this.documentStructure = value;
-        return this;
-    }
+	/** Sets the documentStructure field. */
+	public MarkdownResultBuilder withDocumentStructure(final Optional<Object> value) {
+		this.documentStructure = value;
+		return this;
+	}
 
-    /** Sets the tables field. */
-    public MarkdownResultBuilder withTables(final List<Object> value) {
-        this.tables = value;
-        return this;
-    }
+	/** Sets the tables field. */
+	public MarkdownResultBuilder withTables(final List<Object> value) {
+		this.tables = value;
+		return this;
+	}
 
-    /** Sets the warnings field. */
-    public MarkdownResultBuilder withWarnings(final List<String> value) {
-        this.warnings = value;
-        return this;
-    }
+	/** Sets the warnings field. */
+	public MarkdownResultBuilder withWarnings(final List<String> value) {
+		this.warnings = value;
+		return this;
+	}
 
-    /** Sets the citations field. */
-    public MarkdownResultBuilder withCitations(final Optional<CitationResult> value) {
-        this.citations = value;
-        return this;
-    }
+	/** Sets the citations field. */
+	public MarkdownResultBuilder withCitations(final Optional<CitationResult> value) {
+		this.citations = value;
+		return this;
+	}
 
-    /** Sets the fitContent field. */
-    public MarkdownResultBuilder withFitContent(final Optional<String> value) {
-        this.fitContent = value;
-        return this;
-    }
+	/** Sets the fitContent field. */
+	public MarkdownResultBuilder withFitContent(final Optional<String> value) {
+		this.fitContent = value;
+		return this;
+	}
 
-    /** Builds the MarkdownResult instance. */
-    public MarkdownResult build() {
-        return new MarkdownResult(
-            content,
-            documentStructure.orElse(null),
-            tables,
-            warnings,
-            citations.orElse(null),
-            fitContent.orElse(null)
-        );
-    }
+	/** Builds the MarkdownResult instance. */
+	public MarkdownResult build() {
+		return new MarkdownResult(content, documentStructure.orElse(null), tables, warnings, citations.orElse(null),
+				fitContent.orElse(null));
+	}
 }

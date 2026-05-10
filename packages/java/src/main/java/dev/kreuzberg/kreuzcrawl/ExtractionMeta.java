@@ -15,34 +15,32 @@ import org.jspecify.annotations.Nullable;
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ExtractionMetaBuilder.class)
-public record ExtractionMeta(
-    @Nullable Double cost,
-    @Nullable @JsonProperty("prompt_tokens") Long promptTokens,
-    @Nullable @JsonProperty("completion_tokens") Long completionTokens,
-    @Nullable String model,
-    @JsonProperty("chunks_processed") long chunksProcessed
-) {
-    public static ExtractionMetaBuilder builder() {
-        return new ExtractionMetaBuilder();
-    }
+public record ExtractionMeta(@Nullable Double cost, @Nullable @JsonProperty("prompt_tokens") Long promptTokens,
+		@Nullable @JsonProperty("completion_tokens") Long completionTokens, @Nullable String model,
+		@JsonProperty("chunks_processed") long chunksProcessed) {
+	public static ExtractionMetaBuilder builder() {
+		return new ExtractionMetaBuilder();
+	}
 
-    /**
-     * Parse a {@code ExtractionMeta} from a JSON string.
-     *
-     * @param json JSON serialisation matching the Rust-side field names (snake_case).
-     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
-     */
-    public static ExtractionMeta fromJson(String json) throws KreuzcrawlRsException {
-        try {
-            return new com.fasterxml.jackson.databind.ObjectMapper()
-                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
-                .findAndRegisterModules()
-                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-                .readValue(json, ExtractionMeta.class);
-        } catch (Exception e) {
-            throw new KreuzcrawlRsException("Failed to parse ExtractionMeta from JSON: " + e.getMessage(), e);
-        }
-    }
+	/**
+	 * Parse a {@code ExtractionMeta} from a JSON string.
+	 *
+	 * @param json
+	 *            JSON serialisation matching the Rust-side field names
+	 *            (snake_case).
+	 * @throws KreuzcrawlRsException
+	 *             if the JSON cannot be deserialised.
+	 */
+	public static ExtractionMeta fromJson(String json) throws KreuzcrawlRsException {
+		try {
+			return new com.fasterxml.jackson.databind.ObjectMapper()
+					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
+					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+					.readValue(json, ExtractionMeta.class);
+		} catch (Exception e) {
+			throw new KreuzcrawlRsException("Failed to parse ExtractionMeta from JSON: " + e.getMessage(), e);
+		}
+	}
 }

@@ -14,33 +14,30 @@ import org.jspecify.annotations.Nullable;
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = SitemapUrlBuilder.class)
-public record SitemapUrl(
-    String url,
-    @Nullable String lastmod,
-    @Nullable String changefreq,
-    @Nullable String priority
-) {
-    public static SitemapUrlBuilder builder() {
-        return new SitemapUrlBuilder();
-    }
+public record SitemapUrl(String url, @Nullable String lastmod, @Nullable String changefreq, @Nullable String priority) {
+	public static SitemapUrlBuilder builder() {
+		return new SitemapUrlBuilder();
+	}
 
-    /**
-     * Parse a {@code SitemapUrl} from a JSON string.
-     *
-     * @param json JSON serialisation matching the Rust-side field names (snake_case).
-     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
-     */
-    public static SitemapUrl fromJson(String json) throws KreuzcrawlRsException {
-        try {
-            return new com.fasterxml.jackson.databind.ObjectMapper()
-                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
-                .findAndRegisterModules()
-                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-                .readValue(json, SitemapUrl.class);
-        } catch (Exception e) {
-            throw new KreuzcrawlRsException("Failed to parse SitemapUrl from JSON: " + e.getMessage(), e);
-        }
-    }
+	/**
+	 * Parse a {@code SitemapUrl} from a JSON string.
+	 *
+	 * @param json
+	 *            JSON serialisation matching the Rust-side field names
+	 *            (snake_case).
+	 * @throws KreuzcrawlRsException
+	 *             if the JSON cannot be deserialised.
+	 */
+	public static SitemapUrl fromJson(String json) throws KreuzcrawlRsException {
+		try {
+			return new com.fasterxml.jackson.databind.ObjectMapper()
+					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
+					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+					.readValue(json, SitemapUrl.class);
+		} catch (Exception e) {
+			throw new KreuzcrawlRsException("Failed to parse SitemapUrl from JSON: " + e.getMessage(), e);
+		}
+	}
 }

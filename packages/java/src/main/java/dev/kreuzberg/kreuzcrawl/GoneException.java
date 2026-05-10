@@ -6,13 +6,13 @@ package dev.kreuzberg.kreuzcrawl;
  * The resource is permanently gone (HTTP 410).
  */
 public class GoneException extends CrawlErrorException {
-    /** Creates a new GoneException with the given message. */
-    public GoneException(final String message) {
-        super(message);
-    }
+	/** Creates a new GoneException with the given message. */
+	public GoneException(final String message) {
+		super(message);
+	}
 
-    /** Creates a new GoneException with the given message and cause. */
-    public GoneException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+	/** Creates a new GoneException with the given message and cause. */
+	public GoneException(final String message, final Throwable cause) {
+		super(message, cause);
+	}
 }

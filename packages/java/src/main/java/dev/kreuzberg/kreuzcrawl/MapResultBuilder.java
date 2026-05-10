@@ -14,18 +14,16 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonPOJOBuilder(withPrefix = "with")
 public class MapResultBuilder {
 
-    private List<SitemapUrl> urls = List.of();
+	private List<SitemapUrl> urls = List.of();
 
-    /** Sets the urls field. */
-    public MapResultBuilder withUrls(final List<SitemapUrl> value) {
-        this.urls = value;
-        return this;
-    }
+	/** Sets the urls field. */
+	public MapResultBuilder withUrls(final List<SitemapUrl> value) {
+		this.urls = value;
+		return this;
+	}
 
-    /** Builds the MapResult instance. */
-    public MapResult build() {
-        return new MapResult(
-            urls
-        );
-    }
+	/** Builds the MapResult instance. */
+	public MapResult build() {
+		return new MapResult(urls);
+	}
 }

@@ -14,34 +14,30 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonPOJOBuilder(withPrefix = "with")
 public class BatchCrawlResultBuilder {
 
-    private String url = "";
-    private Optional<CrawlResult> result = Optional.empty();
-    private Optional<String> error = Optional.empty();
+	private String url = "";
+	private Optional<CrawlResult> result = Optional.empty();
+	private Optional<String> error = Optional.empty();
 
-    /** Sets the url field. */
-    public BatchCrawlResultBuilder withUrl(final String value) {
-        this.url = value;
-        return this;
-    }
+	/** Sets the url field. */
+	public BatchCrawlResultBuilder withUrl(final String value) {
+		this.url = value;
+		return this;
+	}
 
-    /** Sets the result field. */
-    public BatchCrawlResultBuilder withResult(final Optional<CrawlResult> value) {
-        this.result = value;
-        return this;
-    }
+	/** Sets the result field. */
+	public BatchCrawlResultBuilder withResult(final Optional<CrawlResult> value) {
+		this.result = value;
+		return this;
+	}
 
-    /** Sets the error field. */
-    public BatchCrawlResultBuilder withError(final Optional<String> value) {
-        this.error = value;
-        return this;
-    }
+	/** Sets the error field. */
+	public BatchCrawlResultBuilder withError(final Optional<String> value) {
+		this.error = value;
+		return this;
+	}
 
-    /** Builds the BatchCrawlResult instance. */
-    public BatchCrawlResult build() {
-        return new BatchCrawlResult(
-            url,
-            result.orElse(null),
-            error.orElse(null)
-        );
-    }
+	/** Builds the BatchCrawlResult instance. */
+	public BatchCrawlResult build() {
+		return new BatchCrawlResult(url, result.orElse(null), error.orElse(null));
+	}
 }

@@ -15,35 +15,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class FeedInfoBuilder {
 
-    private String url = "";
-    private Optional<String> title = Optional.empty();
-    @JsonProperty("feed_type")
-    private FeedType feedType = null;
+	private String url = "";
+	private Optional<String> title = Optional.empty();
+	@JsonProperty("feed_type")
+	private FeedType feedType = null;
 
-    /** Sets the url field. */
-    public FeedInfoBuilder withUrl(final String value) {
-        this.url = value;
-        return this;
-    }
+	/** Sets the url field. */
+	public FeedInfoBuilder withUrl(final String value) {
+		this.url = value;
+		return this;
+	}
 
-    /** Sets the title field. */
-    public FeedInfoBuilder withTitle(final Optional<String> value) {
-        this.title = value;
-        return this;
-    }
+	/** Sets the title field. */
+	public FeedInfoBuilder withTitle(final Optional<String> value) {
+		this.title = value;
+		return this;
+	}
 
-    /** Sets the feedType field. */
-    public FeedInfoBuilder withFeedType(final FeedType value) {
-        this.feedType = value;
-        return this;
-    }
+	/** Sets the feedType field. */
+	public FeedInfoBuilder withFeedType(final FeedType value) {
+		this.feedType = value;
+		return this;
+	}
 
-    /** Builds the FeedInfo instance. */
-    public FeedInfo build() {
-        return new FeedInfo(
-            url,
-            title.orElse(null),
-            feedType
-        );
-    }
+	/** Builds the FeedInfo instance. */
+	public FeedInfo build() {
+		return new FeedInfo(url, title.orElse(null), feedType);
+	}
 }

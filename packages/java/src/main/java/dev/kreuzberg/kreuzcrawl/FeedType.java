@@ -12,34 +12,34 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * The type of a feed (RSS, Atom, or JSON Feed).
  */
 public enum FeedType {
-    /** RSS feed. */
-    Rss("rss"),
-    /** Atom feed. */
-    Atom("atom"),
-    /** JSON Feed. */
-    JsonFeed("json_feed");
+	/** RSS feed. */
+	Rss("rss"),
+	/** Atom feed. */
+	Atom("atom"),
+	/** JSON Feed. */
+	JsonFeed("json_feed");
 
-    /** The string value. */
-    private final String value;
+	/** The string value. */
+	private final String value;
 
-    FeedType(final String value) {
-        this.value = value;
-    }
+	FeedType(final String value) {
+		this.value = value;
+	}
 
-    /** Returns the string value. */
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
+	/** Returns the string value. */
+	@JsonValue
+	public String getValue() {
+		return value;
+	}
 
-    /** Creates an instance from a string value. */
-    @JsonCreator
-    public static FeedType fromValue(final String value) {
-        for (FeedType e : values()) {
-            if (e.value.equalsIgnoreCase(value)) {
-                return e;
-            }
-        }
-        throw new IllegalArgumentException("Unknown value: " + value);
-    }
+	/** Creates an instance from a string value. */
+	@JsonCreator
+	public static FeedType fromValue(final String value) {
+		for (FeedType e : values()) {
+			if (e.value.equalsIgnoreCase(value)) {
+				return e;
+			}
+		}
+		throw new IllegalArgumentException("Unknown value: " + value);
+	}
 }

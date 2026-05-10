@@ -12,36 +12,36 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * The source of an image reference.
  */
 public enum ImageSource {
-    /** An {@code &lt;img&gt;} tag. */
-    Img("img"),
-    /** A {@code &lt;source&gt;} tag inside {@code &lt;picture&gt;}. */
-    PictureSource("picture_source"),
-    /** An {@code og:image} meta tag. */
-    OgImage("og:image"),
-    /** A {@code twitter:image} meta tag. */
-    TwitterImage("twitter:image");
+	/** An {@code &lt;img&gt;} tag. */
+	Img("img"),
+	/** A {@code &lt;source&gt;} tag inside {@code &lt;picture&gt;}. */
+	PictureSource("picture_source"),
+	/** An {@code og:image} meta tag. */
+	OgImage("og:image"),
+	/** A {@code twitter:image} meta tag. */
+	TwitterImage("twitter:image");
 
-    /** The string value. */
-    private final String value;
+	/** The string value. */
+	private final String value;
 
-    ImageSource(final String value) {
-        this.value = value;
-    }
+	ImageSource(final String value) {
+		this.value = value;
+	}
 
-    /** Returns the string value. */
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
+	/** Returns the string value. */
+	@JsonValue
+	public String getValue() {
+		return value;
+	}
 
-    /** Creates an instance from a string value. */
-    @JsonCreator
-    public static ImageSource fromValue(final String value) {
-        for (ImageSource e : values()) {
-            if (e.value.equalsIgnoreCase(value)) {
-                return e;
-            }
-        }
-        throw new IllegalArgumentException("Unknown value: " + value);
-    }
+	/** Creates an instance from a string value. */
+	@JsonCreator
+	public static ImageSource fromValue(final String value) {
+		for (ImageSource e : values()) {
+			if (e.value.equalsIgnoreCase(value)) {
+				return e;
+			}
+		}
+		throw new IllegalArgumentException("Unknown value: " + value);
+	}
 }

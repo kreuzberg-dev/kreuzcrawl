@@ -13,26 +13,23 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonPOJOBuilder(withPrefix = "with")
 public class HeadingInfoBuilder {
 
-    private byte level = 0;
-    private String text = "";
+	private byte level = 0;
+	private String text = "";
 
-    /** Sets the level field. */
-    public HeadingInfoBuilder withLevel(final byte value) {
-        this.level = value;
-        return this;
-    }
+	/** Sets the level field. */
+	public HeadingInfoBuilder withLevel(final byte value) {
+		this.level = value;
+		return this;
+	}
 
-    /** Sets the text field. */
-    public HeadingInfoBuilder withText(final String value) {
-        this.text = value;
-        return this;
-    }
+	/** Sets the text field. */
+	public HeadingInfoBuilder withText(final String value) {
+		this.text = value;
+		return this;
+	}
 
-    /** Builds the HeadingInfo instance. */
-    public HeadingInfo build() {
-        return new HeadingInfo(
-            level,
-            text
-        );
-    }
+	/** Builds the HeadingInfo instance. */
+	public HeadingInfo build() {
+		return new HeadingInfo(level, text);
+	}
 }

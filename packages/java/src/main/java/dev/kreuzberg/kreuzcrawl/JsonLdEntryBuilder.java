@@ -15,35 +15,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class JsonLdEntryBuilder {
 
-    @JsonProperty("schema_type")
-    private String schemaType = "";
-    private Optional<String> name = Optional.empty();
-    private String raw = "";
+	@JsonProperty("schema_type")
+	private String schemaType = "";
+	private Optional<String> name = Optional.empty();
+	private String raw = "";
 
-    /** Sets the schemaType field. */
-    public JsonLdEntryBuilder withSchemaType(final String value) {
-        this.schemaType = value;
-        return this;
-    }
+	/** Sets the schemaType field. */
+	public JsonLdEntryBuilder withSchemaType(final String value) {
+		this.schemaType = value;
+		return this;
+	}
 
-    /** Sets the name field. */
-    public JsonLdEntryBuilder withName(final Optional<String> value) {
-        this.name = value;
-        return this;
-    }
+	/** Sets the name field. */
+	public JsonLdEntryBuilder withName(final Optional<String> value) {
+		this.name = value;
+		return this;
+	}
 
-    /** Sets the raw field. */
-    public JsonLdEntryBuilder withRaw(final String value) {
-        this.raw = value;
-        return this;
-    }
+	/** Sets the raw field. */
+	public JsonLdEntryBuilder withRaw(final String value) {
+		this.raw = value;
+		return this;
+	}
 
-    /** Builds the JsonLdEntry instance. */
-    public JsonLdEntry build() {
-        return new JsonLdEntry(
-            schemaType,
-            name.orElse(null),
-            raw
-        );
-    }
+	/** Builds the JsonLdEntry instance. */
+	public JsonLdEntry build() {
+		return new JsonLdEntry(schemaType, name.orElse(null), raw);
+	}
 }

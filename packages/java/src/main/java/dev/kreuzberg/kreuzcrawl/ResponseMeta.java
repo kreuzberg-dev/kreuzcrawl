@@ -15,36 +15,34 @@ import org.jspecify.annotations.Nullable;
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ResponseMetaBuilder.class)
-public record ResponseMeta(
-    @Nullable String etag,
-    @Nullable @JsonProperty("last_modified") String lastModified,
-    @Nullable @JsonProperty("cache_control") String cacheControl,
-    @Nullable String server,
-    @Nullable @JsonProperty("x_powered_by") String xPoweredBy,
-    @Nullable @JsonProperty("content_language") String contentLanguage,
-    @Nullable @JsonProperty("content_encoding") String contentEncoding
-) {
-    public static ResponseMetaBuilder builder() {
-        return new ResponseMetaBuilder();
-    }
+public record ResponseMeta(@Nullable String etag, @Nullable @JsonProperty("last_modified") String lastModified,
+		@Nullable @JsonProperty("cache_control") String cacheControl, @Nullable String server,
+		@Nullable @JsonProperty("x_powered_by") String xPoweredBy,
+		@Nullable @JsonProperty("content_language") String contentLanguage,
+		@Nullable @JsonProperty("content_encoding") String contentEncoding) {
+	public static ResponseMetaBuilder builder() {
+		return new ResponseMetaBuilder();
+	}
 
-    /**
-     * Parse a {@code ResponseMeta} from a JSON string.
-     *
-     * @param json JSON serialisation matching the Rust-side field names (snake_case).
-     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
-     */
-    public static ResponseMeta fromJson(String json) throws KreuzcrawlRsException {
-        try {
-            return new com.fasterxml.jackson.databind.ObjectMapper()
-                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
-                .findAndRegisterModules()
-                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-                .readValue(json, ResponseMeta.class);
-        } catch (Exception e) {
-            throw new KreuzcrawlRsException("Failed to parse ResponseMeta from JSON: " + e.getMessage(), e);
-        }
-    }
+	/**
+	 * Parse a {@code ResponseMeta} from a JSON string.
+	 *
+	 * @param json
+	 *            JSON serialisation matching the Rust-side field names
+	 *            (snake_case).
+	 * @throws KreuzcrawlRsException
+	 *             if the JSON cannot be deserialised.
+	 */
+	public static ResponseMeta fromJson(String json) throws KreuzcrawlRsException {
+		try {
+			return new com.fasterxml.jackson.databind.ObjectMapper()
+					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
+					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+					.readValue(json, ResponseMeta.class);
+		} catch (Exception e) {
+			throw new KreuzcrawlRsException("Failed to parse ResponseMeta from JSON: " + e.getMessage(), e);
+		}
+	}
 }

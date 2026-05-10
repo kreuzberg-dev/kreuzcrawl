@@ -15,35 +15,33 @@ import org.jspecify.annotations.Nullable;
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = DownloadedAssetBuilder.class)
-public record DownloadedAsset(
-    String url,
-    @JsonProperty("content_hash") String contentHash,
-    @Nullable @JsonProperty("mime_type") String mimeType,
-    long size,
-    @JsonProperty("asset_category") AssetCategory assetCategory,
-    @Nullable @JsonProperty("html_tag") String htmlTag
-) {
-    public static DownloadedAssetBuilder builder() {
-        return new DownloadedAssetBuilder();
-    }
+public record DownloadedAsset(String url, @JsonProperty("content_hash") String contentHash,
+		@Nullable @JsonProperty("mime_type") String mimeType, long size,
+		@JsonProperty("asset_category") AssetCategory assetCategory,
+		@Nullable @JsonProperty("html_tag") String htmlTag) {
+	public static DownloadedAssetBuilder builder() {
+		return new DownloadedAssetBuilder();
+	}
 
-    /**
-     * Parse a {@code DownloadedAsset} from a JSON string.
-     *
-     * @param json JSON serialisation matching the Rust-side field names (snake_case).
-     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
-     */
-    public static DownloadedAsset fromJson(String json) throws KreuzcrawlRsException {
-        try {
-            return new com.fasterxml.jackson.databind.ObjectMapper()
-                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
-                .findAndRegisterModules()
-                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-                .readValue(json, DownloadedAsset.class);
-        } catch (Exception e) {
-            throw new KreuzcrawlRsException("Failed to parse DownloadedAsset from JSON: " + e.getMessage(), e);
-        }
-    }
+	/**
+	 * Parse a {@code DownloadedAsset} from a JSON string.
+	 *
+	 * @param json
+	 *            JSON serialisation matching the Rust-side field names
+	 *            (snake_case).
+	 * @throws KreuzcrawlRsException
+	 *             if the JSON cannot be deserialised.
+	 */
+	public static DownloadedAsset fromJson(String json) throws KreuzcrawlRsException {
+		try {
+			return new com.fasterxml.jackson.databind.ObjectMapper()
+					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
+					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+					.readValue(json, DownloadedAsset.class);
+		} catch (Exception e) {
+			throw new KreuzcrawlRsException("Failed to parse DownloadedAsset from JSON: " + e.getMessage(), e);
+		}
+	}
 }

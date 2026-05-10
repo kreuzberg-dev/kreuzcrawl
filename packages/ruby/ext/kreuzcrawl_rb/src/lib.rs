@@ -480,6 +480,10 @@ impl BrowserConfig {
     }
 }
 
+fn default_timeout() -> u64 {
+    30
+}
+
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[serde(default)]
 #[magnus::wrap(class = "Kreuzcrawl::CrawlConfig")]
