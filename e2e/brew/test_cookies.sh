@@ -8,29 +8,29 @@
 set -euo pipefail
 
 test_cookies_per_domain() {
-    # Isolates cookies per domain during crawl
-    kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/cookies_per_domain" --format json --browser-mode never >/dev/null
+  # Isolates cookies per domain during crawl
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/cookies_per_domain" --format json --browser-mode never >/dev/null
 
-    # skipped: field 'cookies.length' not available on result type
-    # skipped: field 'cookies' not available on result type
+  # skipped: field 'cookies.length' not available on result type
+  # skipped: field 'cookies' not available on result type
 }
 
 test_cookies_persistence() {
-    # Maintains cookies across multiple crawl requests
-    kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/cookies_persistence" --format json --browser-mode never >/dev/null
+  # Maintains cookies across multiple crawl requests
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/cookies_persistence" --format json --browser-mode never >/dev/null
 
-    # skipped: field 'cookies' not available on result type
+  # skipped: field 'cookies' not available on result type
 }
 
 test_cookies_set_cookie_response() {
-    # Respects Set-Cookie header from server responses
-    kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/cookies_set_cookie_response" --format json --browser-mode never >/dev/null
+  # Respects Set-Cookie header from server responses
+  kreuzcrawl scrape "${MOCK_SERVER_URL}/fixtures/cookies_set_cookie_response" --format json --browser-mode never >/dev/null
 
-    # skipped: field 'cookies' not available on result type
+  # skipped: field 'cookies' not available on result type
 }
 
 run_tests_cookies() {
-    run_test test_cookies_per_domain
-    run_test test_cookies_persistence
-    run_test test_cookies_set_cookie_response
+  run_test test_cookies_per_domain
+  run_test test_cookies_persistence
+  run_test test_cookies_set_cookie_response
 }
