@@ -105,20 +105,29 @@ impl CrawlEngine {
         use tower::Service;
         match service.call(CrawlRequest::new(url)).await {
             Ok(resp) => Ok((resp, false)),
-            Err(CrawlError::NotFound(_)) if self.config.respect_robots_txt => {
-                // Return a sentinel response; the scrape() caller recognises status 404
-                // and short-circuits with a minimal result (preserving prior behaviour).
-                Ok((
-                    CrawlResponse {
-                        status: 404,
-                        content_type: String::new(),
-                        body: String::new(),
-                        body_bytes: Vec::new(),
-                        headers: std::collections::HashMap::new(),
-                    },
-                    false,
-                ))
-            }
+            // When soft_http_errors is enabled, synthesise a response for HTTP-level
+            // error variants instead of propagating them as Err. The caller (scrape)
+            // inspects the status code and may short-circuit with a minimal result.
+            Err(CrawlError::NotFound(_)) if self.config.soft_http_errors => Ok((
+                CrawlResponse {
+                    status: 404,
+                    content_type: String::new(),
+                    body: String::new(),
+                    body_bytes: Vec::new(),
+                    headers: std::collections::HashMap::new(),
+                },
+                false,
+            )),
+            Err(CrawlError::Forbidden(_) | CrawlError::WafBlocked(_)) if self.config.soft_http_errors => Ok((
+                CrawlResponse {
+                    status: 403,
+                    content_type: String::new(),
+                    body: String::new(),
+                    body_bytes: Vec::new(),
+                    headers: std::collections::HashMap::new(),
+                },
+                false,
+            )),
             // WAF/access fallback: delegate to browser when mode is Auto.
             // Browser has a legitimate Chrome TLS fingerprint and bypasses most WAFs.
             // Only WAF-blocked and 403 Forbidden responses are retried via browser;
@@ -159,9 +168,48 @@ impl CrawlEngine {
             let max_redirects = self.config.max_redirects;
             let outcome = follow_redirects(self, url, max_redirects).await?;
 
-            // Preserve the original early-return for 404 when robots.txt is respected:
-            // skip extraction entirely and return a minimal result.
-            if outcome.final_response.status == 404 && self.config.respect_robots_txt {
+            // When soft_http_errors is enabled, a synthesised 4xx response should
+            // short-circuit extraction and return a minimal result rather than attempting
+            // to parse an empty body as HTML. The redirect-chain synth (302→404) fires
+            // regardless of soft_http_errors (handled in follow_redirects).
+            let status = outcome.final_response.status;
+            if matches!(status, 404 | 403) && outcome.final_response.body.is_empty() && self.config.soft_http_errors {
+                return Ok(ScrapeResult {
+                    status_code: status,
+                    content_type: String::new(),
+                    html: String::new(),
+                    body_size: 0,
+                    metadata: PageMetadata::default(),
+                    links: Vec::new(),
+                    images: Vec::new(),
+                    feeds: Vec::new(),
+                    json_ld: Vec::new(),
+                    is_allowed: true,
+                    crawl_delay: None,
+                    noindex_detected: false,
+                    nofollow_detected: false,
+                    x_robots_tag: None,
+                    is_pdf: false,
+                    was_skipped: false,
+                    detected_charset: None,
+                    auth_header_sent: self.config.auth.is_some(),
+                    response_meta: None,
+                    assets: Vec::new(),
+                    js_render_hint: false,
+                    browser_used: false,
+                    markdown: None,
+                    extracted_data: None,
+                    extraction_meta: None,
+                    screenshot: None,
+                    downloaded_document: None,
+                });
+            }
+            // Also short-circuit for redirected-chain 404s (redirect_count > 0) —
+            // these come from follow_redirects regardless of soft_http_errors.
+            if outcome.final_response.status == 404
+                && outcome.final_response.body.is_empty()
+                && outcome.redirect_count > 0
+            {
                 return Ok(ScrapeResult {
                     status_code: 404,
                     content_type: String::new(),

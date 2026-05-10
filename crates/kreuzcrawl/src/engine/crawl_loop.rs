@@ -74,10 +74,12 @@ pub(crate) async fn follow_redirects(
     loop {
         let (resp, _browser_used) = match engine.fetch_response(&current_url).await {
             Ok(pair) => pair,
-            // A 404 reached after at least one redirect should not abort the chain — surface
-            // it to the caller as a synthetic 404 response so that callers can read
-            // `final_url` and observe the failure status without catching an exception.
-            // For the first hop (no redirects yet), preserve the original NotFound error.
+            // A 404 reached after at least one redirect is always soft-failed regardless
+            // of `soft_http_errors`. The caller opted into redirect-following, so receiving
+            // a 404 at the end of a chain is part of normal redirect flow. Surface it as a
+            // synthetic 404 response so callers can inspect `final_url` and `status_code`
+            // without catching an exception. For the first hop (no redirects yet), the
+            // original `NotFound` error propagates unless `soft_http_errors` is set.
             Err(CrawlError::NotFound(_)) if redirect_count > 0 => {
                 let synthetic = crate::tower::CrawlResponse {
                     status: 404,

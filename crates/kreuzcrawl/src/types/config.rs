@@ -224,6 +224,15 @@ pub struct CrawlConfig {
     pub max_concurrent: Option<usize>,
     /// Whether to respect robots.txt directives.
     pub respect_robots_txt: bool,
+    /// When true, HTTP-level error responses (404 NotFound, 403 Forbidden, WAF blocks)
+    /// are surfaced as `ScrapeResult` records with the matching `status_code` rather
+    /// than raised as `CrawlError`. Default `false` preserves the historical
+    /// throw-on-error contract for direct fetches. Independently of this flag,
+    /// 404s reached at the end of a redirect chain are *always* surfaced softly —
+    /// the user opted into redirect-following, so receiving a 404 there is part of
+    /// the normal flow rather than an unexpected error.
+    #[serde(default)]
+    pub soft_http_errors: bool,
     /// Custom user-agent string.
     pub user_agent: Option<String>,
     /// Whether to restrict crawling to the same domain.
@@ -311,6 +320,7 @@ impl Default for CrawlConfig {
             max_pages: None,
             max_concurrent: None,
             respect_robots_txt: false,
+            soft_http_errors: false,
             user_agent: None,
             stay_on_domain: false,
             allow_subdomains: false,
