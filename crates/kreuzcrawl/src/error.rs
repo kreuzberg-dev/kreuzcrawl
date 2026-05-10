@@ -2,6 +2,46 @@
 
 use thiserror::Error;
 
+/// Stable, language-agnostic classification for network-level errors.
+///
+/// The [`tag`](NetworkErrorKind::tag) method returns a lowercase ASCII string
+/// that is stable across all language bindings. Cross-language e2e fixtures
+/// assert that the error message contains the corresponding tag.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NetworkErrorKind {
+    /// TCP connection attempt refused or unreachable.
+    Connection,
+    /// DNS name resolution failed.
+    Dns,
+    /// TLS/SSL handshake or certificate error.
+    Ssl,
+    /// Request exceeded the configured deadline.
+    Timeout,
+    /// Error communicating with or configuring a proxy.
+    Proxy,
+    /// Unclassified network error.
+    Other,
+}
+
+impl NetworkErrorKind {
+    /// Returns the stable, lowercase tag string embedded in error messages.
+    ///
+    /// Each tag is a fixed ASCII keyword: `"connection"`, `"dns"`, `"ssl"`,
+    /// `"timeout"`, `"proxy"`, or `"network"`. Cross-language e2e fixtures
+    /// assert that `error.to_string()` contains this substring.
+    #[must_use]
+    pub fn tag(self) -> &'static str {
+        match self {
+            Self::Connection => "connection",
+            Self::Dns => "dns",
+            Self::Ssl => "ssl",
+            Self::Timeout => "timeout",
+            Self::Proxy => "proxy",
+            Self::Other => "network",
+        }
+    }
+}
+
 /// Errors that can occur during crawling, scraping, or mapping operations.
 #[derive(Debug, Error)]
 pub enum CrawlError {
@@ -69,17 +109,17 @@ pub(crate) fn error_chain_string(e: &reqwest::Error) -> String {
     parts.join(" | ").to_lowercase()
 }
 
-/// Classify a `reqwest::Error` into the appropriate `CrawlError` variant.
+/// Determine the [`NetworkErrorKind`] for a reqwest error (non-wasm).
 ///
-/// Walks the full error source chain to detect DNS, SSL/TLS, and other
-/// network-level errors that reqwest wraps in generic connect errors.
+/// Walks the full source chain to detect DNS, SSL/TLS, timeout, and connection
+/// errors that reqwest may wrap inside generic connect errors.
 #[cfg(not(target_arch = "wasm32"))]
-pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
+pub(crate) fn network_error_kind(e: &reqwest::Error) -> NetworkErrorKind {
     let chain = error_chain_string(e);
     if e.is_timeout() || chain.contains("timed out") || chain.contains("timeout") {
-        CrawlError::Timeout(format!("timeout: {e}"))
+        NetworkErrorKind::Timeout
     } else if chain.contains("dns") || chain.contains("resolve") || chain.contains("lookup") {
-        CrawlError::Dns(format!("dns: {e}"))
+        NetworkErrorKind::Dns
     } else if chain.contains("ssl")
         || chain.contains("tls")
         || chain.contains("certificate")
@@ -89,44 +129,228 @@ pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
         || chain.contains("alertdescription")
         || chain.contains("invalidcontenttype")
     {
-        CrawlError::Ssl(format!("ssl: {e}"))
+        NetworkErrorKind::Ssl
+    } else if chain.contains("proxy") {
+        NetworkErrorKind::Proxy
     } else if e.is_connect() || chain.contains("connection") || chain.contains("connect") {
-        CrawlError::Connection(format!("connection: {e}"))
-    } else if e.is_body()
-        || chain.contains("content-length")
-        || chain.contains("truncat")
-        || chain.contains("incomplete")
-        || chain.contains("decoding response body")
-        || chain.contains("error decoding")
-    {
-        CrawlError::DataLoss(format!("data_loss: {e}"))
+        NetworkErrorKind::Connection
     } else {
-        CrawlError::Other(format!("other: {e}"))
+        NetworkErrorKind::Other
     }
 }
 
-/// Classify a `reqwest::Error` into the appropriate `CrawlError` variant (wasm fallback).
+/// Determine the [`NetworkErrorKind`] for a reqwest error (wasm fallback).
 ///
 /// On wasm32, reqwest does not expose `.is_timeout()`, `.is_connect()`, or `.is_body()`
 /// methods, so we rely solely on the error chain string for classification.
 #[cfg(target_arch = "wasm32")]
-pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
+pub(crate) fn network_error_kind(e: &reqwest::Error) -> NetworkErrorKind {
     let chain = error_chain_string(e);
     if chain.contains("timed out") || chain.contains("timeout") {
-        CrawlError::Timeout(format!("timeout: {e}"))
+        NetworkErrorKind::Timeout
     } else if chain.contains("dns") || chain.contains("resolve") || chain.contains("lookup") {
-        CrawlError::Dns(format!("dns: {e}"))
+        NetworkErrorKind::Dns
     } else if chain.contains("ssl")
         || chain.contains("tls")
         || chain.contains("certificate")
         || chain.contains("handshake")
     {
-        CrawlError::Ssl(format!("ssl: {e}"))
+        NetworkErrorKind::Ssl
+    } else if chain.contains("proxy") {
+        NetworkErrorKind::Proxy
     } else if chain.contains("connection") || chain.contains("connect") {
-        CrawlError::Connection(format!("connection: {e}"))
-    } else if chain.contains("content-length") || chain.contains("truncat") || chain.contains("incomplete") {
-        CrawlError::DataLoss(format!("data_loss: {e}"))
+        NetworkErrorKind::Connection
     } else {
-        CrawlError::Other(format!("other: {e}"))
+        NetworkErrorKind::Other
+    }
+}
+
+/// Classify a `reqwest::Error` into the appropriate `CrawlError` variant (non-wasm).
+///
+/// The error message is prefixed with `[network:<kind>]` so that cross-language
+/// e2e fixtures can assert on stable substrings regardless of the native error
+/// message format each binding produces.
+#[cfg(not(target_arch = "wasm32"))]
+pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
+    let chain = error_chain_string(e);
+    let kind = network_error_kind(e);
+    let tag = kind.tag();
+    match kind {
+        NetworkErrorKind::Timeout => CrawlError::Timeout(format!("[network:{tag}] {e}")),
+        NetworkErrorKind::Dns => CrawlError::Dns(format!("[network:{tag}] {e}")),
+        NetworkErrorKind::Ssl => CrawlError::Ssl(format!("[network:{tag}] {e}")),
+        NetworkErrorKind::Proxy | NetworkErrorKind::Connection => {
+            CrawlError::Connection(format!("[network:{tag}] {e}"))
+        }
+        NetworkErrorKind::Other => {
+            if e.is_body()
+                || chain.contains("content-length")
+                || chain.contains("truncat")
+                || chain.contains("incomplete")
+                || chain.contains("decoding response body")
+                || chain.contains("error decoding")
+            {
+                CrawlError::DataLoss(format!("data_loss: {e}"))
+            } else {
+                CrawlError::Other(format!("other: {e}"))
+            }
+        }
+    }
+}
+
+/// Classify a `reqwest::Error` into the appropriate `CrawlError` variant (wasm fallback).
+///
+/// The error message is prefixed with `[network:<kind>]` so that cross-language
+/// e2e fixtures can assert on stable substrings regardless of the native error
+/// message format each binding produces.
+#[cfg(target_arch = "wasm32")]
+pub(crate) fn classify_reqwest_error(e: &reqwest::Error) -> CrawlError {
+    let chain = error_chain_string(e);
+    let kind = network_error_kind(e);
+    let tag = kind.tag();
+    match kind {
+        NetworkErrorKind::Timeout => CrawlError::Timeout(format!("[network:{tag}] {e}")),
+        NetworkErrorKind::Dns => CrawlError::Dns(format!("[network:{tag}] {e}")),
+        NetworkErrorKind::Ssl => CrawlError::Ssl(format!("[network:{tag}] {e}")),
+        NetworkErrorKind::Proxy | NetworkErrorKind::Connection => {
+            CrawlError::Connection(format!("[network:{tag}] {e}"))
+        }
+        NetworkErrorKind::Other => {
+            if chain.contains("content-length") || chain.contains("truncat") || chain.contains("incomplete") {
+                CrawlError::DataLoss(format!("data_loss: {e}"))
+            } else {
+                CrawlError::Other(format!("other: {e}"))
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // -------------------------------------------------------------------------
+    // NetworkErrorKind::tag() unit tests (pure, no network)
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn network_error_kind_tag_connection() {
+        assert_eq!(NetworkErrorKind::Connection.tag(), "connection");
+    }
+
+    #[test]
+    fn network_error_kind_tag_dns() {
+        assert_eq!(NetworkErrorKind::Dns.tag(), "dns");
+    }
+
+    #[test]
+    fn network_error_kind_tag_ssl() {
+        assert_eq!(NetworkErrorKind::Ssl.tag(), "ssl");
+    }
+
+    #[test]
+    fn network_error_kind_tag_timeout() {
+        assert_eq!(NetworkErrorKind::Timeout.tag(), "timeout");
+    }
+
+    #[test]
+    fn network_error_kind_tag_proxy() {
+        assert_eq!(NetworkErrorKind::Proxy.tag(), "proxy");
+    }
+
+    #[test]
+    fn network_error_kind_tag_other() {
+        assert_eq!(NetworkErrorKind::Other.tag(), "network");
+    }
+
+    // -------------------------------------------------------------------------
+    // Network integration tests — each triggers a real reqwest error
+    // -------------------------------------------------------------------------
+
+    #[cfg(not(target_arch = "wasm32"))]
+    mod network_integration {
+        use super::*;
+        use std::time::Duration;
+        use tokio::net::TcpListener;
+
+        async fn scrape_url(url: &str) -> CrawlError {
+            let client = reqwest::Client::builder()
+                .timeout(Duration::from_millis(500))
+                .danger_accept_invalid_certs(true)
+                .build()
+                .expect("client build must not fail");
+            classify_reqwest_error(&client.get(url).send().await.expect_err("expected network error"))
+        }
+
+        #[tokio::test]
+        async fn connection_refused_produces_connection_tag() {
+            // Port 1 is almost universally not listening.
+            let err = scrape_url("http://127.0.0.1:1/").await;
+            let msg = err.to_string();
+            assert!(
+                msg.contains("[network:connection]"),
+                "expected [network:connection] in '{msg}'"
+            );
+            assert!(msg.contains("connection"), "expected 'connection' in '{msg}'");
+        }
+
+        #[tokio::test]
+        async fn dns_failure_produces_dns_tag() {
+            let err = scrape_url("http://this-hostname-does-not-exist-kreuzcrawl-test.invalid/").await;
+            let msg = err.to_string();
+            assert!(msg.contains("[network:dns]"), "expected [network:dns] in '{msg}'");
+            assert!(msg.contains("dns"), "expected 'dns' in '{msg}'");
+        }
+
+        #[tokio::test]
+        async fn timeout_produces_timeout_tag() {
+            // Start a TCP listener that accepts but never writes — causes a
+            // read/response timeout for the HTTP client.
+            let listener = TcpListener::bind("127.0.0.1:0").await.expect("bind failed");
+            let addr = listener.local_addr().expect("addr");
+            // Accept in background and keep the socket open so the connect succeeds
+            // but the response never arrives.
+            tokio::spawn(async move {
+                if let Ok((_socket, _)) = listener.accept().await {
+                    // Hold socket open until dropped at task end.
+                    tokio::time::sleep(Duration::from_secs(5)).await;
+                }
+            });
+
+            let err = scrape_url(&format!("http://{addr}/")).await;
+            let msg = err.to_string();
+            assert!(
+                msg.contains("[network:timeout]"),
+                "expected [network:timeout] in '{msg}'"
+            );
+            assert!(msg.contains("timeout"), "expected 'timeout' in '{msg}'");
+        }
+
+        #[tokio::test]
+        async fn invalid_proxy_produces_connection_tag() {
+            // Configure a proxy pointing at a port that refuses connections.
+            let client = reqwest::Client::builder()
+                .proxy(reqwest::Proxy::all("http://127.0.0.1:1").expect("proxy parse"))
+                .timeout(Duration::from_millis(500))
+                .build()
+                .expect("client build");
+            let raw_err = client
+                .get("http://example.com/")
+                .send()
+                .await
+                .expect_err("expected proxy error");
+            let err = classify_reqwest_error(&raw_err);
+            let msg = err.to_string();
+            // A proxy error surfaces as connection-refused to the proxy address.
+            // The [network:connection] or [network:proxy] tag must be present.
+            assert!(
+                msg.contains("[network:connection]") || msg.contains("[network:proxy]"),
+                "expected [network:connection] or [network:proxy] in '{msg}'"
+            );
+            assert!(
+                msg.contains("connection") || msg.contains("proxy"),
+                "expected 'connection' or 'proxy' in '{msg}'"
+            );
+        }
     }
 }
