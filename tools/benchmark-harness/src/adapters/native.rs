@@ -86,10 +86,13 @@ impl ScrapeAdapter for NativeAdapter {
 
         let urls: Vec<String> = entries.iter().map(|e| e.url.clone()).collect();
 
-        // `kreuzcrawl::batch_scrape` is infallible at the batch level — each
-        // entry carries its own `Option<error>`.  The internal CrawlConfig
-        // timeout applies per-request, so no outer timeout wrapper is needed.
-        let batch_results = kreuzcrawl::batch_scrape(&self.engine, urls).await;
+        // `kreuzcrawl::batch_scrape` rejects empty input but is otherwise
+        // infallible at the batch level — each entry carries its own
+        // `Option<error>`. The internal CrawlConfig timeout applies per-request,
+        // so no outer timeout wrapper is needed.
+        let batch_results = kreuzcrawl::batch_scrape(&self.engine, urls)
+            .await
+            .map_err(|e| crate::error::Error::Adapter(format!("batch_scrape failed: {e}")))?;
 
         let outputs = batch_results
             .into_iter()

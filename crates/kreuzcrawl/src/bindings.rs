@@ -48,6 +48,7 @@ pub struct BatchCrawlResult {
 pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, CrawlError> {
     let mut builder = CrawlEngine::builder();
     if let Some(config) = config {
+        config.validate()?;
         builder = builder.config(config);
     }
     let engine = builder.build()?;
@@ -70,10 +71,13 @@ pub async fn map_urls(engine: &CrawlEngineHandle, url: &str) -> Result<MapResult
 }
 
 /// Scrape multiple URLs concurrently.
-pub async fn batch_scrape(engine: &CrawlEngineHandle, urls: Vec<String>) -> Vec<BatchScrapeResult> {
+pub async fn batch_scrape(engine: &CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, CrawlError> {
+    if urls.is_empty() {
+        return Err(CrawlError::InvalidConfig("batch_urls must not be empty".into()));
+    }
     let url_refs: Vec<&str> = urls.iter().map(String::as_str).collect();
     let results = engine.inner.batch_scrape(&url_refs).await;
-    results
+    Ok(results
         .into_iter()
         .map(|(url, result)| match result {
             Ok(r) => BatchScrapeResult {
@@ -87,14 +91,17 @@ pub async fn batch_scrape(engine: &CrawlEngineHandle, urls: Vec<String>) -> Vec<
                 error: Some(e.to_string()),
             },
         })
-        .collect()
+        .collect())
 }
 
 /// Crawl multiple seed URLs concurrently, each following links to configured depth.
-pub async fn batch_crawl(engine: &CrawlEngineHandle, urls: Vec<String>) -> Vec<BatchCrawlResult> {
+pub async fn batch_crawl(engine: &CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, CrawlError> {
+    if urls.is_empty() {
+        return Err(CrawlError::InvalidConfig("batch_urls must not be empty".into()));
+    }
     let url_refs: Vec<&str> = urls.iter().map(String::as_str).collect();
     let results = engine.inner.batch_crawl(&url_refs).await;
-    results
+    Ok(results
         .into_iter()
         .map(|(url, result)| match result {
             Ok(r) => BatchCrawlResult {
@@ -108,5 +115,5 @@ pub async fn batch_crawl(engine: &CrawlEngineHandle, urls: Vec<String>) -> Vec<B
                 error: Some(e.to_string()),
             },
         })
-        .collect()
+        .collect())
 }

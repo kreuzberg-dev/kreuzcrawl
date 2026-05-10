@@ -259,7 +259,13 @@ async fn main() {
                     }
                 }
             } else {
-                let results = batch_crawl(&handle, urls).await;
+                let results = match batch_crawl(&handle, urls).await {
+                    Ok(r) => r,
+                    Err(e) => {
+                        eprintln!("Error: {e}");
+                        std::process::exit(1);
+                    }
+                };
                 if format == "markdown" {
                     for entry in &results {
                         if let Some(ref r) = entry.result {
