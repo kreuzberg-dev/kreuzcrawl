@@ -425,6 +425,69 @@ impl CrawlConfig {
         if self.request_timeout.is_zero() {
             return Err(CrawlError::InvalidConfig("request_timeout must be > 0".into()));
         }
+        if let Some(ref endpoint) = self.browser.endpoint
+            && !endpoint.starts_with("ws://")
+            && !endpoint.starts_with("wss://")
+        {
+            return Err(CrawlError::InvalidConfig(format!(
+                "browser.endpoint must start with ws:// or wss://, got: {endpoint:?}"
+            )));
+        }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn validate_rejects_http_browser_endpoint() {
+        let config = CrawlConfig {
+            browser: BrowserConfig {
+                endpoint: Some("http://not-websocket:3000".into()),
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+        let err = config.validate().unwrap_err();
+        let msg = err.to_string();
+        assert!(msg.contains("endpoint"), "error should mention 'endpoint', got: {msg}");
+    }
+
+    #[test]
+    fn validate_accepts_ws_endpoint() {
+        let config = CrawlConfig {
+            browser: BrowserConfig {
+                endpoint: Some("ws://localhost:9222".into()),
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+        assert!(config.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_accepts_wss_endpoint() {
+        let config = CrawlConfig {
+            browser: BrowserConfig {
+                endpoint: Some("wss://remote-browser.example.com/devtools".into()),
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+        assert!(config.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_accepts_no_endpoint() {
+        let config = CrawlConfig {
+            browser: BrowserConfig {
+                endpoint: None,
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+        assert!(config.validate().is_ok());
     }
 }
