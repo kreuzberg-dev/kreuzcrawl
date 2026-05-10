@@ -130,6 +130,11 @@ tasks:
   e2e:test:
     desc: Run generated Elixir E2E tests
     dir: e2e/elixir
+    env:
+      # Force the kreuzcrawl path-dep to build the NIF from source rather than
+      # downloading the precompiled binary tagged at the package's release version,
+      # which lags the local source by a few commits during active development.
+      KREUZCRAWL_BUILD: "1"
     cmds:
       - mix deps.get
       - mix test
