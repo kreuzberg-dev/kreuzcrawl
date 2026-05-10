@@ -32,6 +32,130 @@ use super::CrawlEngine;
 /// Default concurrency limit when `max_concurrent` is not set.
 const DEFAULT_MAX_CONCURRENT: usize = 10;
 
+/// Outcome of a [`follow_redirects`] call.
+pub(crate) struct RedirectOutcome {
+    /// The final URL after all redirects have been followed.
+    pub(crate) final_url: String,
+    /// The HTTP response at the final URL.
+    pub(crate) final_response: crate::tower::CrawlResponse,
+    /// Number of redirect hops taken.
+    pub(crate) redirect_count: usize,
+    /// Response headers from each intermediate redirect hop (for cookie extraction).
+    pub(crate) intermediate_headers: Vec<HashMap<String, Vec<String>>>,
+}
+
+/// Follow HTTP 3xx, `Refresh` header, and `<meta http-equiv="refresh">` redirects.
+///
+/// This is the shared redirect-following implementation used by both
+/// [`CrawlEngine::scrape`] and the initial-redirect phase of
+/// [`CrawlEngine::crawl`]. The global reqwest redirect policy remains
+/// `Policy::none()` — this function performs manual redirect resolution so
+/// that the crawl loop retains full control over the redirect chain.
+///
+/// # Errors
+///
+/// Returns `Err` only on network-level failures (DNS, connection refused, timeout, …).
+/// Reaching `max_redirects` or detecting a cycle is **not** an error — the loop
+/// stops and the most recent response (the 3xx that would have redirected further)
+/// is returned to the caller. This matches the historical behavior of
+/// [`CrawlEngine::resolve_initial_redirects`], where the crawl would stop and
+/// surface a soft `state.error` rather than aborting the request.
+pub(crate) async fn follow_redirects(
+    engine: &CrawlEngine,
+    initial_url: &str,
+    max_redirects: usize,
+) -> Result<RedirectOutcome, CrawlError> {
+    let mut current_url = initial_url.to_owned();
+    let mut seen: HashSet<String> = HashSet::with_capacity(max_redirects + 1);
+    seen.insert(current_url.clone());
+    let mut redirect_count: usize = 0;
+    let mut intermediate_headers: Vec<HashMap<String, Vec<String>>> = Vec::new();
+
+    loop {
+        let (resp, _browser_used) = match engine.fetch_response(&current_url).await {
+            Ok(pair) => pair,
+            // A 404 reached after at least one redirect should not abort the chain — surface
+            // it to the caller as a synthetic 404 response so that callers can read
+            // `final_url` and observe the failure status without catching an exception.
+            // For the first hop (no redirects yet), preserve the original NotFound error.
+            Err(CrawlError::NotFound(_)) if redirect_count > 0 => {
+                let synthetic = crate::tower::CrawlResponse {
+                    status: 404,
+                    content_type: String::new(),
+                    body: String::new(),
+                    body_bytes: Vec::new(),
+                    headers: HashMap::new(),
+                };
+                return Ok(RedirectOutcome {
+                    final_url: current_url,
+                    final_response: synthetic,
+                    redirect_count,
+                    intermediate_headers,
+                });
+            }
+            Err(e) => return Err(e),
+        };
+        let status = resp.status;
+
+        // HTTP 3xx redirect via Location header
+        if matches!(status, 301 | 302 | 303 | 307 | 308)
+            && redirect_count < max_redirects
+            && let Some(location) = resp.headers.get("location").and_then(|v| v.first())
+        {
+            let target = resolve_redirect(&current_url, location);
+            if !seen.contains(&target) {
+                intermediate_headers.push(resp.headers);
+                seen.insert(target.clone());
+                redirect_count += 1;
+                current_url = target;
+                continue;
+            }
+        }
+
+        // Refresh header redirect
+        if redirect_count < max_redirects
+            && let Some(refresh) = resp.headers.get("refresh").and_then(|v| v.first())
+            && let Some(pos) = find_ascii_case_insensitive(refresh, "url=")
+        {
+            let target_path = refresh[pos + 4..].trim();
+            let target = resolve_redirect(&current_url, target_path);
+            if !seen.contains(&target) {
+                intermediate_headers.push(resp.headers);
+                seen.insert(target.clone());
+                redirect_count += 1;
+                current_url = target;
+                continue;
+            }
+        }
+
+        // Meta-refresh redirect
+        if redirect_count < max_redirects
+            && is_html_content(&resp.content_type, &resp.body)
+            && let Ok(doc) = tl::parse(&resp.body, ParserOptions::default())
+            && let Some(refresh_target) = detect_meta_refresh(&doc)
+        {
+            let target = resolve_redirect(&current_url, &refresh_target);
+            if !seen.contains(&target) {
+                intermediate_headers.push(resp.headers);
+                seen.insert(target.clone());
+                redirect_count += 1;
+                current_url = target;
+                continue;
+            }
+        }
+
+        // No more redirects (or we've reached our budget / detected a cycle) — return
+        // the most recent response. The caller can inspect status to determine whether
+        // the chain terminated naturally or was cut short.
+        return Ok(RedirectOutcome {
+            final_url: current_url,
+            final_response: resp,
+            redirect_count,
+            intermediate_headers,
+        });
+    }
+}
+
 /// Fallback URL used when a fetched URL fails to parse during extraction.
 /// This should never happen in practice since the URL was already fetched successfully.
 static FALLBACK_URL: std::sync::LazyLock<Url> =
@@ -242,142 +366,31 @@ impl CrawlEngine {
 
     /// Follow HTTP, Refresh header, and meta refresh redirects until a final page is reached.
     ///
-    /// Uses [`fetch_response`](Self::fetch_response) so that browser fallback (WAF blocked or
-    /// `BrowserMode::Always`) applies during redirect resolution just as it does during scraping.
+    /// Delegates to [`follow_redirects`] and maps any `CrawlError` into `state.error`,
+    /// preserving the original string so that callers detect errors via `state.error.is_some()`.
     async fn resolve_initial_redirects(&self, url: &str, max_redirects: usize, state: &mut CrawlState) -> String {
-        let mut current_url = url.to_owned();
-        let mut seen_redirects: HashSet<String> = HashSet::with_capacity(max_redirects + 1);
-        seen_redirects.insert(current_url.clone());
-
-        loop {
-            let resp = match self.fetch_response(&current_url).await {
-                Ok((r, _browser_used)) => r,
-                Err(e) => {
-                    state.error = Some(format!("{e}"));
-                    break;
+        match follow_redirects(self, url, max_redirects).await {
+            Ok(outcome) => {
+                if self.config.cookies_enabled {
+                    for headers in &outcome.intermediate_headers {
+                        state.all_cookies.extend(extract_cookies_from_hashmap(headers));
+                    }
+                    state
+                        .all_cookies
+                        .extend(extract_cookies_from_hashmap(&outcome.final_response.headers));
                 }
-            };
-
-            if self.config.cookies_enabled {
-                state.all_cookies.extend(extract_cookies_from_hashmap(&resp.headers));
-            }
-
-            let status = resp.status;
-
-            // Check HTTP redirect (3xx with Location header)
-            if let Some(target) = self.check_redirect(
-                status,
-                &resp.headers,
-                &current_url,
-                &seen_redirects,
-                max_redirects,
-                state,
-            ) {
-                seen_redirects.insert(target.clone());
-                state.redirect_count += 1;
-                current_url = target;
-                continue;
-            }
-            if state.error.is_some() {
-                break;
-            }
-
-            // Check Refresh header redirect
-            if let Some(refresh) = resp.headers.get("refresh").and_then(|v| v.first())
-                && let Some(pos) = find_ascii_case_insensitive(refresh, "url=")
-            {
-                let target_path = refresh[pos + 4..].trim();
-                let target = resolve_redirect(&current_url, target_path);
-                if let Some(t) = self.try_follow_redirect(&target, &seen_redirects, max_redirects, state) {
-                    seen_redirects.insert(t.clone());
-                    state.redirect_count += 1;
-                    current_url = t;
-                    continue;
+                state.redirect_count = outcome.redirect_count;
+                // Propagate any error status reached after redirect(s).
+                if outcome.final_response.status >= 400 && outcome.redirect_count > 0 {
+                    state.error = Some(format!("HTTP {}", outcome.final_response.status));
                 }
-                if state.error.is_some() {
-                    break;
-                }
+                outcome.final_url
             }
-
-            // Check meta refresh
-            if is_html_content(&resp.content_type, &resp.body)
-                && let Ok(doc) = tl::parse(&resp.body, ParserOptions::default())
-                && let Some(refresh_target) = detect_meta_refresh(&doc)
-            {
-                let target = resolve_redirect(&current_url, &refresh_target);
-                if let Some(t) = self.try_follow_redirect(&target, &seen_redirects, max_redirects, state) {
-                    seen_redirects.insert(t.clone());
-                    state.redirect_count += 1;
-                    current_url = t;
-                    continue;
-                }
-                if state.error.is_some() {
-                    break;
-                }
+            Err(e) => {
+                state.error = Some(format!("{e}"));
+                url.to_owned()
             }
-
-            // Check for error status on final page (after redirect)
-            if status >= 400 && state.redirect_count > 0 {
-                state.error = Some(format!("HTTP {status}"));
-                break;
-            }
-
-            break;
         }
-
-        current_url
-    }
-
-    /// Check if a response is an HTTP redirect and return the target URL.
-    fn check_redirect(
-        &self,
-        status: u16,
-        headers: &HashMap<String, Vec<String>>,
-        current_url: &str,
-        seen_redirects: &HashSet<String>,
-        max_redirects: usize,
-        state: &mut CrawlState,
-    ) -> Option<String> {
-        let is_redirect = matches!(status, 301 | 302 | 303 | 307 | 308);
-        if !is_redirect {
-            return None;
-        }
-
-        if state.redirect_count >= max_redirects {
-            state.error = Some("too many redirects".to_owned());
-            return None;
-        }
-
-        if let Some(location) = headers.get("location").and_then(|v| v.first()) {
-            let target = resolve_redirect(current_url, location);
-            if seen_redirects.contains(&target) {
-                state.error = Some("redirect loop detected".to_owned());
-                return None;
-            }
-            return Some(target);
-        }
-
-        None
-    }
-
-    /// Attempt to follow a non-HTTP redirect (Refresh header or meta refresh).
-    /// Returns `Some(target)` if the redirect should be followed, `None` otherwise.
-    /// Sets `state.error` if max redirects exceeded.
-    fn try_follow_redirect(
-        &self,
-        target: &str,
-        seen_redirects: &HashSet<String>,
-        max_redirects: usize,
-        state: &mut CrawlState,
-    ) -> Option<String> {
-        if state.redirect_count >= max_redirects {
-            state.error = Some("too many redirects".to_owned());
-            return None;
-        }
-        if seen_redirects.contains(target) {
-            return None;
-        }
-        Some(target.to_owned())
     }
 
     /// Main crawl loop: spawn fetch tasks, process results, discover links.

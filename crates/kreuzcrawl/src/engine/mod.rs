@@ -153,11 +153,15 @@ impl CrawlEngine {
         self.config.validate()?;
 
         #[cfg(not(target_arch = "wasm32"))]
-        let (response, browser_used_for_fetch) = {
-            let (resp, used_browser) = self.fetch_response(url).await?;
+        let (final_url, response, browser_used_for_fetch) = {
+            use crawl_loop::follow_redirects;
+
+            let max_redirects = self.config.max_redirects;
+            let outcome = follow_redirects(self, url, max_redirects).await?;
+
             // Preserve the original early-return for 404 when robots.txt is respected:
             // skip extraction entirely and return a minimal result.
-            if resp.status == 404 && self.config.respect_robots_txt {
+            if outcome.final_response.status == 404 && self.config.respect_robots_txt {
                 return Ok(ScrapeResult {
                     status_code: 404,
                     content_type: String::new(),
@@ -188,11 +192,11 @@ impl CrawlEngine {
                     downloaded_document: None,
                 });
             }
-            (resp, used_browser)
+            (outcome.final_url, outcome.final_response, false)
         };
 
         #[cfg(target_arch = "wasm32")]
-        let (response, browser_used_for_fetch) = {
+        let (final_url, response, browser_used_for_fetch) = {
             let client = crate::http::build_client(&self.config)?;
             let resp =
                 crate::http::fetch_with_retry(url, &self.config, &std::collections::HashMap::new(), &client).await?;
@@ -205,10 +209,10 @@ impl CrawlEngine {
                 body_bytes: resp.body_bytes,
                 headers,
             };
-            (crawl_resp, false)
+            (url.to_owned(), crawl_resp, false)
         };
 
-        let mut result = crate::scrape::scrape_from_crawl_response(url, &response, &self.config).await?;
+        let mut result = crate::scrape::scrape_from_crawl_response(&final_url, &response, &self.config).await?;
         result.browser_used = browser_used_for_fetch;
 
         // JS-render fallback: if extraction detected JS-heavy content and we have
@@ -217,7 +221,7 @@ impl CrawlEngine {
         if result.js_render_hint && !result.browser_used && self.config.browser.mode == crate::types::BrowserMode::Auto
         {
             let pool = self.config.browser_pool.as_deref();
-            let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
+            let http_resp = crate::browser::browser_fetch(&final_url, &self.config, None, pool).await?;
             let crawl_resp = crate::tower::CrawlResponse {
                 status: http_resp.status,
                 content_type: http_resp.content_type,
@@ -225,7 +229,7 @@ impl CrawlEngine {
                 body_bytes: http_resp.body_bytes,
                 headers: std::collections::HashMap::new(),
             };
-            result = crate::scrape::scrape_from_crawl_response(url, &crawl_resp, &self.config).await?;
+            result = crate::scrape::scrape_from_crawl_response(&final_url, &crawl_resp, &self.config).await?;
             result.browser_used = true;
         }
 
