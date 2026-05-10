@@ -431,6 +431,13 @@ uintptr_t kcrawl_crawl_config_max_concurrent(const KCRAWLCrawlConfig *ptr);
 int32_t kcrawl_crawl_config_respect_robots_txt(const KCRAWLCrawlConfig *ptr);
 
 /**
+ * Get the `soft_http_errors` field from a `CrawlConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_crawl_config_soft_http_errors(const KCRAWLCrawlConfig *ptr);
+
+/**
  * Get the `user_agent` field from a `CrawlConfig`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
@@ -2494,6 +2501,181 @@ int32_t kcrawl_asset_category_from_i32(int32_t value);
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
 int32_t kcrawl_asset_category_from_str(const char *name);
+
+/**
+ * Free a heap-allocated `BrowserMode` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_browser_mode_free(KCRAWLBrowserMode *ptr);
+
+/**
+ * Serialize a heap-allocated `BrowserMode` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_mode_to_json(const KCRAWLBrowserMode *ptr);
+
+/**
+ * Render a heap-allocated `BrowserMode` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_mode_to_string(const KCRAWLBrowserMode *ptr);
+
+/**
+ * Free a heap-allocated `BrowserWait` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_browser_wait_free(KCRAWLBrowserWait *ptr);
+
+/**
+ * Serialize a heap-allocated `BrowserWait` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_wait_to_json(const KCRAWLBrowserWait *ptr);
+
+/**
+ * Render a heap-allocated `BrowserWait` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_wait_to_string(const KCRAWLBrowserWait *ptr);
+
+/**
+ * Free a heap-allocated `AuthConfig` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_auth_config_free(KCRAWLAuthConfig *ptr);
+
+/**
+ * Serialize a heap-allocated `AuthConfig` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_auth_config_to_json(const KCRAWLAuthConfig *ptr);
+
+/**
+ * Render a heap-allocated `AuthConfig` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_auth_config_to_string(const KCRAWLAuthConfig *ptr);
+
+/**
+ * Free a heap-allocated `LinkType` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_link_type_free(KCRAWLLinkType *ptr);
+
+/**
+ * Serialize a heap-allocated `LinkType` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_link_type_to_json(const KCRAWLLinkType *ptr);
+
+/**
+ * Render a heap-allocated `LinkType` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_link_type_to_string(const KCRAWLLinkType *ptr);
+
+/**
+ * Free a heap-allocated `ImageSource` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_image_source_free(KCRAWLImageSource *ptr);
+
+/**
+ * Serialize a heap-allocated `ImageSource` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_image_source_to_json(const KCRAWLImageSource *ptr);
+
+/**
+ * Render a heap-allocated `ImageSource` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_image_source_to_string(const KCRAWLImageSource *ptr);
+
+/**
+ * Free a heap-allocated `FeedType` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_feed_type_free(KCRAWLFeedType *ptr);
+
+/**
+ * Serialize a heap-allocated `FeedType` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_feed_type_to_json(const KCRAWLFeedType *ptr);
+
+/**
+ * Render a heap-allocated `FeedType` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_feed_type_to_string(const KCRAWLFeedType *ptr);
+
+/**
+ * Free a heap-allocated `AssetCategory` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_asset_category_free(KCRAWLAssetCategory *ptr);
+
+/**
+ * Serialize a heap-allocated `AssetCategory` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_asset_category_to_json(const KCRAWLAssetCategory *ptr);
+
+/**
+ * Render a heap-allocated `AssetCategory` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_asset_category_to_string(const KCRAWLAssetCategory *ptr);
 
 /**
  * Create a new crawl engine with the given configuration.
