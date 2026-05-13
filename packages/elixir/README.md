@@ -101,7 +101,7 @@ Key functions:
 
 Contributions are welcome! Please see our [Contributing Guide](https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/CONTRIBUTING.md) for details.
 
-## Part of Kreuzberg, Inc.
+## Part of Kreuzberg.dev
 
 - [Kreuzberg](https://docs.kreuzberg.dev) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 - [Kreuzberg Cloud](https://docs.kreuzberg.cloud) — managed extraction API with SDKs, dashboards, and observability.

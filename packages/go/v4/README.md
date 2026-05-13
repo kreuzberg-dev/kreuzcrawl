@@ -63,6 +63,7 @@
   </a>
 </div>
 
+
 High-performance document intelligence for Go backed by the Rust core that powers every Kreuzcrawl binding.
 
 > **Version 0.1.0-rc.1**
@@ -298,15 +299,15 @@ func init() {
 
 ## Troubleshooting
 
-| Issue                                                                          | Fix                                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ld returned 1 exit status` or `undefined reference to 'html_to_markdown_...'` | The static library wasn't found. Make sure `CGO_LDFLAGS` points to the directory containing `libkreuzcrawl_ffi.a`: `CGO_LDFLAGS="-L/path/to/lib -lkreuzcrawl_ffi" go build`                                           |
-| `cannot find -lkreuzcrawl_ffi`                                                 | The static library file is missing or in the wrong location. Download it from [GitHub Releases](https://github.com/kreuzberg-dev/kreuzcrawl/releases) or build it yourself: `cargo build -p kreuzcrawl-ffi --release` |
-| `undefined: v4.ExtractFile`                                                    | This function was removed in v4.1.0. Use `ExtractFileSync` and wrap in goroutine if needed (see migration guide)                                                                                                      |
-| `Missing dependency: tesseract`                                                | Install the OCR backend and ensure it is on `PATH`. Errors bubble up as `*v4.MissingDependencyError`.                                                                                                                 |
-| `undefined: C.customValidator` during build                                    | Export the callback with `//export` in a `*_cgo.go` file before using it in `Register*` helpers.                                                                                                                      |
-| `Missing dependency: onnxruntime`                                              | Install ONNX Runtime at build time: `brew install onnxruntime` (macOS), `apt install libonnxruntime libonnxruntime-dev` (Linux), `scoop install onnxruntime` (Windows). Required for embeddings functionality.        |
-| Embeddings not available on Windows MinGW                                      | Windows MinGW builds cannot link ONNX Runtime (MSVC-only). Use Windows MSVC build for embeddings support, or build without embeddings feature.                                                                        |
+| Issue | Fix |
+|-------|-----|
+| `ld returned 1 exit status` or `undefined reference to 'html_to_markdown_...'` | The static library wasn't found. Make sure `CGO_LDFLAGS` points to the directory containing `libkreuzcrawl_ffi.a`: `CGO_LDFLAGS="-L/path/to/lib -lkreuzcrawl_ffi" go build` |
+| `cannot find -lkreuzcrawl_ffi` | The static library file is missing or in the wrong location. Download it from [GitHub Releases](https://github.com/kreuzberg-dev/kreuzcrawl/releases) or build it yourself: `cargo build -p kreuzcrawl-ffi --release` |
+| `undefined: v4.ExtractFile` | This function was removed in v4.1.0. Use `ExtractFileSync` and wrap in goroutine if needed (see migration guide) |
+| `Missing dependency: tesseract` | Install the OCR backend and ensure it is on `PATH`. Errors bubble up as `*v4.MissingDependencyError`. |
+| `undefined: C.customValidator` during build | Export the callback with `//export` in a `*_cgo.go` file before using it in `Register*` helpers. |
+| `Missing dependency: onnxruntime` | Install ONNX Runtime at build time: `brew install onnxruntime` (macOS), `apt install libonnxruntime libonnxruntime-dev` (Linux), `scoop install onnxruntime` (Windows). Required for embeddings functionality. |
+| Embeddings not available on Windows MinGW | Windows MinGW builds cannot link ONNX Runtime (MSVC-only). Use Windows MSVC build for embeddings support, or build without embeddings feature. |
 
 ## Testing / Tooling
 
@@ -316,7 +317,7 @@ func init() {
 
 Need help? Join the [Discord](https://discord.gg/xt9WY3GnKR) or open an issue with logs, platform info, and the steps you tried.
 
-## Part of Kreuzberg, Inc.
+## Part of Kreuzberg.dev
 
 - [Kreuzberg](https://docs.kreuzberg.dev) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 - [Kreuzberg Cloud](https://docs.kreuzberg.cloud) — managed extraction API with SDKs, dashboards, and observability.

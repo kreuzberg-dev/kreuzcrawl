@@ -2,7 +2,7 @@
 
 Contributions are welcome! Please see our [Contributing Guide](https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/CONTRIBUTING.md) for details.
 
-## Part of Kreuzberg, Inc.
+## Part of Kreuzberg.dev
 
 - [Kreuzberg](https://github.com/kreuzberg-dev/kreuzberg) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 - [Kreuzberg Cloud](https://github.com/kreuzberg-dev/kreuzberg-cloud) — managed extraction API with SDKs, dashboards, and observability.
