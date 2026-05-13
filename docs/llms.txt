@@ -1,0 +1,69 @@
+# Kreuzcrawl
+
+> High-performance Rust web crawling engine with native bindings for 14 languages. Crawl, scrape, and map sites with always-on HTML→Markdown conversion, structured metadata extraction, LLM-powered field extraction, and a headless-Chrome fallback for WAF-protected pages. Usable as a library, CLI, REST API, MCP server, or Docker image.
+
+Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware stack. It ships BFS / DFS / BestFirst / Adaptive traversal strategies, batch operations, streaming events, sitemap and link-graph discovery, and JSON-LD parsing — and detects WAF responses across Cloudflare, Akamai, Imperva, DataDome, PerimeterX, Sucuri, F5, and AWS-WAF.
+
+## Get Started
+
+- [Installation](https://docs.kreuzcrawl.kreuzberg.dev/getting-started/installation/): Install Kreuzcrawl for Rust, Python, TypeScript, Go, Java, Kotlin, C#, Ruby, PHP, Elixir, Dart, Swift, Zig, WebAssembly, or via CLI / Docker
+- [Quick Start](https://docs.kreuzcrawl.kreuzberg.dev/getting-started/quickstart/): Scrape a single page, crawl a site, and map URLs in under five minutes
+
+## Guides
+
+- [Crawling](https://docs.kreuzcrawl.kreuzberg.dev/guides/crawling/): Multi-page traversal with depth and page limits, batch crawl
+- [Scraping](https://docs.kreuzcrawl.kreuzberg.dev/guides/scraping/): Single-page extraction and batch scrape
+- [URL Discovery](https://docs.kreuzcrawl.kreuzberg.dev/guides/url-discovery/): Sitemap parsing, link extraction, and map_urls
+- [Markdown Conversion](https://docs.kreuzcrawl.kreuzberg.dev/guides/markdown/): Always-on HTML→Markdown via [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev), citations, and pruning
+- [Browser Automation](https://docs.kreuzcrawl.kreuzberg.dev/guides/browser/): Headless-Chrome fallback, WAF bypass, persistent profiles
+- [WARC Output](https://docs.kreuzcrawl.kreuzberg.dev/guides/warc/): Standards-compliant WARC archiving
+- [Configuration](https://docs.kreuzcrawl.kreuzberg.dev/guides/configuration/): CrawlConfig, ContentConfig, BrowserConfig, AuthConfig, ProxyConfig
+- [Docker](https://docs.kreuzcrawl.kreuzberg.dev/guides/docker/): Container image with feature flags
+- [API Server](https://docs.kreuzcrawl.kreuzberg.dev/guides/api-server/): Firecrawl v1-compatible REST API
+- [MCP Server](https://docs.kreuzcrawl.kreuzberg.dev/guides/mcp-server/): MCP tools for AI agent integration
+
+## CLI
+
+- [CLI Usage](https://docs.kreuzcrawl.kreuzberg.dev/cli/usage/): Command-line reference for the `kreuzcrawl` binary
+
+## Concepts
+
+- [Architecture](https://docs.kreuzcrawl.kreuzberg.dev/concepts/architecture/): Public surface, data flow, binding matrix, feature gates, crate layout
+- [Content Extraction](https://docs.kreuzcrawl.kreuzberg.dev/concepts/content-extraction/): HTML parsing, metadata, Markdown conversion, citations, content pruning
+
+## API Reference
+
+- [Rust API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-rust/): Core crate, `create_engine`, `crawl`, `scrape`, `map_urls`, batch operations
+- [Python API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-python/): PyO3 bindings with asyncio support
+- [TypeScript API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-typescript/): NAPI-RS bindings for Node.js
+- [Go API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-go/): cgo bindings over the C FFI surface
+- [Java API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-java/): Panama FFM bindings
+- [Kotlin API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-kotlin/): Kotlin wrapper over the Java surface
+- [C# API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-csharp/): P/Invoke bindings for .NET
+- [Ruby API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-ruby/): Magnus bindings
+- [PHP API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-php/): ext-php-rs bindings
+- [Elixir API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-elixir/): Rustler NIF
+- [Dart API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-dart/): Dart FFI bindings
+- [Swift API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-swift/): Swift package over the C FFI surface
+- [Zig API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-zig/): Zig wrapper over the C FFI surface
+- [WebAssembly API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-wasm/): wasm-bindgen surface for browsers and edge runtimes
+- [C / FFI API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-c/): C header + shared library
+- [REST API](https://docs.kreuzcrawl.kreuzberg.dev/reference/rest-api/): HTTP endpoints for the API server
+- [MCP Tools](https://docs.kreuzcrawl.kreuzberg.dev/reference/mcp-tools/): Tool catalogue for the MCP server
+- [Configuration](https://docs.kreuzcrawl.kreuzberg.dev/reference/configuration/): Full configuration schema and defaults
+- [Types](https://docs.kreuzcrawl.kreuzberg.dev/reference/types/): `CrawlResult`, `ScrapeResult`, `MapResult`, `PageMetadata`, and related types
+- [Errors](https://docs.kreuzcrawl.kreuzberg.dev/reference/errors/): `CrawlError` variants and FFI error codes
+
+## Ecosystem
+
+- [Kreuzberg](https://docs.kreuzberg.dev): Document intelligence — text, tables, and metadata from 91+ file formats with optional OCR
+- [Kreuzberg Cloud](https://docs.kreuzberg.cloud): Managed document-extraction API with SDKs and dashboards
+- [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev): The HTML→Markdown engine powering Kreuzcrawl's always-on conversion
+- [liter-llm](https://docs.liter-llm.kreuzberg.dev): Multi-provider LLM orchestration with cost and token accounting
+- [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev): 306 tree-sitter grammars and code-intelligence primitives
+
+## Optional
+
+- [Features](https://docs.kreuzcrawl.kreuzberg.dev/features/): Complete feature breakdown
+- [Contributing](https://docs.kreuzcrawl.kreuzberg.dev/contributing/): How to contribute
+- [Changelog](https://docs.kreuzcrawl.kreuzberg.dev/CHANGELOG/): Release history
