@@ -13,9 +13,8 @@ jobs:
       run:
         working-directory: packages/zig
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: actions/checkout@v6
+      - uses: kreuzberg-dev/actions/setup-rust@v1
       - name: Build kreuzcrawl-ffi
         working-directory: ${{ github.workspace }}
         run: cargo build -p kreuzcrawl-ffi
