@@ -1,1 +1,1 @@
-rootProject.name = "kreuzcrawl-kotlin"
+rootProject.name = "kreuzcrawl"
