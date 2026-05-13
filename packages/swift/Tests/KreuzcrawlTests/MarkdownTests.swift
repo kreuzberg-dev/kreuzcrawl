@@ -18,7 +18,7 @@ final class MarkdownTests: XCTestCase {
         XCTAssertEqual(result.status_code(), 200)
         XCTAssertEqual((result.metadata().title()?.toString() ?? "").trimmingCharacters(in: CharacterSet.whitespaces), "Test")
         XCTAssertGreaterThan(result.html().len(), 0, "expected non-empty value")
-        XCTAssertGreaterThan(result.markdown()?.content().len(), 0, "expected non-empty value")
+        XCTAssertGreaterThan(result.markdown()?.content().len() ?? 0, 0, "expected non-empty value")
         XCTAssertTrue((result.markdown()?.content().toString() ?? "").contains("Hello World"), "expected to contain: \("Hello World")")
     }
 
@@ -37,7 +37,7 @@ final class MarkdownTests: XCTestCase {
         let url = ProcessInfo.processInfo.environment["MOCK_SERVER_URL"]! + "/fixtures/markdown_fit_content"
         let result = try await scrape(engineObj, url)
         XCTAssertEqual(result.status_code(), 200)
-        XCTAssertGreaterThan(result.markdown()?.content().len(), 0, "expected non-empty value")
+        XCTAssertGreaterThan(result.markdown()?.content().len() ?? 0, 0, "expected non-empty value")
     }
 
     func testMarkdownHeadingsAndParagraphs() async throws {
@@ -45,7 +45,7 @@ final class MarkdownTests: XCTestCase {
         let engineObj = try createEngine(nil)
         let url = ProcessInfo.processInfo.environment["MOCK_SERVER_URL"]! + "/fixtures/markdown_headings_and_paragraphs"
         let result = try await scrape(engineObj, url)
-        XCTAssertGreaterThan(result.markdown()?.content().len(), 0, "expected non-empty value")
+        XCTAssertGreaterThan(result.markdown()?.content().len() ?? 0, 0, "expected non-empty value")
         XCTAssertTrue((result.markdown()?.content().toString() ?? "").contains("Main Title"), "expected to contain: \("Main Title")")
     }
 
@@ -56,7 +56,7 @@ final class MarkdownTests: XCTestCase {
         let result = try await scrape(engineObj, url)
         XCTAssertEqual(result.status_code(), 200)
         XCTAssertGreaterThan(result.html().len(), 0, "expected non-empty value")
-        XCTAssertGreaterThan(result.markdown()?.content().len(), 0, "expected non-empty value")
+        XCTAssertGreaterThan(result.markdown()?.content().len() ?? 0, 0, "expected non-empty value")
         XCTAssertTrue((result.markdown()?.content().toString() ?? "").contains("Example"), "expected to contain: \("Example")")
     }
 
@@ -66,7 +66,7 @@ final class MarkdownTests: XCTestCase {
         let url = ProcessInfo.processInfo.environment["MOCK_SERVER_URL"]! + "/fixtures/markdown_with_citations"
         let result = try await scrape(engineObj, url)
         XCTAssertEqual(result.status_code(), 200)
-        XCTAssertGreaterThan(result.markdown()?.content().len(), 0, "expected non-empty value")
+        XCTAssertGreaterThan(result.markdown()?.content().len() ?? 0, 0, "expected non-empty value")
     }
 
 }
