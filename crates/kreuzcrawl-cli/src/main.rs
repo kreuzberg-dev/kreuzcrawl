@@ -50,8 +50,8 @@ fn build_browser_config(
 /// JSON values override defaults but do not override CLI flags that were explicitly set.
 fn merge_json_config(config: &mut CrawlConfig, config_str: &str) -> Result<(), Box<dyn std::error::Error>> {
     // Handle @file.json syntax
-    let json_text = if config_str.starts_with('@') {
-        std::fs::read_to_string(&config_str[1..])?
+    let json_text = if let Some(path) = config_str.strip_prefix('@') {
+        std::fs::read_to_string(path)?
     } else {
         config_str.to_string()
     };
