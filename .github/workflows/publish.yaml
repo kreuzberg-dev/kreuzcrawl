@@ -2,9 +2,9 @@ name: Publish Release
 
 # Action-first kreuzcrawl release pipeline.
 #
-# Orchestrates 10 alef language targets:
+# Orchestrates 14 alef language targets:
 #   crates · python · node · wasm · ruby · php · cli · homebrew · go · c-ffi
-#   java · csharp · elixir
+#   java · csharp · elixir · kotlin · dart · swift · zig
 #
 # Mirrors kreuzberg's publish.yaml composition: every registry interaction,
 # every multi-platform build, and every release-asset upload routes through
@@ -87,6 +87,10 @@ jobs:
       release_php: ${{ steps.meta.outputs.release_php }}
       release_elixir: ${{ steps.meta.outputs.release_elixir }}
       release_c_ffi: ${{ steps.meta.outputs.release_c_ffi }}
+      release_dart: ${{ steps.meta.outputs.release_dart }}
+      release_swift: ${{ steps.meta.outputs.release_swift }}
+      release_zig: ${{ steps.meta.outputs.release_zig }}
+      release_kotlin: ${{ steps.meta.outputs.release_kotlin }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -288,6 +292,73 @@ jobs:
           registry: hex
           package: kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
+
+  check-pub:
+    name: Check pub.dev for existing version
+    needs: prepare
+    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_dart == 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      exists: ${{ steps.check.outputs.exists }}
+    steps:
+      - id: check
+        uses: kreuzberg-dev/actions/check-registry@v1
+        with:
+          registry: pub
+          package: kreuzcrawl
+          version: ${{ needs.prepare.outputs.version }}
+
+  check-spi-swift:
+    name: Check Swift Package Index for existing tag
+    needs: prepare
+    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_swift == 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      exists: ${{ steps.check.outputs.exists }}
+    steps:
+      # Swift has no central registry; SPI auto-discovers GitHub tags, so
+      # existence === GitHub release tag exists.
+      - id: check
+        uses: kreuzberg-dev/actions/check-registry@v1
+        with:
+          registry: swift
+          package: kreuzcrawl
+          version: ${{ needs.prepare.outputs.version }}
+          repo: ${{ github.repository }}
+
+  check-zig:
+    name: Check Zig package presence (tag-based)
+    needs: prepare
+    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_zig == 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      exists: ${{ steps.check.outputs.exists }}
+    steps:
+      # Zig has no central registry; existence === GitHub release tag exists.
+      - id: check
+        uses: kreuzberg-dev/actions/check-registry@v1
+        with:
+          registry: zig
+          package: kreuzcrawl
+          version: ${{ needs.prepare.outputs.version }}
+          repo: ${{ github.repository }}
+
+  check-maven-kotlin:
+    name: Check Maven Central for Kotlin package
+    needs: prepare
+    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_kotlin == 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      kotlin_exists: ${{ steps.check.outputs.kotlin_exists }}
+    steps:
+      - id: check
+        uses: kreuzberg-dev/actions/check-registry@v1
+        with:
+          registry: maven
+          package: dev.kreuzberg:kreuzcrawl
+          version: ${{ needs.prepare.outputs.version }}
+          extra-packages: |
+            kotlin_exists=dev.kreuzberg:kreuzcrawl-kotlin
 
   check-homebrew:
     name: Check Homebrew tap for formula
@@ -1176,6 +1247,96 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  dart-package:
+    name: Build Dart package
+    needs: [prepare, check-pub]
+    if: ${{ needs.prepare.outputs.release_dart == 'true' && needs.check-pub.outputs.exists != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
+
+      - uses: kreuzberg-dev/actions/setup-rust@v1
+
+      - uses: kreuzberg-dev/actions/build-dart-package@v1
+        with:
+          # flutter_rust_bridge.yaml lives in packages/dart/rust/, where rust_root: .
+          package-dir: packages/dart/rust
+          crate-name: kreuzcrawl-dart
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dart-package
+          path: packages/dart
+          retention-days: 14
+
+  swift-artifactbundle:
+    name: Build Swift artifact bundle
+    needs: [prepare, check-spi-swift]
+    if: ${{ needs.prepare.outputs.release_swift == 'true' && (needs.check-spi-swift.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
+      - uses: kreuzberg-dev/actions/setup-rust@v1
+      - uses: kreuzberg-dev/actions/build-swift-artifactbundle@v1
+        id: bundle
+        with:
+          crate-name: kreuzcrawl-swift
+          artifact-name: KreuzcrawlSwift
+      - uses: actions/upload-artifact@v7
+        with:
+          name: swift-artifactbundle
+          path: ${{ steps.bundle.outputs.bundle-zip }}
+          if-no-files-found: error
+          retention-days: 14
+
+  swift-package:
+    name: Build Swift package
+    needs: [prepare, check-spi-swift]
+    if: ${{ needs.prepare.outputs.release_swift == 'true' && needs.check-spi-swift.outputs.exists != 'true' }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
+
+      - uses: kreuzberg-dev/actions/setup-rust@v1
+
+      - uses: kreuzberg-dev/actions/build-swift-package@v1
+        with:
+          package-dir: packages/swift
+          crate-name: kreuzcrawl-swift
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: swift-package
+          path: packages/swift
+          retention-days: 14
+
+  zig-package:
+    name: Build Zig package (smoke check)
+    needs: prepare
+    if: ${{ needs.prepare.outputs.release_zig == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+          fetch-depth: 0
+
+      - uses: kreuzberg-dev/actions/setup-rust@v1
+
+      - uses: kreuzberg-dev/actions/build-zig-package@v1
+        with:
+          ffi-crate: kreuzcrawl-ffi
+          package-dir: packages/zig
+
   # ─── GitHub Release asset uploads ─────────────────────────────────────
 
   upload-cli-release:
@@ -1650,6 +1811,99 @@ jobs:
         env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
 
+  publish-kotlin:
+    name: Publish Kotlin (Maven Central via Gradle)
+    needs: [prepare, java-natives, java-natives-musl, check-maven-kotlin]
+    if: ${{ needs.prepare.outputs.release_kotlin == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-maven-kotlin.outputs.kotlin_exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.ref }}
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: java-natives-*
+          path: java-natives
+          merge-multiple: true
+
+      - name: Stage natives into Kotlin resources
+        # Inline: same layout as Maven (Kotlin reuses the Java JNA-loaded bridge).
+        run: |
+          mkdir -p packages/kotlin/src/main/resources/natives
+          for dir in java-natives/native/*/; do
+            classifier="$(basename "$dir")"
+            mkdir -p "packages/kotlin/src/main/resources/natives/${classifier}"
+            cp -v "${dir}"/* "packages/kotlin/src/main/resources/natives/${classifier}/"
+          done
+        shell: bash
+
+      - uses: kreuzberg-dev/actions/publish-maven-gradle@v1
+        with:
+          working-directory: packages/kotlin
+          gradle-task: publishAndReleaseToMavenCentral
+          dry-run: ${{ needs.prepare.outputs.dry_run }}
+        env:
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          MAVEN_GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+  publish-pub:
+    name: Publish Dart package to pub.dev
+    needs: [prepare, dart-package, check-pub]
+    if: ${{ needs.prepare.outputs.release_dart == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.check-pub.outputs.exists != 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dart-package
+          path: packages/dart
+
+      - uses: kreuzberg-dev/actions/publish-pub@v1
+        with:
+          package-dir: packages/dart
+          dry-run: ${{ needs.prepare.outputs.dry_run }}
+
+  publish-swift:
+    name: Notify Swift Package Index
+    needs: [prepare, swift-package, swift-artifactbundle, check-spi-swift]
+    if: ${{ needs.prepare.outputs.release_swift == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.check-spi-swift.outputs.exists != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.ref }}
+
+      - uses: kreuzberg-dev/actions/publish-swift@v1
+        with:
+          working-directory: packages/swift
+          tag: ${{ needs.prepare.outputs.tag }}
+          ping-spi: "true"
+          dry-run: ${{ needs.prepare.outputs.dry_run }}
+
+  publish-zig:
+    name: Publish Zig package metadata
+    needs: [prepare, zig-package, check-zig]
+    if: ${{ needs.prepare.outputs.release_zig == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.check-zig.outputs.exists != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.ref }}
+
+      - uses: kreuzberg-dev/actions/publish-zig@v1
+        with:
+          working-directory: packages/zig
+          tag: ${{ needs.prepare.outputs.tag }}
+          update-release-notes: "true"
+          dry-run: ${{ needs.prepare.outputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   # ─── Homebrew (CLI bottle build + formula update) ─────────────────────
   #
   # kreuzcrawl ships a single-binary CLI; bottles are synthetic tarballs
@@ -1782,8 +2036,12 @@ jobs:
       - publish-wasm
       - publish-packagist
       - publish-maven
+      - publish-kotlin
       - publish-nuget
       - publish-hex
+      - publish-pub
+      - publish-swift
+      - publish-zig
       - publish-homebrew
       - upload-cli-release
       - upload-go-release
@@ -1815,8 +2073,12 @@ jobs:
       - publish-wasm
       - publish-packagist
       - publish-maven
+      - publish-kotlin
       - publish-nuget
       - publish-hex
+      - publish-pub
+      - publish-swift
+      - publish-zig
       - publish-homebrew
       - upload-cli-release
       - upload-go-release
