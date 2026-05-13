@@ -31,7 +31,7 @@ fn convert_html_to_markdown(html: &str, config: &ContentConfig) -> Option<Markdo
         ..Default::default()
     };
 
-    match html_to_markdown_rs::convert(html, Some(options), None) {
+    match html_to_markdown_rs::convert(html, Some(options)) {
         Ok(result) => {
             let content = result.content.unwrap_or_default();
             let document_structure = result.document.and_then(|d| serde_json::to_value(d).ok());

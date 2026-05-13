@@ -1,0 +1,3 @@
+rust_root: .
+rust_input: crate
+dart_output: ../lib/src/kreuzcrawl_bridge_generated

@@ -29,6 +29,14 @@ includes:
     taskfile: .task/languages/c.yml
   brew:
     taskfile: .task/languages/brew.yml
+  dart:
+    taskfile: .task/languages/dart.yml
+  kotlin:
+    taskfile: .task/languages/kotlin.yml
+  swift:
+    taskfile: .task/languages/swift.yml
+  zig:
+    taskfile: .task/languages/zig.yml
 
   _build_wf:
     taskfile: .task/workflows/build.yml
