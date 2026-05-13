@@ -818,13 +818,19 @@ impl WasmCrawlConfig {
     }
 
     #[wasm_bindgen(getter, js_name = "assetTypes")]
-    pub fn asset_types(&self) -> Vec<WasmAssetCategory> {
-        self.asset_types.clone()
+    pub fn asset_types(&self) -> Vec<String> {
+        self.asset_types
+            .iter()
+            .map(|v| v.to_api_str().to_string())
+            .collect()
     }
 
     #[wasm_bindgen(setter, js_name = "assetTypes")]
-    pub fn set_asset_types(&mut self, value: Vec<WasmAssetCategory>) {
-        self.asset_types = value;
+    pub fn set_asset_types(&mut self, value: Vec<String>) {
+        self.asset_types = value
+            .into_iter()
+            .map(|s| WasmAssetCategory::from_api_str(&s))
+            .collect();
     }
 
     #[wasm_bindgen(getter, js_name = "maxAssetSize")]
