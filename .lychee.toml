@@ -15,9 +15,10 @@ exclude = [
   "example\\.com",
   "example\\.org",
 
-  # Template variables (e.g. ${var}, {{ var }})
+  # Template variables (e.g. ${var}, {{ var }}, URL-encoded %7B%7B)
   "\\$\\{",
   "\\{\\{",
+  "%7B%7B",
 
   # GitHub edit links (require auth)
   "github\\.com/.*/edit/",
