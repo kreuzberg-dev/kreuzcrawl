@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Install Kreuzcrawl for Rust, Python, TypeScript, Ruby, Go, Java, C#, PHP, Elixir, WebAssembly, or Docker
+description: Install Kreuzcrawl for Rust, Python, TypeScript, Go, Java, Kotlin, C#, Ruby, PHP, Elixir, Dart, Swift, Zig, WebAssembly, or Docker
 ---
 
 # Installation
@@ -110,7 +110,7 @@ kreuzcrawl --version
     Requires Ruby 3.2+. Add to your `Gemfile`:
 
     ```ruby title="Gemfile"
-    gem "kreuzcrawl", "~> 0.2"
+    gem "kreuzcrawl", "~> 0.3"
     ```
 
     Then:
@@ -140,13 +140,13 @@ kreuzcrawl --version
 
 === "Java"
 
-    Requires Java 21+ (Panama FFM). Add the Maven dependency:
+    Requires Java 25+ (Panama FFM). Add the Maven dependency:
 
     ```xml title="pom.xml"
     <dependency>
         <groupId>dev.kreuzberg.kreuzcrawl</groupId>
         <artifactId>kreuzcrawl</artifactId>
-        <version>0.3.0-rc.17</version>
+        <version>0.3.0-rc.19</version>
     </dependency>
     ```
 
@@ -154,7 +154,7 @@ kreuzcrawl --version
 
 === "C#"
 
-    Requires .NET 8+. Add the NuGet package:
+    Requires .NET 10+. Add the NuGet package:
 
     ```bash
     dotnet add package Kreuzcrawl
@@ -163,7 +163,7 @@ kreuzcrawl --version
     Or in your `.csproj`:
 
     ```xml title="Kreuzcrawl.csproj"
-    <PackageReference Include="Kreuzcrawl" Version="0.3.0-rc.17" />
+    <PackageReference Include="Kreuzcrawl" Version="0.3.0-rc.19" />
     ```
 
     The C# bindings use P/Invoke to call the C FFI layer.
@@ -190,7 +190,7 @@ kreuzcrawl --version
     ```elixir title="mix.exs"
     defp deps do
       [
-        {:kreuzcrawl, "~> 0.2"}
+        {:kreuzcrawl, "~> 0.3"}
       ]
     end
     ```

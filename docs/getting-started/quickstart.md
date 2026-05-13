@@ -16,15 +16,12 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
 === "Rust"
 
     ```rust title="src/main.rs"
-    use kreuzcrawl::{CrawlConfig, CrawlEngine};
+    use kreuzcrawl::{CrawlConfig, create_engine, scrape};
 
     #[tokio::main]
     async fn main() -> Result<(), Box<dyn std::error::Error>> {
-        let engine = CrawlEngine::builder()
-            .config(CrawlConfig::default())
-            .build()?;
-
-        let result = engine.scrape("https://example.com").await?;
+        let engine = create_engine(Some(CrawlConfig::default()))?;
+        let result = scrape(&engine, "https://example.com").await?;
 
         println!("Status: {}", result.status_code);
         println!("Title: {}", result.metadata.title.as_deref().unwrap_or("(none)"));
@@ -33,7 +30,8 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
         println!("Images: {}", result.images.len());
 
         if let Some(ref md) = result.markdown {
-            println!("\n--- Markdown ({} chars) ---\n{}", md.content.len(), &md.content[..200.min(md.content.len())]);
+            let preview_len = 200.min(md.content.len());
+            println!("\n--- Markdown ({} chars) ---\n{}", md.content.len(), &md.content[..preview_len]);
         }
 
         Ok(())
@@ -44,13 +42,11 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
 
     ```python title="scrape.py"
     import asyncio
-    from kreuzcrawl import CrawlEngine, CrawlConfig
+    from kreuzcrawl import CrawlConfig, create_engine, scrape
 
-    async def main():
-        config = CrawlConfig()
-        engine = CrawlEngine(config)
-
-        result = await engine.scrape("https://example.com")
+    async def main() -> None:
+        engine = create_engine(CrawlConfig())
+        result = await scrape(engine, "https://example.com")
 
         print(f"Status: {result.status_code}")
         print(f"Title: {result.metadata.title}")
@@ -68,16 +64,14 @@ Scraping fetches one URL and returns its metadata, links, images, and markdown c
 === "TypeScript"
 
     ```typescript title="scrape.ts"
-    import { CrawlEngine, CrawlConfig } from "@kreuzberg/kreuzcrawl";
+    import { createEngine, scrape } from "@kreuzberg/kreuzcrawl";
 
-    const config: CrawlConfig = {};
-    const engine = new CrawlEngine(config);
-
-    const result = await engine.scrape("https://example.com");
+    const engine = createEngine();
+    const result = await scrape(engine, "https://example.com");
 
     console.log(`Status: ${result.statusCode}`);
-    console.log(`Title: ${result.metadata.title}`);
-    console.log(`Description: ${result.metadata.description}`);
+    console.log(`Title: ${result.metadata.title ?? "(none)"}`);
+    console.log(`Description: ${result.metadata.description ?? "(none)"}`);
     console.log(`Links: ${result.links.length}`);
     console.log(`Images: ${result.images.length}`);
 
@@ -116,21 +110,19 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 === "Rust"
 
     ```rust title="src/main.rs"
-    use kreuzcrawl::{CrawlConfig, CrawlEngine};
+    use kreuzcrawl::{CrawlConfig, create_engine, crawl};
 
     #[tokio::main]
     async fn main() -> Result<(), Box<dyn std::error::Error>> {
-        let engine = CrawlEngine::builder()
-            .config(CrawlConfig {
-                max_depth: Some(2),
-                max_pages: Some(50),
-                stay_on_domain: true,
-                respect_robots_txt: true,
-                ..Default::default()
-            })
-            .build()?;
+        let engine = create_engine(Some(CrawlConfig {
+            max_depth: Some(2),
+            max_pages: Some(50),
+            stay_on_domain: true,
+            respect_robots_txt: true,
+            ..Default::default()
+        }))?;
 
-        let result = engine.crawl("https://example.com").await?;
+        let result = crawl(&engine, "https://example.com").await?;
 
         println!("Crawled {} pages (final URL: {})", result.pages.len(), result.final_url);
 
@@ -148,18 +140,16 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 
     ```python title="crawl.py"
     import asyncio
-    from kreuzcrawl import CrawlEngine, CrawlConfig
+    from kreuzcrawl import CrawlConfig, create_engine, crawl
 
-    async def main():
-        config = CrawlConfig(
+    async def main() -> None:
+        engine = create_engine(CrawlConfig(
             max_depth=2,
             max_pages=50,
             stay_on_domain=True,
             respect_robots_txt=True,
-        )
-        engine = CrawlEngine(config)
-
-        result = await engine.crawl("https://example.com")
+        ))
+        result = await crawl(engine, "https://example.com")
 
         print(f"Crawled {len(result.pages)} pages (final URL: {result.final_url})")
 
@@ -174,17 +164,16 @@ Crawling starts from a URL, follows links up to a configured depth, and returns 
 === "TypeScript"
 
     ```typescript title="crawl.ts"
-    import { CrawlEngine, CrawlConfig } from "@kreuzberg/kreuzcrawl";
+    import { createEngine, crawl } from "@kreuzberg/kreuzcrawl";
 
-    const config: CrawlConfig = {
+    const engine = createEngine({
         maxDepth: 2,
         maxPages: 50,
         stayOnDomain: true,
         respectRobotsTxt: true,
-    };
-    const engine = new CrawlEngine(config);
+    });
 
-    const result = await engine.crawl("https://example.com");
+    const result = await crawl(engine, "https://example.com");
 
     console.log(`Crawled ${result.pages.length} pages (final URL: ${result.finalUrl})`);
 
@@ -227,19 +216,17 @@ Mapping discovers all URLs on a site using sitemaps and link extraction, without
 === "Rust"
 
     ```rust title="src/main.rs"
-    use kreuzcrawl::{CrawlConfig, CrawlEngine};
+    use kreuzcrawl::{CrawlConfig, create_engine, map_urls};
 
     #[tokio::main]
     async fn main() -> Result<(), Box<dyn std::error::Error>> {
-        let engine = CrawlEngine::builder()
-            .config(CrawlConfig {
-                respect_robots_txt: true,
-                map_limit: Some(100),
-                ..Default::default()
-            })
-            .build()?;
+        let engine = create_engine(Some(CrawlConfig {
+            respect_robots_txt: true,
+            map_limit: Some(100),
+            ..Default::default()
+        }))?;
 
-        let result = engine.map("https://example.com").await?;
+        let result = map_urls(&engine, "https://example.com").await?;
 
         println!("Discovered {} URLs:", result.urls.len());
         for entry in &result.urls {
@@ -255,16 +242,14 @@ Mapping discovers all URLs on a site using sitemaps and link extraction, without
 
     ```python title="map.py"
     import asyncio
-    from kreuzcrawl import CrawlEngine, CrawlConfig
+    from kreuzcrawl import CrawlConfig, create_engine, map_urls
 
-    async def main():
-        config = CrawlConfig(
+    async def main() -> None:
+        engine = create_engine(CrawlConfig(
             respect_robots_txt=True,
             map_limit=100,
-        )
-        engine = CrawlEngine(config)
-
-        result = await engine.map("https://example.com")
+        ))
+        result = await map_urls(engine, "https://example.com")
 
         print(f"Discovered {len(result.urls)} URLs:")
         for entry in result.urls:
@@ -277,15 +262,14 @@ Mapping discovers all URLs on a site using sitemaps and link extraction, without
 === "TypeScript"
 
     ```typescript title="map.ts"
-    import { CrawlEngine, CrawlConfig } from "@kreuzberg/kreuzcrawl";
+    import { createEngine, mapUrls } from "@kreuzberg/kreuzcrawl";
 
-    const config: CrawlConfig = {
+    const engine = createEngine({
         respectRobotsTxt: true,
         mapLimit: 100,
-    };
-    const engine = new CrawlEngine(config);
+    });
 
-    const result = await engine.map("https://example.com");
+    const result = await mapUrls(engine, "https://example.com");
 
     console.log(`Discovered ${result.urls.length} URLs:`);
     for (const entry of result.urls) {
