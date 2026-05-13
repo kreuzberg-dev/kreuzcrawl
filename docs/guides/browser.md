@@ -28,50 +28,16 @@ let config = CrawlConfig {
 };
 ```
 
-## BrowserPool management
+## Browser pooling
 
-When crawling many pages, launching a fresh Chrome process per request is expensive.
-`BrowserPool` keeps a single Chrome instance alive and hands out individual pages (tabs),
-limiting concurrency with a semaphore.
-
-```rust
-use std::sync::Arc;
-use kreuzcrawl::BrowserPoolConfig;
-use kreuzcrawl::BrowserPool;
-
-let pool = BrowserPool::new(BrowserPoolConfig {
-    max_pages: 8,              // up to 8 concurrent tabs
-    browser_endpoint: None,    // launch a local Chrome
-    chrome_args: Vec::new(),
-    launch_timeout: std::time::Duration::from_secs(30),
-});
-
-// Optionally warm the pool so the first request doesn't pay startup cost.
-pool.warm().await?;
-
-// Acquire a page, use it, then close.
-let page = pool.acquire_page().await?;
-// ... use page.page() for CDP operations ...
-page.close().await;
-```
-
-Key behaviours:
-
-- **Lazy start** -- Chrome is not launched until the first `acquire_page()` or `warm()` call.
-- **Auto-recovery** -- If Chrome crashes, the next `acquire_page()` call relaunches it automatically.
-- **Graceful shutdown** -- `pool.shutdown().await` closes the browser and rejects further requests.
-- **Health probe** -- `pool.is_healthy()` is a lock-free atomic read, safe for liveness checks.
-
-Each `PooledPage` holds a semaphore permit. When the page is closed (or dropped), the permit
-is released so another caller can open a tab.
+A single Chrome instance is kept alive across requests; tabs are handed out lazily, the pool auto-recovers if Chrome crashes, and concurrent tabs are bounded by `CrawlConfig::max_concurrent`. No additional configuration is required.
 
 ## Connecting to an external browser
 
-Instead of launching a local Chrome process, you can connect to an already-running browser
-via its CDP WebSocket endpoint:
+Point the engine at an already-running Chrome via its CDP WebSocket endpoint instead of launching one locally:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, BrowserConfig};
+use kreuzcrawl::{BrowserConfig, CrawlConfig};
 
 let config = CrawlConfig {
     browser: BrowserConfig {
@@ -82,59 +48,23 @@ let config = CrawlConfig {
 };
 ```
 
-Or with `BrowserPoolConfig`:
+This is the recommended pattern when running Chrome in a sidecar container or a remote debugging session.
+
+## Browser profiles
+
+Persistent browser profiles retain cookies, localStorage, and other browser state across crawl sessions. Configure them through `CrawlConfig::browser_profile` (named profile to attach) and `CrawlConfig::save_browser_profile` (persist changes on exit):
 
 ```rust
-use kreuzcrawl::BrowserPoolConfig;
+use kreuzcrawl::CrawlConfig;
 
-let pool_config = BrowserPoolConfig {
-    browser_endpoint: Some("ws://127.0.0.1:9222/devtools/browser/...".into()),
+let config = CrawlConfig {
+    browser_profile: Some("my-session".into()),
+    save_browser_profile: true,
     ..Default::default()
 };
 ```
 
-This is useful when running Chrome in a sidecar container or a remote debugging session.
-
-## Browser profiles (persistent sessions)
-
-`BrowserProfile` lets you persist cookies, localStorage, and other browser state across
-crawl sessions by pointing Chrome at a stable `--user-data-dir`.
-
-```rust
-use kreuzcrawl::BrowserProfile;
-
-// Create a profile handle (does not touch disk yet).
-let profile = BrowserProfile::new("my-session")?;
-
-// Create the directory if it doesn't exist.
-if !profile.exists() {
-    profile.create()?;
-}
-
-// Pass the profile's Chrome args to BrowserPoolConfig.
-let pool_config = BrowserPoolConfig {
-    chrome_args: profile.chrome_args(),
-    ..Default::default()
-};
-```
-
-Profile names are validated to prevent path-traversal attacks. Only ASCII alphanumerics,
-hyphens, underscores, and dots are allowed (max 255 characters). Profiles are stored under
-`<data_dir>/kreuzcrawl/profiles/<name>`.
-
-Manage profiles:
-
-```rust
-// List all profiles on disk.
-let names = BrowserProfile::list_all()?;
-
-// Delete a profile (refuses to follow symlinks).
-profile.delete()?;
-```
-
-!!! warning "Unix permissions"
-On Unix, `profile.create()` sets the directory to mode `0o700` (owner-only access).
-Never store profiles in world-readable locations.
+Profile names are validated against path-traversal — only ASCII alphanumerics, hyphens, underscores, and dots are allowed (max 255 characters). Profiles are stored under `<data_dir>/kreuzcrawl/profiles/<name>` and, on Unix, are created with mode `0o700`.
 
 ## WAF detection
 

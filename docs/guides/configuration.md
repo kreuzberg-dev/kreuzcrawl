@@ -1,15 +1,15 @@
 # Configuration
 
-All kreuzcrawl operations are controlled through `CrawlConfig`. This guide covers every field, its default value, validation rules, and the builder pattern for constructing engines.
+All kreuzcrawl operations are controlled through `CrawlConfig`. This guide covers every public field, its default value, and validation rules.
 
-## Builder pattern
+## Constructing an engine
 
-The engine's trait-based builder (`CrawlEngine::builder()`) is an internal API — it is not re-exported from the crate root. For most use cases, pass a `CrawlConfig` directly to `create_engine`:
+Pass a `CrawlConfig` to `create_engine`, then call `scrape` / `crawl` / `map_urls` / `batch_scrape` / `batch_crawl` against the returned handle:
 
 ```rust
-use kreuzcrawl::{CrawlConfig, CrawlEngineHandle, create_engine};
+use kreuzcrawl::{CrawlConfig, create_engine};
 
-let engine: CrawlEngineHandle = create_engine(Some(CrawlConfig {
+let engine = create_engine(Some(CrawlConfig {
     max_depth: Some(3),
     max_pages: Some(100),
     max_concurrent: Some(5),
@@ -19,25 +19,7 @@ let engine: CrawlEngineHandle = create_engine(Some(CrawlConfig {
 }))?;
 ```
 
-!!! note "Custom strategy and filter types"
-Alternative crawl strategies (`BestFirstStrategy`, `DfsStrategy`, `AdaptiveStrategy`) and content filters (`Bm25Filter`) exist in the crate's `defaults` module, but that module is not part of the public API. Custom strategies and filters are not currently supported for external use until the relevant traits are re-exported.
-
-### Builder methods (internal reference)
-
-These methods exist on `CrawlEngineBuilder` and are used by `create_engine` internally. They are listed here so you know which defaults are in effect:
-
-| Method                                | Accepts                     | Default                     |
-| ------------------------------------- | --------------------------- | --------------------------- |
-| `.config(config)`                     | `CrawlConfig`               | `CrawlConfig::default()`    |
-| `.frontier(impl Frontier)`            | URL queue and deduplication | `InMemoryFrontier`          |
-| `.rate_limiter(impl RateLimiter)`     | Per-domain throttling       | `PerDomainThrottle` (200ms) |
-| `.store(impl CrawlStore)`             | Result persistence          | `NoopStore`                 |
-| `.event_emitter(impl EventEmitter)`   | Lifecycle event handler     | `NoopEmitter`               |
-| `.strategy(impl CrawlStrategy)`       | URL selection and scoring   | `BfsStrategy`               |
-| `.content_filter(impl ContentFilter)` | Post-extraction page filter | `NoopFilter`                |
-| `.cache(impl CrawlCache)`             | HTTP response cache         | `NoopCache`                 |
-
-Unset fields use their defaults. `create_engine` calls `.build()` which validates the config and returns `Result<CrawlEngineHandle, CrawlError>`.
+`create_engine` runs full validation up front: depth / page / size bounds, regex paths, and field-level constraints. Validation errors surface as `CrawlError::InvalidConfig` before any network request is made.
 
 ## Convenience constructors
 
@@ -181,10 +163,11 @@ ProxyConfig {
 
 ### Content processing
 
-| Field               | Type          | Default | Description                                                                           |
-| ------------------- | ------------- | ------- | ------------------------------------------------------------------------------------- |
-| `main_content_only` | `bool`        | `false` | Extract only the primary content, stripping navigation and boilerplate.               |
-| `remove_tags`       | `Vec<String>` | `[]`    | CSS selectors for elements to remove before processing (e.g., `"nav"`, `".sidebar"`). |
+| Field                       | Type            | Default      | Description                                                                                                      |
+| --------------------------- | --------------- | ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `content.preprocessing_preset` | `String`     | `"standard"` | HTML preprocessing strength: `"minimal"`, `"standard"`, or `"aggressive"` (aggressive strips chrome/boilerplate). |
+| `remove_tags`               | `Vec<String>`   | `[]`         | CSS selectors for elements to remove before processing (e.g., `"nav"`, `".sidebar"`).                            |
+| `max_body_size`             | `Option<usize>` | `None`       | Truncate HTML bodies beyond this size in bytes. `None` keeps the full body.                                      |
 
 ### URL discovery (map)
 
@@ -254,7 +237,9 @@ ProxyConfig {
   "retry_codes": [429, 503],
   "include_paths": ["^/docs/"],
   "exclude_paths": ["/admin/"],
-  "main_content_only": false,
+  "content": {
+    "preprocessing_preset": "standard"
+  },
   "cookies_enabled": false,
   "download_assets": false,
   "download_documents": true,
@@ -287,7 +272,7 @@ Since `CrawlConfig` implements `Deserialize`, you can load it from JSON, TOML, o
 | `max_redirects`        | `10`                    |
 | `retry_count`          | `0`                     |
 | `cookies_enabled`      | `false`                 |
-| `main_content_only`    | `false`                 |
+| `content.preprocessing_preset` | `"standard"`    |
 | `download_assets`      | `false`                 |
 | `download_documents`   | `true`                  |
 | `document_max_size`    | 50 MB                   |
@@ -297,16 +282,3 @@ Since `CrawlConfig` implements `Deserialize`, you can load it from JSON, TOML, o
 | `browser.timeout`      | 30 seconds              |
 | `browser.wait`         | `NetworkIdle`           |
 
-## Default trait implementations
-
-When not overridden via the builder, the engine uses these defaults:
-
-| Trait           | Default implementation | Behavior                                                                                     |
-| --------------- | ---------------------- | -------------------------------------------------------------------------------------------- |
-| `Frontier`      | `InMemoryFrontier`     | In-memory HashSet for URL deduplication.                                                     |
-| `RateLimiter`   | `PerDomainThrottle`    | 200ms minimum interval between requests to the same domain. Respects robots.txt crawl-delay. |
-| `CrawlStore`    | `NoopStore`            | Discards all storage calls.                                                                  |
-| `EventEmitter`  | `NoopEmitter`          | Discards all events.                                                                         |
-| `CrawlStrategy` | `BfsStrategy`          | Breadth-first URL selection.                                                                 |
-| `ContentFilter` | `NoopFilter`           | Passes all pages through.                                                                    |
-| `CrawlCache`    | `NoopCache`            | No caching.                                                                                  |

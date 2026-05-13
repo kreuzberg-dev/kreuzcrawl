@@ -24,43 +24,9 @@ Kreuzcrawl writes two record types:
 Record IDs use the `<urn:uuid:...>` format. Timestamps follow ISO 8601 with second
 precision and a `Z` suffix.
 
-## WarcWriter API
+## Enabling WARC output
 
-The `WarcWriter` struct provides a low-level API for producing WARC files:
-
-```rust
-use std::path::Path;
-use chrono::Utc;
-use kreuzcrawl::WarcWriter;
-
-let mut writer = WarcWriter::new(Path::new("output.warc"))?;
-
-// Write the warcinfo record (call once, before any response records).
-writer.write_warcinfo("kreuzcrawl/0.1.0", "my-host.example.com")?;
-
-// Write a response record for each crawled page.
-let record_id = writer.write_response(
-    "https://example.com/page",
-    200,
-    &[("Content-Type", "text/html")],
-    b"<html>Hello</html>",
-    Utc::now(),
-)?;
-
-// Flush and finalize.
-writer.finish()?;
-```
-
-The `write_response` method returns the WARC-Record-ID assigned to the record, which
-callers can use for cross-referencing.
-
-!!! note "Header validation"
-Header names and values are validated to reject CR/LF characters, preventing
-header injection attacks. Invalid headers cause `CrawlError::InvalidConfig`.
-
-## Integration with crawl
-
-The simplest way to enable WARC output is through the `warc_output` field on `CrawlConfig`:
+Set the `warc_output` field on `CrawlConfig` to write WARC during a crawl:
 
 ```rust
 use std::path::PathBuf;
@@ -72,9 +38,7 @@ let config = CrawlConfig {
 };
 ```
 
-When `warc_output` is set, the crawl engine writes a warcinfo record at the start and
-a response record for every successfully fetched page. The WARC file is flushed and
-closed when the crawl completes.
+When `warc_output` is set, the crawl writes a single `warcinfo` record at the start of the file (identifying `kreuzcrawl/<version>` and the host) followed by one `response` record per successfully fetched page, containing the full HTTP response — status line, headers, and body — as the payload. The file is flushed and closed when the crawl completes. Header names and values are validated against CR/LF injection before being written.
 
 ## CLI flag
 

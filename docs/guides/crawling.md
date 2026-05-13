@@ -7,17 +7,15 @@ Crawling follows links from a seed URL, building a collection of pages up to a c
 The simplest crawl fetches a single seed URL and follows its links:
 
 ```rust
-use kreuzcrawl::{CrawlEngine, CrawlConfig};
+use kreuzcrawl::{CrawlConfig, create_engine, crawl};
 
-let engine = CrawlEngine::builder()
-    .config(CrawlConfig {
-        max_depth: Some(2),
-        max_pages: Some(50),
-        ..Default::default()
-    })
-    .build()?;
+let engine = create_engine(Some(CrawlConfig {
+    max_depth: Some(2),
+    max_pages: Some(50),
+    ..Default::default()
+}))?;
 
-let result = engine.crawl("https://example.com").await?;
+let result = crawl(&engine, "https://example.com").await?;
 
 for page in &result.pages {
     println!("{} (depth {}): {} bytes", page.url, page.depth, page.body_size);
@@ -54,7 +52,7 @@ CrawlConfig {
 !!! tip
 The default of 10 concurrent requests is a good starting point. Lower it when crawling sites with strict rate limits; raise it for high-throughput internal crawls.
 
-The engine also applies per-domain rate limiting through the `RateLimiter` trait. The default `PerDomainThrottle` enforces a 200ms delay between requests to the same domain, and automatically respects `Crawl-delay` directives from robots.txt when `respect_robots_txt` is enabled.
+A per-domain rate limit also applies: the engine enforces a 200 ms minimum interval between requests to the same domain, and automatically respects `Crawl-delay` directives from robots.txt when `respect_robots_txt` is enabled.
 
 ## Domain scoping
 
@@ -92,156 +90,45 @@ CrawlConfig {
 
 The engine compiles these patterns once at the start of the crawl and validates them during `CrawlConfig::validate()`. Invalid regex patterns produce a `CrawlError::InvalidConfig` error.
 
-## Streaming events
-
-For real-time processing as pages are crawled, use `crawl_stream`:
-
-```rust
-use tokio_stream::StreamExt;
-use kreuzcrawl::CrawlEvent;
-
-let mut stream = engine.crawl_stream("https://example.com");
-
-while let Some(event) = stream.next().await {
-    match event {
-        CrawlEvent::Page(page) => {
-            println!("Crawled: {} ({} bytes)", page.url, page.body_size);
-        }
-        CrawlEvent::Error { url, error } => {
-            eprintln!("Failed: {} - {}", url, error);
-        }
-        CrawlEvent::Complete { pages_crawled } => {
-            println!("Done: {} pages", pages_crawled);
-        }
-    }
-}
-```
-
-The stream uses a buffered channel sized at `max_concurrent * 16`. Dropping the stream receiver signals the engine to cancel remaining work.
-
-### CrawlEvent variants
-
-| Variant    | Fields                       | Description                                                                                                             |
-| ---------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `Page`     | `Box<CrawlPageResult>`       | A page was successfully fetched and extracted. Contains the full page result with HTML, metadata, links, markdown, etc. |
-| `Error`    | `url: String, error: String` | A fetch or extraction error occurred for the given URL.                                                                 |
-| `Complete` | `pages_crawled: usize`       | The crawl has finished.                                                                                                 |
-
 ## Batch crawling
 
 Crawl multiple seed URLs concurrently, each following links independently:
 
 ```rust
-let results = engine.batch_crawl(&[
-    "https://example.com",
-    "https://other-site.org",
-]).await;
+use kreuzcrawl::batch_crawl;
 
-for (seed_url, result) in results {
-    match result {
-        Ok(crawl) => println!("{}: {} pages", seed_url, crawl.pages.len()),
-        Err(e) => eprintln!("{}: {}", seed_url, e),
+let results = batch_crawl(
+    &engine,
+    vec![
+        "https://example.com".to_owned(),
+        "https://other-site.org".to_owned(),
+    ],
+).await?;
+
+for entry in &results {
+    match (&entry.result, &entry.error) {
+        (Some(crawl), _) => println!("{}: {} pages", entry.url, crawl.pages.len()),
+        (None, Some(e)) => eprintln!("{}: {}", entry.url, e),
+        _ => {}
     }
 }
 ```
 
-`batch_crawl` respects the same `max_concurrent` limit across all seed URLs. Each seed URL produces an independent `CrawlResult`.
-
-For streaming across multiple seeds, use `batch_crawl_stream`:
-
-```rust
-let mut stream = engine.batch_crawl_stream(&[
-    "https://example.com",
-    "https://other-site.org",
-]);
-
-while let Some(event) = stream.next().await {
-    // Events from all crawls are interleaved
-}
-```
+`batch_crawl` respects the same `max_concurrent` limit across all seed URLs. Each seed URL produces an independent `BatchCrawlResult` with either a populated `result` or an `error` message.
 
 There is also `batch_scrape` for scraping multiple individual URLs without link following:
 
 ```rust
-let results = engine.batch_scrape(&[
-    "https://example.com/page1",
-    "https://example.com/page2",
-]).await;
+use kreuzcrawl::batch_scrape;
+
+let results = batch_scrape(
+    &engine,
+    vec![
+        "https://example.com/page1".to_owned(),
+        "https://example.com/page2".to_owned(),
+    ],
+).await?;
 ```
-
-## Crawl strategies
-
-The engine uses a pluggable `CrawlStrategy` trait to control URL selection order. Four built-in strategies are available:
-
-### BfsStrategy (default)
-
-Breadth-first: always selects the oldest (first) entry from the working set. This explores all pages at depth N before moving to depth N+1.
-
-```rust
-use kreuzcrawl::BfsStrategy;
-
-let engine = CrawlEngine::builder()
-    .strategy(BfsStrategy)
-    .build()?;
-```
-
-### DfsStrategy
-
-Depth-first: always selects the newest (last) entry, giving LIFO behavior. This dives deep along a single path before backtracking.
-
-```rust
-use kreuzcrawl::DfsStrategy;
-
-let engine = CrawlEngine::builder()
-    .strategy(DfsStrategy)
-    .build()?;
-```
-
-### BestFirstStrategy
-
-Selects the candidate with the highest priority score. By default, priority is `1.0 / (depth + 1.0)`, favoring shallower pages. Override `score_url` for custom ranking.
-
-```rust
-use kreuzcrawl::BestFirstStrategy;
-
-let engine = CrawlEngine::builder()
-    .strategy(BestFirstStrategy)
-    .build()?;
-```
-
-### AdaptiveStrategy
-
-Tracks unique terms across crawled pages and stops when content saturation is detected -- when the rate of new term discovery drops below a threshold. This is useful for crawling sites where you want comprehensive coverage without redundant pages.
-
-```rust
-use kreuzcrawl::AdaptiveStrategy;
-
-// Stop when new-term rate drops below 5% over a 10-page window
-let engine = CrawlEngine::builder()
-    .strategy(AdaptiveStrategy::new(10, 0.05))
-    .build()?;
-```
-
-| Parameter              | Default | Description                                                                    |
-| ---------------------- | ------- | ------------------------------------------------------------------------------ |
-| `window_size`          | `10`    | Number of recent pages to consider for saturation detection.                   |
-| `saturation_threshold` | `0.05`  | Stop when the ratio of new terms per page drops below this value (0.0 to 1.0). |
-
-The adaptive strategy continues crawling unconditionally until at least `window_size` pages have been processed, ensuring enough data for a meaningful saturation signal.
-
-## Content filtering
-
-The `ContentFilter` trait allows post-extraction filtering of pages. The built-in `Bm25Filter` scores pages against a query using BM25 TF-saturation:
-
-```rust
-use kreuzcrawl::Bm25Filter;
-
-let engine = CrawlEngine::builder()
-    .content_filter(Bm25Filter::new("rust programming", 0.3))
-    .build()?;
-```
-
-Pages scoring below the threshold are excluded from crawl results but still contribute to link discovery -- their outgoing links are followed normally.
 
 ## Redirect handling
 
@@ -282,5 +169,5 @@ Each page in the crawl result contains:
 | `depth`            | `usize`                  | Distance from the seed URL in link hops.                   |
 | `stayed_on_domain` | `bool`                   | Whether this page is on the same domain as the seed.       |
 | `markdown`         | `Option<MarkdownResult>` | Markdown conversion (always populated for HTML pages).     |
-| `extracted_data`   | `Option<Value>`          | LLM-extracted structured data (when using `LlmExtractor`). |
+| `extracted_data`   | `Option<Value>`          | LLM-extracted structured data, when extraction is configured. |
 | `extraction_meta`  | `Option<ExtractionMeta>` | LLM extraction cost and token metadata.                    |

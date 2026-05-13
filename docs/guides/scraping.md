@@ -5,13 +5,11 @@ Scraping fetches a single URL and runs the full extraction pipeline: metadata, l
 ## Single-page scrape
 
 ```rust
-use kreuzcrawl::{CrawlEngine, CrawlConfig};
+use kreuzcrawl::{CrawlConfig, create_engine, scrape};
 
-let engine = CrawlEngine::builder()
-    .config(CrawlConfig::default())
-    .build()?;
+let engine = create_engine(Some(CrawlConfig::default()))?;
 
-let result = engine.scrape("https://example.com").await?;
+let result = scrape(&engine, "https://example.com").await?;
 
 println!("Status: {}", result.status_code);
 println!("Title: {:?}", result.metadata.title);
@@ -31,7 +29,7 @@ The `ScrapeResult` struct contains everything extracted from a single page:
 | ------------------ | ---------------- | --------------------------------------------------------------------------------------------- |
 | `status_code`      | `u16`            | HTTP response status code.                                                                    |
 | `content_type`     | `String`         | The Content-Type header value.                                                                |
-| `html`             | `String`         | The response body (possibly truncated by `max_body_size` or filtered by `main_content_only`). |
+| `html`             | `String`         | The response body (possibly truncated by `content.max_body_size`).                            |
 | `body_size`        | `usize`          | Size of the response body in bytes.                                                           |
 | `detected_charset` | `Option<String>` | Character encoding detected from Content-Type header or HTML meta tags.                       |
 | `is_pdf`           | `bool`           | Whether the content was detected as PDF.                                                      |
@@ -62,7 +60,6 @@ The `ScrapeResult` struct contains everything extracted from a single page:
 
 | Field                 | Type                         | Description                                                                      |
 | --------------------- | ---------------------------- | -------------------------------------------------------------------------------- |
-| `main_content_only`   | `bool`                       | Whether main content extraction was active.                                      |
 | `auth_header_sent`    | `bool`                       | Whether an authentication header was sent.                                       |
 | `response_meta`       | `Option<ResponseMeta>`       | HTTP headers: ETag, Last-Modified, Cache-Control, Server, etc.                   |
 | `assets`              | `Vec<DownloadedAsset>`       | Downloaded page assets (when `download_assets` is enabled).                      |
@@ -75,7 +72,7 @@ The `ScrapeResult` struct contains everything extracted from a single page:
 
 | Field             | Type                     | Description                                                                     |
 | ----------------- | ------------------------ | ------------------------------------------------------------------------------- |
-| `extracted_data`  | `Option<Value>`          | Structured JSON extracted by LLM (populated when using `LlmExtractor`).         |
+| `extracted_data`  | `Option<Value>`          | Structured JSON extracted by an LLM, when LLM extraction is configured.         |
 | `extraction_meta` | `Option<ExtractionMeta>` | LLM cost tracking: estimated cost in USD, prompt/completion tokens, model name. |
 
 ## Metadata extraction
@@ -174,18 +171,23 @@ The scrape result includes `is_allowed`, `crawl_delay`, and any `noindex`/`nofol
 !!! note
 When `respect_robots_txt` is `false` (the default), `is_allowed` is always `true` and robots.txt is not fetched.
 
-## Main content only mode
+## Aggressive content pruning
 
-Extract only the primary content, stripping navigation, sidebars, and boilerplate:
+Strip navigation, sidebars, and boilerplate before extraction via the content preset:
 
 ```rust
+use kreuzcrawl::{CrawlConfig, ContentConfig};
+
 CrawlConfig {
-    main_content_only: true,
+    content: ContentConfig {
+        preprocessing_preset: "aggressive".to_owned(),
+        ..Default::default()
+    },
     ..Default::default()
 }
 ```
 
-When enabled, the engine runs main content extraction on the HTML before the metadata/link extraction pipeline. The `html` field in the result contains only the extracted main content.
+`preprocessing_preset` accepts `"minimal"`, `"standard"` (default), or `"aggressive"`. The aggressive preset runs the main-content extractor before the metadata and link pipeline, so the resulting Markdown contains the primary content only.
 
 ## Removing specific tags
 

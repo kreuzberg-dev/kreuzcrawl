@@ -101,7 +101,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 The `/health` endpoint returns:
 
 ```json
-{ "status": "ok", "version": "0.1.0" }
+{ "status": "ok", "version": "0.3.0-rc.19" }
 ```
 
 Orchestrators (Docker Compose, Kubernetes, Cloud Run) can use this to detect when the
