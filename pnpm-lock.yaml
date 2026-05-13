@@ -39,7 +39,7 @@ importers:
     devDependencies:
       kreuzcrawl:
         specifier: file:../../crates/kreuzcrawl-wasm/pkg
-        version: kreuzcrawl-wasm@file:crates/kreuzcrawl-wasm/pkg
+        version: pkg@file:crates/kreuzcrawl-wasm/pkg
       rollup:
         specifier: ^4.53.3
         version: 4.60.3
@@ -1362,9 +1362,6 @@ packages:
   json-with-bigint@3.5.8:
     resolution: {integrity: sha512-eq/4KP6K34kwa7TcFdtvnftvHCD9KvHOGGICWwMFc4dOOKF5t4iYqnfLK8otCRCRv06FXOzGGyqE8h8ElMvvdw==}
 
-  kreuzcrawl-wasm@file:crates/kreuzcrawl-wasm/pkg:
-    resolution: {directory: crates/kreuzcrawl-wasm/pkg, type: directory}
-
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
     engines: {node: '>= 12.0.0'}
@@ -1473,6 +1470,9 @@ packages:
   picomatch@4.0.4:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
+
+  pkg@file:crates/kreuzcrawl-wasm/pkg:
+    resolution: {directory: crates/kreuzcrawl-wasm/pkg, type: directory}
 
   postcss@8.5.13:
     resolution: {integrity: sha512-qif0+jGGZoLWdHey3UFHHWP0H7Gbmsk8T5VEqyYFbWqPr1XqvLGBbk/sl8V5exGmcYJklJOhOQq1pV9IcsiFag==}
@@ -2701,8 +2701,6 @@ snapshots:
 
   json-with-bigint@3.5.8: {}
 
-  kreuzcrawl-wasm@file:crates/kreuzcrawl-wasm/pkg: {}
-
   lightningcss-android-arm64@1.32.0:
     optional: true
 
@@ -2773,6 +2771,8 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.4: {}
+
+  pkg@file:crates/kreuzcrawl-wasm/pkg: {}
 
   postcss@8.5.13:
     dependencies:

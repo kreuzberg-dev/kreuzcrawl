@@ -2111,13 +2111,13 @@ impl WasmLinkInfo {
     }
 
     #[wasm_bindgen(getter, js_name = "linkType")]
-    pub fn link_type(&self) -> WasmLinkType {
-        self.link_type
+    pub fn link_type(&self) -> String {
+        self.link_type.to_api_str().to_string()
     }
 
     #[wasm_bindgen(setter, js_name = "linkType")]
-    pub fn set_link_type(&mut self, value: WasmLinkType) {
-        self.link_type = value;
+    pub fn set_link_type(&mut self, value: String) {
+        self.link_type = WasmLinkType::from_api_str(&value);
     }
 
     #[wasm_bindgen(getter)]
@@ -2218,13 +2218,13 @@ impl WasmImageInfo {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn source(&self) -> WasmImageSource {
-        self.source
+    pub fn source(&self) -> String {
+        self.source.to_api_str().to_string()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_source(&mut self, value: WasmImageSource) {
-        self.source = value;
+    pub fn set_source(&mut self, value: String) {
+        self.source = WasmImageSource::from_api_str(&value);
     }
 }
 
@@ -2275,13 +2275,13 @@ impl WasmFeedInfo {
     }
 
     #[wasm_bindgen(getter, js_name = "feedType")]
-    pub fn feed_type(&self) -> WasmFeedType {
-        self.feed_type
+    pub fn feed_type(&self) -> String {
+        self.feed_type.to_api_str().to_string()
     }
 
     #[wasm_bindgen(setter, js_name = "feedType")]
-    pub fn set_feed_type(&mut self, value: WasmFeedType) {
-        self.feed_type = value;
+    pub fn set_feed_type(&mut self, value: String) {
+        self.feed_type = WasmFeedType::from_api_str(&value);
     }
 }
 
@@ -2496,13 +2496,13 @@ impl WasmDownloadedAsset {
     }
 
     #[wasm_bindgen(getter, js_name = "assetCategory")]
-    pub fn asset_category(&self) -> WasmAssetCategory {
-        self.asset_category
+    pub fn asset_category(&self) -> String {
+        self.asset_category.to_api_str().to_string()
     }
 
     #[wasm_bindgen(setter, js_name = "assetCategory")]
-    pub fn set_asset_category(&mut self, value: WasmAssetCategory) {
-        self.asset_category = value;
+    pub fn set_asset_category(&mut self, value: String) {
+        self.asset_category = WasmAssetCategory::from_api_str(&value);
     }
 
     #[wasm_bindgen(getter, js_name = "htmlTag")]
@@ -3918,6 +3918,17 @@ impl WasmLinkType {
             Self::Document => "document",
         }
     }
+
+    /// Converts a string to the corresponding enum variant.
+    pub fn from_api_str(s: &str) -> Self {
+        match s {
+            "internal" => Self::Internal,
+            "external" => Self::External,
+            "anchor" => Self::Anchor,
+            "document" => Self::Document,
+            _ => Self::Internal,
+        }
+    }
 }
 
 /// The source of an image reference.
@@ -3948,6 +3959,17 @@ impl WasmImageSource {
             Self::TwitterImage => "twitter:image",
         }
     }
+
+    /// Converts a string to the corresponding enum variant.
+    pub fn from_api_str(s: &str) -> Self {
+        match s {
+            "img" => Self::Img,
+            "picture_source" => Self::PictureSource,
+            "og:image" => Self::OgImage,
+            "twitter:image" => Self::TwitterImage,
+            _ => Self::Img,
+        }
+    }
 }
 
 /// The type of a feed (RSS, Atom, or JSON Feed).
@@ -3974,6 +3996,16 @@ impl WasmFeedType {
             Self::Rss => "rss",
             Self::Atom => "atom",
             Self::JsonFeed => "json_feed",
+        }
+    }
+
+    /// Converts a string to the corresponding enum variant.
+    pub fn from_api_str(s: &str) -> Self {
+        match s {
+            "rss" => Self::Rss,
+            "atom" => Self::Atom,
+            "json_feed" => Self::JsonFeed,
+            _ => Self::Rss,
         }
     }
 }
@@ -4016,6 +4048,23 @@ impl WasmAssetCategory {
             Self::Archive => "archive",
             Self::Data => "data",
             Self::Other => "other",
+        }
+    }
+
+    /// Converts a string to the corresponding enum variant.
+    pub fn from_api_str(s: &str) -> Self {
+        match s {
+            "document" => Self::Document,
+            "image" => Self::Image,
+            "audio" => Self::Audio,
+            "video" => Self::Video,
+            "font" => Self::Font,
+            "stylesheet" => Self::Stylesheet,
+            "script" => Self::Script,
+            "archive" => Self::Archive,
+            "data" => Self::Data,
+            "other" => Self::Other,
+            _ => Self::Other,
         }
     }
 }
@@ -5073,7 +5122,6 @@ impl From<kreuzcrawl::BrowserWait> for WasmBrowserWait {
         }
     }
 }
-
 
 impl From<WasmLinkType> for kreuzcrawl::LinkType {
     fn from(val: WasmLinkType) -> Self {
