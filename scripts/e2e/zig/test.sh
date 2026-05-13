@@ -18,7 +18,7 @@ if [ ! -f "$MOCK_SERVER_BIN" ]; then
 fi
 
 MOCK_OUT=$(mktemp)
-trap 'rm -f "$MOCK_OUT"; kill "$MOCK_PID" 2>/dev/null; wait "$MOCK_PID" 2>/dev/null || true' EXIT INT TERM
+trap 'rm -f "$MOCK_OUT"; kill -9 "$MOCK_PID" 2>/dev/null || true' EXIT INT TERM
 
 # Start the mock server; pipe a long sleep to its stdin so it doesn't see EOF.
 # $! after a pipeline gives the PID of the rightmost command (the server).
@@ -26,7 +26,7 @@ sleep 9999 | "$MOCK_SERVER_BIN" "$FIXTURES_DIR" >"$MOCK_OUT" 2>&1 &
 MOCK_PID=$!
 
 # Wait up to 5 s for the server to emit MOCK_SERVERS= (the second startup line).
-for i in $(seq 1 50); do
+for _ in $(seq 1 50); do
   if grep -q "^MOCK_SERVERS=" "$MOCK_OUT" 2>/dev/null; then
     break
   fi
