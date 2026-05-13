@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <stdbool.h>
+#include <stdbool.h> 
 typedef struct RustStr { uint8_t* const start; uintptr_t len; } RustStr;
 typedef struct __private__FfiSlice { void* const start; uintptr_t len; } __private__FfiSlice;
 void* __swift_bridge__null_pointer(void);
@@ -873,3 +873,5 @@ struct __private__ResultPtrAndPtr __swift_bridge__$map_urls(void* engine, void* 
 struct __private__ResultPtrAndPtr __swift_bridge__$batch_scrape(void* engine, void* urls);
 struct __private__ResultPtrAndPtr __swift_bridge__$batch_crawl(void* engine, void* urls);
 struct __private__ResultPtrAndPtr __swift_bridge__$crawl_config_from_json(void* json);
+
+

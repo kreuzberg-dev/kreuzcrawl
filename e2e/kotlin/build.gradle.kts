@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation(files("../../packages/kotlin/build/libs/kreuzcrawl-kotlin-0.3.0-rc.19.jar"))
+    testImplementation(files("../../packages/kotlin/build/libs/kreuzcrawl_kotlin-0.3.0-rc.19.jar"))
     testImplementation("net.java.dev.jna:jna:5.18.1")
     testImplementation("com.fasterxml.jackson.core:jackson-annotations:2.18.2")
     testImplementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")

@@ -14,30 +14,33 @@ import org.jspecify.annotations.Nullable;
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = CookieInfoBuilder.class)
-public record CookieInfo(String name, String value, @Nullable String domain, @Nullable String path) {
-	public static CookieInfoBuilder builder() {
-		return new CookieInfoBuilder();
-	}
+public record CookieInfo(
+    String name,
+    String value,
+    @Nullable String domain,
+    @Nullable String path
+) {
+    public static CookieInfoBuilder builder() {
+        return new CookieInfoBuilder();
+    }
 
-	/**
-	 * Parse a {@code CookieInfo} from a JSON string.
-	 *
-	 * @param json
-	 *            JSON serialisation matching the Rust-side field names
-	 *            (snake_case).
-	 * @throws KreuzcrawlRsException
-	 *             if the JSON cannot be deserialised.
-	 */
-	public static CookieInfo fromJson(String json) throws KreuzcrawlRsException {
-		try {
-			return new com.fasterxml.jackson.databind.ObjectMapper()
-					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
-					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-					.readValue(json, CookieInfo.class);
-		} catch (Exception e) {
-			throw new KreuzcrawlRsException("Failed to parse CookieInfo from JSON: " + e.getMessage(), e);
-		}
-	}
+    /**
+     * Parse a {@code CookieInfo} from a JSON string.
+     *
+     * @param json JSON serialisation matching the Rust-side field names (snake_case).
+     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
+     */
+    public static CookieInfo fromJson(String json) throws KreuzcrawlRsException {
+        try {
+            return new com.fasterxml.jackson.databind.ObjectMapper()
+                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
+                .findAndRegisterModules()
+                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+                .readValue(json, CookieInfo.class);
+        } catch (Exception e) {
+            throw new KreuzcrawlRsException("Failed to parse CookieInfo from JSON: " + e.getMessage(), e);
+        }
+    }
 }

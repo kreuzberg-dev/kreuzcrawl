@@ -15,54 +15,60 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class LinkInfoBuilder {
 
-	@JsonProperty("url")
-	private String url = "";
-	@JsonProperty("text")
-	private String text = "";
-	@JsonProperty("link_type")
-	private LinkType linkType = null;
-	@JsonProperty("rel")
-	private Optional<String> rel = Optional.empty();
-	@JsonProperty("nofollow")
-	private boolean nofollow = false;
+    @JsonProperty("url")
+    private String url = "";
+    @JsonProperty("text")
+    private String text = "";
+    @JsonProperty("link_type")
+    private LinkType linkType = null;
+    @JsonProperty("rel")
+    private Optional<String> rel = Optional.empty();
+    @JsonProperty("nofollow")
+    private boolean nofollow = false;
 
-	/** Sets the url field. */
-	@JsonProperty("url")
-	public LinkInfoBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    @JsonProperty("url")
+    public LinkInfoBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the text field. */
-	@JsonProperty("text")
-	public LinkInfoBuilder withText(final String value) {
-		this.text = value;
-		return this;
-	}
+    /** Sets the text field. */
+    @JsonProperty("text")
+    public LinkInfoBuilder withText(final String value) {
+        this.text = value;
+        return this;
+    }
 
-	/** Sets the linkType field. */
-	@JsonProperty("link_type")
-	public LinkInfoBuilder withLinkType(final LinkType value) {
-		this.linkType = value;
-		return this;
-	}
+    /** Sets the linkType field. */
+    @JsonProperty("link_type")
+    public LinkInfoBuilder withLinkType(final LinkType value) {
+        this.linkType = value;
+        return this;
+    }
 
-	/** Sets the rel field. */
-	@JsonProperty("rel")
-	public LinkInfoBuilder withRel(final Optional<String> value) {
-		this.rel = value;
-		return this;
-	}
+    /** Sets the rel field. */
+    @JsonProperty("rel")
+    public LinkInfoBuilder withRel(final Optional<String> value) {
+        this.rel = value;
+        return this;
+    }
 
-	/** Sets the nofollow field. */
-	@JsonProperty("nofollow")
-	public LinkInfoBuilder withNofollow(final boolean value) {
-		this.nofollow = value;
-		return this;
-	}
+    /** Sets the nofollow field. */
+    @JsonProperty("nofollow")
+    public LinkInfoBuilder withNofollow(final boolean value) {
+        this.nofollow = value;
+        return this;
+    }
 
-	/** Builds the LinkInfo instance. */
-	public LinkInfo build() {
-		return new LinkInfo(url, text, linkType, rel.orElse(null), nofollow);
-	}
+    /** Builds the LinkInfo instance. */
+    public LinkInfo build() {
+        return new LinkInfo(
+            url,
+            text,
+            linkType,
+            rel.orElse(null),
+            nofollow
+        );
+    }
 }

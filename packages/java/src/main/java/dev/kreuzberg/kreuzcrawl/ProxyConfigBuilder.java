@@ -15,36 +15,40 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class ProxyConfigBuilder {
 
-	@JsonProperty("url")
-	private String url = "";
-	@JsonProperty("username")
-	private Optional<String> username = Optional.empty();
-	@JsonProperty("password")
-	private Optional<String> password = Optional.empty();
+    @JsonProperty("url")
+    private String url = "";
+    @JsonProperty("username")
+    private Optional<String> username = Optional.empty();
+    @JsonProperty("password")
+    private Optional<String> password = Optional.empty();
 
-	/** Sets the url field. */
-	@JsonProperty("url")
-	public ProxyConfigBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    @JsonProperty("url")
+    public ProxyConfigBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the username field. */
-	@JsonProperty("username")
-	public ProxyConfigBuilder withUsername(final Optional<String> value) {
-		this.username = value;
-		return this;
-	}
+    /** Sets the username field. */
+    @JsonProperty("username")
+    public ProxyConfigBuilder withUsername(final Optional<String> value) {
+        this.username = value;
+        return this;
+    }
 
-	/** Sets the password field. */
-	@JsonProperty("password")
-	public ProxyConfigBuilder withPassword(final Optional<String> value) {
-		this.password = value;
-		return this;
-	}
+    /** Sets the password field. */
+    @JsonProperty("password")
+    public ProxyConfigBuilder withPassword(final Optional<String> value) {
+        this.password = value;
+        return this;
+    }
 
-	/** Builds the ProxyConfig instance. */
-	public ProxyConfig build() {
-		return new ProxyConfig(url, username.orElse(null), password.orElse(null));
-	}
+    /** Builds the ProxyConfig instance. */
+    public ProxyConfig build() {
+        return new ProxyConfig(
+            url,
+            username.orElse(null),
+            password.orElse(null)
+        );
+    }
 }

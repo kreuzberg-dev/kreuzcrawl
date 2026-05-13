@@ -15,45 +15,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class CookieInfoBuilder {
 
-	@JsonProperty("name")
-	private String name = "";
-	@JsonProperty("value")
-	private String value = "";
-	@JsonProperty("domain")
-	private Optional<String> domain = Optional.empty();
-	@JsonProperty("path")
-	private Optional<String> path = Optional.empty();
+    @JsonProperty("name")
+    private String name = "";
+    @JsonProperty("value")
+    private String value = "";
+    @JsonProperty("domain")
+    private Optional<String> domain = Optional.empty();
+    @JsonProperty("path")
+    private Optional<String> path = Optional.empty();
 
-	/** Sets the name field. */
-	@JsonProperty("name")
-	public CookieInfoBuilder withName(final String value) {
-		this.name = value;
-		return this;
-	}
+    /** Sets the name field. */
+    @JsonProperty("name")
+    public CookieInfoBuilder withName(final String value) {
+        this.name = value;
+        return this;
+    }
 
-	/** Sets the value field. */
-	@JsonProperty("value")
-	public CookieInfoBuilder withValue(final String value) {
-		this.value = value;
-		return this;
-	}
+    /** Sets the value field. */
+    @JsonProperty("value")
+    public CookieInfoBuilder withValue(final String value) {
+        this.value = value;
+        return this;
+    }
 
-	/** Sets the domain field. */
-	@JsonProperty("domain")
-	public CookieInfoBuilder withDomain(final Optional<String> value) {
-		this.domain = value;
-		return this;
-	}
+    /** Sets the domain field. */
+    @JsonProperty("domain")
+    public CookieInfoBuilder withDomain(final Optional<String> value) {
+        this.domain = value;
+        return this;
+    }
 
-	/** Sets the path field. */
-	@JsonProperty("path")
-	public CookieInfoBuilder withPath(final Optional<String> value) {
-		this.path = value;
-		return this;
-	}
+    /** Sets the path field. */
+    @JsonProperty("path")
+    public CookieInfoBuilder withPath(final Optional<String> value) {
+        this.path = value;
+        return this;
+    }
 
-	/** Builds the CookieInfo instance. */
-	public CookieInfo build() {
-		return new CookieInfo(name, value, domain.orElse(null), path.orElse(null));
-	}
+    /** Builds the CookieInfo instance. */
+    public CookieInfo build() {
+        return new CookieInfo(
+            name,
+            value,
+            domain.orElse(null),
+            path.orElse(null)
+        );
+    }
 }

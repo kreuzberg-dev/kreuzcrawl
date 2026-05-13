@@ -15,64 +15,70 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class BrowserConfigBuilder {
 
-	@JsonProperty("mode")
-	private BrowserMode mode = null;
-	@JsonProperty("endpoint")
-	private Optional<String> endpoint = Optional.empty();
-	@JsonProperty("timeout")
-	private Long timeout = null;
-	@JsonProperty("wait")
-	private BrowserWait waitValue = null;
-	@JsonProperty("wait_selector")
-	private Optional<String> waitSelector = Optional.empty();
-	@JsonProperty("extra_wait")
-	private Optional<Long> extraWait = Optional.empty();
+    @JsonProperty("mode")
+    private BrowserMode mode = null;
+    @JsonProperty("endpoint")
+    private Optional<String> endpoint = Optional.empty();
+    @JsonProperty("timeout")
+    private Long timeout = null;
+    @JsonProperty("wait")
+    private BrowserWait waitValue = null;
+    @JsonProperty("wait_selector")
+    private Optional<String> waitSelector = Optional.empty();
+    @JsonProperty("extra_wait")
+    private Optional<Long> extraWait = Optional.empty();
 
-	/** Sets the mode field. */
-	@JsonProperty("mode")
-	public BrowserConfigBuilder withMode(final BrowserMode value) {
-		this.mode = value;
-		return this;
-	}
+    /** Sets the mode field. */
+    @JsonProperty("mode")
+    public BrowserConfigBuilder withMode(final BrowserMode value) {
+        this.mode = value;
+        return this;
+    }
 
-	/** Sets the endpoint field. */
-	@JsonProperty("endpoint")
-	public BrowserConfigBuilder withEndpoint(final Optional<String> value) {
-		this.endpoint = value;
-		return this;
-	}
+    /** Sets the endpoint field. */
+    @JsonProperty("endpoint")
+    public BrowserConfigBuilder withEndpoint(final Optional<String> value) {
+        this.endpoint = value;
+        return this;
+    }
 
-	/** Sets the timeout field. */
-	@JsonProperty("timeout")
-	public BrowserConfigBuilder withTimeout(final Long value) {
-		this.timeout = value;
-		return this;
-	}
+    /** Sets the timeout field. */
+    @JsonProperty("timeout")
+    public BrowserConfigBuilder withTimeout(final Long value) {
+        this.timeout = value;
+        return this;
+    }
 
-	/** Sets the waitValue field. */
-	@JsonProperty("wait")
-	public BrowserConfigBuilder withWait(final BrowserWait value) {
-		this.waitValue = value;
-		return this;
-	}
+    /** Sets the waitValue field. */
+    @JsonProperty("wait")
+    public BrowserConfigBuilder withWait(final BrowserWait value) {
+        this.waitValue = value;
+        return this;
+    }
 
-	/** Sets the waitSelector field. */
-	@JsonProperty("wait_selector")
-	public BrowserConfigBuilder withWaitSelector(final Optional<String> value) {
-		this.waitSelector = value;
-		return this;
-	}
+    /** Sets the waitSelector field. */
+    @JsonProperty("wait_selector")
+    public BrowserConfigBuilder withWaitSelector(final Optional<String> value) {
+        this.waitSelector = value;
+        return this;
+    }
 
-	/** Sets the extraWait field. */
-	@JsonProperty("extra_wait")
-	public BrowserConfigBuilder withExtraWait(final Optional<Long> value) {
-		this.extraWait = value;
-		return this;
-	}
+    /** Sets the extraWait field. */
+    @JsonProperty("extra_wait")
+    public BrowserConfigBuilder withExtraWait(final Optional<Long> value) {
+        this.extraWait = value;
+        return this;
+    }
 
-	/** Builds the BrowserConfig instance. */
-	public BrowserConfig build() {
-		return new BrowserConfig(mode, endpoint.orElse(null), timeout, waitValue, waitSelector.orElse(null),
-				extraWait.orElse(null));
-	}
+    /** Builds the BrowserConfig instance. */
+    public BrowserConfig build() {
+        return new BrowserConfig(
+            mode,
+            endpoint.orElse(null),
+            timeout,
+            waitValue,
+            waitSelector.orElse(null),
+            extraWait.orElse(null)
+        );
+    }
 }

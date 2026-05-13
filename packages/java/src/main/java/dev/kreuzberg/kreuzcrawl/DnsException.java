@@ -6,13 +6,13 @@ package dev.kreuzberg.kreuzcrawl;
  * A DNS resolution error occurred.
  */
 public class DnsException extends CrawlErrorException {
-	/** Creates a new DnsException with the given message. */
-	public DnsException(final String message) {
-		super(message);
-	}
+    /** Creates a new DnsException with the given message. */
+    public DnsException(final String message) {
+        super(message);
+    }
 
-	/** Creates a new DnsException with the given message and cause. */
-	public DnsException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    /** Creates a new DnsException with the given message and cause. */
+    public DnsException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

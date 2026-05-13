@@ -430,7 +430,7 @@ impl From<kreuzcrawl::ExtractionMeta> for ExtractionMeta {
             cost: v.cost.map(|x| x as _),
             prompt_tokens: v.prompt_tokens.map(|x| x as _),
             completion_tokens: v.completion_tokens.map(|x| x as _),
-            model: v.model.map(|s| s),
+            model: v.model.map(|s| s.into()),
             chunks_processed: v.chunks_processed as _,
         }
     }
@@ -440,8 +440,8 @@ impl From<kreuzcrawl::ProxyConfig> for ProxyConfig {
     fn from(v: kreuzcrawl::ProxyConfig) -> Self {
         ProxyConfig {
             url: v.url,
-            username: v.username.map(|s| s),
-            password: v.password.map(|s| s),
+            username: v.username.map(|s| s.into()),
+            password: v.password.map(|s| s.into()),
         }
     }
 }
@@ -453,9 +453,9 @@ impl From<kreuzcrawl::ContentConfig> for ContentConfig {
             preprocessing_preset: v.preprocessing_preset,
             remove_navigation: v.remove_navigation as _,
             remove_forms: v.remove_forms as _,
-            strip_tags: v.strip_tags.into_iter().map(|s| s).collect(),
-            preserve_tags: v.preserve_tags.into_iter().map(|s| s).collect(),
-            exclude_selectors: v.exclude_selectors.into_iter().map(|s| s).collect(),
+            strip_tags: v.strip_tags.into_iter().map(|s| s.into()).collect(),
+            preserve_tags: v.preserve_tags.into_iter().map(|s| s.into()).collect(),
+            exclude_selectors: v.exclude_selectors.into_iter().map(|s| s.into()).collect(),
             skip_images: v.skip_images as _,
             max_depth: v.max_depth.map(|x| x as _),
             wrap: v.wrap as _,
@@ -469,10 +469,10 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
     fn from(v: kreuzcrawl::BrowserConfig) -> Self {
         BrowserConfig {
             mode: BrowserMode::from(v.mode),
-            endpoint: v.endpoint.map(|s| s),
+            endpoint: v.endpoint.map(|s| s.into()),
             timeout: v.timeout.as_millis() as i64,
             wait: BrowserWait::from(v.wait),
-            wait_selector: v.wait_selector.map(|s| s),
+            wait_selector: v.wait_selector.map(|s| s.into()),
             extra_wait: v.extra_wait.map(|d| d.as_millis() as i64),
         }
     }
@@ -486,15 +486,15 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             max_concurrent: v.max_concurrent.map(|x| x as _),
             respect_robots_txt: v.respect_robots_txt as _,
             soft_http_errors: v.soft_http_errors as _,
-            user_agent: v.user_agent.map(|s| s),
+            user_agent: v.user_agent.map(|s| s.into()),
             stay_on_domain: v.stay_on_domain as _,
             allow_subdomains: v.allow_subdomains as _,
-            include_paths: v.include_paths.into_iter().map(|s| s).collect(),
-            exclude_paths: v.exclude_paths.into_iter().map(|s| s).collect(),
+            include_paths: v.include_paths.into_iter().map(|s| s.into()).collect(),
+            exclude_paths: v.exclude_paths.into_iter().map(|s| s.into()).collect(),
             custom_headers: v
                 .custom_headers
                 .into_iter()
-                .map(|(k, v)| (k, v))
+                .map(|(k, v)| (k.into(), v.into()))
                 .collect(),
             request_timeout: v.request_timeout.as_millis() as i64,
             rate_limit_ms: v.rate_limit_ms.map(|x| x as _),
@@ -504,22 +504,22 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             cookies_enabled: v.cookies_enabled as _,
             auth: v.auth.map(AuthConfig::from),
             max_body_size: v.max_body_size.map(|x| x as _),
-            remove_tags: v.remove_tags.into_iter().map(|s| s).collect(),
+            remove_tags: v.remove_tags.into_iter().map(|s| s.into()).collect(),
             content: ContentConfig::from(v.content),
             map_limit: v.map_limit.map(|x| x as _),
-            map_search: v.map_search.map(|s| s),
+            map_search: v.map_search.map(|s| s.into()),
             download_assets: v.download_assets as _,
             asset_types: v.asset_types.into_iter().map(AssetCategory::from).collect(),
             max_asset_size: v.max_asset_size.map(|x| x as _),
             browser: BrowserConfig::from(v.browser),
             proxy: v.proxy.map(ProxyConfig::from),
-            user_agents: v.user_agents.into_iter().map(|s| s).collect(),
+            user_agents: v.user_agents.into_iter().map(|s| s.into()).collect(),
             capture_screenshot: v.capture_screenshot as _,
             download_documents: v.download_documents as _,
             document_max_size: v.document_max_size.map(|x| x as _),
-            document_mime_types: v.document_mime_types.into_iter().map(|s| s).collect(),
+            document_mime_types: v.document_mime_types.into_iter().map(|s| s.into()).collect(),
             warc_output: v.warc_output.map(|p| p.to_string_lossy().into_owned()),
-            browser_profile: v.browser_profile.map(|s| s),
+            browser_profile: v.browser_profile.map(|s| s.into()),
             save_browser_profile: v.save_browser_profile as _,
         }
     }
@@ -530,7 +530,7 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
         DownloadedDocument {
             url: v.url,
             mime_type: Default::default(),
-            content: v.content,
+            content: v.content.into(),
             size: v.size as _,
             filename: Default::default(),
             content_hash: Default::default(),
@@ -555,10 +555,10 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             crawl_delay: v.crawl_delay.map(|x| x as _),
             noindex_detected: v.noindex_detected as _,
             nofollow_detected: v.nofollow_detected as _,
-            x_robots_tag: v.x_robots_tag.map(|s| s),
+            x_robots_tag: v.x_robots_tag.map(|s| s.into()),
             is_pdf: v.is_pdf as _,
             was_skipped: v.was_skipped as _,
-            detected_charset: v.detected_charset.map(|s| s),
+            detected_charset: v.detected_charset.map(|s| s.into()),
             auth_header_sent: v.auth_header_sent as _,
             response_meta: v.response_meta.map(ResponseMeta::from),
             assets: v.assets.into_iter().map(DownloadedAsset::from).collect(),
@@ -567,7 +567,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             markdown: v.markdown.map(MarkdownResult::from),
             extracted_data: v.extracted_data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
             extraction_meta: v.extraction_meta.map(ExtractionMeta::from),
-            screenshot: v.screenshot.map(|b| b),
+            screenshot: v.screenshot.map(|b| b.into()),
             downloaded_document: v.downloaded_document.map(DownloadedDocument::from),
         }
     }
@@ -591,7 +591,7 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
             stayed_on_domain: v.stayed_on_domain as _,
             was_skipped: v.was_skipped as _,
             is_pdf: v.is_pdf as _,
-            detected_charset: v.detected_charset.map(|s| s),
+            detected_charset: v.detected_charset.map(|s| s.into()),
             markdown: v.markdown.map(MarkdownResult::from),
             extracted_data: v.extracted_data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
             extraction_meta: v.extraction_meta.map(ExtractionMeta::from),
@@ -607,9 +607,9 @@ impl From<kreuzcrawl::CrawlResult> for CrawlResult {
             final_url: v.final_url,
             redirect_count: v.redirect_count as _,
             was_skipped: v.was_skipped as _,
-            error: v.error.map(|s| s),
+            error: v.error.map(|s| s.into()),
             cookies: v.cookies.into_iter().map(CookieInfo::from).collect(),
-            normalized_urls: v.normalized_urls.into_iter().map(|s| s).collect(),
+            normalized_urls: v.normalized_urls.into_iter().map(|s| s.into()).collect(),
         }
     }
 }
@@ -618,9 +618,9 @@ impl From<kreuzcrawl::SitemapUrl> for SitemapUrl {
     fn from(v: kreuzcrawl::SitemapUrl) -> Self {
         SitemapUrl {
             url: v.url,
-            lastmod: v.lastmod.map(|s| s),
-            changefreq: v.changefreq.map(|s| s),
-            priority: v.priority.map(|s| s),
+            lastmod: v.lastmod.map(|s| s.into()),
+            changefreq: v.changefreq.map(|s| s.into()),
+            priority: v.priority.map(|s| s.into()),
         }
     }
 }
@@ -645,9 +645,9 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
                 .into_iter()
                 .map(|j| serde_json::to_string(&j).unwrap_or_default())
                 .collect(),
-            warnings: v.warnings.into_iter().map(|s| s).collect(),
+            warnings: v.warnings.into_iter().map(|s| s.into()).collect(),
             citations: v.citations.map(CitationResult::from),
-            fit_content: v.fit_content.map(|s| s),
+            fit_content: v.fit_content.map(|s| s.into()),
         }
     }
 }
@@ -658,7 +658,7 @@ impl From<kreuzcrawl::LinkInfo> for LinkInfo {
             url: v.url,
             text: v.text,
             link_type: LinkType::from(v.link_type),
-            rel: v.rel.map(|s| s),
+            rel: v.rel.map(|s| s.into()),
             nofollow: v.nofollow as _,
         }
     }
@@ -668,7 +668,7 @@ impl From<kreuzcrawl::ImageInfo> for ImageInfo {
     fn from(v: kreuzcrawl::ImageInfo) -> Self {
         ImageInfo {
             url: v.url,
-            alt: v.alt.map(|s| s),
+            alt: v.alt.map(|s| s.into()),
             width: v.width.map(|x| x as _),
             height: v.height.map(|x| x as _),
             source: ImageSource::from(v.source),
@@ -680,7 +680,7 @@ impl From<kreuzcrawl::FeedInfo> for FeedInfo {
     fn from(v: kreuzcrawl::FeedInfo) -> Self {
         FeedInfo {
             url: v.url,
-            title: v.title.map(|s| s),
+            title: v.title.map(|s| s.into()),
             feed_type: FeedType::from(v.feed_type),
         }
     }
@@ -690,7 +690,7 @@ impl From<kreuzcrawl::JsonLdEntry> for JsonLdEntry {
     fn from(v: kreuzcrawl::JsonLdEntry) -> Self {
         JsonLdEntry {
             schema_type: v.schema_type,
-            name: v.name.map(|s| s),
+            name: v.name.map(|s| s.into()),
             raw: v.raw,
         }
     }
@@ -701,8 +701,8 @@ impl From<kreuzcrawl::CookieInfo> for CookieInfo {
         CookieInfo {
             name: v.name,
             value: v.value,
-            domain: v.domain.map(|s| s),
-            path: v.path.map(|s| s),
+            domain: v.domain.map(|s| s.into()),
+            path: v.path.map(|s| s.into()),
         }
     }
 }
@@ -712,10 +712,10 @@ impl From<kreuzcrawl::DownloadedAsset> for DownloadedAsset {
         DownloadedAsset {
             url: v.url,
             content_hash: v.content_hash,
-            mime_type: v.mime_type.map(|s| s),
+            mime_type: v.mime_type.map(|s| s.into()),
             size: v.size as _,
             asset_category: AssetCategory::from(v.asset_category),
-            html_tag: v.html_tag.map(|s| s),
+            html_tag: v.html_tag.map(|s| s.into()),
         }
     }
 }
@@ -723,11 +723,11 @@ impl From<kreuzcrawl::DownloadedAsset> for DownloadedAsset {
 impl From<kreuzcrawl::ArticleMetadata> for ArticleMetadata {
     fn from(v: kreuzcrawl::ArticleMetadata) -> Self {
         ArticleMetadata {
-            published_time: v.published_time.map(|s| s),
-            modified_time: v.modified_time.map(|s| s),
-            author: v.author.map(|s| s),
-            section: v.section.map(|s| s),
-            tags: v.tags.into_iter().map(|s| s).collect(),
+            published_time: v.published_time.map(|s| s.into()),
+            modified_time: v.modified_time.map(|s| s.into()),
+            author: v.author.map(|s| s.into()),
+            section: v.section.map(|s| s.into()),
+            tags: v.tags.into_iter().map(|s| s.into()).collect(),
         }
     }
 }
@@ -746,8 +746,8 @@ impl From<kreuzcrawl::FaviconInfo> for FaviconInfo {
         FaviconInfo {
             url: v.url,
             rel: v.rel,
-            sizes: v.sizes.map(|s| s),
-            mime_type: v.mime_type.map(|s| s),
+            sizes: v.sizes.map(|s| s.into()),
+            mime_type: v.mime_type.map(|s| s.into()),
         }
     }
 }
@@ -764,13 +764,13 @@ impl From<kreuzcrawl::HeadingInfo> for HeadingInfo {
 impl From<kreuzcrawl::ResponseMeta> for ResponseMeta {
     fn from(v: kreuzcrawl::ResponseMeta) -> Self {
         ResponseMeta {
-            etag: v.etag.map(|s| s),
-            last_modified: v.last_modified.map(|s| s),
-            cache_control: v.cache_control.map(|s| s),
-            server: v.server.map(|s| s),
-            x_powered_by: v.x_powered_by.map(|s| s),
-            content_language: v.content_language.map(|s| s),
-            content_encoding: v.content_encoding.map(|s| s),
+            etag: v.etag.map(|s| s.into()),
+            last_modified: v.last_modified.map(|s| s.into()),
+            cache_control: v.cache_control.map(|s| s.into()),
+            server: v.server.map(|s| s.into()),
+            x_powered_by: v.x_powered_by.map(|s| s.into()),
+            content_language: v.content_language.map(|s| s.into()),
+            content_encoding: v.content_encoding.map(|s| s.into()),
         }
     }
 }
@@ -778,46 +778,46 @@ impl From<kreuzcrawl::ResponseMeta> for ResponseMeta {
 impl From<kreuzcrawl::PageMetadata> for PageMetadata {
     fn from(v: kreuzcrawl::PageMetadata) -> Self {
         PageMetadata {
-            title: v.title.map(|s| s),
-            description: v.description.map(|s| s),
-            canonical_url: v.canonical_url.map(|s| s),
-            keywords: v.keywords.map(|s| s),
-            author: v.author.map(|s| s),
-            viewport: v.viewport.map(|s| s),
-            theme_color: v.theme_color.map(|s| s),
-            generator: v.generator.map(|s| s),
-            robots: v.robots.map(|s| s),
-            html_lang: v.html_lang.map(|s| s),
-            html_dir: v.html_dir.map(|s| s),
-            og_title: v.og_title.map(|s| s),
-            og_type: v.og_type.map(|s| s),
-            og_image: v.og_image.map(|s| s),
-            og_description: v.og_description.map(|s| s),
-            og_url: v.og_url.map(|s| s),
-            og_site_name: v.og_site_name.map(|s| s),
-            og_locale: v.og_locale.map(|s| s),
-            og_video: v.og_video.map(|s| s),
-            og_audio: v.og_audio.map(|s| s),
+            title: v.title.map(|s| s.into()),
+            description: v.description.map(|s| s.into()),
+            canonical_url: v.canonical_url.map(|s| s.into()),
+            keywords: v.keywords.map(|s| s.into()),
+            author: v.author.map(|s| s.into()),
+            viewport: v.viewport.map(|s| s.into()),
+            theme_color: v.theme_color.map(|s| s.into()),
+            generator: v.generator.map(|s| s.into()),
+            robots: v.robots.map(|s| s.into()),
+            html_lang: v.html_lang.map(|s| s.into()),
+            html_dir: v.html_dir.map(|s| s.into()),
+            og_title: v.og_title.map(|s| s.into()),
+            og_type: v.og_type.map(|s| s.into()),
+            og_image: v.og_image.map(|s| s.into()),
+            og_description: v.og_description.map(|s| s.into()),
+            og_url: v.og_url.map(|s| s.into()),
+            og_site_name: v.og_site_name.map(|s| s.into()),
+            og_locale: v.og_locale.map(|s| s.into()),
+            og_video: v.og_video.map(|s| s.into()),
+            og_audio: v.og_audio.map(|s| s.into()),
             og_locale_alternates: v
                 .og_locale_alternates
-                .map(|vec| vec.into_iter().map(|s| s).collect()),
-            twitter_card: v.twitter_card.map(|s| s),
-            twitter_title: v.twitter_title.map(|s| s),
-            twitter_description: v.twitter_description.map(|s| s),
-            twitter_image: v.twitter_image.map(|s| s),
-            twitter_site: v.twitter_site.map(|s| s),
-            twitter_creator: v.twitter_creator.map(|s| s),
-            dc_title: v.dc_title.map(|s| s),
-            dc_creator: v.dc_creator.map(|s| s),
-            dc_subject: v.dc_subject.map(|s| s),
-            dc_description: v.dc_description.map(|s| s),
-            dc_publisher: v.dc_publisher.map(|s| s),
-            dc_date: v.dc_date.map(|s| s),
-            dc_type: v.dc_type.map(|s| s),
-            dc_format: v.dc_format.map(|s| s),
-            dc_identifier: v.dc_identifier.map(|s| s),
-            dc_language: v.dc_language.map(|s| s),
-            dc_rights: v.dc_rights.map(|s| s),
+                .map(|vec| vec.into_iter().map(|s| s.into()).collect()),
+            twitter_card: v.twitter_card.map(|s| s.into()),
+            twitter_title: v.twitter_title.map(|s| s.into()),
+            twitter_description: v.twitter_description.map(|s| s.into()),
+            twitter_image: v.twitter_image.map(|s| s.into()),
+            twitter_site: v.twitter_site.map(|s| s.into()),
+            twitter_creator: v.twitter_creator.map(|s| s.into()),
+            dc_title: v.dc_title.map(|s| s.into()),
+            dc_creator: v.dc_creator.map(|s| s.into()),
+            dc_subject: v.dc_subject.map(|s| s.into()),
+            dc_description: v.dc_description.map(|s| s.into()),
+            dc_publisher: v.dc_publisher.map(|s| s.into()),
+            dc_date: v.dc_date.map(|s| s.into()),
+            dc_type: v.dc_type.map(|s| s.into()),
+            dc_format: v.dc_format.map(|s| s.into()),
+            dc_identifier: v.dc_identifier.map(|s| s.into()),
+            dc_language: v.dc_language.map(|s| s.into()),
+            dc_rights: v.dc_rights.map(|s| s.into()),
             article: v.article.map(ArticleMetadata::from),
             hreflangs: v
                 .hreflangs
@@ -853,7 +853,7 @@ impl From<kreuzcrawl::BatchScrapeResult> for BatchScrapeResult {
         BatchScrapeResult {
             url: v.url,
             result: v.result.map(ScrapeResult::from),
-            error: v.error.map(|s| s),
+            error: v.error.map(|s| s.into()),
         }
     }
 }
@@ -863,7 +863,7 @@ impl From<kreuzcrawl::BatchCrawlResult> for BatchCrawlResult {
         BatchCrawlResult {
             url: v.url,
             result: v.result.map(CrawlResult::from),
-            error: v.error.map(|s| s),
+            error: v.error.map(|s| s.into()),
         }
     }
 }
@@ -892,13 +892,13 @@ impl From<kreuzcrawl::AuthConfig> for AuthConfig {
     fn from(v: kreuzcrawl::AuthConfig) -> Self {
         match v {
             kreuzcrawl::AuthConfig::Basic { username, password } => AuthConfig::Basic {
-                username,
-                password,
+                username: username.into(),
+                password: password.into(),
             },
-            kreuzcrawl::AuthConfig::Bearer { token } => AuthConfig::Bearer { token },
+            kreuzcrawl::AuthConfig::Bearer { token } => AuthConfig::Bearer { token: token.into() },
             kreuzcrawl::AuthConfig::Header { name, value } => AuthConfig::Header {
-                name,
-                value,
+                name: name.into(),
+                value: value.into(),
             },
         }
     }
@@ -960,9 +960,9 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
 impl From<ProxyConfig> for kreuzcrawl::ProxyConfig {
     fn from(v: ProxyConfig) -> Self {
         kreuzcrawl::ProxyConfig {
-            url: v.url,
-            username: v.username,
-            password: v.password,
+            url: v.url.into(),
+            username: v.username.map(Into::into),
+            password: v.password.map(Into::into),
         }
     }
 }
@@ -970,13 +970,13 @@ impl From<ProxyConfig> for kreuzcrawl::ProxyConfig {
 impl From<ContentConfig> for kreuzcrawl::ContentConfig {
     fn from(v: ContentConfig) -> Self {
         kreuzcrawl::ContentConfig {
-            output_format: v.output_format,
-            preprocessing_preset: v.preprocessing_preset,
+            output_format: v.output_format.into(),
+            preprocessing_preset: v.preprocessing_preset.into(),
             remove_navigation: v.remove_navigation as _,
             remove_forms: v.remove_forms as _,
-            strip_tags: v.strip_tags.into_iter().collect(),
-            preserve_tags: v.preserve_tags.into_iter().collect(),
-            exclude_selectors: v.exclude_selectors.into_iter().collect(),
+            strip_tags: v.strip_tags.into_iter().map(Into::into).collect(),
+            preserve_tags: v.preserve_tags.into_iter().map(Into::into).collect(),
+            exclude_selectors: v.exclude_selectors.into_iter().map(Into::into).collect(),
             skip_images: v.skip_images as _,
             max_depth: v.max_depth.map(|x| x as _),
             wrap: v.wrap as _,
@@ -990,10 +990,10 @@ impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(v: BrowserConfig) -> Self {
         kreuzcrawl::BrowserConfig {
             mode: v.mode.into(),
-            endpoint: v.endpoint,
+            endpoint: v.endpoint.map(Into::into),
             timeout: std::time::Duration::from_millis(v.timeout as u64),
             wait: v.wait.into(),
-            wait_selector: v.wait_selector,
+            wait_selector: v.wait_selector.map(Into::into),
             extra_wait: v.extra_wait.map(|ms| std::time::Duration::from_millis(ms as u64)),
         }
     }
@@ -1007,15 +1007,15 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             max_concurrent: v.max_concurrent.map(|x| x as _),
             respect_robots_txt: v.respect_robots_txt as _,
             soft_http_errors: v.soft_http_errors as _,
-            user_agent: v.user_agent,
+            user_agent: v.user_agent.map(Into::into),
             stay_on_domain: v.stay_on_domain as _,
             allow_subdomains: v.allow_subdomains as _,
-            include_paths: v.include_paths.into_iter().collect(),
-            exclude_paths: v.exclude_paths.into_iter().collect(),
+            include_paths: v.include_paths.into_iter().map(Into::into).collect(),
+            exclude_paths: v.exclude_paths.into_iter().map(Into::into).collect(),
             custom_headers: v
                 .custom_headers
                 .into_iter()
-                .map(|(k, v)| (k, v))
+                .map(|(k, v)| (k.into(), v.into()))
                 .collect(),
             request_timeout: std::time::Duration::from_millis(v.request_timeout as u64),
             rate_limit_ms: v.rate_limit_ms.map(|x| x as _),
@@ -1025,22 +1025,22 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             cookies_enabled: v.cookies_enabled as _,
             auth: v.auth.map(Into::into),
             max_body_size: v.max_body_size.map(|x| x as _),
-            remove_tags: v.remove_tags.into_iter().collect(),
+            remove_tags: v.remove_tags.into_iter().map(Into::into).collect(),
             content: v.content.into(),
             map_limit: v.map_limit.map(|x| x as _),
-            map_search: v.map_search,
+            map_search: v.map_search.map(Into::into),
             download_assets: v.download_assets as _,
             asset_types: v.asset_types.into_iter().map(Into::into).collect(),
             max_asset_size: v.max_asset_size.map(|x| x as _),
             browser: v.browser.into(),
             proxy: v.proxy.map(Into::into),
-            user_agents: v.user_agents.into_iter().collect(),
+            user_agents: v.user_agents.into_iter().map(Into::into).collect(),
             capture_screenshot: v.capture_screenshot as _,
             download_documents: v.download_documents as _,
             document_max_size: v.document_max_size.map(|x| x as _),
-            document_mime_types: v.document_mime_types.into_iter().collect(),
+            document_mime_types: v.document_mime_types.into_iter().map(Into::into).collect(),
             warc_output: v.warc_output.map(std::path::PathBuf::from),
-            browser_profile: v.browser_profile,
+            browser_profile: v.browser_profile.map(Into::into),
             save_browser_profile: v.save_browser_profile as _,
             ..Default::default()
         }
@@ -1071,13 +1071,13 @@ impl From<AuthConfig> for kreuzcrawl::AuthConfig {
     fn from(v: AuthConfig) -> Self {
         match v {
             AuthConfig::Basic { username, password } => kreuzcrawl::AuthConfig::Basic {
-                username,
-                password,
+                username: username.into(),
+                password: password.into(),
             },
-            AuthConfig::Bearer { token } => kreuzcrawl::AuthConfig::Bearer { token },
+            AuthConfig::Bearer { token } => kreuzcrawl::AuthConfig::Bearer { token: token.into() },
             AuthConfig::Header { name, value } => kreuzcrawl::AuthConfig::Header {
-                name,
-                value,
+                name: name.into(),
+                value: value.into(),
             },
         }
     }
@@ -1114,7 +1114,7 @@ pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, S
 pub async fn scrape(engine: CrawlEngineHandle, url: String) -> Result<ScrapeResult, String> {
     kreuzcrawl::scrape(&engine.inner, &url)
         .await
-        .map(ScrapeResult::from)
+        .map(|v| ScrapeResult::from(v))
         .map_err(|e| e.to_string())
 }
 
@@ -1122,7 +1122,7 @@ pub async fn scrape(engine: CrawlEngineHandle, url: String) -> Result<ScrapeResu
 pub async fn crawl(engine: CrawlEngineHandle, url: String) -> Result<CrawlResult, String> {
     kreuzcrawl::crawl(&engine.inner, &url)
         .await
-        .map(CrawlResult::from)
+        .map(|v| CrawlResult::from(v))
         .map_err(|e| e.to_string())
 }
 
@@ -1130,7 +1130,7 @@ pub async fn crawl(engine: CrawlEngineHandle, url: String) -> Result<CrawlResult
 pub async fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResult, String> {
     kreuzcrawl::map_urls(&engine.inner, &url)
         .await
-        .map(MapResult::from)
+        .map(|v| MapResult::from(v))
         .map_err(|e| e.to_string())
 }
 

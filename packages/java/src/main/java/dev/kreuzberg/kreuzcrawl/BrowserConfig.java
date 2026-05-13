@@ -15,36 +15,38 @@ import org.jspecify.annotations.Nullable;
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = BrowserConfigBuilder.class)
-public record BrowserConfig(BrowserMode mode, @Nullable String endpoint, Long timeout,
-		@JsonProperty("wait") BrowserWait waitValue, @Nullable @JsonProperty("wait_selector") String waitSelector,
-		@Nullable @JsonProperty("extra_wait") Long extraWait) {
-	public static BrowserConfigBuilder builder() {
-		return new BrowserConfigBuilder();
-	}
+public record BrowserConfig(
+    BrowserMode mode,
+    @Nullable String endpoint,
+    Long timeout,
+    @JsonProperty("wait") BrowserWait waitValue,
+    @Nullable @JsonProperty("wait_selector") String waitSelector,
+    @Nullable @JsonProperty("extra_wait") Long extraWait
+) {
+    public static BrowserConfigBuilder builder() {
+        return new BrowserConfigBuilder();
+    }
 
-	/**
-	 * Parse a {@code BrowserConfig} from a JSON string.
-	 *
-	 * @param json
-	 *            JSON serialisation matching the Rust-side field names
-	 *            (snake_case).
-	 * @throws KreuzcrawlRsException
-	 *             if the JSON cannot be deserialised.
-	 */
-	public static BrowserConfig fromJson(String json) throws KreuzcrawlRsException {
-		try {
-			return new com.fasterxml.jackson.databind.ObjectMapper()
-					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
-					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-					.readValue(json, BrowserConfig.class);
-		} catch (Exception e) {
-			throw new KreuzcrawlRsException("Failed to parse BrowserConfig from JSON: " + e.getMessage(), e);
-		}
-	}
-	public BrowserConfig {
-		if (timeout == null)
-			timeout = 30000L;
-	}
+    /**
+     * Parse a {@code BrowserConfig} from a JSON string.
+     *
+     * @param json JSON serialisation matching the Rust-side field names (snake_case).
+     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
+     */
+    public static BrowserConfig fromJson(String json) throws KreuzcrawlRsException {
+        try {
+            return new com.fasterxml.jackson.databind.ObjectMapper()
+                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
+                .findAndRegisterModules()
+                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+                .readValue(json, BrowserConfig.class);
+        } catch (Exception e) {
+            throw new KreuzcrawlRsException("Failed to parse BrowserConfig from JSON: " + e.getMessage(), e);
+        }
+    }
+    public BrowserConfig{
+        if (timeout == null) timeout = 30000L;
+    }
 }

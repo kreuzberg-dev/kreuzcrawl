@@ -11,7 +11,7 @@ includes:
 vars:
   FFI_CRATE_DIR: "crates/kreuzcrawl-ffi"
   FFI_TEST_DIR: "crates/kreuzcrawl-ffi/tests/c"
-  E2E_DIR: "e2e/c"
+  C_E2E_DIR: "e2e/c"
   LIB_DIR: "target/debug"
   LIB_DIR_RELEASE: "target/release"
 
@@ -91,31 +91,31 @@ tasks:
     desc: Lint C code with cppcheck and clang-format (auto-fix)
     cmds:
       - cmd: >-
-          bash -c 'find {{.FFI_TEST_DIR}} {{.E2E_DIR}} -name "*.c" -o -name "*.h" |
+          bash -c 'find {{.FFI_TEST_DIR}} {{.C_E2E_DIR}} -name "*.c" -o -name "*.h" |
           xargs clang-format -i 2>/dev/null || echo "clang-format not available"'
         platforms: [linux, darwin]
       - cmd: >-
           bash -c 'cppcheck --enable=warning,style --error-exitcode=0
-          {{.FFI_TEST_DIR}}/*.c {{.E2E_DIR}}/*.c 2>/dev/null || echo "cppcheck not available"'
+          {{.FFI_TEST_DIR}}/*.c {{.C_E2E_DIR}}/*.c 2>/dev/null || echo "cppcheck not available"'
         platforms: [linux, darwin]
 
   lint:check:
     desc: Lint C code in check-only mode (no fixes)
     cmds:
       - cmd: >-
-          bash -c 'find {{.FFI_TEST_DIR}} {{.E2E_DIR}} -name "*.c" -o -name "*.h" |
+          bash -c 'find {{.FFI_TEST_DIR}} {{.C_E2E_DIR}} -name "*.c" -o -name "*.h" |
           xargs clang-format --dry-run --Werror 2>/dev/null || echo "clang-format not available"'
         platforms: [linux, darwin]
       - cmd: >-
           bash -c 'cppcheck --enable=warning,style --error-exitcode=1
-          {{.FFI_TEST_DIR}}/*.c {{.E2E_DIR}}/*.c 2>/dev/null || echo "cppcheck not available"'
+          {{.FFI_TEST_DIR}}/*.c {{.C_E2E_DIR}}/*.c 2>/dev/null || echo "cppcheck not available"'
         platforms: [linux, darwin]
 
   format:
     desc: Format C code with clang-format
     cmds:
       - cmd: >-
-          bash -c 'find {{.FFI_TEST_DIR}} {{.E2E_DIR}} -name "*.c" -o -name "*.h" |
+          bash -c 'find {{.FFI_TEST_DIR}} {{.C_E2E_DIR}} -name "*.c" -o -name "*.h" |
           xargs clang-format -i'
         platforms: [linux, darwin]
 
@@ -123,7 +123,7 @@ tasks:
     desc: Check C code formatting without modifications
     cmds:
       - cmd: >-
-          bash -c 'find {{.FFI_TEST_DIR}} {{.E2E_DIR}} -name "*.c" -o -name "*.h" |
+          bash -c 'find {{.FFI_TEST_DIR}} {{.C_E2E_DIR}} -name "*.c" -o -name "*.h" |
           xargs clang-format --dry-run --Werror'
         platforms: [linux, darwin]
 
@@ -132,7 +132,7 @@ tasks:
     cmds:
       - cmd: make -C {{.FFI_TEST_DIR}} clean 2>/dev/null || true
         platforms: [linux, darwin]
-      - cmd: make -C {{.E2E_DIR}} clean 2>/dev/null || true
+      - cmd: make -C {{.C_E2E_DIR}} clean 2>/dev/null || true
         platforms: [linux, darwin]
 
   update:
@@ -152,14 +152,14 @@ tasks:
     desc: Lint C E2E code
     cmds:
       - cmd: >-
-          bash -c 'find {{.E2E_DIR}} -name "*.c" -o -name "*.h" |
+          bash -c 'find {{.C_E2E_DIR}} -name "*.c" -o -name "*.h" |
           xargs clang-format --dry-run --Werror 2>/dev/null || echo "clang-format not available"'
         platforms: [linux, darwin]
 
   e2e:test:
     desc: Run C E2E tests
     cmds:
-      - cmd: bash -c 'make -C {{.E2E_DIR}} LIBDIR="$(pwd)/{{.LIB_DIR}}" clean all test'
+      - cmd: bash -c 'make -C {{.C_E2E_DIR}} LIBDIR="$(pwd)/{{.LIB_DIR}}" clean all test'
         platforms: [linux, darwin]
       - cmd: echo "C E2E tests not yet supported on Windows"
         platforms: [windows]

@@ -14,27 +14,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class HeadingInfoBuilder {
 
-	@JsonProperty("level")
-	private byte level = 0;
-	@JsonProperty("text")
-	private String text = "";
+    @JsonProperty("level")
+    private byte level = 0;
+    @JsonProperty("text")
+    private String text = "";
 
-	/** Sets the level field. */
-	@JsonProperty("level")
-	public HeadingInfoBuilder withLevel(final byte value) {
-		this.level = value;
-		return this;
-	}
+    /** Sets the level field. */
+    @JsonProperty("level")
+    public HeadingInfoBuilder withLevel(final byte value) {
+        this.level = value;
+        return this;
+    }
 
-	/** Sets the text field. */
-	@JsonProperty("text")
-	public HeadingInfoBuilder withText(final String value) {
-		this.text = value;
-		return this;
-	}
+    /** Sets the text field. */
+    @JsonProperty("text")
+    public HeadingInfoBuilder withText(final String value) {
+        this.text = value;
+        return this;
+    }
 
-	/** Builds the HeadingInfo instance. */
-	public HeadingInfo build() {
-		return new HeadingInfo(level, text);
-	}
+    /** Builds the HeadingInfo instance. */
+    public HeadingInfo build() {
+        return new HeadingInfo(
+            level,
+            text
+        );
+    }
 }

@@ -8,23 +8,23 @@ package dev.kreuzberg.kreuzcrawl;
 /** Exception thrown by KreuzcrawlRs. */
 @SuppressWarnings("checkstyle:LineLength")
 public class KreuzcrawlRsException extends Exception {
-	/** The error code. */
-	private final int code;
+    /** The error code. */
+    private final int code;
 
-	/** Creates a new KreuzcrawlRsException. */
-	public KreuzcrawlRsException(final int code, final String message) {
-		super(message);
-		this.code = code;
-	}
+    /** Creates a new KreuzcrawlRsException. */
+    public KreuzcrawlRsException(final int code, final String message) {
+        super(message);
+        this.code = code;
+    }
 
-	/** Creates a new KreuzcrawlRsException with a cause. */
-	public KreuzcrawlRsException(final String message, final Throwable cause) {
-		super(message, cause);
-		this.code = -1;
-	}
+    /** Creates a new KreuzcrawlRsException with a cause. */
+    public KreuzcrawlRsException(final String message, final Throwable cause) {
+        super(message, cause);
+        this.code = -1;
+    }
 
-	/** Returns the error code. */
-	public int getCode() {
-		return code;
-	}
+    /** Returns the error code. */
+    public int getCode() {
+        return code;
+    }
 }

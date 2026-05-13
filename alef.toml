@@ -594,8 +594,10 @@ async = true
 returns_result = true
 result_is_array = true
 select_when = { input_has = "batch_urls" }
-# Elixir binding does not expose batch functions (unsafe NIF tuple marshalling with mixed-type arrays).
-skip_languages = ["elixir", "zig", "swift"]
+# Elixir, zig, swift bindings and brew CLI do not expose batch functions.
+# For elixir/zig/swift: unsafe NIF tuple marshalling with mixed-type arrays.
+# For brew: CLI only supports scrape, crawl, map subcommands.
+skip_languages = ["elixir", "zig", "swift", "brew"]
 
 [[crates.e2e.calls.batch_scrape.args]]
 name = "engine"

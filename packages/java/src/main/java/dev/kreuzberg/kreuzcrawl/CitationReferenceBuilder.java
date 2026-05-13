@@ -11,36 +11,40 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class CitationReferenceBuilder {
 
-	@JsonProperty("index")
-	private long index = 0;
-	@JsonProperty("url")
-	private String url = "";
-	@JsonProperty("text")
-	private String text = "";
+    @JsonProperty("index")
+    private long index = 0;
+    @JsonProperty("url")
+    private String url = "";
+    @JsonProperty("text")
+    private String text = "";
 
-	/** Sets the index field. */
-	@JsonProperty("index")
-	public CitationReferenceBuilder withIndex(final long value) {
-		this.index = value;
-		return this;
-	}
+    /** Sets the index field. */
+    @JsonProperty("index")
+    public CitationReferenceBuilder withIndex(final long value) {
+        this.index = value;
+        return this;
+    }
 
-	/** Sets the url field. */
-	@JsonProperty("url")
-	public CitationReferenceBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    @JsonProperty("url")
+    public CitationReferenceBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the text field. */
-	@JsonProperty("text")
-	public CitationReferenceBuilder withText(final String value) {
-		this.text = value;
-		return this;
-	}
+    /** Sets the text field. */
+    @JsonProperty("text")
+    public CitationReferenceBuilder withText(final String value) {
+        this.text = value;
+        return this;
+    }
 
-	/** Builds the CitationReference instance. */
-	public CitationReference build() {
-		return new CitationReference(index, url, text);
-	}
+    /** Builds the CitationReference instance. */
+    public CitationReference build() {
+        return new CitationReference(
+            index,
+            url,
+            text
+        );
+    }
 }

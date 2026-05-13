@@ -46,6 +46,41 @@ fn build_browser_config(
     }
 }
 
+/// Merge a JSON config string (or @file.json reference) into a CrawlConfig.
+/// JSON values override defaults but do not override CLI flags that were explicitly set.
+fn merge_json_config(config: &mut CrawlConfig, config_str: &str) -> Result<(), Box<dyn std::error::Error>> {
+    // Handle @file.json syntax
+    let json_text = if config_str.starts_with('@') {
+        std::fs::read_to_string(&config_str[1..])?
+    } else {
+        config_str.to_string()
+    };
+
+    let json: serde_json::Value = serde_json::from_str(&json_text)?;
+
+    // Deserialize the JSON into a temporary CrawlConfig, then merge.
+    // This validates the JSON structure against the config schema.
+    let partial: CrawlConfig = serde_json::from_value(json)?;
+
+    // Merge: apply non-default fields from partial into config.
+    // For simplicity, use serde_json to merge objects.
+    let mut config_json = serde_json::to_value(config.clone())?;
+    let partial_json = serde_json::to_value(partial)?;
+
+    if let (serde_json::Value::Object(config_map), serde_json::Value::Object(partial_map)) =
+        (&mut config_json, partial_json)
+    {
+        for (k, v) in partial_map {
+            if !v.is_null() {
+                config_map.insert(k, v);
+            }
+        }
+    }
+
+    *config = serde_json::from_value(config_json)?;
+    Ok(())
+}
+
 #[derive(Parser)]
 #[command(name = "kreuzcrawl", about = "High-performance web crawler and scraper", version)]
 struct Cli {
@@ -80,6 +115,9 @@ enum Commands {
         /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
         #[arg(long, value_parser = parse_browser_endpoint)]
         browser_endpoint: Option<String>,
+        /// Configuration as JSON string or @file.json
+        #[arg(long, value_name = "JSON")]
+        config: Option<String>,
     },
     /// Crawl a website following links
     Crawl {
@@ -122,6 +160,9 @@ enum Commands {
         /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
         #[arg(long, value_parser = parse_browser_endpoint)]
         browser_endpoint: Option<String>,
+        /// Configuration as JSON string or @file.json
+        #[arg(long, value_name = "JSON")]
+        config: Option<String>,
     },
     /// Discover all URLs on a website via sitemaps and link extraction
     Map {
@@ -136,6 +177,9 @@ enum Commands {
         /// Respect robots.txt
         #[arg(long)]
         respect_robots_txt: bool,
+        /// Configuration as JSON string or @file.json
+        #[arg(long, value_name = "JSON")]
+        config: Option<String>,
     },
     /// Start the REST API server
     #[cfg(feature = "api")]
@@ -166,9 +210,10 @@ async fn main() {
             respect_robots_txt,
             browser_mode,
             browser_endpoint,
+            config: config_str,
         } => {
             let timeout_duration = Duration::from_millis(timeout);
-            let config = CrawlConfig {
+            let mut config = CrawlConfig {
                 user_agent,
                 request_timeout: timeout_duration,
                 respect_robots_txt,
@@ -180,6 +225,15 @@ async fn main() {
                 browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
                 ..Default::default()
             };
+
+            // Apply JSON config if provided.
+            if let Some(config_json) = config_str
+                && let Err(e) = merge_json_config(&mut config, &config_json)
+            {
+                eprintln!("Error: invalid config: {e}");
+                std::process::exit(1);
+            }
+
             let handle = create_engine(Some(config)).expect("failed to create crawl engine");
             match scrape(&handle, &url).await {
                 Ok(result) => {
@@ -216,9 +270,10 @@ async fn main() {
             stay_on_domain,
             browser_mode,
             browser_endpoint,
+            config: config_str,
         } => {
             let timeout_duration = Duration::from_millis(timeout);
-            let config = CrawlConfig {
+            let mut config = CrawlConfig {
                 max_depth: Some(depth),
                 max_pages,
                 max_concurrent: Some(concurrent),
@@ -235,6 +290,15 @@ async fn main() {
                 browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
                 ..Default::default()
             };
+
+            // Apply JSON config if provided.
+            if let Some(config_json) = config_str
+                && let Err(e) = merge_json_config(&mut config, &config_json)
+            {
+                eprintln!("Error: invalid config: {e}");
+                std::process::exit(1);
+            }
+
             let handle = create_engine(Some(config)).expect("failed to create crawl engine");
 
             if urls.len() == 1 {
@@ -307,13 +371,23 @@ async fn main() {
             limit,
             search,
             respect_robots_txt,
+            config: config_str,
         } => {
-            let config = CrawlConfig {
+            let mut config = CrawlConfig {
                 respect_robots_txt,
                 map_limit: limit,
                 map_search: search,
                 ..Default::default()
             };
+
+            // Apply JSON config if provided.
+            if let Some(config_json) = config_str
+                && let Err(e) = merge_json_config(&mut config, &config_json)
+            {
+                eprintln!("Error: invalid config: {e}");
+                std::process::exit(1);
+            }
+
             let handle = create_engine(Some(config)).expect("failed to create crawl engine");
             match map_urls(&handle, &url).await {
                 Ok(result) => {

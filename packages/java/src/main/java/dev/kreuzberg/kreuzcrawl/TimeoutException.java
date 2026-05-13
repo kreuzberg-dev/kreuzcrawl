@@ -6,13 +6,13 @@ package dev.kreuzberg.kreuzcrawl;
  * The request timed out.
  */
 public class TimeoutException extends CrawlErrorException {
-	/** Creates a new TimeoutException with the given message. */
-	public TimeoutException(final String message) {
-		super(message);
-	}
+    /** Creates a new TimeoutException with the given message. */
+    public TimeoutException(final String message) {
+        super(message);
+    }
 
-	/** Creates a new TimeoutException with the given message and cause. */
-	public TimeoutException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    /** Creates a new TimeoutException with the given message and cause. */
+    public TimeoutException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -15,55 +15,60 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class ExtractionMetaBuilder {
 
-	@JsonProperty("cost")
-	private Optional<Double> cost = Optional.empty();
-	@JsonProperty("prompt_tokens")
-	private Optional<Long> promptTokens = Optional.empty();
-	@JsonProperty("completion_tokens")
-	private Optional<Long> completionTokens = Optional.empty();
-	@JsonProperty("model")
-	private Optional<String> model = Optional.empty();
-	@JsonProperty("chunks_processed")
-	private long chunksProcessed = 0;
+    @JsonProperty("cost")
+    private Optional<Double> cost = Optional.empty();
+    @JsonProperty("prompt_tokens")
+    private Optional<Long> promptTokens = Optional.empty();
+    @JsonProperty("completion_tokens")
+    private Optional<Long> completionTokens = Optional.empty();
+    @JsonProperty("model")
+    private Optional<String> model = Optional.empty();
+    @JsonProperty("chunks_processed")
+    private long chunksProcessed = 0;
 
-	/** Sets the cost field. */
-	@JsonProperty("cost")
-	public ExtractionMetaBuilder withCost(final Optional<Double> value) {
-		this.cost = value;
-		return this;
-	}
+    /** Sets the cost field. */
+    @JsonProperty("cost")
+    public ExtractionMetaBuilder withCost(final Optional<Double> value) {
+        this.cost = value;
+        return this;
+    }
 
-	/** Sets the promptTokens field. */
-	@JsonProperty("prompt_tokens")
-	public ExtractionMetaBuilder withPromptTokens(final Optional<Long> value) {
-		this.promptTokens = value;
-		return this;
-	}
+    /** Sets the promptTokens field. */
+    @JsonProperty("prompt_tokens")
+    public ExtractionMetaBuilder withPromptTokens(final Optional<Long> value) {
+        this.promptTokens = value;
+        return this;
+    }
 
-	/** Sets the completionTokens field. */
-	@JsonProperty("completion_tokens")
-	public ExtractionMetaBuilder withCompletionTokens(final Optional<Long> value) {
-		this.completionTokens = value;
-		return this;
-	}
+    /** Sets the completionTokens field. */
+    @JsonProperty("completion_tokens")
+    public ExtractionMetaBuilder withCompletionTokens(final Optional<Long> value) {
+        this.completionTokens = value;
+        return this;
+    }
 
-	/** Sets the model field. */
-	@JsonProperty("model")
-	public ExtractionMetaBuilder withModel(final Optional<String> value) {
-		this.model = value;
-		return this;
-	}
+    /** Sets the model field. */
+    @JsonProperty("model")
+    public ExtractionMetaBuilder withModel(final Optional<String> value) {
+        this.model = value;
+        return this;
+    }
 
-	/** Sets the chunksProcessed field. */
-	@JsonProperty("chunks_processed")
-	public ExtractionMetaBuilder withChunksProcessed(final long value) {
-		this.chunksProcessed = value;
-		return this;
-	}
+    /** Sets the chunksProcessed field. */
+    @JsonProperty("chunks_processed")
+    public ExtractionMetaBuilder withChunksProcessed(final long value) {
+        this.chunksProcessed = value;
+        return this;
+    }
 
-	/** Builds the ExtractionMeta instance. */
-	public ExtractionMeta build() {
-		return new ExtractionMeta(cost.orElse(null), promptTokens.orElse(null), completionTokens.orElse(null),
-				model.orElse(null), chunksProcessed);
-	}
+    /** Builds the ExtractionMeta instance. */
+    public ExtractionMeta build() {
+        return new ExtractionMeta(
+            cost.orElse(null),
+            promptTokens.orElse(null),
+            completionTokens.orElse(null),
+            model.orElse(null),
+            chunksProcessed
+        );
+    }
 }

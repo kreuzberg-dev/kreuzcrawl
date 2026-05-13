@@ -14,27 +14,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class HreflangEntryBuilder {
 
-	@JsonProperty("lang")
-	private String lang = "";
-	@JsonProperty("url")
-	private String url = "";
+    @JsonProperty("lang")
+    private String lang = "";
+    @JsonProperty("url")
+    private String url = "";
 
-	/** Sets the lang field. */
-	@JsonProperty("lang")
-	public HreflangEntryBuilder withLang(final String value) {
-		this.lang = value;
-		return this;
-	}
+    /** Sets the lang field. */
+    @JsonProperty("lang")
+    public HreflangEntryBuilder withLang(final String value) {
+        this.lang = value;
+        return this;
+    }
 
-	/** Sets the url field. */
-	@JsonProperty("url")
-	public HreflangEntryBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    @JsonProperty("url")
+    public HreflangEntryBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Builds the HreflangEntry instance. */
-	public HreflangEntry build() {
-		return new HreflangEntry(lang, url);
-	}
+    /** Builds the HreflangEntry instance. */
+    public HreflangEntry build() {
+        return new HreflangEntry(
+            lang,
+            url
+        );
+    }
 }

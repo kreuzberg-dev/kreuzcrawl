@@ -15,54 +15,60 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class ImageInfoBuilder {
 
-	@JsonProperty("url")
-	private String url = "";
-	@JsonProperty("alt")
-	private Optional<String> alt = Optional.empty();
-	@JsonProperty("width")
-	private Optional<Integer> width = Optional.empty();
-	@JsonProperty("height")
-	private Optional<Integer> height = Optional.empty();
-	@JsonProperty("source")
-	private ImageSource source = null;
+    @JsonProperty("url")
+    private String url = "";
+    @JsonProperty("alt")
+    private Optional<String> alt = Optional.empty();
+    @JsonProperty("width")
+    private Optional<Integer> width = Optional.empty();
+    @JsonProperty("height")
+    private Optional<Integer> height = Optional.empty();
+    @JsonProperty("source")
+    private ImageSource source = null;
 
-	/** Sets the url field. */
-	@JsonProperty("url")
-	public ImageInfoBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    @JsonProperty("url")
+    public ImageInfoBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the alt field. */
-	@JsonProperty("alt")
-	public ImageInfoBuilder withAlt(final Optional<String> value) {
-		this.alt = value;
-		return this;
-	}
+    /** Sets the alt field. */
+    @JsonProperty("alt")
+    public ImageInfoBuilder withAlt(final Optional<String> value) {
+        this.alt = value;
+        return this;
+    }
 
-	/** Sets the width field. */
-	@JsonProperty("width")
-	public ImageInfoBuilder withWidth(final Optional<Integer> value) {
-		this.width = value;
-		return this;
-	}
+    /** Sets the width field. */
+    @JsonProperty("width")
+    public ImageInfoBuilder withWidth(final Optional<Integer> value) {
+        this.width = value;
+        return this;
+    }
 
-	/** Sets the height field. */
-	@JsonProperty("height")
-	public ImageInfoBuilder withHeight(final Optional<Integer> value) {
-		this.height = value;
-		return this;
-	}
+    /** Sets the height field. */
+    @JsonProperty("height")
+    public ImageInfoBuilder withHeight(final Optional<Integer> value) {
+        this.height = value;
+        return this;
+    }
 
-	/** Sets the source field. */
-	@JsonProperty("source")
-	public ImageInfoBuilder withSource(final ImageSource value) {
-		this.source = value;
-		return this;
-	}
+    /** Sets the source field. */
+    @JsonProperty("source")
+    public ImageInfoBuilder withSource(final ImageSource value) {
+        this.source = value;
+        return this;
+    }
 
-	/** Builds the ImageInfo instance. */
-	public ImageInfo build() {
-		return new ImageInfo(url, alt.orElse(null), width.orElse(null), height.orElse(null), source);
-	}
+    /** Builds the ImageInfo instance. */
+    public ImageInfo build() {
+        return new ImageInfo(
+            url,
+            alt.orElse(null),
+            width.orElse(null),
+            height.orElse(null),
+            source
+        );
+    }
 }

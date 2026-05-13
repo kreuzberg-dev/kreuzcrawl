@@ -16,72 +16,80 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class CrawlResultBuilder {
 
-	@JsonProperty("pages")
-	private List<CrawlPageResult> pages = List.of();
-	@JsonProperty("final_url")
-	private String finalUrl = "";
-	@JsonProperty("redirect_count")
-	private long redirectCount = 0;
-	@JsonProperty("was_skipped")
-	private boolean wasSkipped = false;
-	@JsonProperty("error")
-	private Optional<String> error = Optional.empty();
-	@JsonProperty("cookies")
-	private List<CookieInfo> cookies = List.of();
-	@JsonProperty("normalized_urls")
-	private List<String> normalizedUrls = List.of();
+    @JsonProperty("pages")
+    private List<CrawlPageResult> pages = List.of();
+    @JsonProperty("final_url")
+    private String finalUrl = "";
+    @JsonProperty("redirect_count")
+    private long redirectCount = 0;
+    @JsonProperty("was_skipped")
+    private boolean wasSkipped = false;
+    @JsonProperty("error")
+    private Optional<String> error = Optional.empty();
+    @JsonProperty("cookies")
+    private List<CookieInfo> cookies = List.of();
+    @JsonProperty("normalized_urls")
+    private List<String> normalizedUrls = List.of();
 
-	/** Sets the pages field. */
-	@JsonProperty("pages")
-	public CrawlResultBuilder withPages(final List<CrawlPageResult> value) {
-		this.pages = value;
-		return this;
-	}
+    /** Sets the pages field. */
+    @JsonProperty("pages")
+    public CrawlResultBuilder withPages(final List<CrawlPageResult> value) {
+        this.pages = value;
+        return this;
+    }
 
-	/** Sets the finalUrl field. */
-	@JsonProperty("final_url")
-	public CrawlResultBuilder withFinalUrl(final String value) {
-		this.finalUrl = value;
-		return this;
-	}
+    /** Sets the finalUrl field. */
+    @JsonProperty("final_url")
+    public CrawlResultBuilder withFinalUrl(final String value) {
+        this.finalUrl = value;
+        return this;
+    }
 
-	/** Sets the redirectCount field. */
-	@JsonProperty("redirect_count")
-	public CrawlResultBuilder withRedirectCount(final long value) {
-		this.redirectCount = value;
-		return this;
-	}
+    /** Sets the redirectCount field. */
+    @JsonProperty("redirect_count")
+    public CrawlResultBuilder withRedirectCount(final long value) {
+        this.redirectCount = value;
+        return this;
+    }
 
-	/** Sets the wasSkipped field. */
-	@JsonProperty("was_skipped")
-	public CrawlResultBuilder withWasSkipped(final boolean value) {
-		this.wasSkipped = value;
-		return this;
-	}
+    /** Sets the wasSkipped field. */
+    @JsonProperty("was_skipped")
+    public CrawlResultBuilder withWasSkipped(final boolean value) {
+        this.wasSkipped = value;
+        return this;
+    }
 
-	/** Sets the error field. */
-	@JsonProperty("error")
-	public CrawlResultBuilder withError(final Optional<String> value) {
-		this.error = value;
-		return this;
-	}
+    /** Sets the error field. */
+    @JsonProperty("error")
+    public CrawlResultBuilder withError(final Optional<String> value) {
+        this.error = value;
+        return this;
+    }
 
-	/** Sets the cookies field. */
-	@JsonProperty("cookies")
-	public CrawlResultBuilder withCookies(final List<CookieInfo> value) {
-		this.cookies = value;
-		return this;
-	}
+    /** Sets the cookies field. */
+    @JsonProperty("cookies")
+    public CrawlResultBuilder withCookies(final List<CookieInfo> value) {
+        this.cookies = value;
+        return this;
+    }
 
-	/** Sets the normalizedUrls field. */
-	@JsonProperty("normalized_urls")
-	public CrawlResultBuilder withNormalizedUrls(final List<String> value) {
-		this.normalizedUrls = value;
-		return this;
-	}
+    /** Sets the normalizedUrls field. */
+    @JsonProperty("normalized_urls")
+    public CrawlResultBuilder withNormalizedUrls(final List<String> value) {
+        this.normalizedUrls = value;
+        return this;
+    }
 
-	/** Builds the CrawlResult instance. */
-	public CrawlResult build() {
-		return new CrawlResult(pages, finalUrl, redirectCount, wasSkipped, error.orElse(null), cookies, normalizedUrls);
-	}
+    /** Builds the CrawlResult instance. */
+    public CrawlResult build() {
+        return new CrawlResult(
+            pages,
+            finalUrl,
+            redirectCount,
+            wasSkipped,
+            error.orElse(null),
+            cookies,
+            normalizedUrls
+        );
+    }
 }

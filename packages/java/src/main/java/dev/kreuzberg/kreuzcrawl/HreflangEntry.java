@@ -14,29 +14,27 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = HreflangEntryBuilder.class)
 public record HreflangEntry(String lang, String url) {
-	public static HreflangEntryBuilder builder() {
-		return new HreflangEntryBuilder();
-	}
+    public static HreflangEntryBuilder builder() {
+        return new HreflangEntryBuilder();
+    }
 
-	/**
-	 * Parse a {@code HreflangEntry} from a JSON string.
-	 *
-	 * @param json
-	 *            JSON serialisation matching the Rust-side field names
-	 *            (snake_case).
-	 * @throws KreuzcrawlRsException
-	 *             if the JSON cannot be deserialised.
-	 */
-	public static HreflangEntry fromJson(String json) throws KreuzcrawlRsException {
-		try {
-			return new com.fasterxml.jackson.databind.ObjectMapper()
-					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
-					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-					.readValue(json, HreflangEntry.class);
-		} catch (Exception e) {
-			throw new KreuzcrawlRsException("Failed to parse HreflangEntry from JSON: " + e.getMessage(), e);
-		}
-	}
+    /**
+     * Parse a {@code HreflangEntry} from a JSON string.
+     *
+     * @param json JSON serialisation matching the Rust-side field names (snake_case).
+     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
+     */
+    public static HreflangEntry fromJson(String json) throws KreuzcrawlRsException {
+        try {
+            return new com.fasterxml.jackson.databind.ObjectMapper()
+                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
+                .findAndRegisterModules()
+                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+                .readValue(json, HreflangEntry.class);
+        } catch (Exception e) {
+            throw new KreuzcrawlRsException("Failed to parse HreflangEntry from JSON: " + e.getMessage(), e);
+        }
+    }
 }

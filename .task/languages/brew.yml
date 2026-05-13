@@ -17,66 +17,14 @@ tasks:
     deps:
       - task: :rust:cli:build
       - task: :_dev_wf:mock-server:rebuild
-    dir: e2e/brew
     env:
       PATH: "{{.ROOT_DIR}}/target/release:{{.PATH}}"
     cmds:
-      # Spawn the alef-generated mock-server, parse its env markers (MOCK_SERVER_URL +
-      # per-fixture MOCK_SERVERS={...}), export per-fixture MOCK_SERVER_<UPPER_ID> vars,
-      # then run the generated bash suite. Tear the server down on exit.
-      - |
-        set -euo pipefail
-        MOCK_SERVER_BIN="{{.ROOT_DIR}}/e2e/rust/target/release/mock-server"
-        FIXTURES_DIR="{{.ROOT_DIR}}/fixtures"
-        if [ ! -x "$MOCK_SERVER_BIN" ]; then
-          echo "mock-server binary not found at $MOCK_SERVER_BIN — run 'task mock-server:rebuild'" >&2
-          exit 1
-        fi
-        TMP_OUT=$(mktemp)
-        TMP_FIFO=$(mktemp -u)
-        mkfifo "$TMP_FIFO"
-        # Spawn mock-server with stdin tied to a fifo we hold open, so the server
-        # only sees stdin EOF when we explicitly close it.
-        exec 3<>"$TMP_FIFO"
-        rm -f "$TMP_FIFO"
-        "$MOCK_SERVER_BIN" "$FIXTURES_DIR" <&3 >"$TMP_OUT" 2>&1 &
-        SERVER_PID=$!
-        cleanup() {
-          exec 3>&- || true
-          kill "$SERVER_PID" 2>/dev/null || true
-          wait "$SERVER_PID" 2>/dev/null || true
-          rm -f "$TMP_OUT"
-        }
-        trap cleanup EXIT
-        # Wait up to 30s for MOCK_SERVER_URL line to appear.
-        for _ in $(seq 1 300); do
-          if grep -q '^MOCK_SERVER_URL=' "$TMP_OUT" 2>/dev/null; then break; fi
-          sleep 0.1
-        done
-        MOCK_SERVER_URL_LINE=$(grep '^MOCK_SERVER_URL=' "$TMP_OUT" | head -n1 || true)
-        if [ -z "$MOCK_SERVER_URL_LINE" ]; then
-          echo "mock-server failed to emit MOCK_SERVER_URL; output:" >&2
-          cat "$TMP_OUT" >&2
-          exit 1
-        fi
-        export MOCK_SERVER_URL="${MOCK_SERVER_URL_LINE#MOCK_SERVER_URL=}"
-        # Also give the server a moment to print MOCK_SERVERS={...} if any host-root
-        # fixtures are configured (printed on the line right after MOCK_SERVER_URL=).
-        for _ in $(seq 1 20); do
-          if grep -q '^MOCK_SERVERS=' "$TMP_OUT" 2>/dev/null; then break; fi
-          sleep 0.1
-        done
-        MOCK_SERVERS_LINE=$(grep '^MOCK_SERVERS=' "$TMP_OUT" | head -n1 || true)
-        if [ -n "$MOCK_SERVERS_LINE" ]; then
-          export MOCK_SERVERS="${MOCK_SERVERS_LINE#MOCK_SERVERS=}"
-          # Export MOCK_SERVER_<UPPER_ID>=<url> for each fixture in the JSON map.
-          while IFS=$'\t' read -r fid furl; do
-            [ -z "$fid" ] && continue
-            upper_id=$(echo "$fid" | tr '[:lower:]-' '[:upper:]_')
-            export "MOCK_SERVER_${upper_id}=${furl}"
-          done < <(echo "$MOCK_SERVERS" | jq -r 'to_entries[] | "\(.key)\t\(.value)"')
-        fi
-        bash run_tests.sh
+      # Delegates to scripts/task/brew-e2e-test.sh which spawns the alef-generated
+      # mock-server, exports MOCK_SERVER_URL + per-fixture MOCK_SERVER_<UPPER_ID>
+      # env vars from the server's `MOCK_SERVERS={...}` line, runs run_tests.sh,
+      # then tears the server down.
+      - bash scripts/task/brew-e2e-test.sh
 
   e2e:verify:
     desc: Full brew E2E pipeline (generate + lint + test)

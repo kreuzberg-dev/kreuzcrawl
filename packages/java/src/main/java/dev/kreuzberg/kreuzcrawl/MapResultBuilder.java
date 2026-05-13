@@ -15,18 +15,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class MapResultBuilder {
 
-	@JsonProperty("urls")
-	private List<SitemapUrl> urls = List.of();
+    @JsonProperty("urls")
+    private List<SitemapUrl> urls = List.of();
 
-	/** Sets the urls field. */
-	@JsonProperty("urls")
-	public MapResultBuilder withUrls(final List<SitemapUrl> value) {
-		this.urls = value;
-		return this;
-	}
+    /** Sets the urls field. */
+    @JsonProperty("urls")
+    public MapResultBuilder withUrls(final List<SitemapUrl> value) {
+        this.urls = value;
+        return this;
+    }
 
-	/** Builds the MapResult instance. */
-	public MapResult build() {
-		return new MapResult(urls);
-	}
+    /** Builds the MapResult instance. */
+    public MapResult build() {
+        return new MapResult(
+            urls
+        );
+    }
 }

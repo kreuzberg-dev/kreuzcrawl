@@ -3858,3 +3858,6 @@ extension AssetCategory: Vectorizable {
         __swift_bridge__$Vec_AssetCategory$len(vecPtr)
     }
 }
+
+
+

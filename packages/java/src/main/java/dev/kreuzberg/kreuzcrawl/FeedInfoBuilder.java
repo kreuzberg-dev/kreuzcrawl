@@ -15,36 +15,40 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class FeedInfoBuilder {
 
-	@JsonProperty("url")
-	private String url = "";
-	@JsonProperty("title")
-	private Optional<String> title = Optional.empty();
-	@JsonProperty("feed_type")
-	private FeedType feedType = null;
+    @JsonProperty("url")
+    private String url = "";
+    @JsonProperty("title")
+    private Optional<String> title = Optional.empty();
+    @JsonProperty("feed_type")
+    private FeedType feedType = null;
 
-	/** Sets the url field. */
-	@JsonProperty("url")
-	public FeedInfoBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    @JsonProperty("url")
+    public FeedInfoBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the title field. */
-	@JsonProperty("title")
-	public FeedInfoBuilder withTitle(final Optional<String> value) {
-		this.title = value;
-		return this;
-	}
+    /** Sets the title field. */
+    @JsonProperty("title")
+    public FeedInfoBuilder withTitle(final Optional<String> value) {
+        this.title = value;
+        return this;
+    }
 
-	/** Sets the feedType field. */
-	@JsonProperty("feed_type")
-	public FeedInfoBuilder withFeedType(final FeedType value) {
-		this.feedType = value;
-		return this;
-	}
+    /** Sets the feedType field. */
+    @JsonProperty("feed_type")
+    public FeedInfoBuilder withFeedType(final FeedType value) {
+        this.feedType = value;
+        return this;
+    }
 
-	/** Builds the FeedInfo instance. */
-	public FeedInfo build() {
-		return new FeedInfo(url, title.orElse(null), feedType);
-	}
+    /** Builds the FeedInfo instance. */
+    public FeedInfo build() {
+        return new FeedInfo(
+            url,
+            title.orElse(null),
+            feedType
+        );
+    }
 }

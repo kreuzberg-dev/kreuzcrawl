@@ -15,45 +15,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonPOJOBuilder(withPrefix = "with")
 public class SitemapUrlBuilder {
 
-	@JsonProperty("url")
-	private String url = "";
-	@JsonProperty("lastmod")
-	private Optional<String> lastmod = Optional.empty();
-	@JsonProperty("changefreq")
-	private Optional<String> changefreq = Optional.empty();
-	@JsonProperty("priority")
-	private Optional<String> priority = Optional.empty();
+    @JsonProperty("url")
+    private String url = "";
+    @JsonProperty("lastmod")
+    private Optional<String> lastmod = Optional.empty();
+    @JsonProperty("changefreq")
+    private Optional<String> changefreq = Optional.empty();
+    @JsonProperty("priority")
+    private Optional<String> priority = Optional.empty();
 
-	/** Sets the url field. */
-	@JsonProperty("url")
-	public SitemapUrlBuilder withUrl(final String value) {
-		this.url = value;
-		return this;
-	}
+    /** Sets the url field. */
+    @JsonProperty("url")
+    public SitemapUrlBuilder withUrl(final String value) {
+        this.url = value;
+        return this;
+    }
 
-	/** Sets the lastmod field. */
-	@JsonProperty("lastmod")
-	public SitemapUrlBuilder withLastmod(final Optional<String> value) {
-		this.lastmod = value;
-		return this;
-	}
+    /** Sets the lastmod field. */
+    @JsonProperty("lastmod")
+    public SitemapUrlBuilder withLastmod(final Optional<String> value) {
+        this.lastmod = value;
+        return this;
+    }
 
-	/** Sets the changefreq field. */
-	@JsonProperty("changefreq")
-	public SitemapUrlBuilder withChangefreq(final Optional<String> value) {
-		this.changefreq = value;
-		return this;
-	}
+    /** Sets the changefreq field. */
+    @JsonProperty("changefreq")
+    public SitemapUrlBuilder withChangefreq(final Optional<String> value) {
+        this.changefreq = value;
+        return this;
+    }
 
-	/** Sets the priority field. */
-	@JsonProperty("priority")
-	public SitemapUrlBuilder withPriority(final Optional<String> value) {
-		this.priority = value;
-		return this;
-	}
+    /** Sets the priority field. */
+    @JsonProperty("priority")
+    public SitemapUrlBuilder withPriority(final Optional<String> value) {
+        this.priority = value;
+        return this;
+    }
 
-	/** Builds the SitemapUrl instance. */
-	public SitemapUrl build() {
-		return new SitemapUrl(url, lastmod.orElse(null), changefreq.orElse(null), priority.orElse(null));
-	}
+    /** Builds the SitemapUrl instance. */
+    public SitemapUrl build() {
+        return new SitemapUrl(
+            url,
+            lastmod.orElse(null),
+            changefreq.orElse(null),
+            priority.orElse(null)
+        );
+    }
 }

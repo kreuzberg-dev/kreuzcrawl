@@ -16,33 +16,36 @@ import org.jspecify.annotations.Nullable;
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = CrawlResultBuilder.class)
-public record CrawlResult(List<CrawlPageResult> pages, @JsonProperty("final_url") String finalUrl,
-		@JsonProperty("redirect_count") long redirectCount, @JsonProperty("was_skipped") boolean wasSkipped,
-		@Nullable String error, List<CookieInfo> cookies,
-		@JsonProperty("normalized_urls") List<String> normalizedUrls) {
-	public static CrawlResultBuilder builder() {
-		return new CrawlResultBuilder();
-	}
+public record CrawlResult(
+    List<CrawlPageResult> pages,
+    @JsonProperty("final_url") String finalUrl,
+    @JsonProperty("redirect_count") long redirectCount,
+    @JsonProperty("was_skipped") boolean wasSkipped,
+    @Nullable String error,
+    List<CookieInfo> cookies,
+    @JsonProperty("normalized_urls") List<String> normalizedUrls
+) {
+    public static CrawlResultBuilder builder() {
+        return new CrawlResultBuilder();
+    }
 
-	/**
-	 * Parse a {@code CrawlResult} from a JSON string.
-	 *
-	 * @param json
-	 *            JSON serialisation matching the Rust-side field names
-	 *            (snake_case).
-	 * @throws KreuzcrawlRsException
-	 *             if the JSON cannot be deserialised.
-	 */
-	public static CrawlResult fromJson(String json) throws KreuzcrawlRsException {
-		try {
-			return new com.fasterxml.jackson.databind.ObjectMapper()
-					.registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module()).findAndRegisterModules()
-					.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
-					.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-					.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-					.readValue(json, CrawlResult.class);
-		} catch (Exception e) {
-			throw new KreuzcrawlRsException("Failed to parse CrawlResult from JSON: " + e.getMessage(), e);
-		}
-	}
+    /**
+     * Parse a {@code CrawlResult} from a JSON string.
+     *
+     * @param json JSON serialisation matching the Rust-side field names (snake_case).
+     * @throws KreuzcrawlRsException if the JSON cannot be deserialised.
+     */
+    public static CrawlResult fromJson(String json) throws KreuzcrawlRsException {
+        try {
+            return new com.fasterxml.jackson.databind.ObjectMapper()
+                .registerModule(new com.fasterxml.jackson.datatype.jdk8.Jdk8Module())
+                .findAndRegisterModules()
+                .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE)
+                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+                .readValue(json, CrawlResult.class);
+        } catch (Exception e) {
+            throw new KreuzcrawlRsException("Failed to parse CrawlResult from JSON: " + e.getMessage(), e);
+        }
+    }
 }
