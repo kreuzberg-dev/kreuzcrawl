@@ -21,6 +21,8 @@ jobs:
       - name: Build Swift package
         working-directory: packages/swift
         run: swift build
-      - name: Run tests
-        working-directory: packages/swift
-        run: swift test
+      - name: Build mock-server
+        working-directory: e2e/rust
+        run: cargo build --release --bin mock-server
+      - name: Run tests with mock-server
+        run: bash scripts/e2e/swift/test.sh
