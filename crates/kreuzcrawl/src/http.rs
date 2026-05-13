@@ -15,6 +15,8 @@ pub(crate) struct HttpResponse {
     pub(crate) content_type: String,
     pub(crate) body: String,
     pub(crate) body_bytes: Vec<u8>,
+    #[allow(dead_code)]
+    pub(crate) headers: std::collections::HashMap<String, Vec<String>>,
 }
 
 /// Perform a single HTTP GET request with the given configuration.
@@ -150,11 +152,23 @@ pub(crate) async fn http_fetch(
     let body_bytes_vec = body_bytes.to_vec();
     let body = String::from_utf8_lossy(&body_bytes_vec).into_owned();
 
+    // Extract headers into HashMap<String, Vec<String>>
+    let mut headers_map: std::collections::HashMap<String, Vec<String>> = std::collections::HashMap::new();
+    for (name, value) in headers.iter() {
+        if let Ok(v) = value.to_str() {
+            headers_map
+                .entry(name.as_str().to_lowercase())
+                .or_default()
+                .push(v.to_string());
+        }
+    }
+
     Ok(HttpResponse {
         status,
         content_type,
         body,
         body_bytes: body_bytes_vec,
+        headers: headers_map,
     })
 }
 

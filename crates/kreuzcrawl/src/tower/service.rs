@@ -101,7 +101,10 @@ async fn do_fetch(
     let mut headers: HashMap<String, Vec<String>> = HashMap::new();
     for (name, value) in resp.headers().iter() {
         if let Ok(v) = value.to_str() {
-            headers.entry(name.to_string()).or_default().push(v.to_string());
+            headers
+                .entry(name.as_str().to_lowercase())
+                .or_default()
+                .push(v.to_string());
         }
     }
 

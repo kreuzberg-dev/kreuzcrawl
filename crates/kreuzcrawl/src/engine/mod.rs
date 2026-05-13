@@ -248,14 +248,13 @@ impl CrawlEngine {
             let client = crate::http::build_client(&self.config)?;
             let resp =
                 crate::http::fetch_with_retry(url, &self.config, &std::collections::HashMap::new(), &client).await?;
-            let headers = std::collections::HashMap::new();
             // fetch_with_retry returns HttpResponse; convert to CrawlResponse
             let crawl_resp = crate::tower::CrawlResponse {
                 status: resp.status,
                 content_type: resp.content_type,
                 body: resp.body,
                 body_bytes: resp.body_bytes,
-                headers,
+                headers: resp.headers,
             };
             (url.to_owned(), crawl_resp, false)
         };

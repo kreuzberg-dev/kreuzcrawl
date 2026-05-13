@@ -151,6 +151,7 @@ async fn page_fetch(
         content_type: "text/html".to_owned(),
         body: html,
         body_bytes,
+        headers: std::collections::HashMap::new(),
     })
 }
 

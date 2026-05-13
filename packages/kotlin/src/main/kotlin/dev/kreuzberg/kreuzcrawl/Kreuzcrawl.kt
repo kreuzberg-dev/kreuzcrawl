@@ -58,7 +58,6 @@ object Kreuzcrawl {
     fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle {
 
         return Bridge.createEngine(config)
-
     }
 
     /**
@@ -69,7 +68,6 @@ object Kreuzcrawl {
         return withContext(Dispatchers.IO) {
             Bridge.scrape(engine, url)
         }
-
     }
 
     /**
@@ -80,7 +78,6 @@ object Kreuzcrawl {
         return withContext(Dispatchers.IO) {
             Bridge.crawl(engine, url)
         }
-
     }
 
     /**
@@ -91,7 +88,6 @@ object Kreuzcrawl {
         return withContext(Dispatchers.IO) {
             Bridge.mapUrls(engine, url)
         }
-
     }
 
     /**
@@ -102,7 +98,6 @@ object Kreuzcrawl {
         return withContext(Dispatchers.IO) {
             Bridge.batchScrape(engine, urls)
         }
-
     }
 
     /**
@@ -113,7 +108,6 @@ object Kreuzcrawl {
         return withContext(Dispatchers.IO) {
             Bridge.batchCrawl(engine, urls)
         }
-
     }
 
 }
