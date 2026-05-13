@@ -16,12 +16,23 @@ if [ ! -f "$MOCK_SERVER_BIN" ]; then
 fi
 
 MOCK_OUT=$(mktemp)
-trap 'rm -f "$MOCK_OUT"; kill "$MOCK_PID" 2>/dev/null; wait "$MOCK_PID" 2>/dev/null || true' EXIT INT TERM
+# Trap cleans up the mock-server pipeline. The server blocks on stdin until
+# EOF (see e2e/rust/src/main.rs), so we feed it from a FIFO whose write end
+# we hold open ourselves. Closing the FD on exit lets the server return
+# cleanly; killing it is a fallback for the abort path.
+MOCK_FIFO=$(mktemp -u)
+mkfifo "$MOCK_FIFO"
+trap 'exec 9>&- 2>/dev/null || true; rm -f "$MOCK_OUT" "$MOCK_FIFO"; kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true' EXIT INT TERM
 
-# Start the mock server; pipe a long sleep to its stdin so it doesn't see EOF.
-# $! after a pipeline gives the PID of the rightmost command (the server).
-sleep 9999 | "$MOCK_SERVER_BIN" "$FIXTURES_DIR" >"$MOCK_OUT" 2>&1 &
+# Open FIFO for writing in the parent shell so the server sees an open stdin
+# until we close fd 9. This avoids the `sleep 9999` pipeline hack which left
+# the sleep alive when the trap ran and blocked the shell from exiting.
+# Start the server first (it opens the read end), then open fd 9 for writing
+# in the parent. Both opens must succeed before the FIFO is unblocked, so do
+# the server start in the background and follow with the parent open.
+"$MOCK_SERVER_BIN" "$FIXTURES_DIR" <"$MOCK_FIFO" >"$MOCK_OUT" 2>&1 &
 MOCK_PID=$!
+exec 9>"$MOCK_FIFO"
 
 # Wait up to 5 s for the server to emit MOCK_SERVERS= (the second startup line).
 for i in $(seq 1 50); do

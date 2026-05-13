@@ -1302,7 +1302,7 @@ impl DownloadedDocument {
                 __target.mime_type = t;
             }
         }
-        __target.content = content.into();
+        __target.content = content;
         __target.size = size;
         if let Some(s) = filename {
             if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
@@ -1438,7 +1438,7 @@ impl ScrapeResult {
         if let Some(w) = extraction_meta {
             __target.extraction_meta = Some(w.0);
         }
-        __target.screenshot = screenshot.into();
+        __target.screenshot = screenshot;
         if let Some(w) = downloaded_document {
             __target.downloaded_document = Some(w.0);
         }
