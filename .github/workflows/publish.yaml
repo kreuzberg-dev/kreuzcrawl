@@ -507,10 +507,16 @@ jobs:
 
       - name: Build sdist via maturin
         # Inline: maturin sdist is a one-liner; no shared action wraps it.
+        # maturin's -m flag requires a Cargo.toml. In kreuzcrawl the Python
+        # package (pyproject.toml) and the PyO3 crate (Cargo.toml) are in
+        # separate directories, so cd into packages/python/ to let maturin
+        # auto-discover pyproject.toml + follow its manifest-path setting.
         shell: bash
         run: |
           python -m pip install --upgrade pip maturin
-          maturin sdist -m packages/python/pyproject.toml -o dist
+          mkdir -p dist
+          cd packages/python
+          maturin sdist -o "$GITHUB_WORKSPACE/dist"
 
       - uses: actions/upload-artifact@v7
         with:
