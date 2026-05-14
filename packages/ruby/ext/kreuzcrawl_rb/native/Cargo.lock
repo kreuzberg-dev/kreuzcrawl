@@ -764,9 +764,9 @@ dependencies = [
 
 [[package]]
 name = "html-to-markdown-rs"
-version = "3.3.3"
+version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9451a842dd9316c9762a1c2c1d496df9db4db29e702e22f7a3fca210636ed4f9"
+checksum = "7385894d43db56c18bc08db0710d9466bfc50cdc3210929e7f55c16442f70884"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1174,7 +1174,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0-rc.2"
+version = "0.3.0-rc.19"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1183,6 +1183,7 @@ dependencies = [
  "chrono",
  "encoding_rs",
  "flate2",
+ "getrandom 0.3.4",
  "getrandom 0.4.2",
  "html-to-markdown-rs",
  "memchr",
@@ -1201,7 +1202,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-rb"
-version = "0.1.0-rc.9"
+version = "0.3.0-rc.19"
 dependencies = [
  "kreuzcrawl",
  "magnus",
@@ -1267,9 +1268,9 @@ checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
 
 [[package]]
 name = "lru"
-version = "0.17.0"
+version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e0b564323a0fb6d54b864f625ae139de9612e27edb944dda37c109f05aac531"
+checksum = "8a860605968fce16869fd239cf4237a82f3ac470723415db603b0e8b6c8d4fb9"
 dependencies = [
  "hashbrown 0.17.0",
 ]
