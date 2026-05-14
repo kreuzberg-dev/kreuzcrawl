@@ -143,6 +143,8 @@ jobs:
             test-cmd: "task csharp:e2e:test"
           - lang: php
             php-version: "8.4"
+            # PHPUnit requires dom/json/libxml/mbstring/tokenizer/xml/xmlwriter/ctype
+            php-extensions: "dom, json, libxml, mbstring, tokenizer, xml, xmlwriter, ctype"
             test-cmd: "task php:e2e:test"
           - lang: elixir
             elixir-version: "1.17"
@@ -156,10 +158,13 @@ jobs:
           - lang: c
             test-cmd: "task c:e2e:test"
           - lang: dart
-            dart-version: "3.5"
+            # packages/dart/pubspec depends on lints>=5.1.0 which requires Dart >=3.6.0
+            dart-version: "3.7"
             test-cmd: "task dart:e2e:test"
           - lang: kotlin
-            java-version: "25"
+            # Kotlin Gradle Plugin 2.3.21 doesn't grok class-file major version 69
+            # (Java 25). Pin to Java 21 LTS for kotlin matrix entry only.
+            java-version: "21"
             test-cmd: "task kotlin:e2e:test"
           - lang: swift
             swift-version: "6.0"
@@ -256,6 +261,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
+          extensions: ${{ matrix.php-extensions || '' }}
 
       - name: Setup Elixir
         if: matrix.elixir-version
@@ -319,18 +325,30 @@ jobs:
         working-directory: packages/ruby
         run: bundle install && bundle exec rake compile
 
-      # Languages whose e2e tests import a built binding (Node/Java/Kotlin/
-      # WASM/PHP/C#/Dart) need that binding compiled before tests run. Python
-      # and Elixir build via their own conftest paths; Rust/C/Swift/Zig/Brew
-      # use the FFI artifact directly.
+      # Languages whose e2e tests import a built binding need that binding
+      # compiled before tests run. Python and Elixir build via their own
+      # conftest paths; Rust/C/Zig/Brew use the FFI artifact directly.
+      # Swift needs setup-swift-bridge.sh to emit the SwiftBridgeCore module.
       - name: Build language binding
         if: |
           matrix.lang == 'node' || matrix.lang == 'java' ||
           matrix.lang == 'kotlin' || matrix.lang == 'wasm' ||
           matrix.lang == 'php' || matrix.lang == 'csharp' ||
-          matrix.lang == 'dart'
+          matrix.lang == 'dart' || matrix.lang == 'swift'
         shell: bash
         run: task ${{ matrix.lang }}:build:dev
+
+      # Zig's build.zig searches target/debug/ for kreuzcrawl_ffi by default.
+      # CI stages the prebuilt FFI artifact into target/release/, so mirror
+      # it into target/debug/ for the zig matrix entry.
+      - name: Stage FFI for zig (target/debug shim)
+        if: matrix.lang == 'zig'
+        shell: bash
+        run: |
+          mkdir -p target/debug
+          for f in target/release/libkreuzcrawl_ffi.*; do
+            [ -e "$f" ] && ln -sf "$(pwd)/$f" "target/debug/$(basename "$f")"
+          done
 
       - name: Run tests
         run: ${{ matrix.test-cmd }}
