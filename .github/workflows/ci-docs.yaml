@@ -1,0 +1,148 @@
+name: CI Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "pyproject.toml"
+      - "zensical.toml"
+      - ".typos.toml"
+      - ".lychee.toml"
+      - ".textlintrc.json"
+      - ".github/workflows/ci-docs.yaml"
+      - "scripts/ci/docs/**"
+      - "tools/snippet-runner/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "pyproject.toml"
+      - "zensical.toml"
+      - ".typos.toml"
+      - ".lychee.toml"
+      - ".textlintrc.json"
+      - ".github/workflows/ci-docs.yaml"
+      - "scripts/ci/docs/**"
+      - "tools/snippet-runner/**"
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+concurrency:
+  group: ci-docs-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: kreuzberg-dev/actions/setup-python-env@v1
+        with:
+          python-version: "3.13"
+          cache-prefix: docs-build
+          install-command: "uv sync --group docs --no-install-project --no-install-workspace --frozen"
+
+      - name: Build docs (strict)
+        run: scripts/ci/docs/build.sh --strict
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: docs-site
+          path: site/
+          retention-days: 1
+
+  lint-links:
+    name: Lint Links
+    needs: [build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download site artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: docs-site
+          path: site/
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: "--config .lychee.toml site/"
+          fail: true
+
+  lint-prose:
+    name: Lint Prose
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup textlint
+        uses: kreuzberg-dev/actions/setup-textlint@v1
+
+      - name: Run textlint
+        run: scripts/ci/docs/textlint.sh
+
+  validate-snippets:
+    name: Validate Snippets
+    if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: kreuzberg-dev/actions/setup-rust@v1
+        with:
+          cache-key-prefix: validate-snippets
+          use-sccache: "true"
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.26"
+
+      - name: Build and run snippet validation
+        run: cargo run --release -p snippet-runner -- validate --snippets docs/snippets --reference docs/reference --level syntax --timeout 120
+
+  deploy:
+    name: Deploy
+    needs: [build, lint-links, lint-prose, validate-snippets]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download site artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: docs-site
+          path: site/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

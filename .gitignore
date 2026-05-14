@@ -202,6 +202,14 @@ pkg/
 .mock-server.out
 .mock-server.pid
 
+# Per-language smoke workflows scaffolded by alef. kreuzcrawl uses the unified
+# ci-e2e.yaml matrix for all language coverage; these standalone workflows are
+# kept emitted on disk for upstream parity but never committed.
+.github/workflows/dart.yml
+.github/workflows/kotlin.yml
+.github/workflows/swift.yml
+.github/workflows/zig.yml
+
 # BEGIN ai-rulez (DO NOT EDIT - managed by ai-rulez)
 .agents/
 .cursor/
