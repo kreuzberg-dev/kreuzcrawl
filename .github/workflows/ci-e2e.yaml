@@ -165,7 +165,8 @@ jobs:
             swift-version: "6.0"
             test-cmd: "task swift:e2e:test"
           - lang: zig
-            zig-version: "0.12.0"
+            # e2e/zig/build.zig.zon declares minimum_zig_version "0.16.0"
+            zig-version: "0.16.0"
             test-cmd: "task zig:e2e:test"
           - lang: brew
             test-cmd: "task brew:e2e:test"
@@ -271,19 +272,31 @@ jobs:
 
       - name: Setup Swift
         if: matrix.swift-version
-        # v2 supports Ubuntu 24.04; v1 errored with "Version 24.04 of Ubuntu is not supported".
-        uses: swift-actions/setup-swift@v2
+        # kreuzberg-dev wrapper around SwiftyLab/setup-swift — supports
+        # ubuntu-24.04-arm; swift-actions/setup-swift@v2 returns a corrupt
+        # binary on that runner.
+        uses: kreuzberg-dev/actions/setup-swift@v1
         with:
           swift-version: ${{ matrix.swift-version }}
 
       - name: Setup Zig
         if: matrix.zig-version
-        # kreuzberg-dev/actions/setup-zig resolves the official ziglang.org
-        # download index directly, bypassing third-party mirror 404s that
-        # mlugg/setup-zig hit on 0.12.0.
+        # Resolves the official ziglang.org download index directly.
         uses: kreuzberg-dev/actions/setup-zig@v1
         with:
           version: ${{ matrix.zig-version }}
+
+      - name: Setup Gradle
+        if: matrix.lang == 'kotlin'
+        uses: kreuzberg-dev/actions/setup-gradle@v1
+
+      - name: Setup wasm-pack
+        if: matrix.lang == 'wasm'
+        uses: kreuzberg-dev/actions/setup-wasm-pack@v1
+
+      - name: Setup Chrome
+        if: matrix.lang == 'brew'
+        uses: kreuzberg-dev/actions/setup-chrome@v1
 
       - name: Setup library paths for FFI bindings
         if: |
@@ -307,14 +320,15 @@ jobs:
         run: bundle install && bundle exec rake compile
 
       # Languages whose e2e tests import a built binding (Node/Java/Kotlin/
-      # WASM/PHP/C#) need that binding compiled before tests run. Python
-      # and Elixir build via their own conftest paths; Rust/C/Dart/Swift/
-      # Zig/Brew use the FFI artifact directly.
+      # WASM/PHP/C#/Dart) need that binding compiled before tests run. Python
+      # and Elixir build via their own conftest paths; Rust/C/Swift/Zig/Brew
+      # use the FFI artifact directly.
       - name: Build language binding
         if: |
           matrix.lang == 'node' || matrix.lang == 'java' ||
           matrix.lang == 'kotlin' || matrix.lang == 'wasm' ||
-          matrix.lang == 'php' || matrix.lang == 'csharp'
+          matrix.lang == 'php' || matrix.lang == 'csharp' ||
+          matrix.lang == 'dart'
         shell: bash
         run: task ${{ matrix.lang }}:build:dev
 
