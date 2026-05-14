@@ -158,8 +158,8 @@ jobs:
           - lang: c
             test-cmd: "task c:e2e:test"
           - lang: dart
-            # packages/dart/pubspec depends on lints>=5.1.0 which requires Dart >=3.6.0
-            dart-version: "3.7"
+            # packages/dart/pubspec depends on lints>=6.0.0 which requires Dart >=3.8.0
+            dart-version: "3.11.6"
             test-cmd: "task dart:e2e:test"
           - lang: kotlin
             # Kotlin Gradle Plugin 2.3.21 doesn't grok class-file major version 69

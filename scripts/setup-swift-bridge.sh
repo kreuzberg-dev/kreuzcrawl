@@ -8,8 +8,15 @@ PROFILE="${1:-release}"
 BUILD_DIR="target/${PROFILE}/build"
 
 # Find the most recently built output directory
+# Use platform-appropriate stat flags: BSD/macOS uses `-f`, GNU/Linux uses `-c`.
+if stat -f '%m' "$BUILD_DIR" >/dev/null 2>&1; then
+  STAT_FMT='-f %m %N'
+else
+  STAT_FMT='-c %Y %n'
+fi
+# shellcheck disable=SC2086
 OUT=$(find "$BUILD_DIR" -maxdepth 2 -type d -name out -path '*kreuzcrawl-swift-*' \
-  -exec stat -f '%m %N' {} + 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
+  -exec stat $STAT_FMT {} + 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
 if [ -z "$OUT" ]; then
   echo "ERROR: Could not find swift-bridge build output in ${BUILD_DIR}/"
   exit 1

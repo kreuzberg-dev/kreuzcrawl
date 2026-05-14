@@ -65,22 +65,43 @@ else
   DISPLAY_DIR="$TARGET_DIR"
 fi
 
+# Detect the active PHP's default extension_dir so we can preload bundled
+# extensions (dom, json, mbstring, tokenizer, xml, xmlwriter, ctype, libxml)
+# that PHPUnit requires. `php -c <ini>` REPLACES the default php.ini, so we
+# must re-declare extension_dir + every needed extension here.
+DEFAULT_EXT_DIR="$(php -r 'echo ini_get("extension_dir");' 2>/dev/null || true)"
+if [ -z "$DEFAULT_EXT_DIR" ]; then
+  DEFAULT_EXT_DIR="$(php-config --extension-dir 2>/dev/null || true)"
+fi
+if [ -z "$DEFAULT_EXT_DIR" ]; then
+  echo "ERROR: could not determine PHP extension_dir"
+  exit 1
+fi
+
+echo "Detected PHP extension_dir: $DEFAULT_EXT_DIR"
+
 # Create the ini file with absolute path
-# We load the Kreuzcrawl extension with its full path to avoid overriding extension_dir
-# This allows core PHP extensions to be loaded from their default location
+# We load the Kreuzcrawl extension with its full path and set extension_dir to
+# the active PHP's own dir so PHPUnit's required extensions resolve.
 if cat >"$INI_FILE" <<EOF; then
 ; Kreuzcrawl PHP Extension Configuration for CI Testing
 ; This file is generated automatically by create-ci-php-ini.sh
 ; It allows loading the locally-built extension without system-wide installation
 
 ; Load the Kreuzcrawl PHP extension using full path
-; This avoids overriding extension_dir which would prevent core extensions from loading
 extension="$DISPLAY_DIR/$EXT_FILE"
 
-; Load additional extensions that the main PHP installation provides
-; (necessary because -c option overrides php.ini, so we must explicitly load all needed extensions)
-extension_dir = /opt/homebrew/lib/php/pecl/20240924
-extension="ts_pack_core_php.so"
+; Mirror the active PHP's extension_dir so PHPUnit-required extensions resolve
+extension_dir = $DEFAULT_EXT_DIR
+
+; PHPUnit requires: dom, json, libxml, mbstring, tokenizer, xml, xmlwriter, ctype
+extension = ctype
+extension = dom
+extension = libxml
+extension = mbstring
+extension = tokenizer
+extension = xml
+extension = xmlwriter
 EOF
   echo "✓ INI file created: $INI_FILE"
   echo ""

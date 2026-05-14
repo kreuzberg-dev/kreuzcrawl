@@ -11,6 +11,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("../../packages/zig/src/kreuzcrawl.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     kreuzcrawl_module.addLibraryPath(.{ .cwd_relative = ffi_path });
     kreuzcrawl_module.addIncludePath(.{ .cwd_relative = ffi_include });
@@ -20,6 +21,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/auth_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     auth_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const auth_tests = b.addTest(.{
@@ -33,6 +35,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/browser_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     browser_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const browser_tests = b.addTest(.{
@@ -46,6 +49,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/content_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     content_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const content_tests = b.addTest(.{
@@ -59,6 +63,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/cookies_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     cookies_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const cookies_tests = b.addTest(.{
@@ -72,6 +77,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/crawl_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     crawl_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const crawl_tests = b.addTest(.{
@@ -85,6 +91,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/encoding_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     encoding_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const encoding_tests = b.addTest(.{
@@ -98,6 +105,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/engine_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     engine_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const engine_tests = b.addTest(.{
@@ -111,6 +119,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/error_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     error_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const error_tests = b.addTest(.{
@@ -124,6 +133,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/links_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     links_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const links_tests = b.addTest(.{
@@ -137,6 +147,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/map_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     map_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const map_tests = b.addTest(.{
@@ -150,6 +161,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/markdown_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     markdown_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const markdown_tests = b.addTest(.{
@@ -163,6 +175,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/metadata_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     metadata_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const metadata_tests = b.addTest(.{
@@ -176,6 +189,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/redirect_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     redirect_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const redirect_tests = b.addTest(.{
@@ -189,6 +203,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/robots_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     robots_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const robots_tests = b.addTest(.{
@@ -202,6 +217,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/scrape_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     scrape_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const scrape_tests = b.addTest(.{
@@ -215,6 +231,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/sitemap_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     sitemap_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const sitemap_tests = b.addTest(.{
@@ -228,6 +245,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/validation_test.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     validation_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const validation_tests = b.addTest(.{
