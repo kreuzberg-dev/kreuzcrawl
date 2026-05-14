@@ -8,12 +8,12 @@ let package = Package(
         .iOS(.v14),
     ],
     dependencies: [
-        .package(path: "../../packages/swift"),
+        .package(name: "Kreuzcrawl", path: "../../packages/swift"),
     ],
     targets: [
         .testTarget(
-            name: "KreuzcrawlTests",
-            dependencies: [.product(name: "Kreuzcrawl", package: "swift")]
+            name: "KreuzcrawlE2ETests",
+            dependencies: [.product(name: "Kreuzcrawl", package: "Kreuzcrawl")]
         ),
     ]
 )
