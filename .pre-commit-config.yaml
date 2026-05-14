@@ -135,6 +135,9 @@ repos:
       - id: oxfmt
       - id: cppcheck
       - id: rumdl-fmt
+        # alef-generated reference docs are checked verbatim against `alef docs`
+        # output in CI; rumdl's MD022 fixes would diverge from that.
+        exclude: ^docs/reference/
       - id: cpd
         # Raise from default 100. alef-generated *Builder.java share ~121 tokens of
         # @JsonProperty boilerplate mirroring the Rust struct layout — structural,
