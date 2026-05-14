@@ -87,6 +87,16 @@ jobs:
           binary-name: kreuzcrawl
           extra-cargo-args: --features "api,mcp,warc,ai,tracing"
 
+      # mock-server is the alef-generated test fixture server that all language
+      # e2e conftests spawn. It lives in its own workspace (e2e/rust/Cargo.toml)
+      # and depends on the kreuzcrawl core crate. Built only on linux-arm64
+      # since e2e-tests downloads ffi-aarch64-unknown-linux-gnu.
+      - name: Build mock-server (linux-arm64 only)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        shell: bash
+        working-directory: e2e/rust
+        run: cargo build --release --bin mock-server
+
       - name: Upload FFI artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -99,6 +109,7 @@ jobs:
             crates/kreuzcrawl-ffi/cmake/
             target/release/kreuzcrawl
             target/release/kreuzcrawl.exe
+            e2e/rust/target/release/mock-server
           retention-days: 7
           if-no-files-found: error
 
@@ -177,11 +188,25 @@ jobs:
       - name: Stage FFI artifacts
         shell: bash
         run: |
-          mkdir -p target/release
-          cp ffi-artifacts/libkreuzcrawl_ffi.* target/release/ 2>/dev/null || true
-          cp ffi-artifacts/kreuzcrawl_ffi.* target/release/ 2>/dev/null || true
-          cp ffi-artifacts/kreuzcrawl target/release/ 2>/dev/null || true
+          mkdir -p target/release e2e/rust/target/release
+          # actions/upload-artifact@v7 preserves directory structure for multi-path
+          # uploads, so files land under ffi-artifacts/target/release/ etc.
+          # Fall back to flat layout for safety.
+          for src in ffi-artifacts/target/release/libkreuzcrawl_ffi.* ffi-artifacts/libkreuzcrawl_ffi.*; do
+            [ -e "$src" ] && cp "$src" target/release/ || true
+          done
+          for src in ffi-artifacts/target/release/kreuzcrawl_ffi.* ffi-artifacts/kreuzcrawl_ffi.*; do
+            [ -e "$src" ] && cp "$src" target/release/ || true
+          done
+          for src in ffi-artifacts/target/release/kreuzcrawl ffi-artifacts/kreuzcrawl; do
+            [ -e "$src" ] && cp "$src" target/release/ || true
+          done
+          for src in ffi-artifacts/e2e/rust/target/release/mock-server ffi-artifacts/mock-server; do
+            [ -e "$src" ] && cp "$src" e2e/rust/target/release/ || true
+          done
           chmod +x target/release/libkreuzcrawl_ffi.so 2>/dev/null || true
+          chmod +x target/release/kreuzcrawl 2>/dev/null || true
+          chmod +x e2e/rust/target/release/mock-server 2>/dev/null || true
 
       - name: Setup OpenSSL
         uses: kreuzberg-dev/actions/setup-openssl@v1
