@@ -38,7 +38,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 uv_sync() {
-  uv sync --group doc --no-editable --no-install-workspace --no-install-project
+  uv sync --group docs --no-editable --no-install-workspace --no-install-project
 }
 
 zensical_build() {

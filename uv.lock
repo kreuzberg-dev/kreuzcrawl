@@ -20,7 +20,7 @@ dev = [
     { name = "ruff" },
     { name = "validate-pyproject" },
 ]
-doc = [
+docs = [
     { name = "mkdocstrings", specifier = ">=1.0.3" },
     { name = "mkdocstrings-python", specifier = ">=2.0.3" },
     { name = "zensical" },
