@@ -48,7 +48,7 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 
 - :material-translate:{ .lg .middle } **14 Language Bindings**
 
-  Native bindings for Rust, Python, TypeScript, Go, Java, Kotlin, C#, Ruby, PHP, Elixir, Dart, Swift, Zig, and WebAssembly — plus a C FFI surface for everything else.
+  Native bindings for Rust, Python, TypeScript, Go, Java, Kotlin (Android), C#, Ruby, PHP, Elixir, Dart, Swift, Zig, and WebAssembly — plus a C FFI surface for everything else.
 
 </div>
 
@@ -66,7 +66,7 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 | **WebAssembly**       | `npm install @kreuzberg/kreuzcrawl-wasm`                   | [API Reference](reference/api-wasm.md)       |
 | **Go**                | `go get github.com/kreuzberg-dev/kreuzcrawl/packages/go`   | [API Reference](reference/api-go.md)         |
 | **Java**              | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl`        | [API Reference](reference/api-java.md)       |
-| **Kotlin**            | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl-kotlin` | [API Reference](reference/api-kotlin.md)     |
+| **Kotlin (Android)**  | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl-android` | [API Reference](reference/api-kotlin-android.md) |
 | **C#**                | `dotnet add package Kreuzcrawl`                            | [API Reference](reference/api-csharp.md)     |
 | **Ruby**              | `gem install kreuzcrawl`                                   | [API Reference](reference/api-ruby.md)       |
 | **PHP**               | `composer require kreuzberg-dev/kreuzcrawl`                | [API Reference](reference/api-php.md)        |

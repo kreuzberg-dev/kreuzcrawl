@@ -64,7 +64,7 @@ High-performance Rust web crawling engine for structured data extraction. Scrape
 - **Structured extraction** — Text, metadata, links, images, assets, JSON-LD, Open Graph, hreflang, favicons, headings, and response headers
 - **Markdown conversion** — Clean Markdown output with citations, document structure, and fit-content mode
 - **Concurrent crawling** — Depth-first, breadth-first, or best-first traversal with configurable depth, page limits, and concurrency
-- **14 language bindings** — Rust, Python, Node.js, TypeScript, Ruby, Go, Java, Kotlin, C#, PHP, Elixir, Dart, Swift, Zig, and WebAssembly
+- **14 language bindings** — Rust, Python, Node.js, TypeScript, Ruby, Go, Java, Kotlin (Android), C#, PHP, Elixir, Dart, Swift, Zig, and WebAssembly
 - **Smart filtering** — BM25 relevance scoring, URL include/exclude patterns, robots.txt compliance, and sitemap discovery
 - **Browser rendering** — Optional headless browser for JavaScript-heavy SPAs with WAF detection and bypass
 - **Batch operations** — Scrape or crawl hundreds of URLs concurrently with partial failure handling

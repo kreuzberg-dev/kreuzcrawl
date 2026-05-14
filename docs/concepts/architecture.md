@@ -50,7 +50,7 @@ Every binding consumes the same Rust core via FFI. The per-binding glue is gener
 | `packages/elixir/native/...` | Hex `kreuzcrawl`                                            | Rustler NIF              |
 | `packages/go`                | Go module `github.com/kreuzberg-dev/kreuzcrawl/packages/go` | cgo over C FFI           |
 | `packages/java`              | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl`         | Java 25 Panama FFM       |
-| `packages/kotlin`            | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl-kotlin`  | Kotlin wrapper over Java |
+| `packages/kotlin-android`    | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl-android` | Android AAR with JNI .sos |
 | `packages/csharp`            | NuGet `Kreuzcrawl`                                          | .NET 10 P/Invoke         |
 | `packages/dart`              | pub.dev `kreuzcrawl`                                        | Dart FFI                 |
 | `packages/swift`             | Swift Package Manager                                       | Swift over C FFI         |

@@ -4,7 +4,7 @@ name: Publish Release
 #
 # Orchestrates 14 alef language targets:
 #   crates · python · node · wasm · ruby · php · cli · homebrew · go · c-ffi
-#   java · csharp · elixir · kotlin · dart · swift · zig
+#   java · csharp · elixir · kotlin-android · dart · swift · zig
 #
 # Mirrors kreuzberg's publish.yaml composition: every registry interaction,
 # every multi-platform build, and every release-asset upload routes through
@@ -90,7 +90,7 @@ jobs:
       release_dart: ${{ steps.meta.outputs.release_dart }}
       release_swift: ${{ steps.meta.outputs.release_swift }}
       release_zig: ${{ steps.meta.outputs.release_zig }}
-      release_kotlin: ${{ steps.meta.outputs.release_kotlin }}
+      release_kotlin_android: ${{ steps.meta.outputs.release_kotlin_android }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -343,13 +343,13 @@ jobs:
           version: ${{ needs.prepare.outputs.version }}
           repo: ${{ github.repository }}
 
-  check-maven-kotlin:
-    name: Check Maven Central for Kotlin package
+  check-maven-kotlin-android:
+    name: Check Maven Central for kotlin-android package
     needs: prepare
-    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_kotlin == 'true' }}
+    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_kotlin_android == 'true' }}
     runs-on: ubuntu-latest
     outputs:
-      kotlin_exists: ${{ steps.check.outputs.kotlin_exists }}
+      kotlin_android_exists: ${{ steps.check.outputs.kotlin_android_exists }}
     steps:
       - id: check
         uses: kreuzberg-dev/actions/check-registry@v1
@@ -358,7 +358,7 @@ jobs:
           package: dev.kreuzberg:kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
           extra-packages: |
-            kotlin_exists=dev.kreuzberg:kreuzcrawl-kotlin
+            kotlin_android_exists=dev.kreuzberg:kreuzcrawl-android
 
   check-homebrew:
     name: Check Homebrew tap for formula
@@ -1817,10 +1817,53 @@ jobs:
         env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
 
-  publish-kotlin:
-    name: Publish Kotlin (Maven Central via Gradle)
-    needs: [prepare, java-natives, java-natives-musl, check-maven-kotlin]
-    if: ${{ needs.prepare.outputs.release_kotlin == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-maven-kotlin.outputs.kotlin_exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+  kotlin-android-natives:
+    name: Build kotlin-android natives (${{ matrix.abi }})
+    needs: prepare
+    if: ${{ needs.prepare.outputs.release_kotlin_android == 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - abi: arm64-v8a
+            target: aarch64-linux-android
+          - abi: x86_64
+            target: x86_64-linux-android
+          - abi: armeabi-v7a
+            target: armv7-linux-androideabi
+          - abi: x86
+            target: i686-linux-android
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.ref }}
+          submodules: recursive
+
+      - uses: kreuzberg-dev/actions/setup-rust@v1
+        with:
+          target: ${{ matrix.target }}
+          cache-key-prefix: kotlin-android-${{ matrix.abi }}
+
+      - uses: kreuzberg-dev/actions/setup-android-ndk@v1
+
+      - uses: kreuzberg-dev/actions/build-android-natives@v1
+        with:
+          crate-name: kreuzcrawl-ffi
+          lib-name: kreuzcrawl_ffi
+          abi: ${{ matrix.abi }}
+          target: ${{ matrix.target }}
+
+      - uses: actions/upload-artifact@v8
+        with:
+          name: kotlin-android-${{ matrix.abi }}
+          path: dist/android-natives/${{ matrix.abi }}/
+          if-no-files-found: error
+
+  publish-kotlin-android:
+    name: Publish kotlin-android (Maven Central via Gradle)
+    needs: [prepare, kotlin-android-natives, check-maven-kotlin-android]
+    if: ${{ needs.prepare.outputs.release_kotlin_android == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-maven-kotlin-android.outputs.kotlin_android_exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -1829,24 +1872,24 @@ jobs:
 
       - uses: actions/download-artifact@v8
         with:
-          pattern: java-natives-*
-          path: java-natives
-          merge-multiple: true
+          pattern: kotlin-android-*
+          path: kotlin-android-natives
+          merge-multiple: false
 
-      - name: Stage natives into Kotlin resources
-        # Inline: same layout as Maven (Kotlin reuses the Java JNA-loaded bridge).
+      - name: Stage natives into AAR jniLibs
         run: |
-          mkdir -p packages/kotlin/src/main/resources/natives
-          for dir in java-natives/native/*/; do
-            classifier="$(basename "$dir")"
-            mkdir -p "packages/kotlin/src/main/resources/natives/${classifier}"
-            cp -v "${dir}"/* "packages/kotlin/src/main/resources/natives/${classifier}/"
+          for abi in arm64-v8a x86_64 armeabi-v7a x86; do
+            src="kotlin-android-natives/kotlin-android-${abi}"
+            [ -d "$src" ] || continue
+            mkdir -p "packages/kotlin-android/src/main/jniLibs/${abi}"
+            cp -v "${src}/libkreuzcrawl_ffi.so" \
+                  "packages/kotlin-android/src/main/jniLibs/${abi}/"
           done
         shell: bash
 
       - uses: kreuzberg-dev/actions/publish-maven-gradle@v1
         with:
-          working-directory: packages/kotlin
+          working-directory: packages/kotlin-android
           gradle-task: publishAndReleaseToMavenCentral
           dry-run: ${{ needs.prepare.outputs.dry_run }}
         env:
@@ -2042,7 +2085,7 @@ jobs:
       - publish-wasm
       - publish-packagist
       - publish-maven
-      - publish-kotlin
+      - publish-kotlin-android
       - publish-nuget
       - publish-hex
       - publish-pub
@@ -2079,7 +2122,7 @@ jobs:
       - publish-wasm
       - publish-packagist
       - publish-maven
-      - publish-kotlin
+      - publish-kotlin-android
       - publish-nuget
       - publish-hex
       - publish-pub
