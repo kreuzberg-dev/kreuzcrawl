@@ -8,13 +8,11 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../" && pwd)"
-TARGET_DIR="$REPO_ROOT/target/release"
 OUTPUT_DIR="${OUTPUT_DIR:-.}"
 INI_FILE="$OUTPUT_DIR/php-kreuzcrawl.ini"
 
 echo "=== Creating CI PHP ini file ==="
 echo "Repo root: $REPO_ROOT"
-echo "Target dir: $TARGET_DIR"
 echo "Output file: $INI_FILE"
 echo ""
 
@@ -30,15 +28,30 @@ else
   EXT_FILE="libkreuzcrawl_php.so"
 fi
 
-BUILT_EXT="$TARGET_DIR/$EXT_FILE"
+# Prefer release build, fall back to debug. task php:build:dev produces
+# target/debug/, task php:build:release produces target/release/. The generic
+# CI "Build language binding" step calls build:dev for all langs.
+BUILT_EXT=""
+TARGET_DIR=""
+for candidate_dir in "$REPO_ROOT/target/release" "$REPO_ROOT/target/debug"; do
+  if [ -f "$candidate_dir/$EXT_FILE" ]; then
+    BUILT_EXT="$candidate_dir/$EXT_FILE"
+    TARGET_DIR="$candidate_dir"
+    break
+  fi
+done
 
-if [ ! -f "$BUILT_EXT" ]; then
-  echo "ERROR: Built extension not found at $BUILT_EXT"
-  echo ""
-  echo "Available files in $TARGET_DIR:"
-  find "$TARGET_DIR" -maxdepth 1 -iname "*kreuzcrawl*" -type f 2>/dev/null || echo "No kreuzcrawl files found"
+if [ -z "$BUILT_EXT" ]; then
+  echo "ERROR: Built extension $EXT_FILE not found in target/release or target/debug"
+  for candidate_dir in "$REPO_ROOT/target/release" "$REPO_ROOT/target/debug"; do
+    echo ""
+    echo "Available files in $candidate_dir:"
+    find "$candidate_dir" -maxdepth 1 -iname "*kreuzcrawl*" -type f 2>/dev/null || echo "  (directory missing or empty)"
+  done
   exit 1
 fi
+
+echo "Target dir: $TARGET_DIR"
 
 echo "Found built extension: $BUILT_EXT"
 echo "Extension file size: $(du -h "$BUILT_EXT" | cut -f1)"
