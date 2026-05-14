@@ -11,9 +11,10 @@ namespace Kreuzcrawl;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum FeedType
 {/// <summary>    /// RSS feed.    /// </summary>
-[JsonPropertyName("rss")]
+    [JsonPropertyName("rss")]
     Rss,/// <summary>    /// Atom feed.    /// </summary>
-[JsonPropertyName("atom")]
+    [JsonPropertyName("atom")]
     Atom,/// <summary>    /// JSON Feed.    /// </summary>
-[JsonPropertyName("json_feed")]
-    JsonFeed,}
+    [JsonPropertyName("json_feed")]
+    JsonFeed,
+}

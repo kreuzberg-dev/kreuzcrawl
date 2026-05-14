@@ -37,7 +37,8 @@ namespace Kreuzcrawl {
             ?int $prompt_tokens = null,
             ?int $completion_tokens = null,
             ?string $model = null,
-        ) {}
+        ) {
+        }
         public function getCost(): ?float
         {
             throw new \RuntimeException('Not implemented.');
@@ -73,7 +74,8 @@ namespace Kreuzcrawl {
             string $url,
             ?string $username = null,
             ?string $password = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -131,7 +133,8 @@ namespace Kreuzcrawl {
             int $wrap_width,
             bool $include_document_structure,
             ?int $max_depth = null,
-        ) {}
+        ) {
+        }
         public function getOutputFormat(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -201,7 +204,8 @@ namespace Kreuzcrawl {
             ?string $endpoint = null,
             ?string $wait_selector = null,
             ?float $extra_wait = null,
-        ) {}
+        ) {
+        }
         public function getMode(): BrowserMode
         {
             throw new \RuntimeException('Not implemented.');
@@ -325,7 +329,8 @@ namespace Kreuzcrawl {
             ?int $document_max_size = null,
             ?string $warc_output = null,
             ?string $browser_profile = null,
-        ) {}
+        ) {
+        }
         public function getMaxDepth(): ?int
         {
             throw new \RuntimeException('Not implemented.');
@@ -501,7 +506,8 @@ namespace Kreuzcrawl {
             string $content_hash,
             array $headers,
             ?string $filename = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -605,7 +611,8 @@ namespace Kreuzcrawl {
             ?ExtractionMeta $extraction_meta = null,
             ?string $screenshot = null,
             ?DownloadedDocument $downloaded_document = null,
-        ) {}
+        ) {
+        }
         public function getStatusCode(): int
         {
             throw new \RuntimeException('Not implemented.');
@@ -773,7 +780,8 @@ namespace Kreuzcrawl {
             ?string $extracted_data = null,
             ?ExtractionMeta $extraction_meta = null,
             ?DownloadedDocument $downloaded_document = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -885,7 +893,8 @@ namespace Kreuzcrawl {
             array $cookies,
             array $normalized_urls,
             ?string $error = null,
-        ) {}
+        ) {
+        }
         public function getPages(): array
         {
             throw new \RuntimeException('Not implemented.');
@@ -931,7 +940,8 @@ namespace Kreuzcrawl {
             ?string $lastmod = null,
             ?string $changefreq = null,
             ?string $priority = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -963,7 +973,8 @@ namespace Kreuzcrawl {
          */
         public function __construct(
             array $urls,
-        ) {}
+        ) {
+        }
         public function getUrls(): array
         {
             throw new \RuntimeException('Not implemented.');
@@ -995,7 +1006,8 @@ namespace Kreuzcrawl {
             ?string $document_structure = null,
             ?CitationResult $citations = null,
             ?string $fit_content = null,
-        ) {}
+        ) {
+        }
         public function getContent(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1039,7 +1051,8 @@ namespace Kreuzcrawl {
             LinkType $link_type,
             bool $nofollow,
             ?string $rel = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1079,7 +1092,8 @@ namespace Kreuzcrawl {
             ?string $alt = null,
             ?int $width = null,
             ?int $height = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1115,7 +1129,8 @@ namespace Kreuzcrawl {
             string $url,
             FeedType $feed_type,
             ?string $title = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1143,7 +1158,8 @@ namespace Kreuzcrawl {
             string $schema_type,
             string $raw,
             ?string $name = null,
-        ) {}
+        ) {
+        }
         public function getSchemaType(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1173,7 +1189,8 @@ namespace Kreuzcrawl {
             string $value,
             ?string $domain = null,
             ?string $path = null,
-        ) {}
+        ) {
+        }
         public function getName(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1211,7 +1228,8 @@ namespace Kreuzcrawl {
             AssetCategory $asset_category,
             ?string $mime_type = null,
             ?string $html_tag = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1259,7 +1277,8 @@ namespace Kreuzcrawl {
             ?string $modified_time = null,
             ?string $author = null,
             ?string $section = null,
-        ) {}
+        ) {
+        }
         public function getPublishedTime(): ?string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1293,7 +1312,8 @@ namespace Kreuzcrawl {
         public function __construct(
             string $lang,
             string $url,
-        ) {}
+        ) {
+        }
         public function getLang(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1319,7 +1339,8 @@ namespace Kreuzcrawl {
             string $rel,
             ?string $sizes = null,
             ?string $mime_type = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1349,7 +1370,8 @@ namespace Kreuzcrawl {
         public function __construct(
             int $level,
             string $text,
-        ) {}
+        ) {
+        }
         public function getLevel(): int
         {
             throw new \RuntimeException('Not implemented.');
@@ -1381,7 +1403,8 @@ namespace Kreuzcrawl {
             ?string $x_powered_by = null,
             ?string $content_language = null,
             ?string $content_encoding = null,
-        ) {}
+        ) {
+        }
         public function getEtag(): ?string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1515,7 +1538,8 @@ namespace Kreuzcrawl {
             ?array $favicons = null,
             ?array $headings = null,
             ?int $word_count = null,
-        ) {}
+        ) {
+        }
         public function getTitle(): ?string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1705,7 +1729,8 @@ namespace Kreuzcrawl {
         public function __construct(
             string $content,
             array $references,
-        ) {}
+        ) {
+        }
         public function getContent(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1726,7 +1751,8 @@ namespace Kreuzcrawl {
             int $index,
             string $url,
             string $text,
-        ) {}
+        ) {
+        }
         public function getIndex(): int
         {
             throw new \RuntimeException('Not implemented.');
@@ -1754,7 +1780,8 @@ namespace Kreuzcrawl {
             string $url,
             ?ScrapeResult $result = null,
             ?string $error = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1782,7 +1809,8 @@ namespace Kreuzcrawl {
             string $url,
             ?CrawlResult $result = null,
             ?string $error = null,
-        ) {}
+        ) {
+        }
         public function getUrl(): string
         {
             throw new \RuntimeException('Not implemented.');
@@ -1814,7 +1842,9 @@ namespace Kreuzcrawl {
     /**
      * Authentication configuration.
      */
-    class AuthConfig {}
+    class AuthConfig
+    {
+    }
 
     enum LinkType: string
     {

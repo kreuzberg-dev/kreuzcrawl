@@ -11,9 +11,10 @@ namespace Kreuzcrawl;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum BrowserWait
 {/// <summary>    /// Wait until network activity is idle.    /// </summary>
-[JsonPropertyName("network_idle")]
+    [JsonPropertyName("network_idle")]
     NetworkIdle,/// <summary>    /// Wait for a specific CSS selector to appear in the DOM.    /// </summary>
-[JsonPropertyName("selector")]
+    [JsonPropertyName("selector")]
     Selector,/// <summary>    /// Wait for a fixed duration after navigation.    /// </summary>
-[JsonPropertyName("fixed")]
-    Fixed,}
+    [JsonPropertyName("fixed")]
+    Fixed,
+}

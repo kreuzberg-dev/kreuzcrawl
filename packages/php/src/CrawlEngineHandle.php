@@ -15,4 +15,6 @@ namespace Kreuzcrawl;
  * Constructed via [`create_engine`] with an optional [`CrawlConfig`].
  * Default implementations for all pluggable components are used internally.
  */
-final class CrawlEngineHandle {}
+final class CrawlEngineHandle
+{
+}

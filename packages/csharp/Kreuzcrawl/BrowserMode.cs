@@ -11,9 +11,10 @@ namespace Kreuzcrawl;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum BrowserMode
 {/// <summary>    /// Automatically detect when JS rendering is needed and fall back to browser.    /// </summary>
-[JsonPropertyName("auto")]
+    [JsonPropertyName("auto")]
     Auto,/// <summary>    /// Always use the browser for every request.    /// </summary>
-[JsonPropertyName("always")]
+    [JsonPropertyName("always")]
     Always,/// <summary>    /// Never use the browser fallback.    /// </summary>
-[JsonPropertyName("never")]
-    Never,}
+    [JsonPropertyName("never")]
+    Never,
+}

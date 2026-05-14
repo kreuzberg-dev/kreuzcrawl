@@ -11,11 +11,12 @@ namespace Kreuzcrawl;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum LinkType
 {/// <summary>    /// A link to the same domain.    /// </summary>
-[JsonPropertyName("internal")]
+    [JsonPropertyName("internal")]
     Internal,/// <summary>    /// A link to a different domain.    /// </summary>
-[JsonPropertyName("external")]
+    [JsonPropertyName("external")]
     External,/// <summary>    /// A fragment-only link (e.g., `#section`).    /// </summary>
-[JsonPropertyName("anchor")]
+    [JsonPropertyName("anchor")]
     Anchor,/// <summary>    /// A link to a downloadable document (PDF, DOC, etc.).    /// </summary>
-[JsonPropertyName("document")]
-    Document,}
+    [JsonPropertyName("document")]
+    Document,
+}

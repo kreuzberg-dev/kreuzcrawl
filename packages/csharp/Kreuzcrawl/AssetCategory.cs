@@ -11,23 +11,24 @@ namespace Kreuzcrawl;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum AssetCategory
 {/// <summary>    /// A document file (PDF, DOC, etc.).    /// </summary>
-[JsonPropertyName("document")]
+    [JsonPropertyName("document")]
     Document,/// <summary>    /// An image file.    /// </summary>
-[JsonPropertyName("image")]
+    [JsonPropertyName("image")]
     Image,/// <summary>    /// An audio file.    /// </summary>
-[JsonPropertyName("audio")]
+    [JsonPropertyName("audio")]
     Audio,/// <summary>    /// A video file.    /// </summary>
-[JsonPropertyName("video")]
+    [JsonPropertyName("video")]
     Video,/// <summary>    /// A font file.    /// </summary>
-[JsonPropertyName("font")]
+    [JsonPropertyName("font")]
     Font,/// <summary>    /// A CSS stylesheet.    /// </summary>
-[JsonPropertyName("stylesheet")]
+    [JsonPropertyName("stylesheet")]
     Stylesheet,/// <summary>    /// A JavaScript file.    /// </summary>
-[JsonPropertyName("script")]
+    [JsonPropertyName("script")]
     Script,/// <summary>    /// An archive file (ZIP, TAR, etc.).    /// </summary>
-[JsonPropertyName("archive")]
+    [JsonPropertyName("archive")]
     Archive,/// <summary>    /// A data file (JSON, XML, CSV, etc.).    /// </summary>
-[JsonPropertyName("data")]
+    [JsonPropertyName("data")]
     Data,/// <summary>    /// An unrecognized asset type.    /// </summary>
-[JsonPropertyName("other")]
-    Other,}
+    [JsonPropertyName("other")]
+    Other,
+}
