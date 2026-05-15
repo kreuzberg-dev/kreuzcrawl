@@ -20,6 +20,38 @@ const PAGE_OPEN_TIMEOUT: Duration = Duration::from_secs(5);
 /// Timeout for waiting on the CDP handler task during shutdown.
 const HANDLER_SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(5);
 
+/// Puppeteer-derived default args minus `enable-blink-features=IdleDetection`,
+/// which the Ubuntu snap chromium wrapper on linux-arm64 rejects with
+/// "unknown flag". Mirrors chromiumoxide's `DEFAULT_ARGS` so we keep the
+/// stability/headless-test optimizations without the one problematic entry.
+pub(crate) fn safe_default_args() -> &'static [&'static str] {
+    &[
+        "--disable-background-networking",
+        "--enable-features=NetworkService,NetworkServiceInProcess",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-breakpad",
+        "--disable-client-side-phishing-detection",
+        "--disable-component-extensions-with-background-pages",
+        "--disable-default-apps",
+        "--disable-dev-shm-usage",
+        "--disable-features=TranslateUI",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-popup-blocking",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--disable-sync",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--no-first-run",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain",
+        "--lang=en_US",
+    ]
+}
+
 /// Configuration for a [`BrowserPool`].
 #[derive(Debug, Clone)]
 pub struct BrowserPoolConfig {
@@ -237,7 +269,11 @@ impl BrowserPool {
             let mut builder = BrowserConfig::builder()
                 .no_sandbox()
                 .new_headless_mode()
-                .user_data_dir(&user_data_dir);
+                .user_data_dir(&user_data_dir)
+                .disable_default_args();
+            for arg in safe_default_args() {
+                builder = builder.arg(*arg);
+            }
             for arg in &self.config.chrome_args {
                 builder = builder.arg(arg.as_str());
             }
