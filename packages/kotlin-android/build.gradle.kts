@@ -27,6 +27,16 @@ android {
     sourceSets {
         getByName("main") {
             jniLibs.srcDirs("src/main/jniLibs")
+            // alef v0.16.8 still emits Panama-FFM Java glue into the
+            // kotlin-android package alongside the DTOs. Panama is unavailable
+            // on Android (max JDK 17, no java.lang.foreign), so these files
+            // cannot compile. The runtime path is JNI via KreuzcrawlBridge.kt;
+            // these are dead weight. Exclude until alef stops emitting them.
+            java.exclude(
+                "dev/kreuzberg/kreuzcrawl/CrawlEngineHandle.java",
+                "dev/kreuzberg/kreuzcrawl/KreuzcrawlRs.java",
+                "dev/kreuzberg/kreuzcrawl/NativeLib.java",
+            )
         }
     }
 
@@ -41,18 +51,6 @@ kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
     }
-}
-
-// alef v0.16.8 still emits Panama-FFM Java glue (CrawlEngineHandle.java,
-// KreuzcrawlRs.java, NativeLib.java) into the kotlin-android package
-// alongside the DTOs. Panama is unavailable on Android (max JDK 17, no
-// java.lang.foreign), so these files cannot compile. The runtime path is
-// JNI via KreuzcrawlBridge.kt; these are dead weight. Exclude until alef
-// stops emitting them.
-tasks.withType<JavaCompile>().configureEach {
-    exclude("dev/kreuzberg/kreuzcrawl/CrawlEngineHandle.java")
-    exclude("dev/kreuzberg/kreuzcrawl/KreuzcrawlRs.java")
-    exclude("dev/kreuzberg/kreuzcrawl/NativeLib.java")
 }
 
 ktlint {
