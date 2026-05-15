@@ -208,7 +208,7 @@ async fn launch_or_connect(config: &CrawlConfig) -> Result<(Browser, Handler, Op
             .user_data_dir(&user_data_dir)
             .disable_default_args();
         for arg in crate::browser_pool::safe_default_args() {
-            builder = builder.arg(*arg);
+            builder = builder.arg(arg);
         }
         let browser_config = builder
             .build()

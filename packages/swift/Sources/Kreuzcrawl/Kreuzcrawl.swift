@@ -189,7 +189,7 @@ public enum AssetCategory {
 }
 
 /// Errors that can occur during crawling, scraping, or mapping operations.
-public enum CrawlError: Error {
+public enum CrawlError: Swift.Error {
   /// The requested page was not found (HTTP 404).
   case notFound(message: String, field0: String)
   /// The request was unauthorized (HTTP 401).

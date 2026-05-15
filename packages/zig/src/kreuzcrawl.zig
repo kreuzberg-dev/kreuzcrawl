@@ -474,6 +474,7 @@ pub fn scrape(engine: ?[]const u8, url: []const u8) (CrawlError || error{OutOfMe
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
+    defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_scrape(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
@@ -481,7 +482,6 @@ pub fn scrape(engine: ?[]const u8, url: []const u8) (CrawlError || error{OutOfMe
     if (engine_config_z) |z| std.heap.c_allocator.free(z);
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
-    std.heap.c_allocator.free(url_z);
     return blk: {
         const _json_ptr = c.kcrawl_scrape_result_to_json(_result.?);
         defer _free_string(_json_ptr);
@@ -498,6 +498,7 @@ pub fn crawl(engine: ?[]const u8, url: []const u8) (CrawlError || error{OutOfMem
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
+    defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_crawl(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
@@ -505,7 +506,6 @@ pub fn crawl(engine: ?[]const u8, url: []const u8) (CrawlError || error{OutOfMem
     if (engine_config_z) |z| std.heap.c_allocator.free(z);
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
-    std.heap.c_allocator.free(url_z);
     return blk: {
         const _json_ptr = c.kcrawl_crawl_result_to_json(_result.?);
         defer _free_string(_json_ptr);
@@ -522,6 +522,7 @@ pub fn map_urls(engine: ?[]const u8, url: []const u8) (CrawlError || error{OutOf
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
+    defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_map_urls(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
@@ -529,7 +530,6 @@ pub fn map_urls(engine: ?[]const u8, url: []const u8) (CrawlError || error{OutOf
     if (engine_config_z) |z| std.heap.c_allocator.free(z);
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
-    std.heap.c_allocator.free(url_z);
     return blk: {
         const _json_ptr = c.kcrawl_map_result_to_json(_result.?);
         defer _free_string(_json_ptr);
@@ -547,6 +547,7 @@ pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) (CrawlError || error{
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     // Vec/Map parameters are passed as JSON strings across the FFI boundary.
     const urls_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{urls}, 0);
+    defer std.heap.c_allocator.free(urls_z);
     const _result = c.kcrawl_batch_scrape(engine_handle, urls_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
@@ -554,7 +555,6 @@ pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) (CrawlError || error{
     if (engine_config_z) |z| std.heap.c_allocator.free(z);
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
-    std.heap.c_allocator.free(urls_z);
     return blk: {
         const slice = std.mem.sliceTo(_result, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
@@ -570,6 +570,7 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) (CrawlError || error{O
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     // Vec/Map parameters are passed as JSON strings across the FFI boundary.
     const urls_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{urls}, 0);
+    defer std.heap.c_allocator.free(urls_z);
     const _result = c.kcrawl_batch_crawl(engine_handle, urls_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
@@ -577,7 +578,6 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) (CrawlError || error{O
     if (engine_config_z) |z| std.heap.c_allocator.free(z);
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
-    std.heap.c_allocator.free(urls_z);
     return blk: {
         const slice = std.mem.sliceTo(_result, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
@@ -585,3 +585,16 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) (CrawlError || error{O
         break :blk owned;
     };
 }
+
+/// Opaque handle to a configured crawl engine.
+///
+/// Constructed via `create_engine` with an optional `CrawlConfig`.
+/// Default implementations for all pluggable components are used internally.
+pub const CrawlEngineHandle = struct {
+    _handle: *anyopaque,
+
+    /// Release the underlying FFI handle. Safe to call once per instance.
+    pub fn free(self: *CrawlEngineHandle) void {
+        c.kcrawl_crawl_engine_handle_free(@as(*c.KCRAWLCrawlEngineHandle, @ptrCast(self._handle)));
+    }
+};

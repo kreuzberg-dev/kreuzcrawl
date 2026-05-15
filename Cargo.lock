@@ -2405,6 +2405,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "kreuzcrawl-jni"
+version = "0.3.0-rc.20"
+dependencies = [
+ "futures-util",
+ "jni",
+ "kreuzcrawl",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "kreuzcrawl-node"
 version = "0.3.0-rc.20"
 dependencies = [

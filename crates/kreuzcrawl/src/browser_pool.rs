@@ -20,12 +20,18 @@ const PAGE_OPEN_TIMEOUT: Duration = Duration::from_secs(5);
 /// Timeout for waiting on the CDP handler task during shutdown.
 const HANDLER_SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(5);
 
-/// Puppeteer-derived default args minus `enable-blink-features=IdleDetection`,
-/// which the Ubuntu snap chromium wrapper on linux-arm64 rejects with
-/// "unknown flag". Mirrors chromiumoxide's `DEFAULT_ARGS` so we keep the
-/// stability/headless-test optimizations without the one problematic entry.
-pub(crate) fn safe_default_args() -> &'static [&'static str] {
-    &[
+/// Puppeteer-derived default args, filtered for snap chromium compatibility.
+///
+/// The Ubuntu snap chromium wrapper on linux-arm64 rejects flags that regular
+/// chromium accepts:
+/// - `--disable-background-networking` → "unknown command"
+/// - `--enable-features=NetworkService,NetworkServiceInProcess` → "unknown command"
+/// - `--disable-background-timer-throttling` → "unknown flag"
+/// - `--metrics-recording-only` → "unknown command"
+///
+/// We detect snap chromium at runtime and return a filtered set when detected.
+pub(crate) fn safe_default_args() -> Vec<&'static str> {
+    let all_args = vec![
         "--disable-background-networking",
         "--enable-features=NetworkService,NetworkServiceInProcess",
         "--disable-background-timer-throttling",
@@ -49,7 +55,28 @@ pub(crate) fn safe_default_args() -> &'static [&'static str] {
         "--password-store=basic",
         "--use-mock-keychain",
         "--lang=en_US",
-    ]
+    ];
+
+    // Check if running snap chromium by testing the common executable location.
+    let is_snap = std::path::Path::new("/snap/chromium/current/usr/bin/chromium").exists();
+
+    if is_snap {
+        // Filter out snap-incompatible flags
+        all_args
+            .into_iter()
+            .filter(|&arg| {
+                !matches!(
+                    arg,
+                    "--disable-background-networking"
+                        | "--enable-features=NetworkService,NetworkServiceInProcess"
+                        | "--disable-background-timer-throttling"
+                        | "--metrics-recording-only"
+                )
+            })
+            .collect()
+    } else {
+        all_args
+    }
 }
 
 /// Configuration for a [`BrowserPool`].
@@ -272,7 +299,7 @@ impl BrowserPool {
                 .user_data_dir(&user_data_dir)
                 .disable_default_args();
             for arg in safe_default_args() {
-                builder = builder.arg(*arg);
+                builder = builder.arg(arg);
             }
             for arg in &self.config.chrome_args {
                 builder = builder.arg(arg.as_str());
