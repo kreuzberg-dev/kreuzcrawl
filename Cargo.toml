@@ -26,6 +26,7 @@ categories = ["web-programming", "network-programming"]
 
 [workspace.lints.rust]
 unsafe_code = "warn"
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(alef)'] }
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }

@@ -310,6 +310,7 @@ pub struct CrawlConfig {
     /// Shared browser pool for reusing Chrome across requests (not serializable).
     #[cfg(feature = "browser")]
     #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
     pub browser_pool: Option<std::sync::Arc<crate::browser_pool::BrowserPool>>,
 }
 
