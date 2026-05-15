@@ -3,21 +3,15 @@
 package dev.kreuzberg.kreuzcrawl.android
 
 object Kreuzcrawl {
-    fun createEngine(config: String = ""): CrawlEngineHandle =
-        CrawlEngineHandle(KreuzcrawlBridge.nativeCreateEngine(config))
+    fun createEngine(config: String = ""): CrawlEngineHandle = CrawlEngineHandle(KreuzcrawlBridge.nativeCreateEngine(config))
 
-    fun scrape(engine: CrawlEngineHandle, url: String): String =
-        KreuzcrawlBridge.nativeScrape(engine.handle, url)
+    fun scrape(engine: CrawlEngineHandle, url: String): String = KreuzcrawlBridge.nativeScrape(engine.handle, url)
 
-    fun crawl(engine: CrawlEngineHandle, url: String): String =
-        KreuzcrawlBridge.nativeCrawl(engine.handle, url)
+    fun crawl(engine: CrawlEngineHandle, url: String): String = KreuzcrawlBridge.nativeCrawl(engine.handle, url)
 
-    fun mapUrls(engine: CrawlEngineHandle, url: String): String =
-        KreuzcrawlBridge.nativeMapUrls(engine.handle, url)
+    fun mapUrls(engine: CrawlEngineHandle, url: String): String = KreuzcrawlBridge.nativeMapUrls(engine.handle, url)
 
-    fun batchScrape(engine: CrawlEngineHandle, urls: String): String =
-        KreuzcrawlBridge.nativeBatchScrape(engine.handle, urls)
+    fun batchScrape(engine: CrawlEngineHandle, urls: String): String = KreuzcrawlBridge.nativeBatchScrape(engine.handle, urls)
 
-    fun batchCrawl(engine: CrawlEngineHandle, urls: String): String =
-        KreuzcrawlBridge.nativeBatchCrawl(engine.handle, urls)
+    fun batchCrawl(engine: CrawlEngineHandle, urls: String): String = KreuzcrawlBridge.nativeBatchCrawl(engine.handle, urls)
 }
