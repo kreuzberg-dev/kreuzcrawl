@@ -29,8 +29,10 @@ pub fn build(b: *std.Build) void {
         .root_module = auth_module,
         .use_llvm = true,
     });
-    b.installArtifact(auth_tests);
+    const auth_install = b.addInstallArtifact(auth_tests, .{});
+    b.getInstallStep().dependOn(&auth_install.step);
     const auth_run = b.addRunArtifact(auth_tests);
+    auth_run.step.dependOn(&auth_install.step);
     auth_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&auth_run.step);
 
@@ -46,8 +48,10 @@ pub fn build(b: *std.Build) void {
         .root_module = browser_module,
         .use_llvm = true,
     });
-    b.installArtifact(browser_tests);
+    const browser_install = b.addInstallArtifact(browser_tests, .{});
+    b.getInstallStep().dependOn(&browser_install.step);
     const browser_run = b.addRunArtifact(browser_tests);
+    browser_run.step.dependOn(&browser_install.step);
     browser_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&browser_run.step);
 
@@ -63,8 +67,10 @@ pub fn build(b: *std.Build) void {
         .root_module = content_module,
         .use_llvm = true,
     });
-    b.installArtifact(content_tests);
+    const content_install = b.addInstallArtifact(content_tests, .{});
+    b.getInstallStep().dependOn(&content_install.step);
     const content_run = b.addRunArtifact(content_tests);
+    content_run.step.dependOn(&content_install.step);
     content_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&content_run.step);
 
@@ -80,8 +86,10 @@ pub fn build(b: *std.Build) void {
         .root_module = cookies_module,
         .use_llvm = true,
     });
-    b.installArtifact(cookies_tests);
+    const cookies_install = b.addInstallArtifact(cookies_tests, .{});
+    b.getInstallStep().dependOn(&cookies_install.step);
     const cookies_run = b.addRunArtifact(cookies_tests);
+    cookies_run.step.dependOn(&cookies_install.step);
     cookies_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&cookies_run.step);
 
@@ -97,8 +105,10 @@ pub fn build(b: *std.Build) void {
         .root_module = crawl_module,
         .use_llvm = true,
     });
-    b.installArtifact(crawl_tests);
+    const crawl_install = b.addInstallArtifact(crawl_tests, .{});
+    b.getInstallStep().dependOn(&crawl_install.step);
     const crawl_run = b.addRunArtifact(crawl_tests);
+    crawl_run.step.dependOn(&crawl_install.step);
     crawl_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&crawl_run.step);
 
@@ -114,8 +124,10 @@ pub fn build(b: *std.Build) void {
         .root_module = encoding_module,
         .use_llvm = true,
     });
-    b.installArtifact(encoding_tests);
+    const encoding_install = b.addInstallArtifact(encoding_tests, .{});
+    b.getInstallStep().dependOn(&encoding_install.step);
     const encoding_run = b.addRunArtifact(encoding_tests);
+    encoding_run.step.dependOn(&encoding_install.step);
     encoding_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&encoding_run.step);
 
@@ -131,8 +143,10 @@ pub fn build(b: *std.Build) void {
         .root_module = engine_module,
         .use_llvm = true,
     });
-    b.installArtifact(engine_tests);
+    const engine_install = b.addInstallArtifact(engine_tests, .{});
+    b.getInstallStep().dependOn(&engine_install.step);
     const engine_run = b.addRunArtifact(engine_tests);
+    engine_run.step.dependOn(&engine_install.step);
     engine_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&engine_run.step);
 
@@ -148,8 +162,10 @@ pub fn build(b: *std.Build) void {
         .root_module = error_module,
         .use_llvm = true,
     });
-    b.installArtifact(error_tests);
+    const error_install = b.addInstallArtifact(error_tests, .{});
+    b.getInstallStep().dependOn(&error_install.step);
     const error_run = b.addRunArtifact(error_tests);
+    error_run.step.dependOn(&error_install.step);
     error_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&error_run.step);
 
@@ -165,8 +181,10 @@ pub fn build(b: *std.Build) void {
         .root_module = links_module,
         .use_llvm = true,
     });
-    b.installArtifact(links_tests);
+    const links_install = b.addInstallArtifact(links_tests, .{});
+    b.getInstallStep().dependOn(&links_install.step);
     const links_run = b.addRunArtifact(links_tests);
+    links_run.step.dependOn(&links_install.step);
     links_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&links_run.step);
 
@@ -182,8 +200,10 @@ pub fn build(b: *std.Build) void {
         .root_module = map_module,
         .use_llvm = true,
     });
-    b.installArtifact(map_tests);
+    const map_install = b.addInstallArtifact(map_tests, .{});
+    b.getInstallStep().dependOn(&map_install.step);
     const map_run = b.addRunArtifact(map_tests);
+    map_run.step.dependOn(&map_install.step);
     map_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&map_run.step);
 
@@ -199,8 +219,10 @@ pub fn build(b: *std.Build) void {
         .root_module = markdown_module,
         .use_llvm = true,
     });
-    b.installArtifact(markdown_tests);
+    const markdown_install = b.addInstallArtifact(markdown_tests, .{});
+    b.getInstallStep().dependOn(&markdown_install.step);
     const markdown_run = b.addRunArtifact(markdown_tests);
+    markdown_run.step.dependOn(&markdown_install.step);
     markdown_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&markdown_run.step);
 
@@ -216,8 +238,10 @@ pub fn build(b: *std.Build) void {
         .root_module = metadata_module,
         .use_llvm = true,
     });
-    b.installArtifact(metadata_tests);
+    const metadata_install = b.addInstallArtifact(metadata_tests, .{});
+    b.getInstallStep().dependOn(&metadata_install.step);
     const metadata_run = b.addRunArtifact(metadata_tests);
+    metadata_run.step.dependOn(&metadata_install.step);
     metadata_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&metadata_run.step);
 
@@ -233,8 +257,10 @@ pub fn build(b: *std.Build) void {
         .root_module = redirect_module,
         .use_llvm = true,
     });
-    b.installArtifact(redirect_tests);
+    const redirect_install = b.addInstallArtifact(redirect_tests, .{});
+    b.getInstallStep().dependOn(&redirect_install.step);
     const redirect_run = b.addRunArtifact(redirect_tests);
+    redirect_run.step.dependOn(&redirect_install.step);
     redirect_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&redirect_run.step);
 
@@ -250,8 +276,10 @@ pub fn build(b: *std.Build) void {
         .root_module = robots_module,
         .use_llvm = true,
     });
-    b.installArtifact(robots_tests);
+    const robots_install = b.addInstallArtifact(robots_tests, .{});
+    b.getInstallStep().dependOn(&robots_install.step);
     const robots_run = b.addRunArtifact(robots_tests);
+    robots_run.step.dependOn(&robots_install.step);
     robots_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&robots_run.step);
 
@@ -267,8 +295,10 @@ pub fn build(b: *std.Build) void {
         .root_module = scrape_module,
         .use_llvm = true,
     });
-    b.installArtifact(scrape_tests);
+    const scrape_install = b.addInstallArtifact(scrape_tests, .{});
+    b.getInstallStep().dependOn(&scrape_install.step);
     const scrape_run = b.addRunArtifact(scrape_tests);
+    scrape_run.step.dependOn(&scrape_install.step);
     scrape_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&scrape_run.step);
 
@@ -284,8 +314,10 @@ pub fn build(b: *std.Build) void {
         .root_module = sitemap_module,
         .use_llvm = true,
     });
-    b.installArtifact(sitemap_tests);
+    const sitemap_install = b.addInstallArtifact(sitemap_tests, .{});
+    b.getInstallStep().dependOn(&sitemap_install.step);
     const sitemap_run = b.addRunArtifact(sitemap_tests);
+    sitemap_run.step.dependOn(&sitemap_install.step);
     sitemap_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&sitemap_run.step);
 
@@ -301,8 +333,10 @@ pub fn build(b: *std.Build) void {
         .root_module = validation_module,
         .use_llvm = true,
     });
-    b.installArtifact(validation_tests);
+    const validation_install = b.addInstallArtifact(validation_tests, .{});
+    b.getInstallStep().dependOn(&validation_install.step);
     const validation_run = b.addRunArtifact(validation_tests);
+    validation_run.step.dependOn(&validation_install.step);
     validation_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&validation_run.step);
 }
