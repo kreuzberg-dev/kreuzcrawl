@@ -58,25 +58,25 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 
 ### Language Support
 
-| Language              | Package                                                    | Docs                                         |
-| :-------------------- | :--------------------------------------------------------- | :------------------------------------------- |
-| **Rust**              | `cargo add kreuzcrawl`                                     | [API Reference](reference/api-rust.md)       |
-| **Python**            | `pip install kreuzcrawl`                                   | [API Reference](reference/api-python.md)     |
-| **TypeScript / Node** | `npm install @kreuzberg/kreuzcrawl`                        | [API Reference](reference/api-typescript.md) |
-| **WebAssembly**       | `npm install @kreuzberg/kreuzcrawl-wasm`                   | [API Reference](reference/api-wasm.md)       |
-| **Go**                | `go get github.com/kreuzberg-dev/kreuzcrawl/packages/go`   | [API Reference](reference/api-go.md)         |
-| **Java**              | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl`        | [API Reference](reference/api-java.md)       |
+| Language              | Package                                                     | Docs                                             |
+| :-------------------- | :---------------------------------------------------------- | :----------------------------------------------- |
+| **Rust**              | `cargo add kreuzcrawl`                                      | [API Reference](reference/api-rust.md)           |
+| **Python**            | `pip install kreuzcrawl`                                    | [API Reference](reference/api-python.md)         |
+| **TypeScript / Node** | `npm install @kreuzberg/kreuzcrawl`                         | [API Reference](reference/api-typescript.md)     |
+| **WebAssembly**       | `npm install @kreuzberg/kreuzcrawl-wasm`                    | [API Reference](reference/api-wasm.md)           |
+| **Go**                | `go get github.com/kreuzberg-dev/kreuzcrawl/packages/go`    | [API Reference](reference/api-go.md)             |
+| **Java**              | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl`         | [API Reference](reference/api-java.md)           |
 | **Kotlin (Android)**  | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl-android` | [API Reference](reference/api-kotlin-android.md) |
-| **C#**                | `dotnet add package Kreuzcrawl`                            | [API Reference](reference/api-csharp.md)     |
-| **Ruby**              | `gem install kreuzcrawl`                                   | [API Reference](reference/api-ruby.md)       |
-| **PHP**               | `composer require kreuzberg-dev/kreuzcrawl`                | [API Reference](reference/api-php.md)        |
-| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0-rc.19"}`                          | [API Reference](reference/api-elixir.md)     |
-| **Dart / Flutter**    | `dart pub add kreuzcrawl`                                  | [API Reference](reference/api-dart.md)       |
-| **Swift**             | Swift Package Manager                                      | [API Reference](reference/api-swift.md)      |
-| **Zig**               | `zig fetch --save` from GitHub                             | [API Reference](reference/api-zig.md)        |
-| **C (FFI)**           | Shared library + header                                    | [API Reference](reference/api-c.md)          |
-| **CLI**               | `cargo install kreuzcrawl-cli`                             | [CLI Guide](cli/usage.md)                    |
-| **Docker**            | `ghcr.io/kreuzberg-dev/kreuzcrawl`                         | [Docker Guide](guides/docker.md)             |
+| **C#**                | `dotnet add package Kreuzcrawl`                             | [API Reference](reference/api-csharp.md)         |
+| **Ruby**              | `gem install kreuzcrawl`                                    | [API Reference](reference/api-ruby.md)           |
+| **PHP**               | `composer require kreuzberg-dev/kreuzcrawl`                 | [API Reference](reference/api-php.md)            |
+| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0-rc.19"}`                           | [API Reference](reference/api-elixir.md)         |
+| **Dart / Flutter**    | `dart pub add kreuzcrawl`                                   | [API Reference](reference/api-dart.md)           |
+| **Swift**             | Swift Package Manager                                       | [API Reference](reference/api-swift.md)          |
+| **Zig**               | `zig fetch --save` from GitHub                              | [API Reference](reference/api-zig.md)            |
+| **C (FFI)**           | Shared library + header                                     | [API Reference](reference/api-c.md)              |
+| **CLI**               | `cargo install kreuzcrawl-cli`                              | [CLI Guide](cli/usage.md)                        |
+| **Docker**            | `ghcr.io/kreuzberg-dev/kreuzcrawl`                          | [Docker Guide](guides/docker.md)                 |
 
 !!! tip "Choosing between TypeScript packages"
 
