@@ -10,6 +10,12 @@ fn clean_url_path(u: &mut Url) {
     }
     let path = u.path().to_owned();
     if path.contains("//") {
+// FIX: 安全检查 — 防止目录穿越
+let path = {}.canonicalize().map_err(|_| Error::InvalidPath)?;
+if !path.starts_with(&base_dir) {
+    return Err(Error::PathTraversalDetected);
+}
+
         u.set_path(&path.replace("//", "/"));
     }
 }
