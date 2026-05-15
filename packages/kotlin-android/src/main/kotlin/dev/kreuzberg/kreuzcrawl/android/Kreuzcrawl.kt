@@ -2,56 +2,16 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
-import dev.kreuzberg.kreuzcrawl.KreuzcrawlRs as Bridge
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
 object Kreuzcrawl {
-    init {
-        System.loadLibrary("kreuzcrawl_ffi")
-    }
+    fun createEngine(config: String): String = KreuzcrawlBridge.nativeCreateEngine(config)
 
-    /**
-     * Create a new crawl engine with the given configuration.
-     *
-     * If `config` is `null`, uses `CrawlConfig.default()`. Returns an error if the configuration is
-     * invalid.
-     */
-    fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle {
+    fun scrape(engine: String, url: String): String = KreuzcrawlBridge.nativeScrape(engine, url)
 
-        return Bridge.createEngine(config)
-    }
+    fun crawl(engine: String, url: String): String = KreuzcrawlBridge.nativeCrawl(engine, url)
 
-    /** Scrape a single URL, returning extracted page data. */
-    suspend fun scrape(engine: CrawlEngineHandle, url: String): ScrapeResult {
+    fun mapUrls(engine: String, url: String): String = KreuzcrawlBridge.nativeMapUrls(engine, url)
 
-        return withContext(Dispatchers.IO) { Bridge.scrape(engine, url) }
-    }
+    fun batchScrape(engine: String, urls: String): String = KreuzcrawlBridge.nativeBatchScrape(engine, urls)
 
-    /** Crawl a website starting from `url`, following links up to the configured depth. */
-    suspend fun crawl(engine: CrawlEngineHandle, url: String): CrawlResult {
-
-        return withContext(Dispatchers.IO) { Bridge.crawl(engine, url) }
-    }
-
-    /** Discover all pages on a website by following links and sitemaps. */
-    suspend fun mapUrls(engine: CrawlEngineHandle, url: String): MapResult {
-
-        return withContext(Dispatchers.IO) { Bridge.mapUrls(engine, url) }
-    }
-
-    /** Scrape multiple URLs concurrently. */
-    suspend fun batchScrape(
-        engine: CrawlEngineHandle,
-        urls: List<String>,
-    ): List<BatchScrapeResult> {
-
-        return withContext(Dispatchers.IO) { Bridge.batchScrape(engine, urls) }
-    }
-
-    /** Crawl multiple seed URLs concurrently, each following links to configured depth. */
-    suspend fun batchCrawl(engine: CrawlEngineHandle, urls: List<String>): List<BatchCrawlResult> {
-
-        return withContext(Dispatchers.IO) { Bridge.batchCrawl(engine, urls) }
-    }
+    fun batchCrawl(engine: String, urls: String): String = KreuzcrawlBridge.nativeBatchCrawl(engine, urls)
 }

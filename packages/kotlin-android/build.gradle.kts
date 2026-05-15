@@ -7,6 +7,7 @@ plugins {
     kotlin("android") version "2.3.21"
     id("maven-publish")
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
+    id("com.github.ben-manes.versions") version "0.52.0"
 }
 
 android {
@@ -25,15 +26,22 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.srcDirs("src/main/java")
             jniLibs.srcDirs("src/main/jniLibs")
         }
     }
 
-    publishing { singleVariant("release") { withSourcesJar() } }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
-kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+    }
+}
 
 ktlint {
     version.set("1.8.0")
@@ -43,6 +51,9 @@ ktlint {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    // Generated Kotlin facade uses suspend functions and Flow wrappers, both of
+    // which require kotlinx-coroutines-android (transitively pulls -core).
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
@@ -51,7 +62,9 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            afterEvaluate { from(components["release"]) }
+            afterEvaluate {
+                from(components["release"])
+            }
             groupId = "dev.kreuzberg.kreuzcrawl.android"
             artifactId = "kreuzcrawl-android"
             version = "0.0.0"
