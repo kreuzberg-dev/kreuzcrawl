@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,139 +9,241 @@ part of 'lib.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$AuthConfig {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String username, String password) basic,
-    required TResult Function(String token) bearer,
-    required TResult Function(String name, String value) header,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String username, String password)? basic,
-    TResult? Function(String token)? bearer,
-    TResult? Function(String name, String value)? header,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String username, String password)? basic,
-    TResult Function(String token)? bearer,
-    TResult Function(String name, String value)? header,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(AuthConfig_Basic value) basic,
-    required TResult Function(AuthConfig_Bearer value) bearer,
-    required TResult Function(AuthConfig_Header value) header,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(AuthConfig_Basic value)? basic,
-    TResult? Function(AuthConfig_Bearer value)? bearer,
-    TResult? Function(AuthConfig_Header value)? header,
-  }) =>
-      throw _privateConstructorUsedError;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is AuthConfig);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'AuthConfig()';
+  }
+}
+
+/// @nodoc
+class $AuthConfigCopyWith<$Res> {
+  $AuthConfigCopyWith(AuthConfig _, $Res Function(AuthConfig) __);
+}
+
+/// Adds pattern-matching-related methods to [AuthConfig].
+extension AuthConfigPatterns on AuthConfig {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthConfig_Basic value)? basic,
     TResult Function(AuthConfig_Bearer value)? bearer,
     TResult Function(AuthConfig_Header value)? header,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $AuthConfigCopyWith<$Res> {
-  factory $AuthConfigCopyWith(
-          AuthConfig value, $Res Function(AuthConfig) then) =
-      _$AuthConfigCopyWithImpl<$Res, AuthConfig>;
-}
-
-/// @nodoc
-class _$AuthConfigCopyWithImpl<$Res, $Val extends AuthConfig>
-    implements $AuthConfigCopyWith<$Res> {
-  _$AuthConfigCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of AuthConfig
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-abstract class _$$AuthConfig_BasicImplCopyWith<$Res> {
-  factory _$$AuthConfig_BasicImplCopyWith(_$AuthConfig_BasicImpl value,
-          $Res Function(_$AuthConfig_BasicImpl) then) =
-      __$$AuthConfig_BasicImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String username, String password});
-}
-
-/// @nodoc
-class __$$AuthConfig_BasicImplCopyWithImpl<$Res>
-    extends _$AuthConfigCopyWithImpl<$Res, _$AuthConfig_BasicImpl>
-    implements _$$AuthConfig_BasicImplCopyWith<$Res> {
-  __$$AuthConfig_BasicImplCopyWithImpl(_$AuthConfig_BasicImpl _value,
-      $Res Function(_$AuthConfig_BasicImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of AuthConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? username = null,
-    Object? password = null,
   }) {
-    return _then(_$AuthConfig_BasicImpl(
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      password: null == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+    final _that = this;
+    switch (_that) {
+      case AuthConfig_Basic() when basic != null:
+        return basic(_that);
+      case AuthConfig_Bearer() when bearer != null:
+        return bearer(_that);
+      case AuthConfig_Header() when header != null:
+        return header(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthConfig_Basic value) basic,
+    required TResult Function(AuthConfig_Bearer value) bearer,
+    required TResult Function(AuthConfig_Header value) header,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case AuthConfig_Basic():
+        return basic(_that);
+      case AuthConfig_Bearer():
+        return bearer(_that);
+      case AuthConfig_Header():
+        return header(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthConfig_Basic value)? basic,
+    TResult? Function(AuthConfig_Bearer value)? bearer,
+    TResult? Function(AuthConfig_Header value)? header,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case AuthConfig_Basic() when basic != null:
+        return basic(_that);
+      case AuthConfig_Bearer() when bearer != null:
+        return bearer(_that);
+      case AuthConfig_Header() when header != null:
+        return header(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String username, String password)? basic,
+    TResult Function(String token)? bearer,
+    TResult Function(String name, String value)? header,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case AuthConfig_Basic() when basic != null:
+        return basic(_that.username, _that.password);
+      case AuthConfig_Bearer() when bearer != null:
+        return bearer(_that.token);
+      case AuthConfig_Header() when header != null:
+        return header(_that.name, _that.value);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String username, String password) basic,
+    required TResult Function(String token) bearer,
+    required TResult Function(String name, String value) header,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case AuthConfig_Basic():
+        return basic(_that.username, _that.password);
+      case AuthConfig_Bearer():
+        return bearer(_that.token);
+      case AuthConfig_Header():
+        return header(_that.name, _that.value);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String username, String password)? basic,
+    TResult? Function(String token)? bearer,
+    TResult? Function(String name, String value)? header,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case AuthConfig_Basic() when basic != null:
+        return basic(_that.username, _that.password);
+      case AuthConfig_Bearer() when bearer != null:
+        return bearer(_that.token);
+      case AuthConfig_Header() when header != null:
+        return header(_that.name, _that.value);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 
-class _$AuthConfig_BasicImpl extends AuthConfig_Basic {
-  const _$AuthConfig_BasicImpl({required this.username, required this.password})
+class AuthConfig_Basic extends AuthConfig {
+  const AuthConfig_Basic({required this.username, required this.password})
       : super._();
 
-  @override
   final String username;
-  @override
   final String password;
 
-  @override
-  String toString() {
-    return 'AuthConfig.basic(username: $username, password: $password)';
-  }
+  /// Create a copy of AuthConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $AuthConfig_BasicCopyWith<AuthConfig_Basic> get copyWith =>
+      _$AuthConfig_BasicCopyWithImpl<AuthConfig_Basic>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AuthConfig_BasicImpl &&
+            other is AuthConfig_Basic &&
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.password, password) ||
@@ -151,127 +253,108 @@ class _$AuthConfig_BasicImpl extends AuthConfig_Basic {
   @override
   int get hashCode => Object.hash(runtimeType, username, password);
 
-  /// Create a copy of AuthConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$AuthConfig_BasicImplCopyWith<_$AuthConfig_BasicImpl> get copyWith =>
-      __$$AuthConfig_BasicImplCopyWithImpl<_$AuthConfig_BasicImpl>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String username, String password) basic,
-    required TResult Function(String token) bearer,
-    required TResult Function(String name, String value) header,
-  }) {
-    return basic(username, password);
+  String toString() {
+    return 'AuthConfig.basic(username: $username, password: $password)';
   }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String username, String password)? basic,
-    TResult? Function(String token)? bearer,
-    TResult? Function(String name, String value)? header,
-  }) {
-    return basic?.call(username, password);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String username, String password)? basic,
-    TResult Function(String token)? bearer,
-    TResult Function(String name, String value)? header,
-    required TResult orElse(),
-  }) {
-    if (basic != null) {
-      return basic(username, password);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(AuthConfig_Basic value) basic,
-    required TResult Function(AuthConfig_Bearer value) bearer,
-    required TResult Function(AuthConfig_Header value) header,
-  }) {
-    return basic(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(AuthConfig_Basic value)? basic,
-    TResult? Function(AuthConfig_Bearer value)? bearer,
-    TResult? Function(AuthConfig_Header value)? header,
-  }) {
-    return basic?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(AuthConfig_Basic value)? basic,
-    TResult Function(AuthConfig_Bearer value)? bearer,
-    TResult Function(AuthConfig_Header value)? header,
-    required TResult orElse(),
-  }) {
-    if (basic != null) {
-      return basic(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class AuthConfig_Basic extends AuthConfig {
-  const factory AuthConfig_Basic(
-      {required final String username,
-      required final String password}) = _$AuthConfig_BasicImpl;
-  const AuthConfig_Basic._() : super._();
-
-  String get username;
-  String get password;
-
-  /// Create a copy of AuthConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AuthConfig_BasicImplCopyWith<_$AuthConfig_BasicImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$AuthConfig_BearerImplCopyWith<$Res> {
-  factory _$$AuthConfig_BearerImplCopyWith(_$AuthConfig_BearerImpl value,
-          $Res Function(_$AuthConfig_BearerImpl) then) =
-      __$$AuthConfig_BearerImplCopyWithImpl<$Res>;
+abstract mixin class $AuthConfig_BasicCopyWith<$Res>
+    implements $AuthConfigCopyWith<$Res> {
+  factory $AuthConfig_BasicCopyWith(
+          AuthConfig_Basic value, $Res Function(AuthConfig_Basic) _then) =
+      _$AuthConfig_BasicCopyWithImpl;
+  @useResult
+  $Res call({String username, String password});
+}
+
+/// @nodoc
+class _$AuthConfig_BasicCopyWithImpl<$Res>
+    implements $AuthConfig_BasicCopyWith<$Res> {
+  _$AuthConfig_BasicCopyWithImpl(this._self, this._then);
+
+  final AuthConfig_Basic _self;
+  final $Res Function(AuthConfig_Basic) _then;
+
+  /// Create a copy of AuthConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? username = null,
+    Object? password = null,
+  }) {
+    return _then(AuthConfig_Basic(
+      username: null == username
+          ? _self.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+      password: null == password
+          ? _self.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class AuthConfig_Bearer extends AuthConfig {
+  const AuthConfig_Bearer({required this.token}) : super._();
+
+  final String token;
+
+  /// Create a copy of AuthConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $AuthConfig_BearerCopyWith<AuthConfig_Bearer> get copyWith =>
+      _$AuthConfig_BearerCopyWithImpl<AuthConfig_Bearer>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is AuthConfig_Bearer &&
+            (identical(other.token, token) || other.token == token));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, token);
+
+  @override
+  String toString() {
+    return 'AuthConfig.bearer(token: $token)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $AuthConfig_BearerCopyWith<$Res>
+    implements $AuthConfigCopyWith<$Res> {
+  factory $AuthConfig_BearerCopyWith(
+          AuthConfig_Bearer value, $Res Function(AuthConfig_Bearer) _then) =
+      _$AuthConfig_BearerCopyWithImpl;
   @useResult
   $Res call({String token});
 }
 
 /// @nodoc
-class __$$AuthConfig_BearerImplCopyWithImpl<$Res>
-    extends _$AuthConfigCopyWithImpl<$Res, _$AuthConfig_BearerImpl>
-    implements _$$AuthConfig_BearerImplCopyWith<$Res> {
-  __$$AuthConfig_BearerImplCopyWithImpl(_$AuthConfig_BearerImpl _value,
-      $Res Function(_$AuthConfig_BearerImpl) _then)
-      : super(_value, _then);
+class _$AuthConfig_BearerCopyWithImpl<$Res>
+    implements $AuthConfig_BearerCopyWith<$Res> {
+  _$AuthConfig_BearerCopyWithImpl(this._self, this._then);
+
+  final AuthConfig_Bearer _self;
+  final $Res Function(AuthConfig_Bearer) _then;
 
   /// Create a copy of AuthConfig
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? token = null,
   }) {
-    return _then(_$AuthConfig_BearerImpl(
+    return _then(AuthConfig_Bearer(
       token: null == token
-          ? _value.token
+          ? _self.token
           : token // ignore: cast_nullable_to_non_nullable
               as String,
     ));
@@ -280,179 +363,25 @@ class __$$AuthConfig_BearerImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthConfig_BearerImpl extends AuthConfig_Bearer {
-  const _$AuthConfig_BearerImpl({required this.token}) : super._();
-
-  @override
-  final String token;
-
-  @override
-  String toString() {
-    return 'AuthConfig.bearer(token: $token)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AuthConfig_BearerImpl &&
-            (identical(other.token, token) || other.token == token));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, token);
-
-  /// Create a copy of AuthConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AuthConfig_BearerImplCopyWith<_$AuthConfig_BearerImpl> get copyWith =>
-      __$$AuthConfig_BearerImplCopyWithImpl<_$AuthConfig_BearerImpl>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String username, String password) basic,
-    required TResult Function(String token) bearer,
-    required TResult Function(String name, String value) header,
-  }) {
-    return bearer(token);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String username, String password)? basic,
-    TResult? Function(String token)? bearer,
-    TResult? Function(String name, String value)? header,
-  }) {
-    return bearer?.call(token);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String username, String password)? basic,
-    TResult Function(String token)? bearer,
-    TResult Function(String name, String value)? header,
-    required TResult orElse(),
-  }) {
-    if (bearer != null) {
-      return bearer(token);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(AuthConfig_Basic value) basic,
-    required TResult Function(AuthConfig_Bearer value) bearer,
-    required TResult Function(AuthConfig_Header value) header,
-  }) {
-    return bearer(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(AuthConfig_Basic value)? basic,
-    TResult? Function(AuthConfig_Bearer value)? bearer,
-    TResult? Function(AuthConfig_Header value)? header,
-  }) {
-    return bearer?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(AuthConfig_Basic value)? basic,
-    TResult Function(AuthConfig_Bearer value)? bearer,
-    TResult Function(AuthConfig_Header value)? header,
-    required TResult orElse(),
-  }) {
-    if (bearer != null) {
-      return bearer(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class AuthConfig_Bearer extends AuthConfig {
-  const factory AuthConfig_Bearer({required final String token}) =
-      _$AuthConfig_BearerImpl;
-  const AuthConfig_Bearer._() : super._();
-
-  String get token;
-
-  /// Create a copy of AuthConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AuthConfig_BearerImplCopyWith<_$AuthConfig_BearerImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$AuthConfig_HeaderImplCopyWith<$Res> {
-  factory _$$AuthConfig_HeaderImplCopyWith(_$AuthConfig_HeaderImpl value,
-          $Res Function(_$AuthConfig_HeaderImpl) then) =
-      __$$AuthConfig_HeaderImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String name, String value});
-}
-
-/// @nodoc
-class __$$AuthConfig_HeaderImplCopyWithImpl<$Res>
-    extends _$AuthConfigCopyWithImpl<$Res, _$AuthConfig_HeaderImpl>
-    implements _$$AuthConfig_HeaderImplCopyWith<$Res> {
-  __$$AuthConfig_HeaderImplCopyWithImpl(_$AuthConfig_HeaderImpl _value,
-      $Res Function(_$AuthConfig_HeaderImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of AuthConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? value = null,
-  }) {
-    return _then(_$AuthConfig_HeaderImpl(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      value: null == value
-          ? _value.value
-          : value // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$AuthConfig_HeaderImpl extends AuthConfig_Header {
-  const _$AuthConfig_HeaderImpl({required this.name, required this.value})
+class AuthConfig_Header extends AuthConfig {
+  const AuthConfig_Header({required this.name, required this.value})
       : super._();
 
-  @override
   final String name;
-  @override
   final String value;
 
-  @override
-  String toString() {
-    return 'AuthConfig.header(name: $name, value: $value)';
-  }
+  /// Create a copy of AuthConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $AuthConfig_HeaderCopyWith<AuthConfig_Header> get copyWith =>
+      _$AuthConfig_HeaderCopyWithImpl<AuthConfig_Header>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AuthConfig_HeaderImpl &&
+            other is AuthConfig_Header &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.value, value) || other.value == value));
   }
@@ -460,96 +389,48 @@ class _$AuthConfig_HeaderImpl extends AuthConfig_Header {
   @override
   int get hashCode => Object.hash(runtimeType, name, value);
 
+  @override
+  String toString() {
+    return 'AuthConfig.header(name: $name, value: $value)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $AuthConfig_HeaderCopyWith<$Res>
+    implements $AuthConfigCopyWith<$Res> {
+  factory $AuthConfig_HeaderCopyWith(
+          AuthConfig_Header value, $Res Function(AuthConfig_Header) _then) =
+      _$AuthConfig_HeaderCopyWithImpl;
+  @useResult
+  $Res call({String name, String value});
+}
+
+/// @nodoc
+class _$AuthConfig_HeaderCopyWithImpl<$Res>
+    implements $AuthConfig_HeaderCopyWith<$Res> {
+  _$AuthConfig_HeaderCopyWithImpl(this._self, this._then);
+
+  final AuthConfig_Header _self;
+  final $Res Function(AuthConfig_Header) _then;
+
   /// Create a copy of AuthConfig
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
   @pragma('vm:prefer-inline')
-  _$$AuthConfig_HeaderImplCopyWith<_$AuthConfig_HeaderImpl> get copyWith =>
-      __$$AuthConfig_HeaderImplCopyWithImpl<_$AuthConfig_HeaderImpl>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String username, String password) basic,
-    required TResult Function(String token) bearer,
-    required TResult Function(String name, String value) header,
+  $Res call({
+    Object? name = null,
+    Object? value = null,
   }) {
-    return header(name, value);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String username, String password)? basic,
-    TResult? Function(String token)? bearer,
-    TResult? Function(String name, String value)? header,
-  }) {
-    return header?.call(name, value);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String username, String password)? basic,
-    TResult Function(String token)? bearer,
-    TResult Function(String name, String value)? header,
-    required TResult orElse(),
-  }) {
-    if (header != null) {
-      return header(name, value);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(AuthConfig_Basic value) basic,
-    required TResult Function(AuthConfig_Bearer value) bearer,
-    required TResult Function(AuthConfig_Header value) header,
-  }) {
-    return header(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(AuthConfig_Basic value)? basic,
-    TResult? Function(AuthConfig_Bearer value)? bearer,
-    TResult? Function(AuthConfig_Header value)? header,
-  }) {
-    return header?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(AuthConfig_Basic value)? basic,
-    TResult Function(AuthConfig_Bearer value)? bearer,
-    TResult Function(AuthConfig_Header value)? header,
-    required TResult orElse(),
-  }) {
-    if (header != null) {
-      return header(this);
-    }
-    return orElse();
+    return _then(AuthConfig_Header(
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      value: null == value
+          ? _self.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
   }
 }
 
-abstract class AuthConfig_Header extends AuthConfig {
-  const factory AuthConfig_Header(
-      {required final String name,
-      required final String value}) = _$AuthConfig_HeaderImpl;
-  const AuthConfig_Header._() : super._();
-
-  String get name;
-  String get value;
-
-  /// Create a copy of AuthConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AuthConfig_HeaderImplCopyWith<_$AuthConfig_HeaderImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+// dart format on

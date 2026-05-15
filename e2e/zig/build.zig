@@ -25,6 +25,7 @@ pub fn build(b: *std.Build) void {
     });
     auth_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const auth_tests = b.addTest(.{
+        .name = "auth_test",
         .root_module = auth_module,
     });
     const auth_run = b.addRunArtifact(auth_tests);
@@ -39,6 +40,7 @@ pub fn build(b: *std.Build) void {
     });
     browser_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const browser_tests = b.addTest(.{
+        .name = "browser_test",
         .root_module = browser_module,
     });
     const browser_run = b.addRunArtifact(browser_tests);
@@ -53,6 +55,7 @@ pub fn build(b: *std.Build) void {
     });
     content_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const content_tests = b.addTest(.{
+        .name = "content_test",
         .root_module = content_module,
     });
     const content_run = b.addRunArtifact(content_tests);
@@ -67,6 +70,7 @@ pub fn build(b: *std.Build) void {
     });
     cookies_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const cookies_tests = b.addTest(.{
+        .name = "cookies_test",
         .root_module = cookies_module,
     });
     const cookies_run = b.addRunArtifact(cookies_tests);
@@ -81,6 +85,7 @@ pub fn build(b: *std.Build) void {
     });
     crawl_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const crawl_tests = b.addTest(.{
+        .name = "crawl_test",
         .root_module = crawl_module,
     });
     const crawl_run = b.addRunArtifact(crawl_tests);
@@ -95,6 +100,7 @@ pub fn build(b: *std.Build) void {
     });
     encoding_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const encoding_tests = b.addTest(.{
+        .name = "encoding_test",
         .root_module = encoding_module,
     });
     const encoding_run = b.addRunArtifact(encoding_tests);
@@ -109,6 +115,7 @@ pub fn build(b: *std.Build) void {
     });
     engine_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const engine_tests = b.addTest(.{
+        .name = "engine_test",
         .root_module = engine_module,
     });
     const engine_run = b.addRunArtifact(engine_tests);
@@ -123,6 +130,7 @@ pub fn build(b: *std.Build) void {
     });
     error_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const error_tests = b.addTest(.{
+        .name = "error_test",
         .root_module = error_module,
     });
     const error_run = b.addRunArtifact(error_tests);
@@ -137,6 +145,7 @@ pub fn build(b: *std.Build) void {
     });
     links_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const links_tests = b.addTest(.{
+        .name = "links_test",
         .root_module = links_module,
     });
     const links_run = b.addRunArtifact(links_tests);
@@ -151,6 +160,7 @@ pub fn build(b: *std.Build) void {
     });
     map_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const map_tests = b.addTest(.{
+        .name = "map_test",
         .root_module = map_module,
     });
     const map_run = b.addRunArtifact(map_tests);
@@ -165,6 +175,7 @@ pub fn build(b: *std.Build) void {
     });
     markdown_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const markdown_tests = b.addTest(.{
+        .name = "markdown_test",
         .root_module = markdown_module,
     });
     const markdown_run = b.addRunArtifact(markdown_tests);
@@ -179,6 +190,7 @@ pub fn build(b: *std.Build) void {
     });
     metadata_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const metadata_tests = b.addTest(.{
+        .name = "metadata_test",
         .root_module = metadata_module,
     });
     const metadata_run = b.addRunArtifact(metadata_tests);
@@ -193,6 +205,7 @@ pub fn build(b: *std.Build) void {
     });
     redirect_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const redirect_tests = b.addTest(.{
+        .name = "redirect_test",
         .root_module = redirect_module,
     });
     const redirect_run = b.addRunArtifact(redirect_tests);
@@ -207,6 +220,7 @@ pub fn build(b: *std.Build) void {
     });
     robots_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const robots_tests = b.addTest(.{
+        .name = "robots_test",
         .root_module = robots_module,
     });
     const robots_run = b.addRunArtifact(robots_tests);
@@ -221,6 +235,7 @@ pub fn build(b: *std.Build) void {
     });
     scrape_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const scrape_tests = b.addTest(.{
+        .name = "scrape_test",
         .root_module = scrape_module,
     });
     const scrape_run = b.addRunArtifact(scrape_tests);
@@ -235,6 +250,7 @@ pub fn build(b: *std.Build) void {
     });
     sitemap_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const sitemap_tests = b.addTest(.{
+        .name = "sitemap_test",
         .root_module = sitemap_module,
     });
     const sitemap_run = b.addRunArtifact(sitemap_tests);
@@ -249,6 +265,7 @@ pub fn build(b: *std.Build) void {
     });
     validation_module.addImport("kreuzcrawl", kreuzcrawl_module);
     const validation_tests = b.addTest(.{
+        .name = "validation_test",
         .root_module = validation_module,
     });
     const validation_run = b.addRunArtifact(validation_tests);

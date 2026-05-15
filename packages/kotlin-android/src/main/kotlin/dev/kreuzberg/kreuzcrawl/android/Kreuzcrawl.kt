@@ -2,15 +2,13 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import dev.kreuzberg.kreuzcrawl.Kreuzcrawl as Bridge
 import java.nio.file.Path
 import kotlin.time.Duration
-import dev.kreuzberg.kreuzcrawl.Kreuzcrawl as Bridge
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-/**
- * Metadata about an LLM extraction pass.
- */
+/** Metadata about an LLM extraction pass. */
 data class ExtractionMeta(
     val cost: Double?,
     val promptTokens: Long?,
@@ -19,21 +17,14 @@ data class ExtractionMeta(
     val chunksProcessed: Long,
 )
 
-/**
- * Proxy configuration for HTTP requests.
- */
-data class ProxyConfig(
-    val url: String,
-    val username: String?,
-    val password: String?,
-)
+/** Proxy configuration for HTTP requests. */
+data class ProxyConfig(val url: String, val username: String?, val password: String?)
 
 /**
  * Content extraction and conversion configuration.
  *
- * Controls how HTML is converted to the output format. Uses
- * html-to-markdown-rs as the conversion engine for all formats
- * (markdown, plain text, djot).
+ * Controls how HTML is converted to the output format. Uses html-to-markdown-rs as the conversion
+ * engine for all formats (markdown, plain text, djot).
  */
 data class ContentConfig(
     val outputFormat: String,
@@ -50,9 +41,7 @@ data class ContentConfig(
     val includeDocumentStructure: Boolean,
 )
 
-/**
- * Browser fallback configuration.
- */
+/** Browser fallback configuration. */
 data class BrowserConfig(
     val mode: BrowserMode,
     val endpoint: String?,
@@ -62,9 +51,7 @@ data class BrowserConfig(
     val extraWait: Duration?,
 )
 
-/**
- * Configuration for crawl, scrape, and map operations.
- */
+/** Configuration for crawl, scrape, and map operations. */
 data class CrawlConfig(
     val maxDepth: Long?,
     val maxPages: Long?,
@@ -107,9 +94,8 @@ data class CrawlConfig(
 /**
  * A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
  *
- * When the crawler encounters non-HTML content and `download_documents` is
- * enabled, it downloads the raw bytes and populates this struct instead of
- * skipping the resource.
+ * When the crawler encounters non-HTML content and `download_documents` is enabled, it downloads
+ * the raw bytes and populates this struct instead of skipping the resource.
  */
 data class DownloadedDocument(
     val url: String,
@@ -121,9 +107,7 @@ data class DownloadedDocument(
     val headers: Map<String, String>,
 )
 
-/**
- * The result of a single-page scrape operation.
- */
+/** The result of a single-page scrape operation. */
 data class ScrapeResult(
     val statusCode: Short,
     val contentType: String,
@@ -154,9 +138,7 @@ data class ScrapeResult(
     val downloadedDocument: DownloadedDocument?,
 )
 
-/**
- * The result of crawling a single page during a crawl operation.
- */
+/** The result of crawling a single page during a crawl operation. */
 data class CrawlPageResult(
     val url: String,
     val normalizedUrl: String,
@@ -180,9 +162,7 @@ data class CrawlPageResult(
     val downloadedDocument: DownloadedDocument?,
 )
 
-/**
- * The result of a multi-page crawl operation.
- */
+/** The result of a multi-page crawl operation. */
 data class CrawlResult(
     val pages: List<CrawlPageResult>,
     val finalUrl: String,
@@ -193,9 +173,7 @@ data class CrawlResult(
     val normalizedUrls: List<String>,
 )
 
-/**
- * A URL entry from a sitemap.
- */
+/** A URL entry from a sitemap. */
 data class SitemapUrl(
     val url: String,
     val lastmod: String?,
@@ -203,16 +181,10 @@ data class SitemapUrl(
     val priority: String?,
 )
 
-/**
- * The result of a map operation, containing discovered URLs.
- */
-data class MapResult(
-    val urls: List<SitemapUrl>,
-)
+/** The result of a map operation, containing discovered URLs. */
+data class MapResult(val urls: List<SitemapUrl>)
 
-/**
- * Rich markdown conversion result from HTML processing.
- */
+/** Rich markdown conversion result from HTML processing. */
 data class MarkdownResult(
     val content: String,
     val documentStructure: String?,
@@ -222,9 +194,7 @@ data class MarkdownResult(
     val fitContent: String?,
 )
 
-/**
- * Information about a link found on a page.
- */
+/** Information about a link found on a page. */
 data class LinkInfo(
     val url: String,
     val text: String,
@@ -233,9 +203,7 @@ data class LinkInfo(
     val nofollow: Boolean,
 )
 
-/**
- * Information about an image found on a page.
- */
+/** Information about an image found on a page. */
 data class ImageInfo(
     val url: String,
     val alt: String?,
@@ -244,37 +212,16 @@ data class ImageInfo(
     val source: ImageSource,
 )
 
-/**
- * Information about a feed link found on a page.
- */
-data class FeedInfo(
-    val url: String,
-    val title: String?,
-    val feedType: FeedType,
-)
+/** Information about a feed link found on a page. */
+data class FeedInfo(val url: String, val title: String?, val feedType: FeedType)
 
-/**
- * A JSON-LD structured data entry found on a page.
- */
-data class JsonLdEntry(
-    val schemaType: String,
-    val name: String?,
-    val raw: String,
-)
+/** A JSON-LD structured data entry found on a page. */
+data class JsonLdEntry(val schemaType: String, val name: String?, val raw: String)
 
-/**
- * Information about an HTTP cookie received from a response.
- */
-data class CookieInfo(
-    val name: String,
-    val value: String,
-    val domain: String?,
-    val path: String?,
-)
+/** Information about an HTTP cookie received from a response. */
+data class CookieInfo(val name: String, val value: String, val domain: String?, val path: String?)
 
-/**
- * A downloaded asset from a page.
- */
+/** A downloaded asset from a page. */
 data class DownloadedAsset(
     val url: String,
     val contentHash: String,
@@ -284,9 +231,7 @@ data class DownloadedAsset(
     val htmlTag: String?,
 )
 
-/**
- * Article metadata extracted from `article:*` Open Graph tags.
- */
+/** Article metadata extracted from `article:*` Open Graph tags. */
 data class ArticleMetadata(
     val publishedTime: String?,
     val modifiedTime: String?,
@@ -295,35 +240,16 @@ data class ArticleMetadata(
     val tags: List<String>,
 )
 
-/**
- * An hreflang alternate link entry.
- */
-data class HreflangEntry(
-    val lang: String,
-    val url: String,
-)
+/** An hreflang alternate link entry. */
+data class HreflangEntry(val lang: String, val url: String)
 
-/**
- * Information about a favicon or icon link.
- */
-data class FaviconInfo(
-    val url: String,
-    val rel: String,
-    val sizes: String?,
-    val mimeType: String?,
-)
+/** Information about a favicon or icon link. */
+data class FaviconInfo(val url: String, val rel: String, val sizes: String?, val mimeType: String?)
 
-/**
- * A heading element extracted from the page.
- */
-data class HeadingInfo(
-    val level: Byte,
-    val text: String,
-)
+/** A heading element extracted from the page. */
+data class HeadingInfo(val level: Byte, val text: String)
 
-/**
- * Response metadata extracted from HTTP headers.
- */
+/** Response metadata extracted from HTTP headers. */
 data class ResponseMeta(
     val etag: String?,
     val lastModified: String?,
@@ -334,9 +260,7 @@ data class ResponseMeta(
     val contentEncoding: String?,
 )
 
-/**
- * Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
- */
+/** Metadata extracted from an HTML page's `<meta>` tags and `<title>` element. */
 data class PageMetadata(
     val title: String?,
     val description: String?,
@@ -383,86 +307,49 @@ data class PageMetadata(
     val wordCount: Long?,
 )
 
-/**
- * Result of citation conversion.
- */
-data class CitationResult(
-    val content: String,
-    val references: List<CitationReference>,
-)
+/** Result of citation conversion. */
+data class CitationResult(val content: String, val references: List<CitationReference>)
 
-data class CitationReference(
-    val index: Long,
-    val url: String,
-    val text: String,
-)
+data class CitationReference(val index: Long, val url: String, val text: String)
 
 /**
  * Opaque handle to a configured crawl engine.
  *
- * Constructed via `create_engine` with an optional `CrawlConfig`.
- * Default implementations for all pluggable components are used internally.
+ * Constructed via `create_engine` with an optional `CrawlConfig`. Default implementations for all
+ * pluggable components are used internally.
  */
-class CrawlEngineHandle
+class CrawlEngineHandle {}
 
-/**
- * Result from a single URL in a batch scrape operation.
- */
-data class BatchScrapeResult(
-    val url: String,
-    val result: ScrapeResult?,
-    val error: String?,
-)
+/** Result from a single URL in a batch scrape operation. */
+data class BatchScrapeResult(val url: String, val result: ScrapeResult?, val error: String?)
 
-/**
- * Result from a single URL in a batch crawl operation.
- */
-data class BatchCrawlResult(
-    val url: String,
-    val result: CrawlResult?,
-    val error: String?,
-)
+/** Result from a single URL in a batch crawl operation. */
+data class BatchCrawlResult(val url: String, val result: CrawlResult?, val error: String?)
 
-/**
- * When to use the headless browser fallback.
- */
+/** When to use the headless browser fallback. */
 enum class BrowserMode {
     AUTO,
     ALWAYS,
     NEVER,
 }
 
-/**
- * Wait strategy for browser page rendering.
- */
+/** Wait strategy for browser page rendering. */
 enum class BrowserWait {
     NETWORK_IDLE,
     SELECTOR,
     FIXED,
 }
 
-/**
- * Authentication configuration.
- */
+/** Authentication configuration. */
 sealed class AuthConfig {
-    data class Basic(
-        val username: String,
-        val password: String,
-    ) : AuthConfig()
+    data class Basic(val username: String, val password: String) : AuthConfig()
 
-    data class Bearer(
-        val token: String,
-    ) : AuthConfig()
+    data class Bearer(val token: String) : AuthConfig()
 
-    data class Header(
-        val name: String,
-        val value: String,
-    ) : AuthConfig()
+    data class Header(val name: String, val value: String) : AuthConfig()
 }
 
-/**
- * The classification of a link.
- */
+/** The classification of a link. */
 enum class LinkType {
     INTERNAL,
     EXTERNAL,
@@ -470,9 +357,7 @@ enum class LinkType {
     DOCUMENT,
 }
 
-/**
- * The source of an image reference.
- */
+/** The source of an image reference. */
 enum class ImageSource {
     IMG,
     PICTURE_SOURCE,
@@ -480,18 +365,14 @@ enum class ImageSource {
     TWITTER_IMAGE,
 }
 
-/**
- * The type of a feed (RSS, Atom, or JSON Feed).
- */
+/** The type of a feed (RSS, Atom, or JSON Feed). */
 enum class FeedType {
     RSS,
     ATOM,
     JSON_FEED,
 }
 
-/**
- * The category of a downloaded asset.
- */
+/** The category of a downloaded asset. */
 enum class AssetCategory {
     DOCUMENT,
     IMAGE,
@@ -505,79 +386,41 @@ enum class AssetCategory {
     OTHER,
 }
 
-/**
- * Errors that can occur during crawling, scraping, or mapping operations.
- */
-sealed class CrawlError(
-    message: String,
-) : Exception(message) {
-    data class NotFound(
-        val field0: String,
-    ) : CrawlError("not_found: {0}")
+/** Errors that can occur during crawling, scraping, or mapping operations. */
+sealed class CrawlError(message: String) : Exception(message) {
+    data class NotFound(val field0: String) : CrawlError("not_found: {0}")
 
-    data class Unauthorized(
-        val field0: String,
-    ) : CrawlError("unauthorized: {0}")
+    data class Unauthorized(val field0: String) : CrawlError("unauthorized: {0}")
 
-    data class Forbidden(
-        val field0: String,
-    ) : CrawlError("forbidden: {0}")
+    data class Forbidden(val field0: String) : CrawlError("forbidden: {0}")
 
-    data class WafBlocked(
-        val field0: String,
-    ) : CrawlError("forbidden: waf/blocked: {0}")
+    data class WafBlocked(val field0: String) : CrawlError("forbidden: waf/blocked: {0}")
 
-    data class Timeout(
-        val field0: String,
-    ) : CrawlError("timeout: {0}")
+    data class Timeout(val field0: String) : CrawlError("timeout: {0}")
 
-    data class RateLimited(
-        val field0: String,
-    ) : CrawlError("rate_limited: {0}")
+    data class RateLimited(val field0: String) : CrawlError("rate_limited: {0}")
 
-    data class ServerError(
-        val field0: String,
-    ) : CrawlError("server_error: {0}")
+    data class ServerError(val field0: String) : CrawlError("server_error: {0}")
 
-    data class BadGateway(
-        val field0: String,
-    ) : CrawlError("bad_gateway: {0}")
+    data class BadGateway(val field0: String) : CrawlError("bad_gateway: {0}")
 
-    data class Gone(
-        val field0: String,
-    ) : CrawlError("gone: {0}")
+    data class Gone(val field0: String) : CrawlError("gone: {0}")
 
-    data class Connection(
-        val field0: String,
-    ) : CrawlError("connection: {0}")
+    data class Connection(val field0: String) : CrawlError("connection: {0}")
 
-    data class Dns(
-        val field0: String,
-    ) : CrawlError("dns: {0}")
+    data class Dns(val field0: String) : CrawlError("dns: {0}")
 
-    data class Ssl(
-        val field0: String,
-    ) : CrawlError("ssl: {0}")
+    data class Ssl(val field0: String) : CrawlError("ssl: {0}")
 
-    data class DataLoss(
-        val field0: String,
-    ) : CrawlError("data_loss: {0}")
+    data class DataLoss(val field0: String) : CrawlError("data_loss: {0}")
 
-    data class BrowserError(
-        val field0: String,
-    ) : CrawlError("browser: {0}")
+    data class BrowserError(val field0: String) : CrawlError("browser: {0}")
 
-    data class BrowserTimeout(
-        val field0: String,
-    ) : CrawlError("browser_timeout: {0}")
+    data class BrowserTimeout(val field0: String) : CrawlError("browser_timeout: {0}")
 
-    data class InvalidConfig(
-        val field0: String,
-    ) : CrawlError("invalid_config: {0}")
+    data class InvalidConfig(val field0: String) : CrawlError("invalid_config: {0}")
 
-    data class Other(
-        val field0: String,
-    ) : CrawlError("other: {0}")
+    data class Other(val field0: String) : CrawlError("other: {0}")
 }
 
 object Kreuzcrawl {
@@ -588,63 +431,44 @@ object Kreuzcrawl {
     /**
      * Create a new crawl engine with the given configuration.
      *
-     * If `config` is `null`, uses `CrawlConfig.default()`.
-     * Returns an error if the configuration is invalid.
+     * If `config` is `null`, uses `CrawlConfig.default()`. Returns an error if the configuration is
+     * invalid.
      */
-    fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle = Bridge.createEngine(config)
+    fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle {
 
-    /**
-     * Scrape a single URL, returning extracted page data.
-     */
-    suspend fun scrape(
-        engine: CrawlEngineHandle,
-        url: String,
-    ): ScrapeResult =
-        withContext(Dispatchers.IO) {
-            Bridge.scrape(engine, url)
-        }
+        return Bridge.createEngine(config)
+    }
 
-    /**
-     * Crawl a website starting from `url`, following links up to the configured depth.
-     */
-    suspend fun crawl(
-        engine: CrawlEngineHandle,
-        url: String,
-    ): CrawlResult =
-        withContext(Dispatchers.IO) {
-            Bridge.crawl(engine, url)
-        }
+    /** Scrape a single URL, returning extracted page data. */
+    suspend fun scrape(engine: CrawlEngineHandle, url: String): ScrapeResult {
 
-    /**
-     * Discover all pages on a website by following links and sitemaps.
-     */
-    suspend fun mapUrls(
-        engine: CrawlEngineHandle,
-        url: String,
-    ): MapResult =
-        withContext(Dispatchers.IO) {
-            Bridge.mapUrls(engine, url)
-        }
+        return withContext(Dispatchers.IO) { Bridge.scrape(engine, url) }
+    }
 
-    /**
-     * Scrape multiple URLs concurrently.
-     */
+    /** Crawl a website starting from `url`, following links up to the configured depth. */
+    suspend fun crawl(engine: CrawlEngineHandle, url: String): CrawlResult {
+
+        return withContext(Dispatchers.IO) { Bridge.crawl(engine, url) }
+    }
+
+    /** Discover all pages on a website by following links and sitemaps. */
+    suspend fun mapUrls(engine: CrawlEngineHandle, url: String): MapResult {
+
+        return withContext(Dispatchers.IO) { Bridge.mapUrls(engine, url) }
+    }
+
+    /** Scrape multiple URLs concurrently. */
     suspend fun batchScrape(
         engine: CrawlEngineHandle,
         urls: List<String>,
-    ): List<BatchScrapeResult> =
-        withContext(Dispatchers.IO) {
-            Bridge.batchScrape(engine, urls)
-        }
+    ): List<BatchScrapeResult> {
 
-    /**
-     * Crawl multiple seed URLs concurrently, each following links to configured depth.
-     */
-    suspend fun batchCrawl(
-        engine: CrawlEngineHandle,
-        urls: List<String>,
-    ): List<BatchCrawlResult> =
-        withContext(Dispatchers.IO) {
-            Bridge.batchCrawl(engine, urls)
-        }
+        return withContext(Dispatchers.IO) { Bridge.batchScrape(engine, urls) }
+    }
+
+    /** Crawl multiple seed URLs concurrently, each following links to configured depth. */
+    suspend fun batchCrawl(engine: CrawlEngineHandle, urls: List<String>): List<BatchCrawlResult> {
+
+        return withContext(Dispatchers.IO) { Bridge.batchCrawl(engine, urls) }
+    }
 }
