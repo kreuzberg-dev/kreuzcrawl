@@ -145,7 +145,6 @@ pub const CrawlConfig = struct {
 pub const DownloadedDocument = struct {
     url: [:0]const u8,
     mime_type: [:0]const u8,
-    content: []const u8,
     size: u64,
     filename: ?[:0]const u8,
     content_hash: [:0]const u8,
@@ -179,7 +178,6 @@ pub const ScrapeResult = struct {
     markdown: ?MarkdownResult,
     extracted_data: ?[:0]const u8,
     extraction_meta: ?ExtractionMeta,
-    screenshot: ?[]const u8,
     downloaded_document: ?DownloadedDocument,
 };
 

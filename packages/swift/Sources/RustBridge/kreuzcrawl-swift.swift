@@ -631,8 +631,8 @@ public class BrowserConfigRef {
   }
 }
 extension BrowserConfigRef {
-  public func mode() -> BrowserMode {
-    BrowserMode(ptr: __swift_bridge__$BrowserConfig$mode(ptr))
+  public func mode() -> RustString {
+    RustString(ptr: __swift_bridge__$BrowserConfig$mode(ptr))
   }
 
   public func endpoint() -> RustString? {
@@ -646,8 +646,8 @@ extension BrowserConfigRef {
     __swift_bridge__$BrowserConfig$timeout(ptr)
   }
 
-  public func wait() -> BrowserWait {
-    BrowserWait(ptr: __swift_bridge__$BrowserConfig$wait(ptr))
+  public func wait() -> RustString {
+    RustString(ptr: __swift_bridge__$BrowserConfig$wait(ptr))
   }
 
   public func wait_selector() -> RustString? {
@@ -936,10 +936,10 @@ extension CrawlConfigRef {
     __swift_bridge__$CrawlConfig$cookies_enabled(ptr)
   }
 
-  public func auth() -> AuthConfig? {
+  public func auth() -> RustString? {
     {
       let val = __swift_bridge__$CrawlConfig$auth(ptr)
-      if val != nil { return AuthConfig(ptr: val!) } else { return nil }
+      if val != nil { return RustString(ptr: val!) } else { return nil }
     }()
   }
 
@@ -970,7 +970,7 @@ extension CrawlConfigRef {
     __swift_bridge__$CrawlConfig$download_assets(ptr)
   }
 
-  public func asset_types() -> RustVec<AssetCategory> {
+  public func asset_types() -> RustVec<RustString> {
     RustVec(ptr: __swift_bridge__$CrawlConfig$asset_types(ptr))
   }
 
@@ -2496,8 +2496,8 @@ extension LinkInfoRef {
     RustString(ptr: __swift_bridge__$LinkInfo$text(ptr))
   }
 
-  public func link_type() -> LinkType {
-    LinkType(ptr: __swift_bridge__$LinkInfo$link_type(ptr))
+  public func link_type() -> RustString {
+    RustString(ptr: __swift_bridge__$LinkInfo$link_type(ptr))
   }
 
   public func rel() -> RustString? {
@@ -2638,8 +2638,8 @@ extension ImageInfoRef {
     __swift_bridge__$ImageInfo$height(ptr).intoSwiftRepr()
   }
 
-  public func source() -> ImageSource {
-    ImageSource(ptr: __swift_bridge__$ImageInfo$source(ptr))
+  public func source() -> RustString {
+    RustString(ptr: __swift_bridge__$ImageInfo$source(ptr))
   }
 }
 extension ImageInfo: Vectorizable {
@@ -2761,8 +2761,8 @@ extension FeedInfoRef {
     }()
   }
 
-  public func feed_type() -> FeedType {
-    FeedType(ptr: __swift_bridge__$FeedInfo$feed_type(ptr))
+  public func feed_type() -> RustString {
+    RustString(ptr: __swift_bridge__$FeedInfo$feed_type(ptr))
   }
 }
 extension FeedInfo: Vectorizable {
@@ -3172,8 +3172,8 @@ extension DownloadedAssetRef {
     __swift_bridge__$DownloadedAsset$size(ptr)
   }
 
-  public func asset_category() -> AssetCategory {
-    AssetCategory(ptr: __swift_bridge__$DownloadedAsset$asset_category(ptr))
+  public func asset_category() -> RustString {
+    RustString(ptr: __swift_bridge__$DownloadedAsset$asset_category(ptr))
   }
 
   public func html_tag() -> RustString? {

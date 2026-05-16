@@ -100,7 +100,6 @@ pub struct CrawlConfig {
 pub struct DownloadedDocument {
     pub url: String,
     pub mime_type: String,
-    pub content: Vec<u8>,
     pub size: i64,
     pub filename: Option<String>,
     pub content_hash: String,
@@ -134,7 +133,6 @@ pub struct ScrapeResult {
     pub markdown: Option<MarkdownResult>,
     pub extracted_data: Option<String>,
     pub extraction_meta: Option<ExtractionMeta>,
-    pub screenshot: Option<Vec<u8>>,
     pub downloaded_document: Option<DownloadedDocument>,
 }
 
@@ -543,7 +541,6 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
         DownloadedDocument {
             url: v.url.into(),
             mime_type: v.mime_type.into_owned(),
-            content: v.content.into(),
             size: v.size as _,
             filename: Default::default(),
             content_hash: Default::default(),
@@ -580,7 +577,6 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             markdown: v.markdown.map(MarkdownResult::from),
             extracted_data: v.extracted_data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
             extraction_meta: v.extraction_meta.map(ExtractionMeta::from),
-            screenshot: v.screenshot.map(|b| b.into()),
             downloaded_document: v.downloaded_document.map(DownloadedDocument::from),
         }
     }

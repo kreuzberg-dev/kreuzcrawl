@@ -294,9 +294,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<HreflangEntry>? dco_decode_opt_list_hreflang_entry(dynamic raw);
 
   @protected
-  Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
-
-  @protected
   PageMetadata dco_decode_page_metadata(dynamic raw);
 
   @protected
@@ -619,9 +616,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<HreflangEntry>? sse_decode_opt_list_hreflang_entry(
       SseDeserializer deserializer);
-
-  @protected
-  Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
   PageMetadata sse_decode_page_metadata(SseDeserializer deserializer);
@@ -969,10 +963,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_list_hreflang_entry(
       List<HreflangEntry>? self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_opt_list_prim_u_8_strict(
-      Uint8List? self, SseSerializer serializer);
 
   @protected
   void sse_encode_page_metadata(PageMetadata self, SseSerializer serializer);

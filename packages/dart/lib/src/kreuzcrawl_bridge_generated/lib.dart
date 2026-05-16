@@ -775,7 +775,6 @@ class DownloadedAsset {
 class DownloadedDocument {
   final String url;
   final String mimeType;
-  final Uint8List content;
   final PlatformInt64 size;
   final String? filename;
   final String contentHash;
@@ -784,7 +783,6 @@ class DownloadedDocument {
   const DownloadedDocument({
     required this.url,
     required this.mimeType,
-    required this.content,
     required this.size,
     this.filename,
     required this.contentHash,
@@ -795,7 +793,6 @@ class DownloadedDocument {
   int get hashCode =>
       url.hashCode ^
       mimeType.hashCode ^
-      content.hashCode ^
       size.hashCode ^
       filename.hashCode ^
       contentHash.hashCode ^
@@ -808,7 +805,6 @@ class DownloadedDocument {
           runtimeType == other.runtimeType &&
           url == other.url &&
           mimeType == other.mimeType &&
-          content == other.content &&
           size == other.size &&
           filename == other.filename &&
           contentHash == other.contentHash &&
@@ -1398,7 +1394,6 @@ class ScrapeResult {
   final MarkdownResult? markdown;
   final String? extractedData;
   final ExtractionMeta? extractionMeta;
-  final Uint8List? screenshot;
   final DownloadedDocument? downloadedDocument;
 
   const ScrapeResult({
@@ -1427,7 +1422,6 @@ class ScrapeResult {
     this.markdown,
     this.extractedData,
     this.extractionMeta,
-    this.screenshot,
     this.downloadedDocument,
   });
 
@@ -1458,7 +1452,6 @@ class ScrapeResult {
       markdown.hashCode ^
       extractedData.hashCode ^
       extractionMeta.hashCode ^
-      screenshot.hashCode ^
       downloadedDocument.hashCode;
 
   @override
@@ -1491,7 +1484,6 @@ class ScrapeResult {
           markdown == other.markdown &&
           extractedData == other.extractedData &&
           extractionMeta == other.extractionMeta &&
-          screenshot == other.screenshot &&
           downloadedDocument == other.downloadedDocument;
 }
 

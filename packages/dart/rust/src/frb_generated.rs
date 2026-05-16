@@ -1184,7 +1184,6 @@ const _: fn() = || {
         let DownloadedDocument = None::<crate::DownloadedDocument>.unwrap();
         let _: String = DownloadedDocument.url;
         let _: String = DownloadedDocument.mime_type;
-        let _: Vec<u8> = DownloadedDocument.content;
         let _: i64 = DownloadedDocument.size;
         let _: Option<String> = DownloadedDocument.filename;
         let _: String = DownloadedDocument.content_hash;
@@ -1345,7 +1344,6 @@ const _: fn() = || {
         let _: Option<crate::MarkdownResult> = ScrapeResult.markdown;
         let _: Option<String> = ScrapeResult.extracted_data;
         let _: Option<crate::ExtractionMeta> = ScrapeResult.extraction_meta;
-        let _: Option<Vec<u8>> = ScrapeResult.screenshot;
         let _: Option<crate::DownloadedDocument> = ScrapeResult.downloaded_document;
     }
     {
@@ -1800,7 +1798,6 @@ impl SseDecode for crate::DownloadedDocument {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_url = <String>::sse_decode(deserializer);
         let mut var_mimeType = <String>::sse_decode(deserializer);
-        let mut var_content = <Vec<u8>>::sse_decode(deserializer);
         let mut var_size = <i64>::sse_decode(deserializer);
         let mut var_filename = <Option<String>>::sse_decode(deserializer);
         let mut var_contentHash = <String>::sse_decode(deserializer);
@@ -1808,7 +1805,6 @@ impl SseDecode for crate::DownloadedDocument {
         return crate::DownloadedDocument {
             url: var_url,
             mime_type: var_mimeType,
-            content: var_content,
             size: var_size,
             filename: var_filename,
             content_hash: var_contentHash,
@@ -2455,17 +2451,6 @@ impl SseDecode for Option<Vec<crate::HreflangEntry>> {
     }
 }
 
-impl SseDecode for Option<Vec<u8>> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        if (<bool>::sse_decode(deserializer)) {
-            return Some(<Vec<u8>>::sse_decode(deserializer));
-        } else {
-            return None;
-        }
-    }
-}
-
 impl SseDecode for crate::PageMetadata {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2633,7 +2618,6 @@ impl SseDecode for crate::ScrapeResult {
         let mut var_markdown = <Option<crate::MarkdownResult>>::sse_decode(deserializer);
         let mut var_extractedData = <Option<String>>::sse_decode(deserializer);
         let mut var_extractionMeta = <Option<crate::ExtractionMeta>>::sse_decode(deserializer);
-        let mut var_screenshot = <Option<Vec<u8>>>::sse_decode(deserializer);
         let mut var_downloadedDocument = <Option<crate::DownloadedDocument>>::sse_decode(deserializer);
         return crate::ScrapeResult {
             status_code: var_statusCode,
@@ -2661,7 +2645,6 @@ impl SseDecode for crate::ScrapeResult {
             markdown: var_markdown,
             extracted_data: var_extractedData,
             extraction_meta: var_extractionMeta,
-            screenshot: var_screenshot,
             downloaded_document: var_downloadedDocument,
         };
     }
@@ -3140,7 +3123,6 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::DownloadedDocument> {
         [
             self.0.url.into_into_dart().into_dart(),
             self.0.mime_type.into_into_dart().into_dart(),
-            self.0.content.into_into_dart().into_dart(),
             self.0.size.into_into_dart().into_dart(),
             self.0.filename.into_into_dart().into_dart(),
             self.0.content_hash.into_into_dart().into_dart(),
@@ -3505,7 +3487,6 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::ScrapeResult> {
             self.0.markdown.into_into_dart().into_dart(),
             self.0.extracted_data.into_into_dart().into_dart(),
             self.0.extraction_meta.into_into_dart().into_dart(),
-            self.0.screenshot.into_into_dart().into_dart(),
             self.0.downloaded_document.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -3843,7 +3824,6 @@ impl SseEncode for crate::DownloadedDocument {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.url, serializer);
         <String>::sse_encode(self.mime_type, serializer);
-        <Vec<u8>>::sse_encode(self.content, serializer);
         <i64>::sse_encode(self.size, serializer);
         <Option<String>>::sse_encode(self.filename, serializer);
         <String>::sse_encode(self.content_hash, serializer);
@@ -4391,16 +4371,6 @@ impl SseEncode for Option<Vec<crate::HreflangEntry>> {
     }
 }
 
-impl SseEncode for Option<Vec<u8>> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.is_some(), serializer);
-        if let Some(value) = self {
-            <Vec<u8>>::sse_encode(value, serializer);
-        }
-    }
-}
-
 impl SseEncode for crate::PageMetadata {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -4508,7 +4478,6 @@ impl SseEncode for crate::ScrapeResult {
         <Option<crate::MarkdownResult>>::sse_encode(self.markdown, serializer);
         <Option<String>>::sse_encode(self.extracted_data, serializer);
         <Option<crate::ExtractionMeta>>::sse_encode(self.extraction_meta, serializer);
-        <Option<Vec<u8>>>::sse_encode(self.screenshot, serializer);
         <Option<crate::DownloadedDocument>>::sse_encode(self.downloaded_document, serializer);
     }
 }

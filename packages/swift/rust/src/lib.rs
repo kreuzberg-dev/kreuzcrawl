@@ -179,7 +179,6 @@ mod ffi {
         fn new(
             url: String,
             mime_type: String,
-            content: Vec<u8>,
             size: usize,
             filename: Option<String>,
             content_hash: String,
@@ -187,7 +186,6 @@ mod ffi {
         ) -> DownloadedDocument;
         fn url(&self) -> String;
         fn mime_type(&self) -> String;
-        fn content(&self) -> Vec<u8>;
         fn size(&self) -> usize;
         fn filename(&self) -> Option<String>;
         fn content_hash(&self) -> String;
@@ -223,7 +221,6 @@ mod ffi {
             markdown: Option<MarkdownResult>,
             extracted_data: Option<String>,
             extraction_meta: Option<ExtractionMeta>,
-            screenshot: Option<Vec<u8>>,
             downloaded_document: Option<DownloadedDocument>,
         ) -> ScrapeResult;
         fn status_code(&self) -> u16;
@@ -251,7 +248,6 @@ mod ffi {
         fn markdown(&self) -> Option<MarkdownResult>;
         fn extracted_data(&self) -> Option<String>;
         fn extraction_meta(&self) -> Option<ExtractionMeta>;
-        fn screenshot(&self) -> Option<Vec<u8>>;
         fn downloaded_document(&self) -> Option<DownloadedDocument>;
     }
 
@@ -1287,7 +1283,6 @@ impl DownloadedDocument {
     pub fn new(
         url: String,
         mime_type: String,
-        content: Vec<u8>,
         size: usize,
         filename: Option<String>,
         content_hash: String,
@@ -1304,7 +1299,6 @@ impl DownloadedDocument {
                 __target.mime_type = t;
             }
         }
-        __target.content = content.into();
         __target.size = size;
         if let Some(s) = filename {
             if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
@@ -1330,9 +1324,6 @@ impl DownloadedDocument {
     }
     pub fn mime_type(&self) -> String {
         self.0.mime_type.to_string()
-    }
-    pub fn content(&self) -> Vec<u8> {
-        self.0.content.to_vec()
     }
     pub fn size(&self) -> usize {
         ::serde_json::to_value(&self.0.size)
@@ -1379,7 +1370,6 @@ impl ScrapeResult {
         markdown: Option<MarkdownResult>,
         extracted_data: Option<String>,
         extraction_meta: Option<ExtractionMeta>,
-        screenshot: Option<Vec<u8>>,
         downloaded_document: Option<DownloadedDocument>,
     ) -> ScrapeResult {
         let mut __target: kreuzcrawl::ScrapeResult = ::std::default::Default::default();
@@ -1440,7 +1430,6 @@ impl ScrapeResult {
         if let Some(w) = extraction_meta {
             __target.extraction_meta = Some(w.0);
         }
-        __target.screenshot = screenshot.into();
         if let Some(w) = downloaded_document {
             __target.downloaded_document = Some(w.0);
         }
@@ -1557,9 +1546,6 @@ impl ScrapeResult {
     }
     pub fn extraction_meta(&self) -> Option<ExtractionMeta> {
         self.0.extraction_meta.clone().map(ExtractionMeta)
-    }
-    pub fn screenshot(&self) -> Option<Vec<u8>> {
-        self.0.screenshot.as_ref().map(|b| b.to_vec())
     }
     pub fn downloaded_document(&self) -> Option<DownloadedDocument> {
         self.0.downloaded_document.clone().map(DownloadedDocument)

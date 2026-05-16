@@ -2,6 +2,7 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
+@Suppress("TooManyFunctions")
 object KreuzcrawlBridge {
     init {
         System.loadLibrary("kcrawl_jni")

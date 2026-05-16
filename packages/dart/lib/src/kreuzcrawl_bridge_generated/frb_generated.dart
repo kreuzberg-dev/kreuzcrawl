@@ -1451,16 +1451,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DownloadedDocument dco_decode_downloaded_document(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return DownloadedDocument(
       url: dco_decode_String(arr[0]),
       mimeType: dco_decode_String(arr[1]),
-      content: dco_decode_list_prim_u_8_strict(arr[2]),
-      size: dco_decode_i_64(arr[3]),
-      filename: dco_decode_opt_String(arr[4]),
-      contentHash: dco_decode_String(arr[5]),
-      headers: dco_decode_Map_String_String_None(arr[6]),
+      size: dco_decode_i_64(arr[2]),
+      filename: dco_decode_opt_String(arr[3]),
+      contentHash: dco_decode_String(arr[4]),
+      headers: dco_decode_Map_String_String_None(arr[5]),
     );
   }
 
@@ -1860,12 +1859,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_list_prim_u_8_strict(raw);
-  }
-
-  @protected
   PageMetadata dco_decode_page_metadata(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -1965,8 +1958,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ScrapeResult dco_decode_scrape_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 27)
-      throw Exception('unexpected arr length: expect 27 but see ${arr.length}');
+    if (arr.length != 26)
+      throw Exception('unexpected arr length: expect 26 but see ${arr.length}');
     return ScrapeResult(
       statusCode: dco_decode_i_64(arr[0]),
       contentType: dco_decode_String(arr[1]),
@@ -1993,9 +1986,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       markdown: dco_decode_opt_box_autoadd_markdown_result(arr[22]),
       extractedData: dco_decode_opt_String(arr[23]),
       extractionMeta: dco_decode_opt_box_autoadd_extraction_meta(arr[24]),
-      screenshot: dco_decode_opt_list_prim_u_8_strict(arr[25]),
       downloadedDocument:
-          dco_decode_opt_box_autoadd_downloaded_document(arr[26]),
+          dco_decode_opt_box_autoadd_downloaded_document(arr[25]),
     );
   }
 
@@ -2478,7 +2470,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_url = sse_decode_String(deserializer);
     var var_mimeType = sse_decode_String(deserializer);
-    var var_content = sse_decode_list_prim_u_8_strict(deserializer);
     var var_size = sse_decode_i_64(deserializer);
     var var_filename = sse_decode_opt_String(deserializer);
     var var_contentHash = sse_decode_String(deserializer);
@@ -2486,7 +2477,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return DownloadedDocument(
         url: var_url,
         mimeType: var_mimeType,
-        content: var_content,
         size: var_size,
         filename: var_filename,
         contentHash: var_contentHash,
@@ -3092,17 +3082,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_list_prim_u_8_strict(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
   PageMetadata sse_decode_page_metadata(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_title = sse_decode_opt_String(deserializer);
@@ -3263,7 +3242,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_extractedData = sse_decode_opt_String(deserializer);
     var var_extractionMeta =
         sse_decode_opt_box_autoadd_extraction_meta(deserializer);
-    var var_screenshot = sse_decode_opt_list_prim_u_8_strict(deserializer);
     var var_downloadedDocument =
         sse_decode_opt_box_autoadd_downloaded_document(deserializer);
     return ScrapeResult(
@@ -3292,7 +3270,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         markdown: var_markdown,
         extractedData: var_extractedData,
         extractionMeta: var_extractionMeta,
-        screenshot: var_screenshot,
         downloadedDocument: var_downloadedDocument);
   }
 
@@ -3669,7 +3646,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.url, serializer);
     sse_encode_String(self.mimeType, serializer);
-    sse_encode_list_prim_u_8_strict(self.content, serializer);
     sse_encode_i_64(self.size, serializer);
     sse_encode_opt_String(self.filename, serializer);
     sse_encode_String(self.contentHash, serializer);
@@ -4182,17 +4158,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_list_prim_u_8_strict(
-      Uint8List? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_list_prim_u_8_strict(self, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_page_metadata(PageMetadata self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_opt_String(self.title, serializer);
@@ -4296,7 +4261,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_markdown_result(self.markdown, serializer);
     sse_encode_opt_String(self.extractedData, serializer);
     sse_encode_opt_box_autoadd_extraction_meta(self.extractionMeta, serializer);
-    sse_encode_opt_list_prim_u_8_strict(self.screenshot, serializer);
     sse_encode_opt_box_autoadd_downloaded_document(
         self.downloadedDocument, serializer);
   }

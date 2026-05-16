@@ -21,6 +21,7 @@ pub struct DownloadedDocument {
     pub mime_type: Cow<'static, str>,
     /// Raw document bytes. Skipped during JSON serialization.
     #[serde(skip_serializing)]
+    #[cfg_attr(alef, alef(skip))]
     pub content: Vec<u8>,
     /// Size of the document in bytes.
     pub size: usize,
@@ -122,6 +123,7 @@ pub struct ScrapeResult {
     pub extraction_meta: Option<ExtractionMeta>,
     /// Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.
     #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
     pub screenshot: Option<Vec<u8>>,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     #[serde(skip_serializing_if = "Option::is_none")]
