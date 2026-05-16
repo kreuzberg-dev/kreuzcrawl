@@ -44,7 +44,7 @@ repos:
 
   # Python: ruff (linting + formatting)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.12
+    rev: v0.15.13
     hooks:
       - id: ruff
         args: [--fix]
@@ -52,7 +52,7 @@ repos:
 
   # Shared polyrepo hooks
   - repo: https://github.com/kreuzberg-dev/pre-commit-hooks
-    rev: v1.0.5
+    rev: v1.1.2
     hooks:
       - id: cargo-sort
         args: [-w]
@@ -75,8 +75,56 @@ repos:
             "warnings",
           ]
       - id: cargo-machete
+        args: [crates/]
+        exclude: ^(e2e/|test_apps/)
       - id: cargo-deny
         args: ["check"]
+      - id: rustdoc-lint
+        # Scope to the core library only. The binding wrappers (node/py/php/
+        # wasm/jni/ffi/cli) are alef-generated — rustdoc gaps there are alef's
+        # responsibility, fixed upstream and pulled in via the next alef-rev bump.
+        files: ^crates/kreuzcrawl/src/.*\.rs$
+        exclude: /tests/
+        args: ["-p", "kreuzcrawl"]
+      - id: pydocstyle
+        files: ^packages/python/.*\.py$
+        exclude: ^packages/python/(tests/|.*_native\.py$)
+      - id: tsdoc-lint
+        files: ^packages/typescript/src/.*\.ts$
+        exclude: \.d\.ts$
+      - id: alef-docs-fresh
+      - id: yard-coverage
+        files: ^packages/ruby/lib/.*\.rb$
+        exclude: ^packages/ruby/lib/kreuzcrawl/native\.rb$
+      # godoc-lint disabled — hook v1.1.2 invokes `golangci-lint --disable-all`
+      # which is not accepted by golangci-lint v2.x. Re-enable after
+      # pre-commit-hooks fix lands.
+      # - id: godoc-lint
+      #   files: ^packages/go/.*\.go$
+      #   exclude: ^(e2e/|test_apps/)
+      - id: javadoc-lint
+        files: ^packages/java/src/main/.*\.java$
+      - id: cs-xmldoc-lint
+        files: ^packages/csharp/Kreuzcrawl/.*\.cs$
+      # ex-doc-coverage disabled — mix docs requires compiling the elixir
+      # binding, which downloads the precompiled NIF for the current crate
+      # version. Pre-tag the NIF is not yet released, so download 404s.
+      # Re-enable after the matching NIF artifact is published, or wire
+      # `:force_build` in packages/elixir/config/dev.exs.
+      # - id: ex-doc-coverage
+      #   files: ^packages/elixir/lib/.*\.ex$
+      - id: phpdoc-lint
+        files: ^packages/php/src/.*\.php$
+      - id: dart-doc-lint
+        files: ^packages/dart/lib/.*\.dart$
+        exclude: ^packages/dart/lib/src/rust/
+      - id: swift-doc-coverage
+        files: ^packages/swift/Sources/Kreuzcrawl/.*\.swift$
+      - id: zig-doc-lint
+        files: ^packages/zig/src/.*\.zig$
+        exclude: ^packages/zig/src/kreuzcrawl\.zig$
+      - id: kotlin-dokka
+        files: ^packages/kotlin-android/src/main/.*\.kt$
       - id: shfmt
         args: ["-w", "-i", "2"]
       - id: shellcheck
@@ -92,15 +140,12 @@ repos:
         files: ^packages/java/
       - id: ktfmt
         files: ^packages/kotlin-android/.*\.kts?$
-        # packages/kotlin-android/ is alef-emitted. ktfmt's kotlinlang-style
-        # reformat must match alef's emitted shape; if alef ever diverges,
-        # alef-verify will flag the hash drift here.
-      # Disabled: upstream pre-commit-hooks detekt wrapper passes filenames as
-      # positional args; detekt CLI only accepts --input. No detekt config in
-      # the repo either. Re-enable once kreuzberg-dev/pre-commit-hooks fixes
-      # the wrapper and a detekt-config.yml lands here.
-      # - id: detekt
-      #   files: ^packages/kotlin-android/.*\.kts?$
+        args: ["--kotlinlang-style"]
+      - id: detekt
+        files: ^packages/kotlin-android/.*\.kts?$
+        args: ["--build-upon-default-config"]
+      - id: ktlint
+        files: ^packages/kotlin-android/.*\.kts?$
       - id: mypy
         exclude: "e2e/|tests/|scripts/|^packages/r/"
       - id: go-fmt
@@ -143,6 +188,18 @@ repos:
         files: ^packages/elixir/
       - id: mix-credo
         files: ^packages/elixir/
+      - id: swift-format
+        files: ^packages/swift/.*\.swift$
+      - id: swiftlint
+        files: ^packages/swift/.*\.swift$
+      - id: dart-format
+        files: ^packages/dart/.*\.dart$
+      - id: dart-analyze
+        files: ^packages/dart/.*\.dart$
+      - id: zig-fmt
+        files: ^packages/zig/.*\.zig$
+      - id: zig-build-check
+        files: ^packages/zig/.*\.zig$
       - id: textlint
         files: ^docs/.*\.md$
         exclude: ^docs/(reference/|api-|snippets/|migration/)
@@ -150,10 +207,15 @@ repos:
       - id: oxlint
       - id: oxfmt
       - id: cppcheck
+        args: ["--suppress=unusedStructMember"]
       - id: rumdl-fmt
         # alef-generated reference docs are checked verbatim against `alef docs`
         # output in CI; rumdl's MD022 fixes would diverge from that.
         exclude: ^docs/reference/
+      # markdownlint-rumdl-strict is intentionally not wired — kreuzcrawl docs
+      # use zensical/material extensions (HTML grids, indented code, long URL
+      # tables) that the bundled strict config over-flags. rumdl-fmt above
+      # already auto-fixes the issues we care about.
       - id: cpd
         # Raise from default 100. alef-generated *Builder.java share ~213 tokens
         # of @JsonProperty boilerplate mirroring the Rust struct layout
@@ -161,9 +223,11 @@ repos:
         # not refactorable from the kreuzcrawl side.
         args: [--minimum-tokens=250]
 
-  # Alef: verify bindings and sync versions
+  # Alef: verify bindings and sync versions.
+  # Pin to v0.16.17 — the latest tag with release assets uploaded. v0.16.18/19/20
+  # are tagged in git but their GitHub release artifacts have not been published.
   - repo: https://github.com/kreuzberg-dev/alef
-    rev: v0.16.0
+    rev: v0.16.17
     hooks:
       - id: alef-verify
       - id: alef-sync-versions

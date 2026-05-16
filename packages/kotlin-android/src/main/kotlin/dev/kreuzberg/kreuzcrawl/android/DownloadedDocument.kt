@@ -12,6 +12,7 @@ package dev.kreuzberg.kreuzcrawl.android
 data class DownloadedDocument(
     val url: String,
     val mimeType: String,
+    val content: ByteArray,
     val size: Long,
     val filename: String?,
     val contentHash: String,

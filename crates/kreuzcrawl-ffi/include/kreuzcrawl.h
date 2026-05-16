@@ -700,6 +700,14 @@ void kcrawl_downloaded_document_free(KCRAWLDownloadedDocument *ptr);
 char *kcrawl_downloaded_document_url(const KCRAWLDownloadedDocument *ptr);
 
 /**
+ * Get the `content` field from a `DownloadedDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kcrawl_downloaded_document_content(const KCRAWLDownloadedDocument *ptr,
+                                            uintptr_t *out_len);
+
+/**
  * Get the `size` field from a `DownloadedDocument`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
@@ -910,6 +918,13 @@ char *kcrawl_scrape_result_extracted_data(const KCRAWLScrapeResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 KCRAWLExtractionMeta *kcrawl_scrape_result_extraction_meta(const KCRAWLScrapeResult *ptr);
+
+/**
+ * Get the `screenshot` field from a `ScrapeResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kcrawl_scrape_result_screenshot(const KCRAWLScrapeResult *ptr);
 
 /**
  * Get the `downloaded_document` field from a `ScrapeResult`.

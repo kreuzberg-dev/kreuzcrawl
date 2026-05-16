@@ -66,28 +66,28 @@ object Kreuzcrawl {
     /**
      * Scrape multiple URLs concurrently.
      */
-    fun batchScrape(engine: CrawlEngineHandle, urls: String): List<BatchScrapeResult> {
-        val resultJson = KreuzcrawlBridge.nativeBatchScrape(engine.handle, urls)
+    fun batchScrape(engine: CrawlEngineHandle, urls: List<String>): List<BatchScrapeResult> {
+        val resultJson = KreuzcrawlBridge.nativeBatchScrape(engine.handle, mapper.writeValueAsString(urls))
         return mapper.readValue(resultJson, object : TypeReference<List<BatchScrapeResult>>() {})
     }
 
     /**
      * Scrape multiple URLs concurrently.
      */
-    suspend fun batchScrapeAsync(engine: CrawlEngineHandle, urls: String): List<BatchScrapeResult> =
+    suspend fun batchScrapeAsync(engine: CrawlEngineHandle, urls: List<String>): List<BatchScrapeResult> =
         withContext(Dispatchers.IO) { batchScrape(engine, urls) }
 
     /**
      * Crawl multiple seed URLs concurrently, each following links to configured depth.
      */
-    fun batchCrawl(engine: CrawlEngineHandle, urls: String): List<BatchCrawlResult> {
-        val resultJson = KreuzcrawlBridge.nativeBatchCrawl(engine.handle, urls)
+    fun batchCrawl(engine: CrawlEngineHandle, urls: List<String>): List<BatchCrawlResult> {
+        val resultJson = KreuzcrawlBridge.nativeBatchCrawl(engine.handle, mapper.writeValueAsString(urls))
         return mapper.readValue(resultJson, object : TypeReference<List<BatchCrawlResult>>() {})
     }
 
     /**
      * Crawl multiple seed URLs concurrently, each following links to configured depth.
      */
-    suspend fun batchCrawlAsync(engine: CrawlEngineHandle, urls: String): List<BatchCrawlResult> =
+    suspend fun batchCrawlAsync(engine: CrawlEngineHandle, urls: List<String>): List<BatchCrawlResult> =
         withContext(Dispatchers.IO) { batchCrawl(engine, urls) }
 }
