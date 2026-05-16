@@ -32,7 +32,7 @@ importers:
         specifier: workspace:*
         version: link:../../crates/kreuzcrawl-node
       vitest:
-        specifier: ^3.2.4
+        specifier: ^3.0.0
         version: 3.2.4(lightningcss@1.32.0)
 
 packages:
