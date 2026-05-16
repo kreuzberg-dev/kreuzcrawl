@@ -296,9 +296,12 @@
                       @JsonProperty + private field boilerplate that alef
                       emits in *Builder.java for every struct. Bumping the
                       threshold accepts the structural duplication that only
-                      alef codegen can refactor.
+                      alef codegen can refactor. 250 tolerates the 213-token
+                      Builder overlap between CrawlPageResult and ScrapeResult
+                      (status_code/headers/url/final_url/title chain), which
+                      both wrap response_meta + page_metadata.
                     -->
-                    <minimumTokens>200</minimumTokens>
+                    <minimumTokens>250</minimumTokens>
                 </configuration>
                 <executions>
                     <execution>

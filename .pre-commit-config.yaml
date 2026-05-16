@@ -95,8 +95,12 @@ repos:
         # packages/kotlin-android/ is alef-emitted. ktfmt's kotlinlang-style
         # reformat must match alef's emitted shape; if alef ever diverges,
         # alef-verify will flag the hash drift here.
-      - id: detekt
-        files: ^packages/kotlin-android/.*\.kts?$
+      # Disabled: upstream pre-commit-hooks detekt wrapper passes filenames as
+      # positional args; detekt CLI only accepts --input. No detekt config in
+      # the repo either. Re-enable once kreuzberg-dev/pre-commit-hooks fixes
+      # the wrapper and a detekt-config.yml lands here.
+      # - id: detekt
+      #   files: ^packages/kotlin-android/.*\.kts?$
       - id: mypy
         exclude: "e2e/|tests/|scripts/|^packages/r/"
       - id: go-fmt
@@ -151,10 +155,11 @@ repos:
         # output in CI; rumdl's MD022 fixes would diverge from that.
         exclude: ^docs/reference/
       - id: cpd
-        # Raise from default 100. alef-generated *Builder.java share ~121 tokens of
-        # @JsonProperty boilerplate mirroring the Rust struct layout — structural,
+        # Raise from default 100. alef-generated *Builder.java share ~213 tokens
+        # of @JsonProperty boilerplate mirroring the Rust struct layout
+        # (CrawlPageResult/ScrapeResult Builder chains, etc.) — structural,
         # not refactorable from the kreuzcrawl side.
-        args: [--minimum-tokens=200]
+        args: [--minimum-tokens=250]
 
   # Alef: verify bindings and sync versions
   - repo: https://github.com/kreuzberg-dev/alef
