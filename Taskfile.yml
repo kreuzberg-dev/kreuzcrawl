@@ -123,6 +123,22 @@ tasks:
       - prek autoupdate
       - cargo update
       - npx --yes actions-up@latest --yes --style preserve
+      - cmd: cd packages/python && uv sync --all-extras --no-install-workspace --no-install-project
+        ignore_error: true
+      - cmd: pnpm up -r
+        ignore_error: true
+      - cmd: cd packages/go && go get -u=patch ./... && go mod tidy
+        ignore_error: true
+      - cmd: cd packages/ruby && bundle update --conservative
+        ignore_error: true
+      - cmd: cd packages/php && composer update --no-interaction
+        ignore_error: true
+      - cmd: cd packages/elixir && mix deps.update --all
+        ignore_error: true
+      - cmd: cd packages/dart && dart pub upgrade --major-versions=false || dart pub upgrade
+        ignore_error: true
+      - cmd: cd packages/swift && swift package update
+        ignore_error: true
 
   upgrade:
     desc: Upgrade all dependencies to latest versions including cross-major bumps
@@ -131,6 +147,24 @@ tasks:
       - prek autoupdate
       - cargo upgrade --incompatible
       - npx --yes actions-up@latest --yes --style preserve
+      - cmd: cd packages/python && uv sync --all-extras --upgrade --no-install-workspace --no-install-project
+        ignore_error: true
+      - cmd: pnpm up -r --latest
+        ignore_error: true
+      - cmd: cd packages/go && go get -u ./... && go mod tidy
+        ignore_error: true
+      - cmd: cd packages/ruby && bundle update
+        ignore_error: true
+      - cmd: cd packages/php && composer update --with-all-dependencies --no-interaction
+        ignore_error: true
+      - cmd: cd packages/elixir && mix deps.update --all
+        ignore_error: true
+      - cmd: cd packages/dart && dart pub upgrade --major-versions
+        ignore_error: true
+      - cmd: cd packages/swift && swift package update
+        ignore_error: true
+      - task: java:update
+      - task: csharp:update
 
   clean:
     desc: Clean all build artifacts (per-language only; see `clean:full` for cargo + e2e)
