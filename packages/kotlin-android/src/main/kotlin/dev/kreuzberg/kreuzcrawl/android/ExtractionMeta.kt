@@ -6,9 +6,24 @@ package dev.kreuzberg.kreuzcrawl.android
  * Metadata about an LLM extraction pass.
  */
 data class ExtractionMeta(
+    /**
+     * Estimated cost of the LLM call in USD.
+     */
     val cost: Double?,
+    /**
+     * Number of prompt (input) tokens consumed.
+     */
     val promptTokens: Long?,
+    /**
+     * Number of completion (output) tokens generated.
+     */
     val completionTokens: Long?,
+    /**
+     * The model identifier used for extraction.
+     */
     val model: String?,
-    val chunksProcessed: Long
+    /**
+     * Number of content chunks sent to the LLM.
+     */
+    val chunksProcessed: Long,
 )

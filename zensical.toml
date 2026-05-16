@@ -10,69 +10,69 @@ copyright = "Copyright &copy; 2023-2026 Kreuzberg, inc."
 extra_css = ["css/extra.css"]
 
 nav = [
-    { "Home" = "index.md" },
+  { "Home" = "index.md" },
 
-    { "Get Started" = [
-        { "Installation" = "getting-started/installation.md" },
-        { "Basic Usage" = "getting-started/basic_usage.md" },
-        { "Quick Start" = "getting-started/quickstart.md" },
-    ] },
+  { "Get Started" = [
+    { "Installation" = "getting-started/installation.md" },
+    { "Basic Usage" = "getting-started/basic_usage.md" },
+    { "Quick Start" = "getting-started/quickstart.md" },
+  ] },
 
-    { "Guides" = [
-        { "Core" = [
-            { "Crawling" = "guides/crawling.md" },
-            { "Scraping" = "guides/scraping.md" },
-            { "URL Discovery" = "guides/url-discovery.md" },
-            { "Markdown Conversion" = "guides/markdown.md" },
-            { "Configuration" = "guides/configuration.md" },
-        ] },
-        { "Advanced" = [
-            { "Browser Automation" = "guides/browser.md" },
-            { "WARC Output" = "guides/warc.md" },
-        ] },
-        { "Deployment" = [
-            { "Docker" = "guides/docker.md" },
-            { "API Server" = "guides/api-server.md" },
-            { "MCP Server" = "guides/mcp-server.md" },
-        ] },
-        { "CLI" = "cli/usage.md" },
+  { "Guides" = [
+    { "Core" = [
+      { "Crawling" = "guides/crawling.md" },
+      { "Scraping" = "guides/scraping.md" },
+      { "URL Discovery" = "guides/url-discovery.md" },
+      { "Markdown Conversion" = "guides/markdown.md" },
+      { "Configuration" = "guides/configuration.md" },
     ] },
+    { "Advanced" = [
+      { "Browser Automation" = "guides/browser.md" },
+      { "WARC Output" = "guides/warc.md" },
+    ] },
+    { "Deployment" = [
+      { "Docker" = "guides/docker.md" },
+      { "API Server" = "guides/api-server.md" },
+      { "MCP Server" = "guides/mcp-server.md" },
+    ] },
+    { "CLI" = "cli/usage.md" },
+  ] },
 
-    { "Concepts" = [
-        { "Architecture" = "concepts/architecture.md" },
-        { "Content Extraction" = "concepts/content-extraction.md" },
-    ] },
+  { "Concepts" = [
+    { "Architecture" = "concepts/architecture.md" },
+    { "Content Extraction" = "concepts/content-extraction.md" },
+  ] },
 
-    { "Reference" = [
-        { "API" = [
-            { "Rust" = "reference/api-rust.md" },
-            { "Python" = "reference/api-python.md" },
-            { "TypeScript / Node.js" = "reference/api-typescript.md" },
-            { "Go" = "reference/api-go.md" },
-            { "Java" = "reference/api-java.md" },
-            { "Kotlin (Android)" = "reference/api-kotlin-android.md" },
-            { "C#" = "reference/api-csharp.md" },
-            { "Ruby" = "reference/api-ruby.md" },
-            { "PHP" = "reference/api-php.md" },
-            { "Elixir" = "reference/api-elixir.md" },
-            { "Dart" = "reference/api-dart.md" },
-            { "Swift" = "reference/api-swift.md" },
-            { "Zig" = "reference/api-zig.md" },
-            { "WebAssembly" = "reference/api-wasm.md" },
-            { "C / FFI" = "reference/api-c.md" },
-        ] },
-        { "REST API" = "reference/rest-api.md" },
-        { "MCP Tools" = "reference/mcp-tools.md" },
-        { "Configuration" = "reference/configuration.md" },
-        { "Types" = "reference/types.md" },
-        { "Errors" = "reference/errors.md" },
+  { "Reference" = [
+    { "API" = [
+      { "Rust" = "reference/api-rust.md" },
+      { "Python" = "reference/api-python.md" },
+      { "TypeScript / Node.js" = "reference/api-typescript.md" },
+      { "Go" = "reference/api-go.md" },
+      { "Java" = "reference/api-java.md" },
+      { "Kotlin (Android)" = "reference/api-kotlin-android.md" },
+      { "C#" = "reference/api-csharp.md" },
+      { "Ruby" = "reference/api-ruby.md" },
+      { "PHP" = "reference/api-php.md" },
+      { "Elixir" = "reference/api-elixir.md" },
+      { "Dart" = "reference/api-dart.md" },
+      { "Swift" = "reference/api-swift.md" },
+      { "Zig" = "reference/api-zig.md" },
+      { "WebAssembly" = "reference/api-wasm.md" },
+      { "C / FFI" = "reference/api-c.md" },
     ] },
+    { "REST API" = "reference/rest-api.md" },
+    { "MCP Tools" = "reference/mcp-tools.md" },
+    { "Configuration" = "reference/configuration.md" },
+    { "Types" = "reference/types.md" },
+    { "Errors" = "reference/errors.md" },
+  ] },
 
-    { "More" = [
-        { "Features" = "features.md" },
-        { "Contributing" = "contributing.md" },
-        { "Changelog" = "CHANGELOG.md" },
-    ] },
+  { "More" = [
+    { "Features" = "features.md" },
+    { "Contributing" = "contributing.md" },
+    { "Changelog" = "CHANGELOG.md" },
+  ] },
 ]
 
 [project.theme]
@@ -82,25 +82,25 @@ logo = "assets/logo.svg"
 favicon = "assets/favicon.ico"
 language = "en"
 features = [
-    "content.code.copy",
-    "content.code.annotate",
-    "content.tabs.link",
-    "navigation.instant",
-    "navigation.instant.progress",
-    "navigation.path",
-    "navigation.prune",
-    "navigation.indexes",
-    "navigation.sections",
-    "navigation.tabs",
-    "navigation.tabs.sticky",
-    "navigation.tracking",
-    "navigation.top",
-    "search.highlight",
-    "search.share",
-    "search.suggest",
-    "toc.follow",
-    "toc.integrate",
-    "announce.dismiss",
+  "content.code.copy",
+  "content.code.annotate",
+  "content.tabs.link",
+  "navigation.instant",
+  "navigation.instant.progress",
+  "navigation.path",
+  "navigation.prune",
+  "navigation.indexes",
+  "navigation.sections",
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.tracking",
+  "navigation.top",
+  "search.highlight",
+  "search.share",
+  "search.suggest",
+  "toc.follow",
+  "toc.integrate",
+  "announce.dismiss",
 ]
 
 [project.theme.font]
@@ -173,7 +173,7 @@ check_paths = true
 
 [project.markdown_extensions.pymdownx.superfences]
 custom_fences = [
-    { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
 ]
 
 [project.markdown_extensions.pymdownx.tabbed]

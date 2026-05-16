@@ -6,9 +6,24 @@ package dev.kreuzberg.kreuzcrawl.android
  * Information about a link found on a page.
  */
 data class LinkInfo(
+    /**
+     * The resolved URL of the link.
+     */
     val url: String,
+    /**
+     * The visible text of the link.
+     */
     val text: String,
+    /**
+     * The classification of the link.
+     */
     val linkType: LinkType,
+    /**
+     * The `rel` attribute value, if present.
+     */
     val rel: String?,
-    val nofollow: Boolean
+    /**
+     * Whether the link has `rel="nofollow"`.
+     */
+    val nofollow: Boolean,
 )

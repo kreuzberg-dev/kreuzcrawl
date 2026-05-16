@@ -6,11 +6,32 @@ package dev.kreuzberg.kreuzcrawl.android
  * Response metadata extracted from HTTP headers.
  */
 data class ResponseMeta(
+    /**
+     * The ETag header value.
+     */
     val etag: String?,
+    /**
+     * The Last-Modified header value.
+     */
     val lastModified: String?,
+    /**
+     * The Cache-Control header value.
+     */
     val cacheControl: String?,
+    /**
+     * The Server header value.
+     */
     val server: String?,
+    /**
+     * The X-Powered-By header value.
+     */
     val xPoweredBy: String?,
+    /**
+     * The Content-Language header value.
+     */
     val contentLanguage: String?,
-    val contentEncoding: String?
+    /**
+     * The Content-Encoding header value.
+     */
+    val contentEncoding: String?,
 )

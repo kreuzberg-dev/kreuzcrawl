@@ -4,18 +4,26 @@ package dev.kreuzberg.kreuzcrawl.android
 
 @Suppress("TooManyFunctions")
 object KreuzcrawlBridge {
-    init { System.loadLibrary("kcrawl_jni") }
+    init {
+        System.loadLibrary("kcrawl_jni")
+    }
 
+    @Throws(KreuzcrawlBridgeException::class)
     external fun nativeCreateEngine(config: String): Long
 
+    @Throws(KreuzcrawlBridgeException::class)
     external fun nativeScrape(engine: Long, url: String): String
 
+    @Throws(KreuzcrawlBridgeException::class)
     external fun nativeCrawl(engine: Long, url: String): String
 
+    @Throws(KreuzcrawlBridgeException::class)
     external fun nativeMapUrls(engine: Long, url: String): String
 
+    @Throws(KreuzcrawlBridgeException::class)
     external fun nativeBatchScrape(engine: Long, urls: String): String
 
+    @Throws(KreuzcrawlBridgeException::class)
     external fun nativeBatchCrawl(engine: Long, urls: String): String
 
     // Destructor external funs for opaque handle types.

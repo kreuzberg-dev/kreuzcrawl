@@ -6,6 +6,12 @@ package dev.kreuzberg.kreuzcrawl.android
  * Result of citation conversion.
  */
 data class CitationResult(
+    /**
+     * Markdown with links replaced by numbered citations.
+     */
     val content: String,
-    val references: List<CitationReference>
+    /**
+     * Numbered reference list: (index, url, text).
+     */
+    val references: List<CitationReference>,
 )

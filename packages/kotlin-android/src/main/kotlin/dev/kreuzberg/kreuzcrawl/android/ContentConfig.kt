@@ -10,16 +10,63 @@ package dev.kreuzberg.kreuzcrawl.android
  * (markdown, plain text, djot).
  */
 data class ContentConfig(
+    /**
+     * Output format: `"markdown"` (default), `"plain"`, `"djot"`.
+     */
     val outputFormat: String,
+    /**
+     * Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`.
+     *
+     * - Minimal: only scripts/styles removed.
+     * - Standard: also removes nav, nav-hinted headers/footers/asides, forms.
+     * - Aggressive: removes all footers/asides unconditionally.
+     */
     val preprocessingPreset: String,
+    /**
+     * Remove navigation elements (nav, breadcrumbs, menus). Default: `true`.
+     */
     val removeNavigation: Boolean,
+    /**
+     * Remove form elements. Default: `true`.
+     */
     val removeForms: Boolean,
+    /**
+     * HTML tag names to strip (render children only, remove the tag wrapper).
+     * Default: `["noscript"]`.
+     */
     val stripTags: List<String>,
+    /**
+     * HTML tag names to preserve as raw HTML in output.
+     */
     val preserveTags: List<String>,
+    /**
+     * CSS selectors for elements to exclude entirely (element + all content).
+     *
+     * Unlike `strip_tags` (which removes the wrapper but keeps children),
+     * excluded elements and all descendants are dropped. Supports CSS selectors:
+     * `.class`, `#id`, `[attribute]`, compound selectors.
+     *
+     * Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]`
+     */
     val excludeSelectors: List<String>,
+    /**
+     * Skip image elements in output. Default: `false`.
+     */
     val skipImages: Boolean,
+    /**
+     * Max DOM traversal depth. Prevents stack overflow on deeply nested HTML.
+     */
     val maxDepth: Long?,
+    /**
+     * Enable line wrapping. Default: `false`.
+     */
     val wrap: Boolean,
+    /**
+     * Wrap width when `wrap` is enabled. Default: `80`.
+     */
     val wrapWidth: Long,
-    val includeDocumentStructure: Boolean
+    /**
+     * Include document structure tree in output. Default: `true`.
+     */
+    val includeDocumentStructure: Boolean,
 )

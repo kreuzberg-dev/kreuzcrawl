@@ -11,12 +11,12 @@ license = "Elastic-2.0"
 authors = [{ name = "Kreuzberg Team" }]
 requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 urls.repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 
@@ -38,29 +38,29 @@ format.docstring-code-line-length = 120
 format.docstring-code-format = true
 lint.select = ["ALL"]
 lint.ignore = [
-    "ANN401",
-    "ASYNC109",
-    "ASYNC110",
-    "BLE001",
-    "COM812",
-    "D100",
-    "D104",
-    "D107",
-    "D205",
-    "E501",
-    "EM",
-    "FBT",
-    "FIX",
-    "ISC001",
-    "PD011",
-    "PGH003",
-    "PLR2004",
-    "PLW0603",
-    "S104",
-    "S110",
-    "S603",
-    "TD",
-    "TRY",
+  "ANN401",
+  "ASYNC109",
+  "ASYNC110",
+  "BLE001",
+  "COM812",
+  "D100",
+  "D104",
+  "D107",
+  "D205",
+  "E501",
+  "EM",
+  "FBT",
+  "FIX",
+  "ISC001",
+  "PD011",
+  "PGH003",
+  "PLR2004",
+  "PLW0603",
+  "S104",
+  "S110",
+  "S603",
+  "TD",
+  "TRY",
 ]
 lint.per-file-ignores."tests/**" = ["ANN", "D103", "PLR2004", "S101"]
 # kreuzcrawl/ is alef-generated. TC001 wants enum re-exports moved into

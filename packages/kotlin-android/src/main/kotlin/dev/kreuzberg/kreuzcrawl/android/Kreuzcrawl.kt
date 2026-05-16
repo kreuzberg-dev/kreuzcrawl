@@ -16,7 +16,11 @@ object Kreuzcrawl {
      * If `config` is `null`, uses `CrawlConfig.default()`.
      * Returns an error if the configuration is invalid.
      */
-    fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle = CrawlEngineHandle(KreuzcrawlBridge.nativeCreateEngine(config?.let { mapper.writeValueAsString(it) } ?: ""))
+    fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle =
+        CrawlEngineHandle(
+            KreuzcrawlBridge.nativeCreateEngine(config?.let { mapper.writeValueAsString(it) } ?: ""),
+                )
+
     /**
      * Scrape a single URL, returning extracted page data.
      */
@@ -86,5 +90,4 @@ object Kreuzcrawl {
      */
     suspend fun batchCrawlAsync(engine: CrawlEngineHandle, urls: List<String>): List<BatchCrawlResult> =
         withContext(Dispatchers.IO) { batchCrawl(engine, urls) }
-
 }

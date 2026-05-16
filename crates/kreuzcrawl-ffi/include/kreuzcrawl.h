@@ -10,41 +10,157 @@
 #include <stdint.h>
 #include <stdlib.h>
 /* Opaque type forward declarations */
+/**
+ * Article metadata extracted from `article:*` Open Graph tags.
+ */
 typedef struct KCRAWLArticleMetadata KCRAWLArticleMetadata;
+/**
+ * The category of a downloaded asset.
+ */
 typedef struct KCRAWLAssetCategory KCRAWLAssetCategory;
+/**
+ * Authentication configuration.
+ */
 typedef struct KCRAWLAuthConfig KCRAWLAuthConfig;
+/**
+ * Result from a single URL in a batch crawl operation.
+ */
 typedef struct KCRAWLBatchCrawlResult KCRAWLBatchCrawlResult;
+/**
+ * Result from a single URL in a batch scrape operation.
+ */
 typedef struct KCRAWLBatchScrapeResult KCRAWLBatchScrapeResult;
+/**
+ * Browser fallback configuration.
+ */
 typedef struct KCRAWLBrowserConfig KCRAWLBrowserConfig;
+/**
+ * When to use the headless browser fallback.
+ */
 typedef struct KCRAWLBrowserMode KCRAWLBrowserMode;
+/**
+ * Wait strategy for browser page rendering.
+ */
 typedef struct KCRAWLBrowserWait KCRAWLBrowserWait;
 typedef struct KCRAWLCitationReference KCRAWLCitationReference;
+/**
+ * Result of citation conversion.
+ */
 typedef struct KCRAWLCitationResult KCRAWLCitationResult;
+/**
+ * Content extraction and conversion configuration.
+ *
+ * Controls how HTML is converted to the output format. Uses
+ * html-to-markdown-rs as the conversion engine for all formats
+ * (markdown, plain text, djot).
+ */
 typedef struct KCRAWLContentConfig KCRAWLContentConfig;
+/**
+ * Information about an HTTP cookie received from a response.
+ */
 typedef struct KCRAWLCookieInfo KCRAWLCookieInfo;
+/**
+ * Configuration for crawl, scrape, and map operations.
+ */
 typedef struct KCRAWLCrawlConfig KCRAWLCrawlConfig;
+/**
+ * Opaque handle to a configured crawl engine.
+ *
+ * Constructed via [`create_engine`] with an optional [`CrawlConfig`].
+ * Default implementations for all pluggable components are used internally.
+ */
 typedef struct KCRAWLCrawlEngineHandle KCRAWLCrawlEngineHandle;
+/**
+ * The result of crawling a single page during a crawl operation.
+ */
 typedef struct KCRAWLCrawlPageResult KCRAWLCrawlPageResult;
+/**
+ * The result of a multi-page crawl operation.
+ */
 typedef struct KCRAWLCrawlResult KCRAWLCrawlResult;
+/**
+ * A downloaded asset from a page.
+ */
 typedef struct KCRAWLDownloadedAsset KCRAWLDownloadedAsset;
+/**
+ * A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
+ *
+ * When the crawler encounters non-HTML content and `download_documents` is
+ * enabled, it downloads the raw bytes and populates this struct instead of
+ * skipping the resource.
+ */
 typedef struct KCRAWLDownloadedDocument KCRAWLDownloadedDocument;
+/**
+ * Metadata about an LLM extraction pass.
+ */
 typedef struct KCRAWLExtractionMeta KCRAWLExtractionMeta;
+/**
+ * Information about a favicon or icon link.
+ */
 typedef struct KCRAWLFaviconInfo KCRAWLFaviconInfo;
+/**
+ * Information about a feed link found on a page.
+ */
 typedef struct KCRAWLFeedInfo KCRAWLFeedInfo;
+/**
+ * The type of a feed (RSS, Atom, or JSON Feed).
+ */
 typedef struct KCRAWLFeedType KCRAWLFeedType;
+/**
+ * A heading element extracted from the page.
+ */
 typedef struct KCRAWLHeadingInfo KCRAWLHeadingInfo;
+/**
+ * An hreflang alternate link entry.
+ */
 typedef struct KCRAWLHreflangEntry KCRAWLHreflangEntry;
+/**
+ * Information about an image found on a page.
+ */
 typedef struct KCRAWLImageInfo KCRAWLImageInfo;
+/**
+ * The source of an image reference.
+ */
 typedef struct KCRAWLImageSource KCRAWLImageSource;
+/**
+ * A JSON-LD structured data entry found on a page.
+ */
 typedef struct KCRAWLJsonLdEntry KCRAWLJsonLdEntry;
+/**
+ * Information about a link found on a page.
+ */
 typedef struct KCRAWLLinkInfo KCRAWLLinkInfo;
+/**
+ * The classification of a link.
+ */
 typedef struct KCRAWLLinkType KCRAWLLinkType;
+/**
+ * The result of a map operation, containing discovered URLs.
+ */
 typedef struct KCRAWLMapResult KCRAWLMapResult;
+/**
+ * Rich markdown conversion result from HTML processing.
+ */
 typedef struct KCRAWLMarkdownResult KCRAWLMarkdownResult;
+/**
+ * Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
+ */
 typedef struct KCRAWLPageMetadata KCRAWLPageMetadata;
+/**
+ * Proxy configuration for HTTP requests.
+ */
 typedef struct KCRAWLProxyConfig KCRAWLProxyConfig;
+/**
+ * Response metadata extracted from HTTP headers.
+ */
 typedef struct KCRAWLResponseMeta KCRAWLResponseMeta;
+/**
+ * The result of a single-page scrape operation.
+ */
 typedef struct KCRAWLScrapeResult KCRAWLScrapeResult;
+/**
+ * A URL entry from a sitemap.
+ */
 typedef struct KCRAWLSitemapUrl KCRAWLSitemapUrl;
 
 

@@ -6,31 +6,112 @@ package dev.kreuzberg.kreuzcrawl.android
  * The result of a single-page scrape operation.
  */
 data class ScrapeResult(
+    /**
+     * The HTTP status code of the response.
+     */
     val statusCode: Short,
+    /**
+     * The Content-Type header value.
+     */
     val contentType: String,
+    /**
+     * The HTML body of the response.
+     */
     val html: String,
+    /**
+     * The size of the response body in bytes.
+     */
     val bodySize: Long,
+    /**
+     * Extracted metadata from the page.
+     */
     val metadata: PageMetadata,
+    /**
+     * Links found on the page.
+     */
     val links: List<LinkInfo>,
+    /**
+     * Images found on the page.
+     */
     val images: List<ImageInfo>,
+    /**
+     * Feed links found on the page.
+     */
     val feeds: List<FeedInfo>,
+    /**
+     * JSON-LD entries found on the page.
+     */
     val jsonLd: List<JsonLdEntry>,
+    /**
+     * Whether the URL is allowed by robots.txt.
+     */
     val isAllowed: Boolean,
+    /**
+     * The crawl delay from robots.txt, in seconds.
+     */
     val crawlDelay: Long?,
+    /**
+     * Whether a noindex directive was detected.
+     */
     val noindexDetected: Boolean,
+    /**
+     * Whether a nofollow directive was detected.
+     */
     val nofollowDetected: Boolean,
+    /**
+     * The X-Robots-Tag header value, if present.
+     */
     val xRobotsTag: String?,
+    /**
+     * Whether the content is a PDF.
+     */
     val isPdf: Boolean,
+    /**
+     * Whether the page was skipped (binary or PDF content).
+     */
     val wasSkipped: Boolean,
+    /**
+     * The detected character set encoding.
+     */
     val detectedCharset: String?,
+    /**
+     * Whether an authentication header was sent with the request.
+     */
     val authHeaderSent: Boolean,
+    /**
+     * Response metadata extracted from HTTP headers.
+     */
     val responseMeta: ResponseMeta?,
+    /**
+     * Downloaded assets from the page.
+     */
     val assets: List<DownloadedAsset>,
+    /**
+     * Whether the page content suggests JavaScript rendering is needed.
+     */
     val jsRenderHint: Boolean,
+    /**
+     * Whether the browser fallback was used to fetch this page.
+     */
     val browserUsed: Boolean,
+    /**
+     * Markdown conversion of the page content.
+     */
     val markdown: MarkdownResult?,
+    /**
+     * Structured data extracted by LLM. Populated when extraction is configured.
+     */
     val extractedData: String?,
+    /**
+     * Metadata about the LLM extraction pass (cost, tokens, model).
+     */
     val extractionMeta: ExtractionMeta?,
+    /**
+     * Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.
+     */
     val screenshot: ByteArray?,
-    val downloadedDocument: DownloadedDocument?
+    /**
+     * Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
+     */
+    val downloadedDocument: DownloadedDocument?,
 )

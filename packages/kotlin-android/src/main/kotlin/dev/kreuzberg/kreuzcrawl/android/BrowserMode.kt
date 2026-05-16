@@ -6,7 +6,18 @@ package dev.kreuzberg.kreuzcrawl.android
  * When to use the headless browser fallback.
  */
 enum class BrowserMode {
+    /**
+     * Automatically detect when JS rendering is needed and fall back to browser.
+     */
     AUTO,
+
+    /**
+     * Always use the browser for every request.
+     */
     ALWAYS,
-    NEVER;
+
+    /**
+     * Never use the browser fallback.
+     */
+    NEVER,
 }

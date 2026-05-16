@@ -31,7 +31,7 @@ inline fn _first_error(comptime E: type) E {
 }
 
 /// Errors that can occur during crawling, scraping, or mapping operations.
-pub const CrawlError = error {
+pub const CrawlError = error{
     NotFound,
     Unauthorized,
     Forbidden,
@@ -54,17 +54,25 @@ pub const CrawlError = error {
 
 /// Metadata about an LLM extraction pass.
 pub const ExtractionMeta = struct {
+    /// Estimated cost of the LLM call in USD.
     cost: ?f64,
+    /// Number of prompt (input) tokens consumed.
     prompt_tokens: ?u64,
+    /// Number of completion (output) tokens generated.
     completion_tokens: ?u64,
+    /// The model identifier used for extraction.
     model: ?[]const u8,
+    /// Number of content chunks sent to the LLM.
     chunks_processed: u64,
 };
 
 /// Proxy configuration for HTTP requests.
 pub const ProxyConfig = struct {
+    /// Proxy URL (e.g. "http://proxy:8080", "socks5://proxy:1080").
     url: []const u8,
+    /// Optional username for proxy authentication.
     username: ?[]const u8,
+    /// Optional password for proxy authentication.
     password: ?[]const u8,
 };
 
@@ -74,67 +82,139 @@ pub const ProxyConfig = struct {
 /// html-to-markdown-rs as the conversion engine for all formats
 /// (markdown, plain text, djot).
 pub const ContentConfig = struct {
+    /// Output format: `"markdown"` (default), `"plain"`, `"djot"`.
     output_format: []const u8,
+    /// Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`.
+    ///
+    /// - Minimal: only scripts/styles removed.
+    /// - Standard: also removes nav, nav-hinted headers/footers/asides, forms.
+    /// - Aggressive: removes all footers/asides unconditionally.
     preprocessing_preset: []const u8,
+    /// Remove navigation elements (nav, breadcrumbs, menus). Default: `true`.
     remove_navigation: bool,
+    /// Remove form elements. Default: `true`.
     remove_forms: bool,
+    /// HTML tag names to strip (render children only, remove the tag wrapper).
+    /// Default: `["noscript"]`.
     strip_tags: []const []const u8,
+    /// HTML tag names to preserve as raw HTML in output.
     preserve_tags: []const []const u8,
+    /// CSS selectors for elements to exclude entirely (element + all content).
+    ///
+    /// Unlike `strip_tags` (which removes the wrapper but keeps children),
+    /// excluded elements and all descendants are dropped. Supports CSS selectors:
+    /// `.class`, `#id`, `[attribute]`, compound selectors.
+    ///
+    /// Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]`
     exclude_selectors: []const []const u8,
+    /// Skip image elements in output. Default: `false`.
     skip_images: bool,
+    /// Max DOM traversal depth. Prevents stack overflow on deeply nested HTML.
     max_depth: ?u64,
+    /// Enable line wrapping. Default: `false`.
     wrap: bool,
+    /// Wrap width when `wrap` is enabled. Default: `80`.
     wrap_width: u64,
+    /// Include document structure tree in output. Default: `true`.
     include_document_structure: bool,
 };
 
 /// Browser fallback configuration.
 pub const BrowserConfig = struct {
+    /// When to use the headless browser fallback.
     mode: BrowserMode,
+    /// CDP WebSocket endpoint for connecting to an external browser instance.
     endpoint: ?[]const u8,
+    /// Timeout for browser page load and rendering (in milliseconds when serialized).
     timeout: i64,
+    /// Wait strategy after browser navigation.
     wait: BrowserWait,
+    /// CSS selector to wait for when `wait` is `Selector`.
     wait_selector: ?[]const u8,
+    /// Extra time to wait after the wait condition is met.
     extra_wait: ?i64,
 };
 
 /// Configuration for crawl, scrape, and map operations.
 pub const CrawlConfig = struct {
+    /// Maximum crawl depth (number of link hops from the start URL).
     max_depth: ?u64,
+    /// Maximum number of pages to crawl.
     max_pages: ?u64,
+    /// Maximum number of concurrent requests.
     max_concurrent: ?u64,
+    /// Whether to respect robots.txt directives.
     respect_robots_txt: bool,
+    /// When true, HTTP-level error responses (404 NotFound, 403 Forbidden, WAF blocks)
+    /// are surfaced as `ScrapeResult` records with the matching `status_code` rather
+    /// than raised as `CrawlError`. Default `false` preserves the historical
+    /// throw-on-error contract for direct fetches. Independently of this flag,
+    /// 404s reached at the end of a redirect chain are *always* surfaced softly —
+    /// the user opted into redirect-following, so receiving a 404 there is part of
+    /// the normal flow rather than an unexpected error.
     soft_http_errors: bool,
+    /// Custom user-agent string.
     user_agent: ?[]const u8,
+    /// Whether to restrict crawling to the same domain.
     stay_on_domain: bool,
+    /// Whether to allow subdomains when `stay_on_domain` is true.
     allow_subdomains: bool,
+    /// Regex patterns for paths to include during crawling.
     include_paths: []const []const u8,
+    /// Regex patterns for paths to exclude during crawling.
     exclude_paths: []const []const u8,
+    /// Custom HTTP headers to send with each request.
     custom_headers: std.StringHashMap([]const u8),
+    /// Timeout for individual HTTP requests (in milliseconds when serialized).
     request_timeout: i64,
+    /// Per-domain rate limit in milliseconds. When set, enforces a minimum delay
+    /// between requests to the same domain. Defaults to 200ms when `null`.
     rate_limit_ms: ?u64,
+    /// Maximum number of redirects to follow.
     max_redirects: u64,
+    /// Number of retry attempts for failed requests.
     retry_count: u64,
+    /// HTTP status codes that should trigger a retry.
     retry_codes: []const u16,
+    /// Whether to enable cookie handling.
     cookies_enabled: bool,
+    /// Authentication configuration.
     auth: ?AuthConfig,
+    /// Maximum response body size in bytes.
     max_body_size: ?u64,
+    /// CSS selectors for tags to remove from HTML before processing.
     remove_tags: []const []const u8,
+    /// Content extraction and conversion configuration.
     content: ContentConfig,
+    /// Maximum number of URLs to return from a map operation.
     map_limit: ?u64,
+    /// Search filter for map results (case-insensitive substring match on URLs).
     map_search: ?[]const u8,
+    /// Whether to download assets (CSS, JS, images, etc.) from the page.
     download_assets: bool,
+    /// Filter for asset categories to download.
     asset_types: []const AssetCategory,
+    /// Maximum size in bytes for individual asset downloads.
     max_asset_size: ?u64,
+    /// Browser configuration.
     browser: BrowserConfig,
+    /// Proxy configuration for HTTP requests.
     proxy: ?ProxyConfig,
+    /// List of user-agent strings for rotation. If non-empty, overrides `user_agent`.
     user_agents: []const []const u8,
+    /// Whether to capture a screenshot when using the browser.
     capture_screenshot: bool,
+    /// Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them.
     download_documents: bool,
+    /// Maximum size in bytes for document downloads. Defaults to 50 MB.
     document_max_size: ?u64,
+    /// Allowlist of MIME types to download. If empty, uses built-in defaults.
     document_mime_types: []const []const u8,
+    /// Path to write WARC output. If `null`, WARC output is disabled.
     warc_output: ?[]const u8,
+    /// Named browser profile for persistent sessions (cookies, localStorage).
     browser_profile: ?[]const u8,
+    /// Whether to save changes back to the browser profile on exit.
     save_browser_profile: bool,
 };
 
@@ -144,242 +224,403 @@ pub const CrawlConfig = struct {
 /// enabled, it downloads the raw bytes and populates this struct instead of
 /// skipping the resource.
 pub const DownloadedDocument = struct {
+    /// The URL the document was fetched from.
     url: []const u8,
+    /// The MIME type from the Content-Type header.
     mime_type: []const u8,
+    /// Size of the document in bytes.
     size: u64,
+    /// Filename extracted from Content-Disposition or URL path.
     filename: ?[]const u8,
+    /// SHA-256 hex digest of the content.
     content_hash: []const u8,
+    /// Selected response headers.
     headers: std.StringHashMap([]const u8),
 };
 
 /// The result of a single-page scrape operation.
 pub const ScrapeResult = struct {
+    /// The HTTP status code of the response.
     status_code: u16,
+    /// The Content-Type header value.
     content_type: []const u8,
+    /// The HTML body of the response.
     html: []const u8,
+    /// The size of the response body in bytes.
     body_size: u64,
+    /// Extracted metadata from the page.
     metadata: PageMetadata,
+    /// Links found on the page.
     links: []const LinkInfo,
+    /// Images found on the page.
     images: []const ImageInfo,
+    /// Feed links found on the page.
     feeds: []const FeedInfo,
+    /// JSON-LD entries found on the page.
     json_ld: []const JsonLdEntry,
+    /// Whether the URL is allowed by robots.txt.
     is_allowed: bool,
+    /// The crawl delay from robots.txt, in seconds.
     crawl_delay: ?u64,
+    /// Whether a noindex directive was detected.
     noindex_detected: bool,
+    /// Whether a nofollow directive was detected.
     nofollow_detected: bool,
+    /// The X-Robots-Tag header value, if present.
     x_robots_tag: ?[]const u8,
+    /// Whether the content is a PDF.
     is_pdf: bool,
+    /// Whether the page was skipped (binary or PDF content).
     was_skipped: bool,
+    /// The detected character set encoding.
     detected_charset: ?[]const u8,
+    /// Whether an authentication header was sent with the request.
     auth_header_sent: bool,
+    /// Response metadata extracted from HTTP headers.
     response_meta: ?ResponseMeta,
+    /// Downloaded assets from the page.
     assets: []const DownloadedAsset,
+    /// Whether the page content suggests JavaScript rendering is needed.
     js_render_hint: bool,
+    /// Whether the browser fallback was used to fetch this page.
     browser_used: bool,
+    /// Markdown conversion of the page content.
     markdown: ?MarkdownResult,
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     extracted_data: ?[]const u8,
+    /// Metadata about the LLM extraction pass (cost, tokens, model).
     extraction_meta: ?ExtractionMeta,
+    /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     downloaded_document: ?DownloadedDocument,
 };
 
 /// The result of crawling a single page during a crawl operation.
 pub const CrawlPageResult = struct {
+    /// The original URL of the page.
     url: []const u8,
+    /// The normalized URL of the page.
     normalized_url: []const u8,
+    /// The HTTP status code of the response.
     status_code: u16,
+    /// The Content-Type header value.
     content_type: []const u8,
+    /// The HTML body of the response.
     html: []const u8,
+    /// The size of the response body in bytes.
     body_size: u64,
+    /// Extracted metadata from the page.
     metadata: PageMetadata,
+    /// Links found on the page.
     links: []const LinkInfo,
+    /// Images found on the page.
     images: []const ImageInfo,
+    /// Feed links found on the page.
     feeds: []const FeedInfo,
+    /// JSON-LD entries found on the page.
     json_ld: []const JsonLdEntry,
+    /// The depth of this page from the start URL.
     depth: u64,
+    /// Whether this page is on the same domain as the start URL.
     stayed_on_domain: bool,
+    /// Whether this page was skipped (binary or PDF content).
     was_skipped: bool,
+    /// Whether the content is a PDF.
     is_pdf: bool,
+    /// The detected character set encoding.
     detected_charset: ?[]const u8,
+    /// Markdown conversion of the page content.
     markdown: ?MarkdownResult,
+    /// Structured data extracted by LLM. Populated when extraction is configured.
     extracted_data: ?[]const u8,
+    /// Metadata about the LLM extraction pass (cost, tokens, model).
     extraction_meta: ?ExtractionMeta,
+    /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     downloaded_document: ?DownloadedDocument,
 };
 
 /// The result of a multi-page crawl operation.
 pub const CrawlResult = struct {
+    /// The list of crawled pages.
     pages: []const CrawlPageResult,
+    /// The final URL after following redirects.
     final_url: []const u8,
+    /// The number of redirects followed.
     redirect_count: u64,
+    /// Whether any page was skipped during crawling.
     was_skipped: bool,
+    /// An error message, if the crawl encountered an issue.
     error_: ?[]const u8,
+    /// Cookies collected during the crawl.
     cookies: []const CookieInfo,
+    /// Normalized URLs encountered during crawling (for deduplication counting).
     normalized_urls: []const []const u8,
 };
 
 /// A URL entry from a sitemap.
 pub const SitemapUrl = struct {
+    /// The URL.
     url: []const u8,
+    /// The last modification date, if present.
     lastmod: ?[]const u8,
+    /// The change frequency, if present.
     changefreq: ?[]const u8,
+    /// The priority, if present.
     priority: ?[]const u8,
 };
 
 /// The result of a map operation, containing discovered URLs.
 pub const MapResult = struct {
+    /// The list of discovered URLs.
     urls: []const SitemapUrl,
 };
 
 /// Rich markdown conversion result from HTML processing.
 pub const MarkdownResult = struct {
+    /// Converted markdown text.
     content: []const u8,
+    /// Structured document tree with semantic nodes.
     document_structure: ?[]const u8,
+    /// Extracted tables with structured cell data.
     tables: []const []const u8,
+    /// Non-fatal processing warnings.
     warnings: []const []const u8,
+    /// Content with links replaced by numbered citations.
     citations: ?CitationResult,
+    /// Content-filtered markdown optimized for LLM consumption.
     fit_content: ?[]const u8,
 };
 
 /// Information about a link found on a page.
 pub const LinkInfo = struct {
+    /// The resolved URL of the link.
     url: []const u8,
+    /// The visible text of the link.
     text: []const u8,
+    /// The classification of the link.
     link_type: LinkType,
+    /// The `rel` attribute value, if present.
     rel: ?[]const u8,
+    /// Whether the link has `rel="nofollow"`.
     nofollow: bool,
 };
 
 /// Information about an image found on a page.
 pub const ImageInfo = struct {
+    /// The image URL.
     url: []const u8,
+    /// The alt text, if present.
     alt: ?[]const u8,
+    /// The width attribute, if present and parseable.
     width: ?u32,
+    /// The height attribute, if present and parseable.
     height: ?u32,
+    /// The source of the image reference.
     source: ImageSource,
 };
 
 /// Information about a feed link found on a page.
 pub const FeedInfo = struct {
+    /// The feed URL.
     url: []const u8,
+    /// The feed title, if present.
     title: ?[]const u8,
+    /// The type of feed.
     feed_type: FeedType,
 };
 
 /// A JSON-LD structured data entry found on a page.
 pub const JsonLdEntry = struct {
+    /// The `@type` value from the JSON-LD object.
     schema_type: []const u8,
+    /// The `name` value, if present.
     name: ?[]const u8,
+    /// The raw JSON-LD string.
     raw: []const u8,
 };
 
 /// Information about an HTTP cookie received from a response.
 pub const CookieInfo = struct {
+    /// The cookie name.
     name: []const u8,
+    /// The cookie value.
     value: []const u8,
+    /// The cookie domain, if specified.
     domain: ?[]const u8,
+    /// The cookie path, if specified.
     path: ?[]const u8,
 };
 
 /// A downloaded asset from a page.
 pub const DownloadedAsset = struct {
+    /// The original URL of the asset.
     url: []const u8,
+    /// The SHA-256 content hash of the asset.
     content_hash: []const u8,
+    /// The MIME type from the Content-Type header.
     mime_type: ?[]const u8,
+    /// The size of the asset in bytes.
     size: u64,
+    /// The category of the asset.
     asset_category: AssetCategory,
+    /// The HTML tag that referenced this asset (e.g., "link", "script", "img").
     html_tag: ?[]const u8,
 };
 
 /// Article metadata extracted from `article:*` Open Graph tags.
 pub const ArticleMetadata = struct {
+    /// The article publication time.
     published_time: ?[]const u8,
+    /// The article modification time.
     modified_time: ?[]const u8,
+    /// The article author.
     author: ?[]const u8,
+    /// The article section.
     section: ?[]const u8,
+    /// The article tags.
     tags: []const []const u8,
 };
 
 /// An hreflang alternate link entry.
 pub const HreflangEntry = struct {
+    /// The language code (e.g., "en", "fr", "x-default").
     lang: []const u8,
+    /// The URL for this language variant.
     url: []const u8,
 };
 
 /// Information about a favicon or icon link.
 pub const FaviconInfo = struct {
+    /// The icon URL.
     url: []const u8,
+    /// The `rel` attribute (e.g., "icon", "apple-touch-icon").
     rel: []const u8,
+    /// The `sizes` attribute, if present.
     sizes: ?[]const u8,
+    /// The MIME type, if present.
     mime_type: ?[]const u8,
 };
 
 /// A heading element extracted from the page.
 pub const HeadingInfo = struct {
+    /// The heading level (1-6).
     level: u8,
+    /// The heading text content.
     text: []const u8,
 };
 
 /// Response metadata extracted from HTTP headers.
 pub const ResponseMeta = struct {
+    /// The ETag header value.
     etag: ?[]const u8,
+    /// The Last-Modified header value.
     last_modified: ?[]const u8,
+    /// The Cache-Control header value.
     cache_control: ?[]const u8,
+    /// The Server header value.
     server: ?[]const u8,
+    /// The X-Powered-By header value.
     x_powered_by: ?[]const u8,
+    /// The Content-Language header value.
     content_language: ?[]const u8,
+    /// The Content-Encoding header value.
     content_encoding: ?[]const u8,
 };
 
 /// Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 pub const PageMetadata = struct {
+    /// The page title from the `<title>` element.
     title: ?[]const u8,
+    /// The meta description.
     description: ?[]const u8,
+    /// The canonical URL from `<link rel="canonical">`.
     canonical_url: ?[]const u8,
+    /// Keywords from `<meta name="keywords">`.
     keywords: ?[]const u8,
+    /// Author from `<meta name="author">`.
     author: ?[]const u8,
+    /// Viewport content from `<meta name="viewport">`.
     viewport: ?[]const u8,
+    /// Theme color from `<meta name="theme-color">`.
     theme_color: ?[]const u8,
+    /// Generator from `<meta name="generator">`.
     generator: ?[]const u8,
+    /// Robots content from `<meta name="robots">`.
     robots: ?[]const u8,
+    /// The `lang` attribute from the `<html>` element.
     html_lang: ?[]const u8,
+    /// The `dir` attribute from the `<html>` element.
     html_dir: ?[]const u8,
+    /// Open Graph title.
     og_title: ?[]const u8,
+    /// Open Graph type.
     og_type: ?[]const u8,
+    /// Open Graph image URL.
     og_image: ?[]const u8,
+    /// Open Graph description.
     og_description: ?[]const u8,
+    /// Open Graph URL.
     og_url: ?[]const u8,
+    /// Open Graph site name.
     og_site_name: ?[]const u8,
+    /// Open Graph locale.
     og_locale: ?[]const u8,
+    /// Open Graph video URL.
     og_video: ?[]const u8,
+    /// Open Graph audio URL.
     og_audio: ?[]const u8,
+    /// Open Graph locale alternates.
     og_locale_alternates: ?[]const []const u8,
+    /// Twitter card type.
     twitter_card: ?[]const u8,
+    /// Twitter title.
     twitter_title: ?[]const u8,
+    /// Twitter description.
     twitter_description: ?[]const u8,
+    /// Twitter image URL.
     twitter_image: ?[]const u8,
+    /// Twitter site handle.
     twitter_site: ?[]const u8,
+    /// Twitter creator handle.
     twitter_creator: ?[]const u8,
+    /// Dublin Core title.
     dc_title: ?[]const u8,
+    /// Dublin Core creator.
     dc_creator: ?[]const u8,
+    /// Dublin Core subject.
     dc_subject: ?[]const u8,
+    /// Dublin Core description.
     dc_description: ?[]const u8,
+    /// Dublin Core publisher.
     dc_publisher: ?[]const u8,
+    /// Dublin Core date.
     dc_date: ?[]const u8,
+    /// Dublin Core type.
     dc_type: ?[]const u8,
+    /// Dublin Core format.
     dc_format: ?[]const u8,
+    /// Dublin Core identifier.
     dc_identifier: ?[]const u8,
+    /// Dublin Core language.
     dc_language: ?[]const u8,
+    /// Dublin Core rights.
     dc_rights: ?[]const u8,
+    /// Article metadata from `article:*` Open Graph tags.
     article: ?ArticleMetadata,
+    /// Hreflang alternate links.
     hreflangs: ?[]const HreflangEntry,
+    /// Favicon and icon links.
     favicons: ?[]const FaviconInfo,
+    /// Heading elements (h1-h6).
     headings: ?[]const HeadingInfo,
+    /// Computed word count of the page body text.
     word_count: ?u64,
 };
 
 /// Result of citation conversion.
 pub const CitationResult = struct {
+    /// Markdown with links replaced by numbered citations.
     content: []const u8,
+    /// Numbered reference list: (index, url, text).
     references: []const CitationReference,
 };
 
@@ -391,39 +632,54 @@ pub const CitationReference = struct {
 
 /// Result from a single URL in a batch scrape operation.
 pub const BatchScrapeResult = struct {
+    /// The URL that was scraped.
     url: []const u8,
+    /// The scrape result, if successful.
     result: ?ScrapeResult,
+    /// The error message, if the scrape failed.
     error_: ?[]const u8,
 };
 
 /// Result from a single URL in a batch crawl operation.
 pub const BatchCrawlResult = struct {
+    /// The seed URL that was crawled.
     url: []const u8,
+    /// The crawl result, if successful.
     result: ?CrawlResult,
+    /// The error message, if the crawl failed.
     error_: ?[]const u8,
 };
 
 /// When to use the headless browser fallback.
 pub const BrowserMode = enum {
+    /// Automatically detect when JS rendering is needed and fall back to browser.
     auto,
+    /// Always use the browser for every request.
     always,
+    /// Never use the browser fallback.
     never,
 };
 
 /// Wait strategy for browser page rendering.
 pub const BrowserWait = enum {
+    /// Wait until network activity is idle.
     network_idle,
+    /// Wait for a specific CSS selector to appear in the DOM.
     selector,
+    /// Wait for a fixed duration after navigation.
     fixed,
 };
 
 /// Authentication configuration.
 pub const AuthConfig = union(enum) {
+    /// HTTP Basic authentication.
     basic: struct {
         username: []const u8,
         password: []const u8,
     },
+    /// Bearer token authentication.
     bearer: []const u8,
+    /// Custom authentication header.
     header: struct {
         name: []const u8,
         value: []const u8,
@@ -432,49 +688,68 @@ pub const AuthConfig = union(enum) {
 
 /// The classification of a link.
 pub const LinkType = enum {
+    /// A link to the same domain.
     internal,
+    /// A link to a different domain.
     external,
+    /// A fragment-only link (e.g., `#section`).
     anchor,
+    /// A link to a downloadable document (PDF, DOC, etc.).
     document,
 };
 
 /// The source of an image reference.
 pub const ImageSource = enum {
+    /// An `<img>` tag.
     img,
+    /// A `<source>` tag inside `<picture>`.
     picture_source,
-    og:image,
-    twitter:image,
+    /// An `og:image` meta tag.
+    og: image,
+    /// A `twitter:image` meta tag.
+    twitter: image,
 };
 
 /// The type of a feed (RSS, Atom, or JSON Feed).
 pub const FeedType = enum {
+    /// RSS feed.
     rss,
+    /// Atom feed.
     atom,
+    /// JSON Feed.
     json_feed,
 };
 
 /// The category of a downloaded asset.
 pub const AssetCategory = enum {
+    /// A document file (PDF, DOC, etc.).
     document,
+    /// An image file.
     image,
+    /// An audio file.
     audio,
+    /// A video file.
     video,
+    /// A font file.
     font,
+    /// A CSS stylesheet.
     stylesheet,
+    /// A JavaScript file.
     script,
+    /// An archive file (ZIP, TAR, etc.).
     archive,
+    /// A data file (JSON, XML, CSV, etc.).
     data,
+    /// An unrecognized asset type.
     other,
 };
 
 /// Scrape a single URL, returning extracted page data.
 pub fn scrape(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
-    const url_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{url}, 0);
+    const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
     defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_scrape(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
@@ -490,18 +765,15 @@ pub fn scrape(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
         const slice = std.mem.sliceTo(_json_ptr, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         break :blk owned;
-    }
-;
+    };
 }
 
 /// Crawl a website starting from `url`, following links up to the configured depth.
 pub fn crawl(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
-    const url_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{url}, 0);
+    const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
     defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_crawl(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
@@ -517,18 +789,15 @@ pub fn crawl(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
         const slice = std.mem.sliceTo(_json_ptr, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         break :blk owned;
-    }
-;
+    };
 }
 
 /// Discover all pages on a website by following links and sitemaps.
 pub fn map_urls(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
-    const url_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{url}, 0);
+    const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
     defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_map_urls(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
@@ -544,19 +813,16 @@ pub fn map_urls(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
         const slice = std.mem.sliceTo(_json_ptr, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         break :blk owned;
-    }
-;
+    };
 }
 
 /// Scrape multiple URLs concurrently.
 pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     // Vec/Map parameters are passed as JSON strings across the FFI boundary.
-    const urls_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{urls}, 0);
+    const urls_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{urls}, 0);
     defer std.heap.c_allocator.free(urls_z);
     const _result = c.kcrawl_batch_scrape(engine_handle, urls_z);
     const _result_len = c.kcrawl_batch_scrape_len(engine_handle, urls_z);
@@ -576,13 +842,11 @@ pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
 
 /// Crawl multiple seed URLs concurrently, each following links to configured depth.
 pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     // Vec/Map parameters are passed as JSON strings across the FFI boundary.
-    const urls_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{urls}, 0);
+    const urls_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{urls}, 0);
     defer std.heap.c_allocator.free(urls_z);
     const _result = c.kcrawl_batch_crawl(engine_handle, urls_z);
     const _result_len = c.kcrawl_batch_crawl_len(engine_handle, urls_z);

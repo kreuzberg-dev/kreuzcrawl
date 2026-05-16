@@ -10,11 +10,32 @@ package dev.kreuzberg.kreuzcrawl.android
  * skipping the resource.
  */
 data class DownloadedDocument(
+    /**
+     * The URL the document was fetched from.
+     */
     val url: String,
+    /**
+     * The MIME type from the Content-Type header.
+     */
     val mimeType: String,
+    /**
+     * Raw document bytes. Skipped during JSON serialization.
+     */
     val content: ByteArray,
+    /**
+     * Size of the document in bytes.
+     */
     val size: Long,
+    /**
+     * Filename extracted from Content-Disposition or URL path.
+     */
     val filename: String?,
+    /**
+     * SHA-256 hex digest of the content.
+     */
     val contentHash: String,
-    val headers: Map<String, String>
+    /**
+     * Selected response headers.
+     */
+    val headers: Map<String, String>,
 )

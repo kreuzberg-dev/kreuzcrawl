@@ -6,24 +6,84 @@ package dev.kreuzberg.kreuzcrawl.android
  * The result of crawling a single page during a crawl operation.
  */
 data class CrawlPageResult(
+    /**
+     * The original URL of the page.
+     */
     val url: String,
+    /**
+     * The normalized URL of the page.
+     */
     val normalizedUrl: String,
+    /**
+     * The HTTP status code of the response.
+     */
     val statusCode: Short,
+    /**
+     * The Content-Type header value.
+     */
     val contentType: String,
+    /**
+     * The HTML body of the response.
+     */
     val html: String,
+    /**
+     * The size of the response body in bytes.
+     */
     val bodySize: Long,
+    /**
+     * Extracted metadata from the page.
+     */
     val metadata: PageMetadata,
+    /**
+     * Links found on the page.
+     */
     val links: List<LinkInfo>,
+    /**
+     * Images found on the page.
+     */
     val images: List<ImageInfo>,
+    /**
+     * Feed links found on the page.
+     */
     val feeds: List<FeedInfo>,
+    /**
+     * JSON-LD entries found on the page.
+     */
     val jsonLd: List<JsonLdEntry>,
+    /**
+     * The depth of this page from the start URL.
+     */
     val depth: Long,
+    /**
+     * Whether this page is on the same domain as the start URL.
+     */
     val stayedOnDomain: Boolean,
+    /**
+     * Whether this page was skipped (binary or PDF content).
+     */
     val wasSkipped: Boolean,
+    /**
+     * Whether the content is a PDF.
+     */
     val isPdf: Boolean,
+    /**
+     * The detected character set encoding.
+     */
     val detectedCharset: String?,
+    /**
+     * Markdown conversion of the page content.
+     */
     val markdown: MarkdownResult?,
+    /**
+     * Structured data extracted by LLM. Populated when extraction is configured.
+     */
     val extractedData: String?,
+    /**
+     * Metadata about the LLM extraction pass (cost, tokens, model).
+     */
     val extractionMeta: ExtractionMeta?,
-    val downloadedDocument: DownloadedDocument?
+    /**
+     * Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
+     */
+    val downloadedDocument: DownloadedDocument?,
 )
