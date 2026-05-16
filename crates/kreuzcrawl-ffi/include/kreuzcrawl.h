@@ -2710,6 +2710,18 @@ char *kcrawl_batch_scrape(const KCRAWLCrawlEngineHandle *engine,
                           const char *urls);
 
 /**
+ * Return the byte length of the C string that `kcrawl_batch_scrape` would return
+ * for the same arguments, without allocating.  Returns 0 when the underlying value is
+ * None or an error occurs.  Enables safe slice construction in Zig and Java FFM Panama
+ * without a NUL-scan.
+ *
+ * # Safety
+ * All pointer parameters obey the same validity rules as `kcrawl_batch_scrape`.
+ */
+uintptr_t kcrawl_batch_scrape_len(const KCRAWLCrawlEngineHandle *engine,
+                                  const char *urls);
+
+/**
  * Crawl multiple seed URLs concurrently, each following links to configured depth.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
@@ -2717,5 +2729,17 @@ char *kcrawl_batch_scrape(const KCRAWLCrawlEngineHandle *engine,
  */
 char *kcrawl_batch_crawl(const KCRAWLCrawlEngineHandle *engine,
                          const char *urls);
+
+/**
+ * Return the byte length of the C string that `kcrawl_batch_crawl` would return
+ * for the same arguments, without allocating.  Returns 0 when the underlying value is
+ * None or an error occurs.  Enables safe slice construction in Zig and Java FFM Panama
+ * without a NUL-scan.
+ *
+ * # Safety
+ * All pointer parameters obey the same validity rules as `kcrawl_batch_crawl`.
+ */
+uintptr_t kcrawl_batch_crawl_len(const KCRAWLCrawlEngineHandle *engine,
+                                 const char *urls);
 
 #endif  /* KCRAWL_H */

@@ -2,7 +2,12 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
-/** JNI-backed wrapper holding a native `CrawlEngineHandle` handle. */
+/**
+ * Opaque handle to a configured crawl engine.
+ *
+ * Constructed via `create_engine` with an optional `CrawlConfig`.
+ * Default implementations for all pluggable components are used internally.
+ */
 class CrawlEngineHandle internal constructor(internal val handle: Long) : AutoCloseable {
     override fun close() {
         KreuzcrawlBridge.nativeFreeCrawlEngineHandle(handle)

@@ -31,7 +31,7 @@ inline fn _first_error(comptime E: type) E {
 }
 
 /// Errors that can occur during crawling, scraping, or mapping operations.
-pub const CrawlError = error {
+pub const CrawlError = error{
     NotFound,
     Unauthorized,
     Forbidden,
@@ -57,15 +57,15 @@ pub const ExtractionMeta = struct {
     cost: ?f64,
     prompt_tokens: ?u64,
     completion_tokens: ?u64,
-    model: ?[:0]const u8,
+    model: ?[]const u8,
     chunks_processed: u64,
 };
 
 /// Proxy configuration for HTTP requests.
 pub const ProxyConfig = struct {
-    url: [:0]const u8,
-    username: ?[:0]const u8,
-    password: ?[:0]const u8,
+    url: []const u8,
+    username: ?[]const u8,
+    password: ?[]const u8,
 };
 
 /// Content extraction and conversion configuration.
@@ -74,13 +74,13 @@ pub const ProxyConfig = struct {
 /// html-to-markdown-rs as the conversion engine for all formats
 /// (markdown, plain text, djot).
 pub const ContentConfig = struct {
-    output_format: [:0]const u8,
-    preprocessing_preset: [:0]const u8,
+    output_format: []const u8,
+    preprocessing_preset: []const u8,
     remove_navigation: bool,
     remove_forms: bool,
-    strip_tags: []const [:0]const u8,
-    preserve_tags: []const [:0]const u8,
-    exclude_selectors: []const [:0]const u8,
+    strip_tags: []const []const u8,
+    preserve_tags: []const []const u8,
+    exclude_selectors: []const []const u8,
     skip_images: bool,
     max_depth: ?u64,
     wrap: bool,
@@ -91,10 +91,10 @@ pub const ContentConfig = struct {
 /// Browser fallback configuration.
 pub const BrowserConfig = struct {
     mode: BrowserMode,
-    endpoint: ?[:0]const u8,
+    endpoint: ?[]const u8,
     timeout: i64,
     wait: BrowserWait,
-    wait_selector: ?[:0]const u8,
+    wait_selector: ?[]const u8,
     extra_wait: ?i64,
 };
 
@@ -105,12 +105,12 @@ pub const CrawlConfig = struct {
     max_concurrent: ?u64,
     respect_robots_txt: bool,
     soft_http_errors: bool,
-    user_agent: ?[:0]const u8,
+    user_agent: ?[]const u8,
     stay_on_domain: bool,
     allow_subdomains: bool,
-    include_paths: []const [:0]const u8,
-    exclude_paths: []const [:0]const u8,
-    custom_headers: std.StringHashMap([:0]const u8),
+    include_paths: []const []const u8,
+    exclude_paths: []const []const u8,
+    custom_headers: std.StringHashMap([]const u8),
     request_timeout: i64,
     rate_limit_ms: ?u64,
     max_redirects: u64,
@@ -119,22 +119,22 @@ pub const CrawlConfig = struct {
     cookies_enabled: bool,
     auth: ?AuthConfig,
     max_body_size: ?u64,
-    remove_tags: []const [:0]const u8,
+    remove_tags: []const []const u8,
     content: ContentConfig,
     map_limit: ?u64,
-    map_search: ?[:0]const u8,
+    map_search: ?[]const u8,
     download_assets: bool,
     asset_types: []const AssetCategory,
     max_asset_size: ?u64,
     browser: BrowserConfig,
     proxy: ?ProxyConfig,
-    user_agents: []const [:0]const u8,
+    user_agents: []const []const u8,
     capture_screenshot: bool,
     download_documents: bool,
     document_max_size: ?u64,
-    document_mime_types: []const [:0]const u8,
-    warc_output: ?[:0]const u8,
-    browser_profile: ?[:0]const u8,
+    document_mime_types: []const []const u8,
+    warc_output: ?[]const u8,
+    browser_profile: ?[]const u8,
     save_browser_profile: bool,
 };
 
@@ -144,19 +144,19 @@ pub const CrawlConfig = struct {
 /// enabled, it downloads the raw bytes and populates this struct instead of
 /// skipping the resource.
 pub const DownloadedDocument = struct {
-    url: [:0]const u8,
-    mime_type: [:0]const u8,
+    url: []const u8,
+    mime_type: []const u8,
     size: u64,
-    filename: ?[:0]const u8,
-    content_hash: [:0]const u8,
-    headers: std.StringHashMap([:0]const u8),
+    filename: ?[]const u8,
+    content_hash: []const u8,
+    headers: std.StringHashMap([]const u8),
 };
 
 /// The result of a single-page scrape operation.
 pub const ScrapeResult = struct {
     status_code: u16,
-    content_type: [:0]const u8,
-    html: [:0]const u8,
+    content_type: []const u8,
+    html: []const u8,
     body_size: u64,
     metadata: PageMetadata,
     links: []const LinkInfo,
@@ -167,28 +167,28 @@ pub const ScrapeResult = struct {
     crawl_delay: ?u64,
     noindex_detected: bool,
     nofollow_detected: bool,
-    x_robots_tag: ?[:0]const u8,
+    x_robots_tag: ?[]const u8,
     is_pdf: bool,
     was_skipped: bool,
-    detected_charset: ?[:0]const u8,
+    detected_charset: ?[]const u8,
     auth_header_sent: bool,
     response_meta: ?ResponseMeta,
     assets: []const DownloadedAsset,
     js_render_hint: bool,
     browser_used: bool,
     markdown: ?MarkdownResult,
-    extracted_data: ?[:0]const u8,
+    extracted_data: ?[]const u8,
     extraction_meta: ?ExtractionMeta,
     downloaded_document: ?DownloadedDocument,
 };
 
 /// The result of crawling a single page during a crawl operation.
 pub const CrawlPageResult = struct {
-    url: [:0]const u8,
-    normalized_url: [:0]const u8,
+    url: []const u8,
+    normalized_url: []const u8,
     status_code: u16,
-    content_type: [:0]const u8,
-    html: [:0]const u8,
+    content_type: []const u8,
+    html: []const u8,
     body_size: u64,
     metadata: PageMetadata,
     links: []const LinkInfo,
@@ -199,9 +199,9 @@ pub const CrawlPageResult = struct {
     stayed_on_domain: bool,
     was_skipped: bool,
     is_pdf: bool,
-    detected_charset: ?[:0]const u8,
+    detected_charset: ?[]const u8,
     markdown: ?MarkdownResult,
-    extracted_data: ?[:0]const u8,
+    extracted_data: ?[]const u8,
     extraction_meta: ?ExtractionMeta,
     downloaded_document: ?DownloadedDocument,
 };
@@ -209,20 +209,20 @@ pub const CrawlPageResult = struct {
 /// The result of a multi-page crawl operation.
 pub const CrawlResult = struct {
     pages: []const CrawlPageResult,
-    final_url: [:0]const u8,
+    final_url: []const u8,
     redirect_count: u64,
     was_skipped: bool,
-    error_: ?[:0]const u8,
+    error_: ?[]const u8,
     cookies: []const CookieInfo,
-    normalized_urls: []const [:0]const u8,
+    normalized_urls: []const []const u8,
 };
 
 /// A URL entry from a sitemap.
 pub const SitemapUrl = struct {
-    url: [:0]const u8,
-    lastmod: ?[:0]const u8,
-    changefreq: ?[:0]const u8,
-    priority: ?[:0]const u8,
+    url: []const u8,
+    lastmod: ?[]const u8,
+    changefreq: ?[]const u8,
+    priority: ?[]const u8,
 };
 
 /// The result of a map operation, containing discovered URLs.
@@ -232,27 +232,27 @@ pub const MapResult = struct {
 
 /// Rich markdown conversion result from HTML processing.
 pub const MarkdownResult = struct {
-    content: [:0]const u8,
-    document_structure: ?[:0]const u8,
-    tables: []const [:0]const u8,
-    warnings: []const [:0]const u8,
+    content: []const u8,
+    document_structure: ?[]const u8,
+    tables: []const []const u8,
+    warnings: []const []const u8,
     citations: ?CitationResult,
-    fit_content: ?[:0]const u8,
+    fit_content: ?[]const u8,
 };
 
 /// Information about a link found on a page.
 pub const LinkInfo = struct {
-    url: [:0]const u8,
-    text: [:0]const u8,
+    url: []const u8,
+    text: []const u8,
     link_type: LinkType,
-    rel: ?[:0]const u8,
+    rel: ?[]const u8,
     nofollow: bool,
 };
 
 /// Information about an image found on a page.
 pub const ImageInfo = struct {
-    url: [:0]const u8,
-    alt: ?[:0]const u8,
+    url: []const u8,
+    alt: ?[]const u8,
     width: ?u32,
     height: ?u32,
     source: ImageSource,
@@ -260,116 +260,116 @@ pub const ImageInfo = struct {
 
 /// Information about a feed link found on a page.
 pub const FeedInfo = struct {
-    url: [:0]const u8,
-    title: ?[:0]const u8,
+    url: []const u8,
+    title: ?[]const u8,
     feed_type: FeedType,
 };
 
 /// A JSON-LD structured data entry found on a page.
 pub const JsonLdEntry = struct {
-    schema_type: [:0]const u8,
-    name: ?[:0]const u8,
-    raw: [:0]const u8,
+    schema_type: []const u8,
+    name: ?[]const u8,
+    raw: []const u8,
 };
 
 /// Information about an HTTP cookie received from a response.
 pub const CookieInfo = struct {
-    name: [:0]const u8,
-    value: [:0]const u8,
-    domain: ?[:0]const u8,
-    path: ?[:0]const u8,
+    name: []const u8,
+    value: []const u8,
+    domain: ?[]const u8,
+    path: ?[]const u8,
 };
 
 /// A downloaded asset from a page.
 pub const DownloadedAsset = struct {
-    url: [:0]const u8,
-    content_hash: [:0]const u8,
-    mime_type: ?[:0]const u8,
+    url: []const u8,
+    content_hash: []const u8,
+    mime_type: ?[]const u8,
     size: u64,
     asset_category: AssetCategory,
-    html_tag: ?[:0]const u8,
+    html_tag: ?[]const u8,
 };
 
 /// Article metadata extracted from `article:*` Open Graph tags.
 pub const ArticleMetadata = struct {
-    published_time: ?[:0]const u8,
-    modified_time: ?[:0]const u8,
-    author: ?[:0]const u8,
-    section: ?[:0]const u8,
-    tags: []const [:0]const u8,
+    published_time: ?[]const u8,
+    modified_time: ?[]const u8,
+    author: ?[]const u8,
+    section: ?[]const u8,
+    tags: []const []const u8,
 };
 
 /// An hreflang alternate link entry.
 pub const HreflangEntry = struct {
-    lang: [:0]const u8,
-    url: [:0]const u8,
+    lang: []const u8,
+    url: []const u8,
 };
 
 /// Information about a favicon or icon link.
 pub const FaviconInfo = struct {
-    url: [:0]const u8,
-    rel: [:0]const u8,
-    sizes: ?[:0]const u8,
-    mime_type: ?[:0]const u8,
+    url: []const u8,
+    rel: []const u8,
+    sizes: ?[]const u8,
+    mime_type: ?[]const u8,
 };
 
 /// A heading element extracted from the page.
 pub const HeadingInfo = struct {
     level: u8,
-    text: [:0]const u8,
+    text: []const u8,
 };
 
 /// Response metadata extracted from HTTP headers.
 pub const ResponseMeta = struct {
-    etag: ?[:0]const u8,
-    last_modified: ?[:0]const u8,
-    cache_control: ?[:0]const u8,
-    server: ?[:0]const u8,
-    x_powered_by: ?[:0]const u8,
-    content_language: ?[:0]const u8,
-    content_encoding: ?[:0]const u8,
+    etag: ?[]const u8,
+    last_modified: ?[]const u8,
+    cache_control: ?[]const u8,
+    server: ?[]const u8,
+    x_powered_by: ?[]const u8,
+    content_language: ?[]const u8,
+    content_encoding: ?[]const u8,
 };
 
 /// Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 pub const PageMetadata = struct {
-    title: ?[:0]const u8,
-    description: ?[:0]const u8,
-    canonical_url: ?[:0]const u8,
-    keywords: ?[:0]const u8,
-    author: ?[:0]const u8,
-    viewport: ?[:0]const u8,
-    theme_color: ?[:0]const u8,
-    generator: ?[:0]const u8,
-    robots: ?[:0]const u8,
-    html_lang: ?[:0]const u8,
-    html_dir: ?[:0]const u8,
-    og_title: ?[:0]const u8,
-    og_type: ?[:0]const u8,
-    og_image: ?[:0]const u8,
-    og_description: ?[:0]const u8,
-    og_url: ?[:0]const u8,
-    og_site_name: ?[:0]const u8,
-    og_locale: ?[:0]const u8,
-    og_video: ?[:0]const u8,
-    og_audio: ?[:0]const u8,
-    og_locale_alternates: ?[]const [:0]const u8,
-    twitter_card: ?[:0]const u8,
-    twitter_title: ?[:0]const u8,
-    twitter_description: ?[:0]const u8,
-    twitter_image: ?[:0]const u8,
-    twitter_site: ?[:0]const u8,
-    twitter_creator: ?[:0]const u8,
-    dc_title: ?[:0]const u8,
-    dc_creator: ?[:0]const u8,
-    dc_subject: ?[:0]const u8,
-    dc_description: ?[:0]const u8,
-    dc_publisher: ?[:0]const u8,
-    dc_date: ?[:0]const u8,
-    dc_type: ?[:0]const u8,
-    dc_format: ?[:0]const u8,
-    dc_identifier: ?[:0]const u8,
-    dc_language: ?[:0]const u8,
-    dc_rights: ?[:0]const u8,
+    title: ?[]const u8,
+    description: ?[]const u8,
+    canonical_url: ?[]const u8,
+    keywords: ?[]const u8,
+    author: ?[]const u8,
+    viewport: ?[]const u8,
+    theme_color: ?[]const u8,
+    generator: ?[]const u8,
+    robots: ?[]const u8,
+    html_lang: ?[]const u8,
+    html_dir: ?[]const u8,
+    og_title: ?[]const u8,
+    og_type: ?[]const u8,
+    og_image: ?[]const u8,
+    og_description: ?[]const u8,
+    og_url: ?[]const u8,
+    og_site_name: ?[]const u8,
+    og_locale: ?[]const u8,
+    og_video: ?[]const u8,
+    og_audio: ?[]const u8,
+    og_locale_alternates: ?[]const []const u8,
+    twitter_card: ?[]const u8,
+    twitter_title: ?[]const u8,
+    twitter_description: ?[]const u8,
+    twitter_image: ?[]const u8,
+    twitter_site: ?[]const u8,
+    twitter_creator: ?[]const u8,
+    dc_title: ?[]const u8,
+    dc_creator: ?[]const u8,
+    dc_subject: ?[]const u8,
+    dc_description: ?[]const u8,
+    dc_publisher: ?[]const u8,
+    dc_date: ?[]const u8,
+    dc_type: ?[]const u8,
+    dc_format: ?[]const u8,
+    dc_identifier: ?[]const u8,
+    dc_language: ?[]const u8,
+    dc_rights: ?[]const u8,
     article: ?ArticleMetadata,
     hreflangs: ?[]const HreflangEntry,
     favicons: ?[]const FaviconInfo,
@@ -379,28 +379,28 @@ pub const PageMetadata = struct {
 
 /// Result of citation conversion.
 pub const CitationResult = struct {
-    content: [:0]const u8,
+    content: []const u8,
     references: []const CitationReference,
 };
 
 pub const CitationReference = struct {
     index: u64,
-    url: [:0]const u8,
-    text: [:0]const u8,
+    url: []const u8,
+    text: []const u8,
 };
 
 /// Result from a single URL in a batch scrape operation.
 pub const BatchScrapeResult = struct {
-    url: [:0]const u8,
+    url: []const u8,
     result: ?ScrapeResult,
-    error_: ?[:0]const u8,
+    error_: ?[]const u8,
 };
 
 /// Result from a single URL in a batch crawl operation.
 pub const BatchCrawlResult = struct {
-    url: [:0]const u8,
+    url: []const u8,
     result: ?CrawlResult,
-    error_: ?[:0]const u8,
+    error_: ?[]const u8,
 };
 
 /// When to use the headless browser fallback.
@@ -420,13 +420,13 @@ pub const BrowserWait = enum {
 /// Authentication configuration.
 pub const AuthConfig = union(enum) {
     basic: struct {
-        username: [:0]const u8,
-        password: [:0]const u8,
+        username: []const u8,
+        password: []const u8,
     },
-    bearer: [:0]const u8,
+    bearer: []const u8,
     header: struct {
-        name: [:0]const u8,
-        value: [:0]const u8,
+        name: []const u8,
+        value: []const u8,
     },
 };
 
@@ -442,8 +442,8 @@ pub const LinkType = enum {
 pub const ImageSource = enum {
     img,
     picture_source,
-    og:image,
-    twitter:image,
+    og: image,
+    twitter: image,
 };
 
 /// The type of a feed (RSS, Atom, or JSON Feed).
@@ -469,12 +469,10 @@ pub const AssetCategory = enum {
 
 /// Scrape a single URL, returning extracted page data.
 pub fn scrape(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
-    const url_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{url}, 0);
+    const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
     defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_scrape(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
@@ -490,18 +488,15 @@ pub fn scrape(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
         const slice = std.mem.sliceTo(_json_ptr, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         break :blk owned;
-    }
-;
+    };
 }
 
 /// Crawl a website starting from `url`, following links up to the configured depth.
 pub fn crawl(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
-    const url_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{url}, 0);
+    const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
     defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_crawl(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
@@ -517,18 +512,15 @@ pub fn crawl(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
         const slice = std.mem.sliceTo(_json_ptr, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         break :blk owned;
-    }
-;
+    };
 }
 
 /// Discover all pages on a website by following links and sitemaps.
 pub fn map_urls(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
-    const url_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{url}, 0);
+    const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
     defer std.heap.c_allocator.free(url_z);
     const _result = c.kcrawl_map_urls(engine_handle, url_z);
     if (c.kcrawl_last_error_code() != 0) {
@@ -544,21 +536,19 @@ pub fn map_urls(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
         const slice = std.mem.sliceTo(_json_ptr, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         break :blk owned;
-    }
-;
+    };
 }
 
 /// Scrape multiple URLs concurrently.
 pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     // Vec/Map parameters are passed as JSON strings across the FFI boundary.
-    const urls_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{urls}, 0);
+    const urls_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{urls}, 0);
     defer std.heap.c_allocator.free(urls_z);
     const _result = c.kcrawl_batch_scrape(engine_handle, urls_z);
+    const _result_len = c.kcrawl_batch_scrape_len(engine_handle, urls_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
     }
@@ -566,7 +556,7 @@ pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
     return blk: {
-        const slice = std.mem.sliceTo(_result, 0);
+        const slice = _result[0.._result_len];
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         _free_string(_result);
         break :blk owned;
@@ -575,15 +565,14 @@ pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
 
 /// Crawl multiple seed URLs concurrently, each following links to configured depth.
 pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
-    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
     const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
     const engine_handle = c.kcrawl_create_engine(engine_config_handle);
     // Vec/Map parameters are passed as JSON strings across the FFI boundary.
-    const urls_z = try std.fmt.allocPrintSentinel(
-        std.heap.c_allocator, "{s}", .{urls}, 0);
+    const urls_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{urls}, 0);
     defer std.heap.c_allocator.free(urls_z);
     const _result = c.kcrawl_batch_crawl(engine_handle, urls_z);
+    const _result_len = c.kcrawl_batch_crawl_len(engine_handle, urls_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
     }
@@ -591,7 +580,7 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
     return blk: {
-        const slice = std.mem.sliceTo(_result, 0);
+        const slice = _result[0.._result_len];
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         _free_string(_result);
         break :blk owned;
