@@ -227,9 +227,11 @@ public enum CrawlError: Swift.Error {
 }
 
 // MARK: - From-JSON Helpers
-// Public wrappers forwarding RustBridge's swift_bridge-generated
-// `{TypeName}FromJson` helpers into this module's namespace.
+// Public helpers that decode JSON into first-class Swift types.
+// First-class struct types (Codable) use JSONDecoder directly.
+// Opaque RustBridge types forward to RustBridge.
 
 public func crawlConfigFromJson(_ json: String) throws -> CrawlConfig {
-  return try RustBridge.crawlConfigFromJson(json)
+  let data = json.data(using: .utf8) ?? Data()
+  return try JSONDecoder().decode(CrawlConfig.self, from: data)
 }

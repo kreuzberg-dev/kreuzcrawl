@@ -1100,8 +1100,8 @@ public class DownloadedDocument: DownloadedDocumentRefMut {
 }
 extension DownloadedDocument {
   public convenience init<GenericIntoRustString: IntoRustString>(
-    _ url: GenericIntoRustString, _ mime_type: GenericIntoRustString, _ content: RustVec<UInt8>,
-    _ size: UInt, _ filename: GenericIntoRustString?, _ content_hash: GenericIntoRustString,
+    _ url: GenericIntoRustString, _ mime_type: GenericIntoRustString, _ size: UInt,
+    _ filename: GenericIntoRustString?, _ content_hash: GenericIntoRustString,
     _ headers: GenericIntoRustString
   ) {
     self.init(
@@ -1115,11 +1115,6 @@ extension DownloadedDocument {
           let rustString = mime_type.intoRustString()
           rustString.isOwned = false
           return rustString.ptr
-        }(),
-        {
-          let val = content
-          val.isOwned = false
-          return val.ptr
         }(), size,
         {
           if let rustString = optionalStringIntoRustString(filename) {
@@ -1160,10 +1155,6 @@ extension DownloadedDocumentRef {
 
   public func mime_type() -> RustString {
     RustString(ptr: __swift_bridge__$DownloadedDocument$mime_type(ptr))
-  }
-
-  public func content() -> RustVec<UInt8> {
-    RustVec(ptr: __swift_bridge__$DownloadedDocument$content(ptr))
   }
 
   public func size() -> UInt {
@@ -1269,8 +1260,7 @@ extension ScrapeResult {
     _ detected_charset: GenericIntoRustString?, _ auth_header_sent: Bool,
     _ response_meta: ResponseMeta?, _ assets: RustVec<DownloadedAsset>, _ js_render_hint: Bool,
     _ browser_used: Bool, _ markdown: MarkdownResult?, _ extracted_data: GenericIntoRustString?,
-    _ extraction_meta: ExtractionMeta?, _ screenshot: RustVec<UInt8>?,
-    _ downloaded_document: DownloadedDocument?
+    _ extraction_meta: ExtractionMeta?, _ downloaded_document: DownloadedDocument?
   ) {
     self.init(
       ptr: __swift_bridge__$ScrapeResult$new(
@@ -1356,14 +1346,6 @@ extension ScrapeResult {
         }(),
         {
           if let val = extraction_meta {
-            val.isOwned = false
-            return val.ptr
-          } else {
-            return nil
-          }
-        }(),
-        {
-          if let val = screenshot {
             val.isOwned = false
             return val.ptr
           } else {
@@ -1508,13 +1490,6 @@ extension ScrapeResultRef {
     {
       let val = __swift_bridge__$ScrapeResult$extraction_meta(ptr)
       if val != nil { return ExtractionMeta(ptr: val!) } else { return nil }
-    }()
-  }
-
-  public func screenshot() -> RustVec<UInt8>? {
-    {
-      let val = __swift_bridge__$ScrapeResult$screenshot(ptr)
-      if val != nil { return RustVec(ptr: val!) } else { return nil }
     }()
   }
 
