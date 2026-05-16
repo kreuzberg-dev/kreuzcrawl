@@ -12,7 +12,7 @@ on:
       - ".textlintrc.json"
       - ".github/workflows/ci-docs.yaml"
       - "scripts/ci/docs/**"
-      - "tools/snippet-runner/**"
+      - "alef.toml"
   pull_request:
     branches: [main]
     paths:
@@ -24,7 +24,7 @@ on:
       - ".textlintrc.json"
       - ".github/workflows/ci-docs.yaml"
       - "scripts/ci/docs/**"
-      - "tools/snippet-runner/**"
+      - "alef.toml"
   workflow_dispatch:
 
 env:
@@ -101,23 +101,18 @@ jobs:
     name: Validate Snippets
     if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6.0.2
 
-      - name: Setup Rust
-        uses: kreuzberg-dev/actions/setup-rust@v1
-        with:
-          cache-key-prefix: validate-snippets
-          use-sccache: "true"
+      - name: Install alef CLI
+        uses: kreuzberg-dev/actions/install-alef@v1
 
-      - name: Setup Go
-        uses: actions/setup-go@v6.4.0
-        with:
-          go-version: "1.26"
-
-      - name: Build and run snippet validation
-        run: cargo run --release -p snippet-runner -- validate --snippets docs/snippets --reference docs/reference --level syntax --timeout 120
+      - name: Audit + gaps + validate snippets
+        run: |
+          alef snippets audit --snippets docs/snippets
+          alef snippets gaps
+          alef snippets validate --snippets docs/snippets
 
   deploy:
     name: Deploy

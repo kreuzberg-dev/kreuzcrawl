@@ -1,9 +1,7 @@
 ```javascript title="WASM"
-import init, { WasmCrawlConfig, crawl, createEngine, scrape } from "@kreuzberg/kreuzcrawl-wasm";
+import { CrawlConfig, crawl, createEngine, scrape } from "@kreuzberg/kreuzcrawl-wasm";
 
 async function main() {
-  await init();
-
   // Simplest case: scrape a single page with default settings.
   const engine = createEngine();
   const result = await scrape(engine, "https://example.com/");
@@ -12,7 +10,7 @@ async function main() {
   console.log(`Links found: ${result.links?.length ?? 0}`);
 
   // Crawl from a seed URL, limited to one hop and a handful of pages.
-  const config = new WasmCrawlConfig();
+  const config = new CrawlConfig();
   config.maxDepth = 1;
   config.maxPages = 5;
   const crawlEngine = createEngine(config);

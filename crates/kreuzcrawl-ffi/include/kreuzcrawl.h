@@ -301,9 +301,8 @@ uintptr_t kcrawl_content_config_wrap_width(const KCRAWLContentConfig *ptr);
 int32_t kcrawl_content_config_include_document_structure(const KCRAWLContentConfig *ptr);
 
 /**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 KCRAWLContentConfig *kcrawl_content_config_default(void);
 
@@ -373,9 +372,8 @@ char *kcrawl_browser_config_wait_selector(const KCRAWLBrowserConfig *ptr);
 uint64_t kcrawl_browser_config_extra_wait(const KCRAWLBrowserConfig *ptr);
 
 /**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 KCRAWLBrowserConfig *kcrawl_browser_config_default(void);
 
@@ -655,17 +653,15 @@ char *kcrawl_crawl_config_browser_profile(const KCRAWLCrawlConfig *ptr);
 int32_t kcrawl_crawl_config_save_browser_profile(const KCRAWLCrawlConfig *ptr);
 
 /**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 KCRAWLCrawlConfig *kcrawl_crawl_config_default(void);
 
 /**
  * Validate the configuration, returning an error if any values are invalid.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 int32_t kcrawl_crawl_config_validate(const KCRAWLCrawlConfig *this_);
 
@@ -1170,9 +1166,8 @@ char *kcrawl_crawl_result_normalized_urls(const KCRAWLCrawlResult *ptr);
 
 /**
  * Returns the count of unique normalized URLs encountered during crawling.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 uintptr_t kcrawl_crawl_result_unique_normalized_urls(const KCRAWLCrawlResult *this_);
 
@@ -2682,77 +2677,65 @@ char *kcrawl_asset_category_to_string(const KCRAWLAssetCategory *ptr);
  *
  * If `config` is `None`, uses [`CrawlConfig::default()`].
  * Returns an error if the configuration is invalid.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 KCRAWLCrawlEngineHandle *kcrawl_create_engine(const KCRAWLCrawlConfig *config);
 
 /**
  * Scrape a single URL, returning extracted page data.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 KCRAWLScrapeResult *kcrawl_scrape(const KCRAWLCrawlEngineHandle *engine,
                                   const char *url);
 
 /**
  * Crawl a website starting from `url`, following links up to the configured depth.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 KCRAWLCrawlResult *kcrawl_crawl(const KCRAWLCrawlEngineHandle *engine,
                                 const char *url);
 
 /**
  * Discover all pages on a website by following links and sitemaps.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 KCRAWLMapResult *kcrawl_map_urls(const KCRAWLCrawlEngineHandle *engine,
                                  const char *url);
 
 /**
  * Scrape multiple URLs concurrently.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 char *kcrawl_batch_scrape(const KCRAWLCrawlEngineHandle *engine,
                           const char *urls);
 
 /**
- * Return the byte length of the C string that `kcrawl_batch_scrape` would return
- * for the same arguments, without allocating.  Returns 0 when the underlying value is
- * None or an error occurs.  Enables safe slice construction in Zig and Java FFM Panama
- * without a NUL-scan.
- *
- * # Safety
- * All pointer parameters obey the same validity rules as `kcrawl_batch_scrape`.
+ * Return the byte length of the C string that `kcrawl_batch_scrape` would return for the same
+ * arguments, without allocating. Returns 0 when the underlying value is None or an error occurs.
+ * Enables safe slice construction in Zig and Java FFM Panama without a NUL-scan.
+ * \note SAFETY: All pointer parameters obey the same validity rules as `kcrawl_batch_scrape`.
  */
 uintptr_t kcrawl_batch_scrape_len(const KCRAWLCrawlEngineHandle *engine,
                                   const char *urls);
 
 /**
  * Crawl multiple seed URLs concurrently, each following links to configured depth.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
  */
 char *kcrawl_batch_crawl(const KCRAWLCrawlEngineHandle *engine,
                          const char *urls);
 
 /**
- * Return the byte length of the C string that `kcrawl_batch_crawl` would return
- * for the same arguments, without allocating.  Returns 0 when the underlying value is
- * None or an error occurs.  Enables safe slice construction in Zig and Java FFM Panama
- * without a NUL-scan.
- *
- * # Safety
- * All pointer parameters obey the same validity rules as `kcrawl_batch_crawl`.
+ * Return the byte length of the C string that `kcrawl_batch_crawl` would return for the same
+ * arguments, without allocating. Returns 0 when the underlying value is None or an error occurs.
+ * Enables safe slice construction in Zig and Java FFM Panama without a NUL-scan.
+ * \note SAFETY: All pointer parameters obey the same validity rules as `kcrawl_batch_crawl`.
  */
 uintptr_t kcrawl_batch_crawl_len(const KCRAWLCrawlEngineHandle *engine,
                                  const char *urls);

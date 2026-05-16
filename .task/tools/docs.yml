@@ -1,5 +1,9 @@
 version: "3"
 
+# Documentation build + lint + snippet workflows.
+# Snippet commands wrap `alef snippets` (the new alef-snippets crate that replaces
+# the deleted tools/snippet-runner). See `alef snippets <cmd> --help`.
+
 tasks:
   build:
     desc: Build documentation
@@ -25,3 +29,50 @@ tasks:
     desc: Lint prose with textlint
     cmds:
       - npx textlint 'docs/**/*.md'
+
+  # Snippet commands target docs/snippets — the canonical hand-written snippets
+  # consumed by mkdocs `--8<--` includes. The auto-generated docs/reference/ tree
+  # is alef-emitted API reference and is validated separately via `alef docs`.
+
+  snippets:list:
+    desc: List all documentation snippets discovered by alef
+    cmds:
+      - alef snippets list --snippets docs/snippets
+
+  snippets:list:lang:
+    desc: List snippets filtered to specific languages (LANGUAGES=rust,python)
+    requires:
+      vars: [LANGUAGES]
+    cmds:
+      - alef snippets list --snippets docs/snippets --languages {{.LANGUAGES}}
+
+  snippets:validate:
+    desc: Syntax-validate all docs/snippets entries via alef
+    cmds:
+      - alef snippets validate --snippets docs/snippets
+
+  snippets:validate:lang:
+    desc: Validate snippets for specific languages (LANGUAGES=rust,python LEVEL=syntax)
+    requires:
+      vars: [LANGUAGES]
+    vars:
+      LEVEL: '{{ .LEVEL | default "syntax" }}'
+    cmds:
+      - alef snippets validate --snippets docs/snippets --languages {{.LANGUAGES}} --level {{.LEVEL}}
+
+  snippets:gaps:
+    desc: Report unreferenced snippets + missing language variants
+    cmds:
+      - alef snippets gaps
+
+  snippets:audit:
+    desc: Audit snippet + markdown include structure under docs/snippets
+    cmds:
+      - alef snippets audit --snippets docs/snippets
+
+  snippets:all:
+    desc: Run audit + gaps + validate (canonical docs:snippets gate)
+    cmds:
+      - alef snippets audit --snippets docs/snippets
+      - alef snippets gaps
+      - alef snippets validate --snippets docs/snippets

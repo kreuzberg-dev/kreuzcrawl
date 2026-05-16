@@ -14,6 +14,7 @@ nav = [
 
     { "Get Started" = [
         { "Installation" = "getting-started/installation.md" },
+        { "Basic Usage" = "getting-started/basic_usage.md" },
         { "Quick Start" = "getting-started/quickstart.md" },
     ] },
 

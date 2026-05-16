@@ -60,8 +60,6 @@ includes:
     taskfile: .task/tools/docker.yml
   docs:
     taskfile: .task/tools/docs.yml
-  snippets:
-    taskfile: .task/workflows/snippets.yml
   benchmark:
     taskfile: .task/workflows/benchmark.yml
   _tools:
