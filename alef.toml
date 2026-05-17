@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.16.24"
+alef_version = "0.16.33"
 languages = [
   "python",
   "node",
@@ -53,6 +53,14 @@ command = "mvn -f packages/java/pom.xml -B -DskipTests -Dgpg.skip=true -Dskip.ru
 # so both pipelines agree.
 [workspace.format_overrides.elixir]
 command = "cd packages/elixir && mix format"
+
+# PHP is formatted by php-cs-fixer via prek with the project's
+# .php-cs-fixer.dist.php config (multi-line function signatures with trailing
+# commas). alef's default php emitter produces single-line signatures that
+# php-cs-fixer rewrites, breaking the embedded alef:hash. Run the project's
+# php-cs-fixer directly so both pipelines produce byte-identical output.
+[workspace.format_overrides.php]
+command = "cd packages/php && vendor/bin/php-cs-fixer fix src/ tests/"
 
 # ---------------------------------------------------------------------------
 # Version Sync
@@ -227,11 +235,6 @@ precondition = "command -v ruff >/dev/null 2>&1"
 before = "cd packages/python && uv sync"
 typecheck = "cd packages/python && uv run mypy ."
 
-[crates.lint.node]
-precondition = "command -v pnpm >/dev/null 2>&1"
-format = "pnpm dlx oxfmt packages/typescript/"
-check = "pnpm dlx oxlint packages/typescript/"
-
 [crates.lint.ruby]
 precondition = "command -v bundle >/dev/null 2>&1"
 before = "cd packages/ruby && bundle install"
@@ -260,11 +263,6 @@ check = "mvn -f packages/java/pom.xml spotless:check -q"
 precondition = "command -v dotnet >/dev/null 2>&1"
 format = "dotnet format packages/csharp/Kreuzcrawl.slnx"
 check = "dotnet format packages/csharp/Kreuzcrawl.slnx --verify-no-changes"
-
-[crates.lint.wasm]
-precondition = "command -v pnpm >/dev/null 2>&1"
-format = "pnpm dlx oxfmt packages/wasm/"
-check = "pnpm dlx oxlint packages/wasm/"
 
 [crates.lint.ffi]
 precondition = "test -d crates/kreuzcrawl-ffi/tests"
@@ -875,7 +873,7 @@ basic_usage = "getting-started/basic_usage.md"
 [crates.readme.languages.typescript]
 name = "TypeScript (Node.js)"
 template = "language_package.md"
-output_path = "packages/typescript/README.md"
+output_path = "crates/kreuzcrawl-node/README.md"
 package_manager = ["pnpm"]
 package_name = "@kreuzberg/kreuzcrawl"
 install_command = "pnpm add @kreuzberg/kreuzcrawl"

@@ -2381,19 +2381,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kreuzcrawl-e2e-generator"
-version = "0.3.0-rc.20"
-dependencies = [
- "anyhow",
- "camino",
- "clap",
- "itertools 0.14.0",
- "serde",
- "serde_json",
- "walkdir",
-]
-
-[[package]]
 name = "kreuzcrawl-ffi"
 version = "0.3.0-rc.20"
 dependencies = [
@@ -2467,6 +2454,7 @@ name = "kreuzcrawl-wasm"
 version = "0.3.0-rc.20"
 dependencies = [
  "futures-util",
+ "getrandom 0.3.4",
  "getrandom 0.4.2",
  "js-sys",
  "kreuzcrawl",
@@ -2714,18 +2702,6 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "mock-server"
-version = "0.3.0-rc.20"
-dependencies = [
- "axum",
- "clap",
- "serde",
- "serde_json",
- "tokio",
- "tracing-subscriber",
 ]
 
 [[package]]

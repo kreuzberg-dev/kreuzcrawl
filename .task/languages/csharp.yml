@@ -129,7 +129,7 @@ tasks:
   e2e:generate:
     desc: Generate and format C# E2E tests from fixtures
     cmds:
-      - cargo run -p kreuzcrawl-e2e-generator -- generate --lang csharp --fixtures fixtures --output e2e
+      - alef e2e generate --lang csharp
       - task: e2e:format
 
   e2e:format:

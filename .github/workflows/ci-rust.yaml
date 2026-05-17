@@ -148,7 +148,7 @@ jobs:
           FAIL=0
           for VENDORED in packages/go/v4/internal/ffi/kreuzcrawl.h packages/ruby/vendor/kreuzcrawl-ffi/kreuzcrawl.h; do
             if [ -f "$VENDORED" ] && ! diff -q "$CANONICAL" "$VENDORED" > /dev/null 2>&1; then
-              echo "::error::$VENDORED is out of sync with $CANONICAL — run 'python scripts/sync_versions.py'"
+              echo "::error::$VENDORED is out of sync with $CANONICAL — run 'alef sync-versions'"
               diff "$CANONICAL" "$VENDORED" | head -20
               FAIL=1
             fi

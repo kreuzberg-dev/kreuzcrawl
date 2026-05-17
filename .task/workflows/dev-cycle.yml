@@ -23,11 +23,13 @@ tasks:
       - cargo install --path ../alef/crates/alef-cli --locked
 
   alef:regen:
-    desc: Regenerate bindings, packages, and e2e tests against the installed alef
+    desc: Regenerate bindings, packages, READMEs, docs, and e2e tests against the installed alef
     cmds:
       # --format invokes alef.toml [workspace.format_overrides] entries so
       # generated output passes prek's per-language formatters (mix format, etc).
       - alef all --format
+      - alef readme
+      - alef docs
       - alef e2e generate
 
   alef:bump:

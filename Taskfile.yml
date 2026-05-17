@@ -308,11 +308,13 @@ tasks:
   e2e:test:all:
     desc: Run e2e tests across all bindings (mock server auto-managed)
     cmds:
+      - task: _dev_wf:mock-server:rebuild
       - task: _e2e_wf:test:all
 
   e2e:test:quick:
     desc: Quick e2e (Rust only — fastest feedback)
     cmds:
+      - task: _dev_wf:mock-server:rebuild
       - task: _e2e_wf:test:quick
 
   e2e:verify:all:

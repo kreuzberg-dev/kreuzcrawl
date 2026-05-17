@@ -838,6 +838,7 @@ pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
     return blk: {
+        if (_result == null) return _first_error(CrawlError);
         const slice = _result[0.._result_len];
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         _free_string(_result);
@@ -862,6 +863,7 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
     return blk: {
+        if (_result == null) return _first_error(CrawlError);
         const slice = _result[0.._result_len];
         const owned = try std.heap.c_allocator.dupe(u8, slice);
         _free_string(_result);
