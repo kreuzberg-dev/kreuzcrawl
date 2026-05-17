@@ -49,6 +49,7 @@ tasks:
       AR_wasm32_unknown_unknown: "{{.WASI_AR}}"
     cmds:
       - pnpm run build
+      - bash -c "cp index.js pkg/nodejs/ && jq '.type=\"commonjs\" | .main=\"index.js\" | .files += [\"index.js\"]' pkg/nodejs/package.json > pkg/nodejs/package.json.tmp && mv pkg/nodejs/package.json.tmp pkg/nodejs/package.json"
 
   build:release:
     desc: Build WASM bindings in release mode (optimized)
@@ -60,6 +61,7 @@ tasks:
       AR_wasm32_unknown_unknown: "{{.WASI_AR}}"
     cmds:
       - pnpm run build
+      - bash -c "cp index.js pkg/nodejs/ && jq '.type=\"commonjs\" | .main=\"index.js\" | .files += [\"index.js\"]' pkg/nodejs/package.json > pkg/nodejs/package.json.tmp && mv pkg/nodejs/package.json.tmp pkg/nodejs/package.json"
 
   build:ci:
     desc: Build WASM bindings in CI mode
@@ -71,6 +73,7 @@ tasks:
       AR_wasm32_unknown_unknown: "{{.WASI_AR}}"
     cmds:
       - pnpm run build:ci
+      - bash -c "cp index.js pkg/nodejs/ && jq '.type=\"commonjs\" | .main=\"index.js\" | .files += [\"index.js\"]' pkg/nodejs/package.json > pkg/nodejs/package.json.tmp && mv pkg/nodejs/package.json.tmp pkg/nodejs/package.json"
 
   build:web:
     desc: Build WASM for web browsers
@@ -101,6 +104,7 @@ tasks:
       AR_wasm32_unknown_unknown: "{{.WASI_AR}}"
     cmds:
       - pnpm run build:wasm:nodejs
+      - bash -c "cp index.js pkg/nodejs/ && jq '.type=\"commonjs\" | .main=\"index.js\" | .files += [\"index.js\"]' pkg/nodejs/package.json > pkg/nodejs/package.json.tmp && mv pkg/nodejs/package.json.tmp pkg/nodejs/package.json"
 
   build:deno:
     desc: Build WASM for Deno
