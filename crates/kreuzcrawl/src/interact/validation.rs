@@ -36,7 +36,7 @@ pub fn validate_actions(actions: &[PageAction]) -> Result<(), CrawlError> {
                     )));
                 }
             }
-            PageAction::Type { selector, text } => {
+            PageAction::TypeText { selector, text } => {
                 if selector.is_empty() {
                     return Err(CrawlError::InvalidConfig(format!(
                         "action[{i}]: type selector must not be empty"
@@ -62,12 +62,18 @@ pub fn validate_actions(actions: &[PageAction]) -> Result<(), CrawlError> {
             }
             PageAction::Wait { milliseconds, .. } => {
                 if let Some(ms) = milliseconds {
-                    if *ms > MAX_SINGLE_WAIT_MS {
+                    if *ms < 0 {
+                        return Err(CrawlError::InvalidConfig(format!(
+                            "action[{i}]: wait time {ms}ms must not be negative"
+                        )));
+                    }
+                    let ms = *ms as u64;
+                    if ms > MAX_SINGLE_WAIT_MS {
                         return Err(CrawlError::InvalidConfig(format!(
                             "action[{i}]: wait time {ms}ms exceeds maximum of {MAX_SINGLE_WAIT_MS}ms"
                         )));
                     }
-                    total_wait_ms = total_wait_ms.saturating_add(*ms);
+                    total_wait_ms = total_wait_ms.saturating_add(ms);
                 }
             }
             PageAction::ExecuteJs { script } => {
@@ -92,7 +98,7 @@ pub fn validate_actions(actions: &[PageAction]) -> Result<(), CrawlError> {
                     )));
                 }
             }
-            PageAction::Screenshot { .. } | PageAction::Scrape {} => {}
+            PageAction::Screenshot { .. } | PageAction::Scrape => {}
         }
     }
 
