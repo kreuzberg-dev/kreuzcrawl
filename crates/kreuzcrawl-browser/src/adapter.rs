@@ -159,23 +159,23 @@ async fn render_with_context(
     // Selector wait: poll document.querySelector every 100 ms within the
     // remaining timeout budget. We use the already-elapsed time to avoid
     // re-starting the full timeout.
-    if config.wait_until == NativeBrowserWait::Selector {
-        if let Some(ref selector) = config.wait_selector {
-            let deadline = tokio::time::Instant::now() + config.timeout;
-            loop {
-                let expr = format!("!!document.querySelector({selector:?})");
-                let found = page.evaluate(&expr);
-                if found.as_bool() == Some(true) {
-                    break;
-                }
-                if tokio::time::Instant::now() >= deadline {
-                    return Err(PageError::NetworkError(format!(
-                        "browser timed out waiting for selector '{selector}' after {:?}",
-                        config.timeout
-                    )));
-                }
-                tokio::time::sleep(Duration::from_millis(100)).await;
+    if config.wait_until == NativeBrowserWait::Selector
+        && let Some(ref selector) = config.wait_selector
+    {
+        let deadline = tokio::time::Instant::now() + config.timeout;
+        loop {
+            let expr = format!("!!document.querySelector({selector:?})");
+            let found = page.evaluate(&expr);
+            if found.as_bool() == Some(true) {
+                break;
             }
+            if tokio::time::Instant::now() >= deadline {
+                return Err(PageError::NetworkError(format!(
+                    "browser timed out waiting for selector '{selector}' after {:?}",
+                    config.timeout
+                )));
+            }
+            tokio::time::sleep(Duration::from_millis(100)).await;
         }
     }
 

@@ -26,6 +26,8 @@ mod map;
 mod markdown;
 #[cfg(feature = "mcp")]
 pub(crate) mod mcp;
+#[cfg(feature = "browser-native")]
+mod native_browser;
 mod normalize;
 mod pruning;
 #[cfg(feature = "ai")]
