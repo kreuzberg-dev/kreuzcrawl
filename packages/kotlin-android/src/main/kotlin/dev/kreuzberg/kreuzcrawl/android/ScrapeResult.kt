@@ -6,9 +6,12 @@
     "ktlint:standard:spacing-between-declarations-with-annotations",
     "ktlint:standard:when-entry-bracing",
     "ktlint:standard:blank-line-between-when-conditions",
+    "ktlint:standard:blank-line-before-declaration",
     "ktlint:standard:chain-method-continuation",
     "ktlint:standard:annotation",
     "ktlint:standard:max-line-length",
+    "ktlint:standard:no-semi",
+    "ktlint:standard:statement-wrapping",
     "MaxLineLength",
     "TooManyFunctions",
     "FunctionParameterNaming",
@@ -77,4 +80,9 @@ data class ScrapeResult(
     val screenshot: ByteArray?,
     /** Downloaded non-HTML document (PDF, DOCX, image, code, etc.). */
     val downloadedDocument: DownloadedDocument?,
+    /**
+     * Browser-specific extras (eval result, network events, cookies). Only populated when
+     * `BrowserBackend.Native` was used for this request.
+     */
+    val browser: BrowserExtras?,
 )

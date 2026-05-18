@@ -123,6 +123,8 @@ pub const ContentConfig = struct {
 pub const BrowserConfig = struct {
     /// When to use the headless browser fallback.
     mode: BrowserMode,
+    /// Browser backend used to render JavaScript-heavy pages.
+    backend: BrowserBackend,
     /// CDP WebSocket endpoint for connecting to an external browser instance.
     endpoint: ?[]const u8,
     /// Timeout for browser page load and rendering (in milliseconds when serialized).
@@ -133,6 +135,26 @@ pub const BrowserConfig = struct {
     wait_selector: ?[]const u8,
     /// Extra time to wait after the wait condition is met.
     extra_wait: ?i64,
+    /// Enable browser-realistic TLS fingerprint via the stealth HTTP client.
+    /// Only honored by `BrowserBackend.Native` — chromiumoxide is already
+    /// full-stealth via Chrome's TLS stack.
+    stealth: bool,
+    /// Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set.
+    /// Native backend supports http/https only (no SOCKS5).
+    proxy: ?ProxyConfig,
+    /// URL patterns to block before the network request fires. Supports `*`
+    /// wildcards. Useful for skipping ads/analytics/large images. Honored by
+    /// `BrowserBackend.Native`; chromiumoxide ignores this field today.
+    block_url_patterns: []const []const u8,
+    /// JavaScript snippet evaluated after navigation completes. Result is
+    /// captured in `ScrapeResult.browser.eval_result`. Native only.
+    eval_script: ?[]const u8,
+    /// User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent`
+    /// (or kreuzcrawl's default) if unset. Native only.
+    robots_user_agent: ?[]const u8,
+    /// Capture the full network event stream into the result. Default false
+    /// (only the document event is captured). Native only.
+    capture_network_events: bool,
 };
 
 /// Configuration for crawl, scrape, and map operations.
@@ -218,6 +240,20 @@ pub const CrawlConfig = struct {
     save_browser_profile: bool,
 };
 
+/// Browser-specific extras populated when the native browser backend was used.
+///
+/// Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+pub const BrowserExtras = struct {
+    /// Return value of `BrowserConfig.eval_script`, if provided.
+    eval_result: ?[]const u8,
+    /// Network events captured during page navigation (only populated when
+    /// `BrowserConfig.capture_network_events` is true).
+    network_events: []const ResponseMeta,
+    /// All non-expired cookies present in the browser's cookie jar after
+    /// navigation completes (includes both prior cookies and server Set-Cookie).
+    cookies: []const CookieInfo,
+};
+
 /// A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 ///
 /// When the crawler encounters non-HTML content and `download_documents` is
@@ -292,6 +328,9 @@ pub const ScrapeResult = struct {
     extraction_meta: ?ExtractionMeta,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     downloaded_document: ?DownloadedDocument,
+    /// Browser-specific extras (eval result, network events, cookies). Only
+    /// populated when `BrowserBackend.Native` was used for this request.
+    browser: ?BrowserExtras,
 };
 
 /// The result of crawling a single page during a crawl operation.
@@ -352,8 +391,6 @@ pub const CrawlResult = struct {
     error_: ?[]const u8,
     /// Cookies collected during the crawl.
     cookies: []const CookieInfo,
-    /// Normalized URLs encountered during crawling (for deduplication counting).
-    normalized_urls: []const []const u8,
 };
 
 /// A URL entry from a sitemap.
@@ -673,6 +710,14 @@ pub const BrowserWait = enum {
     selector,
     /// Wait for a fixed duration after navigation.
     fixed,
+};
+
+/// Browser backend used for JavaScript rendering.
+pub const BrowserBackend = enum {
+    /// Existing Chromium/CDP backend powered by chromiumoxide.
+    chromiumoxide,
+    /// Kreuzcrawl-owned native browser backend derived from Obscura.
+    native,
 };
 
 /// Authentication configuration.

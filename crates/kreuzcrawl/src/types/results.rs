@@ -217,6 +217,7 @@ pub struct CrawlResult {
     pub cookies: Vec<CookieInfo>,
     /// Normalized URLs encountered during crawling (for deduplication counting).
     #[serde(default, skip_serializing)]
+    #[cfg_attr(alef, alef(skip))]
     pub normalized_urls: Vec<String>,
 }
 

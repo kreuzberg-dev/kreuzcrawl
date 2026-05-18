@@ -1,6 +1,7 @@
 ---
 title: "C API Reference"
 ---
+
 ## C API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
@@ -17,6 +18,7 @@ Returns an error if the configuration is invalid.
 ```c
 KcrawlCrawlEngineHandle* kcrawl_create_engine(KcrawlCrawlConfig config);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +39,7 @@ Scrape a single URL, returning extracted page data.
 ```c
 KcrawlScrapeResult* kcrawl_scrape(KcrawlCrawlEngineHandle engine, const char* url);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +61,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```c
 KcrawlCrawlResult* kcrawl_crawl(KcrawlCrawlEngineHandle engine, const char* url);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +83,7 @@ Discover all pages on a website by following links and sitemaps.
 ```c
 KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +105,7 @@ Scrape multiple URLs concurrently.
 ```c
 KcrawlBatchScrapeResult* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, const char** urls);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +127,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```c
 KcrawlBatchCrawlResult* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const char** urls);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -183,11 +190,18 @@ Browser fallback configuration.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `mode` | `KcrawlBrowserMode` | `KCRAWL_KCRAWL_AUTO` | When to use the headless browser fallback. |
+| `backend` | `KcrawlBrowserBackend` | `KCRAWL_KCRAWL_CHROMIUMOXIDE` | Browser backend used to render JavaScript-heavy pages. |
 | `endpoint` | `const char**` | `NULL` | CDP WebSocket endpoint for connecting to an external browser instance. |
 | `timeout` | `uint64_t` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `KcrawlBrowserWait` | `KCRAWL_KCRAWL_NETWORK_IDLE` | Wait strategy after browser navigation. |
 | `wait_selector` | `const char**` | `NULL` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `uint64_t*` | `NULL` | Extra time to wait after the wait condition is met. |
+| `stealth` | `bool` | `false` | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack. |
+| `proxy` | `KcrawlProxyConfig*` | `NULL` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
+| `block_url_patterns` | `const char**` | `NULL` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `eval_script` | `const char**` | `NULL` | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only. |
+| `robots_user_agent` | `const char**` | `NULL` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 
 ##### Methods
 
@@ -198,6 +212,21 @@ Browser fallback configuration.
 ```c
 KcrawlBrowserConfig kcrawl_default();
 ```
+
+---
+
+#### KcrawlBrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `eval_result` | `void**` | `NULL` | Return value of `BrowserConfig.eval_script`, if provided. |
+| `network_events` | `KcrawlResponseMeta*` | `NULL` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `cookies` | `KcrawlCookieInfo*` | `NULL` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
 
 ---
 
@@ -328,6 +357,7 @@ Configuration for crawl, scrape, and map operations.
 ```c
 KcrawlCrawlConfig kcrawl_default();
 ```
+
 ###### kcrawl_validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -697,6 +727,7 @@ The result of a single-page scrape operation.
 | `extraction_meta` | `KcrawlExtractionMeta*` | `NULL` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `const uint8_t**` | `NULL` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `KcrawlDownloadedDocument*` | `NULL` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `browser` | `KcrawlBrowserExtras*` | `NULL` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 
 ---
@@ -739,6 +770,18 @@ Wait strategy for browser page rendering.
 | `KCRAWL_NETWORK_IDLE` | Wait until network activity is idle. |
 | `KCRAWL_SELECTOR` | Wait for a specific CSS selector to appear in the DOM. |
 | `KCRAWL_FIXED` | Wait for a fixed duration after navigation. |
+
+
+---
+
+#### KcrawlBrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Value | Description |
+|-------|-------------|
+| `KCRAWL_CHROMIUMOXIDE` | Existing Chromium/CDP backend powered by chromiumoxide. |
+| `KCRAWL_NATIVE` | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 
 ---

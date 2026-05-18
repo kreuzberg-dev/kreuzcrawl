@@ -1,6 +1,7 @@
 ---
 title: "Elixir API Reference"
 ---
+
 ## Elixir API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
@@ -18,6 +19,7 @@ Returns an error if the configuration is invalid.
 @spec create_engine(config) :: {:ok, term()} | {:error, term()}
 def create_engine(config)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -39,6 +41,7 @@ Scrape a single URL, returning extracted page data.
 @spec scrape(engine, url) :: {:ok, term()} | {:error, term()}
 def scrape(engine, url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -61,6 +64,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 @spec crawl(engine, url) :: {:ok, term()} | {:error, term()}
 def crawl(engine, url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -83,6 +87,7 @@ Discover all pages on a website by following links and sitemaps.
 @spec map_urls(engine, url) :: {:ok, term()} | {:error, term()}
 def map_urls(engine, url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -105,6 +110,7 @@ Scrape multiple URLs concurrently.
 @spec batch_scrape(engine, urls) :: {:ok, term()} | {:error, term()}
 def batch_scrape(engine, urls)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -127,6 +133,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 @spec batch_crawl(engine, urls) :: {:ok, term()} | {:error, term()}
 def batch_crawl(engine, urls)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -189,11 +196,18 @@ Browser fallback configuration.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `:auto` | When to use the headless browser fallback. |
+| `backend` | `BrowserBackend` | `:chromiumoxide` | Browser backend used to render JavaScript-heavy pages. |
 | `endpoint` | `String.t() \| nil` | `nil` | CDP WebSocket endpoint for connecting to an external browser instance. |
 | `timeout` | `integer()` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `:network_idle` | Wait strategy after browser navigation. |
 | `wait_selector` | `String.t() \| nil` | `nil` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `integer() \| nil` | `nil` | Extra time to wait after the wait condition is met. |
+| `stealth` | `boolean()` | `false` | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack. |
+| `proxy` | `ProxyConfig \| nil` | `nil` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
+| `block_url_patterns` | `list(String.t())` | `[]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `eval_script` | `String.t() \| nil` | `nil` | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only. |
+| `robots_user_agent` | `String.t() \| nil` | `nil` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `capture_network_events` | `boolean()` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 
 ##### Functions
 
@@ -204,6 +218,21 @@ Browser fallback configuration.
 ```elixir
 def default()
 ```
+
+---
+
+#### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `eval_result` | `term() \| nil` | `nil` | Return value of `BrowserConfig.eval_script`, if provided. |
+| `network_events` | `list(ResponseMeta)` | `[]` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `cookies` | `list(CookieInfo)` | `[]` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
 
 ---
 
@@ -334,6 +363,7 @@ Configuration for crawl, scrape, and map operations.
 ```elixir
 def default()
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -703,6 +733,7 @@ The result of a single-page scrape operation.
 | `extraction_meta` | `ExtractionMeta \| nil` | `nil` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `binary() \| nil` | `nil` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `DownloadedDocument \| nil` | `nil` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `browser` | `BrowserExtras \| nil` | `nil` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 
 ---
@@ -745,6 +776,18 @@ Wait strategy for browser page rendering.
 | `network_idle` | Wait until network activity is idle. |
 | `selector` | Wait for a specific CSS selector to appear in the DOM. |
 | `fixed` | Wait for a fixed duration after navigation. |
+
+
+---
+
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Value | Description |
+|-------|-------------|
+| `chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide. |
+| `native` | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 
 ---

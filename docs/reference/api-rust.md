@@ -1,6 +1,7 @@
 ---
 title: "Rust API Reference"
 ---
+
 ## Rust API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
@@ -17,6 +18,7 @@ Returns an error if the configuration is invalid.
 ```rust
 pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, CrawlError>
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +39,7 @@ Scrape a single URL, returning extracted page data.
 ```rust
 pub async fn scrape(engine: CrawlEngineHandle, url: &str) -> Result<ScrapeResult, CrawlError>
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +61,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```rust
 pub async fn crawl(engine: CrawlEngineHandle, url: &str) -> Result<CrawlResult, CrawlError>
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +83,7 @@ Discover all pages on a website by following links and sitemaps.
 ```rust
 pub async fn map_urls(engine: CrawlEngineHandle, url: &str) -> Result<MapResult, CrawlError>
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +105,7 @@ Scrape multiple URLs concurrently.
 ```rust
 pub async fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, CrawlError>
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +127,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```rust
 pub async fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, CrawlError>
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -183,11 +190,18 @@ Browser fallback configuration.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode::Auto` | When to use the headless browser fallback. |
+| `backend` | `BrowserBackend` | `BrowserBackend::Chromiumoxide` | Browser backend used to render JavaScript-heavy pages. |
 | `endpoint` | `Option<String>` | `None` | CDP WebSocket endpoint for connecting to an external browser instance. |
 | `timeout` | `std::time::Duration` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait::NetworkIdle` | Wait strategy after browser navigation. |
 | `wait_selector` | `Option<String>` | `None` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `Option<std::time::Duration>` | `None` | Extra time to wait after the wait condition is met. |
+| `stealth` | `bool` | `false` | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack. |
+| `proxy` | `Option<ProxyConfig>` | `None` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
+| `block_url_patterns` | `Vec<String>` | `vec![]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `eval_script` | `Option<String>` | `None` | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only. |
+| `robots_user_agent` | `Option<String>` | `None` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 
 ##### Methods
 
@@ -198,6 +212,21 @@ Browser fallback configuration.
 ```rust
 pub fn default() -> BrowserConfig
 ```
+
+---
+
+#### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `eval_result` | `Option<serde_json::Value>` | `Default::default()` | Return value of `BrowserConfig.eval_script`, if provided. |
+| `network_events` | `Vec<ResponseMeta>` | `vec![]` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `cookies` | `Vec<CookieInfo>` | `vec![]` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
 
 ---
 
@@ -328,6 +357,7 @@ Configuration for crawl, scrape, and map operations.
 ```rust
 pub fn default() -> CrawlConfig
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -697,6 +727,7 @@ The result of a single-page scrape operation.
 | `extraction_meta` | `Option<ExtractionMeta>` | `Default::default()` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `Option<Vec<u8>>` | `Default::default()` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `Option<DownloadedDocument>` | `Default::default()` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `browser` | `Option<BrowserExtras>` | `Default::default()` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 
 ---
@@ -739,6 +770,18 @@ Wait strategy for browser page rendering.
 | `NetworkIdle` | Wait until network activity is idle. |
 | `Selector` | Wait for a specific CSS selector to appear in the DOM. |
 | `Fixed` | Wait for a fixed duration after navigation. |
+
+
+---
+
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Value | Description |
+|-------|-------------|
+| `Chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide. |
+| `Native` | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 
 ---

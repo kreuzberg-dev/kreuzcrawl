@@ -12,6 +12,7 @@ use crate::types::{AuthConfig, CrawlConfig, ResponseMeta};
 /// Browser-specific extras attached to an `HttpResponse` produced by the native
 /// browser backend. Populated when `browser_used` is true.
 #[derive(Debug, Clone, Default)]
+#[allow(dead_code)]
 pub(crate) struct BrowserExtras {
     pub(crate) eval_result: Option<serde_json::Value>,
     pub(crate) network_events: Vec<crate::types::ResponseMeta>,
@@ -26,6 +27,7 @@ pub(crate) struct HttpResponse {
     pub(crate) body_bytes: Vec<u8>,
     #[allow(dead_code)]
     pub(crate) headers: std::collections::HashMap<String, Vec<String>>,
+    #[allow(dead_code)]
     pub(crate) browser_extras: Option<BrowserExtras>,
 }
 

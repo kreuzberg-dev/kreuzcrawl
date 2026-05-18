@@ -30,7 +30,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const auth_run = b.addRunArtifact(auth_tests);
-    auth_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&auth_run.step);
 
     const browser_module = b.createModule(.{
@@ -46,7 +45,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const browser_run = b.addRunArtifact(browser_tests);
-    browser_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&browser_run.step);
 
     const content_module = b.createModule(.{
@@ -62,7 +60,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const content_run = b.addRunArtifact(content_tests);
-    content_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&content_run.step);
 
     const cookies_module = b.createModule(.{
@@ -78,7 +75,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const cookies_run = b.addRunArtifact(cookies_tests);
-    cookies_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&cookies_run.step);
 
     const crawl_module = b.createModule(.{
@@ -94,7 +90,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const crawl_run = b.addRunArtifact(crawl_tests);
-    crawl_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&crawl_run.step);
 
     const encoding_module = b.createModule(.{
@@ -110,7 +105,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const encoding_run = b.addRunArtifact(encoding_tests);
-    encoding_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&encoding_run.step);
 
     const engine_module = b.createModule(.{
@@ -126,7 +120,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const engine_run = b.addRunArtifact(engine_tests);
-    engine_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&engine_run.step);
 
     const error_module = b.createModule(.{
@@ -142,7 +135,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const error_run = b.addRunArtifact(error_tests);
-    error_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&error_run.step);
 
     const links_module = b.createModule(.{
@@ -158,7 +150,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const links_run = b.addRunArtifact(links_tests);
-    links_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&links_run.step);
 
     const map_module = b.createModule(.{
@@ -174,7 +165,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const map_run = b.addRunArtifact(map_tests);
-    map_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&map_run.step);
 
     const markdown_module = b.createModule(.{
@@ -190,7 +180,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const markdown_run = b.addRunArtifact(markdown_tests);
-    markdown_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&markdown_run.step);
 
     const metadata_module = b.createModule(.{
@@ -206,7 +195,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const metadata_run = b.addRunArtifact(metadata_tests);
-    metadata_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&metadata_run.step);
 
     const redirect_module = b.createModule(.{
@@ -222,7 +210,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const redirect_run = b.addRunArtifact(redirect_tests);
-    redirect_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&redirect_run.step);
 
     const robots_module = b.createModule(.{
@@ -238,7 +225,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const robots_run = b.addRunArtifact(robots_tests);
-    robots_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&robots_run.step);
 
     const scrape_module = b.createModule(.{
@@ -254,7 +240,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const scrape_run = b.addRunArtifact(scrape_tests);
-    scrape_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&scrape_run.step);
 
     const sitemap_module = b.createModule(.{
@@ -270,7 +255,6 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const sitemap_run = b.addRunArtifact(sitemap_tests);
-    sitemap_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&sitemap_run.step);
 
     const validation_module = b.createModule(.{
@@ -286,6 +270,5 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const validation_run = b.addRunArtifact(validation_tests);
-    validation_run.setCwd(b.path("../../test_documents"));
     test_step.dependOn(&validation_run.step);
 }

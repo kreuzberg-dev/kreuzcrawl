@@ -1,6 +1,7 @@
 ---
 title: "Kotlin (Android) API Reference"
 ---
+
 ## Kotlin (Android) API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
@@ -18,6 +19,7 @@ Returns an error if the configuration is invalid.
 @Throws(CrawlError::class)
 fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -39,6 +41,7 @@ Scrape a single URL, returning extracted page data.
 @Throws(CrawlError::class)
 fun scrape(engine: CrawlEngineHandle, url: String): ScrapeResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -61,6 +64,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 @Throws(CrawlError::class)
 fun crawl(engine: CrawlEngineHandle, url: String): CrawlResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -83,6 +87,7 @@ Discover all pages on a website by following links and sitemaps.
 @Throws(CrawlError::class)
 fun mapUrls(engine: CrawlEngineHandle, url: String): MapResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -105,6 +110,7 @@ Scrape multiple URLs concurrently.
 @Throws(CrawlError::class)
 fun batchScrape(engine: CrawlEngineHandle, urls: List<String>): List<BatchScrapeResult>
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -127,6 +133,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 @Throws(CrawlError::class)
 fun batchCrawl(engine: CrawlEngineHandle, urls: List<String>): List<BatchCrawlResult>
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -189,11 +196,18 @@ Browser fallback configuration.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode.Auto` | When to use the headless browser fallback. |
+| `backend` | `BrowserBackend` | `BrowserBackend.Chromiumoxide` | Browser backend used to render JavaScript-heavy pages. |
 | `endpoint` | `String?` | `null` | CDP WebSocket endpoint for connecting to an external browser instance. |
 | `timeout` | `Duration` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait.NetworkIdle` | Wait strategy after browser navigation. |
 | `waitSelector` | `String?` | `null` | CSS selector to wait for when `wait` is `Selector`. |
 | `extraWait` | `Duration?` | `null` | Extra time to wait after the wait condition is met. |
+| `stealth` | `Boolean` | `false` | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack. |
+| `proxy` | `ProxyConfig?` | `null` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
+| `blockUrlPatterns` | `List<String>` | `[]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `evalScript` | `String?` | `null` | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only. |
+| `robotsUserAgent` | `String?` | `null` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `captureNetworkEvents` | `Boolean` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 
 ##### Methods
 
@@ -205,6 +219,21 @@ Browser fallback configuration.
 @JvmStatic
 fun default(): BrowserConfig
 ```
+
+---
+
+#### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `evalResult` | `Any?` | `null` | Return value of `BrowserConfig.eval_script`, if provided. |
+| `networkEvents` | `List<ResponseMeta>` | `[]` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `cookies` | `List<CookieInfo>` | `[]` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
 
 ---
 
@@ -337,6 +366,7 @@ Configuration for crawl, scrape, and map operations.
 @JvmStatic
 fun default(): CrawlConfig
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -707,6 +737,7 @@ The result of a single-page scrape operation.
 | `extractionMeta` | `ExtractionMeta?` | `null` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `ByteArray?` | `null` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloadedDocument` | `DownloadedDocument?` | `null` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `browser` | `BrowserExtras?` | `null` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 
 ---
@@ -749,6 +780,18 @@ Wait strategy for browser page rendering.
 | `NetworkIdle` | Wait until network activity is idle. |
 | `Selector` | Wait for a specific CSS selector to appear in the DOM. |
 | `Fixed` | Wait for a fixed duration after navigation. |
+
+
+---
+
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Value | Description |
+|-------|-------------|
+| `Chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide. |
+| `Native` | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 
 ---

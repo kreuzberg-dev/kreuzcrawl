@@ -67,6 +67,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AuthConfig dco_decode_box_autoadd_auth_config(dynamic raw);
 
   @protected
+  BrowserExtras dco_decode_box_autoadd_browser_extras(dynamic raw);
+
+  @protected
   CitationResult dco_decode_box_autoadd_citation_result(dynamic raw);
 
   @protected
@@ -104,6 +107,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BrowserConfig dco_decode_browser_config(dynamic raw);
+
+  @protected
+  BrowserExtras dco_decode_browser_extras(dynamic raw);
 
   @protected
   BrowserMode dco_decode_browser_mode(dynamic raw);
@@ -235,6 +241,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
 
   @protected
+  List<ResponseMeta> dco_decode_list_response_meta(dynamic raw);
+
+  @protected
   List<SitemapUrl> dco_decode_list_sitemap_url(dynamic raw);
 
   @protected
@@ -251,6 +260,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   AuthConfig? dco_decode_opt_box_autoadd_auth_config(dynamic raw);
+
+  @protected
+  BrowserExtras? dco_decode_opt_box_autoadd_browser_extras(dynamic raw);
 
   @protected
   CitationResult? dco_decode_opt_box_autoadd_citation_result(dynamic raw);
@@ -372,6 +384,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AuthConfig sse_decode_box_autoadd_auth_config(SseDeserializer deserializer);
 
   @protected
+  BrowserExtras sse_decode_box_autoadd_browser_extras(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   CitationResult sse_decode_box_autoadd_citation_result(
     SseDeserializer deserializer,
   );
@@ -421,6 +438,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BrowserConfig sse_decode_browser_config(SseDeserializer deserializer);
+
+  @protected
+  BrowserExtras sse_decode_browser_extras(SseDeserializer deserializer);
 
   @protected
   BrowserMode sse_decode_browser_mode(SseDeserializer deserializer);
@@ -570,6 +590,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<ResponseMeta> sse_decode_list_response_meta(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<SitemapUrl> sse_decode_list_sitemap_url(SseDeserializer deserializer);
 
   @protected
@@ -588,6 +613,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   AuthConfig? sse_decode_opt_box_autoadd_auth_config(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  BrowserExtras? sse_decode_opt_box_autoadd_browser_extras(
     SseDeserializer deserializer,
   );
 
@@ -749,6 +779,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_browser_extras(
+    BrowserExtras self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_citation_result(
     CitationResult self,
     SseSerializer serializer,
@@ -819,6 +855,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_browser_config(BrowserConfig self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_browser_extras(BrowserExtras self, SseSerializer serializer);
 
   @protected
   void sse_encode_browser_mode(BrowserMode self, SseSerializer serializer);
@@ -1013,6 +1052,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_response_meta(
+    List<ResponseMeta> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_sitemap_url(
     List<SitemapUrl> self,
     SseSerializer serializer,
@@ -1039,6 +1084,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_auth_config(
     AuthConfig? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_browser_extras(
+    BrowserExtras? self,
     SseSerializer serializer,
   );
 

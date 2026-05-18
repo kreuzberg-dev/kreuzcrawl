@@ -1,6 +1,7 @@
 ---
 title: "Python API Reference"
 ---
+
 ## Python API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
@@ -17,6 +18,7 @@ Returns an error if the configuration is invalid.
 ```python
 def create_engine(config: CrawlConfig = None) -> CrawlEngineHandle
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +39,7 @@ Scrape a single URL, returning extracted page data.
 ```python
 def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +61,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```python
 def crawl(engine: CrawlEngineHandle, url: str) -> CrawlResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +83,7 @@ Discover all pages on a website by following links and sitemaps.
 ```python
 def map_urls(engine: CrawlEngineHandle, url: str) -> MapResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +105,7 @@ Scrape multiple URLs concurrently.
 ```python
 def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchScrapeResult]
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +127,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```python
 def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchCrawlResult]
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -183,11 +190,18 @@ Browser fallback configuration.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode.AUTO` | When to use the headless browser fallback. |
+| `backend` | `BrowserBackend` | `BrowserBackend.CHROMIUMOXIDE` | Browser backend used to render JavaScript-heavy pages. |
 | `endpoint` | `str \| None` | `None` | CDP WebSocket endpoint for connecting to an external browser instance. |
 | `timeout` | `float` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait.NETWORK_IDLE` | Wait strategy after browser navigation. |
 | `wait_selector` | `str \| None` | `None` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `float \| None` | `None` | Extra time to wait after the wait condition is met. |
+| `stealth` | `bool` | `False` | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack. |
+| `proxy` | `ProxyConfig \| None` | `None` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
+| `block_url_patterns` | `list[str]` | `[]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `eval_script` | `str \| None` | `None` | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only. |
+| `robots_user_agent` | `str \| None` | `None` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `capture_network_events` | `bool` | `False` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 
 ##### Methods
 
@@ -199,6 +213,21 @@ Browser fallback configuration.
 @staticmethod
 def default() -> BrowserConfig
 ```
+
+---
+
+#### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `eval_result` | `dict[str, Any] \| None` | `None` | Return value of `BrowserConfig.eval_script`, if provided. |
+| `network_events` | `list[ResponseMeta]` | `[]` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `cookies` | `list[CookieInfo]` | `[]` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
 
 ---
 
@@ -331,6 +360,7 @@ Configuration for crawl, scrape, and map operations.
 @staticmethod
 def default() -> CrawlConfig
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -700,6 +730,7 @@ The result of a single-page scrape operation.
 | `extraction_meta` | `ExtractionMeta \| None` | `None` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `bytes \| None` | `None` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `DownloadedDocument \| None` | `None` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `browser` | `BrowserExtras \| None` | `None` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 
 ---
@@ -742,6 +773,18 @@ Wait strategy for browser page rendering.
 | `NETWORK_IDLE` | Wait until network activity is idle. |
 | `SELECTOR` | Wait for a specific CSS selector to appear in the DOM. |
 | `FIXED` | Wait for a fixed duration after navigation. |
+
+
+---
+
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Value | Description |
+|-------|-------------|
+| `CHROMIUMOXIDE` | Existing Chromium/CDP backend powered by chromiumoxide. |
+| `NATIVE` | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 
 ---
@@ -827,6 +870,7 @@ The category of a downloaded asset.
 Errors that can occur during crawling, scraping, or mapping operations.
 
 **Base class:** `CrawlError(Exception)`
+
 | Exception | Description |
 |-----------|-------------|
 | `NotFound(CrawlError)` | The requested page was not found (HTTP 404). |

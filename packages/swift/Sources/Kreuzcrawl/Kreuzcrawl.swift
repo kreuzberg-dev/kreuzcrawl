@@ -86,6 +86,11 @@ public typealias BrowserConfig = RustBridge.BrowserConfig
 /// Configuration for crawl, scrape, and map operations.
 public typealias CrawlConfig = RustBridge.CrawlConfig
 
+/// Browser-specific extras populated when the native browser backend was used.
+///
+/// Available on `ScrapeResult.browser` when `BrowserBackend::Native` handled the request.
+public typealias BrowserExtras = RustBridge.BrowserExtras
+
 /// A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 ///
 /// When the crawler encounters non-HTML content and `download_documents` is
@@ -416,6 +421,14 @@ public enum BrowserWait {
     case selector
     /// Wait for a fixed duration after navigation.
     case fixed
+}
+
+/// Browser backend used for JavaScript rendering.
+public enum BrowserBackend {
+    /// Existing Chromium/CDP backend powered by chromiumoxide.
+    case chromiumoxide
+    /// Kreuzcrawl-owned native browser backend derived from Obscura.
+    case native
 }
 
 /// Authentication configuration.
