@@ -1,9 +1,34 @@
 ---
 title: "C# API Reference"
 ---
+
 ## C# API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
+
+#### GenerateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```csharp
+public static CitationResult GenerateCitations(string markdown)
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Markdown` | `string` | Yes | The markdown |
+
+**Returns:** `CitationResult`
+
+---
 
 #### CreateEngine()
 
@@ -17,6 +42,7 @@ Returns an error if the configuration is invalid.
 ```csharp
 public static CrawlEngineHandle CreateEngine(CrawlConfig? config = null)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +63,7 @@ Scrape a single URL, returning extracted page data.
 ```csharp
 public static async Task<ScrapeResult> ScrapeAsync(CrawlEngineHandle engine, string url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +85,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```csharp
 public static async Task<CrawlResult> CrawlAsync(CrawlEngineHandle engine, string url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +107,7 @@ Discover all pages on a website by following links and sitemaps.
 ```csharp
 public static async Task<MapResult> MapUrlsAsync(CrawlEngineHandle engine, string url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +129,7 @@ Scrape multiple URLs concurrently.
 ```csharp
 public static async Task<List<BatchScrapeResult>> BatchScrapeAsync(CrawlEngineHandle engine, List<string> urls)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +151,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```csharp
 public static async Task<List<BatchCrawlResult>> BatchCrawlAsync(CrawlEngineHandle engine, List<string> urls)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -206,6 +237,7 @@ Browser fallback configuration.
 public BrowserConfig CreateDefault()
 ```
 
+
 ---
 
 #### BrowserExtras
@@ -282,6 +314,7 @@ html-to-markdown-rs as the conversion engine for all formats
 public ContentConfig CreateDefault()
 ```
 
+
 ---
 
 #### CookieInfo
@@ -350,6 +383,7 @@ Configuration for crawl, scrape, and map operations.
 ```csharp
 public CrawlConfig CreateDefault()
 ```
+
 ###### Validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -359,6 +393,7 @@ Validate the configuration, returning an error if any values are invalid.
 ```csharp
 public void Validate()
 ```
+
 
 ---
 
@@ -427,6 +462,7 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```csharp
 public nuint UniqueNormalizedUrls()
 ```
+
 
 ---
 

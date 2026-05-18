@@ -1,9 +1,34 @@
 ---
 title: "Java API Reference"
 ---
+
 ## Java API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
+
+#### generateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```java
+public static CitationResult generateCitations(String markdown)
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `String` | Yes | The markdown |
+
+**Returns:** `CitationResult`
+
+---
 
 #### createEngine()
 
@@ -17,6 +42,7 @@ Returns an error if the configuration is invalid.
 ```java
 public static CrawlEngineHandle createEngine(CrawlConfig config) throws CrawlError
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +63,7 @@ Scrape a single URL, returning extracted page data.
 ```java
 public static ScrapeResult scrape(CrawlEngineHandle engine, String url) throws CrawlError
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +85,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```java
 public static CrawlResult crawl(CrawlEngineHandle engine, String url) throws CrawlError
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +107,7 @@ Discover all pages on a website by following links and sitemaps.
 ```java
 public static MapResult mapUrls(CrawlEngineHandle engine, String url) throws CrawlError
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +129,7 @@ Scrape multiple URLs concurrently.
 ```java
 public static List<BatchScrapeResult> batchScrape(CrawlEngineHandle engine, List<String> urls) throws CrawlError
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +151,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```java
 public static List<BatchCrawlResult> batchCrawl(CrawlEngineHandle engine, List<String> urls) throws CrawlError
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -206,6 +237,7 @@ Browser fallback configuration.
 public static BrowserConfig defaultOptions()
 ```
 
+
 ---
 
 #### BrowserExtras
@@ -282,6 +314,7 @@ html-to-markdown-rs as the conversion engine for all formats
 public static ContentConfig defaultOptions()
 ```
 
+
 ---
 
 #### CookieInfo
@@ -350,6 +383,7 @@ Configuration for crawl, scrape, and map operations.
 ```java
 public static CrawlConfig defaultOptions()
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -359,6 +393,7 @@ Validate the configuration, returning an error if any values are invalid.
 ```java
 public void validate() throws CrawlError
 ```
+
 
 ---
 
@@ -427,6 +462,7 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```java
 public long uniqueNormalizedUrls()
 ```
+
 
 ---
 

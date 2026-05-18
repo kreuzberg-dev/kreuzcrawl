@@ -219,7 +219,13 @@ impl std::fmt::Debug for AssetCategory {
 ///
 /// Not available on `wasm32` targets — streaming requires native concurrency
 /// primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+///
+/// Produced by the engine's `crawl_stream` / `batch_crawl_stream` methods,
+/// which take `Sender<CrawlEvent>` / return `ReceiverStream<CrawlEvent>` and
+/// cannot cross an FFI boundary. Hidden from alef until a streaming bridge
+/// pattern is added (callback-based, like the existing trait bridges).
 #[cfg(not(target_arch = "wasm32"))]
+#[cfg_attr(alef, alef(skip))]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum CrawlEvent {
     /// A single page has been crawled.

@@ -1,9 +1,35 @@
 ---
 title: "Elixir API Reference"
 ---
+
 ## Elixir API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
+
+#### generate_citations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```elixir
+@spec generate_citations(markdown) :: {:ok, term()} | {:error, term()}
+def generate_citations(markdown)
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `String.t()` | Yes | The markdown |
+
+**Returns:** `CitationResult`
+
+---
 
 #### create_engine()
 
@@ -18,6 +44,7 @@ Returns an error if the configuration is invalid.
 @spec create_engine(config) :: {:ok, term()} | {:error, term()}
 def create_engine(config)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -39,6 +66,7 @@ Scrape a single URL, returning extracted page data.
 @spec scrape(engine, url) :: {:ok, term()} | {:error, term()}
 def scrape(engine, url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -61,6 +89,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 @spec crawl(engine, url) :: {:ok, term()} | {:error, term()}
 def crawl(engine, url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -83,6 +112,7 @@ Discover all pages on a website by following links and sitemaps.
 @spec map_urls(engine, url) :: {:ok, term()} | {:error, term()}
 def map_urls(engine, url)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -105,6 +135,7 @@ Scrape multiple URLs concurrently.
 @spec batch_scrape(engine, urls) :: {:ok, term()} | {:error, term()}
 def batch_scrape(engine, urls)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -127,6 +158,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 @spec batch_crawl(engine, urls) :: {:ok, term()} | {:error, term()}
 def batch_crawl(engine, urls)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -212,6 +244,7 @@ Browser fallback configuration.
 def default()
 ```
 
+
 ---
 
 #### BrowserExtras
@@ -288,6 +321,7 @@ html-to-markdown-rs as the conversion engine for all formats
 def default()
 ```
 
+
 ---
 
 #### CookieInfo
@@ -356,6 +390,7 @@ Configuration for crawl, scrape, and map operations.
 ```elixir
 def default()
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -365,6 +400,7 @@ Validate the configuration, returning an error if any values are invalid.
 ```elixir
 def validate()
 ```
+
 
 ---
 
@@ -433,6 +469,7 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```elixir
 def unique_normalized_urls()
 ```
+
 
 ---
 

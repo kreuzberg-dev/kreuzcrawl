@@ -794,6 +794,41 @@ pub const AssetCategory = enum {
     other,
 };
 
+/// Convert markdown links to numbered citations.
+///
+/// `[Example](https://example.com)` becomes `Example[1]`
+/// with `[1]: https://example.com` in the reference list.
+/// Images `![alt](url)` are preserved unchanged.
+pub fn generate_citations(markdown: []const u8) error{OutOfMemory}![]u8 {
+    const markdown_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{markdown}, 0);
+    defer std.heap.c_allocator.free(markdown_z);
+    const _result = c.kcrawl_generate_citations(markdown_z);
+    return blk: {
+        const _json_ptr = c.kcrawl_citation_result_to_json(_result.?);
+        defer _free_string(_json_ptr);
+        c.kcrawl_citation_result_free(_result.?);
+        const slice = std.mem.sliceTo(_json_ptr, 0);
+        const owned = try std.heap.c_allocator.dupe(u8, slice);
+        break :blk owned;
+    };
+}
+
+/// Create a new crawl engine with the given configuration.
+///
+/// If `config` is `null`, uses `CrawlConfig.default()`.
+/// Returns an error if the configuration is invalid.
+pub fn create_engine(config: ?[]const u8) CrawlError!CrawlEngineHandle {
+    const config_z: ?[:0]u8 = if (config) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    defer if (config_z) |z| std.heap.c_allocator.free(z);
+    const config_handle = if (config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
+    const _result = c.kcrawl_create_engine(config_handle);
+    if (c.kcrawl_last_error_code() != 0) {
+        return _first_error(CrawlError);
+    }
+    if (config_handle) |h| c.kcrawl_crawl_config_free(h);
+    return CrawlEngineHandle{ ._handle = _result.? };
+}
+
 /// Scrape a single URL, returning extracted page data.
 pub fn scrape(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
     const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;

@@ -1,9 +1,34 @@
 ---
 title: "Swift API Reference"
 ---
+
 ## Swift API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
+
+#### generateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```swift
+public static func generateCitations(markdown: String) -> CitationResult
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `String` | Yes | The markdown |
+
+**Returns:** `CitationResult`
+
+---
 
 #### createEngine()
 
@@ -17,6 +42,7 @@ Returns an error if the configuration is invalid.
 ```swift
 public static func createEngine(config: CrawlConfig? = nil) throws -> CrawlEngineHandle
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +63,7 @@ Scrape a single URL, returning extracted page data.
 ```swift
 public static func scrape(engine: CrawlEngineHandle, url: String) throws -> ScrapeResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +85,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```swift
 public static func crawl(engine: CrawlEngineHandle, url: String) throws -> CrawlResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +107,7 @@ Discover all pages on a website by following links and sitemaps.
 ```swift
 public static func mapUrls(engine: CrawlEngineHandle, url: String) throws -> MapResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +129,7 @@ Scrape multiple URLs concurrently.
 ```swift
 public static func batchScrape(engine: CrawlEngineHandle, urls: [String]) throws -> [BatchScrapeResult]
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +151,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```swift
 public static func batchCrawl(engine: CrawlEngineHandle, urls: [String]) throws -> [BatchCrawlResult]
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -206,6 +237,7 @@ Browser fallback configuration.
 public static func default() -> BrowserConfig
 ```
 
+
 ---
 
 #### BrowserExtras
@@ -282,6 +314,7 @@ html-to-markdown-rs as the conversion engine for all formats
 public static func default() -> ContentConfig
 ```
 
+
 ---
 
 #### CookieInfo
@@ -350,6 +383,7 @@ Configuration for crawl, scrape, and map operations.
 ```swift
 public static func default() -> CrawlConfig
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -359,6 +393,7 @@ Validate the configuration, returning an error if any values are invalid.
 ```swift
 public func validate() throws
 ```
+
 
 ---
 
@@ -427,6 +462,7 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```swift
 public func uniqueNormalizedUrls() -> UInt64
 ```
+
 
 ---
 

@@ -2943,6 +2943,17 @@ char *kcrawl_asset_category_to_json(const KCRAWLAssetCategory *ptr);
 char *kcrawl_asset_category_to_string(const KCRAWLAssetCategory *ptr);
 
 /**
+ * Convert markdown links to numbered citations.
+ *
+ * `Example (https://example.com)` becomes `Example[1]`
+ * with `[1]: https://example.com` in the reference list.
+ * Images `!alt (url)` are preserved unchanged.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
+ */
+KCRAWLCitationResult *kcrawl_generate_citations(const char *markdown);
+
+/**
  * Create a new crawl engine with the given configuration.
  *
  * If `config` is `None`, uses [`CrawlConfig::default()`].

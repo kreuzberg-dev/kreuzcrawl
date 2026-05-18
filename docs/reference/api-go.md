@@ -1,9 +1,34 @@
 ---
 title: "Go API Reference"
 ---
+
 ## Go API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
+
+#### GenerateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```go
+func GenerateCitations(markdown string) CitationResult
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Markdown` | `string` | Yes | The markdown |
+
+**Returns:** `CitationResult`
+
+---
 
 #### CreateEngine()
 
@@ -17,6 +42,7 @@ Returns an error if the configuration is invalid.
 ```go
 func CreateEngine(config CrawlConfig) (CrawlEngineHandle, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +63,7 @@ Scrape a single URL, returning extracted page data.
 ```go
 func Scrape(engine CrawlEngineHandle, url string) (ScrapeResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +85,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```go
 func Crawl(engine CrawlEngineHandle, url string) (CrawlResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +107,7 @@ Discover all pages on a website by following links and sitemaps.
 ```go
 func MapUrls(engine CrawlEngineHandle, url string) (MapResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +129,7 @@ Scrape multiple URLs concurrently.
 ```go
 func BatchScrape(engine CrawlEngineHandle, urls []string) ([]BatchScrapeResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +151,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```go
 func BatchCrawl(engine CrawlEngineHandle, urls []string) ([]BatchCrawlResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -206,6 +237,7 @@ Browser fallback configuration.
 func (o *BrowserConfig) Default() BrowserConfig
 ```
 
+
 ---
 
 #### BrowserExtras
@@ -282,6 +314,7 @@ html-to-markdown-rs as the conversion engine for all formats
 func (o *ContentConfig) Default() ContentConfig
 ```
 
+
 ---
 
 #### CookieInfo
@@ -350,6 +383,7 @@ Configuration for crawl, scrape, and map operations.
 ```go
 func (o *CrawlConfig) Default() CrawlConfig
 ```
+
 ###### Validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -359,6 +393,7 @@ Validate the configuration, returning an error if any values are invalid.
 ```go
 func (o *CrawlConfig) Validate() error
 ```
+
 
 ---
 
@@ -427,6 +462,7 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```go
 func (o *CrawlResult) UniqueNormalizedUrls() int
 ```
+
 
 ---
 

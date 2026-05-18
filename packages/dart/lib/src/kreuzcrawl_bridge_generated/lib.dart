@@ -10,6 +10,14 @@ part 'lib.freezed.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
 
+/// Convert markdown links to numbered citations.
+///
+/// `[Example](https://example.com)` becomes `Example[1]`
+/// with `[1]: https://example.com` in the reference list.
+/// Images `![alt](url)` are preserved unchanged.
+Future<CitationResult> generateCitations({required String markdown}) =>
+    RustLib.instance.api.crateGenerateCitations(markdown: markdown);
+
 /// Create a new crawl engine with the given configuration.
 ///
 /// If `config` is `null`, uses `CrawlConfig.default()`.
@@ -18,29 +26,34 @@ Future<CrawlEngineHandle> createEngine({CrawlConfig? config}) =>
     RustLib.instance.api.crateCreateEngine(config: config);
 
 /// Scrape a single URL, returning extracted page data.
-Future<ScrapeResult> scrape(
-        {required CrawlEngineHandle engine, required String url}) =>
-    RustLib.instance.api.crateScrape(engine: engine, url: url);
+Future<ScrapeResult> scrape({
+  required CrawlEngineHandle engine,
+  required String url,
+}) => RustLib.instance.api.crateScrape(engine: engine, url: url);
 
 /// Crawl a website starting from `url`, following links up to the configured depth.
-Future<CrawlResult> crawl(
-        {required CrawlEngineHandle engine, required String url}) =>
-    RustLib.instance.api.crateCrawl(engine: engine, url: url);
+Future<CrawlResult> crawl({
+  required CrawlEngineHandle engine,
+  required String url,
+}) => RustLib.instance.api.crateCrawl(engine: engine, url: url);
 
 /// Discover all pages on a website by following links and sitemaps.
-Future<MapResult> mapUrls(
-        {required CrawlEngineHandle engine, required String url}) =>
-    RustLib.instance.api.crateMapUrls(engine: engine, url: url);
+Future<MapResult> mapUrls({
+  required CrawlEngineHandle engine,
+  required String url,
+}) => RustLib.instance.api.crateMapUrls(engine: engine, url: url);
 
 /// Scrape multiple URLs concurrently.
-Future<List<BatchScrapeResult>> batchScrape(
-        {required CrawlEngineHandle engine, required List<String> urls}) =>
-    RustLib.instance.api.crateBatchScrape(engine: engine, urls: urls);
+Future<List<BatchScrapeResult>> batchScrape({
+  required CrawlEngineHandle engine,
+  required List<String> urls,
+}) => RustLib.instance.api.crateBatchScrape(engine: engine, urls: urls);
 
 /// Crawl multiple seed URLs concurrently, each following links to configured depth.
-Future<List<BatchCrawlResult>> batchCrawl(
-        {required CrawlEngineHandle engine, required List<String> urls}) =>
-    RustLib.instance.api.crateBatchCrawl(engine: engine, urls: urls);
+Future<List<BatchCrawlResult>> batchCrawl({
+  required CrawlEngineHandle engine,
+  required List<String> urls,
+}) => RustLib.instance.api.crateBatchCrawl(engine: engine, urls: urls);
 
 Future<ExtractionMeta> createExtractionMetaFromJson({required String json}) =>
     RustLib.instance.api.crateCreateExtractionMetaFromJson(json: json);
@@ -60,9 +73,9 @@ Future<CrawlConfig> createCrawlConfigFromJson({required String json}) =>
 Future<BrowserExtras> createBrowserExtrasFromJson({required String json}) =>
     RustLib.instance.api.crateCreateBrowserExtrasFromJson(json: json);
 
-Future<DownloadedDocument> createDownloadedDocumentFromJson(
-        {required String json}) =>
-    RustLib.instance.api.crateCreateDownloadedDocumentFromJson(json: json);
+Future<DownloadedDocument> createDownloadedDocumentFromJson({
+  required String json,
+}) => RustLib.instance.api.crateCreateDownloadedDocumentFromJson(json: json);
 
 Future<ScrapeResult> createScrapeResultFromJson({required String json}) =>
     RustLib.instance.api.crateCreateScrapeResultFromJson(json: json);
@@ -121,17 +134,17 @@ Future<PageMetadata> createPageMetadataFromJson({required String json}) =>
 Future<CitationResult> createCitationResultFromJson({required String json}) =>
     RustLib.instance.api.crateCreateCitationResultFromJson(json: json);
 
-Future<CitationReference> createCitationReferenceFromJson(
-        {required String json}) =>
-    RustLib.instance.api.crateCreateCitationReferenceFromJson(json: json);
+Future<CitationReference> createCitationReferenceFromJson({
+  required String json,
+}) => RustLib.instance.api.crateCreateCitationReferenceFromJson(json: json);
 
-Future<BatchScrapeResult> createBatchScrapeResultFromJson(
-        {required String json}) =>
-    RustLib.instance.api.crateCreateBatchScrapeResultFromJson(json: json);
+Future<BatchScrapeResult> createBatchScrapeResultFromJson({
+  required String json,
+}) => RustLib.instance.api.crateCreateBatchScrapeResultFromJson(json: json);
 
-Future<BatchCrawlResult> createBatchCrawlResultFromJson(
-        {required String json}) =>
-    RustLib.instance.api.crateCreateBatchCrawlResultFromJson(json: json);
+Future<BatchCrawlResult> createBatchCrawlResultFromJson({
+  required String json,
+}) => RustLib.instance.api.crateCreateBatchCrawlResultFromJson(json: json);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CrawlEngineHandle>>
 abstract class CrawlEngineHandle implements RustOpaqueInterface {}
@@ -212,7 +225,6 @@ enum AssetCategory {
 
   /// An unrecognized asset type.
   other,
-  ;
 }
 
 @freezed
@@ -255,11 +267,7 @@ class BatchCrawlResult {
   /// The error message, if the crawl failed.
   final String? error;
 
-  const BatchCrawlResult({
-    required this.url,
-    this.result,
-    this.error,
-  });
+  const BatchCrawlResult({required this.url, this.result, this.error});
 
   @override
   int get hashCode => url.hashCode ^ result.hashCode ^ error.hashCode;
@@ -285,11 +293,7 @@ class BatchScrapeResult {
   /// The error message, if the scrape failed.
   final String? error;
 
-  const BatchScrapeResult({
-    required this.url,
-    this.result,
-    this.error,
-  });
+  const BatchScrapeResult({required this.url, this.result, this.error});
 
   @override
   int get hashCode => url.hashCode ^ result.hashCode ^ error.hashCode;
@@ -311,7 +315,6 @@ enum BrowserBackend {
 
   /// Kreuzcrawl-owned native browser backend derived from Obscura.
   native,
-  ;
 }
 
 /// Browser fallback configuration.
@@ -460,7 +463,6 @@ enum BrowserMode {
 
   /// Never use the browser fallback.
   never,
-  ;
 }
 
 /// Wait strategy for browser page rendering.
@@ -473,7 +475,6 @@ enum BrowserWait {
 
   /// Wait for a fixed duration after navigation.
   fixed,
-  ;
 }
 
 /// A single numbered reference in a citation list — produced by the citation
@@ -515,10 +516,7 @@ class CitationResult {
   /// Numbered reference list: (index, url, text).
   final List<CitationReference> references;
 
-  const CitationResult({
-    required this.content,
-    required this.references,
-  });
+  const CitationResult({required this.content, required this.references});
 
   @override
   int get hashCode => content.hashCode ^ references.hashCode;
@@ -1292,11 +1290,7 @@ class FeedInfo {
   /// The type of feed.
   final FeedType feedType;
 
-  const FeedInfo({
-    required this.url,
-    this.title,
-    required this.feedType,
-  });
+  const FeedInfo({required this.url, this.title, required this.feedType});
 
   @override
   int get hashCode => url.hashCode ^ title.hashCode ^ feedType.hashCode;
@@ -1321,7 +1315,6 @@ enum FeedType {
 
   /// JSON Feed.
   jsonFeed,
-  ;
 }
 
 /// A heading element extracted from the page.
@@ -1332,10 +1325,7 @@ class HeadingInfo {
   /// The heading text content.
   final String text;
 
-  const HeadingInfo({
-    required this.level,
-    required this.text,
-  });
+  const HeadingInfo({required this.level, required this.text});
 
   @override
   int get hashCode => level.hashCode ^ text.hashCode;
@@ -1357,10 +1347,7 @@ class HreflangEntry {
   /// The URL for this language variant.
   final String url;
 
-  const HreflangEntry({
-    required this.lang,
-    required this.url,
-  });
+  const HreflangEntry({required this.lang, required this.url});
 
   @override
   int get hashCode => lang.hashCode ^ url.hashCode;
@@ -1432,7 +1419,6 @@ enum ImageSource {
 
   /// A `twitter:image` meta tag.
   twitterImage,
-  ;
 }
 
 /// A JSON-LD structured data entry found on a page.
@@ -1446,11 +1432,7 @@ class JsonLdEntry {
   /// The raw JSON-LD string.
   final String raw;
 
-  const JsonLdEntry({
-    required this.schemaType,
-    this.name,
-    required this.raw,
-  });
+  const JsonLdEntry({required this.schemaType, this.name, required this.raw});
 
   @override
   int get hashCode => schemaType.hashCode ^ name.hashCode ^ raw.hashCode;
@@ -1523,7 +1505,6 @@ enum LinkType {
 
   /// A link to a downloadable document (PDF, DOC, etc.).
   document,
-  ;
 }
 
 /// The result of a map operation, containing discovered URLs.
@@ -1531,9 +1512,7 @@ class MapResult {
   /// The list of discovered URLs.
   final List<SitemapUrl> urls;
 
-  const MapResult({
-    required this.urls,
-  });
+  const MapResult({required this.urls});
 
   @override
   int get hashCode => urls.hashCode;
@@ -1881,11 +1860,7 @@ class ProxyConfig {
   /// Optional password for proxy authentication.
   final String? password;
 
-  const ProxyConfig({
-    required this.url,
-    this.username,
-    this.password,
-  });
+  const ProxyConfig({required this.url, this.username, this.password});
 
   @override
   int get hashCode => url.hashCode ^ username.hashCode ^ password.hashCode;

@@ -1,9 +1,34 @@
 ---
 title: "Python API Reference"
 ---
+
 ## Python API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
+
+#### generate_citations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```python
+def generate_citations(markdown: str) -> CitationResult
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `str` | Yes | The markdown |
+
+**Returns:** `CitationResult`
+
+---
 
 #### create_engine()
 
@@ -17,6 +42,7 @@ Returns an error if the configuration is invalid.
 ```python
 def create_engine(config: CrawlConfig = None) -> CrawlEngineHandle
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +63,7 @@ Scrape a single URL, returning extracted page data.
 ```python
 def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +85,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```python
 def crawl(engine: CrawlEngineHandle, url: str) -> CrawlResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +107,7 @@ Discover all pages on a website by following links and sitemaps.
 ```python
 def map_urls(engine: CrawlEngineHandle, url: str) -> MapResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +129,7 @@ Scrape multiple URLs concurrently.
 ```python
 def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchScrapeResult]
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +151,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```python
 def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> list[BatchCrawlResult]
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -207,6 +238,7 @@ Browser fallback configuration.
 def default() -> BrowserConfig
 ```
 
+
 ---
 
 #### BrowserExtras
@@ -284,6 +316,7 @@ html-to-markdown-rs as the conversion engine for all formats
 def default() -> ContentConfig
 ```
 
+
 ---
 
 #### CookieInfo
@@ -353,6 +386,7 @@ Configuration for crawl, scrape, and map operations.
 @staticmethod
 def default() -> CrawlConfig
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -362,6 +396,7 @@ Validate the configuration, returning an error if any values are invalid.
 ```python
 def validate(self) -> None
 ```
+
 
 ---
 
@@ -430,6 +465,7 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```python
 def unique_normalized_urls(self) -> int
 ```
+
 
 ---
 

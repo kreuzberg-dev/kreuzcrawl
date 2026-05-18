@@ -1528,6 +1528,15 @@ impl From<AssetCategory> for kreuzcrawl::AssetCategory {
     }
 }
 
+/// Convert markdown links to numbered citations.
+///
+/// `[Example](https://example.com)` becomes `Example[1]`
+/// with `[1]: https://example.com` in the reference list.
+/// Images `![alt](url)` are preserved unchanged.
+pub fn generate_citations(markdown: String) -> CitationResult {
+    (CitationResult::from)(kreuzcrawl::generate_citations(&markdown))
+}
+
 /// Create a new crawl engine with the given configuration.
 ///
 /// If `config` is `null`, uses `CrawlConfig.default()`.

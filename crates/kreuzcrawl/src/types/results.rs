@@ -53,8 +53,13 @@ pub struct DownloadedDocument {
 }
 
 /// Result of executing a sequence of page interaction actions.
+///
+/// Reserved for a future page-interaction API; not yet wired into the engine's
+/// binding surface. Hidden from alef so the unreleased shape doesn't leak into
+/// stable binding APIs.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[allow(dead_code)]
+#[cfg_attr(alef, alef(skip))]
 pub struct InteractionResult {
     /// Results from each executed action.
     pub action_results: Vec<ActionResult>,
@@ -68,8 +73,11 @@ pub struct InteractionResult {
 }
 
 /// Result from a single page action execution.
+///
+/// Companion to `InteractionResult`; hidden from alef for the same reason.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[allow(dead_code)]
+#[cfg_attr(alef, alef(skip))]
 pub struct ActionResult {
     /// Zero-based index of the action in the sequence.
     pub action_index: usize,
@@ -294,7 +302,12 @@ pub struct MarkdownResult {
 }
 
 /// Cached page data for HTTP response caching.
+///
+/// Used only by the `CrawlCache` storage-backend trait, which is not part of
+/// the polyglot binding surface. Hidden from alef so bindings don't expose a
+/// type they can never receive.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[cfg_attr(alef, alef(skip))]
 pub struct CachedPage {
     /// Absolute URL of the cached page.
     pub url: String,

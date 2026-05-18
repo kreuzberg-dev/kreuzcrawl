@@ -75,6 +75,33 @@ where
 }
 
 #[unsafe(no_mangle)]
+pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeGenerateCitations(
+    mut env: EnvUnowned,
+    _class: JClass,
+    markdown: JString,
+) -> jstring {
+    // SAFETY: env is a valid EnvUnowned passed by the JVM for this native call frame.
+    let mut __jni_attach_guard = unsafe { jni::AttachGuard::from_unowned(env.as_raw()) };
+    let env = __jni_attach_guard.borrow_env_mut();
+    let markdown = match jstring_to_string(env, markdown) {
+        Ok(s) => s,
+        Err(e) => {
+            throw_jni_error(env, &format!("{e}"));
+            return std::ptr::null_mut();
+        }
+    };
+    let v = core_crate::generate_citations(&markdown);
+    let s = match serde_json::to_string(&v) {
+        Ok(s) => s,
+        Err(e) => {
+            throw_jni_error(env, &format!("serialize: {e}"));
+            return std::ptr::null_mut();
+        }
+    };
+    string_to_jstring(env, &s)
+}
+
+#[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeCreateEngine(
     mut env: EnvUnowned,
     _class: JClass,

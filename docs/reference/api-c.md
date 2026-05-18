@@ -1,9 +1,34 @@
 ---
 title: "C API Reference"
 ---
+
 ## C API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
+
+#### kcrawl_generate_citations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```c
+KcrawlCitationResult* kcrawl_generate_citations(const char* markdown);
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `const char*` | Yes | The markdown |
+
+**Returns:** `KcrawlCitationResult`
+
+---
 
 #### kcrawl_create_engine()
 
@@ -17,6 +42,7 @@ Returns an error if the configuration is invalid.
 ```c
 KcrawlCrawlEngineHandle* kcrawl_create_engine(KcrawlCrawlConfig config);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +63,7 @@ Scrape a single URL, returning extracted page data.
 ```c
 KcrawlScrapeResult* kcrawl_scrape(KcrawlCrawlEngineHandle engine, const char* url);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +85,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```c
 KcrawlCrawlResult* kcrawl_crawl(KcrawlCrawlEngineHandle engine, const char* url);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +107,7 @@ Discover all pages on a website by following links and sitemaps.
 ```c
 KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +129,7 @@ Scrape multiple URLs concurrently.
 ```c
 KcrawlBatchScrapeResult* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, const char** urls);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +151,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```c
 KcrawlBatchCrawlResult* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const char** urls);
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -206,6 +237,7 @@ Browser fallback configuration.
 KcrawlBrowserConfig kcrawl_default();
 ```
 
+
 ---
 
 #### KcrawlBrowserExtras
@@ -282,6 +314,7 @@ html-to-markdown-rs as the conversion engine for all formats
 KcrawlContentConfig kcrawl_default();
 ```
 
+
 ---
 
 #### KcrawlCookieInfo
@@ -350,6 +383,7 @@ Configuration for crawl, scrape, and map operations.
 ```c
 KcrawlCrawlConfig kcrawl_default();
 ```
+
 ###### kcrawl_validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -359,6 +393,7 @@ Validate the configuration, returning an error if any values are invalid.
 ```c
 void kcrawl_validate();
 ```
+
 
 ---
 
@@ -427,6 +462,7 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```c
 uintptr_t kcrawl_unique_normalized_urls();
 ```
+
 
 ---
 

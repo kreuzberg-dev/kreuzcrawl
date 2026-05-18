@@ -6,6 +6,15 @@ import 'kreuzcrawl_bridge_generated/lib.dart' as rust_bridge;
 import 'kreuzcrawl_bridge_generated/lib.dart';
 
 class KreuzcrawlBridge {
+  /// Convert markdown links to numbered citations.
+  ///
+  /// `[Example](https://example.com)` becomes `Example[1]`
+  /// with `[1]: https://example.com` in the reference list.
+  /// Images `![alt](url)` are preserved unchanged.
+  static Future<CitationResult> generateCitations(String markdown) async {
+    return await rust_bridge.generateCitations(markdown: markdown);
+  }
+
   /// Create a new crawl engine with the given configuration.
   ///
   /// If `config` is `None`, uses [`CrawlConfig::default()`].

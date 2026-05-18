@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.16.43"
+alef_version = "0.16.50"
 languages = [
   "python",
   "node",
@@ -167,7 +167,6 @@ package_name = "Kreuzcrawl"
 
 [crates.zig]
 module_name = "kreuzcrawl"
-exclude_functions = ["create_engine"]
 
 [crates.output]
 python = "crates/kreuzcrawl-py/src/"
@@ -184,10 +183,13 @@ kotlin_android = "packages/kotlin-android/src/main/kotlin/dev/kreuzberg/kreuzcra
 swift = "packages/swift/Sources/Kreuzcrawl/"
 zig = "packages/zig/src/"
 
-[crates.exclude]
-types = ["CachedPage", "InteractionResult", "ActionResult", "CrawlEvent"]
-functions = ["generate_citations"]
-methods = ["CrawlResult.new"]
+# Crate-internal items are hidden from alef via `#[cfg_attr(alef, alef(skip))]`
+# on the Rust definition (preferred over an exclude list here — keeps the intent
+# alongside the type). Currently skipped at source: `CachedPage` (CrawlCache-only
+# storage type), `InteractionResult`/`ActionResult` (placeholders for a future
+# interaction API), `CrawlEvent` (streaming API not yet bridged).
+# `CrawlResult::new` is `pub(crate)` and therefore invisible to alef without any
+# directive.
 
 [crates.include]
 types = [
@@ -230,7 +232,15 @@ types = [
   "BatchCrawlResult",
   "CrawlError",
 ]
-functions = ["create_engine", "scrape", "crawl", "map_urls", "batch_scrape", "batch_crawl"]
+functions = [
+  "create_engine",
+  "scrape",
+  "crawl",
+  "map_urls",
+  "batch_scrape",
+  "batch_crawl",
+  "generate_citations",
+]
 
 [crates.lint.python]
 precondition = "command -v ruff >/dev/null 2>&1"

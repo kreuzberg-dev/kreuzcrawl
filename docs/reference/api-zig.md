@@ -1,9 +1,34 @@
 ---
 title: "Zig API Reference"
 ---
+
 ## Zig API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
+
+#### generateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```zig
+pub fn generate_citations(markdown: [:0]const u8) CitationResult
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `[:0]const u8` | Yes | The markdown |
+
+**Returns:** `CitationResult`
+
+---
 
 #### createEngine()
 
@@ -17,6 +42,7 @@ Returns an error if the configuration is invalid.
 ```zig
 pub fn create_engine(config: ?CrawlConfig) CrawlError!CrawlEngineHandle
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +63,7 @@ Scrape a single URL, returning extracted page data.
 ```zig
 pub fn scrape(engine: CrawlEngineHandle, url: [:0]const u8) CrawlError!ScrapeResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +85,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```zig
 pub fn crawl(engine: CrawlEngineHandle, url: [:0]const u8) CrawlError!CrawlResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +107,7 @@ Discover all pages on a website by following links and sitemaps.
 ```zig
 pub fn map_urls(engine: CrawlEngineHandle, url: [:0]const u8) CrawlError!MapResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +129,7 @@ Scrape multiple URLs concurrently.
 ```zig
 pub fn batch_scrape(engine: CrawlEngineHandle, urls: []const [:0]const u8) CrawlError![]const BatchScrapeResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +151,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```zig
 pub fn batch_crawl(engine: CrawlEngineHandle, urls: []const [:0]const u8) CrawlError![]const BatchCrawlResult
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -206,6 +237,7 @@ Browser fallback configuration.
 pub fn default() BrowserConfig
 ```
 
+
 ---
 
 #### BrowserExtras
@@ -282,6 +314,7 @@ html-to-markdown-rs as the conversion engine for all formats
 pub fn default() ContentConfig
 ```
 
+
 ---
 
 #### CookieInfo
@@ -350,6 +383,7 @@ Configuration for crawl, scrape, and map operations.
 ```zig
 pub fn default() CrawlConfig
 ```
+
 ###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -359,6 +393,7 @@ Validate the configuration, returning an error if any values are invalid.
 ```zig
 pub fn validate(self: *const CrawlConfig) CrawlError!void
 ```
+
 
 ---
 
@@ -427,6 +462,7 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```zig
 pub fn uniqueNormalizedUrls(self: *const CrawlResult) u64
 ```
+
 
 ---
 

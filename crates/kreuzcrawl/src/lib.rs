@@ -47,7 +47,7 @@ pub use bindings::{
     BatchCrawlResult, BatchScrapeResult, CrawlEngineHandle, batch_crawl, batch_scrape, crawl, create_engine, map_urls,
     scrape,
 };
-pub use citations::{CitationReference, CitationResult};
+pub use citations::{CitationReference, CitationResult, generate_citations};
 pub use defaults::{
     AdaptiveStrategy, BestFirstStrategy, BfsStrategy, DfsStrategy, InMemoryFrontier, NoopCache, NoopEmitter,
     NoopFilter, NoopStore, PerDomainThrottle,

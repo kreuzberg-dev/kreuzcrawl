@@ -699,6 +699,8 @@ mod ffi {
     }
 
     extern "Rust" {
+        #[swift_bridge(swift_name = "generateCitations")]
+        fn generate_citations(markdown: String) -> CitationResult;
         #[swift_bridge(swift_name = "createEngine")]
         fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, String>;
         fn scrape(engine: CrawlEngineHandle, url: String) -> Result<ScrapeResult, String>;
@@ -3373,6 +3375,10 @@ impl AssetCategory {
             Self::Other => "other".to_string(),
         }
     }
+}
+
+pub fn generate_citations(markdown: String) -> CitationResult {
+    CitationResult(kreuzcrawl::generate_citations(&markdown))
 }
 
 pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, String> {
