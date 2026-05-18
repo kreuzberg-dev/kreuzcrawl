@@ -202,10 +202,10 @@ impl ObscuraHttpClient {
                     .timeout(Duration::from_secs(30))
                     .danger_accept_invalid_certs(false);
 
-                if let Some(ref proxy) = self.proxy_url {
-                    if let Ok(p) = reqwest::Proxy::all(proxy.as_str()) {
-                        builder = builder.proxy(p);
-                    }
+                if let Some(ref proxy) = self.proxy_url
+                    && let Ok(p) = reqwest::Proxy::all(proxy.as_str())
+                {
+                    builder = builder.proxy(p);
                 }
 
                 builder.build().expect("failed to build HTTP client")
@@ -243,19 +243,18 @@ impl ObscuraHttpClient {
 
         let mut method = initial_method;
         let mut body = initial_body;
-        if self.block_trackers {
-            if let Some(host) = url.host_str() {
-                if crate::net::blocklist::is_blocked(host) {
-                    tracing::debug!("Blocked tracker: {}", url);
-                    return Ok(Response {
-                        status: 0,
-                        url: url.clone(),
-                        headers: HashMap::new(),
-                        body: Vec::new(),
-                        redirected_from: Vec::new(),
-                    });
-                }
-            }
+        if self.block_trackers
+            && let Some(host) = url.host_str()
+            && crate::net::blocklist::is_blocked(host)
+        {
+            tracing::debug!("Blocked tracker: {}", url);
+            return Ok(Response {
+                status: 0,
+                url: url.clone(),
+                headers: HashMap::new(),
+                body: Vec::new(),
+                redirected_from: Vec::new(),
+            });
         }
 
         let mut current_url = url.clone();
@@ -339,10 +338,10 @@ impl ObscuraHttpClient {
             );
 
             let cookie_header = self.cookie_jar.get_cookie_header(&current_url);
-            if !cookie_header.is_empty() {
-                if let Ok(val) = HeaderValue::from_str(&cookie_header) {
-                    headers.insert(reqwest::header::COOKIE, val);
-                }
+            if !cookie_header.is_empty()
+                && let Ok(val) = HeaderValue::from_str(&cookie_header)
+            {
+                headers.insert(reqwest::header::COOKIE, val);
             }
 
             for (k, v) in self.extra_headers.read().await.iter() {
@@ -386,26 +385,26 @@ impl ObscuraHttpClient {
                 .map(|(k, v)| (k.as_str().to_lowercase(), v.to_str().unwrap_or("").to_string()))
                 .collect();
 
-            if status.is_redirection() {
-                if let Some(location) = resp.headers().get(reqwest::header::LOCATION) {
-                    let location_str = location
-                        .to_str()
-                        .map_err(|_| ObscuraNetError::Network("Invalid redirect Location header".into()))?;
-                    let next_url = current_url
-                        .join(location_str)
-                        .map_err(|e| ObscuraNetError::Network(format!("Invalid redirect URL: {}", e)))?;
-                    validate_url(&next_url)?;
-                    redirects.push(current_url.clone());
-                    current_url = next_url;
-                    if status == reqwest::StatusCode::MOVED_PERMANENTLY
-                        || status == reqwest::StatusCode::FOUND
-                        || status == reqwest::StatusCode::SEE_OTHER
-                    {
-                        method = Method::GET;
-                        body = None;
-                    }
-                    continue;
+            if status.is_redirection()
+                && let Some(location) = resp.headers().get(reqwest::header::LOCATION)
+            {
+                let location_str = location
+                    .to_str()
+                    .map_err(|_| ObscuraNetError::Network("Invalid redirect Location header".into()))?;
+                let next_url = current_url
+                    .join(location_str)
+                    .map_err(|e| ObscuraNetError::Network(format!("Invalid redirect URL: {}", e)))?;
+                validate_url(&next_url)?;
+                redirects.push(current_url.clone());
+                current_url = next_url;
+                if status == reqwest::StatusCode::MOVED_PERMANENTLY
+                    || status == reqwest::StatusCode::FOUND
+                    || status == reqwest::StatusCode::SEE_OTHER
+                {
+                    method = Method::GET;
+                    body = None;
                 }
+                continue;
             }
 
             let body_bytes = resp

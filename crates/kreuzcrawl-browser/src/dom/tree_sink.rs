@@ -221,7 +221,7 @@ impl TreeSink for DomTree {
 
 pub fn parse_html(html: &str) -> DomTree {
     use html5ever::tendril::TendrilSink;
-    use html5ever::{parse_document, ParseOpts};
+    use html5ever::{ParseOpts, parse_document};
 
     let tree = DomTree::new();
     parse_document(tree, ParseOpts::default())
@@ -231,11 +231,11 @@ pub fn parse_html(html: &str) -> DomTree {
 
 pub fn parse_fragment(html: &str) -> DomTree {
     use html5ever::tendril::TendrilSink;
-    use html5ever::{parse_fragment, ParseOpts, QualName};
+    use html5ever::{ParseOpts, QualName, parse_fragment};
 
     let context_name = QualName::new(None, ns!(html), local_name!("body"));
     let tree = DomTree::new();
-    parse_fragment(tree, ParseOpts::default(), context_name, vec![])
+    parse_fragment(tree, ParseOpts::default(), context_name, vec![], false)
         .from_utf8()
         .one(html.as_bytes())
 }

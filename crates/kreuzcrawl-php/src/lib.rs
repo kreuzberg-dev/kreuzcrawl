@@ -2187,6 +2187,7 @@ impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
             },
             wait_selector: val.wait_selector,
             extra_wait: val.extra_wait.map(|v| std::time::Duration::from_millis(v as u64)),
+            backend: kreuzcrawl::BrowserBackend::default(),
         }
     }
 }

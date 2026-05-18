@@ -184,10 +184,10 @@ impl DomTree {
             NodeId(idx)
         };
 
-        if let NodeData::Element { ref attrs, .. } = data {
-            if let Some(id_attr) = attrs.iter().find(|a| a.name.local.as_ref() == "id") {
-                inner.id_index.insert(id_attr.value.clone(), id);
-            }
+        if let NodeData::Element { ref attrs, .. } = data
+            && let Some(id_attr) = attrs.iter().find(|a| a.name.local.as_ref() == "id")
+        {
+            inner.id_index.insert(id_attr.value.clone(), id);
         }
 
         inner.nodes[id.index()] = Some(Node {
@@ -239,10 +239,10 @@ impl DomTree {
             child.next_sibling = None;
         }
 
-        if let Some(old_last_id) = old_last {
-            if let Some(Some(old_last_node)) = inner.nodes.get_mut(old_last_id.index()) {
-                old_last_node.next_sibling = Some(child_id);
-            }
+        if let Some(old_last_id) = old_last
+            && let Some(Some(old_last_node)) = inner.nodes.get_mut(old_last_id.index())
+        {
+            old_last_node.next_sibling = Some(child_id);
         }
 
         if let Some(Some(parent)) = inner.nodes.get_mut(parent_id.index()) {
@@ -297,24 +297,24 @@ impl DomTree {
             None => return,
         };
 
-        if let Some(prev) = prev_id {
-            if let Some(Some(node)) = inner.nodes.get_mut(prev.index()) {
-                node.next_sibling = next_id;
-            }
-        } else if let Some(parent_id) = parent_id {
-            if let Some(Some(parent)) = inner.nodes.get_mut(parent_id.index()) {
-                parent.first_child = next_id;
-            }
+        if let Some(prev) = prev_id
+            && let Some(Some(node)) = inner.nodes.get_mut(prev.index())
+        {
+            node.next_sibling = next_id;
+        } else if let Some(parent_id) = parent_id
+            && let Some(Some(parent)) = inner.nodes.get_mut(parent_id.index())
+        {
+            parent.first_child = next_id;
         }
 
-        if let Some(next) = next_id {
-            if let Some(Some(node)) = inner.nodes.get_mut(next.index()) {
-                node.prev_sibling = prev_id;
-            }
-        } else if let Some(parent_id) = parent_id {
-            if let Some(Some(parent)) = inner.nodes.get_mut(parent_id.index()) {
-                parent.last_child = prev_id;
-            }
+        if let Some(next) = next_id
+            && let Some(Some(node)) = inner.nodes.get_mut(next.index())
+        {
+            node.prev_sibling = prev_id;
+        } else if let Some(parent_id) = parent_id
+            && let Some(Some(parent)) = inner.nodes.get_mut(parent_id.index())
+        {
+            parent.last_child = prev_id;
         }
 
         if let Some(Some(node)) = inner.nodes.get_mut(node_id.index()) {
@@ -331,16 +331,16 @@ impl DomTree {
 
         let mut ids_to_remove = Vec::new();
         for &desc_id in &descendants {
-            if let Some(Some(node)) = inner.nodes.get(desc_id.index()) {
-                if let Some(id_val) = node.get_attribute("id") {
-                    ids_to_remove.push(id_val.to_string());
-                }
-            }
-        }
-        if let Some(Some(node)) = inner.nodes.get(node_id.index()) {
-            if let Some(id_val) = node.get_attribute("id") {
+            if let Some(Some(node)) = inner.nodes.get(desc_id.index())
+                && let Some(id_val) = node.get_attribute("id")
+            {
                 ids_to_remove.push(id_val.to_string());
             }
+        }
+        if let Some(Some(node)) = inner.nodes.get(node_id.index())
+            && let Some(id_val) = node.get_attribute("id")
+        {
+            ids_to_remove.push(id_val.to_string());
         }
 
         for id_str in ids_to_remove {
@@ -477,11 +477,11 @@ impl DomTree {
                     .unwrap()
             };
             let mut inner = self.inner.borrow_mut();
-            if let Some(Some(node)) = inner.nodes.get_mut(last_child_id.index()) {
-                if let NodeData::Text { contents } = &mut node.data {
-                    contents.push_str(text);
-                    return;
-                }
+            if let Some(Some(node)) = inner.nodes.get_mut(last_child_id.index())
+                && let NodeData::Text { contents } = &mut node.data
+            {
+                contents.push_str(text);
+                return;
             }
         }
 
@@ -494,24 +494,22 @@ impl DomTree {
     pub fn find_body_or_root(&self) -> NodeId {
         let doc = self.document();
         for child in self.children(doc) {
-            if let Some(n) = self.get_node(child) {
-                if n.as_element()
+            if let Some(n) = self.get_node(child)
+                && n.as_element()
                     .map(|name| name.local.as_ref() == "html")
                     .unwrap_or(false)
-                {
-                    for html_child in self.children(child) {
-                        if let Some(hc) = self.get_node(html_child) {
-                            if hc
-                                .as_element()
-                                .map(|name| name.local.as_ref() == "body")
-                                .unwrap_or(false)
-                            {
-                                return html_child;
-                            }
-                        }
+            {
+                for html_child in self.children(child) {
+                    if let Some(hc) = self.get_node(html_child)
+                        && hc
+                            .as_element()
+                            .map(|name| name.local.as_ref() == "body")
+                            .unwrap_or(false)
+                    {
+                        return html_child;
                     }
-                    return child;
                 }
+                return child;
             }
         }
         doc

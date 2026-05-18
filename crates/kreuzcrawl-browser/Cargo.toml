@@ -1,8 +1,8 @@
 [package]
 name = "kreuzcrawl-browser"
-version = "0.1.0"
-edition = "2021"
-license = "Elastic-2.0"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
 publish = false
 
 [features]
@@ -10,24 +10,24 @@ default = []
 stealth = ["wreq", "wreq-util"]
 
 [build-dependencies]
-deno_core = "0.350"
+deno_core = { workspace = true }
 
 [dependencies]
 anyhow = { workspace = true }
 async-trait = { workspace = true }
 base64 = { workspace = true }
-cssparser = "0.34"
-deno_core = "0.350"
-deno_error = "0.6"
+cssparser = { workspace = true }
+deno_core = { workspace = true }
+deno_error = { workspace = true }
 futures = { workspace = true }
-html5ever = "0.29"
-markup5ever = "0.14"
+html5ever = { workspace = true }
+markup5ever = { workspace = true }
 precomputed-hash = { workspace = true }
 reqwest = { workspace = true }
-selectors = "0.26"
+selectors = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-servo_arc = "0.4"
+servo_arc = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }

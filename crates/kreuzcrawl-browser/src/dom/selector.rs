@@ -29,7 +29,7 @@ impl parser::SelectorImpl for ObscuraSelector {
     type PseudoElement = PseudoElement;
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub struct CssString(pub String);
 
 impl<'a> From<&'a str> for CssString {
@@ -57,12 +57,6 @@ impl PrecomputedHash for CssString {
             h = h.wrapping_mul(33).wrapping_add(*b as u32);
         }
         h
-    }
-}
-
-impl Default for CssString {
-    fn default() -> Self {
-        CssString(String::new())
     }
 }
 

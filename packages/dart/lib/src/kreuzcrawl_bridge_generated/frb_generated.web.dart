@@ -21,21 +21,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   });
 
   CrossPlatformFinalizerArg
-      get rust_arc_decrement_strong_count_CrawlEngineHandlePtr => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle;
+  get rust_arc_decrement_strong_count_CrawlEngineHandlePtr => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle;
 
   @protected
   CrawlEngineHandle
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          dynamic raw);
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    dynamic raw,
+  );
 
   @protected
   Map<String, String> dco_decode_Map_String_String_None(dynamic raw);
 
   @protected
   CrawlEngineHandle
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          dynamic raw);
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    dynamic raw,
+  );
 
   @protected
   String dco_decode_String(dynamic raw);
@@ -96,6 +98,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ScrapeResult dco_decode_box_autoadd_scrape_result(dynamic raw);
+
+  @protected
+  BrowserBackend dco_decode_browser_backend(dynamic raw);
 
   @protected
   BrowserConfig dco_decode_browser_config(dynamic raw);
@@ -258,7 +263,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DownloadedDocument? dco_decode_opt_box_autoadd_downloaded_document(
-      dynamic raw);
+    dynamic raw,
+  );
 
   @protected
   ExtractionMeta? dco_decode_opt_box_autoadd_extraction_meta(dynamic raw);
@@ -319,17 +325,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CrawlEngineHandle
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          SseDeserializer deserializer);
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    SseDeserializer deserializer,
+  );
 
   @protected
   Map<String, String> sse_decode_Map_String_String_None(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   CrawlEngineHandle
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          SseDeserializer deserializer);
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    SseDeserializer deserializer,
+  );
 
   @protected
   String sse_decode_String(SseDeserializer deserializer);
@@ -348,21 +357,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BatchScrapeResult sse_decode_batch_scrape_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
   ArticleMetadata sse_decode_box_autoadd_article_metadata(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   AuthConfig sse_decode_box_autoadd_auth_config(SseDeserializer deserializer);
 
   @protected
   CitationResult sse_decode_box_autoadd_citation_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   CrawlConfig sse_decode_box_autoadd_crawl_config(SseDeserializer deserializer);
@@ -372,11 +384,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DownloadedDocument sse_decode_box_autoadd_downloaded_document(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ExtractionMeta sse_decode_box_autoadd_extraction_meta(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   double sse_decode_box_autoadd_f_64(SseDeserializer deserializer);
@@ -386,18 +400,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MarkdownResult sse_decode_box_autoadd_markdown_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ProxyConfig sse_decode_box_autoadd_proxy_config(SseDeserializer deserializer);
 
   @protected
   ResponseMeta sse_decode_box_autoadd_response_meta(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ScrapeResult sse_decode_box_autoadd_scrape_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  BrowserBackend sse_decode_browser_backend(SseDeserializer deserializer);
 
   @protected
   BrowserConfig sse_decode_browser_config(SseDeserializer deserializer);
@@ -434,7 +454,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DownloadedDocument sse_decode_downloaded_document(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ExtractionMeta sse_decode_extraction_meta(SseDeserializer deserializer);
@@ -483,30 +504,36 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<AssetCategory> sse_decode_list_asset_category(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<BatchCrawlResult> sse_decode_list_batch_crawl_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<BatchScrapeResult> sse_decode_list_batch_scrape_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<CitationReference> sse_decode_list_citation_reference(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<CookieInfo> sse_decode_list_cookie_info(SseDeserializer deserializer);
 
   @protected
   List<CrawlPageResult> sse_decode_list_crawl_page_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<DownloadedAsset> sse_decode_list_downloaded_asset(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<FaviconInfo> sse_decode_list_favicon_info(SseDeserializer deserializer);
@@ -519,7 +546,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<HreflangEntry> sse_decode_list_hreflang_entry(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<ImageInfo> sse_decode_list_image_info(SseDeserializer deserializer);
@@ -538,7 +566,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<(String, String)> sse_decode_list_record_string_string(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<SitemapUrl> sse_decode_list_sitemap_url(SseDeserializer deserializer);
@@ -554,31 +583,38 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ArticleMetadata? sse_decode_opt_box_autoadd_article_metadata(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   AuthConfig? sse_decode_opt_box_autoadd_auth_config(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   CitationResult? sse_decode_opt_box_autoadd_citation_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   CrawlConfig? sse_decode_opt_box_autoadd_crawl_config(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   CrawlResult? sse_decode_opt_box_autoadd_crawl_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   DownloadedDocument? sse_decode_opt_box_autoadd_downloaded_document(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ExtractionMeta? sse_decode_opt_box_autoadd_extraction_meta(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   double? sse_decode_opt_box_autoadd_f_64(SseDeserializer deserializer);
@@ -588,34 +624,41 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MarkdownResult? sse_decode_opt_box_autoadd_markdown_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ProxyConfig? sse_decode_opt_box_autoadd_proxy_config(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ResponseMeta? sse_decode_opt_box_autoadd_response_meta(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ScrapeResult? sse_decode_opt_box_autoadd_scrape_result(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<String>? sse_decode_opt_list_String(SseDeserializer deserializer);
 
   @protected
   List<FaviconInfo>? sse_decode_opt_list_favicon_info(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<HeadingInfo>? sse_decode_opt_list_heading_info(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<HreflangEntry>? sse_decode_opt_list_hreflang_entry(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   PageMetadata sse_decode_page_metadata(SseDeserializer deserializer);
@@ -625,7 +668,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   (String, String) sse_decode_record_string_string(
-      SseDeserializer deserializer);
+    SseDeserializer deserializer,
+  );
 
   @protected
   ResponseMeta sse_decode_response_meta(SseDeserializer deserializer);
@@ -644,24 +688,32 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          CrawlEngineHandle self, SseSerializer serializer);
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    CrawlEngineHandle self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_Map_String_String_None(
-      Map<String, String> self, SseSerializer serializer);
+    Map<String, String> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          CrawlEngineHandle self, SseSerializer serializer);
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    CrawlEngineHandle self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
   void sse_encode_article_metadata(
-      ArticleMetadata self, SseSerializer serializer);
+    ArticleMetadata self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_asset_category(AssetCategory self, SseSerializer serializer);
@@ -671,65 +723,99 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_batch_crawl_result(
-      BatchCrawlResult self, SseSerializer serializer);
+    BatchCrawlResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_batch_scrape_result(
-      BatchScrapeResult self, SseSerializer serializer);
+    BatchScrapeResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_article_metadata(
-      ArticleMetadata self, SseSerializer serializer);
+    ArticleMetadata self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_auth_config(
-      AuthConfig self, SseSerializer serializer);
+    AuthConfig self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_citation_result(
-      CitationResult self, SseSerializer serializer);
+    CitationResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_crawl_config(
-      CrawlConfig self, SseSerializer serializer);
+    CrawlConfig self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_crawl_result(
-      CrawlResult self, SseSerializer serializer);
+    CrawlResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_downloaded_document(
-      DownloadedDocument self, SseSerializer serializer);
+    DownloadedDocument self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_extraction_meta(
-      ExtractionMeta self, SseSerializer serializer);
+    ExtractionMeta self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_f_64(double self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_i_64(
-      PlatformInt64 self, SseSerializer serializer);
+    PlatformInt64 self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_markdown_result(
-      MarkdownResult self, SseSerializer serializer);
+    MarkdownResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_proxy_config(
-      ProxyConfig self, SseSerializer serializer);
+    ProxyConfig self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_response_meta(
-      ResponseMeta self, SseSerializer serializer);
+    ResponseMeta self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_scrape_result(
-      ScrapeResult self, SseSerializer serializer);
+    ScrapeResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_browser_backend(
+    BrowserBackend self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_browser_config(BrowserConfig self, SseSerializer serializer);
@@ -742,11 +828,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_citation_reference(
-      CitationReference self, SseSerializer serializer);
+    CitationReference self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_citation_result(
-      CitationResult self, SseSerializer serializer);
+    CitationResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_content_config(ContentConfig self, SseSerializer serializer);
@@ -759,22 +849,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_crawl_page_result(
-      CrawlPageResult self, SseSerializer serializer);
+    CrawlPageResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_crawl_result(CrawlResult self, SseSerializer serializer);
 
   @protected
   void sse_encode_downloaded_asset(
-      DownloadedAsset self, SseSerializer serializer);
+    DownloadedAsset self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_downloaded_document(
-      DownloadedDocument self, SseSerializer serializer);
+    DownloadedDocument self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_extraction_meta(
-      ExtractionMeta self, SseSerializer serializer);
+    ExtractionMeta self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_f_64(double self, SseSerializer serializer);
@@ -820,149 +918,213 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_asset_category(
-      List<AssetCategory> self, SseSerializer serializer);
+    List<AssetCategory> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_batch_crawl_result(
-      List<BatchCrawlResult> self, SseSerializer serializer);
+    List<BatchCrawlResult> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_batch_scrape_result(
-      List<BatchScrapeResult> self, SseSerializer serializer);
+    List<BatchScrapeResult> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_citation_reference(
-      List<CitationReference> self, SseSerializer serializer);
+    List<CitationReference> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_cookie_info(
-      List<CookieInfo> self, SseSerializer serializer);
+    List<CookieInfo> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_crawl_page_result(
-      List<CrawlPageResult> self, SseSerializer serializer);
+    List<CrawlPageResult> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_downloaded_asset(
-      List<DownloadedAsset> self, SseSerializer serializer);
+    List<DownloadedAsset> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_favicon_info(
-      List<FaviconInfo> self, SseSerializer serializer);
+    List<FaviconInfo> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_feed_info(List<FeedInfo> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_heading_info(
-      List<HeadingInfo> self, SseSerializer serializer);
+    List<HeadingInfo> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_hreflang_entry(
-      List<HreflangEntry> self, SseSerializer serializer);
+    List<HreflangEntry> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_image_info(
-      List<ImageInfo> self, SseSerializer serializer);
+    List<ImageInfo> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_json_ld_entry(
-      List<JsonLdEntry> self, SseSerializer serializer);
+    List<JsonLdEntry> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_link_info(List<LinkInfo> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_prim_i_64_strict(
-      Int64List self, SseSerializer serializer);
+    Int64List self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_prim_u_8_strict(
-      Uint8List self, SseSerializer serializer);
+    Uint8List self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_record_string_string(
-      List<(String, String)> self, SseSerializer serializer);
+    List<(String, String)> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_sitemap_url(
-      List<SitemapUrl> self, SseSerializer serializer);
+    List<SitemapUrl> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_map_result(MapResult self, SseSerializer serializer);
 
   @protected
   void sse_encode_markdown_result(
-      MarkdownResult self, SseSerializer serializer);
+    MarkdownResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_article_metadata(
-      ArticleMetadata? self, SseSerializer serializer);
+    ArticleMetadata? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_auth_config(
-      AuthConfig? self, SseSerializer serializer);
+    AuthConfig? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_citation_result(
-      CitationResult? self, SseSerializer serializer);
+    CitationResult? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_crawl_config(
-      CrawlConfig? self, SseSerializer serializer);
+    CrawlConfig? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_crawl_result(
-      CrawlResult? self, SseSerializer serializer);
+    CrawlResult? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_downloaded_document(
-      DownloadedDocument? self, SseSerializer serializer);
+    DownloadedDocument? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_extraction_meta(
-      ExtractionMeta? self, SseSerializer serializer);
+    ExtractionMeta? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_f_64(double? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_i_64(
-      PlatformInt64? self, SseSerializer serializer);
+    PlatformInt64? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_markdown_result(
-      MarkdownResult? self, SseSerializer serializer);
+    MarkdownResult? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_proxy_config(
-      ProxyConfig? self, SseSerializer serializer);
+    ProxyConfig? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_response_meta(
-      ResponseMeta? self, SseSerializer serializer);
+    ResponseMeta? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_scrape_result(
-      ScrapeResult? self, SseSerializer serializer);
+    ScrapeResult? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_list_String(List<String>? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_list_favicon_info(
-      List<FaviconInfo>? self, SseSerializer serializer);
+    List<FaviconInfo>? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_list_heading_info(
-      List<HeadingInfo>? self, SseSerializer serializer);
+    List<HeadingInfo>? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_list_hreflang_entry(
-      List<HreflangEntry>? self, SseSerializer serializer);
+    List<HreflangEntry>? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_page_metadata(PageMetadata self, SseSerializer serializer);
@@ -972,7 +1134,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_record_string_string(
-      (String, String) self, SseSerializer serializer);
+    (String, String) self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_response_meta(ResponseMeta self, SseSerializer serializer);
@@ -995,17 +1159,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 class RustLibWire implements BaseWire {
   RustLibWire.fromExternalLibrary(ExternalLibrary lib);
 
-  void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          int ptr) =>
-      wasmModule
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-              ptr);
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+        ptr,
+      );
 
-  void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          int ptr) =>
-      wasmModule
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-              ptr);
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+        ptr,
+      );
 }
 
 @JS('wasm_bindgen')
@@ -1015,10 +1183,12 @@ external RustLibWasmModule get wasmModule;
 @anonymous
 extension type RustLibWasmModule._(JSObject _) implements JSObject {
   external void
-      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          int ptr);
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    int ptr,
+  );
 
   external void
-      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
-          int ptr);
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    int ptr,
+  );
 }

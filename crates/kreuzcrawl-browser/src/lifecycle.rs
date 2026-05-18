@@ -30,13 +30,15 @@ pub enum WaitUntil {
     NetworkIdle2,
 }
 
-impl WaitUntil {
-    pub fn from_str(s: &str) -> Self {
-        match s {
+impl std::str::FromStr for WaitUntil {
+    type Err = std::convert::Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
             "domcontentloaded" => WaitUntil::DomContentLoaded,
             "networkidle0" | "networkIdle" | "networkidle" => WaitUntil::NetworkIdle0,
             "networkidle2" => WaitUntil::NetworkIdle2,
             _ => WaitUntil::Load,
-        }
+        })
     }
 }

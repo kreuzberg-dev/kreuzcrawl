@@ -1065,6 +1065,7 @@ const _: fn() = || {
         let _: crate::BrowserWait = BrowserConfig.wait;
         let _: Option<String> = BrowserConfig.wait_selector;
         let _: Option<i64> = BrowserConfig.extra_wait;
+        let _: crate::BrowserBackend = BrowserConfig.backend;
     }
     {
         let CitationReference = None::<crate::CitationReference>.unwrap();
@@ -1503,6 +1504,18 @@ impl SseDecode for bool {
     }
 }
 
+impl SseDecode for crate::BrowserBackend {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::BrowserBackend::Chromiumoxide,
+            1 => crate::BrowserBackend::Native,
+            _ => unreachable!("Invalid variant for BrowserBackend: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::BrowserConfig {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1512,6 +1525,7 @@ impl SseDecode for crate::BrowserConfig {
         let mut var_wait = <crate::BrowserWait>::sse_decode(deserializer);
         let mut var_waitSelector = <Option<String>>::sse_decode(deserializer);
         let mut var_extraWait = <Option<i64>>::sse_decode(deserializer);
+        let mut var_backend = <crate::BrowserBackend>::sse_decode(deserializer);
         return crate::BrowserConfig {
             mode: var_mode,
             endpoint: var_endpoint,
@@ -1519,6 +1533,7 @@ impl SseDecode for crate::BrowserConfig {
             wait: var_wait,
             wait_selector: var_waitSelector,
             extra_wait: var_extraWait,
+            backend: var_backend,
         };
     }
 }
@@ -2862,6 +2877,22 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BatchScrapeResult>> for
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BrowserBackend> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self.0 {
+            crate::BrowserBackend::Chromiumoxide => 0.into_dart(),
+            crate::BrowserBackend::Native => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::BrowserBackend> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BrowserBackend>> for crate::BrowserBackend {
+    fn into_into_dart(self) -> FrbWrapper<crate::BrowserBackend> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BrowserConfig> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -2871,6 +2902,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BrowserConfig> {
             self.0.wait.into_into_dart().into_dart(),
             self.0.wait_selector.into_into_dart().into_dart(),
             self.0.extra_wait.into_into_dart().into_dart(),
+            self.0.backend.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -3635,6 +3667,22 @@ impl SseEncode for bool {
     }
 }
 
+impl SseEncode for crate::BrowserBackend {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::BrowserBackend::Chromiumoxide => 0,
+                crate::BrowserBackend::Native => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for crate::BrowserConfig {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3644,6 +3692,7 @@ impl SseEncode for crate::BrowserConfig {
         <crate::BrowserWait>::sse_encode(self.wait, serializer);
         <Option<String>>::sse_encode(self.wait_selector, serializer);
         <Option<i64>>::sse_encode(self.extra_wait, serializer);
+        <crate::BrowserBackend>::sse_encode(self.backend, serializer);
     }
 }
 
