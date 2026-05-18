@@ -15,8 +15,6 @@ struct CookieEntry {
     secure: bool,
     http_only: bool,
     expires: Option<u64>,
-    #[allow(dead_code)]
-    same_site: String,
 }
 
 impl CookieJar {
@@ -39,7 +37,6 @@ impl CookieJar {
         let mut secure = false;
         let mut http_only = false;
         let mut expires: Option<u64> = None;
-        let mut same_site = "Lax".to_string();
 
         if parts.len() > 1 {
             for attr in parts[1].split(';') {
@@ -69,9 +66,6 @@ impl CookieJar {
                                     expires = Some(now + secs as u64);
                                 }
                             }
-                        }
-                        "samesite" => {
-                            same_site = val.trim().to_string();
                         }
                         _ => {}
                     }
@@ -110,7 +104,6 @@ impl CookieJar {
             secure,
             http_only,
             expires,
-            same_site,
         };
 
         let mut cookies = self.cookies.write().unwrap();
@@ -182,7 +175,6 @@ impl CookieJar {
                 secure: cookie.secure,
                 http_only: cookie.http_only,
                 expires: None,
-                same_site: "Lax".to_string(),
             };
             jar.entry(cookie.domain).or_default().insert(cookie.name, entry);
         }
@@ -239,7 +231,6 @@ impl CookieJar {
         let mut path = url.path().to_string();
         let mut secure = false;
         let mut expires: Option<u64> = None;
-        let mut same_site = "Lax".to_string();
 
         if parts.len() > 1 {
             for attr in parts[1].split(';') {
@@ -270,15 +261,10 @@ impl CookieJar {
                                 }
                             }
                         }
-                        "samesite" => {
-                            same_site = val.trim().to_string();
-                        }
                         _ => {}
                     }
-                } else {
-                    if attr.to_lowercase() == "secure" {
-                        secure = true;
-                    }
+                } else if attr.to_lowercase() == "secure" {
+                    secure = true;
                 }
             }
         }
@@ -308,7 +294,6 @@ impl CookieJar {
             secure,
             http_only: false,
             expires,
-            same_site,
         };
 
         let mut cookies = self.cookies.write().unwrap();
@@ -499,14 +484,6 @@ mod tests {
         let url = Url::parse("https://example.com/").unwrap();
         jar.set_cookie("old=gone; Expires=Thu, 01 Jan 2020 00:00:00 GMT", &url);
         assert!(jar.get_cookie_header(&url).is_empty());
-    }
-
-    #[test]
-    fn test_samesite_parsed() {
-        let jar = CookieJar::new();
-        let url = Url::parse("https://example.com/").unwrap();
-        jar.set_cookie("strict_cookie=val; SameSite=Strict", &url);
-        assert!(jar.get_cookie_header(&url).contains("strict_cookie=val"));
     }
 
     #[test]

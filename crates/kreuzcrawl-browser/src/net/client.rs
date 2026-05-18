@@ -61,11 +61,11 @@ pub enum ResourceType {
 pub type RequestCallback = Arc<dyn Fn(&RequestInfo) + Send + Sync>;
 pub type ResponseCallback = Arc<dyn Fn(&RequestInfo, &Response) + Send + Sync>;
 
-fn validate_url(url: &Url) -> Result<(), ObscuraNetError> {
-    let allow_private_network = std::env::var_os("OBSCURA_ALLOW_PRIVATE_NETWORK").is_some();
+fn validate_url(url: &Url) -> Result<(), NetError> {
+    let allow_private_network = std::env::var_os("KREUZCRAWL_ALLOW_PRIVATE_NETWORK").is_some();
     let scheme = url.scheme();
     if scheme != "http" && scheme != "https" && scheme != "file" {
-        return Err(ObscuraNetError::Network(format!(
+        return Err(NetError::Network(format!(
             "Forbidden URL scheme '{}' - only http, https, and file are allowed",
             scheme
         )));
@@ -84,7 +84,7 @@ fn validate_url(url: &Url) -> Result<(), ObscuraNetError> {
                     || ip.is_broadcast()
                     || ip.is_documentation()
                 {
-                    return Err(ObscuraNetError::Network(format!(
+                    return Err(NetError::Network(format!(
                         "Access to private/internal IP address {} is not allowed",
                         ip
                     )));
@@ -92,7 +92,7 @@ fn validate_url(url: &Url) -> Result<(), ObscuraNetError> {
             }
             url::Host::Ipv6(ip) => {
                 if ip.is_loopback() || ip.is_unicast_link_local() {
-                    return Err(ObscuraNetError::Network(format!(
+                    return Err(NetError::Network(format!(
                         "Access to private/internal IPv6 address {} is not allowed",
                         ip
                     )));
@@ -105,7 +105,7 @@ fn validate_url(url: &Url) -> Result<(), ObscuraNetError> {
                     || lower_domain == "127.0.0.1"
                     || lower_domain == "::1"
                 {
-                    return Err(ObscuraNetError::Network(format!(
+                    return Err(NetError::Network(format!(
                         "Access to localhost domain '{}' is not allowed",
                         domain
                     )));
@@ -117,13 +117,13 @@ fn validate_url(url: &Url) -> Result<(), ObscuraNetError> {
     Ok(())
 }
 
-async fn fetch_file_url(url: &Url) -> Result<Response, ObscuraNetError> {
+async fn fetch_file_url(url: &Url) -> Result<Response, NetError> {
     let path = url
         .to_file_path()
-        .map_err(|_| ObscuraNetError::Network("Invalid file URL".to_string()))?;
+        .map_err(|_| NetError::Network("Invalid file URL".to_string()))?;
     let body = tokio::fs::read(&path)
         .await
-        .map_err(|e| ObscuraNetError::Network(format!("Failed to read file: {}", e)))?;
+        .map_err(|e| NetError::Network(format!("Failed to read file: {}", e)))?;
 
     let mut headers = HashMap::new();
     if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
@@ -152,7 +152,7 @@ async fn fetch_file_url(url: &Url) -> Result<Response, ObscuraNetError> {
     })
 }
 
-pub struct ObscuraHttpClient {
+pub struct HttpClient {
     client: tokio::sync::OnceCell<Client>,
     proxy_url: Option<String>,
     pub cookie_jar: Arc<CookieJar>,
@@ -163,10 +163,9 @@ pub struct ObscuraHttpClient {
     pub on_response: RwLock<Vec<ResponseCallback>>,
     pub timeout: Duration,
     pub in_flight: Arc<std::sync::atomic::AtomicU32>,
-    pub block_trackers: bool,
 }
 
-impl ObscuraHttpClient {
+impl HttpClient {
     pub fn new() -> Self {
         Self::with_cookie_jar(Arc::new(CookieJar::new()))
     }
@@ -176,7 +175,7 @@ impl ObscuraHttpClient {
     }
 
     pub fn with_options(cookie_jar: Arc<CookieJar>, proxy_url: Option<&str>) -> Self {
-        ObscuraHttpClient {
+        HttpClient {
             client: tokio::sync::OnceCell::new(),
             proxy_url: proxy_url.map(|s| s.to_string()),
             cookie_jar,
@@ -190,7 +189,6 @@ impl ObscuraHttpClient {
             on_response: RwLock::new(Vec::new()),
             in_flight: Arc::new(std::sync::atomic::AtomicU32::new(0)),
             timeout: Duration::from_secs(30),
-            block_trackers: false,
         }
     }
 
@@ -220,11 +218,11 @@ impl ObscuraHttpClient {
         self.proxy_url.as_deref()
     }
 
-    pub async fn fetch(&self, url: &Url) -> Result<Response, ObscuraNetError> {
+    pub async fn fetch(&self, url: &Url) -> Result<Response, NetError> {
         self.fetch_with_method(Method::GET, url, None).await
     }
 
-    pub async fn post_form(&self, url: &Url, body: &str) -> Result<Response, ObscuraNetError> {
+    pub async fn post_form(&self, url: &Url, body: &str) -> Result<Response, NetError> {
         self.fetch_with_method(Method::POST, url, Some(body.as_bytes().to_vec()))
             .await
     }
@@ -234,7 +232,7 @@ impl ObscuraHttpClient {
         initial_method: Method,
         url: &Url,
         initial_body: Option<Vec<u8>>,
-    ) -> Result<Response, ObscuraNetError> {
+    ) -> Result<Response, NetError> {
         validate_url(url)?;
 
         if url.scheme() == "file" {
@@ -243,19 +241,6 @@ impl ObscuraHttpClient {
 
         let mut method = initial_method;
         let mut body = initial_body;
-        if self.block_trackers
-            && let Some(host) = url.host_str()
-            && crate::net::blocklist::is_blocked(host)
-        {
-            tracing::debug!("Blocked tracker: {}", url);
-            return Ok(Response {
-                status: 0,
-                url: url.clone(),
-                headers: HashMap::new(),
-                body: Vec::new(),
-                redirected_from: Vec::new(),
-            });
-        }
 
         let mut current_url = url.clone();
         let mut redirects = Vec::new();
@@ -273,7 +258,7 @@ impl ObscuraHttpClient {
                 match interceptor.intercept(&request_info).await {
                     InterceptAction::Continue => {}
                     InterceptAction::Block => {
-                        return Err(ObscuraNetError::Blocked(current_url.to_string()));
+                        return Err(NetError::Blocked(current_url.to_string()));
                     }
                     InterceptAction::Fulfill(response) => {
                         return Ok(response);
@@ -367,7 +352,7 @@ impl ObscuraHttpClient {
             self.in_flight.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let resp = req_builder.send().await.map_err(|e| {
                 self.in_flight.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
-                ObscuraNetError::Network(format!("{}: {}", current_url, e))
+                NetError::Network(format!("{}: {}", current_url, e))
             })?;
             self.in_flight.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
 
@@ -390,10 +375,10 @@ impl ObscuraHttpClient {
             {
                 let location_str = location
                     .to_str()
-                    .map_err(|_| ObscuraNetError::Network("Invalid redirect Location header".into()))?;
+                    .map_err(|_| NetError::Network("Invalid redirect Location header".into()))?;
                 let next_url = current_url
                     .join(location_str)
-                    .map_err(|e| ObscuraNetError::Network(format!("Invalid redirect URL: {}", e)))?;
+                    .map_err(|e| NetError::Network(format!("Invalid redirect URL: {}", e)))?;
                 validate_url(&next_url)?;
                 redirects.push(current_url.clone());
                 current_url = next_url;
@@ -410,7 +395,7 @@ impl ObscuraHttpClient {
             let body_bytes = resp
                 .bytes()
                 .await
-                .map_err(|e| ObscuraNetError::Network(format!("Failed to read body: {}", e)))?
+                .map_err(|e| NetError::Network(format!("Failed to read body: {}", e)))?
                 .to_vec();
 
             let response = Response {
@@ -428,7 +413,7 @@ impl ObscuraHttpClient {
             return Ok(response);
         }
 
-        Err(ObscuraNetError::TooManyRedirects(current_url.to_string()))
+        Err(NetError::TooManyRedirects(current_url.to_string()))
     }
 
     pub async fn set_user_agent(&self, ua: &str) {
@@ -448,14 +433,14 @@ impl ObscuraHttpClient {
     }
 }
 
-impl Default for ObscuraHttpClient {
+impl Default for HttpClient {
     fn default() -> Self {
         Self::new()
     }
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum ObscuraNetError {
+pub enum NetError {
     #[error("Network error: {0}")]
     Network(String),
 

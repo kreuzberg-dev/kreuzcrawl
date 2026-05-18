@@ -13,7 +13,7 @@ use tokio::sync::RwLock;
 use url::Url;
 
 #[cfg(feature = "stealth")]
-use super::client::{ObscuraNetError, Response};
+use super::client::{NetError, Response};
 #[cfg(feature = "stealth")]
 use crate::net::cookies::CookieJar;
 
@@ -68,7 +68,7 @@ impl StealthHttpClient {
         }
     }
 
-    pub async fn fetch(&self, url: &Url) -> Result<Response, ObscuraNetError> {
+    pub async fn fetch(&self, url: &Url) -> Result<Response, NetError> {
         let mut current_url = url.clone();
         let mut redirects = Vec::new();
 
@@ -87,7 +87,7 @@ impl StealthHttpClient {
             self.in_flight.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let resp = req.send().await.map_err(|e| {
                 self.in_flight.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
-                ObscuraNetError::Network(format!("{}: {} (source: {:?})", current_url, e, e.source()))
+                NetError::Network(format!("{}: {} (source: {:?})", current_url, e, e.source()))
             })?;
             self.in_flight.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
 
@@ -110,10 +110,10 @@ impl StealthHttpClient {
             {
                 let location_str = location
                     .to_str()
-                    .map_err(|_| ObscuraNetError::Network("Invalid redirect Location".into()))?;
+                    .map_err(|_| NetError::Network("Invalid redirect Location".into()))?;
                 let next_url = current_url
                     .join(location_str)
-                    .map_err(|e| ObscuraNetError::Network(format!("Invalid redirect URL: {}", e)))?;
+                    .map_err(|e| NetError::Network(format!("Invalid redirect URL: {}", e)))?;
                 redirects.push(current_url.clone());
                 current_url = next_url;
                 continue;
@@ -122,7 +122,7 @@ impl StealthHttpClient {
             let body = resp
                 .bytes()
                 .await
-                .map_err(|e| ObscuraNetError::Network(format!("Failed to read body: {}", e)))?
+                .map_err(|e| NetError::Network(format!("Failed to read body: {}", e)))?
                 .to_vec();
 
             return Ok(Response {
@@ -134,7 +134,7 @@ impl StealthHttpClient {
             });
         }
 
-        Err(ObscuraNetError::TooManyRedirects(url.to_string()))
+        Err(NetError::TooManyRedirects(url.to_string()))
     }
 
     pub async fn set_extra_headers(&self, headers: HashMap<String, String>) {

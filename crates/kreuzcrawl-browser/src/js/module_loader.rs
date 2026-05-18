@@ -9,7 +9,7 @@ use deno_core::ModuleSourceCode;
 use deno_core::ModuleSpecifier;
 use deno_core::error::ModuleLoaderError;
 
-pub struct ObscuraModuleLoader {
+pub struct BrowserModuleLoader {
     pub base_url: String,
     /// Proxy URL threaded through to every dynamic ES-module fetch (#139).
     /// `None` keeps the pre-#139 direct-connection behaviour for callers
@@ -17,13 +17,13 @@ pub struct ObscuraModuleLoader {
     pub proxy_url: Option<String>,
 }
 
-impl ObscuraModuleLoader {
+impl BrowserModuleLoader {
     pub fn new(base_url: &str) -> Self {
         Self::with_proxy(base_url, None)
     }
 
     pub fn with_proxy(base_url: &str, proxy_url: Option<String>) -> Self {
-        ObscuraModuleLoader {
+        BrowserModuleLoader {
             base_url: base_url.to_string(),
             proxy_url,
         }
@@ -34,7 +34,7 @@ fn io_err(msg: String) -> ModuleLoaderError {
     deno_error::JsErrorBox::generic(msg)
 }
 
-impl ModuleLoader for ObscuraModuleLoader {
+impl ModuleLoader for BrowserModuleLoader {
     fn resolve(
         &self,
         specifier: &str,

@@ -14,9 +14,9 @@ use selectors::{Element, OpaqueElement, SelectorList};
 use crate::dom::tree::{DomTree, NodeData, NodeId};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ObscuraSelector;
+pub struct CssSelector;
 
-impl parser::SelectorImpl for ObscuraSelector {
+impl parser::SelectorImpl for CssSelector {
     type ExtraMatchingData<'a> = ();
     type AttrValue = CssString;
     type Identifier = CssString;
@@ -101,7 +101,7 @@ pub enum PseudoClass {
 }
 
 impl parser::NonTSPseudoClass for PseudoClass {
-    type Impl = ObscuraSelector;
+    type Impl = CssSelector;
 
     fn is_active_or_hover(&self) -> bool {
         matches!(self, PseudoClass::Hover | PseudoClass::Active)
@@ -139,7 +139,7 @@ pub enum PseudoElement {
 }
 
 impl parser::PseudoElement for PseudoElement {
-    type Impl = ObscuraSelector;
+    type Impl = CssSelector;
 }
 
 impl ToCss for PseudoElement {
@@ -151,10 +151,10 @@ impl ToCss for PseudoElement {
     }
 }
 
-pub struct ObscuraSelectorParser;
+pub struct CssSelectorParser;
 
-impl<'i> parser::Parser<'i> for ObscuraSelectorParser {
-    type Impl = ObscuraSelector;
+impl<'i> parser::Parser<'i> for CssSelectorParser {
+    type Impl = CssSelector;
     type Error = SelectorParseErrorKind<'i>;
 
     fn parse_non_ts_pseudo_class(
@@ -204,7 +204,7 @@ impl<'a> PartialEq for DomElement<'a> {
 impl<'a> Eq for DomElement<'a> {}
 
 impl<'a> Element for DomElement<'a> {
-    type Impl = ObscuraSelector;
+    type Impl = CssSelector;
 
     fn opaque(&self) -> OpaqueElement {
         OpaqueElement::new(self)
@@ -465,10 +465,10 @@ impl<'a> Element for DomElement<'a> {
     }
 }
 
-pub fn parse_selector(selector: &str) -> Result<SelectorList<ObscuraSelector>, String> {
+pub fn parse_selector(selector: &str) -> Result<SelectorList<CssSelector>, String> {
     let mut parser_input = cssparser::ParserInput::new(selector);
     let mut parser = cssparser::Parser::new(&mut parser_input);
-    SelectorList::parse(&ObscuraSelectorParser, &mut parser, ParseRelative::No)
+    SelectorList::parse(&CssSelectorParser, &mut parser, ParseRelative::No)
         .map_err(|e| format!("Failed to parse selector '{}': {:?}", selector, e))
 }
 

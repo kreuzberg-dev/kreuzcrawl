@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use crate::dom::{DomTree, parse_html};
-use crate::js::runtime::ObscuraJsRuntime;
-use crate::net::{ObscuraHttpClient, ObscuraNetError, Response};
+use crate::js::runtime::BrowserJsRuntime;
+use crate::net::{HttpClient, NetError, Response};
 use url::Url;
 
 use crate::context::BrowserContext;
@@ -86,9 +86,9 @@ pub struct Page {
     pub frame_id: String,
     pub url: Option<Url>,
     pub dom: Option<DomTree>,
-    pub js: Option<ObscuraJsRuntime>,
+    pub js: Option<BrowserJsRuntime>,
     pub lifecycle: LifecycleState,
-    pub http_client: Arc<ObscuraHttpClient>,
+    pub http_client: Arc<HttpClient>,
     pub context: Arc<BrowserContext>,
     pub title: String,
     pub network_events: Vec<NetworkEvent>,
@@ -113,7 +113,7 @@ impl Page {
         let stealth_client = if context.stealth {
             // The wreq client backing StealthHttpClient does not speak SOCKS5.
             // Callers must validate the proxy scheme up front and fail loudly
-            // (see obscura-cli) rather than silently rewriting socks5:// to
+            // rather than silently rewriting socks5:// to
             // http://, which only works when the upstream happens to be a
             // Clash-style mixed-mode proxy and breaks plain SOCKS5 servers
             // like `ssh -ND` (#160).
@@ -172,7 +172,7 @@ impl Page {
         false
     }
 
-    async fn do_fetch(&self, url: &Url) -> Result<Response, ObscuraNetError> {
+    async fn do_fetch(&self, url: &Url) -> Result<Response, NetError> {
         #[cfg(feature = "stealth")]
         if let Some(ref stealth) = self.stealth_client {
             return stealth.fetch(url).await;
@@ -195,7 +195,7 @@ impl Page {
         // and op_fetch_url so dynamic imports and JS fetch() honour the
         // configured upstream proxy (#139). When proxy_url is None this is
         // equivalent to with_base_url() (direct connection).
-        let mut rt = ObscuraJsRuntime::with_base_url_and_proxy(&self.url_string(), self.context.proxy_url.clone());
+        let mut rt = BrowserJsRuntime::with_base_url_and_proxy(&self.url_string(), self.context.proxy_url.clone());
         rt.set_url(&self.url_string());
         rt.set_title(&self.title);
 
@@ -701,7 +701,7 @@ impl Page {
             // U+2028 break out of the template literal and run
             // arbitrary JS in the page's V8 realm.
             let escaped = escape_for_js_template_literal(&combined_css);
-            let code = format!("globalThis.__obscura_css = `{}`;", escaped);
+            let code = format!("globalThis.__kreuzcrawl_css = `{}`;", escaped);
             let _ = js.execute_script("<css>", &code);
         }
         if let Some(js) = &mut self.js {
@@ -1003,8 +1003,8 @@ pub enum PageError {
     TooManyRedirects(usize),
 }
 
-impl From<ObscuraNetError> for PageError {
-    fn from(e: ObscuraNetError) -> Self {
+impl From<NetError> for PageError {
+    fn from(e: NetError) -> Self {
         PageError::NetworkError(e.to_string())
     }
 }

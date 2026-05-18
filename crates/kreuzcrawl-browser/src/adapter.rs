@@ -4,7 +4,11 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 
-use crate::{BrowserContext, Page, PageError, WaitUntil};
+pub use crate::page::PageError;
+
+use crate::context::BrowserContext;
+use crate::lifecycle::WaitUntil;
+use crate::page::Page;
 
 #[derive(Debug, Clone)]
 pub struct NativeBrowserConfig {

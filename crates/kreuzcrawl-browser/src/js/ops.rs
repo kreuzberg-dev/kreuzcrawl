@@ -4,7 +4,7 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::dom::{DomTree, NodeData, NodeId};
-use crate::net::{CookieJar, ObscuraHttpClient};
+use crate::net::{CookieJar, HttpClient};
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use deno_core::Extension;
 use deno_core::OpState;
@@ -41,22 +41,22 @@ pub struct InterceptedRequest {
     pub resolver: tokio::sync::oneshot::Sender<InterceptResolution>,
 }
 
-pub struct ObscuraState {
+pub struct JsOpState {
     pub dom: Option<DomTree>,
     pub url: String,
     pub title: String,
     pub blocked_urls: Vec<String>,
     pub cookie_jar: Option<Arc<CookieJar>>,
-    pub http_client: Option<Arc<ObscuraHttpClient>>,
+    pub http_client: Option<Arc<HttpClient>>,
     pub pending_navigation: Option<(String, String, String)>,
     pub intercept_tx: Option<tokio::sync::mpsc::UnboundedSender<InterceptedRequest>>,
     pub intercept_counter: u64,
     pub intercept_enabled: bool,
 }
 
-impl ObscuraState {
+impl JsOpState {
     pub fn new() -> Self {
-        ObscuraState {
+        JsOpState {
             dom: None,
             url: "about:blank".to_string(),
             title: String::new(),
@@ -71,13 +71,13 @@ impl ObscuraState {
     }
 }
 
-impl Default for ObscuraState {
+impl Default for JsOpState {
     fn default() -> Self {
         Self::new()
     }
 }
 
-pub type SharedState = Rc<RefCell<ObscuraState>>;
+pub type SharedState = Rc<RefCell<JsOpState>>;
 
 #[op2]
 #[string]
@@ -341,9 +341,9 @@ fn op_dom(state: &OpState, #[string] cmd: String, #[string] arg1: String, #[stri
 fn op_console_msg(state: &OpState, #[string] level: &str, #[string] msg: &str) {
     let _ = state;
     match level {
-        "warn" => tracing::warn!(target: "obscura::console", "{}", msg),
-        "error" => tracing::error!(target: "obscura::console", "{}", msg),
-        _ => tracing::info!(target: "obscura::console", "{}", msg),
+        "warn" => tracing::warn!(target: "kreuzcrawl::console", "{}", msg),
+        "error" => tracing::error!(target: "kreuzcrawl::console", "{}", msg),
+        _ => tracing::info!(target: "kreuzcrawl::console", "{}", msg),
     }
 }
 
@@ -351,7 +351,7 @@ fn op_console_msg(state: &OpState, #[string] level: &str, #[string] msg: &str) {
 // process-wide `OnceLock<reqwest::Client>` initialised with no proxy, so
 // every JS network call bypassed the configured upstream proxy. We now
 // build a client per request, threading whatever `proxy_url` the page's
-// ObscuraHttpClient was configured with.
+// HttpClient was configured with.
 //
 // The per-request build cost is negligible (≪1ms) compared with the actual
 // network round-trip; the simplification is worth not having to invalidate
@@ -822,7 +822,7 @@ fn op_navigate(state: &OpState, #[string] url: &str, #[string] method: &str, #[s
 
 pub fn build_extension() -> Extension {
     Extension {
-        name: "obscura_dom",
+        name: "kreuzcrawl_browser_dom",
         ops: std::borrow::Cow::Owned(vec![
             op_dom(),
             op_console_msg(),
