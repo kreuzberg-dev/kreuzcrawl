@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'lib.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
 
 /// Create a new crawl engine with the given configuration.
 ///
@@ -297,6 +297,15 @@ class BatchScrapeResult {
           error == other.error;
 }
 
+/// Browser backend used for JavaScript rendering.
+enum BrowserBackend {
+  /// Existing Chromium/CDP backend powered by chromiumoxide.
+  chromiumoxide,
+
+  /// Kreuzcrawl-owned native browser backend derived from Obscura.
+  native,
+}
+
 /// Browser fallback configuration.
 class BrowserConfig {
   /// When to use the headless browser fallback.
@@ -317,6 +326,9 @@ class BrowserConfig {
   /// Extra time to wait after the wait condition is met.
   final PlatformInt64? extraWait;
 
+  /// Browser backend used for JavaScript rendering.
+  final BrowserBackend backend;
+
   const BrowserConfig({
     required this.mode,
     this.endpoint,
@@ -324,6 +336,7 @@ class BrowserConfig {
     required this.wait,
     this.waitSelector,
     this.extraWait,
+    required this.backend,
   });
 
   @override
@@ -333,7 +346,8 @@ class BrowserConfig {
       timeout.hashCode ^
       wait.hashCode ^
       waitSelector.hashCode ^
-      extraWait.hashCode;
+      extraWait.hashCode ^
+      backend.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -345,7 +359,8 @@ class BrowserConfig {
           timeout == other.timeout &&
           wait == other.wait &&
           waitSelector == other.waitSelector &&
-          extraWait == other.extraWait;
+          extraWait == other.extraWait &&
+          backend == other.backend;
 }
 
 /// When to use the headless browser fallback.

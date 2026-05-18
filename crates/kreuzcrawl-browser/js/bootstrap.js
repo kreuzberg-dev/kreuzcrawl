@@ -1,12 +1,12 @@
 "use strict";
 
-globalThis.__obscura_errors = [];
+globalThis.__kreuzcrawl_errors = [];
 
 globalThis.addEventListener = globalThis.addEventListener || function(){};
 globalThis.onunhandledrejection = function(e) { if (e?.preventDefault) e.preventDefault(); };
 
 globalThis.onerror = function(msg, src, line, col, error) {
-  globalThis.__obscura_errors.push({msg: String(msg), src: String(src||""), line, error: String(error||"")});
+  globalThis.__kreuzcrawl_errors.push({msg: String(msg), src: String(src||""), line, error: String(error||"")});
 };
 globalThis.__windowListeners = {};
 globalThis.addEventListener = function(type, fn) {
@@ -554,8 +554,8 @@ class Element extends Node {
       }
     }
   }
-  focus() { globalThis.__obscura_focused = this; globalThis.__obscura_click_target = this; }
-  blur() { if (globalThis.__obscura_focused === this) globalThis.__obscura_focused = null; }
+  focus() { globalThis.__kreuzcrawl_focused = this; globalThis.__kreuzcrawl_click_target = this; }
+  blur() { if (globalThis.__kreuzcrawl_focused === this) globalThis.__kreuzcrawl_focused = null; }
   get value() {
     if (_formValues[this._nid] !== undefined) return _formValues[this._nid];
     const tag = this.localName;
@@ -742,11 +742,11 @@ class Element extends Node {
   get scrollTop() { return 0; } set scrollTop(v) {}
   get scrollLeft() { return 0; } set scrollLeft(v) {}
   getBoundingClientRect() {
-    globalThis.__obscura_click_target = this;
+    globalThis.__kreuzcrawl_click_target = this;
     return {x:8,y:8,width:100,height:20,top:8,right:108,bottom:28,left:8,toJSON(){return this;}};
   }
   getClientRects() { return [this.getBoundingClientRect()]; }
-  scrollIntoView() { globalThis.__obscura_click_target = this; }
+  scrollIntoView() { globalThis.__kreuzcrawl_click_target = this; }
   animate(keyframes, options) {
     const duration = typeof options === 'number' ? options : (options?.duration || 0);
     return {
@@ -949,7 +949,7 @@ class Document extends Node {
     return this.createTreeWalker(root, whatToShow, filter);
   }
   getSelection() { return globalThis.getSelection(); }
-  get activeElement() { return globalThis.__obscura_focused || this.body; }
+  get activeElement() { return globalThis.__kreuzcrawl_focused || this.body; }
   get implementation() {
     return {
       createHTMLDocument(title) { return globalThis.document; },
@@ -1116,7 +1116,7 @@ function _registerIframe(iframeEl) {
   });
 }
 globalThis.navigator = {
-  get userAgent() { return globalThis.__obscura_ua || "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"; },
+  get userAgent() { return globalThis.__kreuzcrawl_ua || "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"; },
   get appVersion() { return this.userAgent.replace('Mozilla/', ''); },
   language: "en-US", languages: ["en-US","en"], platform: "Linux x86_64",
   onLine: true, cookieEnabled: true, hardwareConcurrency: 8,
@@ -1258,7 +1258,7 @@ function _arrayBufferFromBytes(bytes) {
 
 function _installWasmStreamingFallback() {
   if (typeof WebAssembly === 'undefined') return;
-  if (WebAssembly.instantiateStreaming && WebAssembly.instantiateStreaming.__obscuraFallback) return;
+  if (WebAssembly.instantiateStreaming && WebAssembly.instantiateStreaming.__kreuzcrawlFallback) return;
   const nativeInstantiateStreaming = WebAssembly.instantiateStreaming;
   const fallback = async function instantiateStreaming(source, imports) {
     const response = await source;
@@ -1270,7 +1270,7 @@ function _installWasmStreamingFallback() {
     }
     return WebAssembly.instantiate(response, imports);
   };
-  fallback.__obscuraFallback = true;
+  fallback.__kreuzcrawlFallback = true;
   WebAssembly.instantiateStreaming = fallback;
 }
 _installWasmStreamingFallback();
@@ -2816,11 +2816,11 @@ globalThis.__blobStore = globalThis.__blobStore || {};
 const _origCreateObjectURL = URL.createObjectURL;
 URL.createObjectURL = function(blob) {
   if (blob && typeof blob.text === 'function') {
-    const id = 'blob:obscura/' + Math.random().toString(36).substring(2);
+    const id = 'blob:kreuzcrawl/' + Math.random().toString(36).substring(2);
     blob.text().then(text => { globalThis.__blobStore[id] = text; });
     return id;
   }
-  return 'blob:obscura/fallback';
+  return 'blob:kreuzcrawl/fallback';
 };
 URL.revokeObjectURL = function(url) {
   delete globalThis.__blobStore[url];
@@ -3133,7 +3133,7 @@ if (typeof ShadowRoot !== 'undefined' && !ShadowRoot.prototype.elementFromPoint)
   };
 }
 
-globalThis.__obscura_init = function() {
+globalThis.__kreuzcrawl_init = function() {
   _fpSeed = Date.now() ^ (Math.random() * 0xFFFFFFFF >>> 0);
   _fpCache = null;
   _installWasmStreamingFallback();
@@ -3160,11 +3160,11 @@ globalThis.__obscura_init = function() {
     }
   };
   const toHide = Object.keys(globalThis).filter(k =>
-    k.startsWith('_') || k.includes('obscura') || k.includes('Obscura')
+    k.startsWith('_') || k.includes('kreuzcrawl') || k.includes('Kreuzcrawl')
   );
   for (const p of toHide) {
     try { Object.defineProperty(globalThis, p, { enumerable: false }); } catch(e) {
     }
   }
-  delete globalThis.__obscura_init;
+  delete globalThis.__kreuzcrawl_init;
 };

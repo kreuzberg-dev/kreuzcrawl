@@ -5,7 +5,7 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
 
     let out_dir = PathBuf::from(std::env::var("OUT_DIR").unwrap());
-    let snapshot_path = out_dir.join("OBSCURA_SNAPSHOT.bin");
+    let snapshot_path = out_dir.join("kreuzcrawl_browser_snapshot.bin");
 
     let bootstrap_js = include_str!("js/bootstrap.js");
 
@@ -18,7 +18,7 @@ fn main() {
             extension_transpiler: None,
             with_runtime_cb: Some(Box::new(move |runtime| {
                 runtime
-                    .execute_script("<obscura:bootstrap>", bootstrap_js.to_string())
+                    .execute_script("<kreuzcrawl:bootstrap>", bootstrap_js.to_string())
                     .expect("bootstrap.js should not fail during snapshot creation");
             })),
         },
@@ -27,7 +27,10 @@ fn main() {
     .expect("Failed to create V8 snapshot");
 
     std::fs::write(&snapshot_path, &*output.output).expect("Failed to write snapshot");
-    println!("cargo:rustc-env=OBSCURA_SNAPSHOT_PATH={}", snapshot_path.display());
+    println!(
+        "cargo:rustc-env=KREUZCRAWL_BROWSER_SNAPSHOT_PATH={}",
+        snapshot_path.display()
+    );
 
     for file in &output.files_loaded_during_snapshot {
         println!("cargo:rerun-if-changed={}", file.display());

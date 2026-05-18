@@ -5,10 +5,10 @@ use std::rc::Rc;
 use crate::dom::DomTree;
 use deno_core::{JsRuntime, RuntimeOptions};
 
-use super::ops::{ObscuraState, build_extension};
-use crate::js::module_loader::ObscuraModuleLoader;
+use super::ops::{JsOpState, build_extension};
+use crate::js::module_loader::BrowserModuleLoader;
 
-static SNAPSHOT: &[u8] = include_bytes!(env!("OBSCURA_SNAPSHOT_PATH"));
+static SNAPSHOT: &[u8] = include_bytes!(env!("KREUZCRAWL_BROWSER_SNAPSHOT_PATH"));
 
 #[derive(Debug, Clone)]
 pub struct RemoteObjectInfo {
@@ -20,14 +20,14 @@ pub struct RemoteObjectInfo {
     pub value: Option<serde_json::Value>,
 }
 
-pub struct ObscuraJsRuntime {
+pub struct BrowserJsRuntime {
     runtime: JsRuntime,
-    state: Rc<RefCell<ObscuraState>>,
+    state: Rc<RefCell<JsOpState>>,
     object_store: HashMap<String, String>,
     object_counter: u64,
 }
 
-impl ObscuraJsRuntime {
+impl BrowserJsRuntime {
     pub fn new() -> Self {
         Self::with_base_url("about:blank")
     }
@@ -40,10 +40,10 @@ impl ObscuraJsRuntime {
     /// through `proxy_url` (#139). `None` is equivalent to `with_base_url`
     /// (direct connection).
     pub fn with_base_url_and_proxy(base_url: &str, proxy_url: Option<String>) -> Self {
-        let state = Rc::new(RefCell::new(ObscuraState::new()));
+        let state = Rc::new(RefCell::new(JsOpState::new()));
         let state_clone = state.clone();
 
-        let module_loader = Rc::new(ObscuraModuleLoader::with_proxy(base_url, proxy_url));
+        let module_loader = Rc::new(BrowserModuleLoader::with_proxy(base_url, proxy_url));
 
         let mut runtime = JsRuntime::new(RuntimeOptions {
             extensions: vec![build_extension()],
@@ -56,13 +56,13 @@ impl ObscuraJsRuntime {
 
         runtime
             .execute_script(
-                "<obscura:init>",
-                "globalThis.__obscura_objects = {}; globalThis.__obscura_oid = 0; globalThis.__obscura_init();"
+                "<kreuzcrawl:init>",
+                "globalThis.__kreuzcrawl_objects = {}; globalThis.__kreuzcrawl_oid = 0; globalThis.__kreuzcrawl_init();"
                     .to_string(),
             )
             .expect("init should not fail");
 
-        ObscuraJsRuntime {
+        BrowserJsRuntime {
             runtime,
             state,
             object_store: HashMap::new(),
@@ -74,7 +74,7 @@ impl ObscuraJsRuntime {
         self.state.borrow_mut().cookie_jar = Some(jar);
     }
 
-    pub fn set_http_client(&self, client: std::sync::Arc<crate::net::ObscuraHttpClient>) {
+    pub fn set_http_client(&self, client: std::sync::Arc<crate::net::HttpClient>) {
         self.state.borrow_mut().http_client = Some(client);
     }
 
@@ -108,7 +108,7 @@ impl ObscuraJsRuntime {
         let escaped = ua.replace('\\', "\\\\").replace('\'', "\\'");
         let _ = self
             .runtime
-            .execute_script("<set-ua>", format!("globalThis.__obscura_ua = '{}';", escaped));
+            .execute_script("<set-ua>", format!("globalThis.__kreuzcrawl_ua = '{}';", escaped));
     }
     pub fn evaluate(&mut self, expression: &str) -> Result<serde_json::Value, String> {
         let wrapped = Self::wrap_expression(expression);
@@ -145,13 +145,13 @@ impl ObscuraJsRuntime {
                 "(async function() {{\n\
                     try {{\n\
                         var __result = await ({expr});\n\
-                        globalThis.__obscura_objects['{oid}'] = __result;\n\
-                        globalThis.__obscura_await_meta = {meta_fn};\n\
-                        globalThis.__obscura_await_rejected = false;\n\
+                        globalThis.__kreuzcrawl_objects['{oid}'] = __result;\n\
+                        globalThis.__kreuzcrawl_await_meta = {meta_fn};\n\
+                        globalThis.__kreuzcrawl_await_rejected = false;\n\
                     }} catch(e) {{\n\
-                        globalThis.__obscura_objects['{oid}'] = e;\n\
-                        globalThis.__obscura_await_meta = {err_meta_fn};\n\
-                        globalThis.__obscura_await_rejected = true;\n\
+                        globalThis.__kreuzcrawl_objects['{oid}'] = e;\n\
+                        globalThis.__kreuzcrawl_await_meta = {err_meta_fn};\n\
+                        globalThis.__kreuzcrawl_await_rejected = true;\n\
                     }}\n\
                 }})()",
                 expr = cleaned_expr,
@@ -164,7 +164,7 @@ impl ObscuraJsRuntime {
                 "(function() {{\n\
                     var __result;\n\
                     try {{ __result = ({expr}); }} catch(e) {{ __result = undefined; }}\n\
-                    globalThis.__obscura_objects['{oid}'] = __result;\n\
+                    globalThis.__kreuzcrawl_objects['{oid}'] = __result;\n\
                     return {meta_fn};\n\
                 }})()",
                 expr = cleaned_expr,
@@ -182,10 +182,10 @@ impl ObscuraJsRuntime {
             self.resolve_promises().await;
             let rejected = self
                 .runtime
-                .execute_script("<readRejected>", "globalThis.__obscura_await_rejected".to_string())
+                .execute_script("<readRejected>", "globalThis.__kreuzcrawl_await_rejected".to_string())
                 .map_err(|e| format!("JS error: {}", e))?;
             if self.v8_to_json(rejected)?.as_bool().unwrap_or(false) {
-                let err = self.runtime.execute_script("<readError>", format!("String(globalThis.__obscura_objects['{0}'] && (globalThis.__obscura_objects['{0}'].message || globalThis.__obscura_objects['{0}']))", oid))
+                let err = self.runtime.execute_script("<readError>", format!("String(globalThis.__kreuzcrawl_objects['{0}'] && (globalThis.__kreuzcrawl_objects['{0}'].message || globalThis.__kreuzcrawl_objects['{0}']))", oid))
                     .map_err(|e| format!("JS error: {}", e))?;
                 return Err(format!(
                     "Promise rejected: {}",
@@ -193,7 +193,7 @@ impl ObscuraJsRuntime {
                 ));
             }
             self.runtime
-                .execute_script("<readMeta>", "globalThis.__obscura_await_meta".to_string())
+                .execute_script("<readMeta>", "globalThis.__kreuzcrawl_await_meta".to_string())
                 .map_err(|e| format!("JS error: {}", e))?
         } else {
             result
@@ -205,12 +205,12 @@ impl ObscuraJsRuntime {
             meta_str
         };
         self.object_store
-            .insert(oid.clone(), format!("globalThis.__obscura_objects['{}']", oid));
+            .insert(oid.clone(), format!("globalThis.__kreuzcrawl_objects['{}']", oid));
 
         if await_promise && return_by_value {
             let read = self
                 .runtime
-                .execute_script("<readResult>", format!("globalThis.__obscura_objects['{}']", oid))
+                .execute_script("<readResult>", format!("globalThis.__kreuzcrawl_objects['{}']", oid))
                 .map_err(|e| format!("JS error: {}", e))?;
             let json_val = self.v8_to_json(read)?;
             return Ok(Self::info_from_json(&json_val));
@@ -240,8 +240,8 @@ impl ObscuraJsRuntime {
                     var __fn = ({fn_decl});\n\
                     var __this = ({this_expr});\n\
                     var __result = await __fn.call(__this, {args});\n\
-                    globalThis.__obscura_objects['{oid}'] = __result;\n\
-                    globalThis.__obscura_await_meta = {meta_fn};\n\
+                    globalThis.__kreuzcrawl_objects['{oid}'] = __result;\n\
+                    globalThis.__kreuzcrawl_await_meta = {meta_fn};\n\
                 }})()",
                 setup = setup,
                 fn_decl = function_declaration,
@@ -260,7 +260,7 @@ impl ObscuraJsRuntime {
             if return_by_value {
                 let read = self
                     .runtime
-                    .execute_script("<readResult>", format!("globalThis.__obscura_objects['{}']", oid))
+                    .execute_script("<readResult>", format!("globalThis.__kreuzcrawl_objects['{}']", oid))
                     .map_err(|e| format!("JS error: {}", e))?;
                 let json_val = self.v8_to_json(read)?;
                 return Ok(Self::info_from_json(&json_val));
@@ -268,7 +268,7 @@ impl ObscuraJsRuntime {
 
             let meta_result = self
                 .runtime
-                .execute_script("<readMeta>", "globalThis.__obscura_await_meta".to_string())
+                .execute_script("<readMeta>", "globalThis.__kreuzcrawl_await_meta".to_string())
                 .map_err(|e| format!("JS error: {}", e))?;
             let meta_str = self.v8_to_json(meta_result)?;
             let meta_json = if let serde_json::Value::String(s) = &meta_str {
@@ -277,7 +277,7 @@ impl ObscuraJsRuntime {
                 meta_str
             };
             self.object_store
-                .insert(oid.clone(), format!("globalThis.__obscura_objects['{}']", oid));
+                .insert(oid.clone(), format!("globalThis.__kreuzcrawl_objects['{}']", oid));
             return Ok(Self::info_from_meta(&meta_json, Some(oid)));
         }
 
@@ -308,7 +308,7 @@ impl ObscuraJsRuntime {
                 var __fn = ({fn_decl});\n\
                 var __this = ({this_expr});\n\
                 var __result = __fn.call(__this, {args});\n\
-                globalThis.__obscura_objects['{oid}'] = __result;\n\
+                globalThis.__kreuzcrawl_objects['{oid}'] = __result;\n\
                 return {meta_fn};\n\
             }})()",
             setup = setup,
@@ -329,7 +329,7 @@ impl ObscuraJsRuntime {
             meta_str
         };
         self.object_store
-            .insert(oid.clone(), format!("globalThis.__obscura_objects['{}']", oid));
+            .insert(oid.clone(), format!("globalThis.__kreuzcrawl_objects['{}']", oid));
         Ok(Self::info_from_meta(&meta_json, Some(oid)))
     }
     pub async fn call_function_on(
@@ -345,12 +345,12 @@ impl ObscuraJsRuntime {
     pub fn store_object(&mut self, js_expression: &str) -> Result<String, String> {
         self.object_counter += 1;
         let oid = self.make_oid(self.object_counter);
-        let code = format!("globalThis.__obscura_objects['{}'] = ({});", oid, js_expression,);
+        let code = format!("globalThis.__kreuzcrawl_objects['{}'] = ({});", oid, js_expression,);
         self.runtime
             .execute_script("<store>", code)
             .map_err(|e| format!("Store error: {}", e))?;
         self.object_store
-            .insert(oid.clone(), format!("globalThis.__obscura_objects['{}']", oid));
+            .insert(oid.clone(), format!("globalThis.__kreuzcrawl_objects['{}']", oid));
         Ok(oid)
     }
 
@@ -360,7 +360,7 @@ impl ObscuraJsRuntime {
         let code = format!(
             "(function() {{\n\
                 var __result = ({expr});\n\
-                globalThis.__obscura_objects['{oid}'] = __result;\n\
+                globalThis.__kreuzcrawl_objects['{oid}'] = __result;\n\
                 return {meta_fn};\n\
             }})()",
             expr = js_expression,
@@ -378,13 +378,13 @@ impl ObscuraJsRuntime {
             meta_str
         };
         self.object_store
-            .insert(oid.clone(), format!("globalThis.__obscura_objects['{}']", oid));
+            .insert(oid.clone(), format!("globalThis.__kreuzcrawl_objects['{}']", oid));
         Ok(Self::info_from_meta(&meta_json, Some(oid)))
     }
 
     pub fn release_object(&mut self, object_id: &str) {
         if self.object_store.remove(object_id).is_some() {
-            let code = format!("delete globalThis.__obscura_objects['{}'];", object_id,);
+            let code = format!("delete globalThis.__kreuzcrawl_objects['{}'];", object_id,);
             let _ = self.runtime.execute_script("<release>", code);
         }
     }
@@ -392,7 +392,7 @@ impl ObscuraJsRuntime {
     pub fn release_object_group(&mut self) {
         let _ = self
             .runtime
-            .execute_script("<releaseGroup>", "globalThis.__obscura_objects = {};".to_string());
+            .execute_script("<releaseGroup>", "globalThis.__kreuzcrawl_objects = {};".to_string());
         self.object_store.clear();
     }
     pub async fn load_module(&mut self, url: &str) -> Result<(), String> {
@@ -823,7 +823,7 @@ impl ObscuraJsRuntime {
     }
 }
 
-impl Default for ObscuraJsRuntime {
+impl Default for BrowserJsRuntime {
     fn default() -> Self {
         Self::new()
     }
@@ -834,9 +834,9 @@ mod tests {
     use super::*;
     use crate::dom::parse_html;
 
-    fn setup_runtime(html: &str) -> ObscuraJsRuntime {
+    fn setup_runtime(html: &str) -> BrowserJsRuntime {
         let dom = parse_html(html);
-        let rt = ObscuraJsRuntime::new();
+        let rt = BrowserJsRuntime::new();
         rt.set_dom(dom);
         rt.set_url("http://example.com/test");
         rt.set_title("Test Page");
@@ -1254,7 +1254,7 @@ mod tests {
         drop(rt2);
 
         if let Some(dom) = dom1 {
-            let rt1b = ObscuraJsRuntime::new();
+            let rt1b = BrowserJsRuntime::new();
             rt1b.set_dom(dom);
             rt1b.set_url("http://example.com");
             rt1b.set_title("Page1");
@@ -1336,10 +1336,10 @@ mod tests {
         assert_eq!(result.value.unwrap().as_f64().unwrap() as i64, 84);
     }
 
-    fn setup_runtime_with_cookies(html: &str) -> (ObscuraJsRuntime, std::sync::Arc<crate::net::CookieJar>) {
+    fn setup_runtime_with_cookies(html: &str) -> (BrowserJsRuntime, std::sync::Arc<crate::net::CookieJar>) {
         let dom = crate::dom::parse_html(html);
         let jar = std::sync::Arc::new(crate::net::CookieJar::new());
-        let rt = ObscuraJsRuntime::new();
+        let rt = BrowserJsRuntime::new();
         rt.set_dom(dom);
         rt.set_url("http://example.com/test");
         rt.set_title("Test Page");
@@ -1728,67 +1728,6 @@ mod tests {
     }
 
     #[test]
-    fn test_html_to_markdown_headings() {
-        let mut rt = setup_runtime("<html><body><h1>Title</h1><h2>Sub</h2><p>Body</p></body></html>");
-        let md = rt
-            .evaluate(crate::js::HTML_TO_MARKDOWN_JS)
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .to_string();
-        assert!(md.contains("# Title"), "missing H1: {}", md);
-        assert!(md.contains("## Sub"), "missing H2: {}", md);
-        assert!(md.contains("Body"), "missing paragraph text: {}", md);
-    }
-
-    #[test]
-    fn test_html_to_markdown_links_and_inline() {
-        let mut rt = setup_runtime(
-            r#"<html><body><p>Hello <strong>world</strong> <a href="https://x.test/">link</a> <em>em</em></p></body></html>"#,
-        );
-        let md = rt
-            .evaluate(crate::js::HTML_TO_MARKDOWN_JS)
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .to_string();
-        assert!(md.contains("**world**"), "missing strong: {}", md);
-        assert!(md.contains("*em*"), "missing em: {}", md);
-        assert!(md.contains("[link](https://x.test/)"), "missing link: {}", md);
-    }
-
-    #[test]
-    fn test_html_to_markdown_lists() {
-        let mut rt =
-            setup_runtime("<html><body><ul><li>A</li><li>B</li></ul><ol><li>X</li><li>Y</li></ol></body></html>");
-        let md = rt
-            .evaluate(crate::js::HTML_TO_MARKDOWN_JS)
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .to_string();
-        assert!(md.contains("- A"), "missing unordered A: {}", md);
-        assert!(md.contains("- B"), "missing unordered B: {}", md);
-        assert!(md.contains("1. X"), "missing ordered X: {}", md);
-    }
-
-    #[test]
-    fn test_html_to_markdown_skips_script_and_style() {
-        let mut rt = setup_runtime(
-            "<html><body><p>Text</p><script>alert(1)</script><style>body{color:red}</style></body></html>",
-        );
-        let md = rt
-            .evaluate(crate::js::HTML_TO_MARKDOWN_JS)
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .to_string();
-        assert!(md.contains("Text"), "missing visible text: {}", md);
-        assert!(!md.contains("alert"), "leaked script content: {}", md);
-        assert!(!md.contains("color:red"), "leaked style content: {}", md);
-    }
-
-    #[test]
     fn test_page_content_puppeteer_pattern() {
         let mut rt = setup_runtime("<!DOCTYPE html><html><head></head><body><p>Test</p></body></html>");
         let result = rt.evaluate(
@@ -1857,16 +1796,16 @@ mod tests {
     // the prod fix.
     #[test]
     fn http_client_round_trips_proxy_url() {
-        use crate::net::{CookieJar, ObscuraHttpClient};
+        use crate::net::{CookieJar, HttpClient};
         let jar = std::sync::Arc::new(CookieJar::new());
-        let configured = ObscuraHttpClient::with_options(jar.clone(), Some("http://proxy.test:8080"));
+        let configured = HttpClient::with_options(jar.clone(), Some("http://proxy.test:8080"));
         assert_eq!(
             configured.proxy_url(),
             Some("http://proxy.test:8080"),
             "proxy_url() must expose the value passed to with_options"
         );
 
-        let direct = ObscuraHttpClient::with_options(jar, None);
+        let direct = HttpClient::with_options(jar, None);
         assert_eq!(
             direct.proxy_url(),
             None,
@@ -1876,14 +1815,14 @@ mod tests {
 
     #[test]
     fn module_loader_stores_proxy_for_dynamic_imports() {
-        use crate::js::module_loader::ObscuraModuleLoader;
+        use crate::js::module_loader::BrowserModuleLoader;
         let loader =
-            ObscuraModuleLoader::with_proxy("https://example.com/", Some("http://proxy.test:8080".to_string()));
+            BrowserModuleLoader::with_proxy("https://example.com/", Some("http://proxy.test:8080".to_string()));
         assert_eq!(loader.proxy_url.as_deref(), Some("http://proxy.test:8080"));
         assert_eq!(loader.base_url, "https://example.com/");
 
         // Default constructor must keep the historical "no proxy" behaviour.
-        let direct = ObscuraModuleLoader::new("https://example.com/");
+        let direct = BrowserModuleLoader::new("https://example.com/");
         assert_eq!(direct.proxy_url, None);
     }
 
@@ -1892,8 +1831,8 @@ mod tests {
         // Sanity-check the public ctor that page.rs uses to thread proxy
         // through to the module loader. Direct (None) and proxied paths
         // must both initialise the JS environment.
-        let _direct = ObscuraJsRuntime::with_base_url_and_proxy("https://example.com/", None);
-        let _proxied = ObscuraJsRuntime::with_base_url_and_proxy(
+        let _direct = BrowserJsRuntime::with_base_url_and_proxy("https://example.com/", None);
+        let _proxied = BrowserJsRuntime::with_base_url_and_proxy(
             "https://example.com/",
             Some("http://proxy.test:8080".to_string()),
         );

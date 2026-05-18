@@ -15,8 +15,6 @@ struct CookieEntry {
     secure: bool,
     http_only: bool,
     expires: Option<u64>,
-    #[allow(dead_code)]
-    same_site: String,
 }
 
 impl CookieJar {
@@ -39,7 +37,6 @@ impl CookieJar {
         let mut secure = false;
         let mut http_only = false;
         let mut expires: Option<u64> = None;
-        let mut same_site = "Lax".to_string();
 
         if parts.len() > 1 {
             for attr in parts[1].split(';') {
@@ -69,9 +66,6 @@ impl CookieJar {
                                     expires = Some(now + secs as u64);
                                 }
                             }
-                        }
-                        "samesite" => {
-                            same_site = val.trim().to_string();
                         }
                         _ => {}
                     }
@@ -110,7 +104,6 @@ impl CookieJar {
             secure,
             http_only,
             expires,
-            same_site,
         };
 
         let mut cookies = self.cookies.write().unwrap();
@@ -182,7 +175,6 @@ impl CookieJar {
                 secure: cookie.secure,
                 http_only: cookie.http_only,
                 expires: None,
-                same_site: "Lax".to_string(),
             };
             jar.entry(cookie.domain).or_default().insert(cookie.name, entry);
         }
@@ -239,7 +231,6 @@ impl CookieJar {
         let mut path = url.path().to_string();
         let mut secure = false;
         let mut expires: Option<u64> = None;
-        let mut same_site = "Lax".to_string();
 
         if parts.len() > 1 {
             for attr in parts[1].split(';') {
@@ -270,15 +261,10 @@ impl CookieJar {
                                 }
                             }
                         }
-                        "samesite" => {
-                            same_site = val.trim().to_string();
-                        }
                         _ => {}
                     }
-                } else {
-                    if attr.to_lowercase() == "secure" {
-                        secure = true;
-                    }
+                } else if attr.to_lowercase() == "secure" {
+                    secure = true;
                 }
             }
         }
@@ -308,7 +294,6 @@ impl CookieJar {
             secure,
             http_only: false,
             expires,
-            same_site,
         };
 
         let mut cookies = self.cookies.write().unwrap();
@@ -333,6 +318,59 @@ impl CookieJar {
                 }
             }
         }
+    }
+
+    /// Insert a cookie from pre-parsed fields (not a raw Set-Cookie header).
+    pub fn set_parsed_cookie(
+        &self,
+        name: &str,
+        value: &str,
+        domain: Option<&str>,
+        path: Option<&str>,
+        secure: bool,
+        http_only: bool,
+    ) {
+        let domain = domain.unwrap_or("").trim_start_matches('.').to_lowercase();
+        let path = path.unwrap_or("/").to_string();
+        let entry = CookieEntry {
+            name: name.to_string(),
+            value: value.to_string(),
+            path,
+            domain: domain.clone(),
+            secure,
+            http_only,
+            expires: None,
+        };
+        let mut cookies = self.cookies.write().unwrap();
+        cookies.entry(domain).or_default().insert(name.to_string(), entry);
+    }
+
+    /// Snapshot all non-expired cookies as flat tuples.
+    pub fn snapshot(&self) -> Vec<(String, String, String, String, bool, bool)> {
+        let cookies = self.cookies.read().unwrap();
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs();
+        let mut result = Vec::new();
+        for domain_cookies in cookies.values() {
+            for entry in domain_cookies.values() {
+                if let Some(exp) = entry.expires
+                    && exp < now
+                {
+                    continue;
+                }
+                result.push((
+                    entry.name.clone(),
+                    entry.value.clone(),
+                    entry.domain.clone(),
+                    entry.path.clone(),
+                    entry.secure,
+                    entry.http_only,
+                ));
+            }
+        }
+        result
     }
 
     pub fn clear(&self) {
@@ -499,14 +537,6 @@ mod tests {
         let url = Url::parse("https://example.com/").unwrap();
         jar.set_cookie("old=gone; Expires=Thu, 01 Jan 2020 00:00:00 GMT", &url);
         assert!(jar.get_cookie_header(&url).is_empty());
-    }
-
-    #[test]
-    fn test_samesite_parsed() {
-        let jar = CookieJar::new();
-        let url = Url::parse("https://example.com/").unwrap();
-        jar.set_cookie("strict_cookie=val; SameSite=Strict", &url);
-        assert!(jar.get_cookie_header(&url).contains("strict_cookie=val"));
     }
 
     #[test]

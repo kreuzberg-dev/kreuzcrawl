@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use crate::net::{CookieJar, ObscuraHttpClient, RobotsCache};
+use crate::net::{CookieJar, HttpClient, RobotsCache};
 
 pub struct BrowserContext {
     pub id: String,
     pub cookie_jar: Arc<CookieJar>,
-    pub http_client: Arc<ObscuraHttpClient>,
+    pub http_client: Arc<HttpClient>,
     pub user_agent: String,
     pub proxy_url: Option<String>,
     pub robots_cache: Arc<RobotsCache>,
@@ -21,7 +21,7 @@ pub struct BrowserContext {
 impl BrowserContext {
     pub fn new(id: String) -> Self {
         let cookie_jar = Arc::new(CookieJar::new());
-        let http_client = Arc::new(ObscuraHttpClient::with_cookie_jar(cookie_jar.clone()));
+        let http_client = Arc::new(HttpClient::with_cookie_jar(cookie_jar.clone()));
         BrowserContext {
             id,
             cookie_jar,
@@ -43,10 +43,7 @@ impl BrowserContext {
 
     pub fn with_full_options(id: String, proxy_url: Option<String>, stealth: bool, user_agent: Option<String>) -> Self {
         let cookie_jar = Arc::new(CookieJar::new());
-        let mut client = ObscuraHttpClient::with_options(cookie_jar.clone(), proxy_url.as_deref());
-        if stealth {
-            client.block_trackers = true;
-        }
+        let client = HttpClient::with_options(cookie_jar.clone(), proxy_url.as_deref());
         let resolved_ua = user_agent.unwrap_or_else(|| {
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
                 .to_string()

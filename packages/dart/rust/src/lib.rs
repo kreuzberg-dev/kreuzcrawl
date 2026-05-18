@@ -99,6 +99,8 @@ pub struct BrowserConfig {
     pub wait_selector: Option<String>,
     /// Extra time to wait after the wait condition is met.
     pub extra_wait: Option<i64>,
+    /// Browser backend used for JavaScript rendering.
+    pub backend: BrowserBackend,
 }
 
 /// Configuration for crawl, scrape, and map operations.
@@ -688,6 +690,15 @@ pub enum BrowserWait {
     Fixed,
 }
 
+/// Browser backend used for JavaScript rendering.
+#[frb(mirror(BrowserBackend))]
+pub enum BrowserBackend {
+    /// Existing Chromium/CDP backend powered by chromiumoxide.
+    Chromiumoxide,
+    /// Kreuzcrawl-owned native browser backend derived from Obscura.
+    Native,
+}
+
 /// Authentication configuration.
 #[frb(mirror(AuthConfig))]
 pub enum AuthConfig {
@@ -826,6 +837,7 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
             wait: BrowserWait::from(v.wait),
             wait_selector: v.wait_selector.map(|s| s.into()),
             extra_wait: v.extra_wait.map(|d| d.as_millis() as i64),
+            backend: BrowserBackend::from(v.backend),
         }
     }
 }
@@ -1238,6 +1250,24 @@ impl From<kreuzcrawl::BrowserWait> for BrowserWait {
     }
 }
 
+impl From<kreuzcrawl::BrowserBackend> for BrowserBackend {
+    fn from(v: kreuzcrawl::BrowserBackend) -> Self {
+        match v {
+            kreuzcrawl::BrowserBackend::Chromiumoxide => BrowserBackend::Chromiumoxide,
+            kreuzcrawl::BrowserBackend::Native => BrowserBackend::Native,
+        }
+    }
+}
+
+impl From<BrowserBackend> for kreuzcrawl::BrowserBackend {
+    fn from(v: BrowserBackend) -> Self {
+        match v {
+            BrowserBackend::Chromiumoxide => kreuzcrawl::BrowserBackend::Chromiumoxide,
+            BrowserBackend::Native => kreuzcrawl::BrowserBackend::Native,
+        }
+    }
+}
+
 impl From<kreuzcrawl::AuthConfig> for AuthConfig {
     fn from(v: kreuzcrawl::AuthConfig) -> Self {
         match v {
@@ -1339,6 +1369,7 @@ impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
             wait: v.wait.into(),
             wait_selector: v.wait_selector.map(Into::into),
             extra_wait: v.extra_wait.map(|ms| std::time::Duration::from_millis(ms as u64)),
+            backend: v.backend.into(),
         }
     }
 }

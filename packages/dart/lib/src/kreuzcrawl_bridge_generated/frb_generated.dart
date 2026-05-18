@@ -1500,11 +1500,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BrowserBackend dco_decode_browser_backend(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return BrowserBackend.values[raw as int];
+  }
+
+  @protected
   BrowserConfig dco_decode_browser_config(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 7)
+      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
     return BrowserConfig(
       mode: dco_decode_browser_mode(arr[0]),
       endpoint: dco_decode_opt_String(arr[1]),
@@ -1512,6 +1518,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       wait: dco_decode_browser_wait(arr[3]),
       waitSelector: dco_decode_opt_String(arr[4]),
       extraWait: dco_decode_opt_box_autoadd_i_64(arr[5]),
+      backend: dco_decode_browser_backend(arr[6]),
     );
   }
 
@@ -2481,6 +2488,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BrowserBackend sse_decode_browser_backend(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return BrowserBackend.values[inner];
+  }
+
+  @protected
   BrowserConfig sse_decode_browser_config(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_mode = sse_decode_browser_mode(deserializer);
@@ -2489,6 +2503,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_wait = sse_decode_browser_wait(deserializer);
     var var_waitSelector = sse_decode_opt_String(deserializer);
     var var_extraWait = sse_decode_opt_box_autoadd_i_64(deserializer);
+    var var_backend = sse_decode_browser_backend(deserializer);
     return BrowserConfig(
       mode: var_mode,
       endpoint: var_endpoint,
@@ -2496,6 +2511,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       wait: var_wait,
       waitSelector: var_waitSelector,
       extraWait: var_extraWait,
+      backend: var_backend,
     );
   }
 
@@ -3855,6 +3871,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_browser_backend(
+    BrowserBackend self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
   void sse_encode_browser_config(BrowserConfig self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_browser_mode(self.mode, serializer);
@@ -3863,6 +3888,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_browser_wait(self.wait, serializer);
     sse_encode_opt_String(self.waitSelector, serializer);
     sse_encode_opt_box_autoadd_i_64(self.extraWait, serializer);
+    sse_encode_browser_backend(self.backend, serializer);
   }
 
   @protected

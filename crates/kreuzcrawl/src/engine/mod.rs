@@ -81,14 +81,18 @@ impl CrawlEngine {
         /// shape expected by the extraction pipeline. Browser fetches do not carry
         /// HTTP response headers, so we supply an empty map.
         #[cfg(feature = "browser")]
-        fn browser_http_to_crawl(r: crate::http::HttpResponse) -> CrawlResponse {
-            CrawlResponse {
-                status: r.status,
-                content_type: r.content_type,
-                body: r.body,
-                body_bytes: r.body_bytes,
-                headers: std::collections::HashMap::new(),
-            }
+        fn browser_http_to_crawl(r: crate::http::HttpResponse) -> (CrawlResponse, Option<crate::http::BrowserExtras>) {
+            let extras = r.browser_extras;
+            (
+                CrawlResponse {
+                    status: r.status,
+                    content_type: r.content_type,
+                    body: r.body,
+                    body_bytes: r.body_bytes,
+                    headers: std::collections::HashMap::new(),
+                },
+                extras,
+            )
         }
 
         // BrowserMode::Always — skip HTTP entirely.

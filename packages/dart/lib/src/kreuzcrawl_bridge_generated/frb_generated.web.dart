@@ -100,6 +100,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ScrapeResult dco_decode_box_autoadd_scrape_result(dynamic raw);
 
   @protected
+  BrowserBackend dco_decode_browser_backend(dynamic raw);
+
+  @protected
   BrowserConfig dco_decode_browser_config(dynamic raw);
 
   @protected
@@ -412,6 +415,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ScrapeResult sse_decode_box_autoadd_scrape_result(
     SseDeserializer deserializer,
   );
+
+  @protected
+  BrowserBackend sse_decode_browser_backend(SseDeserializer deserializer);
 
   @protected
   BrowserConfig sse_decode_browser_config(SseDeserializer deserializer);
@@ -802,6 +808,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_scrape_result(
     ScrapeResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_browser_backend(
+    BrowserBackend self,
     SseSerializer serializer,
   );
 

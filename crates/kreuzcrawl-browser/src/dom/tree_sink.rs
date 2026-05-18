@@ -8,19 +8,19 @@ use html5ever::{Attribute as HtmlAttribute, LocalName, Namespace, QualName};
 
 use crate::dom::tree::{Attribute, DomTree, NodeData, NodeId};
 
-pub struct ObscuraElemName<'a> {
+pub struct DomElemName<'a> {
     _ref: Ref<'a, ()>,
     name: *const QualName,
 }
 
-impl<'a> fmt::Debug for ObscuraElemName<'a> {
+impl<'a> fmt::Debug for DomElemName<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = unsafe { &*self.name };
         write!(f, "{:?}", name)
     }
 }
 
-impl<'a> ElemName for ObscuraElemName<'a> {
+impl<'a> ElemName for DomElemName<'a> {
     fn ns(&self) -> &Namespace {
         unsafe { &(*self.name).ns }
     }
@@ -33,7 +33,7 @@ impl<'a> ElemName for ObscuraElemName<'a> {
 impl TreeSink for DomTree {
     type Handle = NodeId;
     type Output = Self;
-    type ElemName<'a> = ObscuraElemName<'a>;
+    type ElemName<'a> = DomElemName<'a>;
 
     fn finish(self) -> Self::Output {
         self
@@ -45,7 +45,7 @@ impl TreeSink for DomTree {
         self.document()
     }
 
-    fn elem_name<'a>(&'a self, target: &'a NodeId) -> ObscuraElemName<'a> {
+    fn elem_name<'a>(&'a self, target: &'a NodeId) -> DomElemName<'a> {
         let borrow = self.borrow_inner();
         let node = borrow
             .nodes
@@ -57,7 +57,7 @@ impl TreeSink for DomTree {
             _ => panic!("elem_name called on non-element"),
         };
         let ref_guard = Ref::map(borrow, |_| &());
-        ObscuraElemName {
+        DomElemName {
             _ref: ref_guard,
             name: name_ptr,
         }
