@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.16.36"
+alef_version = "0.16.33"
 languages = [
   "python",
   "node",
@@ -167,9 +167,6 @@ package_name = "Kreuzcrawl"
 [crates.zig]
 module_name = "kreuzcrawl"
 exclude_functions = ["create_engine"]
-
-[crates.wasm]
-type_prefix = ""
 
 [crates.output]
 python = "crates/kreuzcrawl-py/src/"
