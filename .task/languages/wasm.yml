@@ -222,7 +222,7 @@ tasks:
     desc: Run WASM E2E tests (Node/vitest, alef-generated)
     dir: e2e/wasm
     cmds:
-      - pnpm install --silent
+      - pnpm install
       # Use `pnpm exec` (not `pnpm dlx`) so vitest runs against the
       # e2e/wasm/node_modules deps (vite-plugin-wasm etc.). `pnpm dlx`
       # downloads vitest into a temp dir and resolves config from
