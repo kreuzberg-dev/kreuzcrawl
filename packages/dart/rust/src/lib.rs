@@ -89,6 +89,8 @@ pub struct ContentConfig {
 pub struct BrowserConfig {
     /// When to use the headless browser fallback.
     pub mode: BrowserMode,
+    /// Browser backend used to render JavaScript-heavy pages.
+    pub backend: BrowserBackend,
     /// CDP WebSocket endpoint for connecting to an external browser instance.
     pub endpoint: Option<String>,
     /// Timeout for browser page load and rendering (in milliseconds when serialized).
@@ -99,8 +101,26 @@ pub struct BrowserConfig {
     pub wait_selector: Option<String>,
     /// Extra time to wait after the wait condition is met.
     pub extra_wait: Option<i64>,
-    /// Browser backend used for JavaScript rendering.
-    pub backend: BrowserBackend,
+    /// Enable browser-realistic TLS fingerprint via the stealth HTTP client.
+    /// Only honored by `BrowserBackend::Native` — chromiumoxide is already
+    /// full-stealth via Chrome's TLS stack.
+    pub stealth: bool,
+    /// Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set.
+    /// Native backend supports http/https only (no SOCKS5).
+    pub proxy: Option<ProxyConfig>,
+    /// URL patterns to block before the network request fires. Supports `*`
+    /// wildcards. Useful for skipping ads/analytics/large images. Honored by
+    /// `BrowserBackend::Native`; chromiumoxide ignores this field today.
+    pub block_url_patterns: Vec<String>,
+    /// JavaScript snippet evaluated after navigation completes. Result is
+    /// captured in `ScrapeResult.browser.eval_result`. Native only.
+    pub eval_script: Option<String>,
+    /// User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent`
+    /// (or kreuzcrawl's default) if unset. Native only.
+    pub robots_user_agent: Option<String>,
+    /// Capture the full network event stream into the result. Default false
+    /// (only the document event is captured). Native only.
+    pub capture_network_events: bool,
 }
 
 /// Configuration for crawl, scrape, and map operations.
@@ -187,6 +207,21 @@ pub struct CrawlConfig {
     pub save_browser_profile: bool,
 }
 
+/// Browser-specific extras populated when the native browser backend was used.
+///
+/// Available on `ScrapeResult.browser` when `BrowserBackend::Native` handled the request.
+#[frb(mirror(BrowserExtras))]
+pub struct BrowserExtras {
+    /// Return value of `BrowserConfig.eval_script`, if provided.
+    pub eval_result: Option<String>,
+    /// Network events captured during page navigation (only populated when
+    /// `BrowserConfig.capture_network_events` is true).
+    pub network_events: Vec<ResponseMeta>,
+    /// All non-expired cookies present in the browser's cookie jar after
+    /// navigation completes (includes both prior cookies and server Set-Cookie).
+    pub cookies: Vec<CookieInfo>,
+}
+
 /// A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 ///
 /// When the crawler encounters non-HTML content and `download_documents` is
@@ -263,6 +298,9 @@ pub struct ScrapeResult {
     pub extraction_meta: Option<ExtractionMeta>,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     pub downloaded_document: Option<DownloadedDocument>,
+    /// Browser-specific extras (eval result, network events, cookies). Only
+    /// populated when `BrowserBackend::Native` was used for this request.
+    pub browser: Option<BrowserExtras>,
 }
 
 /// The result of crawling a single page during a crawl operation.
@@ -325,8 +363,6 @@ pub struct CrawlResult {
     pub error: Option<String>,
     /// Cookies collected during the crawl.
     pub cookies: Vec<CookieInfo>,
-    /// Normalized URLs encountered during crawling (for deduplication counting).
-    pub normalized_urls: Vec<String>,
 }
 
 /// A URL entry from a sitemap.
@@ -832,12 +868,18 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
     fn from(v: kreuzcrawl::BrowserConfig) -> Self {
         BrowserConfig {
             mode: BrowserMode::from(v.mode),
+            backend: BrowserBackend::from(v.backend),
             endpoint: v.endpoint.map(|s| s.into()),
             timeout: v.timeout.as_millis() as i64,
             wait: BrowserWait::from(v.wait),
             wait_selector: v.wait_selector.map(|s| s.into()),
             extra_wait: v.extra_wait.map(|d| d.as_millis() as i64),
-            backend: BrowserBackend::from(v.backend),
+            stealth: v.stealth as _,
+            proxy: v.proxy.map(ProxyConfig::from),
+            block_url_patterns: v.block_url_patterns.into_iter().map(|s| s.into()).collect(),
+            eval_script: v.eval_script.map(|s| s.into()),
+            robots_user_agent: v.robots_user_agent.map(|s| s.into()),
+            capture_network_events: v.capture_network_events as _,
         }
     }
 }
@@ -889,6 +931,16 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
     }
 }
 
+impl From<kreuzcrawl::BrowserExtras> for BrowserExtras {
+    fn from(v: kreuzcrawl::BrowserExtras) -> Self {
+        BrowserExtras {
+            eval_result: v.eval_result.map(|j| serde_json::to_string(&j).unwrap_or_default()),
+            network_events: v.network_events.into_iter().map(ResponseMeta::from).collect(),
+            cookies: v.cookies.into_iter().map(CookieInfo::from).collect(),
+        }
+    }
+}
+
 impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     fn from(v: kreuzcrawl::DownloadedDocument) -> Self {
         DownloadedDocument {
@@ -931,6 +983,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             extracted_data: v.extracted_data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
             extraction_meta: v.extraction_meta.map(ExtractionMeta::from),
             downloaded_document: v.downloaded_document.map(DownloadedDocument::from),
+            browser: v.browser.map(BrowserExtras::from),
         }
     }
 }
@@ -971,7 +1024,6 @@ impl From<kreuzcrawl::CrawlResult> for CrawlResult {
             was_skipped: v.was_skipped as _,
             error: v.error.map(|s| s.into()),
             cookies: v.cookies.into_iter().map(CookieInfo::from).collect(),
-            normalized_urls: v.normalized_urls.into_iter().map(|s| s.into()).collect(),
         }
     }
 }
@@ -1259,15 +1311,6 @@ impl From<kreuzcrawl::BrowserBackend> for BrowserBackend {
     }
 }
 
-impl From<BrowserBackend> for kreuzcrawl::BrowserBackend {
-    fn from(v: BrowserBackend) -> Self {
-        match v {
-            BrowserBackend::Chromiumoxide => kreuzcrawl::BrowserBackend::Chromiumoxide,
-            BrowserBackend::Native => kreuzcrawl::BrowserBackend::Native,
-        }
-    }
-}
-
 impl From<kreuzcrawl::AuthConfig> for AuthConfig {
     fn from(v: kreuzcrawl::AuthConfig) -> Self {
         match v {
@@ -1364,18 +1407,18 @@ impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(v: BrowserConfig) -> Self {
         kreuzcrawl::BrowserConfig {
             mode: v.mode.into(),
+            backend: v.backend.into(),
             endpoint: v.endpoint.map(Into::into),
             timeout: std::time::Duration::from_millis(v.timeout as u64),
             wait: v.wait.into(),
             wait_selector: v.wait_selector.map(Into::into),
             extra_wait: v.extra_wait.map(|ms| std::time::Duration::from_millis(ms as u64)),
-            backend: v.backend.into(),
-            stealth: false,
-            proxy: None,
-            block_url_patterns: Vec::new(),
-            eval_script: None,
-            robots_user_agent: None,
-            capture_network_events: false,
+            stealth: v.stealth as _,
+            proxy: v.proxy.map(Into::into),
+            block_url_patterns: v.block_url_patterns.into_iter().map(Into::into).collect(),
+            eval_script: v.eval_script.map(Into::into),
+            robots_user_agent: v.robots_user_agent.map(Into::into),
+            capture_network_events: v.capture_network_events as _,
         }
     }
 }
@@ -1445,6 +1488,15 @@ impl From<BrowserWait> for kreuzcrawl::BrowserWait {
             BrowserWait::NetworkIdle => kreuzcrawl::BrowserWait::NetworkIdle,
             BrowserWait::Selector => kreuzcrawl::BrowserWait::Selector,
             BrowserWait::Fixed => kreuzcrawl::BrowserWait::Fixed,
+        }
+    }
+}
+
+impl From<BrowserBackend> for kreuzcrawl::BrowserBackend {
+    fn from(v: BrowserBackend) -> Self {
+        match v {
+            BrowserBackend::Chromiumoxide => kreuzcrawl::BrowserBackend::Chromiumoxide,
+            BrowserBackend::Native => kreuzcrawl::BrowserBackend::Native,
         }
     }
 }
@@ -1560,6 +1612,13 @@ pub fn create_browser_config_from_json(json: String) -> Result<BrowserConfig, St
 pub fn create_crawl_config_from_json(json: String) -> Result<CrawlConfig, String> {
     serde_json::from_str::<kreuzcrawl::CrawlConfig>(&json)
         .map(CrawlConfig::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
+pub fn create_browser_extras_from_json(json: String) -> Result<BrowserExtras, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserExtras>(&json)
+        .map(BrowserExtras::from)
         .map_err(|e| e.to_string())
 }
 

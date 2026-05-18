@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.16.33"
+alef_version = "0.16.43"
 languages = [
   "python",
   "node",
@@ -60,7 +60,7 @@ command = "cd packages/elixir && mix format"
 # php-cs-fixer rewrites, breaking the embedded alef:hash. Run the project's
 # php-cs-fixer directly so both pipelines produce byte-identical output.
 [workspace.format_overrides.php]
-command = "cd packages/php && vendor/bin/php-cs-fixer fix src/ tests/"
+command = "cd packages/php && vendor/bin/php-cs-fixer fix src/"
 
 # ---------------------------------------------------------------------------
 # Version Sync
@@ -220,6 +220,7 @@ types = [
   "FaviconInfo",
   "HeadingInfo",
   "ResponseMeta",
+  "BrowserExtras",
   "PageMetadata",
   "CitationResult",
   "CitationReference",

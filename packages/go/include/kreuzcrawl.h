@@ -31,9 +31,19 @@ typedef struct KCRAWLBatchCrawlResult KCRAWLBatchCrawlResult;
  */
 typedef struct KCRAWLBatchScrapeResult KCRAWLBatchScrapeResult;
 /**
+ * Browser backend used for JavaScript rendering.
+ */
+typedef struct KCRAWLBrowserBackend KCRAWLBrowserBackend;
+/**
  * Browser fallback configuration.
  */
 typedef struct KCRAWLBrowserConfig KCRAWLBrowserConfig;
+/**
+ * Browser-specific extras populated when the native browser backend was used.
+ *
+ * Available on `ScrapeResult.browser` when `BrowserBackend::Native` handled the request.
+ */
+typedef struct KCRAWLBrowserExtras KCRAWLBrowserExtras;
 /**
  * When to use the headless browser fallback.
  */
@@ -457,6 +467,13 @@ void kcrawl_browser_config_free(KCRAWLBrowserConfig *ptr);
 KCRAWLBrowserMode *kcrawl_browser_config_mode(const KCRAWLBrowserConfig *ptr);
 
 /**
+ * Get the `backend` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KCRAWLBrowserBackend *kcrawl_browser_config_backend(const KCRAWLBrowserConfig *ptr);
+
+/**
  * Get the `endpoint` field from a `BrowserConfig`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
@@ -490,6 +507,48 @@ char *kcrawl_browser_config_wait_selector(const KCRAWLBrowserConfig *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 uint64_t kcrawl_browser_config_extra_wait(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `stealth` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_browser_config_stealth(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `proxy` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KCRAWLProxyConfig *kcrawl_browser_config_proxy(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `block_url_patterns` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_config_block_url_patterns(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `eval_script` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_config_eval_script(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `robots_user_agent` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_config_robots_user_agent(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `capture_network_events` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_browser_config_capture_network_events(const KCRAWLBrowserConfig *ptr);
 
 /**
  * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
@@ -786,6 +845,50 @@ KCRAWLCrawlConfig *kcrawl_crawl_config_default(void);
 int32_t kcrawl_crawl_config_validate(const KCRAWLCrawlConfig *this_);
 
 /**
+ * Create a `BrowserExtras` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_browser_extras_free`.
+ */
+KCRAWLBrowserExtras *kcrawl_browser_extras_from_json(const char *json);
+
+/**
+ * Serialize a `BrowserExtras` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_extras_to_json(const KCRAWLBrowserExtras *ptr);
+
+/**
+ * Free a `BrowserExtras` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_browser_extras_free(KCRAWLBrowserExtras *ptr);
+
+/**
+ * Get the `eval_result` field from a `BrowserExtras`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_extras_eval_result(const KCRAWLBrowserExtras *ptr);
+
+/**
+ * Get the `network_events` field from a `BrowserExtras`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_extras_network_events(const KCRAWLBrowserExtras *ptr);
+
+/**
+ * Get the `cookies` field from a `BrowserExtras`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_extras_cookies(const KCRAWLBrowserExtras *ptr);
+
+/**
  * Create a `DownloadedDocument` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -1048,6 +1151,13 @@ uint8_t *kcrawl_scrape_result_screenshot(const KCRAWLScrapeResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 KCRAWLDownloadedDocument *kcrawl_scrape_result_downloaded_document(const KCRAWLScrapeResult *ptr);
+
+/**
+ * Get the `browser` field from a `ScrapeResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KCRAWLBrowserExtras *kcrawl_scrape_result_browser(const KCRAWLScrapeResult *ptr);
 
 /**
  * Create a `CrawlPageResult` from a JSON string. Returns null on failure.
@@ -2543,6 +2653,21 @@ int32_t kcrawl_browser_wait_from_i32(int32_t value);
 int32_t kcrawl_browser_wait_from_str(const char *name);
 
 /**
+ * Convert an integer to a `BrowserBackend` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kcrawl_browser_backend_from_i32(int32_t value);
+
+/**
+ * Convert a `BrowserBackend` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kcrawl_browser_backend_from_str(const char *name);
+
+/**
  * Convert an integer to a `AuthConfig` variant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
@@ -2666,6 +2791,31 @@ char *kcrawl_browser_wait_to_json(const KCRAWLBrowserWait *ptr);
  * The returned string must be freed with `kcrawl_free_string`.
  */
 char *kcrawl_browser_wait_to_string(const KCRAWLBrowserWait *ptr);
+
+/**
+ * Free a heap-allocated `BrowserBackend` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_browser_backend_free(KCRAWLBrowserBackend *ptr);
+
+/**
+ * Serialize a heap-allocated `BrowserBackend` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_backend_to_json(const KCRAWLBrowserBackend *ptr);
+
+/**
+ * Render a heap-allocated `BrowserBackend` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_backend_to_string(const KCRAWLBrowserBackend *ptr);
 
 /**
  * Free a heap-allocated `AuthConfig` returned by a pointer-returning FFI function.

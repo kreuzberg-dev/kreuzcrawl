@@ -80,18 +80,32 @@ mod ffi {
         #[swift_bridge(init)]
         fn new(
             mode: BrowserMode,
+            backend: BrowserBackend,
             endpoint: Option<String>,
             timeout: u64,
             wait: BrowserWait,
             wait_selector: Option<String>,
             extra_wait: Option<u64>,
+            stealth: bool,
+            proxy: Option<ProxyConfig>,
+            block_url_patterns: Vec<String>,
+            eval_script: Option<String>,
+            robots_user_agent: Option<String>,
+            capture_network_events: bool,
         ) -> BrowserConfig;
         fn mode(&self) -> String;
+        fn backend(&self) -> String;
         fn endpoint(&self) -> Option<String>;
         fn timeout(&self) -> u64;
         fn wait(&self) -> String;
         fn wait_selector(&self) -> Option<String>;
         fn extra_wait(&self) -> Option<u64>;
+        fn stealth(&self) -> bool;
+        fn proxy(&self) -> Option<ProxyConfig>;
+        fn block_url_patterns(&self) -> Vec<String>;
+        fn eval_script(&self) -> Option<String>;
+        fn robots_user_agent(&self) -> Option<String>;
+        fn capture_network_events(&self) -> bool;
     }
 
     extern "Rust" {
@@ -174,6 +188,19 @@ mod ffi {
     }
 
     extern "Rust" {
+        type BrowserExtras;
+        #[swift_bridge(init)]
+        fn new(
+            eval_result: Option<String>,
+            network_events: Vec<ResponseMeta>,
+            cookies: Vec<CookieInfo>,
+        ) -> BrowserExtras;
+        fn eval_result(&self) -> Option<String>;
+        fn network_events(&self) -> Vec<ResponseMeta>;
+        fn cookies(&self) -> Vec<CookieInfo>;
+    }
+
+    extern "Rust" {
         type DownloadedDocument;
         #[swift_bridge(init)]
         fn new(
@@ -222,6 +249,7 @@ mod ffi {
             extracted_data: Option<String>,
             extraction_meta: Option<ExtractionMeta>,
             downloaded_document: Option<DownloadedDocument>,
+            browser: Option<BrowserExtras>,
         ) -> ScrapeResult;
         fn status_code(&self) -> u16;
         fn content_type(&self) -> String;
@@ -249,6 +277,7 @@ mod ffi {
         fn extracted_data(&self) -> Option<String>;
         fn extraction_meta(&self) -> Option<ExtractionMeta>;
         fn downloaded_document(&self) -> Option<DownloadedDocument>;
+        fn browser(&self) -> Option<BrowserExtras>;
     }
 
     extern "Rust" {
@@ -308,7 +337,6 @@ mod ffi {
             was_skipped: bool,
             error: Option<String>,
             cookies: Vec<CookieInfo>,
-            normalized_urls: Vec<String>,
         ) -> CrawlResult;
         fn pages(&self) -> Vec<CrawlPageResult>;
         fn final_url(&self) -> String;
@@ -316,7 +344,6 @@ mod ffi {
         fn was_skipped(&self) -> bool;
         fn error(&self) -> Option<String>;
         fn cookies(&self) -> Vec<CookieInfo>;
-        fn normalized_urls(&self) -> Vec<String>;
     }
 
     extern "Rust" {
@@ -642,6 +669,11 @@ mod ffi {
     }
 
     extern "Rust" {
+        type BrowserBackend;
+        fn to_string(&self) -> String;
+    }
+
+    extern "Rust" {
         type AuthConfig;
         fn to_string(&self) -> String;
     }
@@ -901,14 +933,22 @@ pub struct BrowserConfig(pub kreuzcrawl::BrowserConfig);
 impl BrowserConfig {
     pub fn new(
         mode: BrowserMode,
+        backend: BrowserBackend,
         endpoint: Option<String>,
         timeout: u64,
         wait: BrowserWait,
         wait_selector: Option<String>,
         extra_wait: Option<u64>,
+        stealth: bool,
+        proxy: Option<ProxyConfig>,
+        block_url_patterns: Vec<String>,
+        eval_script: Option<String>,
+        robots_user_agent: Option<String>,
+        capture_network_events: bool,
     ) -> BrowserConfig {
         let mut __target: kreuzcrawl::BrowserConfig = ::std::default::Default::default();
         // alef: mode (BrowserMode) is an enum; reverse From not generated — left at default
+        // alef: backend (BrowserBackend) is an enum; reverse From not generated — left at default
         if let Some(s) = endpoint {
             if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
                 if let Ok(t) = ::serde_json::from_value(v) {
@@ -926,10 +966,37 @@ impl BrowserConfig {
             }
         }
         __target.extra_wait = extra_wait.map(std::time::Duration::from_millis);
+        __target.stealth = stealth;
+        if let Some(w) = proxy {
+            __target.proxy = Some(w.0);
+        }
+        if let Ok(__v) = ::serde_json::to_value(block_url_patterns) {
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.block_url_patterns = t;
+            }
+        }
+        if let Some(s) = eval_script {
+            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
+                if let Ok(t) = ::serde_json::from_value(v) {
+                    __target.eval_script = Some(t);
+                }
+            }
+        }
+        if let Some(s) = robots_user_agent {
+            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
+                if let Ok(t) = ::serde_json::from_value(v) {
+                    __target.robots_user_agent = Some(t);
+                }
+            }
+        }
+        __target.capture_network_events = capture_network_events;
         BrowserConfig(__target)
     }
     pub fn mode(&self) -> String {
         BrowserMode::from(self.0.mode.clone()).to_string()
+    }
+    pub fn backend(&self) -> String {
+        BrowserBackend::from(self.0.backend.clone()).to_string()
     }
     pub fn endpoint(&self) -> Option<String> {
         self.0.endpoint.clone()
@@ -945,6 +1012,33 @@ impl BrowserConfig {
     }
     pub fn extra_wait(&self) -> Option<u64> {
         self.0.extra_wait.map(|d| d.as_millis() as u64)
+    }
+    pub fn stealth(&self) -> bool {
+        ::serde_json::to_value(&self.0.stealth)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn proxy(&self) -> Option<ProxyConfig> {
+        self.0.proxy.clone().map(ProxyConfig)
+    }
+    pub fn block_url_patterns(&self) -> Vec<String> {
+        ::serde_json::to_value(&self.0.block_url_patterns)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn eval_script(&self) -> Option<String> {
+        self.0.eval_script.clone()
+    }
+    pub fn robots_user_agent(&self) -> Option<String> {
+        self.0.robots_user_agent.clone()
+    }
+    pub fn capture_network_events(&self) -> bool {
+        ::serde_json::to_value(&self.0.capture_network_events)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
     }
 }
 
@@ -1278,6 +1372,40 @@ impl CrawlConfig {
     }
 }
 
+pub struct BrowserExtras(pub kreuzcrawl::BrowserExtras);
+impl BrowserExtras {
+    pub fn new(
+        eval_result: Option<String>,
+        network_events: Vec<ResponseMeta>,
+        cookies: Vec<CookieInfo>,
+    ) -> BrowserExtras {
+        let mut __target: kreuzcrawl::BrowserExtras = ::std::default::Default::default();
+        if let Some(s) = eval_result {
+            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
+                if let Ok(t) = ::serde_json::from_value(v) {
+                    __target.eval_result = Some(t);
+                }
+            }
+        }
+        __target.network_events = network_events.into_iter().map(|w| w.0).collect();
+        __target.cookies = cookies.into_iter().map(|w| w.0).collect();
+        BrowserExtras(__target)
+    }
+    pub fn eval_result(&self) -> Option<String> {
+        self.0.eval_result.as_ref().and_then(|v| serde_json::to_string(v).ok())
+    }
+    pub fn network_events(&self) -> Vec<ResponseMeta> {
+        self.0
+            .network_events
+            .iter()
+            .map(|elem| ResponseMeta(elem.clone()))
+            .collect()
+    }
+    pub fn cookies(&self) -> Vec<CookieInfo> {
+        self.0.cookies.iter().map(|elem| CookieInfo(elem.clone())).collect()
+    }
+}
+
 pub struct DownloadedDocument(pub kreuzcrawl::DownloadedDocument);
 impl DownloadedDocument {
     pub fn new(
@@ -1371,6 +1499,7 @@ impl ScrapeResult {
         extracted_data: Option<String>,
         extraction_meta: Option<ExtractionMeta>,
         downloaded_document: Option<DownloadedDocument>,
+        browser: Option<BrowserExtras>,
     ) -> ScrapeResult {
         let mut __target: kreuzcrawl::ScrapeResult = ::std::default::Default::default();
         __target.status_code = status_code;
@@ -1432,6 +1561,9 @@ impl ScrapeResult {
         }
         if let Some(w) = downloaded_document {
             __target.downloaded_document = Some(w.0);
+        }
+        if let Some(w) = browser {
+            __target.browser = Some(w.0);
         }
         ScrapeResult(__target)
     }
@@ -1549,6 +1681,9 @@ impl ScrapeResult {
     }
     pub fn downloaded_document(&self) -> Option<DownloadedDocument> {
         self.0.downloaded_document.clone().map(DownloadedDocument)
+    }
+    pub fn browser(&self) -> Option<BrowserExtras> {
+        self.0.browser.clone().map(BrowserExtras)
     }
 }
 
@@ -1725,7 +1860,6 @@ impl CrawlResult {
         was_skipped: bool,
         error: Option<String>,
         cookies: Vec<CookieInfo>,
-        normalized_urls: Vec<String>,
     ) -> CrawlResult {
         let mut __target: kreuzcrawl::CrawlResult = ::std::default::Default::default();
         __target.pages = pages.into_iter().map(|w| w.0).collect();
@@ -1744,11 +1878,6 @@ impl CrawlResult {
             }
         }
         __target.cookies = cookies.into_iter().map(|w| w.0).collect();
-        if let Ok(__v) = ::serde_json::to_value(normalized_urls) {
-            if let Ok(t) = ::serde_json::from_value(__v) {
-                __target.normalized_urls = t;
-            }
-        }
         CrawlResult(__target)
     }
     pub fn pages(&self) -> Vec<CrawlPageResult> {
@@ -1774,12 +1903,6 @@ impl CrawlResult {
     }
     pub fn cookies(&self) -> Vec<CookieInfo> {
         self.0.cookies.iter().map(|elem| CookieInfo(elem.clone())).collect()
-    }
-    pub fn normalized_urls(&self) -> Vec<String> {
-        ::serde_json::to_value(&self.0.normalized_urls)
-            .ok()
-            .and_then(|j| ::serde_json::from_value(j).ok())
-            .unwrap_or_default()
     }
 }
 
@@ -3073,6 +3196,29 @@ impl BrowserWait {
             Self::NetworkIdle => "network_idle".to_string(),
             Self::Selector => "selector".to_string(),
             Self::Fixed => "fixed".to_string(),
+        }
+    }
+}
+
+pub enum BrowserBackend {
+    Chromiumoxide,
+    Native,
+}
+
+impl From<kreuzcrawl::BrowserBackend> for BrowserBackend {
+    fn from(val: kreuzcrawl::BrowserBackend) -> Self {
+        match val {
+            kreuzcrawl::BrowserBackend::Chromiumoxide => Self::Chromiumoxide,
+            kreuzcrawl::BrowserBackend::Native => Self::Native,
+        }
+    }
+}
+
+impl BrowserBackend {
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Chromiumoxide => "chromiumoxide".to_string(),
+            Self::Native => "native".to_string(),
         }
     }
 }

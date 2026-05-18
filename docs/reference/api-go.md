@@ -1,6 +1,7 @@
 ---
 title: "Go API Reference"
 ---
+
 ## Go API Reference <span class="version-badge">v0.3.0-rc.20</span>
 
 ### Functions
@@ -17,6 +18,7 @@ Returns an error if the configuration is invalid.
 ```go
 func CreateEngine(config CrawlConfig) (CrawlEngineHandle, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -37,6 +39,7 @@ Scrape a single URL, returning extracted page data.
 ```go
 func Scrape(engine CrawlEngineHandle, url string) (ScrapeResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -58,6 +61,7 @@ Crawl a website starting from `url`, following links up to the configured depth.
 ```go
 func Crawl(engine CrawlEngineHandle, url string) (CrawlResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -79,6 +83,7 @@ Discover all pages on a website by following links and sitemaps.
 ```go
 func MapUrls(engine CrawlEngineHandle, url string) (MapResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -100,6 +105,7 @@ Scrape multiple URLs concurrently.
 ```go
 func BatchScrape(engine CrawlEngineHandle, urls []string) ([]BatchScrapeResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -121,6 +127,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```go
 func BatchCrawl(engine CrawlEngineHandle, urls []string) ([]BatchCrawlResult, error)
 ```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -183,11 +190,18 @@ Browser fallback configuration.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `Mode` | `BrowserMode` | `BrowserMode.Auto` | When to use the headless browser fallback. |
+| `Backend` | `BrowserBackend` | `BrowserBackend.Chromiumoxide` | Browser backend used to render JavaScript-heavy pages. |
 | `Endpoint` | `*string` | `nil` | CDP WebSocket endpoint for connecting to an external browser instance. |
 | `Timeout` | `time.Duration` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `Wait` | `BrowserWait` | `BrowserWait.NetworkIdle` | Wait strategy after browser navigation. |
 | `WaitSelector` | `*string` | `nil` | CSS selector to wait for when `wait` is `Selector`. |
 | `ExtraWait` | `*time.Duration` | `nil` | Extra time to wait after the wait condition is met. |
+| `Stealth` | `bool` | `false` | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack. |
+| `Proxy` | `*ProxyConfig` | `nil` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
+| `BlockUrlPatterns` | `[]string` | `nil` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `EvalScript` | `*string` | `nil` | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only. |
+| `RobotsUserAgent` | `*string` | `nil` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `CaptureNetworkEvents` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 
 ##### Methods
 
@@ -198,6 +212,21 @@ Browser fallback configuration.
 ```go
 func (o *BrowserConfig) Default() BrowserConfig
 ```
+
+---
+
+#### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `EvalResult` | `*interface{}` | `nil` | Return value of `BrowserConfig.eval_script`, if provided. |
+| `NetworkEvents` | `[]ResponseMeta` | `nil` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `Cookies` | `[]CookieInfo` | `nil` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
 
 ---
 
@@ -328,6 +357,7 @@ Configuration for crawl, scrape, and map operations.
 ```go
 func (o *CrawlConfig) Default() CrawlConfig
 ```
+
 ###### Validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -697,6 +727,7 @@ The result of a single-page scrape operation.
 | `ExtractionMeta` | `*ExtractionMeta` | `nil` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `Screenshot` | `*[]byte` | `nil` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `DownloadedDocument` | `*DownloadedDocument` | `nil` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `Browser` | `*BrowserExtras` | `nil` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 
 ---
@@ -739,6 +770,18 @@ Wait strategy for browser page rendering.
 | `NetworkIdle` | Wait until network activity is idle. |
 | `Selector` | Wait for a specific CSS selector to appear in the DOM. |
 | `Fixed` | Wait for a fixed duration after navigation. |
+
+
+---
+
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Value | Description |
+|-------|-------------|
+| `Chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide. |
+| `Native` | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 
 ---

@@ -2907,7 +2907,6 @@ dependencies = [
 name = "kreuzcrawl-browser"
 version = "0.3.0-rc.20"
 dependencies = [
- "anyhow",
  "async-trait",
  "base64",
  "boring-sys2",
@@ -2917,13 +2916,11 @@ dependencies = [
  "deno_error",
  "futures",
  "html5ever",
- "markup5ever",
  "precomputed-hash",
  "reqwest",
  "selectors",
  "serde",
  "serde_json",
- "servo_arc",
  "thiserror 2.0.18",
  "tokio",
  "tokio-boring2",

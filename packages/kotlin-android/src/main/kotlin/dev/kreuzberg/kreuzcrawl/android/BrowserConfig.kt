@@ -6,9 +6,12 @@
     "ktlint:standard:spacing-between-declarations-with-annotations",
     "ktlint:standard:when-entry-bracing",
     "ktlint:standard:blank-line-between-when-conditions",
+    "ktlint:standard:blank-line-before-declaration",
     "ktlint:standard:chain-method-continuation",
     "ktlint:standard:annotation",
     "ktlint:standard:max-line-length",
+    "ktlint:standard:no-semi",
+    "ktlint:standard:statement-wrapping",
     "MaxLineLength",
     "TooManyFunctions",
     "FunctionParameterNaming",
@@ -24,6 +27,8 @@ import kotlin.time.Duration
 data class BrowserConfig(
     /** When to use the headless browser fallback. */
     val mode: BrowserMode,
+    /** Browser backend used to render JavaScript-heavy pages. */
+    val backend: BrowserBackend,
     /** CDP WebSocket endpoint for connecting to an external browser instance. */
     val endpoint: String?,
     /** Timeout for browser page load and rendering (in milliseconds when serialized). */
@@ -34,4 +39,35 @@ data class BrowserConfig(
     val waitSelector: String?,
     /** Extra time to wait after the wait condition is met. */
     val extraWait: Duration?,
+    /**
+     * Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by
+     * `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.
+     */
+    val stealth: Boolean,
+    /**
+     * Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports
+     * http/https only (no SOCKS5).
+     */
+    val proxy: ProxyConfig?,
+    /**
+     * URL patterns to block before the network request fires. Supports `*` wildcards. Useful for
+     * skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide
+     * ignores this field today.
+     */
+    val blockUrlPatterns: List<String>,
+    /**
+     * JavaScript snippet evaluated after navigation completes. Result is captured in
+     * `ScrapeResult.browser.eval_result`. Native only.
+     */
+    val evalScript: String?,
+    /**
+     * User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or
+     * kreuzcrawl's default) if unset. Native only.
+     */
+    val robotsUserAgent: String?,
+    /**
+     * Capture the full network event stream into the result. Default false (only the document event
+     * is captured). Native only.
+     */
+    val captureNetworkEvents: Boolean,
 )

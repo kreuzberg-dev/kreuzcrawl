@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'lib.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
 
 /// Create a new crawl engine with the given configuration.
 ///
@@ -61,6 +61,9 @@ Future<BrowserConfig> createBrowserConfigFromJson({required String json}) =>
 
 Future<CrawlConfig> createCrawlConfigFromJson({required String json}) =>
     RustLib.instance.api.crateCreateCrawlConfigFromJson(json: json);
+
+Future<BrowserExtras> createBrowserExtrasFromJson({required String json}) =>
+    RustLib.instance.api.crateCreateBrowserExtrasFromJson(json: json);
 
 Future<DownloadedDocument> createDownloadedDocumentFromJson({
   required String json,
@@ -311,6 +314,9 @@ class BrowserConfig {
   /// When to use the headless browser fallback.
   final BrowserMode mode;
 
+  /// Browser backend used to render JavaScript-heavy pages.
+  final BrowserBackend backend;
+
   /// CDP WebSocket endpoint for connecting to an external browser instance.
   final String? endpoint;
 
@@ -326,28 +332,63 @@ class BrowserConfig {
   /// Extra time to wait after the wait condition is met.
   final PlatformInt64? extraWait;
 
-  /// Browser backend used for JavaScript rendering.
-  final BrowserBackend backend;
+  /// Enable browser-realistic TLS fingerprint via the stealth HTTP client.
+  /// Only honored by `BrowserBackend::Native` — chromiumoxide is already
+  /// full-stealth via Chrome's TLS stack.
+  final bool stealth;
+
+  /// Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set.
+  /// Native backend supports http/https only (no SOCKS5).
+  final ProxyConfig? proxy;
+
+  /// URL patterns to block before the network request fires. Supports `*`
+  /// wildcards. Useful for skipping ads/analytics/large images. Honored by
+  /// `BrowserBackend::Native`; chromiumoxide ignores this field today.
+  final List<String> blockUrlPatterns;
+
+  /// JavaScript snippet evaluated after navigation completes. Result is
+  /// captured in `ScrapeResult.browser.eval_result`. Native only.
+  final String? evalScript;
+
+  /// User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent`
+  /// (or kreuzcrawl's default) if unset. Native only.
+  final String? robotsUserAgent;
+
+  /// Capture the full network event stream into the result. Default false
+  /// (only the document event is captured). Native only.
+  final bool captureNetworkEvents;
 
   const BrowserConfig({
     required this.mode,
+    required this.backend,
     this.endpoint,
     required this.timeout,
     required this.wait,
     this.waitSelector,
     this.extraWait,
-    required this.backend,
+    required this.stealth,
+    this.proxy,
+    required this.blockUrlPatterns,
+    this.evalScript,
+    this.robotsUserAgent,
+    required this.captureNetworkEvents,
   });
 
   @override
   int get hashCode =>
       mode.hashCode ^
+      backend.hashCode ^
       endpoint.hashCode ^
       timeout.hashCode ^
       wait.hashCode ^
       waitSelector.hashCode ^
       extraWait.hashCode ^
-      backend.hashCode;
+      stealth.hashCode ^
+      proxy.hashCode ^
+      blockUrlPatterns.hashCode ^
+      evalScript.hashCode ^
+      robotsUserAgent.hashCode ^
+      captureNetworkEvents.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -355,12 +396,53 @@ class BrowserConfig {
       other is BrowserConfig &&
           runtimeType == other.runtimeType &&
           mode == other.mode &&
+          backend == other.backend &&
           endpoint == other.endpoint &&
           timeout == other.timeout &&
           wait == other.wait &&
           waitSelector == other.waitSelector &&
           extraWait == other.extraWait &&
-          backend == other.backend;
+          stealth == other.stealth &&
+          proxy == other.proxy &&
+          blockUrlPatterns == other.blockUrlPatterns &&
+          evalScript == other.evalScript &&
+          robotsUserAgent == other.robotsUserAgent &&
+          captureNetworkEvents == other.captureNetworkEvents;
+}
+
+/// Browser-specific extras populated when the native browser backend was used.
+///
+/// Available on `ScrapeResult.browser` when `BrowserBackend::Native` handled the request.
+class BrowserExtras {
+  /// Return value of `BrowserConfig.eval_script`, if provided.
+  final String? evalResult;
+
+  /// Network events captured during page navigation (only populated when
+  /// `BrowserConfig.capture_network_events` is true).
+  final List<ResponseMeta> networkEvents;
+
+  /// All non-expired cookies present in the browser's cookie jar after
+  /// navigation completes (includes both prior cookies and server Set-Cookie).
+  final List<CookieInfo> cookies;
+
+  const BrowserExtras({
+    this.evalResult,
+    required this.networkEvents,
+    required this.cookies,
+  });
+
+  @override
+  int get hashCode =>
+      evalResult.hashCode ^ networkEvents.hashCode ^ cookies.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BrowserExtras &&
+          runtimeType == other.runtimeType &&
+          evalResult == other.evalResult &&
+          networkEvents == other.networkEvents &&
+          cookies == other.cookies;
 }
 
 /// When to use the headless browser fallback.
@@ -971,9 +1053,6 @@ class CrawlResult {
   /// Cookies collected during the crawl.
   final List<CookieInfo> cookies;
 
-  /// Normalized URLs encountered during crawling (for deduplication counting).
-  final List<String> normalizedUrls;
-
   const CrawlResult({
     required this.pages,
     required this.finalUrl,
@@ -981,7 +1060,6 @@ class CrawlResult {
     required this.wasSkipped,
     this.error,
     required this.cookies,
-    required this.normalizedUrls,
   });
 
   @override
@@ -991,8 +1069,7 @@ class CrawlResult {
       redirectCount.hashCode ^
       wasSkipped.hashCode ^
       error.hashCode ^
-      cookies.hashCode ^
-      normalizedUrls.hashCode;
+      cookies.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -1004,8 +1081,7 @@ class CrawlResult {
           redirectCount == other.redirectCount &&
           wasSkipped == other.wasSkipped &&
           error == other.error &&
-          cookies == other.cookies &&
-          normalizedUrls == other.normalizedUrls;
+          cookies == other.cookies;
 }
 
 /// A downloaded asset from a page.
@@ -1928,6 +2004,10 @@ class ScrapeResult {
   /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
   final DownloadedDocument? downloadedDocument;
 
+  /// Browser-specific extras (eval result, network events, cookies). Only
+  /// populated when `BrowserBackend::Native` was used for this request.
+  final BrowserExtras? browser;
+
   const ScrapeResult({
     required this.statusCode,
     required this.contentType,
@@ -1955,6 +2035,7 @@ class ScrapeResult {
     this.extractedData,
     this.extractionMeta,
     this.downloadedDocument,
+    this.browser,
   });
 
   @override
@@ -1984,7 +2065,8 @@ class ScrapeResult {
       markdown.hashCode ^
       extractedData.hashCode ^
       extractionMeta.hashCode ^
-      downloadedDocument.hashCode;
+      downloadedDocument.hashCode ^
+      browser.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -2016,7 +2098,8 @@ class ScrapeResult {
           markdown == other.markdown &&
           extractedData == other.extractedData &&
           extractionMeta == other.extractionMeta &&
-          downloadedDocument == other.downloadedDocument;
+          downloadedDocument == other.downloadedDocument &&
+          browser == other.browser;
 }
 
 /// A URL entry from a sitemap.

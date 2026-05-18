@@ -41,6 +41,7 @@ The result of a single-page scrape operation.
 | `extraction_meta` | `Option<ExtractionMeta>` | `Default::default()` | Metadata about the LLM extraction pass (cost, tokens, model). |
 | `screenshot` | `Option<Vec<u8>>` | `Default::default()` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `Option<DownloadedDocument>` | `Default::default()` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
+| `browser` | `Option<BrowserExtras>` | `Default::default()` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 ---
 
@@ -197,11 +198,18 @@ Browser fallback configuration.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `mode` | `BrowserMode` | `BrowserMode::Auto` | When to use the headless browser fallback. |
+| `backend` | `BrowserBackend` | `BrowserBackend::Chromiumoxide` | Browser backend used to render JavaScript-heavy pages. |
 | `endpoint` | `Option<String>` | `None` | CDP WebSocket endpoint for connecting to an external browser instance. |
 | `timeout` | `Duration` | `30000ms` | Timeout for browser page load and rendering (in milliseconds when serialized). |
 | `wait` | `BrowserWait` | `BrowserWait::NetworkIdle` | Wait strategy after browser navigation. |
 | `wait_selector` | `Option<String>` | `None` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `Option<Duration>` | `None` | Extra time to wait after the wait condition is met. |
+| `stealth` | `bool` | `false` | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack. |
+| `proxy` | `Option<ProxyConfig>` | `None` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
+| `block_url_patterns` | `Vec<String>` | `vec![]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `eval_script` | `Option<String>` | `None` | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only. |
+| `robots_user_agent` | `Option<String>` | `None` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
+| `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 
 ---
 
@@ -247,6 +255,20 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `Option<PathBuf>` | `None` | Path to write WARC output. If `None`, WARC output is disabled. |
 | `browser_profile` | `Option<String>` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
+
+---
+
+#### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `eval_result` | `Option<serde_json::Value>` | `Default::default()` | Return value of `BrowserConfig.eval_script`, if provided. |
+| `network_events` | `Vec<ResponseMeta>` | `vec![]` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `cookies` | `Vec<CookieInfo>` | `vec![]` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
 
 ---
 
@@ -552,6 +574,17 @@ Authentication configuration.
 | `Basic` | `basic` | HTTP Basic authentication. — Fields: `username`: `String`, `password`: `String` |
 | `Bearer` | `bearer` | Bearer token authentication. — Fields: `token`: `String` |
 | `Header` | `header` | Custom authentication header. — Fields: `name`: `String`, `value`: `String` |
+
+---
+
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Variant | Wire value | Description |
+|---------|------------|-------------|
+| `Chromiumoxide` | `chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide. |
+| `Native` | `native` | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 ---
 
