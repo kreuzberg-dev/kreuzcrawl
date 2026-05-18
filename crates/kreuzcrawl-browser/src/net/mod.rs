@@ -11,4 +11,4 @@ pub use client::{ObscuraHttpClient, ObscuraNetError, RequestInfo, ResourceType, 
 pub use cookies::{CookieInfo, CookieJar};
 pub use robots::RobotsCache;
 #[cfg(feature = "stealth")]
-pub use wreq_client::{StealthHttpClient, STEALTH_USER_AGENT};
+pub use wreq_client::{STEALTH_USER_AGENT, StealthHttpClient};

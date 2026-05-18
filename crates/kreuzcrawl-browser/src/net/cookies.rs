@@ -135,10 +135,10 @@ impl CookieJar {
                 continue;
             }
             for entry in domain_cookies.values() {
-                if let Some(exp) = entry.expires {
-                    if exp < now {
-                        continue;
-                    }
+                if let Some(exp) = entry.expires
+                    && exp < now
+                {
+                    continue;
                 }
                 if entry.secure && !is_secure {
                     continue;
@@ -209,10 +209,10 @@ impl CookieJar {
                 if entry.http_only {
                     continue;
                 }
-                if let Some(exp) = entry.expires {
-                    if exp < now {
-                        continue;
-                    }
+                if let Some(exp) = entry.expires
+                    && exp < now
+                {
+                    continue;
                 }
                 if entry.secure && !is_secure {
                     continue;
@@ -276,9 +276,8 @@ impl CookieJar {
                         _ => {}
                     }
                 } else {
-                    match attr.to_lowercase().as_str() {
-                        "secure" => secure = true,
-                        _ => {}
+                    if attr.to_lowercase() == "secure" {
+                        secure = true;
                     }
                 }
             }
@@ -392,7 +391,7 @@ fn parse_http_date(s: &str) -> Result<u64, ()> {
         };
     }
     let days_in_month = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    let is_leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    let is_leap = year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400));
     for m in 1..month {
         days_total += days_in_month[m as usize] + if m == 2 && is_leap { 1 } else { 0 };
     }

@@ -1,6 +1,7 @@
 //! Sitemap XML parsing and recursive fetching.
 
 use quick_xml::Reader;
+use quick_xml::XmlVersion;
 use quick_xml::events::Event;
 use url::Url;
 
@@ -59,7 +60,7 @@ pub(crate) fn parse_sitemap_xml(body: &str) -> Vec<SitemapUrl> {
                 _ => {}
             },
             Ok(Event::Text(ref e)) => {
-                if let Ok(text) = e.xml_content() {
+                if let Ok(text) = e.xml_content(XmlVersion::default()) {
                     let text = text.trim().to_owned();
                     if in_loc {
                         current_loc = text;
@@ -112,7 +113,7 @@ pub(crate) fn parse_sitemap_index(body: &str) -> Vec<String> {
                 _ => {}
             },
             Ok(Event::Text(ref e)) => {
-                if in_loc && let Ok(text) = e.xml_content() {
+                if in_loc && let Ok(text) = e.xml_content(XmlVersion::default()) {
                     current_loc = text.trim().to_owned();
                 }
             }

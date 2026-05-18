@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::dom::{parse_html, DomTree};
+use crate::dom::{DomTree, parse_html};
 use crate::js::runtime::ObscuraJsRuntime;
 use crate::net::{ObscuraHttpClient, ObscuraNetError, Response};
 use url::Url;
@@ -157,15 +157,15 @@ impl Page {
                 if url.contains(&pattern[1..pattern.len() - 1]) {
                     return true;
                 }
-            } else if pattern.starts_with('*') {
-                if url.ends_with(&pattern[1..]) {
+            } else if let Some(suffix) = pattern.strip_prefix('*') {
+                if url.ends_with(suffix) {
                     return true;
                 }
-            } else if pattern.ends_with('*') {
-                if url.starts_with(&pattern[..pattern.len() - 1]) {
+            } else if let Some(prefix) = pattern.strip_suffix('*') {
+                if url.starts_with(prefix) {
                     return true;
                 }
-            } else if url.contains(pattern) {
+            } else if url.contains(pattern.as_str()) {
                 return true;
             }
         }
@@ -309,11 +309,7 @@ impl Page {
             deferred.len(),
             async_scripts.len()
         );
-        let all_to_execute: Vec<ScriptInfo> = scripts
-            .into_iter()
-            .chain(deferred.into_iter())
-            .chain(async_scripts.into_iter())
-            .collect();
+        let all_to_execute: Vec<ScriptInfo> = scripts.into_iter().chain(deferred).chain(async_scripts).collect();
 
         let mut resolved: Vec<(usize, String)> = Vec::new();
         let mut fetch_tasks: Vec<(usize, String)> = Vec::new();
@@ -376,30 +372,27 @@ impl Page {
 
         let mut fetched: std::collections::HashMap<usize, (String, String, crate::net::Response)> =
             std::collections::HashMap::new();
-        for result in fetch_results {
-            if let Some((idx, url, resp)) = result {
-                let code = String::from_utf8_lossy(&resp.body).to_string();
-                fetched.insert(idx, (url, code, resp));
-            }
+        for (idx, url, resp) in fetch_results.into_iter().flatten() {
+            let code = String::from_utf8_lossy(&resp.body).to_string();
+            fetched.insert(idx, (url, code, resp));
         }
 
         for (i, script) in all_to_execute.iter().enumerate() {
-            if script.src.is_some() {
-                if let Some((url, code, resp)) = fetched.remove(&i) {
-                    tracing::info!("Executing script ({} bytes): {}", code.len(), url);
-                    self.record_network_event(&url, "GET", "Script", resp.status, &resp.headers, resp.body.len());
-                    if let Some(js) = &mut self.js {
-                        if let Err(e) = js.execute_script_guarded(&url, &code) {
-                            tracing::warn!("Script error ({}): {}", url, e);
-                        }
-                    }
+            if script.src.is_some()
+                && let Some((url, code, resp)) = fetched.remove(&i)
+            {
+                tracing::info!("Executing script ({} bytes): {}", code.len(), url);
+                self.record_network_event(&url, "GET", "Script", resp.status, &resp.headers, resp.body.len());
+                if let Some(js) = &mut self.js
+                    && let Err(e) = js.execute_script_guarded(&url, &code)
+                {
+                    tracing::warn!("Script error ({}): {}", url, e);
                 }
-            } else if !script.inline.is_empty() {
-                if let Some(js) = &mut self.js {
-                    if let Err(e) = js.execute_script_guarded("<inline>", &script.inline) {
-                        tracing::warn!("Inline script error: {}", e);
-                    }
-                }
+            } else if !script.inline.is_empty()
+                && let Some(js) = &mut self.js
+                && let Err(e) = js.execute_script_guarded("<inline>", &script.inline)
+            {
+                tracing::warn!("Inline script error: {}", e);
             }
         }
 
@@ -434,10 +427,10 @@ impl Page {
                 }
             } else if !module_script.inline.is_empty() {
                 let base = self.url_string();
-                if let Some(js) = &mut self.js {
-                    if let Err(e) = js.load_inline_module(&module_script.inline, &base).await {
-                        tracing::warn!("Inline ES module error: {}", e);
-                    }
+                if let Some(js) = &mut self.js
+                    && let Err(e) = js.load_inline_module(&module_script.inline, &base).await
+                {
+                    tracing::warn!("Inline ES module error: {}", e);
                 }
             }
         }
@@ -560,26 +553,25 @@ impl Page {
         self.url = Some(url.clone());
         self.network_events.clear();
 
-        if self.context.obey_robots {
-            if let Some(domain) = url.host_str() {
-                if self.context.robots_cache.is_allowed(domain, "/robots.txt") {
-                    let robots_url = format!("{}://{}/robots.txt", url.scheme(), domain);
-                    if let Ok(robots_url) = Url::parse(&robots_url) {
-                        if let Ok(resp) = self.http_client.fetch(&robots_url).await {
-                            if resp.status == 200 {
-                                let body = String::from_utf8_lossy(&resp.body);
-                                self.context
-                                    .robots_cache
-                                    .parse_and_store(domain, &body, &self.context.user_agent);
-                            }
-                        }
-                    }
+        if self.context.obey_robots
+            && let Some(domain) = url.host_str()
+        {
+            if self.context.robots_cache.is_allowed(domain, "/robots.txt") {
+                let robots_url = format!("{}://{}/robots.txt", url.scheme(), domain);
+                if let Ok(robots_url) = Url::parse(&robots_url)
+                    && let Ok(resp) = self.http_client.fetch(&robots_url).await
+                    && resp.status == 200
+                {
+                    let body = String::from_utf8_lossy(&resp.body);
+                    self.context
+                        .robots_cache
+                        .parse_and_store(domain, &body, &self.context.user_agent);
                 }
+            }
 
-                if !self.context.robots_cache.is_allowed(domain, url.path()) {
-                    self.lifecycle = LifecycleState::Failed;
-                    return Err(PageError::NetworkError(format!("Blocked by robots.txt: {}", url)));
-                }
+            if !self.context.robots_cache.is_allowed(domain, url.path()) {
+                self.lifecycle = LifecycleState::Failed;
+                return Err(PageError::NetworkError(format!("Blocked by robots.txt: {}", url)));
             }
         }
 
@@ -675,19 +667,17 @@ impl Page {
 
         let css_results = futures::future::join_all(css_futures).await;
         let mut css_sources = Vec::new();
-        for result in css_results {
-            if let Some((url_str, resp)) = result {
-                let css = String::from_utf8_lossy(&resp.body).to_string();
-                self.record_network_event(
-                    &url_str,
-                    "GET",
-                    "Stylesheet",
-                    resp.status,
-                    &resp.headers,
-                    resp.body.len(),
-                );
-                css_sources.push(css);
-            }
+        for (url_str, resp) in css_results.into_iter().flatten() {
+            let css = String::from_utf8_lossy(&resp.body).to_string();
+            self.record_network_event(
+                &url_str,
+                "GET",
+                "Stylesheet",
+                resp.status,
+                &resp.headers,
+                resp.body.len(),
+            );
+            css_sources.push(css);
         }
 
         self.dom = Some(dom);
@@ -700,19 +690,19 @@ impl Page {
 
         self.init_js();
 
-        if !css_sources.is_empty() {
-            if let Some(js) = &mut self.js {
-                let combined_css = css_sources.join("\n");
-                // Use the thorough template-literal escape that
-                // covers U+2028 / U+2029 and other control chars.
-                // The previous escaper only handled `, \, and ${,
-                // letting attacker-controlled CSS containing a raw
-                // U+2028 break out of the template literal and run
-                // arbitrary JS in the page's V8 realm.
-                let escaped = escape_for_js_template_literal(&combined_css);
-                let code = format!("globalThis.__obscura_css = `{}`;", escaped);
-                let _ = js.execute_script("<css>", &code);
-            }
+        if !css_sources.is_empty()
+            && let Some(js) = &mut self.js
+        {
+            let combined_css = css_sources.join("\n");
+            // Use the thorough template-literal escape that
+            // covers U+2028 / U+2029 and other control chars.
+            // The previous escaper only handled `, \, and ${,
+            // letting attacker-controlled CSS containing a raw
+            // U+2028 break out of the template literal and run
+            // arbitrary JS in the page's V8 realm.
+            let escaped = escape_for_js_template_literal(&combined_css);
+            let code = format!("globalThis.__obscura_css = `{}`;", escaped);
+            let _ = js.execute_script("<css>", &code);
         }
         if let Some(js) = &mut self.js {
             let _ = js.execute_script("<iframe-load>",
@@ -721,12 +711,11 @@ impl Page {
 
         self.execute_scripts().await;
 
-        if let Some(js) = &mut self.js {
-            if let Ok(new_title) = js.evaluate("document.title") {
-                if let Some(t) = new_title.as_str() {
-                    self.title = t.to_string();
-                }
-            }
+        if let Some(js) = &mut self.js
+            && let Ok(new_title) = js.evaluate("document.title")
+            && let Some(t) = new_title.as_str()
+        {
+            self.title = t.to_string();
         }
 
         self.lifecycle = LifecycleState::Loaded;
@@ -948,10 +937,10 @@ impl Page {
     }
 
     pub fn suspend_js(&mut self) {
-        if let Some(js) = &self.js {
-            if let Some(dom) = js.take_dom() {
-                self.dom = Some(dom);
-            }
+        if let Some(js) = &self.js
+            && let Some(dom) = js.take_dom()
+        {
+            self.dom = Some(dom);
         }
         self.js = None;
     }

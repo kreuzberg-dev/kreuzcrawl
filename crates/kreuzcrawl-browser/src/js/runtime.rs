@@ -5,8 +5,8 @@ use std::rc::Rc;
 use crate::dom::DomTree;
 use deno_core::{JsRuntime, RuntimeOptions};
 
+use super::ops::{ObscuraState, build_extension};
 use crate::js::module_loader::ObscuraModuleLoader;
-use super::ops::{build_extension, ObscuraState};
 
 static SNAPSHOT: &[u8] = include_bytes!(env!("OBSCURA_SNAPSHOT_PATH"));
 
@@ -682,8 +682,8 @@ impl ObscuraJsRuntime {
                 } else {
                     setup_lines.push(format!("var {} = undefined;", arg_name));
                 }
-            } else if let Some(unser) = arg.get("unserializableValue").and_then(|v| v.as_str()) {
-                setup_lines.push(format!("var {} = {};", arg_name, unser));
+            } else if let Some(raw) = arg.get("unserializableValue").and_then(|v| v.as_str()) {
+                setup_lines.push(format!("var {} = {};", arg_name, raw));
             } else {
                 setup_lines.push(format!("var {} = undefined;", arg_name));
             }
@@ -694,8 +694,11 @@ impl ObscuraJsRuntime {
     }
 
     fn v8_to_json(&mut self, result: deno_core::v8::Global<deno_core::v8::Value>) -> Result<serde_json::Value, String> {
-        let scope = &mut self.runtime.handle_scope();
-        let local = deno_core::v8::Local::new(scope, result);
+        use deno_core::v8;
+        let context = self.runtime.main_context();
+        let isolate = &mut *self.runtime.v8_isolate();
+        v8::scope_with_context!(scope, isolate, context);
+        let local = v8::Local::new(scope, result);
 
         if local.is_undefined() || local.is_null() {
             return Ok(serde_json::Value::Null);
@@ -714,19 +717,18 @@ impl ObscuraJsRuntime {
 
         let global = scope.get_current_context().global(scope);
         let json_obj_str = deno_core::v8::String::new(scope, "JSON").unwrap();
-        if let Some(json_obj) = global.get(scope, json_obj_str.into()) {
-            if let Some(json_obj) = json_obj.to_object(scope) {
-                let stringify_str = deno_core::v8::String::new(scope, "stringify").unwrap();
-                if let Some(stringify_fn) = json_obj.get(scope, stringify_str.into()) {
-                    if let Ok(stringify_fn) = deno_core::v8::Local::<deno_core::v8::Function>::try_from(stringify_fn) {
-                        let args = [local];
-                        if let Some(result) = stringify_fn.call(scope, json_obj.into(), &args) {
-                            let json_str = result.to_rust_string_lossy(scope);
-                            if let Ok(val) = serde_json::from_str(&json_str) {
-                                return Ok(val);
-                            }
-                        }
-                    }
+        if let Some(json_obj) = global.get(scope, json_obj_str.into())
+            && let Some(json_obj) = json_obj.to_object(scope)
+        {
+            let stringify_str = deno_core::v8::String::new(scope, "stringify").unwrap();
+            if let Some(stringify_fn) = json_obj.get(scope, stringify_str.into())
+                && let Ok(stringify_fn) = deno_core::v8::Local::<deno_core::v8::Function>::try_from(stringify_fn)
+            {
+                let args = [local];
+                if let Some(result) = stringify_fn.call(scope, json_obj.into(), &args)
+                    && let Ok(val) = serde_json::from_str(&result.to_rust_string_lossy(scope))
+                {
+                    return Ok(val);
                 }
             }
         }
@@ -1401,12 +1403,13 @@ mod tests {
         let (mut rt, jar) = setup_runtime_with_cookies("<html><body></body></html>");
         let url = url::Url::parse("http://example.com/test").unwrap();
         rt.evaluate("document.cookie = 'temp=val; Path=/'").unwrap();
-        assert!(rt
-            .evaluate("document.cookie")
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .contains("temp=val"));
+        assert!(
+            rt.evaluate("document.cookie")
+                .unwrap()
+                .as_str()
+                .unwrap()
+                .contains("temp=val")
+        );
         rt.evaluate("document.cookie = 'temp=; Max-Age=0'").unwrap();
         let result = rt.evaluate("document.cookie").unwrap();
         assert!(

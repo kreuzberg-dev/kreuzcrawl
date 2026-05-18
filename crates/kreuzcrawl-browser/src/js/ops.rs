@@ -5,10 +5,10 @@ use std::sync::Arc;
 
 use crate::dom::{DomTree, NodeData, NodeId};
 use crate::net::{CookieJar, ObscuraHttpClient};
-use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
-use deno_core::op2;
+use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use deno_core::Extension;
 use deno_core::OpState;
+use deno_core::op2;
 use tokio::sync::Mutex;
 
 pub type InterceptCallback =
@@ -71,6 +71,12 @@ impl ObscuraState {
     }
 }
 
+impl Default for ObscuraState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub type SharedState = Rc<RefCell<ObscuraState>>;
 
 #[op2]
@@ -89,34 +95,32 @@ fn op_dom(state: &OpState, #[string] cmd: String, #[string] arg1: String, #[stri
         "document_url" => serde_json::to_string(&gs.url).unwrap_or("\"\"".into()),
         "document_element" => {
             for cid in dom.children(dom.document()) {
-                if let Some(n) = dom.get_node(cid) {
-                    if n.as_element()
+                if let Some(n) = dom.get_node(cid)
+                    && n.as_element()
                         .map(|name| name.local.as_ref() == "html")
                         .unwrap_or(false)
-                    {
-                        return cid.index().to_string();
-                    }
+                {
+                    return cid.index().to_string();
                 }
             }
             "-1".into()
         }
         "document_doctype" => {
             for cid in dom.children(dom.document()) {
-                if let Some(n) = dom.get_node(cid) {
-                    if let crate::dom::NodeData::Doctype {
+                if let Some(n) = dom.get_node(cid)
+                    && let crate::dom::NodeData::Doctype {
                         name,
                         public_id,
                         system_id,
                     } = &n.data
-                    {
-                        return serde_json::json!({
-                            "name": name,
-                            "publicId": public_id,
-                            "systemId": system_id,
-                            "nodeId": cid.index(),
-                        })
-                        .to_string();
-                    }
+                {
+                    return serde_json::json!({
+                        "name": name,
+                        "publicId": public_id,
+                        "systemId": system_id,
+                        "nodeId": cid.index(),
+                    })
+                    .to_string();
                 }
             }
             "null".into()
@@ -371,7 +375,7 @@ fn build_request_client(proxy_url: Option<&str>) -> Result<reqwest::Client, Stri
 /// Matches reqwest's default policy of 10.
 const FETCH_REDIRECT_LIMIT: usize = 10;
 
-#[op2(async)]
+#[op2(async(lazy), fast)]
 #[string]
 async fn op_fetch_url(
     state: Rc<RefCell<OpState>>,
@@ -384,18 +388,18 @@ async fn op_fetch_url(
 ) -> Result<String, deno_error::JsErrorBox> {
     tracing::debug!("op_fetch_url called: {} {} (intercept check pending)", method, url);
 
-    if let Ok(parsed_url) = url::Url::parse(&url) {
-        if let Err(e) = validate_fetch_url(&parsed_url) {
-            return Ok(serde_json::json!({
-                "status": 0,
-                "body": "",
-                "url": url,
-                "headers": {},
-                "blocked": true,
-                "error": e,
-            })
-            .to_string());
-        }
+    if let Ok(parsed_url) = url::Url::parse(&url)
+        && let Err(e) = validate_fetch_url(&parsed_url)
+    {
+        return Ok(serde_json::json!({
+            "status": 0,
+            "body": "",
+            "url": url,
+            "headers": {},
+            "blocked": true,
+            "error": e,
+        })
+        .to_string());
     }
 
     let (cookie_jar, in_flight, intercept_tx, proxy_url) = {
@@ -566,14 +570,13 @@ async fn op_fetch_url(
             req = req.header("Origin", &page_origin);
         }
 
-        if !is_cross_origin {
-            if let Some(ref jar) = cookie_jar {
-                if let Ok(parsed_url) = url::Url::parse(&current_url) {
-                    let cookie_header = jar.get_cookie_header(&parsed_url);
-                    if !cookie_header.is_empty() {
-                        req = req.header("Cookie", &cookie_header);
-                    }
-                }
+        if !is_cross_origin
+            && let Some(ref jar) = cookie_jar
+            && let Ok(parsed_url) = url::Url::parse(&current_url)
+        {
+            let cookie_header = jar.get_cookie_header(&parsed_url);
+            if !cookie_header.is_empty() {
+                req = req.header("Cookie", &cookie_header);
             }
         }
 
@@ -600,12 +603,12 @@ async fn op_fetch_url(
             counter.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
         }
 
-        if let Some(ref jar) = cookie_jar {
-            if let Ok(parsed_url) = url::Url::parse(&current_url) {
-                for val in resp.headers().get_all(reqwest::header::SET_COOKIE) {
-                    if let Ok(s) = val.to_str() {
-                        jar.set_cookie(s, &parsed_url);
-                    }
+        if let Some(ref jar) = cookie_jar
+            && let Ok(parsed_url) = url::Url::parse(&current_url)
+        {
+            for val in resp.headers().get_all(reqwest::header::SET_COOKIE) {
+                if let Ok(s) = val.to_str() {
+                    jar.set_cookie(s, &parsed_url);
                 }
             }
         }
@@ -723,11 +726,11 @@ fn glob_match(pattern: &str, url: &str) -> bool {
     if pattern.starts_with('*') && pattern.ends_with('*') {
         return url.contains(&pattern[1..pattern.len() - 1]);
     }
-    if pattern.starts_with('*') {
-        return url.ends_with(&pattern[1..]);
+    if let Some(suffix) = pattern.strip_prefix('*') {
+        return url.ends_with(suffix);
     }
-    if pattern.ends_with('*') {
-        return url.starts_with(&pattern[..pattern.len() - 1]);
+    if let Some(prefix) = pattern.strip_suffix('*') {
+        return url.starts_with(prefix);
     }
     url == pattern
 }
