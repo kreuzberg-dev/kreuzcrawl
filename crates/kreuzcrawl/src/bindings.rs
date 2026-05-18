@@ -7,7 +7,8 @@
 
 use crate::engine::CrawlEngine;
 use crate::error::CrawlError;
-use crate::types::{CrawlConfig, CrawlResult, MapResult, ScrapeResult};
+use crate::interact::PageAction;
+use crate::types::{CrawlConfig, CrawlResult, InteractionResult, MapResult, ScrapeResult};
 use serde::{Deserialize, Serialize};
 
 /// Opaque handle to a configured crawl engine.
@@ -68,6 +69,15 @@ pub async fn crawl(engine: &CrawlEngineHandle, url: &str) -> Result<CrawlResult,
 /// Discover all pages on a website by following links and sitemaps.
 pub async fn map_urls(engine: &CrawlEngineHandle, url: &str) -> Result<MapResult, CrawlError> {
     engine.inner.map(url).await
+}
+
+/// Execute browser actions on a single page.
+pub async fn interact(
+    engine: &CrawlEngineHandle,
+    url: &str,
+    actions: Vec<PageAction>,
+) -> Result<InteractionResult, CrawlError> {
+    engine.inner.interact(url, &actions).await
 }
 
 /// Scrape multiple URLs concurrently.

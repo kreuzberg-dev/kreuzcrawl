@@ -328,6 +328,19 @@ impl CrawlEngine {
         Ok(result)
     }
 
+    /// Execute browser actions on a single page.
+    ///
+    /// The public API is always available. Runtime execution depends on the
+    /// configured browser backend and the browser backend features compiled
+    /// into the crate.
+    pub async fn interact(
+        &self,
+        url: &str,
+        actions: &[crate::interact::PageAction],
+    ) -> Result<InteractionResult, CrawlError> {
+        crate::interact::run(self, url, actions).await
+    }
+
     /// Discover all pages on a website by following links and sitemaps.
     pub async fn map(&self, url: &str) -> Result<MapResult, CrawlError> {
         self.config.validate()?;

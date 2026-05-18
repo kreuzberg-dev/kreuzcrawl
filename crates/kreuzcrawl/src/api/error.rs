@@ -71,6 +71,7 @@ impl From<CrawlError> for ApiError {
             CrawlError::Ssl(_) => (StatusCode::INTERNAL_SERVER_ERROR, "SSL_ERROR"),
             CrawlError::DataLoss(_) => (StatusCode::INTERNAL_SERVER_ERROR, "DATA_LOSS"),
             CrawlError::BrowserError(_) => (StatusCode::INTERNAL_SERVER_ERROR, "BROWSER_ERROR"),
+            CrawlError::Unsupported(_) => (StatusCode::NOT_IMPLEMENTED, "UNSUPPORTED"),
             CrawlError::Other(_) => (StatusCode::INTERNAL_SERVER_ERROR, "SERVER_ERROR"),
         };
 

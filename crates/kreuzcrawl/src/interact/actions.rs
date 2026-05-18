@@ -27,6 +27,7 @@ pub const MAX_SCROLL_AMOUNT: i64 = 100_000;
 /// except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "camelCase", deny_unknown_fields)]
+#[derive(Default)]
 pub enum PageAction {
     /// Click on an element matching the given CSS selector.
     Click {
@@ -34,7 +35,8 @@ pub enum PageAction {
         selector: String,
     },
     /// Type text into an element matching the given CSS selector.
-    Type {
+    #[serde(rename = "type")]
+    TypeText {
         /// CSS selector for the input element.
         selector: String,
         /// Text to type into the element.
@@ -60,7 +62,7 @@ pub enum PageAction {
     Wait {
         /// Milliseconds to wait. Ignored if `selector` is provided.
         #[serde(skip_serializing_if = "Option::is_none")]
-        milliseconds: Option<u64>,
+        milliseconds: Option<i64>,
         /// CSS selector to wait for.
         #[serde(skip_serializing_if = "Option::is_none")]
         selector: Option<String>,
@@ -83,15 +85,41 @@ pub enum PageAction {
         script: String,
     },
     /// Scrape the current page HTML.
-    Scrape {},
+    #[default]
+    Scrape,
 }
 
 /// Direction for a scroll action.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ScrollDirection {
     /// Scroll upward.
     Up,
     /// Scroll downward.
+    #[default]
     Down,
+}
+
+impl From<ScrollDirection> for String {
+    fn from(direction: ScrollDirection) -> Self {
+        match direction {
+            ScrollDirection::Up => "up".to_owned(),
+            ScrollDirection::Down => "down".to_owned(),
+        }
+    }
+}
+
+impl From<String> for ScrollDirection {
+    fn from(value: String) -> Self {
+        value.as_str().into()
+    }
+}
+
+impl From<&str> for ScrollDirection {
+    fn from(value: &str) -> Self {
+        match value {
+            "up" | "Up" | "UP" => Self::Up,
+            _ => Self::Down,
+        }
+    }
 }

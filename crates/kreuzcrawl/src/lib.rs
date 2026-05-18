@@ -20,8 +20,7 @@ mod error;
 mod helpers;
 mod html;
 mod http;
-#[cfg(feature = "interact")]
-pub(crate) mod interact;
+pub mod interact;
 mod map;
 mod markdown;
 #[cfg(feature = "mcp")]
@@ -44,8 +43,8 @@ pub(crate) mod warc;
 #[cfg(feature = "api")]
 pub use api::serve_with_config as serve_api;
 pub use bindings::{
-    BatchCrawlResult, BatchScrapeResult, CrawlEngineHandle, batch_crawl, batch_scrape, crawl, create_engine, map_urls,
-    scrape,
+    BatchCrawlResult, BatchScrapeResult, CrawlEngineHandle, batch_crawl, batch_scrape, crawl, create_engine, interact,
+    map_urls, scrape,
 };
 pub use citations::{CitationReference, CitationResult};
 pub use defaults::{
@@ -54,12 +53,16 @@ pub use defaults::{
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
+pub use interact::{
+    MAX_ACTIONS, MAX_SCRIPT_LEN, MAX_SCROLL_AMOUNT, MAX_SELECTOR_LEN, MAX_SINGLE_WAIT_MS, MAX_TEXT_LEN,
+    MAX_TOTAL_WAIT_SECS, PageAction, ScrollDirection, validate_actions,
+};
 #[cfg(feature = "mcp")]
 pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use types::{
-    ArticleMetadata, AssetCategory, AuthConfig, BrowserBackend, BrowserConfig, BrowserExtras, BrowserMode, BrowserWait,
-    CachedPage, ContentConfig, CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, DownloadedAsset,
-    DownloadedDocument, ExtractionMeta, FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo,
-    ImageSource, JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta,
-    ScrapeResult, SitemapUrl,
+    ActionResult, ArticleMetadata, AssetCategory, AuthConfig, BrowserBackend, BrowserConfig, BrowserExtras,
+    BrowserMode, BrowserWait, CachedPage, ContentConfig, CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult,
+    DownloadedAsset, DownloadedDocument, ExtractionMeta, FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry,
+    ImageInfo, ImageSource, InteractionResult, JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult,
+    PageMetadata, ProxyConfig, ResponseMeta, ScrapeResult, SitemapUrl,
 };
