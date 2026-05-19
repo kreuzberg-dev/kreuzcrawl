@@ -1661,6 +1661,22 @@ impl From<AssetCategory> for kreuzcrawl::AssetCategory {
     }
 }
 
+// From<T> for SourceT conversions for streaming-adapter mirror request types.
+
+impl From<BatchCrawlStreamRequest> for kreuzcrawl::BatchCrawlStreamRequest {
+    fn from(v: BatchCrawlStreamRequest) -> Self {
+        kreuzcrawl::BatchCrawlStreamRequest {
+            urls: v.urls.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<CrawlStreamRequest> for kreuzcrawl::CrawlStreamRequest {
+    fn from(v: CrawlStreamRequest) -> Self {
+        kreuzcrawl::CrawlStreamRequest { url: v.url.into() }
+    }
+}
+
 /// Convert markdown links to numbered citations.
 ///
 /// `[Example](https://example.com)` becomes `Example[1]`
