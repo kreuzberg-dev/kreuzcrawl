@@ -3,7 +3,7 @@
 
 use std::time::Duration;
 
-use kreuzcrawl_browser::adapter::NativeCookie as NBCookie;
+use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeCookie as NBCookie};
 
 use crate::error::CrawlError;
 use crate::http::{BrowserExtras, HttpResponse};
@@ -13,6 +13,7 @@ pub(crate) async fn native_browser_fetch(
     url: &str,
     config: &CrawlConfig,
     prior_cookies: Option<&[CookieInfo]>,
+    native_executor: &NativeBrowserExecutor,
 ) -> Result<HttpResponse, CrawlError> {
     if config.browser.endpoint.is_some() {
         return Err(CrawlError::InvalidConfig(
@@ -84,24 +85,13 @@ pub(crate) async fn native_browser_fetch(
         capture_network_events: config.browser.capture_network_events,
     };
 
-    let url = url.to_owned();
     let timeout = config.browser.timeout;
-    let rendered = tokio::task::spawn_blocking(move || {
-        let runtime = tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .map_err(|e| format!("failed to create native browser runtime: {e}"))?;
-        runtime
-            .block_on(kreuzcrawl_browser::adapter::render_url(&url, &native_config))
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| CrawlError::BrowserError(format!("native browser render task failed: {e}")))?
-    .map_err(|e| {
-        if e.contains("timed out") {
+    let rendered = native_executor.render_url(url, &native_config).await.map_err(|e| {
+        let message = e.to_string();
+        if message.contains("timed out") {
             CrawlError::BrowserTimeout(format!("browser timed out after {timeout:?}"))
         } else {
-            CrawlError::BrowserError(format!("native browser render failed: {e}"))
+            CrawlError::BrowserError(format!("native browser render failed: {message}"))
         }
     })?;
 

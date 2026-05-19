@@ -1,8 +1,8 @@
 use std::time::Duration;
 
 use kreuzcrawl_browser::adapter::{
-    NativeActionResult, NativeBrowserConfig, NativeBrowserWait, NativeCookie, NativeInteractionResult,
-    NativePageAction, NativeScrollDirection,
+    NativeActionResult, NativeBrowserConfig, NativeBrowserExecutor, NativeBrowserWait, NativeCookie,
+    NativeInteractionResult, NativePageAction, NativeScrollDirection,
 };
 
 use super::{PageAction, ScrollDirection};
@@ -13,6 +13,7 @@ pub(super) async fn run(
     url: &str,
     actions: &[PageAction],
     config: &CrawlConfig,
+    native_executor: &NativeBrowserExecutor,
 ) -> Result<InteractionResult, CrawlError> {
     if config.browser.endpoint.is_some() {
         return Err(CrawlError::InvalidConfig(
@@ -23,32 +24,19 @@ pub(super) async fn run(
     let native_config = build_native_config(config);
     let native_actions = actions.iter().map(map_action).collect::<Vec<_>>();
     let post_navigation_wait = post_navigation_wait(config);
-    let url = url.to_owned();
     let timeout = config.browser.timeout;
 
-    let native_result = tokio::task::spawn_blocking(move || {
-        let runtime = tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .map_err(|e| format!("failed to create native browser runtime: {e}"))?;
-        runtime
-            .block_on(kreuzcrawl_browser::adapter::interact_url(
-                &url,
-                &native_config,
-                &native_actions,
-                post_navigation_wait,
-            ))
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| CrawlError::BrowserError(format!("native browser interact task failed: {e}")))?
-    .map_err(|e| {
-        if e.contains("timed out") {
-            CrawlError::BrowserTimeout(format!("browser timed out after {timeout:?}"))
-        } else {
-            CrawlError::BrowserError(format!("native browser interact failed: {e}"))
-        }
-    })?;
+    let native_result = native_executor
+        .interact_url(url, &native_config, &native_actions, post_navigation_wait)
+        .await
+        .map_err(|e| {
+            let message = e.to_string();
+            if message.contains("timed out") {
+                CrawlError::BrowserTimeout(format!("browser timed out after {timeout:?}"))
+            } else {
+                CrawlError::BrowserError(format!("native browser interact failed: {message}"))
+            }
+        })?;
 
     Ok(map_result(native_result))
 }

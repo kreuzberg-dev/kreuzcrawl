@@ -30,6 +30,17 @@ pub enum CliExecutionMode {
     Cached,
 }
 
+/// Browser backend selectable from the CLI.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+pub enum CliBrowserBackend {
+    /// Use direct HTTP fetching without browser rendering.
+    Http,
+    /// Use the existing Chromium/CDP backend.
+    Chromiumoxide,
+    /// Use the native V8 browser backend.
+    Native,
+}
+
 #[derive(Subcommand)]
 enum Commands {
     /// Download a scrape-evals dataset to a local directory.
@@ -56,6 +67,10 @@ enum Commands {
         /// Execution mode: live or cached.
         #[arg(short = 'm', long, default_value = "cached")]
         mode: CliExecutionMode,
+
+        /// Browser backend to use for scraping.
+        #[arg(long, default_value = "chromiumoxide")]
+        browser_backend: CliBrowserBackend,
 
         /// Frameworks to benchmark (may be specified multiple times).
         #[arg(short = 'F', long, default_values = ["kreuzcrawl-native"])]
@@ -124,6 +139,10 @@ enum Commands {
         #[arg(short = 'm', long, default_value = "cached")]
         mode: CliExecutionMode,
 
+        /// Browser backend to use for scraping.
+        #[arg(long, default_value = "chromiumoxide")]
+        browser_backend: CliBrowserBackend,
+
         /// Number of URLs to scrape during the profiling session.
         #[arg(long, default_value = "50")]
         sample_size: usize,
@@ -178,6 +197,7 @@ fn main() -> ExitCode {
         Commands::Run {
             fixtures,
             mode,
+            browser_backend,
             frameworks,
             output,
             max_concurrent,
@@ -194,6 +214,7 @@ fn main() -> ExitCode {
         } => cmd_run(
             fixtures,
             mode,
+            browser_backend,
             frameworks,
             output,
             max_concurrent,
@@ -212,9 +233,10 @@ fn main() -> ExitCode {
             fixtures,
             output,
             mode,
+            browser_backend,
             sample_size,
             frequency,
-        } => cmd_profile(fixtures, output, mode, sample_size, frequency),
+        } => cmd_profile(fixtures, output, mode, browser_backend, sample_size, frequency),
         Commands::Report {
             inputs,
             output,
@@ -251,6 +273,52 @@ fn quality_crawl_config() -> kreuzcrawl::CrawlConfig {
     }
 }
 
+fn crawl_config_for_backend(
+    preset: &str,
+    browser_backend: CliBrowserBackend,
+    max_concurrent: usize,
+) -> benchmark_harness::Result<kreuzcrawl::CrawlConfig> {
+    let mut crawl_config = match preset {
+        "quality" => quality_crawl_config(),
+        "default" => kreuzcrawl::CrawlConfig::default(),
+        other => {
+            return Err(benchmark_harness::Error::Config(format!(
+                "unknown preset '{other}', expected 'default' or 'quality'"
+            )));
+        }
+    };
+
+    crawl_config.max_concurrent = Some(max_concurrent);
+
+    match browser_backend {
+        CliBrowserBackend::Chromiumoxide => {
+            crawl_config.browser.backend = kreuzcrawl::BrowserBackend::Chromiumoxide;
+        }
+        CliBrowserBackend::Native => {
+            configure_native_browser_backend(&mut crawl_config)?;
+        }
+        CliBrowserBackend::Http => {
+            crawl_config.browser.mode = kreuzcrawl::BrowserMode::Never;
+        }
+    }
+
+    Ok(crawl_config)
+}
+
+#[cfg(feature = "native-browser")]
+fn configure_native_browser_backend(crawl_config: &mut kreuzcrawl::CrawlConfig) -> benchmark_harness::Result<()> {
+    crawl_config.browser.backend = kreuzcrawl::BrowserBackend::Native;
+    crawl_config.browser.mode = kreuzcrawl::BrowserMode::Always;
+    Ok(())
+}
+
+#[cfg(not(feature = "native-browser"))]
+fn configure_native_browser_backend(_crawl_config: &mut kreuzcrawl::CrawlConfig) -> benchmark_harness::Result<()> {
+    Err(benchmark_harness::Error::Config(
+        "browser-backend=native requires the benchmark-harness native-browser feature".to_string(),
+    ))
+}
+
 fn cmd_download(_dataset: String, output: PathBuf, force: bool) -> benchmark_harness::Result<()> {
     let rt = tokio::runtime::Runtime::new()
         .map_err(|e| benchmark_harness::Error::Config(format!("failed to create tokio runtime: {e}")))?;
@@ -263,6 +331,7 @@ fn cmd_download(_dataset: String, output: PathBuf, force: bool) -> benchmark_har
 fn cmd_run(
     fixtures: PathBuf,
     mode: CliExecutionMode,
+    browser_backend: CliBrowserBackend,
     frameworks: Vec<String>,
     output: PathBuf,
     max_concurrent: usize,
@@ -339,15 +408,7 @@ fn cmd_run(
         None
     };
 
-    let crawl_config = match preset.as_str() {
-        "quality" => quality_crawl_config(),
-        "default" => kreuzcrawl::CrawlConfig::default(),
-        other => {
-            return Err(benchmark_harness::Error::Config(format!(
-                "unknown preset '{other}', expected 'default' or 'quality'"
-            )));
-        }
-    };
+    let crawl_config = crawl_config_for_backend(&preset, browser_backend, max_concurrent)?;
     let adapter: Arc<dyn benchmark_harness::adapter::ScrapeAdapter> = Arc::new(
         benchmark_harness::adapters::native::NativeAdapter::with_config(crawl_config)?,
     );
@@ -378,6 +439,7 @@ fn cmd_profile(
     fixtures: PathBuf,
     output: PathBuf,
     mode: CliExecutionMode,
+    browser_backend: CliBrowserBackend,
     sample_size: usize,
     frequency: i32,
 ) -> benchmark_harness::Result<()> {
@@ -413,8 +475,10 @@ fn cmd_profile(
 
     eprintln!("Profiling {} fixtures at {} Hz", fixture_entries.len(), frequency);
 
-    let adapter: Arc<dyn benchmark_harness::adapter::ScrapeAdapter> =
-        Arc::new(benchmark_harness::adapters::native::NativeAdapter::new()?);
+    let crawl_config = crawl_config_for_backend("default", browser_backend, config.max_concurrent)?;
+    let adapter: Arc<dyn benchmark_harness::adapter::ScrapeAdapter> = Arc::new(
+        benchmark_harness::adapters::native::NativeAdapter::with_config(crawl_config)?,
+    );
 
     std::fs::create_dir_all(&output)?;
     let flamegraph_path = output.join("flamegraph.svg");
@@ -538,4 +602,48 @@ fn parse_shard(s: &str) -> benchmark_harness::Result<(usize, usize)> {
         )));
     }
     Ok((index, total))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[cfg(feature = "native-browser")]
+    #[test]
+    fn native_browser_backend_uses_native_always_and_concurrency() {
+        let config = crawl_config_for_backend("default", CliBrowserBackend::Native, 7).unwrap();
+
+        assert_eq!(config.browser.backend, kreuzcrawl::BrowserBackend::Native);
+        assert_eq!(config.browser.mode, kreuzcrawl::BrowserMode::Always);
+        assert_eq!(config.max_concurrent, Some(7));
+    }
+
+    #[cfg(not(feature = "native-browser"))]
+    #[test]
+    fn native_browser_backend_requires_native_browser_feature() {
+        let error = crawl_config_for_backend("default", CliBrowserBackend::Native, 7)
+            .expect_err("native backend should require the native-browser feature");
+
+        assert!(
+            error.to_string().contains("native-browser"),
+            "unexpected error: {error}"
+        );
+    }
+
+    #[test]
+    fn http_browser_backend_disables_browser() {
+        let config = crawl_config_for_backend("default", CliBrowserBackend::Http, 3).unwrap();
+
+        assert_eq!(config.browser.mode, kreuzcrawl::BrowserMode::Never);
+        assert_eq!(config.max_concurrent, Some(3));
+    }
+
+    #[test]
+    fn chromiumoxide_browser_backend_keeps_existing_mode() {
+        let config = crawl_config_for_backend("quality", CliBrowserBackend::Chromiumoxide, 5).unwrap();
+
+        assert_eq!(config.browser.backend, kreuzcrawl::BrowserBackend::Chromiumoxide);
+        assert_eq!(config.browser.mode, kreuzcrawl::BrowserMode::Auto);
+        assert_eq!(config.max_concurrent, Some(5));
+    }
 }

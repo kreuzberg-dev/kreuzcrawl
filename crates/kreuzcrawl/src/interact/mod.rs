@@ -34,7 +34,7 @@ pub(crate) async fn run(
 
     match engine.config.browser.backend {
         BrowserBackend::Chromiumoxide => run_chromiumoxide(url, actions, &engine.config).await,
-        BrowserBackend::Native => run_native(url, actions, &engine.config).await,
+        BrowserBackend::Native => run_native(engine, url, actions).await,
     }
 }
 
@@ -59,19 +59,18 @@ async fn run_chromiumoxide(
 }
 
 #[cfg(feature = "browser-native")]
-async fn run_native(
-    url: &str,
-    actions: &[PageAction],
-    config: &crate::types::CrawlConfig,
-) -> Result<InteractionResult, CrawlError> {
-    native::run(url, actions, config).await
+async fn run_native(engine: &CrawlEngine, url: &str, actions: &[PageAction]) -> Result<InteractionResult, CrawlError> {
+    let native_executor = engine.native_browser_executor.as_deref().ok_or_else(|| {
+        CrawlError::BrowserError("native browser executor is not available for BrowserBackend::Native".into())
+    })?;
+    native::run(url, actions, &engine.config, native_executor).await
 }
 
 #[cfg(not(feature = "browser-native"))]
 async fn run_native(
+    _engine: &CrawlEngine,
     _url: &str,
     _actions: &[PageAction],
-    _config: &crate::types::CrawlConfig,
 ) -> Result<InteractionResult, CrawlError> {
     Err(CrawlError::Unsupported(
         "interact() with BrowserBackend::Native requires the browser-native feature".into(),

@@ -1,7 +1,9 @@
 //! Kreuzcrawl-facing adapter for the native browser backend.
 
 use std::collections::HashMap;
-use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Arc, Mutex};
+use std::thread::JoinHandle;
 use std::time::Duration;
 
 pub use crate::page::PageError;
@@ -113,6 +115,8 @@ const SNAPSHOT_ROW_HEIGHT: u32 = 18;
 const SNAPSHOT_ROW_GAP: u32 = 6;
 const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
 const FNV_PRIME: u64 = 0x100000001b3;
+const DEFAULT_NATIVE_WORKER_LIMIT: usize = 8;
+const DEFAULT_QUEUE_CAPACITY_PER_WORKER: usize = 64;
 
 /// Scroll direction for native page interactions.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -179,13 +183,263 @@ pub struct NativeInteractionResult {
     pub screenshot: Option<Vec<u8>>,
 }
 
+/// Configuration for [`NativeBrowserExecutor`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct NativeBrowserExecutorConfig {
+    /// Number of dedicated browser worker threads.
+    pub workers: usize,
+    /// Bounded job queue capacity for each worker.
+    pub queue_capacity_per_worker: usize,
+}
+
+impl NativeBrowserExecutorConfig {
+    /// Create a config with an explicit worker count and default queue capacity.
+    pub fn with_workers(workers: usize) -> Self {
+        Self {
+            workers,
+            queue_capacity_per_worker: DEFAULT_QUEUE_CAPACITY_PER_WORKER,
+        }
+    }
+}
+
+impl Default for NativeBrowserExecutorConfig {
+    fn default() -> Self {
+        let workers = std::thread::available_parallelism()
+            .map(usize::from)
+            .unwrap_or(1)
+            .clamp(1, DEFAULT_NATIVE_WORKER_LIMIT);
+        Self {
+            workers,
+            queue_capacity_per_worker: DEFAULT_QUEUE_CAPACITY_PER_WORKER,
+        }
+    }
+}
+
+/// Dedicated native browser worker pool.
+///
+/// Each worker owns one OS thread and one current-thread Tokio runtime. Native
+/// page state and V8 `JsRuntime`s are created and used only inside a worker, so
+/// public executor futures stay `Send` without sharing V8 isolates across
+/// threads.
+#[derive(Clone)]
+pub struct NativeBrowserExecutor {
+    inner: Arc<NativeBrowserExecutorInner>,
+}
+
+struct NativeBrowserExecutorInner {
+    workers: Mutex<Vec<tokio::sync::mpsc::Sender<NativeBrowserJob>>>,
+    handles: Mutex<Vec<JoinHandle<()>>>,
+    next_worker: AtomicUsize,
+}
+
+enum NativeBrowserJob {
+    Render {
+        url: String,
+        config: NativeBrowserConfig,
+        reply: tokio::sync::oneshot::Sender<Result<RenderedPage, PageError>>,
+    },
+    Interact {
+        url: String,
+        config: NativeBrowserConfig,
+        actions: Vec<NativePageAction>,
+        post_navigation_wait: Option<Duration>,
+        reply: tokio::sync::oneshot::Sender<Result<NativeInteractionResult, PageError>>,
+    },
+}
+
+impl NativeBrowserExecutor {
+    /// Start a native browser worker pool.
+    pub fn new(config: NativeBrowserExecutorConfig) -> Result<Self, PageError> {
+        if config.workers == 0 {
+            return Err(PageError::ParseError(
+                "native browser executor requires at least one worker".to_owned(),
+            ));
+        }
+        if config.queue_capacity_per_worker == 0 {
+            return Err(PageError::ParseError(
+                "native browser executor requires queue_capacity_per_worker > 0".to_owned(),
+            ));
+        }
+
+        let mut workers = Vec::with_capacity(config.workers);
+        let mut handles = Vec::with_capacity(config.workers);
+        for index in 0..config.workers {
+            let (sender, receiver) = tokio::sync::mpsc::channel(config.queue_capacity_per_worker);
+            let (startup_sender, startup_receiver) = std::sync::mpsc::channel();
+            let handle = std::thread::Builder::new()
+                .name(format!("kreuzcrawl-native-browser-{index}"))
+                .spawn(move || run_native_worker(receiver, startup_sender))
+                .map_err(|e| PageError::NetworkError(format!("failed to start native browser worker: {e}")))?;
+
+            match startup_receiver.recv() {
+                Ok(Ok(())) => {}
+                Ok(Err(error)) => {
+                    let _ = handle.join();
+                    return Err(PageError::NetworkError(format!(
+                        "failed to start native browser worker runtime: {error}"
+                    )));
+                }
+                Err(error) => {
+                    let _ = handle.join();
+                    return Err(PageError::NetworkError(format!(
+                        "native browser worker stopped during startup: {error}"
+                    )));
+                }
+            }
+
+            workers.push(sender);
+            handles.push(handle);
+        }
+
+        Ok(Self {
+            inner: Arc::new(NativeBrowserExecutorInner {
+                workers: Mutex::new(workers),
+                handles: Mutex::new(handles),
+                next_worker: AtomicUsize::new(0),
+            }),
+        })
+    }
+
+    /// Navigate to a URL and return the rendered page.
+    pub async fn render_url(&self, url: &str, config: &NativeBrowserConfig) -> Result<RenderedPage, PageError> {
+        let (reply, result) = tokio::sync::oneshot::channel();
+        let job = NativeBrowserJob::Render {
+            url: url.to_owned(),
+            config: config.clone(),
+            reply,
+        };
+        self.send_job(job).await?;
+        result.await.map_err(|_| {
+            PageError::NetworkError("native browser worker stopped before returning render result".to_owned())
+        })?
+    }
+
+    /// Navigate to a URL and execute page actions.
+    pub async fn interact_url(
+        &self,
+        url: &str,
+        config: &NativeBrowserConfig,
+        actions: &[NativePageAction],
+        post_navigation_wait: Option<Duration>,
+    ) -> Result<NativeInteractionResult, PageError> {
+        let (reply, result) = tokio::sync::oneshot::channel();
+        let job = NativeBrowserJob::Interact {
+            url: url.to_owned(),
+            config: config.clone(),
+            actions: actions.to_vec(),
+            post_navigation_wait,
+            reply,
+        };
+        self.send_job(job).await?;
+        result.await.map_err(|_| {
+            PageError::NetworkError("native browser worker stopped before returning interact result".to_owned())
+        })?
+    }
+
+    async fn send_job(&self, mut job: NativeBrowserJob) -> Result<(), PageError> {
+        let workers = self.worker_senders()?;
+        let start = self.inner.next_worker.fetch_add(1, Ordering::Relaxed);
+
+        for offset in 0..workers.len() {
+            let index = (start + offset) % workers.len();
+            match workers[index].send(job).await {
+                Ok(()) => return Ok(()),
+                Err(error) => {
+                    job = error.0;
+                }
+            }
+        }
+
+        Err(PageError::NetworkError(
+            "native browser worker pool is shut down".to_owned(),
+        ))
+    }
+
+    fn worker_senders(&self) -> Result<Vec<tokio::sync::mpsc::Sender<NativeBrowserJob>>, PageError> {
+        let workers = self
+            .inner
+            .workers
+            .lock()
+            .map_err(|_| PageError::NetworkError("native browser worker pool lock is poisoned".to_owned()))?;
+        if workers.is_empty() {
+            return Err(PageError::NetworkError(
+                "native browser worker pool is shut down".to_owned(),
+            ));
+        }
+        Ok(workers.clone())
+    }
+}
+
+impl Drop for NativeBrowserExecutorInner {
+    fn drop(&mut self) {
+        if let Ok(mut workers) = self.workers.lock() {
+            workers.clear();
+        }
+        if let Ok(mut handles) = self.handles.lock() {
+            for handle in handles.drain(..) {
+                let _ = handle.join();
+            }
+        }
+    }
+}
+
+fn run_native_worker(
+    mut receiver: tokio::sync::mpsc::Receiver<NativeBrowserJob>,
+    startup_sender: std::sync::mpsc::Sender<Result<(), String>>,
+) {
+    let runtime = match tokio::runtime::Builder::new_current_thread().enable_all().build() {
+        Ok(runtime) => {
+            let _ = startup_sender.send(Ok(()));
+            runtime
+        }
+        Err(error) => {
+            let _ = startup_sender.send(Err(error.to_string()));
+            return;
+        }
+    };
+
+    runtime.block_on(async move {
+        while let Some(job) = receiver.recv().await {
+            match job {
+                NativeBrowserJob::Render { url, config, reply } => {
+                    let _ = reply.send(render_url_local(&url, &config).await);
+                }
+                NativeBrowserJob::Interact {
+                    url,
+                    config,
+                    actions,
+                    post_navigation_wait,
+                    reply,
+                } => {
+                    let _ = reply.send(interact_url_local(&url, &config, &actions, post_navigation_wait).await);
+                }
+            }
+        }
+    });
+}
+
 pub async fn render_url(url: &str, config: &NativeBrowserConfig) -> Result<RenderedPage, PageError> {
-    let context = create_context(config).await;
-    render_with_context(url, config, context).await
+    let executor = NativeBrowserExecutor::new(NativeBrowserExecutorConfig::with_workers(1))?;
+    executor.render_url(url, config).await
 }
 
 /// Navigate to a URL and execute page actions using the native browser backend.
 pub async fn interact_url(
+    url: &str,
+    config: &NativeBrowserConfig,
+    actions: &[NativePageAction],
+    post_navigation_wait: Option<Duration>,
+) -> Result<NativeInteractionResult, PageError> {
+    let executor = NativeBrowserExecutor::new(NativeBrowserExecutorConfig::with_workers(1))?;
+    executor.interact_url(url, config, actions, post_navigation_wait).await
+}
+
+async fn render_url_local(url: &str, config: &NativeBrowserConfig) -> Result<RenderedPage, PageError> {
+    let context = create_context(config).await;
+    render_with_context(url, config, context).await
+}
+
+async fn interact_url_local(
     url: &str,
     config: &NativeBrowserConfig,
     actions: &[NativePageAction],
@@ -882,4 +1136,187 @@ fn rendered_html(page: &Page) -> Option<String> {
             dom.outer_html(dom.document())
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::sync::{Arc, OnceLock};
+
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    use tokio::net::TcpListener;
+
+    use super::*;
+
+    static ALLOW_PRIVATE: OnceLock<()> = OnceLock::new();
+
+    fn allow_private_network() {
+        ALLOW_PRIVATE.get_or_init(|| {
+            // SAFETY: tests write this process env var once before network work starts.
+            #[allow(unsafe_code)]
+            unsafe {
+                std::env::set_var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "1");
+            }
+        });
+    }
+
+    fn assert_send<T: Send>(_: T) {}
+
+    #[test]
+    fn native_browser_executor_futures_are_send() {
+        let executor =
+            NativeBrowserExecutor::new(NativeBrowserExecutorConfig::with_workers(1)).expect("executor should start");
+        let config = NativeBrowserConfig::default();
+        let actions = vec![NativePageAction::Scrape];
+
+        assert_send(executor.render_url("http://example.com", &config));
+        assert_send(executor.interact_url("http://example.com", &config, &actions, None));
+        assert_send(render_url("http://example.com", &config));
+        assert_send(interact_url("http://example.com", &config, &actions, None));
+    }
+
+    #[tokio::test]
+    async fn native_browser_executor_runs_render_jobs_concurrently() {
+        allow_private_network();
+        let server = TestServer::start().await;
+        let executor = NativeBrowserExecutor::new(NativeBrowserExecutorConfig {
+            workers: 4,
+            queue_capacity_per_worker: 8,
+        })
+        .expect("executor should start");
+
+        let mut tasks = Vec::new();
+        for index in 0..16 {
+            let executor = executor.clone();
+            let url = format!("{}/page-{index}", server.base_url);
+            tasks.push(tokio::spawn(async move {
+                executor.render_url(&url, &NativeBrowserConfig::default()).await
+            }));
+        }
+
+        let results = futures::future::join_all(tasks).await;
+        for result in results {
+            let rendered = result.expect("task should join").expect("render should succeed");
+            assert!(rendered.html.contains("Native executor"));
+        }
+        assert!(
+            server.max_in_flight.load(Ordering::SeqCst) >= 2,
+            "server should observe parallel native requests"
+        );
+    }
+
+    #[tokio::test]
+    async fn native_browser_executor_runs_interact_jobs_concurrently() {
+        allow_private_network();
+        let server = TestServer::start().await;
+        let executor = NativeBrowserExecutor::new(NativeBrowserExecutorConfig {
+            workers: 4,
+            queue_capacity_per_worker: 8,
+        })
+        .expect("executor should start");
+
+        let actions = vec![
+            NativePageAction::Click {
+                selector: "#go".to_owned(),
+            },
+            NativePageAction::Scrape,
+        ];
+        let mut tasks = Vec::new();
+        for index in 0..12 {
+            let executor = executor.clone();
+            let actions = actions.clone();
+            let url = format!("{}/action-{index}", server.base_url);
+            tasks.push(tokio::spawn(async move {
+                executor
+                    .interact_url(&url, &NativeBrowserConfig::default(), &actions, None)
+                    .await
+            }));
+        }
+
+        let results = futures::future::join_all(tasks).await;
+        for result in results {
+            let interaction = result.expect("task should join").expect("interact should succeed");
+            assert!(interaction.action_results.iter().all(|action| action.success));
+            assert!(interaction.final_html.contains("clicked"));
+        }
+        assert!(
+            server.max_in_flight.load(Ordering::SeqCst) >= 2,
+            "server should observe parallel native interaction requests"
+        );
+    }
+
+    #[tokio::test]
+    async fn native_browser_executor_drops_after_work() {
+        allow_private_network();
+        let server = TestServer::start().await;
+        let executor =
+            NativeBrowserExecutor::new(NativeBrowserExecutorConfig::with_workers(2)).expect("executor should start");
+
+        let rendered = executor
+            .render_url(&server.base_url, &NativeBrowserConfig::default())
+            .await
+            .expect("render should succeed");
+        assert!(rendered.html.contains("Native executor"));
+        drop(executor);
+    }
+
+    struct TestServer {
+        base_url: String,
+        max_in_flight: Arc<AtomicUsize>,
+    }
+
+    impl TestServer {
+        async fn start() -> Self {
+            let listener = TcpListener::bind("127.0.0.1:0").await.expect("test server should bind");
+            let addr = listener.local_addr().expect("test server should have local addr");
+            let current = Arc::new(AtomicUsize::new(0));
+            let max_in_flight = Arc::new(AtomicUsize::new(0));
+            let current_for_task = current.clone();
+            let max_for_task = max_in_flight.clone();
+
+            tokio::spawn(async move {
+                loop {
+                    let Ok((mut stream, _)) = listener.accept().await else {
+                        return;
+                    };
+                    let current = current_for_task.clone();
+                    let max_in_flight = max_for_task.clone();
+                    tokio::spawn(async move {
+                        let active = current.fetch_add(1, Ordering::SeqCst) + 1;
+                        max_in_flight.fetch_max(active, Ordering::SeqCst);
+
+                        let mut buffer = [0_u8; 1024];
+                        let _ = stream.read(&mut buffer).await;
+                        tokio::time::sleep(Duration::from_millis(150)).await;
+                        let body = r#"
+                            <html>
+                              <body>
+                                <button id="go">Go</button>
+                                <div id="status">Native executor</div>
+                                <script>
+                                  document.getElementById('go').addEventListener('click', () => {
+                                    document.getElementById('status').textContent = 'clicked';
+                                  });
+                                </script>
+                              </body>
+                            </html>
+                        "#;
+                        let response = format!(
+                            "HTTP/1.1 200 OK\r\ncontent-type: text/html\r\ncontent-length: {}\r\nconnection: close\r\n\r\n{}",
+                            body.len(),
+                            body
+                        );
+                        let _ = stream.write_all(response.as_bytes()).await;
+                        let _ = stream.shutdown().await;
+                        current.fetch_sub(1, Ordering::SeqCst);
+                    });
+                }
+            });
+
+            Self {
+                base_url: format!("http://{addr}"),
+                max_in_flight,
+            }
+        }
+    }
 }

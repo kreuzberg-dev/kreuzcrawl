@@ -110,6 +110,8 @@ impl CrawlEngineBuilder {
         let rate_limit_ms = config.rate_limit_ms.unwrap_or(200);
         #[cfg(not(target_arch = "wasm32"))]
         let ua_rotation = crate::tower::UaRotationLayer::new(config.user_agents.clone());
+        #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
+        let native_browser_executor = build_native_browser_executor(&config)?;
         Ok(CrawlEngine {
             config,
             frontier: self
@@ -127,8 +129,27 @@ impl CrawlEngineBuilder {
             cache: self.cache.unwrap_or_else(|| Arc::new(defaults::NoopCache)),
             #[cfg(not(target_arch = "wasm32"))]
             ua_rotation,
+            #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
+            native_browser_executor,
         })
     }
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
+fn build_native_browser_executor(
+    config: &CrawlConfig,
+) -> Result<Option<Arc<kreuzcrawl_browser::adapter::NativeBrowserExecutor>>, CrawlError> {
+    if config.browser.backend != BrowserBackend::Native {
+        return Ok(None);
+    }
+
+    let executor_config = match config.max_concurrent {
+        Some(workers) if workers > 0 => kreuzcrawl_browser::adapter::NativeBrowserExecutorConfig::with_workers(workers),
+        _ => kreuzcrawl_browser::adapter::NativeBrowserExecutorConfig::default(),
+    };
+    let executor = kreuzcrawl_browser::adapter::NativeBrowserExecutor::new(executor_config)
+        .map_err(|e| CrawlError::BrowserError(format!("failed to start native browser executor: {e}")))?;
+    Ok(Some(Arc::new(executor)))
 }
 
 impl Default for CrawlEngineBuilder {

@@ -31,6 +31,8 @@ pub struct CrawlEngine {
     /// Shared UA rotation layer — preserves rotation counter across service builds.
     #[cfg(not(target_arch = "wasm32"))]
     ua_rotation: crate::tower::UaRotationLayer,
+    #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
+    pub(crate) native_browser_executor: Option<Arc<kreuzcrawl_browser::adapter::NativeBrowserExecutor>>,
 }
 
 impl CrawlEngine {
@@ -99,6 +101,11 @@ impl CrawlEngine {
         #[cfg(feature = "browser")]
         if self.config.browser.mode == crate::types::BrowserMode::Always {
             let pool = self.config.browser_pool.as_deref();
+            #[cfg(feature = "browser-native")]
+            let http_resp =
+                crate::browser::browser_fetch(url, &self.config, None, pool, self.native_browser_executor.as_deref())
+                    .await?;
+            #[cfg(not(feature = "browser-native"))]
             let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
             let (crawl_resp, _extras) = browser_http_to_crawl(http_resp);
             return Ok((crawl_resp, true));
@@ -143,6 +150,16 @@ impl CrawlEngine {
                 if self.config.browser.mode == crate::types::BrowserMode::Auto =>
             {
                 let pool = self.config.browser_pool.as_deref();
+                #[cfg(feature = "browser-native")]
+                let http_resp = crate::browser::browser_fetch(
+                    url,
+                    &self.config,
+                    None,
+                    pool,
+                    self.native_browser_executor.as_deref(),
+                )
+                .await?;
+                #[cfg(not(feature = "browser-native"))]
                 let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
                 let (crawl_resp, _extras) = browser_http_to_crawl(http_resp);
                 Ok((crawl_resp, true))
@@ -175,7 +192,11 @@ impl CrawlEngine {
         if self.config.browser.mode == crate::types::BrowserMode::Always
             && self.config.browser.backend == crate::types::BrowserBackend::Native
         {
-            let mut http_resp = crate::native_browser::native_browser_fetch(url, &self.config, None).await?;
+            let native_executor = self.native_browser_executor.as_deref().ok_or_else(|| {
+                CrawlError::BrowserError("native browser executor is not available for BrowserBackend::Native".into())
+            })?;
+            let mut http_resp =
+                crate::native_browser::native_browser_fetch(url, &self.config, None, native_executor).await?;
             let raw_extras = http_resp.browser_extras.take();
             let crawl_resp = crate::tower::CrawlResponse {
                 status: http_resp.status,
@@ -305,6 +326,16 @@ impl CrawlEngine {
         if result.js_render_hint && !result.browser_used && self.config.browser.mode == crate::types::BrowserMode::Auto
         {
             let pool = self.config.browser_pool.as_deref();
+            #[cfg(feature = "browser-native")]
+            let mut http_resp = crate::browser::browser_fetch(
+                &final_url,
+                &self.config,
+                None,
+                pool,
+                self.native_browser_executor.as_deref(),
+            )
+            .await?;
+            #[cfg(not(feature = "browser-native"))]
             let mut http_resp = crate::browser::browser_fetch(&final_url, &self.config, None, pool).await?;
             let raw_extras = http_resp.browser_extras.take();
             let crawl_resp = crate::tower::CrawlResponse {
