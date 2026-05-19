@@ -15,7 +15,7 @@ use wiremock::matchers::{method, path};
 #[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
-#[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
+#[cfg(feature = "browser-native")]
 const PNG_SIGNATURE: &[u8; 8] = b"\x89PNG\r\n\x1a\n";
 #[cfg(feature = "browser-native")]
 const NATIVE_VIEWPORT_SCREENSHOT_HEIGHT: u32 = 720;

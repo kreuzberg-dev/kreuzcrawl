@@ -90,6 +90,24 @@ object Kreuzcrawl {
     suspend fun mapUrlsAsync(engine: CrawlEngineHandle, url: String): MapResult =
         withContext(Dispatchers.IO) { mapUrls(engine, url) }
 
+    /** Execute browser actions on a single page. */
+    fun interact(
+        engine: CrawlEngineHandle,
+        url: String,
+        actions: List<PageAction>,
+    ): InteractionResult {
+        val resultJson =
+            KreuzcrawlBridge.nativeInteract(engine.handle, url, mapper.writeValueAsString(actions))
+        return mapper.readValue(resultJson, InteractionResult::class.java)
+    }
+
+    /** Execute browser actions on a single page. */
+    suspend fun interactAsync(
+        engine: CrawlEngineHandle,
+        url: String,
+        actions: List<PageAction>,
+    ): InteractionResult = withContext(Dispatchers.IO) { interact(engine, url, actions) }
+
     /** Scrape multiple URLs concurrently. */
     fun batchScrape(engine: CrawlEngineHandle, urls: List<String>): List<BatchScrapeResult> {
         val resultJson =

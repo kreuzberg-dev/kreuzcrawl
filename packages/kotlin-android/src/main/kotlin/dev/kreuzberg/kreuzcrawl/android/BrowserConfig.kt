@@ -56,8 +56,11 @@ data class BrowserConfig(
      */
     val blockUrlPatterns: List<String>,
     /**
-     * JavaScript snippet evaluated after navigation completes. Result is captured in
-     * `ScrapeResult.browser.eval_result`. Native only.
+     * JavaScript snippet evaluated after navigation completes.
+     *
+     * Scraping captures the native backend result in `ScrapeResult.browser.eval_result`.
+     * Interactions run this script before page actions on both browser backends but do not include
+     * the script result in `InteractionResult`.
      */
     val evalScript: String?,
     /**

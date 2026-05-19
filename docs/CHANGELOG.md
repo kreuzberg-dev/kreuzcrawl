@@ -4,14 +4,24 @@
 
 ### Features
 
-- **Core**: Published `interact()` with `PageAction`, `ActionResult`, and `InteractionResult` for backend-neutral page interaction.
+- **Core**: Published `interact()` with `PageAction`, `ActionResult`, and `InteractionResult` for backend-neutral page interaction. Exposed across every language binding (Python, Node, Ruby, PHP, Go, Java, C#, Elixir, WASM, Dart, Kotlin/Android, Swift, Zig, C).
+- **Core**: Streaming crawl APIs — `CrawlEngineHandle::crawl_stream` and `batch_crawl_stream` yield `CrawlEvent::Page`/`Error`/`Complete` as pages are processed. Per-language adapters: Python `AsyncIterator`, Node async iterators, Ruby `Enumerator`, Java `Stream`, Go channels, C# `IAsyncEnumerable`, Elixir `Stream.unfold`, PHP `Generator`, plus C FFI handle-based polling. WASM is excluded (no Tokio multi-thread runtime).
 - **Browser (native)**: Added native `interact()` execution for click, type, press, scroll, wait, JavaScript, scrape, and screenshot actions. Native screenshots are deterministic PNG snapshots derived from the post-action HTML rather than Chrome compositor captures.
+- **Browser (native)**: Worker-pool isolation for the in-process native backend — concurrent crawls no longer contend on a single browser instance.
 
 ### Fixes
 
 - **Core**: `interact()` now runs `BrowserConfig.eval_script` after navigation and before page actions.
 - **Core**: Page-action validation now rejects invalid wait and scroll selectors before navigation.
 - **MCP**: The MCP `interact` tool now delegates to the public engine API instead of returning a placeholder message.
+
+### Breaking Changes
+
+- **JSON wire format**: `CrawlEvent` now serializes as an internally-tagged enum (`{"type":"page","result":{...}}`) instead of externally-tagged (`{"Page":{...}}`). Clients parsing the streaming wire format directly must update their decoders. The Rust enum API is unchanged.
+
+### Tooling
+
+- Pinned `alef_version = "0.17.0"`. Upstream fixes that flowed in: streaming FFI emits `_to_json`/`_free` for enum item types, NAPI Box-deref in tagged-enum conversions, Java CPD threshold lift, ktlint multiline-expression-wrapping disabled for ktfmt parity, PHP dedup of binding→core From impls across tagged-enum variant payloads.
 
 ## 0.3.0 - 2026-05-18
 

@@ -235,6 +235,32 @@ mod ffi {
     }
 
     extern "Rust" {
+        type InteractionResult;
+        #[swift_bridge(init)]
+        fn new(action_results: Vec<ActionResult>, final_html: String, final_url: String) -> InteractionResult;
+        fn action_results(&self) -> Vec<ActionResult>;
+        fn final_html(&self) -> String;
+        fn final_url(&self) -> String;
+    }
+
+    extern "Rust" {
+        type ActionResult;
+        #[swift_bridge(init)]
+        fn new(
+            action_index: usize,
+            action_type: String,
+            success: bool,
+            data: Option<String>,
+            error: Option<String>,
+        ) -> ActionResult;
+        fn action_index(&self) -> usize;
+        fn action_type(&self) -> String;
+        fn success(&self) -> bool;
+        fn data(&self) -> Option<String>;
+        fn error(&self) -> Option<String>;
+    }
+
+    extern "Rust" {
         type ScrapeResult;
         #[swift_bridge(init)]
         fn new(
@@ -733,6 +759,16 @@ mod ffi {
     }
 
     extern "Rust" {
+        type PageAction;
+        fn to_string(&self) -> String;
+    }
+
+    extern "Rust" {
+        type ScrollDirection;
+        fn to_string(&self) -> String;
+    }
+
+    extern "Rust" {
         #[swift_bridge(swift_name = "generateCitations")]
         fn generate_citations(markdown: String) -> CitationResult;
         #[swift_bridge(swift_name = "createEngine")]
@@ -741,6 +777,7 @@ mod ffi {
         fn crawl(engine: CrawlEngineHandle, url: String) -> Result<CrawlResult, String>;
         #[swift_bridge(swift_name = "mapUrls")]
         fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResult, String>;
+        fn interact(engine: CrawlEngineHandle, url: String, actions: Vec<String>) -> Result<InteractionResult, String>;
         #[swift_bridge(swift_name = "batchScrape")]
         fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, String>;
         #[swift_bridge(swift_name = "batchCrawl")]
@@ -1525,6 +1562,94 @@ impl DownloadedDocument {
     }
     pub fn headers(&self) -> String {
         serde_json::to_string(&self.0.headers).expect("serializable headers")
+    }
+}
+
+pub struct InteractionResult(pub kreuzcrawl::InteractionResult);
+impl InteractionResult {
+    pub fn new(action_results: Vec<ActionResult>, final_html: String, final_url: String) -> InteractionResult {
+        let mut __target: kreuzcrawl::InteractionResult = ::std::default::Default::default();
+        __target.action_results = action_results.into_iter().map(|w| w.0).collect();
+        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&final_html) {
+            if let Ok(t) = ::serde_json::from_value(v) {
+                __target.final_html = t;
+            }
+        }
+        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&final_url) {
+            if let Ok(t) = ::serde_json::from_value(v) {
+                __target.final_url = t;
+            }
+        }
+        InteractionResult(__target)
+    }
+    pub fn action_results(&self) -> Vec<ActionResult> {
+        self.0
+            .action_results
+            .iter()
+            .map(|elem| ActionResult(elem.clone()))
+            .collect()
+    }
+    pub fn final_html(&self) -> String {
+        self.0.final_html.clone()
+    }
+    pub fn final_url(&self) -> String {
+        self.0.final_url.clone()
+    }
+}
+
+pub struct ActionResult(pub kreuzcrawl::ActionResult);
+impl ActionResult {
+    pub fn new(
+        action_index: usize,
+        action_type: String,
+        success: bool,
+        data: Option<String>,
+        error: Option<String>,
+    ) -> ActionResult {
+        let mut __target: kreuzcrawl::ActionResult = ::std::default::Default::default();
+        __target.action_index = action_index;
+        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&action_type) {
+            if let Ok(t) = ::serde_json::from_value(v) {
+                __target.action_type = t;
+            }
+        }
+        __target.success = success;
+        if let Some(s) = data {
+            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
+                if let Ok(t) = ::serde_json::from_value(v) {
+                    __target.data = Some(t);
+                }
+            }
+        }
+        if let Some(s) = error {
+            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
+                if let Ok(t) = ::serde_json::from_value(v) {
+                    __target.error = Some(t);
+                }
+            }
+        }
+        ActionResult(__target)
+    }
+    pub fn action_index(&self) -> usize {
+        ::serde_json::to_value(&self.0.action_index)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn action_type(&self) -> String {
+        self.0.action_type.to_string()
+    }
+    pub fn success(&self) -> bool {
+        ::serde_json::to_value(&self.0.success)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn data(&self) -> Option<String> {
+        self.0.data.as_ref().and_then(|v| serde_json::to_string(v).ok())
+    }
+    pub fn error(&self) -> Option<String> {
+        self.0.error.clone()
     }
 }
 
@@ -3489,6 +3614,53 @@ impl CrawlEvent {
     }
 }
 
+pub enum PageAction {
+    Scrape,
+    /// Data variants not directly bridgeable — represented as Unknown.
+    Unknown,
+}
+
+impl From<kreuzcrawl::PageAction> for PageAction {
+    fn from(val: kreuzcrawl::PageAction) -> Self {
+        match val {
+            kreuzcrawl::PageAction::Scrape => Self::Scrape,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+impl PageAction {
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Scrape => "scrape".to_string(),
+            Self::Unknown => "unknown".to_string(),
+        }
+    }
+}
+
+pub enum ScrollDirection {
+    Up,
+    Down,
+}
+
+impl From<kreuzcrawl::ScrollDirection> for ScrollDirection {
+    fn from(val: kreuzcrawl::ScrollDirection) -> Self {
+        match val {
+            kreuzcrawl::ScrollDirection::Up => Self::Up,
+            kreuzcrawl::ScrollDirection::Down => Self::Down,
+        }
+    }
+}
+
+impl ScrollDirection {
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Up => "up".to_string(),
+            Self::Down => "down".to_string(),
+        }
+    }
+}
+
 pub fn generate_citations(markdown: String) -> CitationResult {
     CitationResult(kreuzcrawl::generate_citations(&markdown))
 }
@@ -3523,6 +3695,21 @@ pub fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResult, Str
             .await
             .map_err(|e| e.to_string())
             .map(MapResult)
+    })
+}
+
+pub fn interact(engine: CrawlEngineHandle, url: String, actions: Vec<String>) -> Result<InteractionResult, String> {
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::interact(&engine.0, &url, {
+            let values = actions;
+            values
+                .into_iter()
+                .map(|json| ::serde_json::from_str::<kreuzcrawl::PageAction>(&json).expect("valid JSON for actions"))
+                .collect::<Vec<_>>()
+        })
+        .await
+        .map_err(|e| e.to_string())
+        .map(InteractionResult)
     })
 }
 

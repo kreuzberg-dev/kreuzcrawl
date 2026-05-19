@@ -55,5 +55,7 @@ sealed class CrawlError(message: String) : Exception(message) {
 
     data class InvalidConfig(val field0: String) : CrawlError("invalid_config: $field0")
 
+    data class Unsupported(val field0: String) : CrawlError("unsupported: $field0")
+
     data class Other(val field0: String) : CrawlError("other: $field0")
 }

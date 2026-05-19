@@ -166,6 +166,20 @@ public static func batchCrawl(engine: CrawlEngineHandle, urls: [String]) throws 
 
 ### Types
 
+#### ActionResult
+
+Result from a single page action execution.
+
+| Field         | Type      | Default | Description                                                                    |
+| ------------- | --------- | ------- | ------------------------------------------------------------------------------ |
+| `actionIndex` | `UInt64`  | —       | Zero-based index of the action in the sequence.                                |
+| `actionType`  | `String`  | —       | The type of action that was executed.                                          |
+| `success`     | `Bool`    | —       | Whether the action completed successfully.                                     |
+| `data`        | `String?` | `null`  | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
+| `error`       | `String?` | `null`  | Error message if the action failed.                                            |
+
+---
+
 #### ArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
@@ -222,21 +236,21 @@ Result from a single URL in a batch scrape operation.
 
 Browser fallback configuration.
 
-| Field                  | Type             | Default                        | Description                                                                                                                                                                                                 |
-| ---------------------- | ---------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mode`                 | `BrowserMode`    | `BrowserMode.Auto`             | When to use the headless browser fallback.                                                                                                                                                                  |
-| `backend`              | `BrowserBackend` | `BrowserBackend.Chromiumoxide` | Browser backend used to render JavaScript-heavy pages.                                                                                                                                                      |
-| `endpoint`             | `String?`        | `null`                         | CDP WebSocket endpoint for connecting to an external browser instance.                                                                                                                                      |
-| `timeout`              | `Duration`       | `30000ms`                      | Timeout for browser page load and rendering (in milliseconds when serialized).                                                                                                                              |
-| `wait`                 | `BrowserWait`    | `BrowserWait.NetworkIdle`      | Wait strategy after browser navigation.                                                                                                                                                                     |
-| `waitSelector`         | `String?`        | `null`                         | CSS selector to wait for when `wait` is `Selector`.                                                                                                                                                         |
-| `extraWait`            | `Duration?`      | `null`                         | Extra time to wait after the wait condition is met.                                                                                                                                                         |
-| `stealth`              | `Bool`           | `false`                        | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.                               |
-| `proxy`                | `ProxyConfig?`   | `null`                         | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5).                                                                                     |
-| `blockUrlPatterns`     | `[String]`       | `[]`                           | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
-| `evalScript`           | `String?`        | `null`                         | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only.                                                                             |
-| `robotsUserAgent`      | `String?`        | `null`                         | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                           |
-| `captureNetworkEvents` | `Bool`           | `false`                        | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                    |
+| Field                  | Type             | Default                        | Description                                                                                                                                                                                                                                                                        |
+| ---------------------- | ---------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`                 | `BrowserMode`    | `BrowserMode.Auto`             | When to use the headless browser fallback.                                                                                                                                                                                                                                         |
+| `backend`              | `BrowserBackend` | `BrowserBackend.Chromiumoxide` | Browser backend used to render JavaScript-heavy pages.                                                                                                                                                                                                                             |
+| `endpoint`             | `String?`        | `null`                         | CDP WebSocket endpoint for connecting to an external browser instance.                                                                                                                                                                                                             |
+| `timeout`              | `Duration`       | `30000ms`                      | Timeout for browser page load and rendering (in milliseconds when serialized).                                                                                                                                                                                                     |
+| `wait`                 | `BrowserWait`    | `BrowserWait.NetworkIdle`      | Wait strategy after browser navigation.                                                                                                                                                                                                                                            |
+| `waitSelector`         | `String?`        | `null`                         | CSS selector to wait for when `wait` is `Selector`.                                                                                                                                                                                                                                |
+| `extraWait`            | `Duration?`      | `null`                         | Extra time to wait after the wait condition is met.                                                                                                                                                                                                                                |
+| `stealth`              | `Bool`           | `false`                        | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.                                                                                                      |
+| `proxy`                | `ProxyConfig?`   | `null`                         | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5).                                                                                                                                                            |
+| `blockUrlPatterns`     | `[String]`       | `[]`                           | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today.                                                                        |
+| `evalScript`           | `String?`        | `null`                         | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
+| `robotsUserAgent`      | `String?`        | `null`                         | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
+| `captureNetworkEvents` | `Bool`           | `false`                        | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
 ##### Methods
 
@@ -623,6 +637,19 @@ Information about an image found on a page.
 
 ---
 
+#### InteractionResult
+
+Result of executing a sequence of page interaction actions.
+
+| Field           | Type             | Default | Description                                          |
+| --------------- | ---------------- | ------- | ---------------------------------------------------- |
+| `actionResults` | `[ActionResult]` | `[]`    | Results from each executed action.                   |
+| `finalHtml`     | `String`         | —       | Final page HTML after all actions completed.         |
+| `finalUrl`      | `String`         | —       | Final page URL (may have changed due to navigation). |
+| `screenshot`    | `Data?`          | `null`  | Screenshot taken after all actions, if requested.    |
+
+---
+
 #### JsonLdEntry
 
 A JSON-LD structured data entry found on a page.
@@ -930,6 +957,37 @@ Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
 
 ---
 
+#### PageAction
+
+A single page interaction action.
+
+Actions are serialized with a `type` tag using camelCase naming,
+except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
+
+| Value        | Description                                                                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Click`      | Click on an element matching the given CSS selector. — Fields: `selector`: `String`                                                                                                                     |
+| `TypeText`   | Type text into an element matching the given CSS selector. — Fields: `selector`: `String`, `text`: `String`                                                                                             |
+| `Press`      | Press a keyboard key (e.g. "Enter", "Tab", "Escape"). — Fields: `key`: `String`                                                                                                                         |
+| `Scroll`     | Scroll the page or a specific element. — Fields: `direction`: `ScrollDirection`, `selector`: `String`, `amount`: `Int64`                                                                                |
+| `Wait`       | Wait for a duration or for an element to appear. — Fields: `milliseconds`: `Int64`, `selector`: `String`                                                                                                |
+| `Screenshot` | Take a screenshot of the current page. — Fields: `fullPage`: `Bool`                                                                                                                                     |
+| `ExecuteJs`  | Execute arbitrary JavaScript in the page context. **Safety:** The script runs with full page privileges in the browser context. Only execute scripts from trusted sources. — Fields: `script`: `String` |
+| `Scrape`     | Scrape the current page HTML.                                                                                                                                                                           |
+
+---
+
+#### ScrollDirection
+
+Direction for a scroll action.
+
+| Value  | Description      |
+| ------ | ---------------- |
+| `Up`   | Scroll upward.   |
+| `Down` | Scroll downward. |
+
+---
+
 ### Errors
 
 #### CrawlError
@@ -954,6 +1012,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `BrowserError`   | The browser failed to launch, connect, or navigate.                                |
 | `BrowserTimeout` | The browser page load or rendering timed out.                                      |
 | `InvalidConfig`  | The provided configuration is invalid.                                             |
+| `Unsupported`    | The requested capability is not supported by the active backend or build.          |
 | `Other`          | An unclassified error occurred.                                                    |
 
 ---

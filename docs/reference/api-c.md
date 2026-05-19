@@ -166,6 +166,20 @@ KcrawlBatchCrawlResult* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const
 
 ### Types
 
+#### KcrawlActionResult
+
+Result from a single page action execution.
+
+| Field          | Type           | Default | Description                                                                    |
+| -------------- | -------------- | ------- | ------------------------------------------------------------------------------ |
+| `action_index` | `uintptr_t`    | —       | Zero-based index of the action in the sequence.                                |
+| `action_type`  | `const char*`  | —       | The type of action that was executed.                                          |
+| `success`      | `bool`         | —       | Whether the action completed successfully.                                     |
+| `data`         | `void**`       | `NULL`  | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
+| `error`        | `const char**` | `NULL`  | Error message if the action failed.                                            |
+
+---
+
 #### KcrawlArticleMetadata
 
 Article metadata extracted from `article:*` Open Graph tags.
@@ -222,21 +236,21 @@ Result from a single URL in a batch scrape operation.
 
 Browser fallback configuration.
 
-| Field                    | Type                   | Default                       | Description                                                                                                                                                                                                 |
-| ------------------------ | ---------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mode`                   | `KcrawlBrowserMode`    | `KCRAWL_KCRAWL_AUTO`          | When to use the headless browser fallback.                                                                                                                                                                  |
-| `backend`                | `KcrawlBrowserBackend` | `KCRAWL_KCRAWL_CHROMIUMOXIDE` | Browser backend used to render JavaScript-heavy pages.                                                                                                                                                      |
-| `endpoint`               | `const char**`         | `NULL`                        | CDP WebSocket endpoint for connecting to an external browser instance.                                                                                                                                      |
-| `timeout`                | `uint64_t`             | `30000ms`                     | Timeout for browser page load and rendering (in milliseconds when serialized).                                                                                                                              |
-| `wait`                   | `KcrawlBrowserWait`    | `KCRAWL_KCRAWL_NETWORK_IDLE`  | Wait strategy after browser navigation.                                                                                                                                                                     |
-| `wait_selector`          | `const char**`         | `NULL`                        | CSS selector to wait for when `wait` is `Selector`.                                                                                                                                                         |
-| `extra_wait`             | `uint64_t*`            | `NULL`                        | Extra time to wait after the wait condition is met.                                                                                                                                                         |
-| `stealth`                | `bool`                 | `false`                       | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.                               |
-| `proxy`                  | `KcrawlProxyConfig*`   | `NULL`                        | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5).                                                                                     |
-| `block_url_patterns`     | `const char**`         | `NULL`                        | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
-| `eval_script`            | `const char**`         | `NULL`                        | JavaScript snippet evaluated after navigation completes. Result is captured in `ScrapeResult.browser.eval_result`. Native only.                                                                             |
-| `robots_user_agent`      | `const char**`         | `NULL`                        | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                           |
-| `capture_network_events` | `bool`                 | `false`                       | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                    |
+| Field                    | Type                   | Default                       | Description                                                                                                                                                                                                                                                                        |
+| ------------------------ | ---------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`                   | `KcrawlBrowserMode`    | `KCRAWL_KCRAWL_AUTO`          | When to use the headless browser fallback.                                                                                                                                                                                                                                         |
+| `backend`                | `KcrawlBrowserBackend` | `KCRAWL_KCRAWL_CHROMIUMOXIDE` | Browser backend used to render JavaScript-heavy pages.                                                                                                                                                                                                                             |
+| `endpoint`               | `const char**`         | `NULL`                        | CDP WebSocket endpoint for connecting to an external browser instance.                                                                                                                                                                                                             |
+| `timeout`                | `uint64_t`             | `30000ms`                     | Timeout for browser page load and rendering (in milliseconds when serialized).                                                                                                                                                                                                     |
+| `wait`                   | `KcrawlBrowserWait`    | `KCRAWL_KCRAWL_NETWORK_IDLE`  | Wait strategy after browser navigation.                                                                                                                                                                                                                                            |
+| `wait_selector`          | `const char**`         | `NULL`                        | CSS selector to wait for when `wait` is `Selector`.                                                                                                                                                                                                                                |
+| `extra_wait`             | `uint64_t*`            | `NULL`                        | Extra time to wait after the wait condition is met.                                                                                                                                                                                                                                |
+| `stealth`                | `bool`                 | `false`                       | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.                                                                                                      |
+| `proxy`                  | `KcrawlProxyConfig*`   | `NULL`                        | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5).                                                                                                                                                            |
+| `block_url_patterns`     | `const char**`         | `NULL`                        | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today.                                                                        |
+| `eval_script`            | `const char**`         | `NULL`                        | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
+| `robots_user_agent`      | `const char**`         | `NULL`                        | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
+| `capture_network_events` | `bool`                 | `false`                       | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
 ##### Methods
 
@@ -623,6 +637,19 @@ Information about an image found on a page.
 
 ---
 
+#### KcrawlInteractionResult
+
+Result of executing a sequence of page interaction actions.
+
+| Field            | Type                  | Default | Description                                          |
+| ---------------- | --------------------- | ------- | ---------------------------------------------------- |
+| `action_results` | `KcrawlActionResult*` | `NULL`  | Results from each executed action.                   |
+| `final_html`     | `const char*`         | —       | Final page HTML after all actions completed.         |
+| `final_url`      | `const char*`         | —       | Final page URL (may have changed due to navigation). |
+| `screenshot`     | `const uint8_t**`     | `NULL`  | Screenshot taken after all actions, if requested.    |
+
+---
+
 #### KcrawlJsonLdEntry
 
 A JSON-LD structured data entry found on a page.
@@ -930,6 +957,37 @@ Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
 
 ---
 
+#### KcrawlPageAction
+
+A single page interaction action.
+
+Actions are serialized with a `type` tag using camelCase naming,
+except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
+
+| Value               | Description                                                                                                                                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `KCRAWL_CLICK`      | Click on an element matching the given CSS selector. — Fields: `selector`: `const char*`                                                                                                                     |
+| `KCRAWL_TYPE_TEXT`  | Type text into an element matching the given CSS selector. — Fields: `selector`: `const char*`, `text`: `const char*`                                                                                        |
+| `KCRAWL_PRESS`      | Press a keyboard key (e.g. "Enter", "Tab", "Escape"). — Fields: `key`: `const char*`                                                                                                                         |
+| `KCRAWL_SCROLL`     | Scroll the page or a specific element. — Fields: `direction`: `KcrawlScrollDirection`, `selector`: `const char*`, `amount`: `int64_t`                                                                        |
+| `KCRAWL_WAIT`       | Wait for a duration or for an element to appear. — Fields: `milliseconds`: `int64_t`, `selector`: `const char*`                                                                                              |
+| `KCRAWL_SCREENSHOT` | Take a screenshot of the current page. — Fields: `full_page`: `bool`                                                                                                                                         |
+| `KCRAWL_EXECUTE_JS` | Execute arbitrary JavaScript in the page context. **Safety:** The script runs with full page privileges in the browser context. Only execute scripts from trusted sources. — Fields: `script`: `const char*` |
+| `KCRAWL_SCRAPE`     | Scrape the current page HTML.                                                                                                                                                                                |
+
+---
+
+#### KcrawlScrollDirection
+
+Direction for a scroll action.
+
+| Value         | Description      |
+| ------------- | ---------------- |
+| `KCRAWL_UP`   | Scroll upward.   |
+| `KCRAWL_DOWN` | Scroll downward. |
+
+---
+
 ### Errors
 
 #### KcrawlCrawlError
@@ -954,6 +1012,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `KCRAWL_BROWSER_ERROR`   | The browser failed to launch, connect, or navigate.                                |
 | `KCRAWL_BROWSER_TIMEOUT` | The browser page load or rendering timed out.                                      |
 | `KCRAWL_INVALID_CONFIG`  | The provided configuration is invalid.                                             |
+| `KCRAWL_UNSUPPORTED`     | The requested capability is not supported by the active backend or build.          |
 | `KCRAWL_OTHER`           | An unclassified error occurred.                                                    |
 
 ---
