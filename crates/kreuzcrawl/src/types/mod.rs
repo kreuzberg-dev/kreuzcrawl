@@ -19,8 +19,8 @@ pub use discovery::{
 };
 pub use metadata::{ArticleMetadata, FaviconInfo, HeadingInfo, HreflangEntry, PageMetadata, ResponseMeta};
 pub use results::{
-    BrowserExtras, CachedPage, CrawlPageResult, CrawlResult, DownloadedDocument, MapResult, MarkdownResult,
-    ScrapeResult, SitemapUrl,
+    ActionResult, BrowserExtras, CachedPage, CrawlPageResult, CrawlResult, DownloadedDocument, InteractionResult,
+    MapResult, MarkdownResult, ScrapeResult, SitemapUrl,
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use streaming::{BatchCrawlStreamRequest, CrawlStreamRequest};

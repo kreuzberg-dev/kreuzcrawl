@@ -32,6 +32,9 @@ object KreuzcrawlBridge {
     external fun nativeMapUrls(engine: Long, url: String): String
 
     @Throws(KreuzcrawlBridgeException::class)
+    external fun nativeInteract(engine: Long, url: String, actions: String): String
+
+    @Throws(KreuzcrawlBridgeException::class)
     external fun nativeBatchScrape(engine: Long, urls: String): String
 
     @Throws(KreuzcrawlBridgeException::class)

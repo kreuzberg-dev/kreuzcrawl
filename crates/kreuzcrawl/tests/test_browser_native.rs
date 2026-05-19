@@ -6,10 +6,13 @@
 #![cfg(feature = "browser-native")]
 #![allow(clippy::unwrap_used, clippy::panic)]
 
-use std::sync::OnceLock;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Arc, OnceLock};
 use std::time::Duration;
 
-use kreuzcrawl::{BrowserBackend, BrowserConfig, BrowserWait, CrawlConfig, create_engine, scrape};
+use kreuzcrawl::{BrowserBackend, BrowserConfig, BrowserWait, CrawlConfig, batch_scrape, create_engine, scrape};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpListener;
 use wiremock::matchers::{header, method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -378,4 +381,92 @@ async fn native_wait_selector_succeeds() {
     });
     let result = scrape(&engine_with(config), &url).await;
     assert!(result.is_ok(), "wait_selector should succeed: {:?}", result.err());
+}
+
+#[tokio::test]
+async fn native_batch_scrape_uses_shared_executor_concurrently() {
+    let server = TestServer::start().await;
+    let config = native_config(|mut browser| {
+        browser.timeout = Duration::from_secs(15);
+        browser
+    });
+    let config = CrawlConfig {
+        max_concurrent: Some(4),
+        ..config
+    };
+    let engine = engine_with(config);
+
+    let urls = (0..12)
+        .map(|index| format!("{}/page-{index}", server.base_url))
+        .collect::<Vec<_>>();
+    let results = batch_scrape(&engine, urls).await.expect("batch scrape should run");
+
+    assert_eq!(results.len(), 12);
+    for result in results {
+        let page = result.result.expect("native scrape should succeed");
+        assert!(page.html.contains("Native executor"));
+        assert!(page.html.contains("data-rendered=\"true\""));
+    }
+    assert!(
+        server.max_in_flight.load(Ordering::SeqCst) >= 2,
+        "server should observe parallel native requests"
+    );
+}
+
+struct TestServer {
+    base_url: String,
+    max_in_flight: Arc<AtomicUsize>,
+}
+
+impl TestServer {
+    async fn start() -> Self {
+        allow_private_network();
+        let listener = TcpListener::bind("127.0.0.1:0").await.expect("test server should bind");
+        let addr = listener.local_addr().expect("test server should have local addr");
+        let current = Arc::new(AtomicUsize::new(0));
+        let max_in_flight = Arc::new(AtomicUsize::new(0));
+        let current_for_task = current.clone();
+        let max_for_task = max_in_flight.clone();
+
+        tokio::spawn(async move {
+            loop {
+                let Ok((mut stream, _)) = listener.accept().await else {
+                    return;
+                };
+                let current = current_for_task.clone();
+                let max_in_flight = max_for_task.clone();
+                tokio::spawn(async move {
+                    let active = current.fetch_add(1, Ordering::SeqCst) + 1;
+                    max_in_flight.fetch_max(active, Ordering::SeqCst);
+
+                    let mut buffer = [0_u8; 1024];
+                    let _ = stream.read(&mut buffer).await;
+                    tokio::time::sleep(Duration::from_millis(150)).await;
+                    let body = r#"
+                        <html>
+                          <body>
+                            <div id="status">Native executor</div>
+                            <script>
+                              document.body.setAttribute('data-rendered', 'true');
+                            </script>
+                          </body>
+                        </html>
+                    "#;
+                    let response = format!(
+                        "HTTP/1.1 200 OK\r\ncontent-type: text/html\r\ncontent-length: {}\r\nconnection: close\r\n\r\n{}",
+                        body.len(),
+                        body
+                    );
+                    let _ = stream.write_all(response.as_bytes()).await;
+                    let _ = stream.shutdown().await;
+                    current.fetch_sub(1, Ordering::SeqCst);
+                });
+            }
+        });
+
+        Self {
+            base_url: format!("http://{addr}"),
+            max_in_flight,
+        }
+    }
 }

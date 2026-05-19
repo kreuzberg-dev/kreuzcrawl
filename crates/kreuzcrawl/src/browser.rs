@@ -26,10 +26,20 @@ pub(crate) async fn browser_fetch(
     config: &CrawlConfig,
     prior_cookies: Option<&[CookieInfo]>,
     pool: Option<&BrowserPool>,
+    #[cfg(feature = "browser-native")] native_executor: Option<&kreuzcrawl_browser::adapter::NativeBrowserExecutor>,
 ) -> Result<HttpResponse, CrawlError> {
     match config.browser.backend {
         BrowserBackend::Chromiumoxide => chromiumoxide_fetch(url, config, prior_cookies, pool).await,
-        BrowserBackend::Native => native_fetch(url, config, prior_cookies).await,
+        BrowserBackend::Native => {
+            #[cfg(feature = "browser-native")]
+            {
+                native_fetch(url, config, prior_cookies, native_executor).await
+            }
+            #[cfg(not(feature = "browser-native"))]
+            {
+                native_fetch(url, config, prior_cookies).await
+            }
+        }
     }
 }
 
@@ -72,8 +82,12 @@ async fn native_fetch(
     url: &str,
     config: &CrawlConfig,
     prior_cookies: Option<&[CookieInfo]>,
+    native_executor: Option<&kreuzcrawl_browser::adapter::NativeBrowserExecutor>,
 ) -> Result<HttpResponse, CrawlError> {
-    crate::native_browser::native_browser_fetch(url, config, prior_cookies).await
+    let native_executor = native_executor.ok_or_else(|| {
+        CrawlError::BrowserError("native browser executor is not available for BrowserBackend::Native".into())
+    })?;
+    crate::native_browser::native_browser_fetch(url, config, prior_cookies, native_executor).await
 }
 
 #[cfg(not(feature = "browser-native"))]

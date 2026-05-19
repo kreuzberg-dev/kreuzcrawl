@@ -93,6 +93,9 @@ pub enum CrawlError {
     /// The provided configuration is invalid.
     #[error("invalid_config: {0}")]
     InvalidConfig(String),
+    /// The requested capability is not supported by the active backend or build.
+    #[error("unsupported: {0}")]
+    Unsupported(String),
     /// An unclassified error occurred.
     #[error("other: {0}")]
     Other(String),

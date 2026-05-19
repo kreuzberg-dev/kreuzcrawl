@@ -45,6 +45,20 @@ class KreuzcrawlBridge {
     return await rust_bridge.mapUrls(engine: engine, url: url);
   }
 
+  /// Execute browser actions on a single page.
+  /// throws CrawlError on failure
+  static Future<InteractionResult> interact(
+    CrawlEngineHandle engine,
+    String url,
+    List<PageAction> actions,
+  ) async {
+    return await rust_bridge.interact(
+      engine: engine,
+      url: url,
+      actions: actions,
+    );
+  }
+
   /// Scrape multiple URLs concurrently.
   /// throws CrawlError on failure
   static Future<List<BatchScrapeResult>> batchScrape(

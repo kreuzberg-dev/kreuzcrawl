@@ -65,6 +65,7 @@ minijinja = "2"
 napi = { version = "3", default-features = false, features = ["napi8", "tokio_rt"] }
 napi-derive = "3"
 precomputed-hash = "0.1"
+png = "0.18"
 pyo3 = { version = "0.28", features = ["abi3-py310"] }
 pyo3-async-runtimes = { version = "0.28", features = ["tokio-runtime"] }
 quick-xml = "0.40"

@@ -48,6 +48,8 @@ pub fn map_crawl_error(error: CrawlError) -> McpError {
 
         CrawlError::BrowserTimeout(msg) => McpError::internal_error(format!("Browser timeout: {msg}"), None),
 
+        CrawlError::Unsupported(msg) => McpError::invalid_params(format!("Unsupported operation: {msg}"), None),
+
         CrawlError::Other(msg) => McpError::internal_error(msg, None),
     }
 }
@@ -144,6 +146,7 @@ mod tests {
             CrawlError::BrowserError("test".to_string()),
             CrawlError::BrowserTimeout("test".to_string()),
             CrawlError::InvalidConfig("test".to_string()),
+            CrawlError::Unsupported("test".to_string()),
             CrawlError::Other("test".to_string()),
         ];
 

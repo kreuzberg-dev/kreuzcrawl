@@ -8,11 +8,14 @@
 //! 4. Direct 403 raises when `soft_http_errors` is `false` (default).
 //! 5. Direct 403 returns `Ok(ScrapeResult { status_code: 403 })` when enabled.
 
-use kreuzcrawl::{CrawlConfig, CrawlError, create_engine, scrape};
+use kreuzcrawl::{BrowserMode, CrawlConfig, CrawlError, create_engine, scrape};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
-fn engine_with_config(config: CrawlConfig) -> kreuzcrawl::CrawlEngineHandle {
+fn engine_with_config(mut config: CrawlConfig) -> kreuzcrawl::CrawlEngineHandle {
+    // These tests assert direct HTTP error semantics. BrowserMode::Auto may
+    // intentionally retry 403 responses through a browser when all features are enabled.
+    config.browser.mode = BrowserMode::Never;
     create_engine(Some(config)).expect("engine build must not fail")
 }
 
