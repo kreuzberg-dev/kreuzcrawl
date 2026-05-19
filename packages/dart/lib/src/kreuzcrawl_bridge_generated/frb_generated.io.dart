@@ -23,8 +23,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandlePtr;
 
   @protected
+  AnyhowException dco_decode_AnyhowException(dynamic raw);
+
+  @protected
   CrawlEngineHandle
   dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    dynamic raw,
+  );
+
+  @protected
+  CrawlEngineHandle
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
     dynamic raw,
   );
 
@@ -36,6 +45,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
     dynamic raw,
   );
+
+  @protected
+  RustStreamSink<CrawlEvent> dco_decode_StreamSink_crawl_event_Sse(dynamic raw);
 
   @protected
   String dco_decode_String(dynamic raw);
@@ -53,6 +65,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BatchCrawlResult dco_decode_batch_crawl_result(dynamic raw);
 
   @protected
+  BatchCrawlStreamRequest dco_decode_batch_crawl_stream_request(dynamic raw);
+
+  @protected
   BatchScrapeResult dco_decode_batch_scrape_result(dynamic raw);
 
   @protected
@@ -65,6 +80,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AuthConfig dco_decode_box_autoadd_auth_config(dynamic raw);
 
   @protected
+  BatchCrawlStreamRequest dco_decode_box_autoadd_batch_crawl_stream_request(
+    dynamic raw,
+  );
+
+  @protected
   BrowserExtras dco_decode_box_autoadd_browser_extras(dynamic raw);
 
   @protected
@@ -74,7 +94,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CrawlConfig dco_decode_box_autoadd_crawl_config(dynamic raw);
 
   @protected
+  CrawlPageResult dco_decode_box_autoadd_crawl_page_result(dynamic raw);
+
+  @protected
   CrawlResult dco_decode_box_autoadd_crawl_result(dynamic raw);
+
+  @protected
+  CrawlStreamRequest dco_decode_box_autoadd_crawl_stream_request(dynamic raw);
 
   @protected
   DownloadedDocument dco_decode_box_autoadd_downloaded_document(dynamic raw);
@@ -131,10 +157,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CrawlConfig dco_decode_crawl_config(dynamic raw);
 
   @protected
+  CrawlEvent dco_decode_crawl_event(dynamic raw);
+
+  @protected
   CrawlPageResult dco_decode_crawl_page_result(dynamic raw);
 
   @protected
   CrawlResult dco_decode_crawl_result(dynamic raw);
+
+  @protected
+  CrawlStreamRequest dco_decode_crawl_stream_request(dynamic raw);
 
   @protected
   DownloadedAsset dco_decode_downloaded_asset(dynamic raw);
@@ -337,8 +369,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt dco_decode_usize(dynamic raw);
 
   @protected
+  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
+
+  @protected
   CrawlEngineHandle
   sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  CrawlEngineHandle
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
     SseDeserializer deserializer,
   );
 
@@ -350,6 +391,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   CrawlEngineHandle
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  RustStreamSink<CrawlEvent> sse_decode_StreamSink_crawl_event_Sse(
     SseDeserializer deserializer,
   );
 
@@ -369,6 +415,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BatchCrawlResult sse_decode_batch_crawl_result(SseDeserializer deserializer);
 
   @protected
+  BatchCrawlStreamRequest sse_decode_batch_crawl_stream_request(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   BatchScrapeResult sse_decode_batch_scrape_result(
     SseDeserializer deserializer,
   );
@@ -385,6 +436,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AuthConfig sse_decode_box_autoadd_auth_config(SseDeserializer deserializer);
 
   @protected
+  BatchCrawlStreamRequest sse_decode_box_autoadd_batch_crawl_stream_request(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   BrowserExtras sse_decode_box_autoadd_browser_extras(
     SseDeserializer deserializer,
   );
@@ -398,7 +454,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CrawlConfig sse_decode_box_autoadd_crawl_config(SseDeserializer deserializer);
 
   @protected
+  CrawlPageResult sse_decode_box_autoadd_crawl_page_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   CrawlResult sse_decode_box_autoadd_crawl_result(SseDeserializer deserializer);
+
+  @protected
+  CrawlStreamRequest sse_decode_box_autoadd_crawl_stream_request(
+    SseDeserializer deserializer,
+  );
 
   @protected
   DownloadedDocument sse_decode_box_autoadd_downloaded_document(
@@ -465,10 +531,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CrawlConfig sse_decode_crawl_config(SseDeserializer deserializer);
 
   @protected
+  CrawlEvent sse_decode_crawl_event(SseDeserializer deserializer);
+
+  @protected
   CrawlPageResult sse_decode_crawl_page_result(SseDeserializer deserializer);
 
   @protected
   CrawlResult sse_decode_crawl_result(SseDeserializer deserializer);
+
+  @protected
+  CrawlStreamRequest sse_decode_crawl_stream_request(
+    SseDeserializer deserializer,
+  );
 
   @protected
   DownloadedAsset sse_decode_downloaded_asset(SseDeserializer deserializer);
@@ -721,8 +795,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
+  void sse_encode_AnyhowException(
+    AnyhowException self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void
   sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
+    CrawlEngineHandle self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
     CrawlEngineHandle self,
     SseSerializer serializer,
   );
@@ -737,6 +824,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCrawlEngineHandle(
     CrawlEngineHandle self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_StreamSink_crawl_event_Sse(
+    RustStreamSink<CrawlEvent> self,
     SseSerializer serializer,
   );
 
@@ -762,6 +855,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_batch_crawl_stream_request(
+    BatchCrawlStreamRequest self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_batch_scrape_result(
     BatchScrapeResult self,
     SseSerializer serializer,
@@ -779,6 +878,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_auth_config(
     AuthConfig self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_batch_crawl_stream_request(
+    BatchCrawlStreamRequest self,
     SseSerializer serializer,
   );
 
@@ -801,8 +906,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_crawl_page_result(
+    CrawlPageResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_crawl_result(
     CrawlResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_crawl_stream_request(
+    CrawlStreamRequest self,
     SseSerializer serializer,
   );
 
@@ -891,6 +1008,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_crawl_config(CrawlConfig self, SseSerializer serializer);
 
   @protected
+  void sse_encode_crawl_event(CrawlEvent self, SseSerializer serializer);
+
+  @protected
   void sse_encode_crawl_page_result(
     CrawlPageResult self,
     SseSerializer serializer,
@@ -898,6 +1018,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_crawl_result(CrawlResult self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_crawl_stream_request(
+    CrawlStreamRequest self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_downloaded_asset(

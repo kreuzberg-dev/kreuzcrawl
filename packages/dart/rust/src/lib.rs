@@ -640,6 +640,29 @@ pub struct PageMetadata {
     pub word_count: Option<i64>,
 }
 
+/// Request to begin a single-URL streaming crawl.
+///
+/// Wraps a single seed URL for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+#[frb(mirror(CrawlStreamRequest))]
+pub struct CrawlStreamRequest {
+    /// The seed URL to crawl.
+    pub url: String,
+}
+
+/// Request to begin a multi-URL streaming crawl.
+///
+/// Wraps a set of seed URLs for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+#[frb(mirror(BatchCrawlStreamRequest))]
+pub struct BatchCrawlStreamRequest {
+    /// The seed URLs to crawl. Each URL is followed independently up to the
+    /// engine's configured depth.
+    pub urls: Vec<String>,
+}
+
 /// Result of citation conversion.
 #[frb(mirror(CitationResult))]
 pub struct CitationResult {
@@ -702,6 +725,61 @@ pub struct BatchCrawlResult {
     pub result: Option<CrawlResult>,
     /// The error message, if the crawl failed.
     pub error: Option<String>,
+}
+
+impl CrawlEngineHandle {
+    #[frb]
+    pub fn crawl_stream(&self, req: CrawlStreamRequest, sink: crate::frb_generated::StreamSink<CrawlEvent>) {
+        use futures_util::StreamExt;
+        let inner = self.inner.clone();
+        let core_req: kreuzcrawl::CrawlStreamRequest = req.into();
+        flutter_rust_bridge::spawn(async move {
+            match inner.crawl_stream(core_req).await {
+                Ok(mut stream) => {
+                    while let Some(item) = stream.next().await {
+                        match item {
+                            Ok(chunk) => {
+                                let _ = sink.add(CrawlEvent::from(chunk));
+                            }
+                            Err(e) => {
+                                let _ = sink.add_error(e.to_string());
+                                break;
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    let _ = sink.add_error(e.to_string());
+                }
+            }
+        });
+    }
+    #[frb]
+    pub fn batch_crawl_stream(&self, req: BatchCrawlStreamRequest, sink: crate::frb_generated::StreamSink<CrawlEvent>) {
+        use futures_util::StreamExt;
+        let inner = self.inner.clone();
+        let core_req: kreuzcrawl::BatchCrawlStreamRequest = req.into();
+        flutter_rust_bridge::spawn(async move {
+            match inner.batch_crawl_stream(core_req).await {
+                Ok(mut stream) => {
+                    while let Some(item) = stream.next().await {
+                        match item {
+                            Ok(chunk) => {
+                                let _ = sink.add(CrawlEvent::from(chunk));
+                            }
+                            Err(e) => {
+                                let _ = sink.add_error(e.to_string());
+                                break;
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    let _ = sink.add_error(e.to_string());
+                }
+            }
+        });
+    }
 }
 
 /// When to use the headless browser fallback.
@@ -819,6 +897,33 @@ pub enum AssetCategory {
     Data,
     /// An unrecognized asset type.
     Other,
+}
+
+/// An event emitted during a streaming crawl operation.
+///
+/// Not available on `wasm32` targets — streaming requires native concurrency
+/// primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+///
+/// Delivered to bindings via alef's streaming-adapter pattern. The
+/// `crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+/// expose this as the per-language streaming idiom (Python `AsyncIterator`,
+/// Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+#[frb(mirror(CrawlEvent))]
+pub enum CrawlEvent {
+    /// A single page has been crawled.
+    Page { field0: CrawlPageResult },
+    /// An error occurred while crawling a URL.
+    Error {
+        /// The URL that failed.
+        url: String,
+        /// The error message.
+        error: String,
+    },
+    /// The crawl has completed.
+    Complete {
+        /// Total number of pages crawled.
+        pages_crawled: i64,
+    },
 }
 
 // From<SourceT> conversions for bridge return types.
@@ -1243,6 +1348,20 @@ impl From<kreuzcrawl::PageMetadata> for PageMetadata {
     }
 }
 
+impl From<kreuzcrawl::CrawlStreamRequest> for CrawlStreamRequest {
+    fn from(v: kreuzcrawl::CrawlStreamRequest) -> Self {
+        CrawlStreamRequest { url: v.url.into() }
+    }
+}
+
+impl From<kreuzcrawl::BatchCrawlStreamRequest> for BatchCrawlStreamRequest {
+    fn from(v: kreuzcrawl::BatchCrawlStreamRequest) -> Self {
+        BatchCrawlStreamRequest {
+            urls: v.urls.into_iter().map(|s| s.into()).collect(),
+        }
+    }
+}
+
 impl From<kreuzcrawl::CitationResult> for CitationResult {
     fn from(v: kreuzcrawl::CitationResult) -> Self {
         CitationResult {
@@ -1366,6 +1485,20 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
             kreuzcrawl::AssetCategory::Archive => AssetCategory::Archive,
             kreuzcrawl::AssetCategory::Data => AssetCategory::Data,
             kreuzcrawl::AssetCategory::Other => AssetCategory::Other,
+        }
+    }
+}
+
+impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
+    fn from(v: kreuzcrawl::CrawlEvent) -> Self {
+        match v {
+            kreuzcrawl::CrawlEvent::Page(f0) => CrawlEvent::Page {
+                field0: CrawlPageResult::from(*f0),
+            },
+            kreuzcrawl::CrawlEvent::Error { url, error } => CrawlEvent::Error { url, error },
+            kreuzcrawl::CrawlEvent::Complete { pages_crawled } => CrawlEvent::Complete {
+                pages_crawled: pages_crawled as _,
+            },
         }
     }
 }
@@ -1761,6 +1894,20 @@ pub fn create_response_meta_from_json(json: String) -> Result<ResponseMeta, Stri
 pub fn create_page_metadata_from_json(json: String) -> Result<PageMetadata, String> {
     serde_json::from_str::<kreuzcrawl::PageMetadata>(&json)
         .map(PageMetadata::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
+pub fn create_crawl_stream_request_from_json(json: String) -> Result<CrawlStreamRequest, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlStreamRequest>(&json)
+        .map(CrawlStreamRequest::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
+pub fn create_batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlStreamRequest>(&json)
+        .map(BatchCrawlStreamRequest::from)
         .map_err(|e| e.to_string())
 }
 

@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'lib.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
 
 /// Convert markdown links to numbered citations.
 ///
@@ -131,6 +131,15 @@ Future<ResponseMeta> createResponseMetaFromJson({required String json}) =>
 Future<PageMetadata> createPageMetadataFromJson({required String json}) =>
     RustLib.instance.api.crateCreatePageMetadataFromJson(json: json);
 
+Future<CrawlStreamRequest> createCrawlStreamRequestFromJson({
+  required String json,
+}) => RustLib.instance.api.crateCreateCrawlStreamRequestFromJson(json: json);
+
+Future<BatchCrawlStreamRequest> createBatchCrawlStreamRequestFromJson({
+  required String json,
+}) =>
+    RustLib.instance.api.crateCreateBatchCrawlStreamRequestFromJson(json: json);
+
 Future<CitationResult> createCitationResultFromJson({required String json}) =>
     RustLib.instance.api.crateCreateCitationResultFromJson(json: json);
 
@@ -147,7 +156,11 @@ Future<BatchCrawlResult> createBatchCrawlResultFromJson({
 }) => RustLib.instance.api.crateCreateBatchCrawlResultFromJson(json: json);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CrawlEngineHandle>>
-abstract class CrawlEngineHandle implements RustOpaqueInterface {}
+abstract class CrawlEngineHandle implements RustOpaqueInterface {
+  Stream<CrawlEvent> batchCrawlStream({required BatchCrawlStreamRequest req});
+
+  Stream<CrawlEvent> crawlStream({required CrawlStreamRequest req});
+}
 
 /// Article metadata extracted from `article:*` Open Graph tags.
 class ArticleMetadata {
@@ -280,6 +293,29 @@ class BatchCrawlResult {
           url == other.url &&
           result == other.result &&
           error == other.error;
+}
+
+/// Request to begin a multi-URL streaming crawl.
+///
+/// Wraps a set of seed URLs for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+class BatchCrawlStreamRequest {
+  /// The seed URLs to crawl. Each URL is followed independently up to the
+  /// engine's configured depth.
+  final List<String> urls;
+
+  const BatchCrawlStreamRequest({required this.urls});
+
+  @override
+  int get hashCode => urls.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BatchCrawlStreamRequest &&
+          runtimeType == other.runtimeType &&
+          urls == other.urls;
 }
 
 /// Result from a single URL in a batch scrape operation.
@@ -906,6 +942,30 @@ class CrawlConfig {
           saveBrowserProfile == other.saveBrowserProfile;
 }
 
+@freezed
+sealed class CrawlEvent with _$CrawlEvent {
+  const CrawlEvent._();
+
+  /// A single page has been crawled.
+  const factory CrawlEvent.page({required CrawlPageResult field0}) =
+      CrawlEvent_Page;
+
+  /// An error occurred while crawling a URL.
+  const factory CrawlEvent.error({
+    /// The URL that failed.
+    required String url,
+
+    /// The error message.
+    required String error,
+  }) = CrawlEvent_Error;
+
+  /// The crawl has completed.
+  const factory CrawlEvent.complete({
+    /// Total number of pages crawled.
+    required PlatformInt64 pagesCrawled,
+  }) = CrawlEvent_Complete;
+}
+
 /// The result of crawling a single page during a crawl operation.
 class CrawlPageResult {
   /// The original URL of the page.
@@ -1090,6 +1150,28 @@ class CrawlResult {
           wasSkipped == other.wasSkipped &&
           error == other.error &&
           cookies == other.cookies;
+}
+
+/// Request to begin a single-URL streaming crawl.
+///
+/// Wraps a single seed URL for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+class CrawlStreamRequest {
+  /// The seed URL to crawl.
+  final String url;
+
+  const CrawlStreamRequest({required this.url});
+
+  @override
+  int get hashCode => url.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CrawlStreamRequest &&
+          runtimeType == other.runtimeType &&
+          url == other.url;
 }
 
 /// A downloaded asset from a page.

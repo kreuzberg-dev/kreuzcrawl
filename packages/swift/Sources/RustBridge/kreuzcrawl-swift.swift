@@ -134,6 +134,30 @@ public func batchCrawl<GenericIntoRustString: IntoRustString>(
     }
   }()
 }
+public func crawlEngineHandleCrawlStreamStart(
+  _ client: CrawlEngineHandleRef, _ req: CrawlStreamRequestRef
+) throws -> CrawlEngineHandleCrawlStreamStreamHandle {
+  try {
+    let val = __swift_bridge__$crawl_engine_handle_crawl_stream_start(client.ptr, req.ptr)
+    if val.is_ok {
+      return CrawlEngineHandleCrawlStreamStreamHandle(ptr: val.ok_or_err!)
+    } else {
+      throw RustString(ptr: val.ok_or_err!)
+    }
+  }()
+}
+public func crawlEngineHandleBatchCrawlStreamStart(
+  _ client: CrawlEngineHandleRef, _ req: BatchCrawlStreamRequestRef
+) throws -> CrawlEngineHandleBatchCrawlStreamStreamHandle {
+  try {
+    let val = __swift_bridge__$crawl_engine_handle_batch_crawl_stream_start(client.ptr, req.ptr)
+    if val.is_ok {
+      return CrawlEngineHandleBatchCrawlStreamStreamHandle(ptr: val.ok_or_err!)
+    } else {
+      throw RustString(ptr: val.ok_or_err!)
+    }
+  }()
+}
 public func crawlConfigFromJson<GenericIntoRustString: IntoRustString>(
   _ json: GenericIntoRustString
 ) throws -> CrawlConfig {
@@ -146,6 +170,40 @@ public func crawlConfigFromJson<GenericIntoRustString: IntoRustString>(
       }())
     if val.is_ok {
       return CrawlConfig(ptr: val.ok_or_err!)
+    } else {
+      throw RustString(ptr: val.ok_or_err!)
+    }
+  }()
+}
+public func crawlStreamRequestFromJson<GenericIntoRustString: IntoRustString>(
+  _ json: GenericIntoRustString
+) throws -> CrawlStreamRequest {
+  try {
+    let val = __swift_bridge__$crawl_stream_request_from_json(
+      {
+        let rustString = json.intoRustString()
+        rustString.isOwned = false
+        return rustString.ptr
+      }())
+    if val.is_ok {
+      return CrawlStreamRequest(ptr: val.ok_or_err!)
+    } else {
+      throw RustString(ptr: val.ok_or_err!)
+    }
+  }()
+}
+public func batchCrawlStreamRequestFromJson<GenericIntoRustString: IntoRustString>(
+  _ json: GenericIntoRustString
+) throws -> BatchCrawlStreamRequest {
+  try {
+    let val = __swift_bridge__$batch_crawl_stream_request_from_json(
+      {
+        let rustString = json.intoRustString()
+        rustString.isOwned = false
+        return rustString.ptr
+      }())
+    if val.is_ok {
+      return BatchCrawlStreamRequest(ptr: val.ok_or_err!)
     } else {
       throw RustString(ptr: val.ok_or_err!)
     }
@@ -4910,6 +4968,213 @@ extension PageMetadata: Vectorizable {
   }
 }
 
+public class CrawlStreamRequest: CrawlStreamRequestRefMut {
+  var isOwned: Bool = true
+
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+
+  deinit {
+    if isOwned {
+      __swift_bridge__$CrawlStreamRequest$_free(ptr)
+    }
+  }
+}
+extension CrawlStreamRequest {
+  public convenience init<GenericIntoRustString: IntoRustString>(_ url: GenericIntoRustString) {
+    self.init(
+      ptr: __swift_bridge__$CrawlStreamRequest$new(
+        {
+          let rustString = url.intoRustString()
+          rustString.isOwned = false
+          return rustString.ptr
+        }()))
+  }
+}
+public class CrawlStreamRequestRefMut: CrawlStreamRequestRef {
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+}
+public class CrawlStreamRequestRef {
+  var ptr: UnsafeMutableRawPointer
+
+  public init(ptr: UnsafeMutableRawPointer) {
+    self.ptr = ptr
+  }
+}
+extension CrawlStreamRequestRef {
+  public func url() -> RustString {
+    RustString(ptr: __swift_bridge__$CrawlStreamRequest$url(ptr))
+  }
+}
+extension CrawlStreamRequest: Vectorizable {
+  public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
+    __swift_bridge__$Vec_CrawlStreamRequest$new()
+  }
+
+  public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
+    __swift_bridge__$Vec_CrawlStreamRequest$drop(vecPtr)
+  }
+
+  public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: CrawlStreamRequest) {
+    __swift_bridge__$Vec_CrawlStreamRequest$push(
+      vecPtr,
+      {
+        value.isOwned = false
+        return value.ptr
+      }())
+  }
+
+  public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Self? {
+    let pointer = __swift_bridge__$Vec_CrawlStreamRequest$pop(vecPtr)
+    if pointer == nil {
+      return nil
+    } else {
+      return (CrawlStreamRequest(ptr: pointer!) as! Self)
+    }
+  }
+
+  public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> CrawlStreamRequestRef?
+  {
+    let pointer = __swift_bridge__$Vec_CrawlStreamRequest$get(vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return CrawlStreamRequestRef(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> CrawlStreamRequestRefMut?
+  {
+    let pointer = __swift_bridge__$Vec_CrawlStreamRequest$get_mut(vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return CrawlStreamRequestRefMut(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+    CrawlStreamRequestRef
+  > {
+    UnsafePointer<CrawlStreamRequestRef>(
+      OpaquePointer(__swift_bridge__$Vec_CrawlStreamRequest$as_ptr(vecPtr)))
+  }
+
+  public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
+    __swift_bridge__$Vec_CrawlStreamRequest$len(vecPtr)
+  }
+}
+
+public class BatchCrawlStreamRequest: BatchCrawlStreamRequestRefMut {
+  var isOwned: Bool = true
+
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+
+  deinit {
+    if isOwned {
+      __swift_bridge__$BatchCrawlStreamRequest$_free(ptr)
+    }
+  }
+}
+extension BatchCrawlStreamRequest {
+  public convenience init<GenericIntoRustString: IntoRustString>(
+    _ urls: RustVec<GenericIntoRustString>
+  ) {
+    self.init(
+      ptr: __swift_bridge__$BatchCrawlStreamRequest$new(
+        {
+          let val = urls
+          val.isOwned = false
+          return val.ptr
+        }()))
+  }
+}
+public class BatchCrawlStreamRequestRefMut: BatchCrawlStreamRequestRef {
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+}
+public class BatchCrawlStreamRequestRef {
+  var ptr: UnsafeMutableRawPointer
+
+  public init(ptr: UnsafeMutableRawPointer) {
+    self.ptr = ptr
+  }
+}
+extension BatchCrawlStreamRequestRef {
+  public func urls() -> RustVec<RustString> {
+    RustVec(ptr: __swift_bridge__$BatchCrawlStreamRequest$urls(ptr))
+  }
+}
+extension BatchCrawlStreamRequest: Vectorizable {
+  public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
+    __swift_bridge__$Vec_BatchCrawlStreamRequest$new()
+  }
+
+  public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
+    __swift_bridge__$Vec_BatchCrawlStreamRequest$drop(vecPtr)
+  }
+
+  public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: BatchCrawlStreamRequest)
+  {
+    __swift_bridge__$Vec_BatchCrawlStreamRequest$push(
+      vecPtr,
+      {
+        value.isOwned = false
+        return value.ptr
+      }())
+  }
+
+  public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Self? {
+    let pointer = __swift_bridge__$Vec_BatchCrawlStreamRequest$pop(vecPtr)
+    if pointer == nil {
+      return nil
+    } else {
+      return (BatchCrawlStreamRequest(ptr: pointer!) as! Self)
+    }
+  }
+
+  public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> BatchCrawlStreamRequestRef?
+  {
+    let pointer = __swift_bridge__$Vec_BatchCrawlStreamRequest$get(vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return BatchCrawlStreamRequestRef(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> BatchCrawlStreamRequestRefMut?
+  {
+    let pointer = __swift_bridge__$Vec_BatchCrawlStreamRequest$get_mut(vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return BatchCrawlStreamRequestRefMut(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+    BatchCrawlStreamRequestRef
+  > {
+    UnsafePointer<BatchCrawlStreamRequestRef>(
+      OpaquePointer(__swift_bridge__$Vec_BatchCrawlStreamRequest$as_ptr(vecPtr)))
+  }
+
+  public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
+    __swift_bridge__$Vec_BatchCrawlStreamRequest$len(vecPtr)
+  }
+}
+
 public class CitationResult: CitationResultRefMut {
   var isOwned: Bool = true
 
@@ -6196,5 +6461,304 @@ extension AssetCategory: Vectorizable {
 
   public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
     __swift_bridge__$Vec_AssetCategory$len(vecPtr)
+  }
+}
+
+public class CrawlEvent: CrawlEventRefMut {
+  var isOwned: Bool = true
+
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+
+  deinit {
+    if isOwned {
+      __swift_bridge__$CrawlEvent$_free(ptr)
+    }
+  }
+}
+public class CrawlEventRefMut: CrawlEventRef {
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+}
+public class CrawlEventRef {
+  var ptr: UnsafeMutableRawPointer
+
+  public init(ptr: UnsafeMutableRawPointer) {
+    self.ptr = ptr
+  }
+}
+extension CrawlEventRef {
+  public func to_string() -> RustString {
+    RustString(ptr: __swift_bridge__$CrawlEvent$to_string(ptr))
+  }
+}
+extension CrawlEvent: Vectorizable {
+  public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
+    __swift_bridge__$Vec_CrawlEvent$new()
+  }
+
+  public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
+    __swift_bridge__$Vec_CrawlEvent$drop(vecPtr)
+  }
+
+  public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: CrawlEvent) {
+    __swift_bridge__$Vec_CrawlEvent$push(
+      vecPtr,
+      {
+        value.isOwned = false
+        return value.ptr
+      }())
+  }
+
+  public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Self? {
+    let pointer = __swift_bridge__$Vec_CrawlEvent$pop(vecPtr)
+    if pointer == nil {
+      return nil
+    } else {
+      return (CrawlEvent(ptr: pointer!) as! Self)
+    }
+  }
+
+  public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> CrawlEventRef? {
+    let pointer = __swift_bridge__$Vec_CrawlEvent$get(vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return CrawlEventRef(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> CrawlEventRefMut?
+  {
+    let pointer = __swift_bridge__$Vec_CrawlEvent$get_mut(vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return CrawlEventRefMut(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<CrawlEventRef>
+  {
+    UnsafePointer<CrawlEventRef>(OpaquePointer(__swift_bridge__$Vec_CrawlEvent$as_ptr(vecPtr)))
+  }
+
+  public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
+    __swift_bridge__$Vec_CrawlEvent$len(vecPtr)
+  }
+}
+
+public class CrawlEngineHandleBatchCrawlStreamStreamHandle:
+  CrawlEngineHandleBatchCrawlStreamStreamHandleRefMut
+{
+  var isOwned: Bool = true
+
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+
+  deinit {
+    if isOwned {
+      __swift_bridge__$CrawlEngineHandleBatchCrawlStreamStreamHandle$_free(ptr)
+    }
+  }
+}
+public class CrawlEngineHandleBatchCrawlStreamStreamHandleRefMut:
+  CrawlEngineHandleBatchCrawlStreamStreamHandleRef
+{
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+}
+extension CrawlEngineHandleBatchCrawlStreamStreamHandleRefMut {
+  public func next() throws -> RustString {
+    try {
+      let val = __swift_bridge__$CrawlEngineHandleBatchCrawlStreamStreamHandle$next(ptr)
+      if val.is_ok {
+        return RustString(ptr: val.ok_or_err!)
+      } else {
+        throw RustString(ptr: val.ok_or_err!)
+      }
+    }()
+  }
+}
+public class CrawlEngineHandleBatchCrawlStreamStreamHandleRef {
+  var ptr: UnsafeMutableRawPointer
+
+  public init(ptr: UnsafeMutableRawPointer) {
+    self.ptr = ptr
+  }
+}
+extension CrawlEngineHandleBatchCrawlStreamStreamHandle: Vectorizable {
+  public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
+    __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$new()
+  }
+
+  public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
+    __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$drop(vecPtr)
+  }
+
+  public static func vecOfSelfPush(
+    vecPtr: UnsafeMutableRawPointer, value: CrawlEngineHandleBatchCrawlStreamStreamHandle
+  ) {
+    __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$push(
+      vecPtr,
+      {
+        value.isOwned = false
+        return value.ptr
+      }())
+  }
+
+  public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Self? {
+    let pointer = __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$pop(vecPtr)
+    if pointer == nil {
+      return nil
+    } else {
+      return (CrawlEngineHandleBatchCrawlStreamStreamHandle(ptr: pointer!) as! Self)
+    }
+  }
+
+  public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> CrawlEngineHandleBatchCrawlStreamStreamHandleRef?
+  {
+    let pointer = __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$get(
+      vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return CrawlEngineHandleBatchCrawlStreamStreamHandleRef(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> CrawlEngineHandleBatchCrawlStreamStreamHandleRefMut?
+  {
+    let pointer = __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$get_mut(
+      vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return CrawlEngineHandleBatchCrawlStreamStreamHandleRefMut(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+    CrawlEngineHandleBatchCrawlStreamStreamHandleRef
+  > {
+    UnsafePointer<CrawlEngineHandleBatchCrawlStreamStreamHandleRef>(
+      OpaquePointer(
+        __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$as_ptr(vecPtr)))
+  }
+
+  public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
+    __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$len(vecPtr)
+  }
+}
+
+public class CrawlEngineHandleCrawlStreamStreamHandle:
+  CrawlEngineHandleCrawlStreamStreamHandleRefMut
+{
+  var isOwned: Bool = true
+
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+
+  deinit {
+    if isOwned {
+      __swift_bridge__$CrawlEngineHandleCrawlStreamStreamHandle$_free(ptr)
+    }
+  }
+}
+public class CrawlEngineHandleCrawlStreamStreamHandleRefMut:
+  CrawlEngineHandleCrawlStreamStreamHandleRef
+{
+  public override init(ptr: UnsafeMutableRawPointer) {
+    super.init(ptr: ptr)
+  }
+}
+extension CrawlEngineHandleCrawlStreamStreamHandleRefMut {
+  public func next() throws -> RustString {
+    try {
+      let val = __swift_bridge__$CrawlEngineHandleCrawlStreamStreamHandle$next(ptr)
+      if val.is_ok {
+        return RustString(ptr: val.ok_or_err!)
+      } else {
+        throw RustString(ptr: val.ok_or_err!)
+      }
+    }()
+  }
+}
+public class CrawlEngineHandleCrawlStreamStreamHandleRef {
+  var ptr: UnsafeMutableRawPointer
+
+  public init(ptr: UnsafeMutableRawPointer) {
+    self.ptr = ptr
+  }
+}
+extension CrawlEngineHandleCrawlStreamStreamHandle: Vectorizable {
+  public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
+    __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$new()
+  }
+
+  public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
+    __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$drop(vecPtr)
+  }
+
+  public static func vecOfSelfPush(
+    vecPtr: UnsafeMutableRawPointer, value: CrawlEngineHandleCrawlStreamStreamHandle
+  ) {
+    __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$push(
+      vecPtr,
+      {
+        value.isOwned = false
+        return value.ptr
+      }())
+  }
+
+  public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Self? {
+    let pointer = __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$pop(vecPtr)
+    if pointer == nil {
+      return nil
+    } else {
+      return (CrawlEngineHandleCrawlStreamStreamHandle(ptr: pointer!) as! Self)
+    }
+  }
+
+  public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> CrawlEngineHandleCrawlStreamStreamHandleRef?
+  {
+    let pointer = __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$get(vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return CrawlEngineHandleCrawlStreamStreamHandleRef(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt)
+    -> CrawlEngineHandleCrawlStreamStreamHandleRefMut?
+  {
+    let pointer = __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$get_mut(
+      vecPtr, index)
+    if pointer == nil {
+      return nil
+    } else {
+      return CrawlEngineHandleCrawlStreamStreamHandleRefMut(ptr: pointer!)
+    }
+  }
+
+  public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+    CrawlEngineHandleCrawlStreamStreamHandleRef
+  > {
+    UnsafePointer<CrawlEngineHandleCrawlStreamStreamHandleRef>(
+      OpaquePointer(__swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$as_ptr(vecPtr)))
+  }
+
+  public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
+    __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$len(vecPtr)
   }
 }

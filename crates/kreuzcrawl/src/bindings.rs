@@ -7,7 +7,13 @@
 
 use crate::engine::CrawlEngine;
 use crate::error::CrawlError;
+#[cfg(not(target_arch = "wasm32"))]
+use crate::types::{BatchCrawlStreamRequest, CrawlEvent, CrawlStreamRequest};
 use crate::types::{CrawlConfig, CrawlResult, MapResult, ScrapeResult};
+#[cfg(not(target_arch = "wasm32"))]
+use futures::future::BoxFuture;
+#[cfg(not(target_arch = "wasm32"))]
+use futures::stream::{BoxStream, StreamExt};
 use serde::{Deserialize, Serialize};
 
 /// Opaque handle to a configured crawl engine.
@@ -17,6 +23,44 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone)]
 pub struct CrawlEngineHandle {
     inner: CrawlEngine,
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+impl CrawlEngineHandle {
+    /// Stream a single-URL crawl, yielding [`CrawlEvent`]s as pages are processed.
+    ///
+    /// Returns an async stream that emits one event per crawled page, plus a
+    /// terminal `Complete` event. On per-URL failure during the crawl, emits an
+    /// `Error` event followed by `Complete`. The stream item type is wrapped in
+    /// a `Result` to surface transport-level errors; today every emit is `Ok`.
+    pub fn crawl_stream(
+        &self,
+        req: CrawlStreamRequest,
+    ) -> BoxFuture<'static, Result<BoxStream<'static, Result<CrawlEvent, CrawlError>>, CrawlError>> {
+        let engine = self.inner.clone();
+        Box::pin(async move {
+            let stream = engine.crawl_stream(&req.url);
+            Ok(stream.map(Ok::<CrawlEvent, CrawlError>).boxed())
+        })
+    }
+
+    /// Stream a multi-URL crawl, yielding [`CrawlEvent`]s across all seeds.
+    ///
+    /// Returns an async stream that emits one event per crawled page across all
+    /// seeds, plus terminal `Complete` and `Error` events as appropriate. The
+    /// stream item type is wrapped in a `Result` to surface transport-level
+    /// errors; today every emit is `Ok`.
+    pub fn batch_crawl_stream(
+        &self,
+        req: BatchCrawlStreamRequest,
+    ) -> BoxFuture<'static, Result<BoxStream<'static, Result<CrawlEvent, CrawlError>>, CrawlError>> {
+        let engine = self.inner.clone();
+        Box::pin(async move {
+            let url_refs: Vec<&str> = req.urls.iter().map(String::as_str).collect();
+            let stream = engine.batch_crawl_stream(&url_refs);
+            Ok(stream.map(Ok::<CrawlEvent, CrawlError>).boxed())
+        })
+    }
 }
 
 /// Result from a single URL in a batch scrape operation.

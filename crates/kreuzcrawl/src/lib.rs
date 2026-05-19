@@ -63,3 +63,5 @@ pub use types::{
     ImageSource, JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta,
     ScrapeResult, SitemapUrl,
 };
+#[cfg(not(target_arch = "wasm32"))]
+pub use types::{BatchCrawlStreamRequest, CrawlEvent, CrawlStreamRequest};

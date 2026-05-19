@@ -360,6 +360,36 @@ internal extension ResponseMeta {
 /// Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 public typealias PageMetadata = RustBridge.PageMetadata
 
+/// Request to begin a single-URL streaming crawl.
+///
+/// Wraps a single seed URL for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+public struct CrawlStreamRequest: Codable, Sendable, Hashable {
+    /// The seed URL to crawl.
+    public let url: String
+    public init(url: String) {
+        self.url = url
+    }
+}
+
+// MARK: - Internal FFI conversions for CrawlStreamRequest
+internal extension CrawlStreamRequest {
+    init(_ rb: RustBridge.CrawlStreamRequest) throws {
+        self.url = rb.url().toString()
+    }
+    func intoRust() throws -> RustBridge.CrawlStreamRequest {
+        return RustBridge.CrawlStreamRequest(self.url)
+    }
+}
+
+/// Request to begin a multi-URL streaming crawl.
+///
+/// Wraps a set of seed URLs for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+public typealias BatchCrawlStreamRequest = RustBridge.BatchCrawlStreamRequest
+
 /// Result of citation conversion.
 public typealias CitationResult = RustBridge.CitationResult
 
@@ -390,12 +420,6 @@ internal extension CitationReference {
         return RustBridge.CitationReference(self.index, self.url, self.text)
     }
 }
-
-/// Opaque handle to a configured crawl engine.
-///
-/// Constructed via [`create_engine`] with an optional [`CrawlConfig`].
-/// Default implementations for all pluggable components are used internally.
-public typealias CrawlEngineHandle = RustBridge.CrawlEngineHandle
 
 /// Result from a single URL in a batch scrape operation.
 public typealias BatchScrapeResult = RustBridge.BatchScrapeResult
@@ -499,6 +523,24 @@ public enum AssetCategory {
     case other
 }
 
+/// An event emitted during a streaming crawl operation.
+///
+/// Not available on `wasm32` targets — streaming requires native concurrency
+/// primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+///
+/// Delivered to bindings via alef's streaming-adapter pattern. The
+/// `crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+/// expose this as the per-language streaming idiom (Python `AsyncIterator`,
+/// Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+public enum CrawlEvent {
+    /// A single page has been crawled.
+    case page(field0: CrawlPageResult)
+    /// An error occurred while crawling a URL.
+    case error(url: String, error: String)
+    /// The crawl has completed.
+    case complete(pagesCrawled: UInt)
+}
+
 /// Errors that can occur during crawling, scraping, or mapping operations.
 public enum CrawlError: Swift.Error {
     /// The requested page was not found (HTTP 404).
@@ -544,4 +586,13 @@ public enum CrawlError: Swift.Error {
 
 public func crawlConfigFromJson(_ json: String) throws -> CrawlConfig {
     return try RustBridge.crawlConfigFromJson(json)
+}
+
+public func crawlStreamRequestFromJson(_ json: String) throws -> CrawlStreamRequest {
+    let data = json.data(using: .utf8) ?? Data()
+    return try JSONDecoder().decode(CrawlStreamRequest.self, from: data)
+}
+
+public func batchCrawlStreamRequestFromJson(_ json: String) throws -> BatchCrawlStreamRequest {
+    return try RustBridge.batchCrawlStreamRequestFromJson(json)
 }

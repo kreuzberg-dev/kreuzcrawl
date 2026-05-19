@@ -16,6 +16,21 @@
     clippy::inherent_to_string
 )]
 
+/// Process-wide tokio runtime shared across every swift-bridge async wrapper.
+///
+/// alef-emitted; see shims.rs for the rationale (orphaned reqwest connection
+/// pools when each call creates and drops its own current-thread runtime).
+fn __alef_tokio_runtime() -> &'static ::tokio::runtime::Runtime {
+    use std::sync::OnceLock;
+    static RT: OnceLock<::tokio::runtime::Runtime> = OnceLock::new();
+    RT.get_or_init(|| {
+        ::tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .build()
+            .expect("build process-wide alef tokio runtime")
+    })
+}
+
 #[swift_bridge::bridge]
 mod ffi {
     extern "Rust" {
@@ -620,6 +635,20 @@ mod ffi {
     }
 
     extern "Rust" {
+        type CrawlStreamRequest;
+        #[swift_bridge(init)]
+        fn new(url: String) -> CrawlStreamRequest;
+        fn url(&self) -> String;
+    }
+
+    extern "Rust" {
+        type BatchCrawlStreamRequest;
+        #[swift_bridge(init)]
+        fn new(urls: Vec<String>) -> BatchCrawlStreamRequest;
+        fn urls(&self) -> Vec<String>;
+    }
+
+    extern "Rust" {
         type CitationResult;
         #[swift_bridge(init)]
         fn new(content: String, references: Vec<CitationReference>) -> CitationResult;
@@ -699,6 +728,11 @@ mod ffi {
     }
 
     extern "Rust" {
+        type CrawlEvent;
+        fn to_string(&self) -> String;
+    }
+
+    extern "Rust" {
         #[swift_bridge(swift_name = "generateCitations")]
         fn generate_citations(markdown: String) -> CitationResult;
         #[swift_bridge(swift_name = "createEngine")]
@@ -714,9 +748,31 @@ mod ffi {
     }
 
     extern "Rust" {
+        type CrawlEngineHandleCrawlStreamStreamHandle;
+        type CrawlEngineHandleBatchCrawlStreamStreamHandle;
+
+        #[swift_bridge(swift_name = "crawlEngineHandleCrawlStreamStart")]
+        fn crawl_engine_handle_crawl_stream_start(
+            client: &CrawlEngineHandle,
+            req: &CrawlStreamRequest,
+        ) -> Result<CrawlEngineHandleCrawlStreamStreamHandle, String>;
+        fn next(self: &mut CrawlEngineHandleCrawlStreamStreamHandle) -> Result<String, String>;
+        #[swift_bridge(swift_name = "crawlEngineHandleBatchCrawlStreamStart")]
+        fn crawl_engine_handle_batch_crawl_stream_start(
+            client: &CrawlEngineHandle,
+            req: &BatchCrawlStreamRequest,
+        ) -> Result<CrawlEngineHandleBatchCrawlStreamStreamHandle, String>;
+        fn next(self: &mut CrawlEngineHandleBatchCrawlStreamStreamHandle) -> Result<String, String>;
+    }
+
+    extern "Rust" {
 
         #[swift_bridge(swift_name = "crawlConfigFromJson")]
         fn crawl_config_from_json(json: String) -> Result<CrawlConfig, String>;
+        #[swift_bridge(swift_name = "crawlStreamRequestFromJson")]
+        fn crawl_stream_request_from_json(json: String) -> Result<CrawlStreamRequest, String>;
+        #[swift_bridge(swift_name = "batchCrawlStreamRequestFromJson")]
+        fn batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String>;
     }
 }
 
@@ -3029,6 +3085,41 @@ impl PageMetadata {
     }
 }
 
+pub struct CrawlStreamRequest(pub kreuzcrawl::CrawlStreamRequest);
+impl CrawlStreamRequest {
+    pub fn new(url: String) -> CrawlStreamRequest {
+        let mut __target: kreuzcrawl::CrawlStreamRequest = ::std::default::Default::default();
+        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
+            if let Ok(t) = ::serde_json::from_value(v) {
+                __target.url = t;
+            }
+        }
+        CrawlStreamRequest(__target)
+    }
+    pub fn url(&self) -> String {
+        self.0.url.clone()
+    }
+}
+
+pub struct BatchCrawlStreamRequest(pub kreuzcrawl::BatchCrawlStreamRequest);
+impl BatchCrawlStreamRequest {
+    pub fn new(urls: Vec<String>) -> BatchCrawlStreamRequest {
+        let mut __target: kreuzcrawl::BatchCrawlStreamRequest = ::std::default::Default::default();
+        if let Ok(__v) = ::serde_json::to_value(urls) {
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.urls = t;
+            }
+        }
+        BatchCrawlStreamRequest(__target)
+    }
+    pub fn urls(&self) -> Vec<String> {
+        ::serde_json::to_value(&self.0.urls)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+}
+
 pub struct CitationResult(pub kreuzcrawl::CitationResult);
 impl CitationResult {
     pub fn new(content: String, references: Vec<CitationReference>) -> CitationResult {
@@ -3377,6 +3468,27 @@ impl AssetCategory {
     }
 }
 
+pub enum CrawlEvent {
+    /// Data variants not directly bridgeable — represented as Unknown.
+    Unknown,
+}
+
+impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
+    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
+        match val {
+            _ => Self::Unknown,
+        }
+    }
+}
+
+impl CrawlEvent {
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Unknown => "unknown".to_string(),
+        }
+    }
+}
+
 pub fn generate_citations(markdown: String) -> CitationResult {
     CitationResult(kreuzcrawl::generate_citations(&markdown))
 }
@@ -3388,72 +3500,218 @@ pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, S
 }
 
 pub fn scrape(engine: CrawlEngineHandle, url: String) -> Result<ScrapeResult, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::scrape(&engine.0, &url)
-                .await
-                .map_err(|e| e.to_string())
-                .map(ScrapeResult)
-        })
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::scrape(&engine.0, &url)
+            .await
+            .map_err(|e| e.to_string())
+            .map(ScrapeResult)
+    })
 }
 
 pub fn crawl(engine: CrawlEngineHandle, url: String) -> Result<CrawlResult, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::crawl(&engine.0, &url)
-                .await
-                .map_err(|e| e.to_string())
-                .map(CrawlResult)
-        })
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::crawl(&engine.0, &url)
+            .await
+            .map_err(|e| e.to_string())
+            .map(CrawlResult)
+    })
 }
 
 pub fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResult, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::map_urls(&engine.0, &url)
-                .await
-                .map_err(|e| e.to_string())
-                .map(MapResult)
-        })
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::map_urls(&engine.0, &url)
+            .await
+            .map_err(|e| e.to_string())
+            .map(MapResult)
+    })
 }
 
 pub fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::batch_scrape(&engine.0, urls)
-                .await
-                .map_err(|e| e.to_string())
-                .map(|v| v.into_iter().map(BatchScrapeResult).collect::<Vec<_>>())
-        })
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::batch_scrape(&engine.0, urls)
+            .await
+            .map_err(|e| e.to_string())
+            .map(|v| v.into_iter().map(BatchScrapeResult).collect::<Vec<_>>())
+    })
 }
 
 pub fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, String> {
-    ::tokio::runtime::Builder::new_current_thread()
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::batch_crawl(&engine.0, urls)
+            .await
+            .map_err(|e| e.to_string())
+            .map(|v| v.into_iter().map(BatchCrawlResult).collect::<Vec<_>>())
+    })
+}
+
+/// Opaque handle owning a tokio runtime and a boxed `CrawlEvent` stream.
+///
+/// Created by `crawl_engine_handle_crawl_stream_start`, advanced via `next()`. Drop runs when the
+/// Swift handle goes out of scope (swift-bridge generates the matching
+/// `deinit`), so explicit cleanup from Swift is unnecessary.
+///
+/// Items are JSON-encoded at the bridge boundary because swift-bridge's
+/// `Option<OpaqueRust>` support varies across versions, while `Result<String,
+/// String>` is well-tested. An empty string `""` is the EOF sentinel —
+/// no valid JSON value is the empty string.
+pub struct CrawlEngineHandleCrawlStreamStreamHandle {
+    rt: ::tokio::runtime::Runtime,
+    stream: ::std::sync::Mutex<
+        Option<
+            ::futures_util::stream::BoxStream<
+                'static,
+                Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+            >,
+        >,
+    >,
+}
+
+/// Start a streaming `CrawlEngineHandle::crawl_stream` request.
+///
+/// Returns a fresh `CrawlEngineHandleCrawlStreamStreamHandle` whose ownership transfers to the
+/// Swift caller (swift-bridge boxes the handle internally).
+pub fn crawl_engine_handle_crawl_stream_start(
+    client: &CrawlEngineHandle,
+    req: &CrawlStreamRequest,
+) -> Result<CrawlEngineHandleCrawlStreamStreamHandle, String> {
+    use ::futures_util::StreamExt;
+    let rt = ::tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(1)
         .enable_all()
         .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::batch_crawl(&engine.0, urls)
-                .await
-                .map_err(|e| e.to_string())
-                .map(|v| v.into_iter().map(BatchCrawlResult).collect::<Vec<_>>())
-        })
+        .map_err(|e| format!("build tokio runtime: {e}"))?;
+    let raw = rt.block_on(async { client.0.crawl_stream(req.0.clone()).await.map_err(|e| e.to_string()) })?;
+    let erased: ::futures_util::stream::BoxStream<
+        'static,
+        Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+    > = Box::pin(raw.map(|r| r.map_err(|e| Box::new(e) as Box<dyn ::std::error::Error + Send + Sync + 'static>)));
+    Ok(CrawlEngineHandleCrawlStreamStreamHandle {
+        rt,
+        stream: ::std::sync::Mutex::new(Some(erased)),
+    })
+}
+
+impl CrawlEngineHandleCrawlStreamStreamHandle {
+    /// Advance the stream and return the next chunk JSON, or `""` on clean
+    /// end-of-stream. Returns `Err(message)` on a stream-level error.
+    pub fn next(&mut self) -> Result<String, String> {
+        let mut guard = self
+            .stream
+            .lock()
+            .map_err(|_| "CrawlEngineHandleCrawlStreamStreamHandle::next: stream mutex poisoned".to_string())?;
+        let stream = match guard.as_mut() {
+            Some(s) => s,
+            None => return Ok(String::new()),
+        };
+        use ::futures_util::StreamExt;
+        match self.rt.block_on(stream.next()) {
+            Some(Ok(item)) => ::serde_json::to_string(&item).map_err(|e| e.to_string()),
+            Some(Err(e)) => {
+                *guard = None;
+                Err(e.to_string())
+            }
+            None => {
+                *guard = None;
+                Ok(String::new())
+            }
+        }
+    }
+}
+
+/// Opaque handle owning a tokio runtime and a boxed `CrawlEvent` stream.
+///
+/// Created by `crawl_engine_handle_batch_crawl_stream_start`, advanced via `next()`. Drop runs when the
+/// Swift handle goes out of scope (swift-bridge generates the matching
+/// `deinit`), so explicit cleanup from Swift is unnecessary.
+///
+/// Items are JSON-encoded at the bridge boundary because swift-bridge's
+/// `Option<OpaqueRust>` support varies across versions, while `Result<String,
+/// String>` is well-tested. An empty string `""` is the EOF sentinel —
+/// no valid JSON value is the empty string.
+pub struct CrawlEngineHandleBatchCrawlStreamStreamHandle {
+    rt: ::tokio::runtime::Runtime,
+    stream: ::std::sync::Mutex<
+        Option<
+            ::futures_util::stream::BoxStream<
+                'static,
+                Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+            >,
+        >,
+    >,
+}
+
+/// Start a streaming `CrawlEngineHandle::batch_crawl_stream` request.
+///
+/// Returns a fresh `CrawlEngineHandleBatchCrawlStreamStreamHandle` whose ownership transfers to the
+/// Swift caller (swift-bridge boxes the handle internally).
+pub fn crawl_engine_handle_batch_crawl_stream_start(
+    client: &CrawlEngineHandle,
+    req: &BatchCrawlStreamRequest,
+) -> Result<CrawlEngineHandleBatchCrawlStreamStreamHandle, String> {
+    use ::futures_util::StreamExt;
+    let rt = ::tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(1)
+        .enable_all()
+        .build()
+        .map_err(|e| format!("build tokio runtime: {e}"))?;
+    let raw = rt.block_on(async {
+        client
+            .0
+            .batch_crawl_stream(req.0.clone())
+            .await
+            .map_err(|e| e.to_string())
+    })?;
+    let erased: ::futures_util::stream::BoxStream<
+        'static,
+        Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+    > = Box::pin(raw.map(|r| r.map_err(|e| Box::new(e) as Box<dyn ::std::error::Error + Send + Sync + 'static>)));
+    Ok(CrawlEngineHandleBatchCrawlStreamStreamHandle {
+        rt,
+        stream: ::std::sync::Mutex::new(Some(erased)),
+    })
+}
+
+impl CrawlEngineHandleBatchCrawlStreamStreamHandle {
+    /// Advance the stream and return the next chunk JSON, or `""` on clean
+    /// end-of-stream. Returns `Err(message)` on a stream-level error.
+    pub fn next(&mut self) -> Result<String, String> {
+        let mut guard = self
+            .stream
+            .lock()
+            .map_err(|_| "CrawlEngineHandleBatchCrawlStreamStreamHandle::next: stream mutex poisoned".to_string())?;
+        let stream = match guard.as_mut() {
+            Some(s) => s,
+            None => return Ok(String::new()),
+        };
+        use ::futures_util::StreamExt;
+        match self.rt.block_on(stream.next()) {
+            Some(Ok(item)) => ::serde_json::to_string(&item).map_err(|e| e.to_string()),
+            Some(Err(e)) => {
+                *guard = None;
+                Err(e.to_string())
+            }
+            None => {
+                *guard = None;
+                Ok(String::new())
+            }
+        }
+    }
 }
 
 pub fn crawl_config_from_json(json: String) -> Result<CrawlConfig, String> {
     serde_json::from_str::<kreuzcrawl::CrawlConfig>(&json)
         .map(CrawlConfig)
+        .map_err(|e| e.to_string())
+}
+
+pub fn crawl_stream_request_from_json(json: String) -> Result<CrawlStreamRequest, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlStreamRequest>(&json)
+        .map(CrawlStreamRequest)
+        .map_err(|e| e.to_string())
+}
+
+pub fn batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlStreamRequest>(&json)
+        .map(BatchCrawlStreamRequest)
         .map_err(|e| e.to_string())
 }

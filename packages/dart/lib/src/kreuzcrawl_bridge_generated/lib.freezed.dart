@@ -384,4 +384,373 @@ as String,
 
 }
 
+/// @nodoc
+mixin _$CrawlEvent {
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlEvent);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CrawlEvent()';
+}
+
+
+}
+
+/// @nodoc
+class $CrawlEventCopyWith<$Res>  {
+$CrawlEventCopyWith(CrawlEvent _, $Res Function(CrawlEvent) __);
+}
+
+
+/// Adds pattern-matching-related methods to [CrawlEvent].
+extension CrawlEventPatterns on CrawlEvent {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CrawlEvent_Page value)?  page,TResult Function( CrawlEvent_Error value)?  error,TResult Function( CrawlEvent_Complete value)?  complete,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case CrawlEvent_Page() when page != null:
+return page(_that);case CrawlEvent_Error() when error != null:
+return error(_that);case CrawlEvent_Complete() when complete != null:
+return complete(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CrawlEvent_Page value)  page,required TResult Function( CrawlEvent_Error value)  error,required TResult Function( CrawlEvent_Complete value)  complete,}){
+final _that = this;
+switch (_that) {
+case CrawlEvent_Page():
+return page(_that);case CrawlEvent_Error():
+return error(_that);case CrawlEvent_Complete():
+return complete(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CrawlEvent_Page value)?  page,TResult? Function( CrawlEvent_Error value)?  error,TResult? Function( CrawlEvent_Complete value)?  complete,}){
+final _that = this;
+switch (_that) {
+case CrawlEvent_Page() when page != null:
+return page(_that);case CrawlEvent_Error() when error != null:
+return error(_that);case CrawlEvent_Complete() when complete != null:
+return complete(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( CrawlPageResult field0)?  page,TResult Function( String url,  String error)?  error,TResult Function( PlatformInt64 pagesCrawled)?  complete,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case CrawlEvent_Page() when page != null:
+return page(_that.field0);case CrawlEvent_Error() when error != null:
+return error(_that.url,_that.error);case CrawlEvent_Complete() when complete != null:
+return complete(_that.pagesCrawled);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( CrawlPageResult field0)  page,required TResult Function( String url,  String error)  error,required TResult Function( PlatformInt64 pagesCrawled)  complete,}) {final _that = this;
+switch (_that) {
+case CrawlEvent_Page():
+return page(_that.field0);case CrawlEvent_Error():
+return error(_that.url,_that.error);case CrawlEvent_Complete():
+return complete(_that.pagesCrawled);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( CrawlPageResult field0)?  page,TResult? Function( String url,  String error)?  error,TResult? Function( PlatformInt64 pagesCrawled)?  complete,}) {final _that = this;
+switch (_that) {
+case CrawlEvent_Page() when page != null:
+return page(_that.field0);case CrawlEvent_Error() when error != null:
+return error(_that.url,_that.error);case CrawlEvent_Complete() when complete != null:
+return complete(_that.pagesCrawled);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class CrawlEvent_Page extends CrawlEvent {
+  const CrawlEvent_Page({required this.field0}): super._();
+  
+
+ final  CrawlPageResult field0;
+
+/// Create a copy of CrawlEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlEvent_PageCopyWith<CrawlEvent_Page> get copyWith => _$CrawlEvent_PageCopyWithImpl<CrawlEvent_Page>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlEvent_Page&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlEvent.page(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlEvent_PageCopyWith<$Res> implements $CrawlEventCopyWith<$Res> {
+  factory $CrawlEvent_PageCopyWith(CrawlEvent_Page value, $Res Function(CrawlEvent_Page) _then) = _$CrawlEvent_PageCopyWithImpl;
+@useResult
+$Res call({
+ CrawlPageResult field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlEvent_PageCopyWithImpl<$Res>
+    implements $CrawlEvent_PageCopyWith<$Res> {
+  _$CrawlEvent_PageCopyWithImpl(this._self, this._then);
+
+  final CrawlEvent_Page _self;
+  final $Res Function(CrawlEvent_Page) _then;
+
+/// Create a copy of CrawlEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlEvent_Page(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as CrawlPageResult,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlEvent_Error extends CrawlEvent {
+  const CrawlEvent_Error({required this.url, required this.error}): super._();
+  
+
+/// The URL that failed.
+ final  String url;
+/// The error message.
+ final  String error;
+
+/// Create a copy of CrawlEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlEvent_ErrorCopyWith<CrawlEvent_Error> get copyWith => _$CrawlEvent_ErrorCopyWithImpl<CrawlEvent_Error>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlEvent_Error&&(identical(other.url, url) || other.url == url)&&(identical(other.error, error) || other.error == error));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,url,error);
+
+@override
+String toString() {
+  return 'CrawlEvent.error(url: $url, error: $error)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlEvent_ErrorCopyWith<$Res> implements $CrawlEventCopyWith<$Res> {
+  factory $CrawlEvent_ErrorCopyWith(CrawlEvent_Error value, $Res Function(CrawlEvent_Error) _then) = _$CrawlEvent_ErrorCopyWithImpl;
+@useResult
+$Res call({
+ String url, String error
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlEvent_ErrorCopyWithImpl<$Res>
+    implements $CrawlEvent_ErrorCopyWith<$Res> {
+  _$CrawlEvent_ErrorCopyWithImpl(this._self, this._then);
+
+  final CrawlEvent_Error _self;
+  final $Res Function(CrawlEvent_Error) _then;
+
+/// Create a copy of CrawlEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? url = null,Object? error = null,}) {
+  return _then(CrawlEvent_Error(
+url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,error: null == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlEvent_Complete extends CrawlEvent {
+  const CrawlEvent_Complete({required this.pagesCrawled}): super._();
+  
+
+/// Total number of pages crawled.
+ final  PlatformInt64 pagesCrawled;
+
+/// Create a copy of CrawlEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlEvent_CompleteCopyWith<CrawlEvent_Complete> get copyWith => _$CrawlEvent_CompleteCopyWithImpl<CrawlEvent_Complete>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlEvent_Complete&&(identical(other.pagesCrawled, pagesCrawled) || other.pagesCrawled == pagesCrawled));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,pagesCrawled);
+
+@override
+String toString() {
+  return 'CrawlEvent.complete(pagesCrawled: $pagesCrawled)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlEvent_CompleteCopyWith<$Res> implements $CrawlEventCopyWith<$Res> {
+  factory $CrawlEvent_CompleteCopyWith(CrawlEvent_Complete value, $Res Function(CrawlEvent_Complete) _then) = _$CrawlEvent_CompleteCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 pagesCrawled
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlEvent_CompleteCopyWithImpl<$Res>
+    implements $CrawlEvent_CompleteCopyWith<$Res> {
+  _$CrawlEvent_CompleteCopyWithImpl(this._self, this._then);
+
+  final CrawlEvent_Complete _self;
+  final $Res Function(CrawlEvent_Complete) _then;
+
+/// Create a copy of CrawlEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? pagesCrawled = null,}) {
+  return _then(CrawlEvent_Complete(
+pagesCrawled: null == pagesCrawled ? _self.pagesCrawled : pagesCrawled // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,
+  ));
+}
+
+
+}
+
 // dart format on

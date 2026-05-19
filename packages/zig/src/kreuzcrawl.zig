@@ -653,6 +653,27 @@ pub const PageMetadata = struct {
     word_count: ?u64,
 };
 
+/// Request to begin a single-URL streaming crawl.
+///
+/// Wraps a single seed URL for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+pub const CrawlStreamRequest = struct {
+    /// The seed URL to crawl.
+    url: []const u8,
+};
+
+/// Request to begin a multi-URL streaming crawl.
+///
+/// Wraps a set of seed URLs for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+pub const BatchCrawlStreamRequest = struct {
+    /// The seed URLs to crawl. Each URL is followed independently up to the
+    /// engine's configured depth.
+    urls: []const []const u8,
+};
+
 /// Result of citation conversion.
 pub const CitationResult = struct {
     /// Markdown with links replaced by numbered citations.
@@ -792,6 +813,27 @@ pub const AssetCategory = enum {
     data,
     /// An unrecognized asset type.
     other,
+};
+
+/// An event emitted during a streaming crawl operation.
+///
+/// Not available on `wasm32` targets — streaming requires native concurrency
+/// primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+///
+/// Delivered to bindings via alef's streaming-adapter pattern. The
+/// `crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+/// expose this as the per-language streaming idiom (Python `AsyncIterator`,
+/// Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+pub const CrawlEvent = union(enum) {
+    /// A single page has been crawled.
+    page: CrawlPageResult,
+    /// An error occurred while crawling a URL.
+    error_: struct {
+        url: []const u8,
+        error_: []const u8,
+    },
+    /// The crawl has completed.
+    complete: u64,
 };
 
 /// Convert markdown links to numbered citations.
@@ -957,6 +999,74 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
 /// Default implementations for all pluggable components are used internally.
 pub const CrawlEngineHandle = struct {
     _handle: *anyopaque,
+
+    /// Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
+    ///
+    /// Returns an async stream that emits one event per crawled page, plus a
+    /// terminal `Complete` event. On per-URL failure during the crawl, emits an
+    /// `Error` event followed by `Complete`. The stream item type is wrapped in
+    /// a `Result` to surface transport-level errors; today every emit is `Ok`.
+    pub fn crawl_stream(self: *CrawlEngineHandle, req: []const u8) (CrawlError || error{OutOfMemory})![]u8 {
+        const req_z = try std.heap.c_allocator.dupeZ(u8, req);
+        const req_handle = c.kcrawl_crawl_stream_request_from_json(req_z.ptr);
+        std.heap.c_allocator.free(req_z);
+        if (req_handle == null) {
+            return _first_error(CrawlError);
+        }
+        defer c.kcrawl_crawl_stream_request_free(req_handle);
+        const _stream_handle = c.kcrawl_crawl_engine_handle_crawl_stream_start(@as(*c.KCRAWLCrawlEngineHandle, @ptrCast(self._handle)), req_handle);
+        if (_stream_handle == null) {
+            return _first_error(CrawlError);
+        }
+        defer c.kcrawl_crawl_engine_handle_crawl_stream_free(_stream_handle);
+        var _last_json: ?[]u8 = null;
+        while (true) {
+            const _chunk = c.kcrawl_crawl_engine_handle_crawl_stream_next(_stream_handle);
+            if (_chunk == null) break;
+            if (_last_json) |j| std.heap.c_allocator.free(j);
+            const _chunk_json_ptr = c.kcrawl_crawl_event_to_json(_chunk);
+            c.kcrawl_crawl_event_free(_chunk);
+            if (_chunk_json_ptr == null) continue;
+            const _chunk_slice = std.mem.span(_chunk_json_ptr);
+            _last_json = try std.heap.c_allocator.dupe(u8, _chunk_slice);
+            c.kcrawl_free_string(_chunk_json_ptr);
+        }
+        return _last_json orelse try std.heap.c_allocator.dupe(u8, "{}");
+    }
+
+    /// Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
+    ///
+    /// Returns an async stream that emits one event per crawled page across all
+    /// seeds, plus terminal `Complete` and `Error` events as appropriate. The
+    /// stream item type is wrapped in a `Result` to surface transport-level
+    /// errors; today every emit is `Ok`.
+    pub fn batch_crawl_stream(self: *CrawlEngineHandle, req: []const u8) (CrawlError || error{OutOfMemory})![]u8 {
+        const req_z = try std.heap.c_allocator.dupeZ(u8, req);
+        const req_handle = c.kcrawl_batch_crawl_stream_request_from_json(req_z.ptr);
+        std.heap.c_allocator.free(req_z);
+        if (req_handle == null) {
+            return _first_error(CrawlError);
+        }
+        defer c.kcrawl_batch_crawl_stream_request_free(req_handle);
+        const _stream_handle = c.kcrawl_crawl_engine_handle_batch_crawl_stream_start(@as(*c.KCRAWLCrawlEngineHandle, @ptrCast(self._handle)), req_handle);
+        if (_stream_handle == null) {
+            return _first_error(CrawlError);
+        }
+        defer c.kcrawl_crawl_engine_handle_batch_crawl_stream_free(_stream_handle);
+        var _last_json: ?[]u8 = null;
+        while (true) {
+            const _chunk = c.kcrawl_crawl_engine_handle_batch_crawl_stream_next(_stream_handle);
+            if (_chunk == null) break;
+            if (_last_json) |j| std.heap.c_allocator.free(j);
+            const _chunk_json_ptr = c.kcrawl_crawl_event_to_json(_chunk);
+            c.kcrawl_crawl_event_free(_chunk);
+            if (_chunk_json_ptr == null) continue;
+            const _chunk_slice = std.mem.span(_chunk_json_ptr);
+            _last_json = try std.heap.c_allocator.dupe(u8, _chunk_slice);
+            c.kcrawl_free_string(_chunk_json_ptr);
+        }
+        return _last_json orelse try std.heap.c_allocator.dupe(u8, "{}");
+    }
 
     /// Release the underlying FFI handle. Safe to call once per instance.
     pub fn free(self: *CrawlEngineHandle) void {

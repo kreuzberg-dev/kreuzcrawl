@@ -4,6 +4,8 @@ mod config;
 mod discovery;
 mod metadata;
 mod results;
+#[cfg(not(target_arch = "wasm32"))]
+mod streaming;
 
 pub use config::{
     AuthConfig, BrowserBackend, BrowserConfig, BrowserMode, BrowserWait, ContentConfig, CrawlConfig, ExtractionMeta,
@@ -20,3 +22,5 @@ pub use results::{
     BrowserExtras, CachedPage, CrawlPageResult, CrawlResult, DownloadedDocument, MapResult, MarkdownResult,
     ScrapeResult, SitemapUrl,
 };
+#[cfg(not(target_arch = "wasm32"))]
+pub use streaming::{BatchCrawlStreamRequest, CrawlStreamRequest};

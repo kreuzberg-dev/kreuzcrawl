@@ -473,6 +473,30 @@ void* __swift_bridge__$Vec_PageMetadata$get_mut(void* vec_ptr, uintptr_t index);
 uintptr_t __swift_bridge__$Vec_PageMetadata$len(void* vec_ptr);
 void* __swift_bridge__$Vec_PageMetadata$as_ptr(void* vec_ptr);
 
+typedef struct CrawlStreamRequest CrawlStreamRequest;
+void __swift_bridge__$CrawlStreamRequest$_free(void* self);
+
+void* __swift_bridge__$Vec_CrawlStreamRequest$new(void);
+void __swift_bridge__$Vec_CrawlStreamRequest$drop(void* vec_ptr);
+void __swift_bridge__$Vec_CrawlStreamRequest$push(void* vec_ptr, void* item_ptr);
+void* __swift_bridge__$Vec_CrawlStreamRequest$pop(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlStreamRequest$get(void* vec_ptr, uintptr_t index);
+void* __swift_bridge__$Vec_CrawlStreamRequest$get_mut(void* vec_ptr, uintptr_t index);
+uintptr_t __swift_bridge__$Vec_CrawlStreamRequest$len(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlStreamRequest$as_ptr(void* vec_ptr);
+
+typedef struct BatchCrawlStreamRequest BatchCrawlStreamRequest;
+void __swift_bridge__$BatchCrawlStreamRequest$_free(void* self);
+
+void* __swift_bridge__$Vec_BatchCrawlStreamRequest$new(void);
+void __swift_bridge__$Vec_BatchCrawlStreamRequest$drop(void* vec_ptr);
+void __swift_bridge__$Vec_BatchCrawlStreamRequest$push(void* vec_ptr, void* item_ptr);
+void* __swift_bridge__$Vec_BatchCrawlStreamRequest$pop(void* vec_ptr);
+void* __swift_bridge__$Vec_BatchCrawlStreamRequest$get(void* vec_ptr, uintptr_t index);
+void* __swift_bridge__$Vec_BatchCrawlStreamRequest$get_mut(void* vec_ptr, uintptr_t index);
+uintptr_t __swift_bridge__$Vec_BatchCrawlStreamRequest$len(void* vec_ptr);
+void* __swift_bridge__$Vec_BatchCrawlStreamRequest$as_ptr(void* vec_ptr);
+
 typedef struct CitationResult CitationResult;
 void __swift_bridge__$CitationResult$_free(void* self);
 
@@ -628,6 +652,42 @@ void* __swift_bridge__$Vec_AssetCategory$get(void* vec_ptr, uintptr_t index);
 void* __swift_bridge__$Vec_AssetCategory$get_mut(void* vec_ptr, uintptr_t index);
 uintptr_t __swift_bridge__$Vec_AssetCategory$len(void* vec_ptr);
 void* __swift_bridge__$Vec_AssetCategory$as_ptr(void* vec_ptr);
+
+typedef struct CrawlEvent CrawlEvent;
+void __swift_bridge__$CrawlEvent$_free(void* self);
+
+void* __swift_bridge__$Vec_CrawlEvent$new(void);
+void __swift_bridge__$Vec_CrawlEvent$drop(void* vec_ptr);
+void __swift_bridge__$Vec_CrawlEvent$push(void* vec_ptr, void* item_ptr);
+void* __swift_bridge__$Vec_CrawlEvent$pop(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlEvent$get(void* vec_ptr, uintptr_t index);
+void* __swift_bridge__$Vec_CrawlEvent$get_mut(void* vec_ptr, uintptr_t index);
+uintptr_t __swift_bridge__$Vec_CrawlEvent$len(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlEvent$as_ptr(void* vec_ptr);
+
+typedef struct CrawlEngineHandleBatchCrawlStreamStreamHandle CrawlEngineHandleBatchCrawlStreamStreamHandle;
+void __swift_bridge__$CrawlEngineHandleBatchCrawlStreamStreamHandle$_free(void* self);
+
+void* __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$new(void);
+void __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$drop(void* vec_ptr);
+void __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$push(void* vec_ptr, void* item_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$pop(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$get(void* vec_ptr, uintptr_t index);
+void* __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$get_mut(void* vec_ptr, uintptr_t index);
+uintptr_t __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$len(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandleBatchCrawlStreamStreamHandle$as_ptr(void* vec_ptr);
+
+typedef struct CrawlEngineHandleCrawlStreamStreamHandle CrawlEngineHandleCrawlStreamStreamHandle;
+void __swift_bridge__$CrawlEngineHandleCrawlStreamStreamHandle$_free(void* self);
+
+void* __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$new(void);
+void __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$drop(void* vec_ptr);
+void __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$push(void* vec_ptr, void* item_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$pop(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$get(void* vec_ptr, uintptr_t index);
+void* __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$get_mut(void* vec_ptr, uintptr_t index);
+uintptr_t __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$len(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$as_ptr(void* vec_ptr);
 
 void* __swift_bridge__$ExtractionMeta$new(struct __private__OptionF64 cost, struct __private__OptionU64 prompt_tokens, struct __private__OptionU64 completion_tokens, void* model, uintptr_t chunks_processed);
 struct __private__OptionF64 __swift_bridge__$ExtractionMeta$cost(void* self);
@@ -885,6 +945,10 @@ void* __swift_bridge__$PageMetadata$hreflangs(void* self);
 void* __swift_bridge__$PageMetadata$favicons(void* self);
 void* __swift_bridge__$PageMetadata$headings(void* self);
 struct __private__OptionUsize __swift_bridge__$PageMetadata$word_count(void* self);
+void* __swift_bridge__$CrawlStreamRequest$new(void* url);
+void* __swift_bridge__$CrawlStreamRequest$url(void* self);
+void* __swift_bridge__$BatchCrawlStreamRequest$new(void* urls);
+void* __swift_bridge__$BatchCrawlStreamRequest$urls(void* self);
 void* __swift_bridge__$CitationResult$new(void* content, void* references);
 void* __swift_bridge__$CitationResult$content(void* self);
 void* __swift_bridge__$CitationResult$references(void* self);
@@ -908,6 +972,7 @@ void* __swift_bridge__$LinkType$to_string(void* self);
 void* __swift_bridge__$ImageSource$to_string(void* self);
 void* __swift_bridge__$FeedType$to_string(void* self);
 void* __swift_bridge__$AssetCategory$to_string(void* self);
+void* __swift_bridge__$CrawlEvent$to_string(void* self);
 void* __swift_bridge__$generate_citations(void* markdown);
 struct __private__ResultPtrAndPtr __swift_bridge__$create_engine(void* config);
 struct __private__ResultPtrAndPtr __swift_bridge__$scrape(void* engine, void* url);
@@ -915,7 +980,13 @@ struct __private__ResultPtrAndPtr __swift_bridge__$crawl(void* engine, void* url
 struct __private__ResultPtrAndPtr __swift_bridge__$map_urls(void* engine, void* url);
 struct __private__ResultPtrAndPtr __swift_bridge__$batch_scrape(void* engine, void* urls);
 struct __private__ResultPtrAndPtr __swift_bridge__$batch_crawl(void* engine, void* urls);
+struct __private__ResultPtrAndPtr __swift_bridge__$crawl_engine_handle_crawl_stream_start(void* client, void* req);
+struct __private__ResultPtrAndPtr __swift_bridge__$CrawlEngineHandleCrawlStreamStreamHandle$next(void* self);
+struct __private__ResultPtrAndPtr __swift_bridge__$crawl_engine_handle_batch_crawl_stream_start(void* client, void* req);
+struct __private__ResultPtrAndPtr __swift_bridge__$CrawlEngineHandleBatchCrawlStreamStreamHandle$next(void* self);
 struct __private__ResultPtrAndPtr __swift_bridge__$crawl_config_from_json(void* json);
+struct __private__ResultPtrAndPtr __swift_bridge__$crawl_stream_request_from_json(void* json);
+struct __private__ResultPtrAndPtr __swift_bridge__$batch_crawl_stream_request_from_json(void* json);
 
 
 #endif /* RUST_BRIDGE_C_H */

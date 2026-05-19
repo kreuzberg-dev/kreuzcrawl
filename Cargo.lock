@@ -2828,6 +2828,7 @@ dependencies = [
  "dirs",
  "encoding_rs",
  "flate2",
+ "futures",
  "getrandom 0.3.4",
  "getrandom 0.4.2",
  "html-to-markdown-rs",
@@ -2905,6 +2906,7 @@ name = "kreuzcrawl-dart"
 version = "0.3.0-rc.20"
 dependencies = [
  "flutter_rust_bridge",
+ "futures-util",
  "kreuzcrawl",
  "serde_json",
 ]
@@ -2914,6 +2916,7 @@ name = "kreuzcrawl-ffi"
 version = "0.3.0-rc.20"
 dependencies = [
  "cbindgen",
+ "futures-util",
  "kreuzcrawl",
  "serde_json",
  "tempfile",
@@ -2935,6 +2938,7 @@ dependencies = [
 name = "kreuzcrawl-node"
 version = "0.3.0-rc.20"
 dependencies = [
+ "futures-util",
  "kreuzcrawl",
  "napi",
  "napi-build",
@@ -2948,6 +2952,7 @@ name = "kreuzcrawl-php"
 version = "0.3.0-rc.20"
 dependencies = [
  "ext-php-rs",
+ "futures-util",
  "kreuzcrawl",
  "serde",
  "serde_json",
@@ -2958,11 +2963,13 @@ dependencies = [
 name = "kreuzcrawl-py"
 version = "0.3.0-rc.20"
 dependencies = [
+ "futures",
  "kreuzcrawl",
  "pyo3",
  "pyo3-async-runtimes",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]
@@ -2970,6 +2977,7 @@ name = "kreuzcrawl-swift"
 version = "0.3.0-rc.20"
 dependencies = [
  "async-trait",
+ "futures-util",
  "kreuzcrawl",
  "serde",
  "serde_json",
