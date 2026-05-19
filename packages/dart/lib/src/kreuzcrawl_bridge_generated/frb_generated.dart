@@ -1963,7 +1963,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     switch (raw[0]) {
       case 0:
         return CrawlEvent_Page(
-          field0: dco_decode_box_autoadd_crawl_page_result(raw[1]),
+          result: dco_decode_box_autoadd_crawl_page_result(raw[1]),
         );
       case 1:
         return CrawlEvent_Error(
@@ -3136,8 +3136,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var tag_ = sse_decode_i_32(deserializer);
     switch (tag_) {
       case 0:
-        var var_field0 = sse_decode_box_autoadd_crawl_page_result(deserializer);
-        return CrawlEvent_Page(field0: var_field0);
+        var var_result = sse_decode_box_autoadd_crawl_page_result(deserializer);
+        return CrawlEvent_Page(result: var_result);
       case 1:
         var var_url = sse_decode_String(deserializer);
         var var_error = sse_decode_String(deserializer);
@@ -4611,9 +4611,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_crawl_event(CrawlEvent self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
-      case CrawlEvent_Page(field0: final field0):
+      case CrawlEvent_Page(result: final result):
         sse_encode_i_32(0, serializer);
-        sse_encode_box_autoadd_crawl_page_result(field0, serializer);
+        sse_encode_box_autoadd_crawl_page_result(result, serializer);
       case CrawlEvent_Error(url: final url, error: final error):
         sse_encode_i_32(1, serializer);
         sse_encode_String(url, serializer);

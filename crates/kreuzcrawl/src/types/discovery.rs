@@ -226,9 +226,13 @@ impl std::fmt::Debug for AssetCategory {
 /// Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
 #[cfg(not(target_arch = "wasm32"))]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
 pub enum CrawlEvent {
     /// A single page has been crawled.
-    Page(Box<CrawlPageResult>),
+    Page {
+        /// The crawled page result.
+        result: Box<CrawlPageResult>,
+    },
     /// An error occurred while crawling a URL.
     Error {
         /// The URL that failed.

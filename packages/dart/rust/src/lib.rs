@@ -911,7 +911,10 @@ pub enum AssetCategory {
 #[frb(mirror(CrawlEvent))]
 pub enum CrawlEvent {
     /// A single page has been crawled.
-    Page { field0: CrawlPageResult },
+    Page {
+        /// The crawled page result.
+        result: CrawlPageResult,
+    },
     /// An error occurred while crawling a URL.
     Error {
         /// The URL that failed.
@@ -1492,8 +1495,8 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
 impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
     fn from(v: kreuzcrawl::CrawlEvent) -> Self {
         match v {
-            kreuzcrawl::CrawlEvent::Page(f0) => CrawlEvent::Page {
-                field0: CrawlPageResult::from(*f0),
+            kreuzcrawl::CrawlEvent::Page { result } => CrawlEvent::Page {
+                result: CrawlPageResult::from(*result),
             },
             kreuzcrawl::CrawlEvent::Error { url, error } => CrawlEvent::Error { url, error },
             kreuzcrawl::CrawlEvent::Complete { pages_crawled } => CrawlEvent::Complete {

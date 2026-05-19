@@ -652,11 +652,11 @@ Delivered to bindings via alef's streaming-adapter pattern. The
 expose this as the per-language streaming idiom (Python `AsyncIterator`,
 Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
 
-| Variant    | Description                                                                          |
-| ---------- | ------------------------------------------------------------------------------------ |
-| `Page`     | A single page has been crawled. — Fields: `_0`: `CrawlPageResult`                    |
-| `Error`    | An error occurred while crawling a URL. — Fields: `url`: `String`, `error`: `String` |
-| `Complete` | The crawl has completed. — Fields: `pages_crawled`: `usize`                          |
+| Variant    | Wire value | Description                                                                          |
+| ---------- | ---------- | ------------------------------------------------------------------------------------ |
+| `Page`     | `page`     | A single page has been crawled. — Fields: `result`: `CrawlPageResult`                |
+| `Error`    | `error`    | An error occurred while crawling a URL. — Fields: `url`: `String`, `error`: `String` |
+| `Complete` | `complete` | The crawl has completed. — Fields: `pages_crawled`: `usize`                          |
 
 ---
 

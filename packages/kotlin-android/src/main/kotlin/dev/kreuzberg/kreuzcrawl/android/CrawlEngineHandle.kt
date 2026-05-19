@@ -33,31 +33,35 @@ import kotlinx.coroutines.withContext
 /**
  * Opaque handle to a configured crawl engine.
  *
- * Constructed via `create_engine` with an optional `CrawlConfig`.
- * Default implementations for all pluggable components are used internally.
+ * Constructed via `create_engine` with an optional `CrawlConfig`. Default implementations for all
+ * pluggable components are used internally.
  */
 class CrawlEngineHandle internal constructor(internal val handle: Long) : AutoCloseable {
-    override fun close() { KreuzcrawlBridge.nativeFreeCrawlEngineHandle(handle) }
+    override fun close() {
+        KreuzcrawlBridge.nativeFreeCrawlEngineHandle(handle)
+    }
 
     private val mapper =
         ObjectMapper()
-        .registerModule(Jdk8Module())
-        .findAndRegisterModules()
-        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+            .registerModule(Jdk8Module())
+            .findAndRegisterModules()
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
 
     @Suppress("TooGenericExceptionCaught")
-    fun crawlStream(req: CrawlStreamRequest): Flow<CrawlEvent> =
-        callbackFlow {
+    fun crawlStream(req: CrawlStreamRequest): Flow<CrawlEvent> = callbackFlow {
         val streamHandle: Long =
             withContext(Dispatchers.IO) {
-            KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamStart(handle, mapper.writeValueAsString(req))
-        }
+                KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamStart(
+                    handle,
+                    mapper.writeValueAsString(req),
+                )
+            }
         try {
             while (true) {
                 val chunkJson: String? =
                     withContext(Dispatchers.IO) {
-                    KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamNext(streamHandle)
-                }
+                        KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamNext(streamHandle)
+                    }
                 if (chunkJson == null) break
                 val chunk = mapper.readValue(chunkJson, CrawlEvent::class.java)
                 send(chunk)
@@ -66,24 +70,24 @@ class CrawlEngineHandle internal constructor(internal val handle: Long) : AutoCl
         } catch (e: Throwable) {
             close(e)
         }
-        awaitClose {
-            KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamFree(streamHandle)
-        }
+        awaitClose { KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamFree(streamHandle) }
     }
 
     @Suppress("TooGenericExceptionCaught")
-    fun batchCrawlStream(req: BatchCrawlStreamRequest): Flow<CrawlEvent> =
-        callbackFlow {
+    fun batchCrawlStream(req: BatchCrawlStreamRequest): Flow<CrawlEvent> = callbackFlow {
         val streamHandle: Long =
             withContext(Dispatchers.IO) {
-            KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamStart(handle, mapper.writeValueAsString(req))
-        }
+                KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamStart(
+                    handle,
+                    mapper.writeValueAsString(req),
+                )
+            }
         try {
             while (true) {
                 val chunkJson: String? =
                     withContext(Dispatchers.IO) {
-                    KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamNext(streamHandle)
-                }
+                        KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamNext(streamHandle)
+                    }
                 if (chunkJson == null) break
                 val chunk = mapper.readValue(chunkJson, CrawlEvent::class.java)
                 send(chunk)
@@ -92,8 +96,6 @@ class CrawlEngineHandle internal constructor(internal val handle: Long) : AutoCl
         } catch (e: Throwable) {
             close(e)
         }
-        awaitClose {
-            KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle)
-        }
+        awaitClose { KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle) }
     }
 }

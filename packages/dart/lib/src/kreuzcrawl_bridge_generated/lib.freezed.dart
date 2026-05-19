@@ -182,7 +182,7 @@ return header(_that.name,_that.value);case _:
 
 class AuthConfig_Basic extends AuthConfig {
   const AuthConfig_Basic({required this.username, required this.password}): super._();
-  
+
 
 /// Username sent in the `Authorization: Basic` header.
  final  String username;
@@ -252,7 +252,7 @@ as String,
 
 class AuthConfig_Bearer extends AuthConfig {
   const AuthConfig_Bearer({required this.token}): super._();
-  
+
 
 /// Token sent in the `Authorization: Bearer` header.
  final  String token;
@@ -319,7 +319,7 @@ as String,
 
 class AuthConfig_Header extends AuthConfig {
   const AuthConfig_Header({required this.name, required this.value}): super._();
-  
+
 
 /// HTTP header name to set on each request.
  final  String name;
@@ -495,10 +495,10 @@ return complete(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( CrawlPageResult field0)?  page,TResult Function( String url,  String error)?  error,TResult Function( PlatformInt64 pagesCrawled)?  complete,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( CrawlPageResult result)?  page,TResult Function( String url,  String error)?  error,TResult Function( PlatformInt64 pagesCrawled)?  complete,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case CrawlEvent_Page() when page != null:
-return page(_that.field0);case CrawlEvent_Error() when error != null:
+return page(_that.result);case CrawlEvent_Error() when error != null:
 return error(_that.url,_that.error);case CrawlEvent_Complete() when complete != null:
 return complete(_that.pagesCrawled);case _:
   return orElse();
@@ -518,10 +518,10 @@ return complete(_that.pagesCrawled);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( CrawlPageResult field0)  page,required TResult Function( String url,  String error)  error,required TResult Function( PlatformInt64 pagesCrawled)  complete,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( CrawlPageResult result)  page,required TResult Function( String url,  String error)  error,required TResult Function( PlatformInt64 pagesCrawled)  complete,}) {final _that = this;
 switch (_that) {
 case CrawlEvent_Page():
-return page(_that.field0);case CrawlEvent_Error():
+return page(_that.result);case CrawlEvent_Error():
 return error(_that.url,_that.error);case CrawlEvent_Complete():
 return complete(_that.pagesCrawled);}
 }
@@ -537,10 +537,10 @@ return complete(_that.pagesCrawled);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( CrawlPageResult field0)?  page,TResult? Function( String url,  String error)?  error,TResult? Function( PlatformInt64 pagesCrawled)?  complete,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( CrawlPageResult result)?  page,TResult? Function( String url,  String error)?  error,TResult? Function( PlatformInt64 pagesCrawled)?  complete,}) {final _that = this;
 switch (_that) {
 case CrawlEvent_Page() when page != null:
-return page(_that.field0);case CrawlEvent_Error() when error != null:
+return page(_that.result);case CrawlEvent_Error() when error != null:
 return error(_that.url,_that.error);case CrawlEvent_Complete() when complete != null:
 return complete(_that.pagesCrawled);case _:
   return null;
@@ -554,10 +554,11 @@ return complete(_that.pagesCrawled);case _:
 
 
 class CrawlEvent_Page extends CrawlEvent {
-  const CrawlEvent_Page({required this.field0}): super._();
-  
+  const CrawlEvent_Page({required this.result}): super._();
 
- final  CrawlPageResult field0;
+
+/// The crawled page result.
+ final  CrawlPageResult result;
 
 /// Create a copy of CrawlEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -569,16 +570,16 @@ $CrawlEvent_PageCopyWith<CrawlEvent_Page> get copyWith => _$CrawlEvent_PageCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlEvent_Page&&(identical(other.field0, field0) || other.field0 == field0));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlEvent_Page&&(identical(other.result, result) || other.result == result));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,field0);
+int get hashCode => Object.hash(runtimeType,result);
 
 @override
 String toString() {
-  return 'CrawlEvent.page(field0: $field0)';
+  return 'CrawlEvent.page(result: $result)';
 }
 
 
@@ -589,7 +590,7 @@ abstract mixin class $CrawlEvent_PageCopyWith<$Res> implements $CrawlEventCopyWi
   factory $CrawlEvent_PageCopyWith(CrawlEvent_Page value, $Res Function(CrawlEvent_Page) _then) = _$CrawlEvent_PageCopyWithImpl;
 @useResult
 $Res call({
- CrawlPageResult field0
+ CrawlPageResult result
 });
 
 
@@ -606,9 +607,9 @@ class _$CrawlEvent_PageCopyWithImpl<$Res>
 
 /// Create a copy of CrawlEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? result = null,}) {
   return _then(CrawlEvent_Page(
-field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+result: null == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
 as CrawlPageResult,
   ));
 }
@@ -621,7 +622,7 @@ as CrawlPageResult,
 
 class CrawlEvent_Error extends CrawlEvent {
   const CrawlEvent_Error({required this.url, required this.error}): super._();
-  
+
 
 /// The URL that failed.
  final  String url;
@@ -691,7 +692,7 @@ as String,
 
 class CrawlEvent_Complete extends CrawlEvent {
   const CrawlEvent_Complete({required this.pagesCrawled}): super._();
-  
+
 
 /// Total number of pages crawled.
  final  PlatformInt64 pagesCrawled;

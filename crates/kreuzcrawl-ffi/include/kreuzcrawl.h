@@ -3183,6 +3183,31 @@ char *kcrawl_asset_category_to_json(const KCRAWLAssetCategory *ptr);
 char *kcrawl_asset_category_to_string(const KCRAWLAssetCategory *ptr);
 
 /**
+ * Free a heap-allocated `CrawlEvent` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_crawl_event_free(KCRAWLCrawlEvent *ptr);
+
+/**
+ * Serialize a heap-allocated `CrawlEvent` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_crawl_event_to_json(const KCRAWLCrawlEvent *ptr);
+
+/**
+ * Render a heap-allocated `CrawlEvent` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_crawl_event_to_string(const KCRAWLCrawlEvent *ptr);
+
+/**
  * Convert markdown links to numbered citations.
  *
  * `Example (https://example.com)` becomes `Example[1]`

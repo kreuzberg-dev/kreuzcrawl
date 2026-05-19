@@ -78,7 +78,98 @@ internal extension ProxyConfig {
 /// Controls how HTML is converted to the output format. Uses
 /// html-to-markdown-rs as the conversion engine for all formats
 /// (markdown, plain text, djot).
-public typealias ContentConfig = RustBridge.ContentConfig
+public struct ContentConfig: Codable, Sendable, Hashable {
+    /// Output format: `"markdown"` (default), `"plain"`, `"djot"`.
+    public let outputFormat: String
+    /// Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`.
+    ///
+    /// - Minimal: only scripts/styles removed.
+    /// - Standard: also removes nav, nav-hinted headers/footers/asides, forms.
+    /// - Aggressive: removes all footers/asides unconditionally.
+    public let preprocessingPreset: String
+    /// Remove navigation elements (nav, breadcrumbs, menus). Default: `true`.
+    public let removeNavigation: Bool
+    /// Remove form elements. Default: `true`.
+    public let removeForms: Bool
+    /// HTML tag names to strip (render children only, remove the tag wrapper).
+    /// Default: `["noscript"]`.
+    public let stripTags: [String]
+    /// HTML tag names to preserve as raw HTML in output.
+    public let preserveTags: [String]
+    /// CSS selectors for elements to exclude entirely (element + all content).
+    ///
+    /// Unlike `strip_tags` (which removes the wrapper but keeps children),
+    /// excluded elements and all descendants are dropped. Supports CSS selectors:
+    /// `.class`, `#id`, `[attribute]`, compound selectors.
+    ///
+    /// Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]`
+    public let excludeSelectors: [String]
+    /// Skip image elements in output. Default: `false`.
+    public let skipImages: Bool
+    /// Max DOM traversal depth. Prevents stack overflow on deeply nested HTML.
+    public let maxDepth: UInt?
+    /// Enable line wrapping. Default: `false`.
+    public let wrap: Bool
+    /// Wrap width when `wrap` is enabled. Default: `80`.
+    public let wrapWidth: UInt
+    /// Include document structure tree in output. Default: `true`.
+    public let includeDocumentStructure: Bool
+    public init(outputFormat: String, preprocessingPreset: String, removeNavigation: Bool, removeForms: Bool, stripTags: [String], preserveTags: [String], excludeSelectors: [String], skipImages: Bool, maxDepth: UInt? = nil, wrap: Bool, wrapWidth: UInt, includeDocumentStructure: Bool) {
+        self.outputFormat = outputFormat
+        self.preprocessingPreset = preprocessingPreset
+        self.removeNavigation = removeNavigation
+        self.removeForms = removeForms
+        self.stripTags = stripTags
+        self.preserveTags = preserveTags
+        self.excludeSelectors = excludeSelectors
+        self.skipImages = skipImages
+        self.maxDepth = maxDepth
+        self.wrap = wrap
+        self.wrapWidth = wrapWidth
+        self.includeDocumentStructure = includeDocumentStructure
+    }
+    private enum CodingKeys: String, CodingKey {
+        case outputFormat = "output_format"
+        case preprocessingPreset = "preprocessing_preset"
+        case removeNavigation = "remove_navigation"
+        case removeForms = "remove_forms"
+        case stripTags = "strip_tags"
+        case preserveTags = "preserve_tags"
+        case excludeSelectors = "exclude_selectors"
+        case skipImages = "skip_images"
+        case maxDepth = "max_depth"
+        case wrap = "wrap"
+        case wrapWidth = "wrap_width"
+        case includeDocumentStructure = "include_document_structure"
+    }
+}
+
+// MARK: - Internal FFI conversions for ContentConfig
+internal extension ContentConfig {
+    init(_ rb: RustBridge.ContentConfig) throws {
+        self.outputFormat = rb.output_format().toString()
+        self.preprocessingPreset = rb.preprocessing_preset().toString()
+        self.removeNavigation = rb.remove_navigation()
+        self.removeForms = rb.remove_forms()
+        self.stripTags = rb.strip_tags().map { $0.toString() }
+        self.preserveTags = rb.preserve_tags().map { $0.toString() }
+        self.excludeSelectors = rb.exclude_selectors().map { $0.toString() }
+        self.skipImages = rb.skip_images()
+        self.maxDepth = rb.max_depth()
+        self.wrap = rb.wrap()
+        self.wrapWidth = rb.wrap_width()
+        self.includeDocumentStructure = rb.include_document_structure()
+    }
+    func intoRust() throws -> RustBridge.ContentConfig {
+        let __stripTags = RustVec<String>()
+        for __elem in self.stripTags { __stripTags.push(value: __elem) }
+        let __preserveTags = RustVec<String>()
+        for __elem in self.preserveTags { __preserveTags.push(value: __elem) }
+        let __excludeSelectors = RustVec<String>()
+        for __elem in self.excludeSelectors { __excludeSelectors.push(value: __elem) }
+        return RustBridge.ContentConfig(self.outputFormat, self.preprocessingPreset, self.removeNavigation, self.removeForms, __stripTags, __preserveTags, __excludeSelectors, self.skipImages, self.maxDepth, self.wrap, self.wrapWidth, self.includeDocumentStructure)
+    }
+}
 
 /// Browser fallback configuration.
 public typealias BrowserConfig = RustBridge.BrowserConfig
@@ -139,19 +230,137 @@ internal extension SitemapUrl {
 }
 
 /// The result of a map operation, containing discovered URLs.
-public typealias MapResult = RustBridge.MapResult
+public struct MapResult: Codable, Sendable, Hashable {
+    /// The list of discovered URLs.
+    public let urls: [SitemapUrl]
+    public init(urls: [SitemapUrl]) {
+        self.urls = urls
+    }
+}
+
+// MARK: - Internal FFI conversions for MapResult
+internal extension MapResult {
+    init(_ rb: RustBridge.MapResult) throws {
+        self.urls = try rb.urls().map { try SitemapUrl($0) }
+    }
+    func intoRust() throws -> RustBridge.MapResult {
+        let __urls = RustVec<RustBridge.SitemapUrl>()
+        for __elem in self.urls { __urls.push(value: try __elem.intoRust()) }
+        return RustBridge.MapResult(__urls)
+    }
+}
 
 /// Rich markdown conversion result from HTML processing.
 public typealias MarkdownResult = RustBridge.MarkdownResult
 
 /// Information about a link found on a page.
-public typealias LinkInfo = RustBridge.LinkInfo
+public struct LinkInfo: Codable, Sendable, Hashable {
+    /// The resolved URL of the link.
+    public let url: String
+    /// The visible text of the link.
+    public let text: String
+    /// The classification of the link.
+    public let linkType: LinkType
+    /// The `rel` attribute value, if present.
+    public let rel: String?
+    /// Whether the link has `rel="nofollow"`.
+    public let nofollow: Bool
+    public init(url: String, text: String, linkType: LinkType, rel: String? = nil, nofollow: Bool) {
+        self.url = url
+        self.text = text
+        self.linkType = linkType
+        self.rel = rel
+        self.nofollow = nofollow
+    }
+    private enum CodingKeys: String, CodingKey {
+        case url = "url"
+        case text = "text"
+        case linkType = "link_type"
+        case rel = "rel"
+        case nofollow = "nofollow"
+    }
+}
+
+// MARK: - Internal FFI conversions for LinkInfo
+internal extension LinkInfo {
+    init(_ rb: RustBridge.LinkInfo) throws {
+        self.url = rb.url().toString()
+        self.text = rb.text().toString()
+        self.linkType = LinkType(rawValue: rb.link_type().toString()) ?? { fatalError("Unknown LinkType: \(rb.link_type().toString())") }()
+        self.rel = rb.rel()?.toString()
+        self.nofollow = rb.nofollow()
+    }
+    func intoRust() throws -> RustBridge.LinkInfo {
+        return RustBridge.LinkInfo(self.url, self.text, try self.linkType.intoRust(), self.rel, self.nofollow)
+    }
+}
 
 /// Information about an image found on a page.
-public typealias ImageInfo = RustBridge.ImageInfo
+public struct ImageInfo: Codable, Sendable, Hashable {
+    /// The image URL.
+    public let url: String
+    /// The alt text, if present.
+    public let alt: String?
+    /// The width attribute, if present and parseable.
+    public let width: UInt32?
+    /// The height attribute, if present and parseable.
+    public let height: UInt32?
+    /// The source of the image reference.
+    public let source: ImageSource
+    public init(url: String, alt: String? = nil, width: UInt32? = nil, height: UInt32? = nil, source: ImageSource) {
+        self.url = url
+        self.alt = alt
+        self.width = width
+        self.height = height
+        self.source = source
+    }
+}
+
+// MARK: - Internal FFI conversions for ImageInfo
+internal extension ImageInfo {
+    init(_ rb: RustBridge.ImageInfo) throws {
+        self.url = rb.url().toString()
+        self.alt = rb.alt()?.toString()
+        self.width = rb.width()
+        self.height = rb.height()
+        self.source = ImageSource(rawValue: rb.source().toString()) ?? { fatalError("Unknown ImageSource: \(rb.source().toString())") }()
+    }
+    func intoRust() throws -> RustBridge.ImageInfo {
+        return RustBridge.ImageInfo(self.url, self.alt, self.width, self.height, try self.source.intoRust())
+    }
+}
 
 /// Information about a feed link found on a page.
-public typealias FeedInfo = RustBridge.FeedInfo
+public struct FeedInfo: Codable, Sendable, Hashable {
+    /// The feed URL.
+    public let url: String
+    /// The feed title, if present.
+    public let title: String?
+    /// The type of feed.
+    public let feedType: FeedType
+    public init(url: String, title: String? = nil, feedType: FeedType) {
+        self.url = url
+        self.title = title
+        self.feedType = feedType
+    }
+    private enum CodingKeys: String, CodingKey {
+        case url = "url"
+        case title = "title"
+        case feedType = "feed_type"
+    }
+}
+
+// MARK: - Internal FFI conversions for FeedInfo
+internal extension FeedInfo {
+    init(_ rb: RustBridge.FeedInfo) throws {
+        self.url = rb.url().toString()
+        self.title = rb.title()?.toString()
+        self.feedType = FeedType(rawValue: rb.feed_type().toString()) ?? { fatalError("Unknown FeedType: \(rb.feed_type().toString())") }()
+    }
+    func intoRust() throws -> RustBridge.FeedInfo {
+        return RustBridge.FeedInfo(self.url, self.title, try self.feedType.intoRust())
+    }
+}
 
 /// A JSON-LD structured data entry found on a page.
 public struct JsonLdEntry: Codable, Sendable, Hashable {
@@ -217,10 +426,95 @@ internal extension CookieInfo {
 }
 
 /// A downloaded asset from a page.
-public typealias DownloadedAsset = RustBridge.DownloadedAsset
+public struct DownloadedAsset: Codable, Sendable, Hashable {
+    /// The original URL of the asset.
+    public let url: String
+    /// The SHA-256 content hash of the asset.
+    public let contentHash: String
+    /// The MIME type from the Content-Type header.
+    public let mimeType: String?
+    /// The size of the asset in bytes.
+    public let size: UInt
+    /// The category of the asset.
+    public let assetCategory: AssetCategory
+    /// The HTML tag that referenced this asset (e.g., "link", "script", "img").
+    public let htmlTag: String?
+    public init(url: String, contentHash: String, mimeType: String? = nil, size: UInt, assetCategory: AssetCategory, htmlTag: String? = nil) {
+        self.url = url
+        self.contentHash = contentHash
+        self.mimeType = mimeType
+        self.size = size
+        self.assetCategory = assetCategory
+        self.htmlTag = htmlTag
+    }
+    private enum CodingKeys: String, CodingKey {
+        case url = "url"
+        case contentHash = "content_hash"
+        case mimeType = "mime_type"
+        case size = "size"
+        case assetCategory = "asset_category"
+        case htmlTag = "html_tag"
+    }
+}
+
+// MARK: - Internal FFI conversions for DownloadedAsset
+internal extension DownloadedAsset {
+    init(_ rb: RustBridge.DownloadedAsset) throws {
+        self.url = rb.url().toString()
+        self.contentHash = rb.content_hash().toString()
+        self.mimeType = rb.mime_type()?.toString()
+        self.size = rb.size()
+        self.assetCategory = AssetCategory(rawValue: rb.asset_category().toString()) ?? { fatalError("Unknown AssetCategory: \(rb.asset_category().toString())") }()
+        self.htmlTag = rb.html_tag()?.toString()
+    }
+    func intoRust() throws -> RustBridge.DownloadedAsset {
+        return RustBridge.DownloadedAsset(self.url, self.contentHash, self.mimeType, self.size, try self.assetCategory.intoRust(), self.htmlTag)
+    }
+}
 
 /// Article metadata extracted from `article:*` Open Graph tags.
-public typealias ArticleMetadata = RustBridge.ArticleMetadata
+public struct ArticleMetadata: Codable, Sendable, Hashable {
+    /// The article publication time.
+    public let publishedTime: String?
+    /// The article modification time.
+    public let modifiedTime: String?
+    /// The article author.
+    public let author: String?
+    /// The article section.
+    public let section: String?
+    /// The article tags.
+    public let tags: [String]
+    public init(publishedTime: String? = nil, modifiedTime: String? = nil, author: String? = nil, section: String? = nil, tags: [String]) {
+        self.publishedTime = publishedTime
+        self.modifiedTime = modifiedTime
+        self.author = author
+        self.section = section
+        self.tags = tags
+    }
+    private enum CodingKeys: String, CodingKey {
+        case publishedTime = "published_time"
+        case modifiedTime = "modified_time"
+        case author = "author"
+        case section = "section"
+        case tags = "tags"
+    }
+}
+
+// MARK: - Internal FFI conversions for ArticleMetadata
+internal extension ArticleMetadata {
+    init(_ rb: RustBridge.ArticleMetadata) throws {
+        self.publishedTime = rb.published_time()?.toString()
+        self.modifiedTime = rb.modified_time()?.toString()
+        self.author = rb.author()?.toString()
+        self.section = rb.section()?.toString()
+        self.tags = rb.tags().map { $0.toString() }
+    }
+    func intoRust() throws -> RustBridge.ArticleMetadata {
+        let __tags = RustVec<String>()
+        for __elem in self.tags { __tags.push(value: __elem) }
+        return RustBridge.ArticleMetadata(self.publishedTime, self.modifiedTime, self.author, self.section, __tags)
+    }
+}
 
 /// An hreflang alternate link entry.
 public struct HreflangEntry: Codable, Sendable, Hashable {
@@ -358,7 +652,238 @@ internal extension ResponseMeta {
 }
 
 /// Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
-public typealias PageMetadata = RustBridge.PageMetadata
+public struct PageMetadata: Codable, Sendable, Hashable {
+    /// The page title from the `<title>` element.
+    public let title: String?
+    /// The meta description.
+    public let description: String?
+    /// The canonical URL from `<link rel="canonical">`.
+    public let canonicalUrl: String?
+    /// Keywords from `<meta name="keywords">`.
+    public let keywords: String?
+    /// Author from `<meta name="author">`.
+    public let author: String?
+    /// Viewport content from `<meta name="viewport">`.
+    public let viewport: String?
+    /// Theme color from `<meta name="theme-color">`.
+    public let themeColor: String?
+    /// Generator from `<meta name="generator">`.
+    public let generator: String?
+    /// Robots content from `<meta name="robots">`.
+    public let robots: String?
+    /// The `lang` attribute from the `<html>` element.
+    public let htmlLang: String?
+    /// The `dir` attribute from the `<html>` element.
+    public let htmlDir: String?
+    /// Open Graph title.
+    public let ogTitle: String?
+    /// Open Graph type.
+    public let ogType: String?
+    /// Open Graph image URL.
+    public let ogImage: String?
+    /// Open Graph description.
+    public let ogDescription: String?
+    /// Open Graph URL.
+    public let ogUrl: String?
+    /// Open Graph site name.
+    public let ogSiteName: String?
+    /// Open Graph locale.
+    public let ogLocale: String?
+    /// Open Graph video URL.
+    public let ogVideo: String?
+    /// Open Graph audio URL.
+    public let ogAudio: String?
+    /// Open Graph locale alternates.
+    public let ogLocaleAlternates: [String]?
+    /// Twitter card type.
+    public let twitterCard: String?
+    /// Twitter title.
+    public let twitterTitle: String?
+    /// Twitter description.
+    public let twitterDescription: String?
+    /// Twitter image URL.
+    public let twitterImage: String?
+    /// Twitter site handle.
+    public let twitterSite: String?
+    /// Twitter creator handle.
+    public let twitterCreator: String?
+    /// Dublin Core title.
+    public let dcTitle: String?
+    /// Dublin Core creator.
+    public let dcCreator: String?
+    /// Dublin Core subject.
+    public let dcSubject: String?
+    /// Dublin Core description.
+    public let dcDescription: String?
+    /// Dublin Core publisher.
+    public let dcPublisher: String?
+    /// Dublin Core date.
+    public let dcDate: String?
+    /// Dublin Core type.
+    public let dcType: String?
+    /// Dublin Core format.
+    public let dcFormat: String?
+    /// Dublin Core identifier.
+    public let dcIdentifier: String?
+    /// Dublin Core language.
+    public let dcLanguage: String?
+    /// Dublin Core rights.
+    public let dcRights: String?
+    /// Article metadata from `article:*` Open Graph tags.
+    public let article: ArticleMetadata?
+    /// Hreflang alternate links.
+    public let hreflangs: [HreflangEntry]?
+    /// Favicon and icon links.
+    public let favicons: [FaviconInfo]?
+    /// Heading elements (h1-h6).
+    public let headings: [HeadingInfo]?
+    /// Computed word count of the page body text.
+    public let wordCount: UInt?
+    public init(title: String? = nil, description: String? = nil, canonicalUrl: String? = nil, keywords: String? = nil, author: String? = nil, viewport: String? = nil, themeColor: String? = nil, generator: String? = nil, robots: String? = nil, htmlLang: String? = nil, htmlDir: String? = nil, ogTitle: String? = nil, ogType: String? = nil, ogImage: String? = nil, ogDescription: String? = nil, ogUrl: String? = nil, ogSiteName: String? = nil, ogLocale: String? = nil, ogVideo: String? = nil, ogAudio: String? = nil, ogLocaleAlternates: [String]? = nil, twitterCard: String? = nil, twitterTitle: String? = nil, twitterDescription: String? = nil, twitterImage: String? = nil, twitterSite: String? = nil, twitterCreator: String? = nil, dcTitle: String? = nil, dcCreator: String? = nil, dcSubject: String? = nil, dcDescription: String? = nil, dcPublisher: String? = nil, dcDate: String? = nil, dcType: String? = nil, dcFormat: String? = nil, dcIdentifier: String? = nil, dcLanguage: String? = nil, dcRights: String? = nil, article: ArticleMetadata? = nil, hreflangs: [HreflangEntry]? = nil, favicons: [FaviconInfo]? = nil, headings: [HeadingInfo]? = nil, wordCount: UInt? = nil) {
+        self.title = title
+        self.description = description
+        self.canonicalUrl = canonicalUrl
+        self.keywords = keywords
+        self.author = author
+        self.viewport = viewport
+        self.themeColor = themeColor
+        self.generator = generator
+        self.robots = robots
+        self.htmlLang = htmlLang
+        self.htmlDir = htmlDir
+        self.ogTitle = ogTitle
+        self.ogType = ogType
+        self.ogImage = ogImage
+        self.ogDescription = ogDescription
+        self.ogUrl = ogUrl
+        self.ogSiteName = ogSiteName
+        self.ogLocale = ogLocale
+        self.ogVideo = ogVideo
+        self.ogAudio = ogAudio
+        self.ogLocaleAlternates = ogLocaleAlternates
+        self.twitterCard = twitterCard
+        self.twitterTitle = twitterTitle
+        self.twitterDescription = twitterDescription
+        self.twitterImage = twitterImage
+        self.twitterSite = twitterSite
+        self.twitterCreator = twitterCreator
+        self.dcTitle = dcTitle
+        self.dcCreator = dcCreator
+        self.dcSubject = dcSubject
+        self.dcDescription = dcDescription
+        self.dcPublisher = dcPublisher
+        self.dcDate = dcDate
+        self.dcType = dcType
+        self.dcFormat = dcFormat
+        self.dcIdentifier = dcIdentifier
+        self.dcLanguage = dcLanguage
+        self.dcRights = dcRights
+        self.article = article
+        self.hreflangs = hreflangs
+        self.favicons = favicons
+        self.headings = headings
+        self.wordCount = wordCount
+    }
+    private enum CodingKeys: String, CodingKey {
+        case title = "title"
+        case description = "description"
+        case canonicalUrl = "canonical_url"
+        case keywords = "keywords"
+        case author = "author"
+        case viewport = "viewport"
+        case themeColor = "theme_color"
+        case generator = "generator"
+        case robots = "robots"
+        case htmlLang = "html_lang"
+        case htmlDir = "html_dir"
+        case ogTitle = "og_title"
+        case ogType = "og_type"
+        case ogImage = "og_image"
+        case ogDescription = "og_description"
+        case ogUrl = "og_url"
+        case ogSiteName = "og_site_name"
+        case ogLocale = "og_locale"
+        case ogVideo = "og_video"
+        case ogAudio = "og_audio"
+        case ogLocaleAlternates = "og_locale_alternates"
+        case twitterCard = "twitter_card"
+        case twitterTitle = "twitter_title"
+        case twitterDescription = "twitter_description"
+        case twitterImage = "twitter_image"
+        case twitterSite = "twitter_site"
+        case twitterCreator = "twitter_creator"
+        case dcTitle = "dc_title"
+        case dcCreator = "dc_creator"
+        case dcSubject = "dc_subject"
+        case dcDescription = "dc_description"
+        case dcPublisher = "dc_publisher"
+        case dcDate = "dc_date"
+        case dcType = "dc_type"
+        case dcFormat = "dc_format"
+        case dcIdentifier = "dc_identifier"
+        case dcLanguage = "dc_language"
+        case dcRights = "dc_rights"
+        case article = "article"
+        case hreflangs = "hreflangs"
+        case favicons = "favicons"
+        case headings = "headings"
+        case wordCount = "word_count"
+    }
+}
+
+// MARK: - Internal FFI conversions for PageMetadata
+internal extension PageMetadata {
+    init(_ rb: RustBridge.PageMetadata) throws {
+        self.title = rb.title()?.toString()
+        self.description = rb.description()?.toString()
+        self.canonicalUrl = rb.canonical_url()?.toString()
+        self.keywords = rb.keywords()?.toString()
+        self.author = rb.author()?.toString()
+        self.viewport = rb.viewport()?.toString()
+        self.themeColor = rb.theme_color()?.toString()
+        self.generator = rb.generator()?.toString()
+        self.robots = rb.robots()?.toString()
+        self.htmlLang = rb.html_lang()?.toString()
+        self.htmlDir = rb.html_dir()?.toString()
+        self.ogTitle = rb.og_title()?.toString()
+        self.ogType = rb.og_type()?.toString()
+        self.ogImage = rb.og_image()?.toString()
+        self.ogDescription = rb.og_description()?.toString()
+        self.ogUrl = rb.og_url()?.toString()
+        self.ogSiteName = rb.og_site_name()?.toString()
+        self.ogLocale = rb.og_locale()?.toString()
+        self.ogVideo = rb.og_video()?.toString()
+        self.ogAudio = rb.og_audio()?.toString()
+        self.ogLocaleAlternates = rb.og_locale_alternates()?.map { $0.toString() }
+        self.twitterCard = rb.twitter_card()?.toString()
+        self.twitterTitle = rb.twitter_title()?.toString()
+        self.twitterDescription = rb.twitter_description()?.toString()
+        self.twitterImage = rb.twitter_image()?.toString()
+        self.twitterSite = rb.twitter_site()?.toString()
+        self.twitterCreator = rb.twitter_creator()?.toString()
+        self.dcTitle = rb.dc_title()?.toString()
+        self.dcCreator = rb.dc_creator()?.toString()
+        self.dcSubject = rb.dc_subject()?.toString()
+        self.dcDescription = rb.dc_description()?.toString()
+        self.dcPublisher = rb.dc_publisher()?.toString()
+        self.dcDate = rb.dc_date()?.toString()
+        self.dcType = rb.dc_type()?.toString()
+        self.dcFormat = rb.dc_format()?.toString()
+        self.dcIdentifier = rb.dc_identifier()?.toString()
+        self.dcLanguage = rb.dc_language()?.toString()
+        self.dcRights = rb.dc_rights()?.toString()
+        self.article = try rb.article().map { try ArticleMetadata($0) }
+        self.hreflangs = try rb.hreflangs()?.map { try HreflangEntry($0) }
+        self.favicons = try rb.favicons()?.map { try FaviconInfo($0) }
+        self.headings = try rb.headings()?.map { try HeadingInfo($0) }
+        self.wordCount = rb.word_count()
+    }
+    func intoRust() throws -> RustBridge.PageMetadata {
+        let data = try JSONEncoder().encode(self)
+        let json = String(data: data, encoding: .utf8) ?? "{}"
+        return try RustBridge.pageMetadataFromJson(json)
+    }
+}
 
 /// Request to begin a single-URL streaming crawl.
 ///
@@ -388,10 +913,51 @@ internal extension CrawlStreamRequest {
 /// Wraps a set of seed URLs for delivery through the streaming-adapter binding
 /// surface. Required as a struct because alef's streaming adapter requires a
 /// named request type — primitives are not supported.
-public typealias BatchCrawlStreamRequest = RustBridge.BatchCrawlStreamRequest
+public struct BatchCrawlStreamRequest: Codable, Sendable, Hashable {
+    /// The seed URLs to crawl. Each URL is followed independently up to the
+    /// engine's configured depth.
+    public let urls: [String]
+    public init(urls: [String]) {
+        self.urls = urls
+    }
+}
+
+// MARK: - Internal FFI conversions for BatchCrawlStreamRequest
+internal extension BatchCrawlStreamRequest {
+    init(_ rb: RustBridge.BatchCrawlStreamRequest) throws {
+        self.urls = rb.urls().map { $0.toString() }
+    }
+    func intoRust() throws -> RustBridge.BatchCrawlStreamRequest {
+        let __urls = RustVec<String>()
+        for __elem in self.urls { __urls.push(value: __elem) }
+        return RustBridge.BatchCrawlStreamRequest(__urls)
+    }
+}
 
 /// Result of citation conversion.
-public typealias CitationResult = RustBridge.CitationResult
+public struct CitationResult: Codable, Sendable, Hashable {
+    /// Markdown with links replaced by numbered citations.
+    public let content: String
+    /// Numbered reference list: (index, url, text).
+    public let references: [CitationReference]
+    public init(content: String, references: [CitationReference]) {
+        self.content = content
+        self.references = references
+    }
+}
+
+// MARK: - Internal FFI conversions for CitationResult
+internal extension CitationResult {
+    init(_ rb: RustBridge.CitationResult) throws {
+        self.content = rb.content().toString()
+        self.references = try rb.references().map { try CitationReference($0) }
+    }
+    func intoRust() throws -> RustBridge.CitationResult {
+        let __references = RustVec<RustBridge.CitationReference>()
+        for __elem in self.references { __references.push(value: try __elem.intoRust()) }
+        return RustBridge.CitationResult(self.content, __references)
+    }
+}
 
 /// A single numbered reference in a citation list — produced by the citation
 /// extractor when content uses inline `[N]`-style markers.
@@ -428,7 +994,7 @@ public typealias BatchScrapeResult = RustBridge.BatchScrapeResult
 public typealias BatchCrawlResult = RustBridge.BatchCrawlResult
 
 /// When to use the headless browser fallback.
-public enum BrowserMode {
+public enum BrowserMode: String, Codable, Sendable, Hashable {
     /// Automatically detect when JS rendering is needed and fall back to browser.
     case auto
     /// Always use the browser for every request.
@@ -438,9 +1004,9 @@ public enum BrowserMode {
 }
 
 /// Wait strategy for browser page rendering.
-public enum BrowserWait {
+public enum BrowserWait: String, Codable, Sendable, Hashable {
     /// Wait until network activity is idle.
-    case networkIdle
+    case networkIdle = "network_idle"
     /// Wait for a specific CSS selector to appear in the DOM.
     case selector
     /// Wait for a fixed duration after navigation.
@@ -448,7 +1014,7 @@ public enum BrowserWait {
 }
 
 /// Browser backend used for JavaScript rendering.
-public enum BrowserBackend {
+public enum BrowserBackend: String, Codable, Sendable, Hashable {
     /// Existing Chromium/CDP backend powered by chromiumoxide.
     case chromiumoxide
     /// Kreuzcrawl-owned native browser backend derived from Obscura.
@@ -466,7 +1032,7 @@ public enum AuthConfig {
 }
 
 /// The classification of a link.
-public enum LinkType {
+public enum LinkType: String, Codable, Sendable, Hashable {
     /// A link to the same domain.
     case `internal`
     /// A link to a different domain.
@@ -478,29 +1044,29 @@ public enum LinkType {
 }
 
 /// The source of an image reference.
-public enum ImageSource {
+public enum ImageSource: String, Codable, Sendable, Hashable {
     /// An `<img>` tag.
     case img
     /// A `<source>` tag inside `<picture>`.
-    case pictureSource
+    case pictureSource = "picture_source"
     /// An `og:image` meta tag.
-    case ogImage
+    case ogImage = "og:image"
     /// A `twitter:image` meta tag.
-    case twitterImage
+    case twitterImage = "twitter:image"
 }
 
 /// The type of a feed (RSS, Atom, or JSON Feed).
-public enum FeedType {
+public enum FeedType: String, Codable, Sendable, Hashable {
     /// RSS feed.
     case rss
     /// Atom feed.
     case atom
     /// JSON Feed.
-    case jsonFeed
+    case jsonFeed = "json_feed"
 }
 
 /// The category of a downloaded asset.
-public enum AssetCategory {
+public enum AssetCategory: String, Codable, Sendable, Hashable {
     /// A document file (PDF, DOC, etc.).
     case document
     /// An image file.
@@ -534,7 +1100,7 @@ public enum AssetCategory {
 /// Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
 public enum CrawlEvent {
     /// A single page has been crawled.
-    case page(field0: CrawlPageResult)
+    case page(result: CrawlPageResult)
     /// An error occurred while crawling a URL.
     case error(url: String, error: String)
     /// The crawl has completed.
@@ -594,5 +1160,29 @@ public func crawlStreamRequestFromJson(_ json: String) throws -> CrawlStreamRequ
 }
 
 public func batchCrawlStreamRequestFromJson(_ json: String) throws -> BatchCrawlStreamRequest {
-    return try RustBridge.batchCrawlStreamRequestFromJson(json)
+    let data = json.data(using: .utf8) ?? Data()
+    return try JSONDecoder().decode(BatchCrawlStreamRequest.self, from: data)
+}
+
+// MARK: - Free-function Forwarders
+// Re-export every public free function on the source Rust crate as a
+// top-level `public func` on the host module so consumers do not need to
+// `import RustBridge` directly. Forwarders take Swift-native parameter
+// types and convert to the swift-bridge runtime types internally.
+
+/// Convert markdown links to numbered citations.
+///
+/// `[Example](https://example.com)` becomes `Example[1]`
+/// with `[1]: https://example.com` in the reference list.
+/// Images `![alt](url)` are preserved unchanged.
+public func generateCitations(markdown: String) -> CitationResult {
+    return RustBridge.generateCitations(markdown)
+}
+
+/// Create a new crawl engine with the given configuration.
+///
+/// If `config` is `None`, uses [`CrawlConfig::default()`].
+/// Returns an error if the configuration is invalid.
+public func createEngine(config: CrawlConfig?) throws -> CrawlEngineHandle {
+    return try RustBridge.createEngine(config)
 }

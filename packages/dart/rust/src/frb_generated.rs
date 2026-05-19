@@ -1364,8 +1364,8 @@ const _: fn() = || {
         let _: bool = CrawlConfig.save_browser_profile;
     }
     match None::<crate::CrawlEvent>.unwrap() {
-        crate::CrawlEvent::Page { field0 } => {
-            let _: crate::CrawlPageResult = field0;
+        crate::CrawlEvent::Page { result } => {
+            let _: crate::CrawlPageResult = result;
         }
         crate::CrawlEvent::Error { url, error } => {
             let _: String = url;
@@ -2014,8 +2014,8 @@ impl SseDecode for crate::CrawlEvent {
         let mut tag_ = <i32>::sse_decode(deserializer);
         match tag_ {
             0 => {
-                let mut var_field0 = <crate::CrawlPageResult>::sse_decode(deserializer);
-                return crate::CrawlEvent::Page { field0: var_field0 };
+                let mut var_result = <crate::CrawlPageResult>::sse_decode(deserializer);
+                return crate::CrawlEvent::Page { result: var_result };
             }
             1 => {
                 let mut var_url = <String>::sse_decode(deserializer);
@@ -3475,7 +3475,7 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::CrawlConfig>> for crate
 impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlEvent> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self.0 {
-            crate::CrawlEvent::Page { field0 } => [0.into_dart(), field0.into_into_dart().into_dart()].into_dart(),
+            crate::CrawlEvent::Page { result } => [0.into_dart(), result.into_into_dart().into_dart()].into_dart(),
             crate::CrawlEvent::Error { url, error } => [
                 1.into_dart(),
                 url.into_into_dart().into_dart(),
@@ -4292,9 +4292,9 @@ impl SseEncode for crate::CrawlEvent {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         match self {
-            crate::CrawlEvent::Page { field0 } => {
+            crate::CrawlEvent::Page { result } => {
                 <i32>::sse_encode(0, serializer);
-                <crate::CrawlPageResult>::sse_encode(field0, serializer);
+                <crate::CrawlPageResult>::sse_encode(result, serializer);
             }
             crate::CrawlEvent::Error { url, error } => {
                 <i32>::sse_encode(1, serializer);

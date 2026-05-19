@@ -924,7 +924,7 @@ Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
 
 | Value      | Description                                                                                      |
 | ---------- | ------------------------------------------------------------------------------------------------ |
-| `Page`     | A single page has been crawled. — Fields: `0`: `CrawlPageResult`                                 |
+| `Page`     | A single page has been crawled. — Fields: `result`: `CrawlPageResult`                            |
 | `Error`    | An error occurred while crawling a URL. — Fields: `url`: `[:0]const u8`, `error`: `[:0]const u8` |
 | `Complete` | The crawl has completed. — Fields: `pagesCrawled`: `u64`                                         |
 

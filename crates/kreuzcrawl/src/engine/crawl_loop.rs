@@ -694,7 +694,12 @@ impl CrawlEngine {
 
         // Send page event through the channel if streaming
         if let Some(sender) = tx
-            && sender.send(CrawlEvent::Page(Box::new(page.clone()))).await.is_err()
+            && sender
+                .send(CrawlEvent::Page {
+                    result: Box::new(page.clone()),
+                })
+                .await
+                .is_err()
         {
             // Receiver dropped; signal cancellation
             return Ok(true);

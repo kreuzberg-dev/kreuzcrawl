@@ -2990,6 +2990,7 @@ dependencies = [
 name = "kreuzcrawl-wasm"
 version = "0.3.0-rc.20"
 dependencies = [
+ "futures",
  "futures-util",
  "getrandom 0.3.4",
  "getrandom 0.4.2",

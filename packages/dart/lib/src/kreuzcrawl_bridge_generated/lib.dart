@@ -947,8 +947,10 @@ sealed class CrawlEvent with _$CrawlEvent {
   const CrawlEvent._();
 
   /// A single page has been crawled.
-  const factory CrawlEvent.page({required CrawlPageResult field0}) =
-      CrawlEvent_Page;
+  const factory CrawlEvent.page({
+    /// The crawled page result.
+    required CrawlPageResult result,
+  }) = CrawlEvent_Page;
 
   /// An error occurred while crawling a URL.
   const factory CrawlEvent.error({
