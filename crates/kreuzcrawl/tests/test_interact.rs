@@ -1,18 +1,35 @@
 #![allow(clippy::unwrap_used, clippy::panic)]
 
-#[cfg(feature = "browser-chromiumoxide")]
+#[cfg(feature = "browser-native")]
+use std::sync::OnceLock;
+#[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
 use std::time::Duration;
 
-#[cfg(feature = "browser-chromiumoxide")]
+#[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
 use kreuzcrawl::ScrollDirection;
 #[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
 use kreuzcrawl::{BrowserBackend, BrowserConfig, BrowserMode, CrawlConfig};
 use kreuzcrawl::{CrawlError, PageAction, create_engine, interact};
 
-#[cfg(feature = "browser-chromiumoxide")]
+#[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
 use wiremock::matchers::{method, path};
-#[cfg(feature = "browser-chromiumoxide")]
+#[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
 use wiremock::{Mock, MockServer, ResponseTemplate};
+
+#[cfg(feature = "browser-native")]
+static ALLOW_PRIVATE: OnceLock<()> = OnceLock::new();
+
+#[cfg(feature = "browser-native")]
+fn allow_private_network() {
+    ALLOW_PRIVATE.get_or_init(|| {
+        // SAFETY: tests run in a single process; the env var is written once
+        // from `OnceLock::get_or_init` before any network call is made.
+        #[allow(unsafe_code)]
+        unsafe {
+            std::env::set_var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "1");
+        }
+    });
+}
 
 #[cfg(feature = "browser-chromiumoxide")]
 #[tokio::test]
@@ -106,26 +123,108 @@ async fn chromiumoxide_interact_click_wait_screenshot_and_scrape() {
 
 #[cfg(feature = "browser-native")]
 #[tokio::test]
-async fn native_interact_returns_unsupported() {
+async fn native_interact_click_type_wait_scroll_execute_js_and_scrape() {
+    allow_private_network();
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"
+                    <html>
+                      <body style="height: 2000px">
+                        <button id="go">Go</button>
+                        <input id="name" value="">
+                        <div id="status">idle</div>
+                        <script>
+                          document.getElementById('go').addEventListener('click', () => {
+                            document.getElementById('status').textContent = 'clicked';
+                            const done = document.createElement('div');
+                            done.id = 'done';
+                            done.textContent = 'ready';
+                            document.body.appendChild(done);
+                          });
+                        </script>
+                      </body>
+                    </html>
+                    "#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+
     let config = CrawlConfig {
         browser: BrowserConfig {
             backend: BrowserBackend::Native,
             mode: BrowserMode::Always,
+            timeout: Duration::from_secs(15),
             ..BrowserConfig::default()
         },
         ..CrawlConfig::default()
     };
     let engine = create_engine(Some(config)).unwrap();
 
-    let result = interact(&engine, "https://example.com", vec![PageAction::Scrape]).await;
+    let result = interact(
+        &engine,
+        &mock.uri(),
+        vec![
+            PageAction::Click {
+                selector: "#go".to_string(),
+            },
+            PageAction::TypeText {
+                selector: "#name".to_string(),
+                text: "kreuzcrawl".to_string(),
+            },
+            PageAction::Wait {
+                milliseconds: None,
+                selector: Some("#done".to_string()),
+            },
+            PageAction::Scroll {
+                direction: ScrollDirection::Down,
+                selector: None,
+                amount: Some(100),
+            },
+            PageAction::ExecuteJs {
+                script: "document.querySelector('#name').value".to_string(),
+            },
+            PageAction::Screenshot { full_page: Some(false) },
+            PageAction::Scrape,
+        ],
+    )
+    .await
+    .unwrap();
 
-    match result {
-        Err(CrawlError::Unsupported(message)) => {
-            assert!(message.contains("BrowserBackend::Native"));
-            assert!(message.contains("BrowserBackend::Chromiumoxide"));
-        }
-        other => panic!("expected Unsupported, got {other:?}"),
-    }
+    assert_eq!(result.action_results.len(), 7);
+    assert!(
+        result.action_results[..5].iter().all(|action| action.success),
+        "non-screenshot actions should succeed: {:?}",
+        result.action_results
+    );
+    assert!(!result.action_results[5].success);
+    assert!(
+        result.action_results[5]
+            .error
+            .as_deref()
+            .is_some_and(|error| error.contains("BrowserBackend::Chromiumoxide"))
+    );
+    assert!(result.action_results[6].success);
+    assert!(result.final_html.contains("clicked"));
+    assert!(result.final_html.contains("id=\"done\""));
+    assert!(result.screenshot.is_none());
+
+    let typed_value = result.action_results[4]
+        .data
+        .as_ref()
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or_default();
+    assert_eq!(typed_value, "kreuzcrawl");
+
+    let scrape_data = result.action_results[6]
+        .data
+        .as_ref()
+        .and_then(|data| data.get("html"))
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or_default();
+    assert!(scrape_data.contains("clicked"));
 }
 
 #[cfg(not(feature = "browser-chromiumoxide"))]

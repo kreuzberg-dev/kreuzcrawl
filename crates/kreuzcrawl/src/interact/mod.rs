@@ -8,6 +8,8 @@
 pub mod actions;
 #[cfg(feature = "browser-chromiumoxide")]
 mod chromiumoxide;
+#[cfg(feature = "browser-native")]
+mod native;
 /// Page action validation helpers.
 pub mod validation;
 
@@ -32,7 +34,7 @@ pub(crate) async fn run(
 
     match engine.config.browser.backend {
         BrowserBackend::Chromiumoxide => run_chromiumoxide(url, actions, &engine.config).await,
-        BrowserBackend::Native => Err(native_unsupported()),
+        BrowserBackend::Native => run_native(url, actions, &engine.config).await,
     }
 }
 
@@ -56,8 +58,22 @@ async fn run_chromiumoxide(
     ))
 }
 
-fn native_unsupported() -> CrawlError {
-    CrawlError::Unsupported(
-        "interact() is not supported by BrowserBackend::Native yet; use BrowserBackend::Chromiumoxide".into(),
-    )
+#[cfg(feature = "browser-native")]
+async fn run_native(
+    url: &str,
+    actions: &[PageAction],
+    config: &crate::types::CrawlConfig,
+) -> Result<InteractionResult, CrawlError> {
+    native::run(url, actions, config).await
+}
+
+#[cfg(not(feature = "browser-native"))]
+async fn run_native(
+    _url: &str,
+    _actions: &[PageAction],
+    _config: &crate::types::CrawlConfig,
+) -> Result<InteractionResult, CrawlError> {
+    Err(CrawlError::Unsupported(
+        "interact() with BrowserBackend::Native requires the browser-native feature".into(),
+    ))
 }
