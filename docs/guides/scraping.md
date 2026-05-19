@@ -59,7 +59,7 @@ println!("HTML bytes: {}", result.final_html.len());
 
 `interact()` validates the action list before navigation and returns one `ActionResult` per action. Failed actions are recorded in the result and later actions still run; navigation/setup failures are returned as `CrawlError`.
 
-The chromiumoxide backend supports click, type, press, scroll, wait, screenshot, JavaScript execution, and scrape actions. The native backend supports DOM and JavaScript actions, but screenshot actions return an action-level unsupported error because the native renderer has no visual layout surface.
+Both browser backends support click, type, press, scroll, wait, screenshot, JavaScript execution, and scrape actions. Chromiumoxide screenshots are captured from Chrome. Native screenshots are deterministic PNG snapshots derived from the post-action HTML, so they are useful for inspection but are not pixel-perfect Chrome compositor captures.
 
 ## ScrapeResult fields
 

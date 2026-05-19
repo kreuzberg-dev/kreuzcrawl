@@ -34,7 +34,7 @@ graph LR
     D --> O
 ```
 
-The middleware stack between the engine and the network applies per-domain rate limiting, conditional caching, and User-Agent rotation, plus optional `tracing` spans. WAF responses can trigger an automatic browser fallback when `BrowserMode::Auto` is set. `interact()` bypasses the crawl/extraction pipeline and keeps one browser page open while it executes `PageAction` values such as click, type, wait, screenshot, JavaScript evaluation, and scrape. Chromiumoxide supports the full action set; the native backend supports DOM/JS actions and reports screenshot actions as unsupported because it has no visual layout renderer. The extraction pipeline is described in detail in [Content Extraction](content-extraction.md).
+The middleware stack between the engine and the network applies per-domain rate limiting, conditional caching, and User-Agent rotation, plus optional `tracing` spans. WAF responses can trigger an automatic browser fallback when `BrowserMode::Auto` is set. `interact()` bypasses the crawl/extraction pipeline and keeps one browser page open while it executes `PageAction` values such as click, type, wait, screenshot, JavaScript evaluation, and scrape. Chromiumoxide screenshots are compositor captures; native screenshots are deterministic PNG snapshots derived from the post-action HTML and are intended for inspection, not pixel-perfect Chrome parity. The extraction pipeline is described in detail in [Content Extraction](content-extraction.md).
 
 ## Bindings
 

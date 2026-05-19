@@ -104,6 +104,15 @@ pub struct RenderedPage {
 const DEFAULT_SCROLL_AMOUNT: i64 = 800;
 const DEFAULT_SELECTOR_WAIT_MS: i64 = 30_000;
 const SELECTOR_POLL_INTERVAL: Duration = Duration::from_millis(100);
+const SCREENSHOT_VIEWPORT_WIDTH: u32 = 1280;
+const SCREENSHOT_VIEWPORT_HEIGHT: u32 = 720;
+const MAX_NATIVE_SCREENSHOT_HEIGHT: u32 = 16_384;
+const RGBA_CHANNELS: usize = 4;
+const SNAPSHOT_MARGIN: u32 = 24;
+const SNAPSHOT_ROW_HEIGHT: u32 = 18;
+const SNAPSHOT_ROW_GAP: u32 = 6;
+const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
+const FNV_PRIME: u64 = 0x100000001b3;
 
 /// Scroll direction for native page interactions.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -438,14 +447,17 @@ async fn execute_action(page: &mut Page, action: &NativePageAction) -> Result<Na
             Ok(NativeActionData::empty())
         }
         NativePageAction::Screenshot { full_page } => {
-            let scope = if full_page.unwrap_or(false) {
-                "full-page"
-            } else {
-                "viewport"
-            };
-            Err(format!(
-                "Native backend does not support {scope} screenshot actions because it has no visual layout renderer; use BrowserBackend::Chromiumoxide for screenshots"
-            ))
+            let full_page = full_page.unwrap_or(false);
+            let bytes = screenshot(page, full_page).await?;
+            let len = bytes.len();
+            Ok(NativeActionData {
+                data: Some(serde_json::json!({
+                    "bytes": len,
+                    "format": "png",
+                    "full_page": full_page,
+                })),
+                screenshot: Some(bytes),
+            })
         }
         NativePageAction::ExecuteJs { script } => page.evaluate_result(script).map(NativeActionData::data),
         NativePageAction::Scrape => {
@@ -467,6 +479,9 @@ async fn click(page: &mut Page, selector: &str) -> Result<(), String> {
             if (!target) {{
                 return {{ ok: false, error: `click target not found: ${{selector}}` }};
             }}
+            target.focus && target.focus();
+            target.dispatchEvent(new MouseEvent("mousedown", {{ bubbles: true, cancelable: true, button: 0 }}));
+            target.dispatchEvent(new MouseEvent("mouseup", {{ bubbles: true, cancelable: true, button: 0 }}));
             target.click();
             return {{ ok: true }};
         }})()
@@ -496,9 +511,18 @@ fn type_text(page: &mut Page, selector: &str, text: &str) -> Result<(), String> 
                 return {{ ok: false, error: `type target not found: ${{selector}}` }};
             }}
             target.focus && target.focus();
-            const current = target.value == null ? "" : String(target.value);
-            target.value = current + text;
-            target.dispatchEvent(new Event("input", {{ bubbles: true }}));
+            for (const char of Array.from(text)) {{
+                const keydownAllowed = target.dispatchEvent(new KeyboardEvent("keydown", {{ key: char, bubbles: true, cancelable: true }}));
+                const keypressAllowed = keydownAllowed
+                    ? target.dispatchEvent(new KeyboardEvent("keypress", {{ key: char, bubbles: true, cancelable: true }}))
+                    : false;
+                if (keydownAllowed && keypressAllowed) {{
+                    const current = target.value == null ? "" : String(target.value);
+                    target.value = current + char;
+                    target.dispatchEvent(new Event("input", {{ bubbles: true }}));
+                }}
+                target.dispatchEvent(new KeyboardEvent("keyup", {{ key: char, bubbles: true, cancelable: true }}));
+            }}
             target.dispatchEvent(new Event("change", {{ bubbles: true }}));
             return {{ ok: true }};
         }})()
@@ -517,9 +541,31 @@ async fn press(page: &mut Page, key: &str) -> Result<(), String> {
         (() => {{
             const key = {key_json};
             const target = document.activeElement || document.body || document;
-            for (const eventType of ["keydown", "keypress", "keyup"]) {{
-                target.dispatchEvent(new KeyboardEvent(eventType, {{ key, bubbles: true, cancelable: true }}));
+            const keydownAllowed = target.dispatchEvent(new KeyboardEvent("keydown", {{ key, code: key, bubbles: true, cancelable: true }}));
+            let keypressAllowed = true;
+            if (key === "Enter") {{
+                keypressAllowed = keydownAllowed
+                    ? target.dispatchEvent(new KeyboardEvent("keypress", {{ key, code: key, bubbles: true, cancelable: true }}))
+                    : false;
+                const form = target.form || (target.closest && target.closest("form"));
+                if (keydownAllowed && keypressAllowed && form && typeof form.submit === "function") {{
+                    form.submit();
+                }}
+            }} else if (key === "Backspace") {{
+                if (keydownAllowed && target && (target.localName === "input" || target.localName === "textarea")) {{
+                    target.value = String(target.value || "").slice(0, -1);
+                    target.dispatchEvent(new Event("input", {{ bubbles: true }}));
+                }}
+            }} else if (Array.from(key).length === 1) {{
+                keypressAllowed = keydownAllowed
+                    ? target.dispatchEvent(new KeyboardEvent("keypress", {{ key, code: key, bubbles: true, cancelable: true }}))
+                    : false;
+                if (keydownAllowed && keypressAllowed && target && (target.localName === "input" || target.localName === "textarea")) {{
+                    target.value = String(target.value || "") + key;
+                    target.dispatchEvent(new Event("input", {{ bubbles: true }}));
+                }}
             }}
+            target.dispatchEvent(new KeyboardEvent("keyup", {{ key, code: key, bubbles: true, cancelable: true }}));
             return {{ ok: true }};
         }})()
         "#
@@ -529,6 +575,182 @@ async fn press(page: &mut Page, key: &str) -> Result<(), String> {
         .await
         .map_err(|e| format!("failed to process key navigation: {e}"))?;
     Ok(())
+}
+
+async fn screenshot(page: &mut Page, full_page: bool) -> Result<Vec<u8>, String> {
+    let html = rendered_html(page).ok_or_else(|| "no rendered DOM available for screenshot".to_string())?;
+    let height = if full_page {
+        screenshot_content_height(page, &html).max(SCREENSHOT_VIEWPORT_HEIGHT)
+    } else {
+        SCREENSHOT_VIEWPORT_HEIGHT
+    }
+    .min(MAX_NATIVE_SCREENSHOT_HEIGHT);
+
+    tokio::task::spawn_blocking(move || render_snapshot_png(&html, SCREENSHOT_VIEWPORT_WIDTH, height))
+        .await
+        .map_err(|e| format!("native screenshot render task failed: {e}"))?
+}
+
+fn screenshot_content_height(page: &mut Page, html: &str) -> u32 {
+    let dom_height = page
+        .evaluate_result("document.documentElement && document.documentElement.scrollHeight")
+        .ok()
+        .and_then(|value| value.as_u64())
+        .and_then(|value| u32::try_from(value).ok())
+        .unwrap_or(SCREENSHOT_VIEWPORT_HEIGHT);
+    dom_height
+        .max(snapshot_content_height(html))
+        .max(css_pixel_height_hint(html).unwrap_or(SCREENSHOT_VIEWPORT_HEIGHT))
+}
+
+fn render_snapshot_png(html: &str, width: u32, height: u32) -> Result<Vec<u8>, String> {
+    let mut buffer = vec![255; width as usize * height as usize * RGBA_CHANNELS];
+    draw_snapshot_background(&mut buffer, width, height);
+    draw_snapshot_rows(&mut buffer, width, height, html);
+    encode_png(&buffer, width, height)
+}
+
+fn draw_snapshot_background(buffer: &mut [u8], width: u32, height: u32) {
+    for y in 0..height {
+        for x in 0..width {
+            let offset = pixel_offset(width, x, y);
+            let shade = if y < 56 { 238 } else { 250 };
+            buffer[offset] = shade;
+            buffer[offset + 1] = shade;
+            buffer[offset + 2] = shade;
+            buffer[offset + 3] = 255;
+        }
+    }
+}
+
+fn draw_snapshot_rows(buffer: &mut [u8], width: u32, height: u32, html: &str) {
+    let mut y = SNAPSHOT_MARGIN;
+    for chunk in snapshot_chunks(html) {
+        if y + SNAPSHOT_ROW_HEIGHT >= height {
+            break;
+        }
+        let row_width = snapshot_row_width(width, &chunk);
+        let color = snapshot_color(&chunk);
+        fill_rect(buffer, width, SNAPSHOT_MARGIN, y, row_width, SNAPSHOT_ROW_HEIGHT, color);
+        y += SNAPSHOT_ROW_HEIGHT + SNAPSHOT_ROW_GAP;
+    }
+}
+
+fn snapshot_content_height(html: &str) -> u32 {
+    let row_count = u32::try_from(snapshot_chunks(html).len()).unwrap_or(u32::MAX);
+    SNAPSHOT_MARGIN
+        .saturating_mul(2)
+        .saturating_add(row_count.saturating_mul(SNAPSHOT_ROW_HEIGHT.saturating_add(SNAPSHOT_ROW_GAP)))
+}
+
+fn snapshot_chunks(html: &str) -> Vec<String> {
+    let mut chunks = Vec::new();
+    let mut text = String::new();
+    let mut in_tag = false;
+    for ch in html.chars() {
+        match ch {
+            '<' => {
+                push_snapshot_text(&mut chunks, &mut text);
+                in_tag = true;
+            }
+            '>' => {
+                in_tag = false;
+            }
+            _ if !in_tag => text.push(ch),
+            _ => {}
+        }
+    }
+    push_snapshot_text(&mut chunks, &mut text);
+    if chunks.is_empty() {
+        chunks.push("empty document".to_string());
+    }
+    chunks
+}
+
+fn css_pixel_height_hint(html: &str) -> Option<u32> {
+    let mut rest = html;
+    let mut height = None;
+    while let Some(index) = rest.find("height:") {
+        rest = &rest[index + "height:".len()..];
+        let candidate = parse_css_pixel_value(rest);
+        height = height.max(candidate);
+    }
+    height
+}
+
+fn parse_css_pixel_value(input: &str) -> Option<u32> {
+    let trimmed = input.trim_start();
+    let number: String = trimmed.chars().take_while(|ch| ch.is_ascii_digit()).collect();
+    if number.is_empty() {
+        return None;
+    }
+    let suffix = trimmed[number.len()..].trim_start();
+    if !suffix.starts_with("px") {
+        return None;
+    }
+    number.parse().ok()
+}
+
+fn push_snapshot_text(chunks: &mut Vec<String>, text: &mut String) {
+    let normalized = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    if !normalized.is_empty() {
+        chunks.push(normalized);
+    }
+    text.clear();
+}
+
+fn snapshot_row_width(width: u32, text: &str) -> u32 {
+    let max_width = width.saturating_sub(SNAPSHOT_MARGIN * 2);
+    let text_width = (text.chars().count() as u32).saturating_mul(9).max(48);
+    text_width.min(max_width)
+}
+
+fn snapshot_color(text: &str) -> [u8; 4] {
+    let bytes = stable_hash64(text).to_le_bytes();
+    [
+        80_u8.saturating_add(bytes[0] / 3),
+        96_u8.saturating_add(bytes[1] / 3),
+        112_u8.saturating_add(bytes[2] / 3),
+        255,
+    ]
+}
+
+fn stable_hash64(text: &str) -> u64 {
+    let mut hash = FNV_OFFSET_BASIS;
+    for byte in text.bytes() {
+        hash ^= u64::from(byte);
+        hash = hash.wrapping_mul(FNV_PRIME);
+    }
+    hash
+}
+
+fn fill_rect(buffer: &mut [u8], width: u32, x: u32, y: u32, rect_width: u32, rect_height: u32, color: [u8; 4]) {
+    for row in y..y + rect_height {
+        for col in x..x + rect_width {
+            let offset = pixel_offset(width, col, row);
+            buffer[offset..offset + RGBA_CHANNELS].copy_from_slice(&color);
+        }
+    }
+}
+
+fn pixel_offset(width: u32, x: u32, y: u32) -> usize {
+    (y as usize * width as usize + x as usize) * RGBA_CHANNELS
+}
+
+fn encode_png(buffer: &[u8], width: u32, height: u32) -> Result<Vec<u8>, String> {
+    let mut output = Vec::new();
+    {
+        let mut encoder = png::Encoder::new(&mut output, width, height);
+        encoder.set_color(png::ColorType::Rgba);
+        encoder.set_depth(png::BitDepth::Eight);
+        let mut writer = encoder
+            .write_header()
+            .map_err(|e| format!("failed to write native screenshot PNG header: {e}"))?;
+        writer
+            .write_image_data(buffer)
+            .map_err(|e| format!("failed to write native screenshot PNG data: {e}"))?;
+    }
+    Ok(output)
 }
 
 fn scroll(

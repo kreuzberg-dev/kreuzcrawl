@@ -5,7 +5,7 @@
 ### Features
 
 - **Core**: Published `interact()` with `PageAction`, `ActionResult`, and `InteractionResult` for backend-neutral page interaction.
-- **Browser (native)**: Added native `interact()` execution for click, type, press, scroll, wait, JavaScript, and scrape actions. Screenshot actions return an action-level unsupported result because the native backend has no visual renderer.
+- **Browser (native)**: Added native `interact()` execution for click, type, press, scroll, wait, JavaScript, scrape, and screenshot actions. Native screenshots are deterministic PNG snapshots derived from the post-action HTML rather than Chrome compositor captures.
 
 ### Fixes
 

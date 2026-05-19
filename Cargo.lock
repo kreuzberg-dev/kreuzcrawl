@@ -2876,6 +2876,7 @@ dependencies = [
  "deno_error",
  "futures",
  "html5ever",
+ "png",
  "precomputed-hash",
  "reqwest",
  "selectors",

@@ -15,6 +15,21 @@ use wiremock::matchers::{method, path};
 #[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
+#[cfg(any(feature = "browser-chromiumoxide", feature = "browser-native"))]
+const PNG_SIGNATURE: &[u8; 8] = b"\x89PNG\r\n\x1a\n";
+#[cfg(feature = "browser-native")]
+const NATIVE_VIEWPORT_SCREENSHOT_HEIGHT: u32 = 720;
+
+#[cfg(feature = "browser-native")]
+fn png_dimensions(bytes: &[u8]) -> Option<(u32, u32)> {
+    if bytes.len() < 24 || !bytes.starts_with(PNG_SIGNATURE) {
+        return None;
+    }
+    let width = u32::from_be_bytes(bytes[16..20].try_into().ok()?);
+    let height = u32::from_be_bytes(bytes[20..24].try_into().ok()?);
+    Some((width, height))
+}
+
 #[cfg(feature = "browser-native")]
 static ALLOW_PRIVATE: OnceLock<()> = OnceLock::new();
 
@@ -134,15 +149,29 @@ async fn native_interact_click_type_wait_scroll_execute_js_and_scrape() {
                     <html>
                       <body style="height: 2000px">
                         <button id="go">Go</button>
-                        <input id="name" value="">
+                        <form id="form" action="/submitted">
+                          <input id="name" name="name" value="">
+                        </form>
                         <div id="status">idle</div>
+                        <div id="events"></div>
                         <script>
+                          const events = [];
+                          const record = event => {
+                            events.push(event.type);
+                            document.getElementById('events').textContent = events.join(',');
+                          };
                           document.getElementById('go').addEventListener('click', () => {
                             document.getElementById('status').textContent = 'clicked';
                             const done = document.createElement('div');
                             done.id = 'done';
                             done.textContent = 'ready';
                             document.body.appendChild(done);
+                          });
+                          document.getElementById('go').addEventListener('mousedown', record);
+                          document.getElementById('go').addEventListener('click', record);
+                          document.getElementById('go').addEventListener('mouseup', record);
+                          document.getElementById('name').addEventListener('input', () => {
+                            document.body.setAttribute('data-name', document.getElementById('name').value);
                           });
                         </script>
                       </body>
@@ -188,6 +217,12 @@ async fn native_interact_click_type_wait_scroll_execute_js_and_scrape() {
             PageAction::ExecuteJs {
                 script: "document.querySelector('#name').value".to_string(),
             },
+            PageAction::Press {
+                key: "Backspace".to_string(),
+            },
+            PageAction::ExecuteJs {
+                script: "document.querySelector('#name').value".to_string(),
+            },
             PageAction::ExecuteJs {
                 script: "throw new Error('boom')".to_string(),
             },
@@ -202,40 +237,41 @@ async fn native_interact_click_type_wait_scroll_execute_js_and_scrape() {
     .await
     .unwrap();
 
-    assert_eq!(result.action_results.len(), 9);
+    assert_eq!(result.action_results.len(), 11);
     assert!(
-        result.action_results[..5].iter().all(|action| action.success),
+        result.action_results[..7].iter().all(|action| action.success),
         "non-screenshot actions should succeed: {:?}",
         result.action_results
-    );
-    assert!(!result.action_results[5].success);
-    assert!(
-        result.action_results[5]
-            .error
-            .as_deref()
-            .is_some_and(|error| !error.is_empty())
-    );
-    assert!(!result.action_results[6].success);
-    assert!(
-        result.action_results[6]
-            .error
-            .as_deref()
-            .is_some_and(|error| error.contains("selector syntax error")),
-        "invalid selector should surface an evaluation error: {:?}",
-        result.action_results[6]
     );
     assert!(!result.action_results[7].success);
     assert!(
         result.action_results[7]
             .error
             .as_deref()
-            .is_some_and(|error| error.contains("BrowserBackend::Chromiumoxide"))
+            .is_some_and(|error| !error.is_empty())
     );
-    assert!(result.action_results[8].success);
+    assert!(!result.action_results[8].success);
+    assert!(
+        result.action_results[8]
+            .error
+            .as_deref()
+            .is_some_and(|error| error.contains("selector syntax error")),
+        "invalid selector should surface an evaluation error: {:?}",
+        result.action_results[8]
+    );
+    assert!(result.action_results[9].success);
+    assert!(result.action_results[10].success);
     assert!(result.final_html.contains("clicked"));
     assert!(result.final_html.contains("id=\"done\""));
     assert!(result.final_html.contains("data-eval-script=\"ran\""));
-    assert!(result.screenshot.is_none());
+    assert!(result.final_html.contains("mousedown,mouseup,click"));
+    assert!(result.final_html.contains("data-name=\"kreuzcraw"));
+    assert!(
+        result
+            .screenshot
+            .as_deref()
+            .is_some_and(|bytes| bytes.starts_with(PNG_SIGNATURE))
+    );
 
     let typed_value = result.action_results[4]
         .data
@@ -244,13 +280,389 @@ async fn native_interact_click_type_wait_scroll_execute_js_and_scrape() {
         .unwrap_or_default();
     assert_eq!(typed_value, "kreuzcrawl");
 
-    let scrape_data = result.action_results[8]
+    let backspaced_value = result.action_results[6]
+        .data
+        .as_ref()
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or_default();
+    assert_eq!(backspaced_value, "kreuzcraw");
+
+    let screenshot_data = result.action_results[9]
+        .data
+        .as_ref()
+        .expect("screenshot action should return metadata");
+    assert_eq!(
+        screenshot_data.get("format").and_then(serde_json::Value::as_str),
+        Some("png")
+    );
+    assert_eq!(
+        screenshot_data.get("full_page").and_then(serde_json::Value::as_bool),
+        Some(false)
+    );
+    assert!(
+        screenshot_data
+            .get("bytes")
+            .and_then(serde_json::Value::as_u64)
+            .is_some_and(|bytes| bytes > 0)
+    );
+
+    let scrape_data = result.action_results[10]
         .data
         .as_ref()
         .and_then(|data| data.get("html"))
         .and_then(serde_json::Value::as_str)
         .unwrap_or_default();
     assert!(scrape_data.contains("clicked"));
+}
+
+#[cfg(feature = "browser-native")]
+#[tokio::test]
+async fn native_interact_full_page_screenshot_returns_png() {
+    allow_private_network();
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"
+                    <html>
+                      <body style="margin: 0">
+                        <main style="height: 1800px; background: #f6f6f6">
+                          <h1>Native screenshot</h1>
+                        </main>
+                      </body>
+                    </html>
+                    "#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+
+    let config = CrawlConfig {
+        browser: BrowserConfig {
+            backend: BrowserBackend::Native,
+            mode: BrowserMode::Always,
+            timeout: Duration::from_secs(15),
+            ..BrowserConfig::default()
+        },
+        ..CrawlConfig::default()
+    };
+    let engine = create_engine(Some(config)).unwrap();
+
+    let result = interact(
+        &engine,
+        &mock.uri(),
+        vec![PageAction::Screenshot { full_page: Some(true) }],
+    )
+    .await
+    .unwrap();
+
+    assert_eq!(result.action_results.len(), 1);
+    assert!(result.action_results[0].success);
+    assert!(
+        result
+            .screenshot
+            .as_deref()
+            .is_some_and(|bytes| bytes.starts_with(PNG_SIGNATURE))
+    );
+    assert_eq!(
+        result.action_results[0]
+            .data
+            .as_ref()
+            .and_then(|data| data.get("full_page"))
+            .and_then(serde_json::Value::as_bool),
+        Some(true)
+    );
+    assert!(
+        result
+            .screenshot
+            .as_deref()
+            .and_then(png_dimensions)
+            .is_some_and(|(_, height)| height > NATIVE_VIEWPORT_SCREENSHOT_HEIGHT)
+    );
+}
+
+#[cfg(feature = "browser-native")]
+#[tokio::test]
+async fn native_interact_link_click_navigates() {
+    allow_private_network();
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"
+                    <html>
+                      <body>
+                        <a id="next" href="/next">Next</a>
+                      </body>
+                    </html>
+                    "#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/next"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"<html><body><h1 id="arrived">Arrived</h1></body></html>"#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+
+    let config = CrawlConfig {
+        browser: BrowserConfig {
+            backend: BrowserBackend::Native,
+            mode: BrowserMode::Always,
+            timeout: Duration::from_secs(15),
+            ..BrowserConfig::default()
+        },
+        ..CrawlConfig::default()
+    };
+    let engine = create_engine(Some(config)).unwrap();
+
+    let result = interact(
+        &engine,
+        &mock.uri(),
+        vec![
+            PageAction::Click {
+                selector: "#next".to_string(),
+            },
+            PageAction::Scrape,
+        ],
+    )
+    .await
+    .unwrap();
+
+    assert!(result.action_results.iter().all(|action| action.success));
+    assert!(result.final_url.ends_with("/next"));
+    assert!(result.final_html.contains("id=\"arrived\""));
+}
+
+#[cfg(feature = "browser-native")]
+#[tokio::test]
+async fn native_interact_click_respects_prevent_default() {
+    allow_private_network();
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"
+                    <html>
+                      <body>
+                        <a id="next" href="/next">Next</a>
+                        <div id="status">idle</div>
+                        <script>
+                          document.getElementById('next').addEventListener('click', event => {
+                            event.preventDefault();
+                            document.getElementById('status').textContent = 'stayed';
+                          });
+                        </script>
+                      </body>
+                    </html>
+                    "#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/next"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"<html><body><h1 id="arrived">Arrived</h1></body></html>"#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+
+    let config = CrawlConfig {
+        browser: BrowserConfig {
+            backend: BrowserBackend::Native,
+            mode: BrowserMode::Always,
+            timeout: Duration::from_secs(15),
+            ..BrowserConfig::default()
+        },
+        ..CrawlConfig::default()
+    };
+    let engine = create_engine(Some(config)).unwrap();
+
+    let result = interact(
+        &engine,
+        &mock.uri(),
+        vec![
+            PageAction::Click {
+                selector: "#next".to_string(),
+            },
+            PageAction::Scrape,
+        ],
+    )
+    .await
+    .unwrap();
+
+    assert!(result.action_results.iter().all(|action| action.success));
+    assert_eq!(result.final_url, format!("{}/", mock.uri()));
+    assert!(result.final_html.contains("stayed"));
+    assert!(!result.final_html.contains("id=\"arrived\""));
+}
+
+#[cfg(feature = "browser-native")]
+#[tokio::test]
+async fn native_interact_press_enter_submits_focused_form() {
+    allow_private_network();
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"
+                    <html>
+                      <body>
+                        <form action="/submitted">
+                          <input id="name" name="name" value="">
+                        </form>
+                      </body>
+                    </html>
+                    "#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/submitted"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"<html><body><h1 id="submitted">Submitted</h1></body></html>"#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+
+    let config = CrawlConfig {
+        browser: BrowserConfig {
+            backend: BrowserBackend::Native,
+            mode: BrowserMode::Always,
+            timeout: Duration::from_secs(15),
+            ..BrowserConfig::default()
+        },
+        ..CrawlConfig::default()
+    };
+    let engine = create_engine(Some(config)).unwrap();
+
+    let result = interact(
+        &engine,
+        &mock.uri(),
+        vec![
+            PageAction::TypeText {
+                selector: "#name".to_string(),
+                text: "ada".to_string(),
+            },
+            PageAction::Press {
+                key: "Enter".to_string(),
+            },
+            PageAction::Scrape,
+        ],
+    )
+    .await
+    .unwrap();
+
+    assert!(result.action_results.iter().all(|action| action.success));
+    assert!(
+        result.final_url.ends_with("/submitted?name=ada"),
+        "unexpected final URL: {}",
+        result.final_url
+    );
+    assert!(result.final_html.contains("id=\"submitted\""));
+}
+
+#[cfg(feature = "browser-native")]
+#[tokio::test]
+async fn native_interact_keyboard_prevent_default_blocks_defaults() {
+    allow_private_network();
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"
+                    <html>
+                      <body>
+                        <form action="/submitted">
+                          <input id="name" name="name" value="keep">
+                        </form>
+                        <script>
+                          const input = document.getElementById('name');
+                          input.addEventListener('keypress', event => {
+                            if (event.key === 'x') event.preventDefault();
+                          });
+                          input.addEventListener('keydown', event => {
+                            if (event.key === 'Backspace' || event.key === 'Enter') {
+                              event.preventDefault();
+                            }
+                          });
+                        </script>
+                      </body>
+                    </html>
+                    "#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/submitted"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            r#"<html><body><h1 id="submitted">Submitted</h1></body></html>"#,
+            "text/html",
+        ))
+        .mount(&mock)
+        .await;
+
+    let config = CrawlConfig {
+        browser: BrowserConfig {
+            backend: BrowserBackend::Native,
+            mode: BrowserMode::Always,
+            timeout: Duration::from_secs(15),
+            ..BrowserConfig::default()
+        },
+        ..CrawlConfig::default()
+    };
+    let engine = create_engine(Some(config)).unwrap();
+
+    let result = interact(
+        &engine,
+        &mock.uri(),
+        vec![
+            PageAction::TypeText {
+                selector: "#name".to_string(),
+                text: "x".to_string(),
+            },
+            PageAction::ExecuteJs {
+                script: "document.querySelector('#name').value".to_string(),
+            },
+            PageAction::Press {
+                key: "Backspace".to_string(),
+            },
+            PageAction::ExecuteJs {
+                script: "document.querySelector('#name').value".to_string(),
+            },
+            PageAction::Press {
+                key: "Enter".to_string(),
+            },
+            PageAction::Scrape,
+        ],
+    )
+    .await
+    .unwrap();
+
+    assert!(result.action_results.iter().all(|action| action.success));
+    let after_type = result.action_results[1]
+        .data
+        .as_ref()
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or_default();
+    let after_backspace = result.action_results[3]
+        .data
+        .as_ref()
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or_default();
+    assert_eq!(after_type, "keep");
+    assert_eq!(after_backspace, "keep");
+    assert_eq!(result.final_url, format!("{}/", mock.uri()));
+    assert!(!result.final_html.contains("id=\"submitted\""));
 }
 
 #[test]

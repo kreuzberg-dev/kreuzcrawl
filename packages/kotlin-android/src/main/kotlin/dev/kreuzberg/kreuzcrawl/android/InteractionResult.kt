@@ -21,24 +21,14 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
-/**
- * Result of executing a sequence of page interaction actions.
- */
+/** Result of executing a sequence of page interaction actions. */
 data class InteractionResult(
-    /**
-     * Results from each executed action.
-     */
+    /** Results from each executed action. */
     val actionResults: List<ActionResult>,
-    /**
-     * Final page HTML after all actions completed.
-     */
+    /** Final page HTML after all actions completed. */
     val finalHtml: String,
-    /**
-     * Final page URL (may have changed due to navigation).
-     */
+    /** Final page URL (may have changed due to navigation). */
     val finalUrl: String,
-    /**
-     * Screenshot taken after all actions, if requested.
-     */
-    val screenshot: ByteArray?
+    /** Screenshot taken after all actions, if requested. */
+    val screenshot: ByteArray?,
 )

@@ -21,16 +21,10 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
-/**
- * Direction for a scroll action.
- */
+/** Direction for a scroll action. */
 enum class ScrollDirection {
-    /**
-     * Scroll upward.
-     */
+    /** Scroll upward. */
     UP,
-    /**
-     * Scroll downward.
-     */
-    DOWN;
+    /** Scroll downward. */
+    DOWN,
 }
