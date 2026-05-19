@@ -1019,19 +1019,24 @@ pub const CrawlEngineHandle = struct {
             return _first_error(CrawlError);
         }
         defer c.kcrawl_crawl_engine_handle_crawl_stream_free(_stream_handle);
-        var _last_json: ?[]u8 = null;
+        var _buf = std.ArrayList(u8).init(std.heap.c_allocator);
+        defer _buf.deinit();
+        try _buf.append('[');
+        var _first = true;
         while (true) {
             const _chunk = c.kcrawl_crawl_engine_handle_crawl_stream_next(_stream_handle);
             if (_chunk == null) break;
-            if (_last_json) |j| std.heap.c_allocator.free(j);
             const _chunk_json_ptr = c.kcrawl_crawl_event_to_json(_chunk);
             c.kcrawl_crawl_event_free(_chunk);
             if (_chunk_json_ptr == null) continue;
+            if (!_first) try _buf.append(',');
+            _first = false;
             const _chunk_slice = std.mem.span(_chunk_json_ptr);
-            _last_json = try std.heap.c_allocator.dupe(u8, _chunk_slice);
+            try _buf.appendSlice(_chunk_slice);
             c.kcrawl_free_string(_chunk_json_ptr);
         }
-        return _last_json orelse try std.heap.c_allocator.dupe(u8, "{}");
+        try _buf.append(']');
+        return _buf.toOwnedSlice();
     }
 
     /// Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -1053,19 +1058,24 @@ pub const CrawlEngineHandle = struct {
             return _first_error(CrawlError);
         }
         defer c.kcrawl_crawl_engine_handle_batch_crawl_stream_free(_stream_handle);
-        var _last_json: ?[]u8 = null;
+        var _buf = std.ArrayList(u8).init(std.heap.c_allocator);
+        defer _buf.deinit();
+        try _buf.append('[');
+        var _first = true;
         while (true) {
             const _chunk = c.kcrawl_crawl_engine_handle_batch_crawl_stream_next(_stream_handle);
             if (_chunk == null) break;
-            if (_last_json) |j| std.heap.c_allocator.free(j);
             const _chunk_json_ptr = c.kcrawl_crawl_event_to_json(_chunk);
             c.kcrawl_crawl_event_free(_chunk);
             if (_chunk_json_ptr == null) continue;
+            if (!_first) try _buf.append(',');
+            _first = false;
             const _chunk_slice = std.mem.span(_chunk_json_ptr);
-            _last_json = try std.heap.c_allocator.dupe(u8, _chunk_slice);
+            try _buf.appendSlice(_chunk_slice);
             c.kcrawl_free_string(_chunk_json_ptr);
         }
-        return _last_json orelse try std.heap.c_allocator.dupe(u8, "{}");
+        try _buf.append(']');
+        return _buf.toOwnedSlice();
     }
 
     /// Release the underlying FFI handle. Safe to call once per instance.

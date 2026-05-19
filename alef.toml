@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.16.68"
+alef_version = "0.16.71"
 languages = [
   "python",
   "node",
@@ -247,9 +247,11 @@ functions = [
 
 # Streaming adapters — delivered to bindings via alef's per-language streaming
 # idiom (Python AsyncIterator, Ruby Enumerator, PHP Generator, Elixir
-# Stream.unfold, WASM js_sys::Array chunks, FFI callbacks for C consumers).
-# Go/Java/C# emit `compile_error!` per alef-adapters/src/streaming.rs and are
-# explicitly excluded below.
+# Stream.unfold, FFI callbacks for C consumers).
+# WASM is excluded via skip_languages: the kreuzcrawl core engine relies on
+# tokio's multi-thread runtime which is incompatible with wasm32-unknown-unknown
+# (no working fetch/async shim). Go/Java/C# emit `compile_error!` per
+# alef-adapters/src/streaming.rs and are explicitly excluded below.
 [[crates.adapters]]
 name = "crawl_stream"
 pattern = "streaming"
@@ -258,6 +260,7 @@ owner_type = "CrawlEngineHandle"
 item_type = "CrawlEvent"
 error_type = "CrawlError"
 request_type = "kreuzcrawl::CrawlStreamRequest"
+skip_languages = ["wasm"]
 
 [[crates.adapters.params]]
 name = "req"
@@ -271,6 +274,7 @@ owner_type = "CrawlEngineHandle"
 item_type = "CrawlEvent"
 error_type = "CrawlError"
 request_type = "kreuzcrawl::BatchCrawlStreamRequest"
+skip_languages = ["wasm"]
 
 [[crates.adapters.params]]
 name = "req"

@@ -418,6 +418,40 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
+##### Methods
+
+###### crawlStream()
+
+Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
+
+Returns an async stream that emits one event per crawled page, plus a
+terminal `Complete` event. On per-URL failure during the crawl, emits an
+`Error` event followed by `Complete`. The stream item type is wrapped in
+a `Result` to surface transport-level errors; today every emit is `Ok`.
+
+**Signature:**
+
+```kotlin
+@Throws(CrawlError::class)
+fun crawlStream(req: CrawlStreamRequest): String
+```
+
+###### batchCrawlStream()
+
+Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
+
+Returns an async stream that emits one event per crawled page across all
+seeds, plus terminal `Complete` and `Error` events as appropriate. The
+stream item type is wrapped in a `Result` to surface transport-level
+errors; today every emit is `Ok`.
+
+**Signature:**
+
+```kotlin
+@Throws(CrawlError::class)
+fun batchCrawlStream(req: BatchCrawlStreamRequest): String
+```
+
 ---
 
 #### CrawlPageResult

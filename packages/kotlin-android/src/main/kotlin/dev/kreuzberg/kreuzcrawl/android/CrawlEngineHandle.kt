@@ -21,6 +21,15 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.withContext
+
 /**
  * Opaque handle to a configured crawl engine.
  *
@@ -29,4 +38,62 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 class CrawlEngineHandle internal constructor(internal val handle: Long) : AutoCloseable {
     override fun close() { KreuzcrawlBridge.nativeFreeCrawlEngineHandle(handle) }
+
+    private val mapper =
+        ObjectMapper()
+        .registerModule(Jdk8Module())
+        .findAndRegisterModules()
+        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+
+    @Suppress("TooGenericExceptionCaught")
+    fun crawlStream(req: CrawlStreamRequest): Flow<CrawlEvent> =
+        callbackFlow {
+        val streamHandle: Long =
+            withContext(Dispatchers.IO) {
+            KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamStart(handle, mapper.writeValueAsString(req))
+        }
+        try {
+            while (true) {
+                val chunkJson: String? =
+                    withContext(Dispatchers.IO) {
+                    KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamNext(streamHandle)
+                }
+                if (chunkJson == null) break
+                val chunk = mapper.readValue(chunkJson, CrawlEvent::class.java)
+                send(chunk)
+            }
+            close()
+        } catch (e: Throwable) {
+            close(e)
+        }
+        awaitClose {
+            KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamFree(streamHandle)
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    fun batchCrawlStream(req: BatchCrawlStreamRequest): Flow<CrawlEvent> =
+        callbackFlow {
+        val streamHandle: Long =
+            withContext(Dispatchers.IO) {
+            KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamStart(handle, mapper.writeValueAsString(req))
+        }
+        try {
+            while (true) {
+                val chunkJson: String? =
+                    withContext(Dispatchers.IO) {
+                    KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamNext(streamHandle)
+                }
+                if (chunkJson == null) break
+                val chunk = mapper.readValue(chunkJson, CrawlEvent::class.java)
+                send(chunk)
+            }
+            close()
+        } catch (e: Throwable) {
+            close(e)
+        }
+        awaitClose {
+            KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle)
+        }
+    }
 }

@@ -1,5 +1,5 @@
 [build-system]
-requires = [ "maturin>=1.0,<2.0" ]
+requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [project]
@@ -16,10 +16,8 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-authors = [
-    { name = "Kreuzberg Team" }
-]
-keywords = [ "crawl", "scrape", "web", "spider" ]
+authors = [{ name = "Kreuzberg Team" }]
+keywords = ["crawl", "scrape", "web", "spider"]
 [project.urls]
 repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 
@@ -28,23 +26,42 @@ module-name = "kreuzcrawl._kreuzcrawl"
 manifest-path = "../../crates/kreuzcrawl-py/Cargo.toml"
 # abi3-py310 produces a single wheel per platform that loads on Python 3.10+,
 # avoiding a per-Python-version build matrix.
-features = [ "pyo3/extension-module", "pyo3/abi3-py310" ]
-python-packages = [ "kreuzcrawl" ]
+features = ["pyo3/extension-module", "pyo3/abi3-py310"]
+python-packages = ["kreuzcrawl"]
 
 [dependency-groups]
-dev = [ "ruff>=0.14.8", "mypy>=1.19.0" ]
+dev = ["ruff>=0.14.8", "mypy>=1.19.0"]
 
 [tool.ruff]
 target-version = "py310"
 line-length = 120
 
 [tool.ruff.lint]
-select = [ "ALL" ]
+select = ["ALL"]
 ignore = [
-  "ANN401", "ASYNC109", "ASYNC110", "BLE001", "COM812",
-  "D100", "D104", "D107", "D205", "E501", "EM",
-  "FBT", "FIX", "ISC001", "PD011", "PGH003", "PLR2004",
-  "PLW0603", "S104", "S110", "S603", "TD", "TRY",
+  "ANN401",
+  "ASYNC109",
+  "ASYNC110",
+  "BLE001",
+  "COM812",
+  "D100",
+  "D104",
+  "D107",
+  "D205",
+  "E501",
+  "EM",
+  "FBT",
+  "FIX",
+  "ISC001",
+  "PD011",
+  "PGH003",
+  "PLR2004",
+  "PLW0603",
+  "S104",
+  "S110",
+  "S603",
+  "TD",
+  "TRY",
 ]
 
 [tool.ruff.lint.mccabe]
@@ -59,7 +76,7 @@ max-returns = 10
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = [ "S101", "D103", "ANN", "PLR2004" ]
+"tests/**" = ["S101", "D103", "ANN", "PLR2004"]
 
 [tool.ruff.format]
 docstring-code-line-length = 120
