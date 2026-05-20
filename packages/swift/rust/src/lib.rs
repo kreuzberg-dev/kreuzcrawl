@@ -991,6 +991,98 @@ mod ffi {
         #[swift_bridge(swift_name = "batchCrawlStreamRequestFromJson")]
         fn batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String>;
     }
+    extern "Rust" {
+
+        #[swift_bridge(swift_name = "extractionMetaFromJson")]
+        fn extraction_meta_from_json(json: String) -> Result<ExtractionMeta, String>;
+        #[swift_bridge(swift_name = "proxyConfigFromJson")]
+        fn proxy_config_from_json(json: String) -> Result<ProxyConfig, String>;
+        #[swift_bridge(swift_name = "contentConfigFromJson")]
+        fn content_config_from_json(json: String) -> Result<ContentConfig, String>;
+        #[swift_bridge(swift_name = "browserConfigFromJson")]
+        fn browser_config_from_json(json: String) -> Result<BrowserConfig, String>;
+        #[swift_bridge(swift_name = "browserExtrasFromJson")]
+        fn browser_extras_from_json(json: String) -> Result<BrowserExtras, String>;
+        #[swift_bridge(swift_name = "downloadedDocumentFromJson")]
+        fn downloaded_document_from_json(json: String) -> Result<DownloadedDocument, String>;
+        #[swift_bridge(swift_name = "interactionResultFromJson")]
+        fn interaction_result_from_json(json: String) -> Result<InteractionResult, String>;
+        #[swift_bridge(swift_name = "actionResultFromJson")]
+        fn action_result_from_json(json: String) -> Result<ActionResult, String>;
+        #[swift_bridge(swift_name = "scrapeResultFromJson")]
+        fn scrape_result_from_json(json: String) -> Result<ScrapeResult, String>;
+        #[swift_bridge(swift_name = "crawlPageResultFromJson")]
+        fn crawl_page_result_from_json(json: String) -> Result<CrawlPageResult, String>;
+        #[swift_bridge(swift_name = "crawlResultFromJson")]
+        fn crawl_result_from_json(json: String) -> Result<CrawlResult, String>;
+        #[swift_bridge(swift_name = "sitemapUrlFromJson")]
+        fn sitemap_url_from_json(json: String) -> Result<SitemapUrl, String>;
+        #[swift_bridge(swift_name = "mapResultFromJson")]
+        fn map_result_from_json(json: String) -> Result<MapResult, String>;
+        #[swift_bridge(swift_name = "markdownResultFromJson")]
+        fn markdown_result_from_json(json: String) -> Result<MarkdownResult, String>;
+        #[swift_bridge(swift_name = "linkInfoFromJson")]
+        fn link_info_from_json(json: String) -> Result<LinkInfo, String>;
+        #[swift_bridge(swift_name = "imageInfoFromJson")]
+        fn image_info_from_json(json: String) -> Result<ImageInfo, String>;
+        #[swift_bridge(swift_name = "feedInfoFromJson")]
+        fn feed_info_from_json(json: String) -> Result<FeedInfo, String>;
+        #[swift_bridge(swift_name = "jsonLdEntryFromJson")]
+        fn json_ld_entry_from_json(json: String) -> Result<JsonLdEntry, String>;
+        #[swift_bridge(swift_name = "cookieInfoFromJson")]
+        fn cookie_info_from_json(json: String) -> Result<CookieInfo, String>;
+        #[swift_bridge(swift_name = "downloadedAssetFromJson")]
+        fn downloaded_asset_from_json(json: String) -> Result<DownloadedAsset, String>;
+        #[swift_bridge(swift_name = "articleMetadataFromJson")]
+        fn article_metadata_from_json(json: String) -> Result<ArticleMetadata, String>;
+        #[swift_bridge(swift_name = "hreflangEntryFromJson")]
+        fn hreflang_entry_from_json(json: String) -> Result<HreflangEntry, String>;
+        #[swift_bridge(swift_name = "faviconInfoFromJson")]
+        fn favicon_info_from_json(json: String) -> Result<FaviconInfo, String>;
+        #[swift_bridge(swift_name = "headingInfoFromJson")]
+        fn heading_info_from_json(json: String) -> Result<HeadingInfo, String>;
+        #[swift_bridge(swift_name = "responseMetaFromJson")]
+        fn response_meta_from_json(json: String) -> Result<ResponseMeta, String>;
+        #[swift_bridge(swift_name = "pageMetadataFromJson")]
+        fn page_metadata_from_json(json: String) -> Result<PageMetadata, String>;
+        #[swift_bridge(swift_name = "citationResultFromJson")]
+        fn citation_result_from_json(json: String) -> Result<CitationResult, String>;
+        #[swift_bridge(swift_name = "citationReferenceFromJson")]
+        fn citation_reference_from_json(json: String) -> Result<CitationReference, String>;
+        #[swift_bridge(swift_name = "batchScrapeResultFromJson")]
+        fn batch_scrape_result_from_json(json: String) -> Result<BatchScrapeResult, String>;
+        #[swift_bridge(swift_name = "batchCrawlResultFromJson")]
+        fn batch_crawl_result_from_json(json: String) -> Result<BatchCrawlResult, String>;
+        #[swift_bridge(swift_name = "batchScrapeResultsFromJson")]
+        fn batch_scrape_results_from_json(json: String) -> Result<BatchScrapeResults, String>;
+        #[swift_bridge(swift_name = "batchCrawlResultsFromJson")]
+        fn batch_crawl_results_from_json(json: String) -> Result<BatchCrawlResults, String>;
+    }
+    extern "Rust" {
+
+        #[swift_bridge(swift_name = "browserModeFromJson")]
+        fn browser_mode_from_json(json: String) -> Result<BrowserMode, String>;
+        #[swift_bridge(swift_name = "browserWaitFromJson")]
+        fn browser_wait_from_json(json: String) -> Result<BrowserWait, String>;
+        #[swift_bridge(swift_name = "browserBackendFromJson")]
+        fn browser_backend_from_json(json: String) -> Result<BrowserBackend, String>;
+        #[swift_bridge(swift_name = "authConfigFromJson")]
+        fn auth_config_from_json(json: String) -> Result<AuthConfig, String>;
+        #[swift_bridge(swift_name = "linkTypeFromJson")]
+        fn link_type_from_json(json: String) -> Result<LinkType, String>;
+        #[swift_bridge(swift_name = "imageSourceFromJson")]
+        fn image_source_from_json(json: String) -> Result<ImageSource, String>;
+        #[swift_bridge(swift_name = "feedTypeFromJson")]
+        fn feed_type_from_json(json: String) -> Result<FeedType, String>;
+        #[swift_bridge(swift_name = "assetCategoryFromJson")]
+        fn asset_category_from_json(json: String) -> Result<AssetCategory, String>;
+        #[swift_bridge(swift_name = "crawlEventFromJson")]
+        fn crawl_event_from_json(json: String) -> Result<CrawlEvent, String>;
+        #[swift_bridge(swift_name = "pageActionFromJson")]
+        fn page_action_from_json(json: String) -> Result<PageAction, String>;
+        #[swift_bridge(swift_name = "scrollDirectionFromJson")]
+        fn scroll_direction_from_json(json: String) -> Result<ScrollDirection, String>;
+    }
 }
 
 pub struct ExtractionMeta(pub kreuzcrawl::ExtractionMeta);
@@ -4158,15 +4250,228 @@ pub fn crawl_config_from_json(json: String) -> Result<CrawlConfig, String> {
         .map(CrawlConfig)
         .map_err(|e| e.to_string())
 }
-
 pub fn crawl_stream_request_from_json(json: String) -> Result<CrawlStreamRequest, String> {
     serde_json::from_str::<kreuzcrawl::CrawlStreamRequest>(&json)
         .map(CrawlStreamRequest)
         .map_err(|e| e.to_string())
 }
-
 pub fn batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String> {
     serde_json::from_str::<kreuzcrawl::BatchCrawlStreamRequest>(&json)
         .map(BatchCrawlStreamRequest)
+        .map_err(|e| e.to_string())
+}
+pub fn extraction_meta_from_json(json: String) -> Result<ExtractionMeta, String> {
+    serde_json::from_str::<kreuzcrawl::ExtractionMeta>(&json)
+        .map(ExtractionMeta)
+        .map_err(|e| e.to_string())
+}
+pub fn proxy_config_from_json(json: String) -> Result<ProxyConfig, String> {
+    serde_json::from_str::<kreuzcrawl::ProxyConfig>(&json)
+        .map(ProxyConfig)
+        .map_err(|e| e.to_string())
+}
+pub fn content_config_from_json(json: String) -> Result<ContentConfig, String> {
+    serde_json::from_str::<kreuzcrawl::ContentConfig>(&json)
+        .map(ContentConfig)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_config_from_json(json: String) -> Result<BrowserConfig, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserConfig>(&json)
+        .map(BrowserConfig)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_extras_from_json(json: String) -> Result<BrowserExtras, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserExtras>(&json)
+        .map(BrowserExtras)
+        .map_err(|e| e.to_string())
+}
+pub fn downloaded_document_from_json(json: String) -> Result<DownloadedDocument, String> {
+    serde_json::from_str::<kreuzcrawl::DownloadedDocument>(&json)
+        .map(DownloadedDocument)
+        .map_err(|e| e.to_string())
+}
+pub fn interaction_result_from_json(json: String) -> Result<InteractionResult, String> {
+    serde_json::from_str::<kreuzcrawl::InteractionResult>(&json)
+        .map(InteractionResult)
+        .map_err(|e| e.to_string())
+}
+pub fn action_result_from_json(json: String) -> Result<ActionResult, String> {
+    serde_json::from_str::<kreuzcrawl::ActionResult>(&json)
+        .map(ActionResult)
+        .map_err(|e| e.to_string())
+}
+pub fn scrape_result_from_json(json: String) -> Result<ScrapeResult, String> {
+    serde_json::from_str::<kreuzcrawl::ScrapeResult>(&json)
+        .map(ScrapeResult)
+        .map_err(|e| e.to_string())
+}
+pub fn crawl_page_result_from_json(json: String) -> Result<CrawlPageResult, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlPageResult>(&json)
+        .map(CrawlPageResult)
+        .map_err(|e| e.to_string())
+}
+pub fn crawl_result_from_json(json: String) -> Result<CrawlResult, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlResult>(&json)
+        .map(CrawlResult)
+        .map_err(|e| e.to_string())
+}
+pub fn sitemap_url_from_json(json: String) -> Result<SitemapUrl, String> {
+    serde_json::from_str::<kreuzcrawl::SitemapUrl>(&json)
+        .map(SitemapUrl)
+        .map_err(|e| e.to_string())
+}
+pub fn map_result_from_json(json: String) -> Result<MapResult, String> {
+    serde_json::from_str::<kreuzcrawl::MapResult>(&json)
+        .map(MapResult)
+        .map_err(|e| e.to_string())
+}
+pub fn markdown_result_from_json(json: String) -> Result<MarkdownResult, String> {
+    serde_json::from_str::<kreuzcrawl::MarkdownResult>(&json)
+        .map(MarkdownResult)
+        .map_err(|e| e.to_string())
+}
+pub fn link_info_from_json(json: String) -> Result<LinkInfo, String> {
+    serde_json::from_str::<kreuzcrawl::LinkInfo>(&json)
+        .map(LinkInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn image_info_from_json(json: String) -> Result<ImageInfo, String> {
+    serde_json::from_str::<kreuzcrawl::ImageInfo>(&json)
+        .map(ImageInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn feed_info_from_json(json: String) -> Result<FeedInfo, String> {
+    serde_json::from_str::<kreuzcrawl::FeedInfo>(&json)
+        .map(FeedInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn json_ld_entry_from_json(json: String) -> Result<JsonLdEntry, String> {
+    serde_json::from_str::<kreuzcrawl::JsonLdEntry>(&json)
+        .map(JsonLdEntry)
+        .map_err(|e| e.to_string())
+}
+pub fn cookie_info_from_json(json: String) -> Result<CookieInfo, String> {
+    serde_json::from_str::<kreuzcrawl::CookieInfo>(&json)
+        .map(CookieInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn downloaded_asset_from_json(json: String) -> Result<DownloadedAsset, String> {
+    serde_json::from_str::<kreuzcrawl::DownloadedAsset>(&json)
+        .map(DownloadedAsset)
+        .map_err(|e| e.to_string())
+}
+pub fn article_metadata_from_json(json: String) -> Result<ArticleMetadata, String> {
+    serde_json::from_str::<kreuzcrawl::ArticleMetadata>(&json)
+        .map(ArticleMetadata)
+        .map_err(|e| e.to_string())
+}
+pub fn hreflang_entry_from_json(json: String) -> Result<HreflangEntry, String> {
+    serde_json::from_str::<kreuzcrawl::HreflangEntry>(&json)
+        .map(HreflangEntry)
+        .map_err(|e| e.to_string())
+}
+pub fn favicon_info_from_json(json: String) -> Result<FaviconInfo, String> {
+    serde_json::from_str::<kreuzcrawl::FaviconInfo>(&json)
+        .map(FaviconInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn heading_info_from_json(json: String) -> Result<HeadingInfo, String> {
+    serde_json::from_str::<kreuzcrawl::HeadingInfo>(&json)
+        .map(HeadingInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn response_meta_from_json(json: String) -> Result<ResponseMeta, String> {
+    serde_json::from_str::<kreuzcrawl::ResponseMeta>(&json)
+        .map(ResponseMeta)
+        .map_err(|e| e.to_string())
+}
+pub fn page_metadata_from_json(json: String) -> Result<PageMetadata, String> {
+    serde_json::from_str::<kreuzcrawl::PageMetadata>(&json)
+        .map(PageMetadata)
+        .map_err(|e| e.to_string())
+}
+pub fn citation_result_from_json(json: String) -> Result<CitationResult, String> {
+    serde_json::from_str::<kreuzcrawl::CitationResult>(&json)
+        .map(CitationResult)
+        .map_err(|e| e.to_string())
+}
+pub fn citation_reference_from_json(json: String) -> Result<CitationReference, String> {
+    serde_json::from_str::<kreuzcrawl::CitationReference>(&json)
+        .map(CitationReference)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_scrape_result_from_json(json: String) -> Result<BatchScrapeResult, String> {
+    serde_json::from_str::<kreuzcrawl::BatchScrapeResult>(&json)
+        .map(BatchScrapeResult)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_crawl_result_from_json(json: String) -> Result<BatchCrawlResult, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlResult>(&json)
+        .map(BatchCrawlResult)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_scrape_results_from_json(json: String) -> Result<BatchScrapeResults, String> {
+    serde_json::from_str::<kreuzcrawl::BatchScrapeResults>(&json)
+        .map(BatchScrapeResults)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_crawl_results_from_json(json: String) -> Result<BatchCrawlResults, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlResults>(&json)
+        .map(BatchCrawlResults)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_mode_from_json(json: String) -> Result<BrowserMode, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserMode>(&json)
+        .map(BrowserMode::from)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_wait_from_json(json: String) -> Result<BrowserWait, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserWait>(&json)
+        .map(BrowserWait::from)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_backend_from_json(json: String) -> Result<BrowserBackend, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserBackend>(&json)
+        .map(BrowserBackend::from)
+        .map_err(|e| e.to_string())
+}
+pub fn auth_config_from_json(json: String) -> Result<AuthConfig, String> {
+    serde_json::from_str::<kreuzcrawl::AuthConfig>(&json)
+        .map(AuthConfig::from)
+        .map_err(|e| e.to_string())
+}
+pub fn link_type_from_json(json: String) -> Result<LinkType, String> {
+    serde_json::from_str::<kreuzcrawl::LinkType>(&json)
+        .map(LinkType::from)
+        .map_err(|e| e.to_string())
+}
+pub fn image_source_from_json(json: String) -> Result<ImageSource, String> {
+    serde_json::from_str::<kreuzcrawl::ImageSource>(&json)
+        .map(ImageSource::from)
+        .map_err(|e| e.to_string())
+}
+pub fn feed_type_from_json(json: String) -> Result<FeedType, String> {
+    serde_json::from_str::<kreuzcrawl::FeedType>(&json)
+        .map(FeedType::from)
+        .map_err(|e| e.to_string())
+}
+pub fn asset_category_from_json(json: String) -> Result<AssetCategory, String> {
+    serde_json::from_str::<kreuzcrawl::AssetCategory>(&json)
+        .map(AssetCategory::from)
+        .map_err(|e| e.to_string())
+}
+pub fn crawl_event_from_json(json: String) -> Result<CrawlEvent, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlEvent>(&json)
+        .map(CrawlEvent::from)
+        .map_err(|e| e.to_string())
+}
+pub fn page_action_from_json(json: String) -> Result<PageAction, String> {
+    serde_json::from_str::<kreuzcrawl::PageAction>(&json)
+        .map(PageAction::from)
+        .map_err(|e| e.to_string())
+}
+pub fn scroll_direction_from_json(json: String) -> Result<ScrollDirection, String> {
+    serde_json::from_str::<kreuzcrawl::ScrollDirection>(&json)
+        .map(ScrollDirection::from)
         .map_err(|e| e.to_string())
 }

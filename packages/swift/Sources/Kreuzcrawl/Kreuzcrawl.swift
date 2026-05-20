@@ -42,7 +42,7 @@ internal extension ExtractionMeta {
         self.chunksProcessed = rb.chunksProcessed()
     }
     func intoRust() throws -> RustBridge.ExtractionMeta {
-        return RustBridge.ExtractionMeta(self.cost, self.promptTokens, self.completionTokens, self.model, self.chunksProcessed)
+        return RustBridge.ExtractionMeta(self.cost, self.promptTokens, self.completionTokens, self.model.map(RustString.init), self.chunksProcessed)
     }
 }
 
@@ -69,7 +69,7 @@ internal extension ProxyConfig {
         self.password = rb.password()?.toString()
     }
     func intoRust() throws -> RustBridge.ProxyConfig {
-        return RustBridge.ProxyConfig(self.url, self.username, self.password)
+        return RustBridge.ProxyConfig(RustString(self.url), self.username.map(RustString.init), self.password.map(RustString.init))
     }
 }
 
@@ -167,7 +167,7 @@ internal extension ContentConfig {
         for __elem in self.preserveTags { __preserveTags.push(value: RustString(__elem)) }
         let __excludeSelectors = RustVec<RustString>()
         for __elem in self.excludeSelectors { __excludeSelectors.push(value: RustString(__elem)) }
-        return RustBridge.ContentConfig(self.outputFormat, self.preprocessingPreset, self.removeNavigation, self.removeForms, __stripTags, __preserveTags, __excludeSelectors, self.skipImages, self.maxDepth, self.wrap, self.wrapWidth, self.includeDocumentStructure)
+        return RustBridge.ContentConfig(RustString(self.outputFormat), RustString(self.preprocessingPreset), self.removeNavigation, self.removeForms, __stripTags, __preserveTags, __excludeSelectors, self.skipImages, self.maxDepth, self.wrap, self.wrapWidth, self.includeDocumentStructure)
     }
 }
 
@@ -231,7 +231,7 @@ internal extension SitemapUrl {
         self.priority = rb.priority()?.toString()
     }
     func intoRust() throws -> RustBridge.SitemapUrl {
-        return RustBridge.SitemapUrl(self.url, self.lastmod, self.changefreq, self.priority)
+        return RustBridge.SitemapUrl(RustString(self.url), self.lastmod.map(RustString.init), self.changefreq.map(RustString.init), self.priority.map(RustString.init))
     }
 }
 
@@ -297,7 +297,7 @@ internal extension LinkInfo {
         self.nofollow = rb.nofollow()
     }
     func intoRust() throws -> RustBridge.LinkInfo {
-        return RustBridge.LinkInfo(self.url, self.text, try self.linkType.intoRust(), self.rel, self.nofollow)
+        return RustBridge.LinkInfo(RustString(self.url), RustString(self.text), try self.linkType.intoRust(), self.rel.map(RustString.init), self.nofollow)
     }
 }
 
@@ -332,7 +332,7 @@ internal extension ImageInfo {
         self.source = ImageSource(rawValue: rb.source().toString()) ?? { fatalError("Unknown ImageSource: \(rb.source().toString())") }()
     }
     func intoRust() throws -> RustBridge.ImageInfo {
-        return RustBridge.ImageInfo(self.url, self.alt, self.width, self.height, try self.source.intoRust())
+        return RustBridge.ImageInfo(RustString(self.url), self.alt.map(RustString.init), self.width, self.height, try self.source.intoRust())
     }
 }
 
@@ -364,7 +364,7 @@ internal extension FeedInfo {
         self.feedType = FeedType(rawValue: rb.feedType().toString()) ?? { fatalError("Unknown FeedType: \(rb.feedType().toString())") }()
     }
     func intoRust() throws -> RustBridge.FeedInfo {
-        return RustBridge.FeedInfo(self.url, self.title, try self.feedType.intoRust())
+        return RustBridge.FeedInfo(RustString(self.url), self.title.map(RustString.init), try self.feedType.intoRust())
     }
 }
 
@@ -396,7 +396,7 @@ internal extension JsonLdEntry {
         self.raw = rb.raw().toString()
     }
     func intoRust() throws -> RustBridge.JsonLdEntry {
-        return RustBridge.JsonLdEntry(self.schemaType, self.name, self.raw)
+        return RustBridge.JsonLdEntry(RustString(self.schemaType), self.name.map(RustString.init), RustString(self.raw))
     }
 }
 
@@ -427,7 +427,7 @@ internal extension CookieInfo {
         self.path = rb.path()?.toString()
     }
     func intoRust() throws -> RustBridge.CookieInfo {
-        return RustBridge.CookieInfo(self.name, self.value, self.domain, self.path)
+        return RustBridge.CookieInfo(RustString(self.name), RustString(self.value), self.domain.map(RustString.init), self.path.map(RustString.init))
     }
 }
 
@@ -474,7 +474,7 @@ internal extension DownloadedAsset {
         self.htmlTag = rb.htmlTag()?.toString()
     }
     func intoRust() throws -> RustBridge.DownloadedAsset {
-        return RustBridge.DownloadedAsset(self.url, self.contentHash, self.mimeType, self.size, try self.assetCategory.intoRust(), self.htmlTag)
+        return RustBridge.DownloadedAsset(RustString(self.url), RustString(self.contentHash), self.mimeType.map(RustString.init), self.size, try self.assetCategory.intoRust(), self.htmlTag.map(RustString.init))
     }
 }
 
@@ -518,7 +518,7 @@ internal extension ArticleMetadata {
     func intoRust() throws -> RustBridge.ArticleMetadata {
         let __tags = RustVec<RustString>()
         for __elem in self.tags { __tags.push(value: RustString(__elem)) }
-        return RustBridge.ArticleMetadata(self.publishedTime, self.modifiedTime, self.author, self.section, __tags)
+        return RustBridge.ArticleMetadata(self.publishedTime.map(RustString.init), self.modifiedTime.map(RustString.init), self.author.map(RustString.init), self.section.map(RustString.init), __tags)
     }
 }
 
@@ -541,7 +541,7 @@ internal extension HreflangEntry {
         self.url = rb.url().toString()
     }
     func intoRust() throws -> RustBridge.HreflangEntry {
-        return RustBridge.HreflangEntry(self.lang, self.url)
+        return RustBridge.HreflangEntry(RustString(self.lang), RustString(self.url))
     }
 }
 
@@ -578,7 +578,7 @@ internal extension FaviconInfo {
         self.mimeType = rb.mimeType()?.toString()
     }
     func intoRust() throws -> RustBridge.FaviconInfo {
-        return RustBridge.FaviconInfo(self.url, self.rel, self.sizes, self.mimeType)
+        return RustBridge.FaviconInfo(RustString(self.url), RustString(self.rel), self.sizes.map(RustString.init), self.mimeType.map(RustString.init))
     }
 }
 
@@ -601,7 +601,7 @@ internal extension HeadingInfo {
         self.text = rb.text().toString()
     }
     func intoRust() throws -> RustBridge.HeadingInfo {
-        return RustBridge.HeadingInfo(self.level, self.text)
+        return RustBridge.HeadingInfo(self.level, RustString(self.text))
     }
 }
 
@@ -653,7 +653,7 @@ internal extension ResponseMeta {
         self.contentEncoding = rb.contentEncoding()?.toString()
     }
     func intoRust() throws -> RustBridge.ResponseMeta {
-        return RustBridge.ResponseMeta(self.etag, self.lastModified, self.cacheControl, self.server, self.xPoweredBy, self.contentLanguage, self.contentEncoding)
+        return RustBridge.ResponseMeta(self.etag.map(RustString.init), self.lastModified.map(RustString.init), self.cacheControl.map(RustString.init), self.server.map(RustString.init), self.xPoweredBy.map(RustString.init), self.contentLanguage.map(RustString.init), self.contentEncoding.map(RustString.init))
     }
 }
 
@@ -910,7 +910,7 @@ internal extension CrawlStreamRequest {
         self.url = rb.url().toString()
     }
     func intoRust() throws -> RustBridge.CrawlStreamRequest {
-        return RustBridge.CrawlStreamRequest(self.url)
+        return RustBridge.CrawlStreamRequest(RustString(self.url))
     }
 }
 
@@ -961,7 +961,7 @@ internal extension CitationResult {
     func intoRust() throws -> RustBridge.CitationResult {
         let __references = RustVec<RustBridge.CitationReference>()
         for __elem in self.references { __references.push(value: try __elem.intoRust()) }
-        return RustBridge.CitationResult(self.content, __references)
+        return RustBridge.CitationResult(RustString(self.content), __references)
     }
 }
 
@@ -989,7 +989,7 @@ internal extension CitationReference {
         self.text = rb.text().toString()
     }
     func intoRust() throws -> RustBridge.CitationReference {
-        return RustBridge.CitationReference(self.index, self.url, self.text)
+        return RustBridge.CitationReference(self.index, RustString(self.url), RustString(self.text))
     }
 }
 
