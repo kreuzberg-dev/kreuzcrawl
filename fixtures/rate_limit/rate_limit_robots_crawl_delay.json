@@ -1,7 +1,12 @@
 {
 	"id": "rate_limit_robots_crawl_delay",
 	"description": "Respects Crawl-delay directive in robots.txt",
-	"tags": ["rate_limit", "robots_txt", "crawl_delay"],
+	"tags": [
+		"rate_limit",
+		"robots_txt",
+		"crawl_delay",
+		"crawl"
+	],
 	"input": {
 		"mock_responses": [
 			{
@@ -43,7 +48,7 @@
 		},
 		{
 			"type": "equals",
-			"field": "status_code",
+			"field": "pages[0].status_code",
 			"value": 200
 		}
 	]

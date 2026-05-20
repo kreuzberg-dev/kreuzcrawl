@@ -1,7 +1,10 @@
 {
 	"id": "crawl_double_slash_normalization",
 	"description": "Normalizes double slashes in URL paths (//page to /page)",
-	"tags": ["crawl", "normalization"],
+	"tags": [
+		"crawl",
+		"normalization"
+	],
 	"input": {
 		"mock_responses": [
 			{
@@ -31,7 +34,7 @@
 	"assertions": [
 		{
 			"type": "equals",
-			"field": "unique_urls.length",
+			"field": "pages.length",
 			"value": 2
 		}
 	]
