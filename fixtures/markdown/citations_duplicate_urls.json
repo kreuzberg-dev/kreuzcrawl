@@ -1,0 +1,33 @@
+{
+	"id": "citations_duplicate_urls",
+	"description": "Citations deduplicates multiple links to the same URL",
+	"tags": ["markdown", "citations", "dedup"],
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><p>Visit <a href=\"https://example.com\">Example</a>. Also check out <a href=\"https://example.com\">Example again</a> and <a href=\"https://example.com\">One more time</a>. And <a href=\"https://different.com\">Different site</a>.</p></body></html>"
+			}
+		],
+		"config": {}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "not_empty",
+			"field": "markdown.content"
+		},
+		{
+			"type": "is_true",
+			"field": "markdown.citations"
+		}
+	]
+}
