@@ -151,9 +151,9 @@ internal extension ContentConfig {
         self.preprocessingPreset = rb.preprocessing_preset().toString()
         self.removeNavigation = rb.remove_navigation()
         self.removeForms = rb.remove_forms()
-        self.stripTags = rb.strip_tags().map { $0.toString() }
-        self.preserveTags = rb.preserve_tags().map { $0.toString() }
-        self.excludeSelectors = rb.exclude_selectors().map { $0.toString() }
+        self.stripTags = rb.strip_tags().map { $0.as_str().toString() }
+        self.preserveTags = rb.preserve_tags().map { $0.as_str().toString() }
+        self.excludeSelectors = rb.exclude_selectors().map { $0.as_str().toString() }
         self.skipImages = rb.skip_images()
         self.maxDepth = rb.max_depth()
         self.wrap = rb.wrap()
@@ -513,7 +513,7 @@ internal extension ArticleMetadata {
         self.modifiedTime = rb.modified_time()?.toString()
         self.author = rb.author()?.toString()
         self.section = rb.section()?.toString()
-        self.tags = rb.tags().map { $0.toString() }
+        self.tags = rb.tags().map { $0.as_str().toString() }
     }
     func intoRust() throws -> RustBridge.ArticleMetadata {
         let __tags = RustVec<String>()
@@ -860,7 +860,7 @@ internal extension PageMetadata {
         self.ogLocale = rb.og_locale()?.toString()
         self.ogVideo = rb.og_video()?.toString()
         self.ogAudio = rb.og_audio()?.toString()
-        self.ogLocaleAlternates = rb.og_locale_alternates()?.map { $0.toString() }
+        self.ogLocaleAlternates = rb.og_locale_alternates()?.map { $0.as_str().toString() }
         self.twitterCard = rb.twitter_card()?.toString()
         self.twitterTitle = rb.twitter_title()?.toString()
         self.twitterDescription = rb.twitter_description()?.toString()
@@ -931,7 +931,7 @@ public struct BatchCrawlStreamRequest: Codable, Sendable, Hashable {
 // MARK: - Internal FFI conversions for BatchCrawlStreamRequest
 internal extension BatchCrawlStreamRequest {
     init(_ rb: RustBridge.BatchCrawlStreamRequest) throws {
-        self.urls = rb.urls().map { $0.toString() }
+        self.urls = rb.urls().map { $0.as_str().toString() }
     }
     func intoRust() throws -> RustBridge.BatchCrawlStreamRequest {
         let __urls = RustVec<String>()

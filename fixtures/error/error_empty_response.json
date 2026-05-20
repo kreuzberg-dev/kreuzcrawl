@@ -7,9 +7,8 @@
   ],
   "assertions": [
     {
-      "type": "equals",
-      "field": "html_not_empty",
-      "value": false
+      "type": "is_empty",
+      "field": "html"
     },
     {
       "type": "equals",

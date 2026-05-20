@@ -86,6 +86,66 @@ pub struct BatchCrawlResult {
     pub error: Option<String>,
 }
 
+/// Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
+///
+/// The counts are derived once at construction so every binding language can read them
+/// as plain integer fields without re-iterating the `results` vector.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct BatchScrapeResults {
+    /// Per-URL scrape results, in the order URLs were submitted.
+    pub results: Vec<BatchScrapeResult>,
+    /// Total number of URLs in the batch (equal to `results.len()`).
+    pub total_count: usize,
+    /// Number of URLs whose scrape succeeded (`error` is `None`).
+    pub completed_count: usize,
+    /// Number of URLs whose scrape failed (`error` is `Some`).
+    pub failed_count: usize,
+}
+
+impl From<Vec<BatchScrapeResult>> for BatchScrapeResults {
+    fn from(results: Vec<BatchScrapeResult>) -> Self {
+        let total_count = results.len();
+        let failed_count = results.iter().filter(|r| r.error.is_some()).count();
+        let completed_count = total_count - failed_count;
+        Self {
+            results,
+            total_count,
+            completed_count,
+            failed_count,
+        }
+    }
+}
+
+/// Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
+///
+/// The counts are derived once at construction so every binding language can read them
+/// as plain integer fields without re-iterating the `results` vector.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct BatchCrawlResults {
+    /// Per-URL crawl results, in the order seed URLs were submitted.
+    pub results: Vec<BatchCrawlResult>,
+    /// Total number of seed URLs in the batch (equal to `results.len()`).
+    pub total_count: usize,
+    /// Number of seed URLs whose crawl succeeded (`error` is `None`).
+    pub completed_count: usize,
+    /// Number of seed URLs whose crawl failed (`error` is `Some`).
+    pub failed_count: usize,
+}
+
+impl From<Vec<BatchCrawlResult>> for BatchCrawlResults {
+    fn from(results: Vec<BatchCrawlResult>) -> Self {
+        let total_count = results.len();
+        let failed_count = results.iter().filter(|r| r.error.is_some()).count();
+        let completed_count = total_count - failed_count;
+        Self {
+            results,
+            total_count,
+            completed_count,
+            failed_count,
+        }
+    }
+}
+
 /// Create a new crawl engine with the given configuration.
 ///
 /// If `config` is `None`, uses [`CrawlConfig::default()`].
@@ -125,13 +185,13 @@ pub async fn interact(
 }
 
 /// Scrape multiple URLs concurrently.
-pub async fn batch_scrape(engine: &CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, CrawlError> {
+pub async fn batch_scrape(engine: &CrawlEngineHandle, urls: Vec<String>) -> Result<BatchScrapeResults, CrawlError> {
     if urls.is_empty() {
         return Err(CrawlError::InvalidConfig("batch_urls must not be empty".into()));
     }
     let url_refs: Vec<&str> = urls.iter().map(String::as_str).collect();
     let results = engine.inner.batch_scrape(&url_refs).await;
-    Ok(results
+    let per_url: Vec<BatchScrapeResult> = results
         .into_iter()
         .map(|(url, result)| match result {
             Ok(r) => BatchScrapeResult {
@@ -145,17 +205,18 @@ pub async fn batch_scrape(engine: &CrawlEngineHandle, urls: Vec<String>) -> Resu
                 error: Some(e.to_string()),
             },
         })
-        .collect())
+        .collect();
+    Ok(BatchScrapeResults::from(per_url))
 }
 
 /// Crawl multiple seed URLs concurrently, each following links to configured depth.
-pub async fn batch_crawl(engine: &CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, CrawlError> {
+pub async fn batch_crawl(engine: &CrawlEngineHandle, urls: Vec<String>) -> Result<BatchCrawlResults, CrawlError> {
     if urls.is_empty() {
         return Err(CrawlError::InvalidConfig("batch_urls must not be empty".into()));
     }
     let url_refs: Vec<&str> = urls.iter().map(String::as_str).collect();
     let results = engine.inner.batch_crawl(&url_refs).await;
-    Ok(results
+    let per_url: Vec<BatchCrawlResult> = results
         .into_iter()
         .map(|(url, result)| match result {
             Ok(r) => BatchCrawlResult {
@@ -169,5 +230,6 @@ pub async fn batch_crawl(engine: &CrawlEngineHandle, urls: Vec<String>) -> Resul
                 error: Some(e.to_string()),
             },
         })
-        .collect())
+        .collect();
+    Ok(BatchCrawlResults::from(per_url))
 }

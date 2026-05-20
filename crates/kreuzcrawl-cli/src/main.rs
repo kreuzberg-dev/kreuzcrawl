@@ -331,7 +331,7 @@ async fn main() {
                     }
                 };
                 if format == "markdown" {
-                    for entry in &results {
+                    for entry in &results.results {
                         if let Some(ref r) = entry.result {
                             for page in &r.pages {
                                 if let Some(ref md) = page.markdown {
@@ -348,6 +348,7 @@ async fn main() {
                         "{}",
                         serde_json::to_string_pretty(
                             &results
+                                .results
                                 .iter()
                                 .map(|entry| {
                                     serde_json::json!({

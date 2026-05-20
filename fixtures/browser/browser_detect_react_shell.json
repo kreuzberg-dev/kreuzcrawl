@@ -24,9 +24,8 @@
       "value": 200
     },
     {
-      "type": "equals",
-      "field": "html_not_empty",
-      "value": true
+      "type": "not_empty",
+      "field": "html"
     },
     {
       "type": "equals",

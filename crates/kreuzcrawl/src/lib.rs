@@ -43,8 +43,8 @@ pub(crate) mod warc;
 #[cfg(feature = "api")]
 pub use api::serve_with_config as serve_api;
 pub use bindings::{
-    BatchCrawlResult, BatchScrapeResult, CrawlEngineHandle, batch_crawl, batch_scrape, crawl, create_engine, interact,
-    map_urls, scrape,
+    BatchCrawlResult, BatchCrawlResults, BatchScrapeResult, BatchScrapeResults, CrawlEngineHandle, batch_crawl,
+    batch_scrape, crawl, create_engine, interact, map_urls, scrape,
 };
 pub use citations::{CitationReference, CitationResult, generate_citations};
 pub use defaults::{
