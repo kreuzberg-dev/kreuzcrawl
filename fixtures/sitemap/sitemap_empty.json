@@ -3,7 +3,8 @@
   "description": "Handles empty sitemap gracefully",
   "tags": [
     "sitemap",
-    "edge-case"
+    "edge-case",
+    "map"
   ],
   "input": {
     "config": {},

@@ -392,6 +392,8 @@ pub struct CrawlResult {
     pub error: Option<String>,
     /// Cookies collected during the crawl.
     pub cookies: Vec<CookieInfo>,
+    /// Whether all crawled pages stayed on the same domain as the start URL.
+    pub stayed_on_domain: bool,
 }
 
 /// A URL entry from a sitemap.
@@ -1323,6 +1325,7 @@ impl From<kreuzcrawl::CrawlResult> for CrawlResult {
             was_skipped: v.was_skipped as _,
             error: v.error.map(|s| s.into()),
             cookies: v.cookies.into_iter().map(CookieInfo::from).collect(),
+            stayed_on_domain: v.stayed_on_domain as _,
         }
     }
 }

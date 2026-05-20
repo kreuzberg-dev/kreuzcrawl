@@ -584,6 +584,7 @@ The result of a multi-page crawl operation.
 | `was_skipped` | `bool` | — | Whether any page was skipped during crawling. |
 | `error` | `const char**` | `NULL` | An error message, if the crawl encountered an issue. |
 | `cookies` | `KcrawlCookieInfo*` | `NULL` | Cookies collected during the crawl. |
+| `stayed_on_domain` | `bool` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `normalized_urls` | `const char**` | `NULL` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ### Methods

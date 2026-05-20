@@ -1162,7 +1162,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0-rc.21"
+version = "0.3.0-rc.23"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1191,7 +1191,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl_nif"
-version = "0.3.0-rc.21"
+version = "0.3.0-rc.23"
 dependencies = [
  "futures-util",
  "kreuzcrawl",

@@ -214,6 +214,8 @@ pub struct CrawlResult {
     pub error: Option<String>,
     /// Cookies collected during the crawl.
     pub cookies: Vec<CookieInfo>,
+    /// Whether all crawled pages stayed on the same domain as the start URL.
+    pub stayed_on_domain: bool,
     /// Normalized URLs encountered during crawling (for deduplication counting).
     #[serde(default, skip_serializing)]
     #[cfg_attr(alef, alef(skip))]
@@ -229,6 +231,7 @@ impl CrawlResult {
         was_skipped: bool,
         error: Option<String>,
         cookies: Vec<CookieInfo>,
+        stayed_on_domain: bool,
         normalized_urls: Vec<String>,
     ) -> Self {
         Self {
@@ -238,6 +241,7 @@ impl CrawlResult {
             was_skipped,
             error,
             cookies,
+            stayed_on_domain,
             normalized_urls,
         }
     }

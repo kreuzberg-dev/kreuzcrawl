@@ -35,6 +35,8 @@ data class CrawlResult(
     val error: String?,
     /** Cookies collected during the crawl. */
     val cookies: List<CookieInfo>,
+    /** Whether all crawled pages stayed on the same domain as the start URL. */
+    val stayedOnDomain: Boolean,
     /** Normalized URLs encountered during crawling (for deduplication counting). */
     val normalizedUrls: List<String>
 )

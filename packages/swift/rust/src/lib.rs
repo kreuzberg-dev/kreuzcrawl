@@ -470,6 +470,7 @@ mod ffi {
             was_skipped: bool,
             error: Option<String>,
             cookies: Vec<CookieInfo>,
+            stayed_on_domain: bool,
         ) -> CrawlResult;
         fn pages(&self) -> Vec<CrawlPageResult>;
         #[swift_bridge(swift_name = "finalUrl")]
@@ -480,6 +481,8 @@ mod ffi {
         fn was_skipped(&self) -> bool;
         fn error(&self) -> Option<String>;
         fn cookies(&self) -> Vec<CookieInfo>;
+        #[swift_bridge(swift_name = "stayedOnDomain")]
+        fn stayed_on_domain(&self) -> bool;
     }
 
     extern "Rust" {
@@ -2315,6 +2318,7 @@ impl CrawlResult {
         was_skipped: bool,
         error: Option<String>,
         cookies: Vec<CookieInfo>,
+        stayed_on_domain: bool,
     ) -> CrawlResult {
         let mut __target: kreuzcrawl::CrawlResult = ::std::default::Default::default();
         __target.pages = pages.into_iter().map(|w| w.0).collect();
@@ -2333,6 +2337,7 @@ impl CrawlResult {
             }
         }
         __target.cookies = cookies.into_iter().map(|w| w.0).collect();
+        __target.stayed_on_domain = stayed_on_domain;
         CrawlResult(__target)
     }
     pub fn pages(&self) -> Vec<CrawlPageResult> {
@@ -2358,6 +2363,12 @@ impl CrawlResult {
     }
     pub fn cookies(&self) -> Vec<CookieInfo> {
         self.0.cookies.iter().map(|elem| CookieInfo(elem.clone())).collect()
+    }
+    pub fn stayed_on_domain(&self) -> bool {
+        ::serde_json::to_value(&self.0.stayed_on_domain)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
     }
 }
 

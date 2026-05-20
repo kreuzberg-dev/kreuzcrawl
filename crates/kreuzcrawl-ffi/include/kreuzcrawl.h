@@ -1658,6 +1658,13 @@ char *kcrawl_crawl_result_error(const KCRAWLCrawlResult *ptr);
 char *kcrawl_crawl_result_cookies(const KCRAWLCrawlResult *ptr);
 
 /**
+ * Get the `stayed_on_domain` field from a `CrawlResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_crawl_result_stayed_on_domain(const KCRAWLCrawlResult *ptr);
+
+/**
  * Get the `normalized_urls` field from a `CrawlResult`.
  * # Safety
  * Pointer must be a valid handle returned by this library.

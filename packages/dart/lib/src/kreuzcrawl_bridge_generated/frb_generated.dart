@@ -2245,8 +2245,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   CrawlResult dco_decode_crawl_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 7)
+      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
     return CrawlResult(
       pages: dco_decode_list_crawl_page_result(arr[0]),
       finalUrl: dco_decode_String(arr[1]),
@@ -2254,6 +2254,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       wasSkipped: dco_decode_bool(arr[3]),
       error: dco_decode_opt_String(arr[4]),
       cookies: dco_decode_list_cookie_info(arr[5]),
+      stayedOnDomain: dco_decode_bool(arr[6]),
     );
   }
 
@@ -3559,6 +3560,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_wasSkipped = sse_decode_bool(deserializer);
     var var_error = sse_decode_opt_String(deserializer);
     var var_cookies = sse_decode_list_cookie_info(deserializer);
+    var var_stayedOnDomain = sse_decode_bool(deserializer);
     return CrawlResult(
       pages: var_pages,
       finalUrl: var_finalUrl,
@@ -3566,6 +3568,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       wasSkipped: var_wasSkipped,
       error: var_error,
       cookies: var_cookies,
+      stayedOnDomain: var_stayedOnDomain,
     );
   }
 
@@ -5140,6 +5143,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self.wasSkipped, serializer);
     sse_encode_opt_String(self.error, serializer);
     sse_encode_list_cookie_info(self.cookies, serializer);
+    sse_encode_bool(self.stayedOnDomain, serializer);
   }
 
   @protected

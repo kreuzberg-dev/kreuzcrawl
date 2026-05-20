@@ -9,7 +9,7 @@ All notable changes to kreuzcrawl are documented here.
 - **Regenerated all alef bindings against `alef 0.17.8`** (was `0.17.2`). Two
   behaviour changes flow through to the per-language bindings:
   - Rustdoc intra-doc links of the form `[Type::method]` are now emitted as
-    plain ``Type.method`` in non-Rust binding source comments. The previous
+    plain `Type.method` in non-Rust binding source comments. The previous
     output left raw `[CrawlConfig::default()]` markers that rustdoc could not
     resolve in the binding crates (no `CrawlConfig` symbol in scope), causing
     `clippy::doc-link-with-quotes` and `rustdoc::broken-intra-doc-links`

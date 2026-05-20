@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.17.8"
+alef_version = "0.17.10"
 languages = [
   "python",
   "node",
@@ -542,10 +542,7 @@ fields_array = [
   "metadata.hreflangs",
   "metadata.favicons",
 ]
-fields_enum = [
-  "links[].link_type",
-  "assets[].category",
-]
+fields_enum = ["links[].link_type", "assets[].category"]
 result_fields = [
   "status_code",
   "content_type",
@@ -870,9 +867,9 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
-select_when = { category = "map" }
+select_when = { tag = "map" }
 # MapResult top-level fields (per crates/kreuzcrawl/src/types/results.rs).
-result_fields = ["urls"]
+result_fields = ["urls", "has_lastmod"]
 
 [[crates.e2e.calls.map_urls.args]]
 name = "engine"
@@ -1137,7 +1134,11 @@ streaming = true
 select_when = { category = "stream" }
 # wasm is excluded for the underlying adapter (see [[crates.adapters]] above);
 # repeat here so codegen skips per-language streaming emission consistently.
-skip_languages = ["wasm"]
+# C is excluded: the FFI streaming adapter is callback-based (see
+# kcrawl_crawl_engine_handle_crawl_stream), not a simple `char*` return, and
+# cannot be expressed as assertion-based tests without a dedicated callback
+# harness. A future streaming e2e harness will re-enable C.
+skip_languages = ["wasm", "c"]
 # CrawlEvent is a discriminated enum streamed item-by-item; result_fields
 # applies to the per-event projection (alef streaming adapter exposes
 # `url`, `event_type`, `page`, `error`, `final_url` etc. as virtual fields).
@@ -1216,7 +1217,8 @@ async = true
 returns_result = true
 streaming = true
 select_when = { category = "stream", id_prefix = "batch_crawl_stream" }
-skip_languages = ["wasm", "elixir", "zig", "swift", "brew"]
+# C excluded: callback-based FFI API, same reason as crawl_stream.
+skip_languages = ["wasm", "elixir", "zig", "swift", "brew", "c"]
 result_fields = ["url", "event_type", "page", "error", "final_url", "result", "pages_crawled"]
 
 [[crates.e2e.calls.batch_crawl_stream.args]]
@@ -1340,8 +1342,34 @@ description = "metadata.description"
 "scrape_result.extraction_meta" = "ExtractionMeta"
 "scrape_result.downloaded_document" = "DownloadedDocument"
 "scrape_result.browser" = "BrowserExtras"
+# ScrapeResult fields that are NOT present in the C FFI (exist on CrawlResult/MapResult
+# but not ScrapeResult). Marked "skip" so the C codegen omits assertions that reference
+# them via the default scrape call rather than generating non-existent accessor calls.
+"scrape_result.is_error" = "skip"
+"scrape_result.stayed_on_domain" = "skip"
+"scrape_result.redirect_count" = "skip"
+"scrape_result.redirect_chain" = "skip"
+"scrape_result.final_url" = "skip"
+"scrape_result.cookies" = "skip"
+"scrape_result.urls" = "skip"
+"scrape_result.has_lastmod" = "skip"
+"scrape_result.pages_crawled" = "skip"
 # CrawlResult JSON array fields (char* — use alef_json_array_count for .length)
 "crawl_result.pages" = "char*"
+"crawl_result.cookies" = "char*"
+# CrawlResult primitive fields
+"crawl_result.stayed_on_domain" = "int32_t"
+"crawl_result.redirect_count" = "uintptr_t"
+# CrawlResult char* fields
+"crawl_result.final_url" = "char*"
+"crawl_result.error" = "char*"
+# MapResult fields
+"map_result.urls" = "char*"
+# has_lastmod is a computed field (derived from urls[*].lastmod presence) with no
+# dedicated C FFI accessor yet — skip in C until kcrawl_map_result_has_lastmod is added.
+"map_result.has_lastmod" = "skip"
+# InteractionResult fields — action_results is a JSON array returned as char*
+"interaction_result.action_results" = "char*"
 # PageMetadata primitive fields
 "page_metadata.word_count" = "uintptr_t"
 # PageMetadata JSON array fields (char* — use alef_json_array_count for .length)

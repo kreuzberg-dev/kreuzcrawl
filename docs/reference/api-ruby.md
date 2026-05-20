@@ -584,6 +584,7 @@ The result of a multi-page crawl operation.
 | `was_skipped` | `Boolean` | — | Whether any page was skipped during crawling. |
 | `error` | `String?` | `nil` | An error message, if the crawl encountered an issue. |
 | `cookies` | `Array<CookieInfo>` | `[]` | Cookies collected during the crawl. |
+| `stayed_on_domain` | `Boolean` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `normalized_urls` | `Array<String>` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ### Methods

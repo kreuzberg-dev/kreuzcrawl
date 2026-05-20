@@ -1573,6 +1573,7 @@ const _: fn() = || {
         let _: bool = CrawlResult.was_skipped;
         let _: Option<String> = CrawlResult.error;
         let _: Vec<crate::CookieInfo> = CrawlResult.cookies;
+        let _: bool = CrawlResult.stayed_on_domain;
     }
     {
         let CrawlStreamRequest = None::<crate::CrawlStreamRequest>.unwrap();
@@ -2350,6 +2351,7 @@ impl SseDecode for crate::CrawlResult {
         let mut var_wasSkipped = <bool>::sse_decode(deserializer);
         let mut var_error = <Option<String>>::sse_decode(deserializer);
         let mut var_cookies = <Vec<crate::CookieInfo>>::sse_decode(deserializer);
+        let mut var_stayedOnDomain = <bool>::sse_decode(deserializer);
         return crate::CrawlResult {
             pages: var_pages,
             final_url: var_finalUrl,
@@ -2357,6 +2359,7 @@ impl SseDecode for crate::CrawlResult {
             was_skipped: var_wasSkipped,
             error: var_error,
             cookies: var_cookies,
+            stayed_on_domain: var_stayedOnDomain,
         };
     }
 }
@@ -3965,6 +3968,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlResult> {
             self.0.was_skipped.into_into_dart().into_dart(),
             self.0.error.into_into_dart().into_dart(),
             self.0.cookies.into_into_dart().into_dart(),
+            self.0.stayed_on_domain.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4881,6 +4885,7 @@ impl SseEncode for crate::CrawlResult {
         <bool>::sse_encode(self.was_skipped, serializer);
         <Option<String>>::sse_encode(self.error, serializer);
         <Vec<crate::CookieInfo>>::sse_encode(self.cookies, serializer);
+        <bool>::sse_encode(self.stayed_on_domain, serializer);
     }
 }
 

@@ -213,6 +213,7 @@ impl CrawlState {
     }
 
     fn into_result(self, final_url: String) -> CrawlResult {
+        let stayed_on_domain = self.pages.iter().all(|p| p.stayed_on_domain);
         CrawlResult::new(
             self.pages,
             final_url,
@@ -220,6 +221,7 @@ impl CrawlState {
             self.was_skipped,
             self.error,
             self.all_cookies,
+            stayed_on_domain,
             self.normalized_urls,
         )
     }

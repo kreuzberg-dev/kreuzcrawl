@@ -584,6 +584,7 @@ The result of a multi-page crawl operation.
 | `WasSkipped` | `bool` | — | Whether any page was skipped during crawling. |
 | `Error` | `string?` | `null` | An error message, if the crawl encountered an issue. |
 | `Cookies` | `List<CookieInfo>` | `new List<CookieInfo>()` | Cookies collected during the crawl. |
+| `StayedOnDomain` | `bool` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `NormalizedUrls` | `List<string>` | `new List<string>()` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ### Methods

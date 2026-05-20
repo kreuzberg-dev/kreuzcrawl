@@ -419,6 +419,8 @@ pub const CrawlResult = struct {
     error_: ?[]const u8,
     /// Cookies collected during the crawl.
     cookies: []const CookieInfo,
+    /// Whether all crawled pages stayed on the same domain as the start URL.
+    stayed_on_domain: bool,
 };
 
 /// A URL entry from a sitemap.

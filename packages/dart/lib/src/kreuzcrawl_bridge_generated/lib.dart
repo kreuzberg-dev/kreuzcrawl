@@ -1282,6 +1282,9 @@ class CrawlResult {
   /// Cookies collected during the crawl.
   final List<CookieInfo> cookies;
 
+  /// Whether all crawled pages stayed on the same domain as the start URL.
+  final bool stayedOnDomain;
+
   const CrawlResult({
     required this.pages,
     required this.finalUrl,
@@ -1289,6 +1292,7 @@ class CrawlResult {
     required this.wasSkipped,
     this.error,
     required this.cookies,
+    required this.stayedOnDomain,
   });
 
   @override
@@ -1298,7 +1302,8 @@ class CrawlResult {
       redirectCount.hashCode ^
       wasSkipped.hashCode ^
       error.hashCode ^
-      cookies.hashCode;
+      cookies.hashCode ^
+      stayedOnDomain.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -1310,7 +1315,8 @@ class CrawlResult {
           redirectCount == other.redirectCount &&
           wasSkipped == other.wasSkipped &&
           error == other.error &&
-          cookies == other.cookies;
+          cookies == other.cookies &&
+          stayedOnDomain == other.stayedOnDomain;
 }
 
 /// Request to begin a single-URL streaming crawl.

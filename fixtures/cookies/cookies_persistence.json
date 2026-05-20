@@ -1,7 +1,7 @@
 {
 	"id": "cookies_persistence",
 	"description": "Maintains cookies across multiple crawl requests",
-	"tags": ["cookies", "session"],
+	"tags": ["cookies", "session", "crawl"],
 	"input": {
 		"mock_responses": [
 			{

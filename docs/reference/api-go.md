@@ -584,6 +584,7 @@ The result of a multi-page crawl operation.
 | `WasSkipped` | `bool` | — | Whether any page was skipped during crawling. |
 | `Error` | `*string` | `nil` | An error message, if the crawl encountered an issue. |
 | `Cookies` | `[]CookieInfo` | `nil` | Cookies collected during the crawl. |
+| `StayedOnDomain` | `bool` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `NormalizedUrls` | `[]string` | `nil` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ### Methods

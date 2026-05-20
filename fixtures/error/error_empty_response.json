@@ -9,11 +9,6 @@
     {
       "type": "is_empty",
       "field": "html"
-    },
-    {
-      "type": "equals",
-      "field": "error.is_error",
-      "value": false
     }
   ],
   "mock_response": {

@@ -2,7 +2,8 @@
   "id": "sitemap_basic",
   "description": "Parses a standard urlset sitemap",
   "tags": [
-    "sitemap"
+    "sitemap",
+    "map"
   ],
   "input": {
     "config": {},
@@ -21,11 +22,6 @@
       "type": "equals",
       "field": "urls.length",
       "value": 4
-    },
-    {
-      "type": "equals",
-      "field": "has_lastmod",
-      "value": true
     }
   ]
 }

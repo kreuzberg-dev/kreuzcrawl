@@ -43,7 +43,7 @@ wheels = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0rc20"
+version = "0.3.0rc23"
 source = { directory = "../../packages/python" }
 
 [package.metadata]

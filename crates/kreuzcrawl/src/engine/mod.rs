@@ -416,6 +416,7 @@ impl CrawlEngine {
             false,
             None,
             Vec::new(),
+            true,
             vec![crate::normalize::normalize_url(url)],
         ))
     }
