@@ -388,7 +388,7 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
 
 [[package]]
 name = "benchmark-harness"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "ahash",
  "async-trait",
@@ -2814,7 +2814,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -2859,14 +2859,14 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-bindings-common"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "kreuzcrawl",
 ]
 
 [[package]]
 name = "kreuzcrawl-browser"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "async-trait",
  "base64",
@@ -2894,7 +2894,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-cli"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "clap",
  "kreuzcrawl",
@@ -2926,7 +2926,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-jni"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "futures-util",
  "jni",

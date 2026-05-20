@@ -13,6 +13,24 @@ use super::CrawlEngine;
 ///
 /// Any field left unset will be filled with a default implementation
 /// from the crate's internal `defaults` module.
+///
+/// # Pool injection
+///
+/// For long-lived processes (e.g. a worker service that handles many jobs), construct
+/// the browser pool(s) once at startup and inject them via the builder methods rather
+/// than relying on per-engine pool construction:
+///
+/// ```rust,ignore
+/// use kreuzcrawl::{BrowserPool, BrowserPoolConfig, CrawlEngine};
+///
+/// let pool = BrowserPool::new(BrowserPoolConfig::default());
+/// pool.warm().await?;
+///
+/// let engine = CrawlEngine::builder()
+///     .with_browser_pool(pool)
+///     .build()?;
+/// // The engine reuses the same Chrome instance across all crawls.
+/// ```
 pub struct CrawlEngineBuilder {
     config: Option<CrawlConfig>,
     frontier: Option<Arc<dyn Frontier>>,
@@ -22,6 +40,10 @@ pub struct CrawlEngineBuilder {
     strategy: Option<Arc<dyn CrawlStrategy>>,
     content_filter: Option<Arc<dyn ContentFilter>>,
     cache: Option<Arc<dyn CrawlCache>>,
+    #[cfg(feature = "browser")]
+    browser_pool: Option<Arc<crate::browser_pool::BrowserPool>>,
+    #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
+    native_executor: Option<Arc<kreuzcrawl_browser::adapter::NativeBrowserExecutor>>,
 }
 
 impl CrawlEngineBuilder {
@@ -36,6 +58,10 @@ impl CrawlEngineBuilder {
             strategy: None,
             content_filter: None,
             cache: None,
+            #[cfg(feature = "browser")]
+            browser_pool: None,
+            #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
+            native_executor: None,
         }
     }
 
@@ -101,17 +127,73 @@ impl CrawlEngineBuilder {
         self
     }
 
+    /// Inject a pre-built [`BrowserPool`] for chromiumoxide-backed browser fetches.
+    ///
+    /// When set, the engine reuses this pool across all crawl operations rather than
+    /// constructing a new pool per engine or per request. Intended for long-lived
+    /// worker processes that need to amortise Chrome startup cost.
+    ///
+    /// The injected pool takes precedence over any pool stored in `CrawlConfig.browser_pool`.
+    ///
+    /// [`BrowserPool`]: crate::browser_pool::BrowserPool
+    #[cfg(feature = "browser")]
+    #[cfg_attr(alef, alef(skip))]
+    pub fn with_browser_pool(mut self, pool: Arc<crate::browser_pool::BrowserPool>) -> Self {
+        self.browser_pool = Some(pool);
+        self
+    }
+
+    /// Inject a pre-built [`NativeBrowserExecutor`] for native-backend browser fetches.
+    ///
+    /// When set, the engine reuses this executor across all crawl operations rather than
+    /// constructing a new thread-pool per engine. Intended for long-lived worker processes
+    /// that need to amortise native browser worker startup cost.
+    ///
+    /// The injected executor takes precedence over the one constructed from config.
+    ///
+    /// [`NativeBrowserExecutor`]: kreuzcrawl_browser::adapter::NativeBrowserExecutor
+    #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
+    #[cfg_attr(alef, alef(skip))]
+    pub fn with_native_executor(
+        mut self,
+        executor: Arc<kreuzcrawl_browser::adapter::NativeBrowserExecutor>,
+    ) -> Self {
+        self.native_executor = Some(executor);
+        self
+    }
+
     /// Build the [`CrawlEngine`] with the configured options.
     ///
     /// Config validation is deferred to the first operation (scrape, crawl, etc.) so that
     /// the engine can always be constructed and individual operations report validation errors.
     pub fn build(self) -> Result<CrawlEngine, CrawlError> {
-        let config = self.config.unwrap_or_default();
+        // `config` needs to be mutable only when the `browser` feature is active
+        // (to inject `browser_pool`); suppress the warning on other feature combinations.
+        #[allow(unused_mut)]
+        let mut config = self.config.unwrap_or_default();
+
+        // Apply the injected browser pool to the config so the engine's fetch paths
+        // pick it up from `config.browser_pool`. The builder field takes precedence
+        // over any pool that was already embedded in the config.
+        #[cfg(feature = "browser")]
+        if let Some(pool) = self.browser_pool {
+            config.browser_pool = Some(pool);
+        }
+
         let rate_limit_ms = config.rate_limit_ms.unwrap_or(200);
         #[cfg(not(target_arch = "wasm32"))]
         let ua_rotation = crate::tower::UaRotationLayer::new(config.user_agents.clone());
+
+        // Native executor: use the injected one when present; otherwise build from config.
         #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
-        let native_browser_executor = build_native_browser_executor(&config)?;
+        let native_browser_executor = if let Some(executor) = self.native_executor {
+            // Backend may not be Native in config yet, but the caller explicitly provided
+            // an executor — honour it regardless so callers can pre-build and inject.
+            Some(executor)
+        } else {
+            build_native_browser_executor(&config)?
+        };
+
         Ok(CrawlEngine {
             config,
             frontier: self

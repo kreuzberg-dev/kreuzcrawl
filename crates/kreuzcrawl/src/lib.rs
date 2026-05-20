@@ -8,7 +8,7 @@ pub(crate) mod bindings;
 mod browser;
 mod browser_detect;
 #[cfg(feature = "browser")]
-mod browser_pool;
+pub mod browser_pool;
 #[cfg(feature = "browser")]
 pub(crate) mod browser_profile;
 pub(crate) mod citations;
@@ -42,6 +42,10 @@ pub(crate) mod warc;
 
 #[cfg(feature = "api")]
 pub use api::serve_with_config as serve_api;
+#[cfg(feature = "browser")]
+pub use browser_pool::{BrowserPool, BrowserPoolConfig};
+#[cfg(feature = "browser-native")]
+pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecutorConfig};
 pub use bindings::{
     BatchCrawlResult, BatchCrawlResults, BatchScrapeResult, BatchScrapeResults, CrawlEngineHandle, batch_crawl,
     batch_scrape, crawl, create_engine, interact, map_urls, scrape,

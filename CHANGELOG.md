@@ -1,0 +1,33 @@
+# Changelog
+
+All notable changes to kreuzcrawl are documented here.
+
+## [0.3.0-rc.21] - 2026-05-20
+
+### Added
+
+- **`BrowserPool` and `BrowserPoolConfig` are now part of the public API** (re-exported from
+  the crate root under `#[cfg(feature = "browser")]`). Downstream consumers such as
+  `kreuzberg-cloud`'s worker can construct and `warm()` a pool at process startup then
+  reuse it across all crawl jobs.
+
+- **`NativeBrowserExecutor` and `NativeBrowserExecutorConfig` are now re-exported** from the
+  crate root under `#[cfg(feature = "browser-native")]` (forwarded from
+  `kreuzcrawl_browser::adapter`). Allows the same startup-once pattern for the native
+  browser backend.
+
+- **`CrawlEngineBuilder::with_browser_pool(Arc<BrowserPool>)`** — inject a pre-built
+  chromiumoxide pool into the engine at build time. Takes precedence over any pool set in
+  `CrawlConfig.browser_pool`. Gated on `#[cfg(feature = "browser")]`.
+
+- **`CrawlEngineBuilder::with_native_executor(Arc<NativeBrowserExecutor>)`** — inject a
+  pre-built native browser worker pool into the engine. Takes precedence over the executor
+  constructed from config. Gated on `#[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]`.
+
+### Notes
+
+- The existing `CrawlConfig.browser_pool` field (added in rc.20) remains the canonical
+  low-level injection point; the new builder methods are convenience wrappers around it.
+- `Arc::strong_count` on the injected pool increases by exactly 1 per engine built — the
+  engine holds a clone inside its `CrawlConfig`, no additional clones are created per
+  crawl call.
