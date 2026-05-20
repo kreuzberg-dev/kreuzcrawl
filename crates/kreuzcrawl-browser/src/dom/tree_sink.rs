@@ -15,6 +15,10 @@ pub struct DomElemName<'a> {
 
 impl<'a> fmt::Debug for DomElemName<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // SAFETY: `self.name` points to a `QualName` owned by the `DomTree`'s inner
+        // `RefCell`. `self._ref` holds a `Ref` borrow of that cell, so the pointee
+        // outlives `self` and no mutable borrow can coexist.
+        #[allow(unsafe_code)]
         let name = unsafe { &*self.name };
         write!(f, "{:?}", name)
     }
@@ -22,11 +26,19 @@ impl<'a> fmt::Debug for DomElemName<'a> {
 
 impl<'a> ElemName for DomElemName<'a> {
     fn ns(&self) -> &Namespace {
-        unsafe { &(*self.name).ns }
+        // SAFETY: see `DomElemName::fmt` — `_ref` keeps the pointee alive for `'a`.
+        #[allow(unsafe_code)]
+        unsafe {
+            &(*self.name).ns
+        }
     }
 
     fn local_name(&self) -> &LocalName {
-        unsafe { &(*self.name).local }
+        // SAFETY: see `DomElemName::fmt` — `_ref` keeps the pointee alive for `'a`.
+        #[allow(unsafe_code)]
+        unsafe {
+            &(*self.name).local
+        }
     }
 }
 

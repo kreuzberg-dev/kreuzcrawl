@@ -2,6 +2,17 @@
 
 All notable changes to kreuzcrawl are documented here.
 
+## [0.3.0-rc.22] - 2026-05-20
+
+### Fixed
+
+- **`crates/kreuzcrawl-browser/src/dom/tree_sink.rs`** — `DomElemName`'s three `unsafe`
+  blocks (`Debug::fmt`, `ElemName::ns`, `ElemName::local_name`) now carry
+  `#[allow(unsafe_code)]` with SAFETY comments documenting the `Ref`-backed
+  pointer-lifetime invariant. The workspace lint `unsafe_code = "warn"` combined with
+  `-D warnings` was promoting these to compile errors and breaking `task rust:lint:check`
+  and macOS clippy in CI.
+
 ## [0.3.0-rc.21] - 2026-05-20
 
 ### Added
