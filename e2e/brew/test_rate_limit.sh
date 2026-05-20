@@ -8,56 +8,56 @@
 set -euo pipefail
 
 test_rate_limit_adaptive_backoff() {
-    # Exponential backoff retry succeeds after 429 Too Many Requests
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_ADAPTIVE_BACKOFF:-${MOCK_SERVER_URL}/fixtures/rate_limit_adaptive_backoff}" --config '{"respect_robots_txt":false,"retry_codes":[429],"retry_count":2}' --format json --browser-mode never)
+  # Exponential backoff retry succeeds after 429 Too Many Requests
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_ADAPTIVE_BACKOFF:-${MOCK_SERVER_URL}/fixtures/rate_limit_adaptive_backoff}" --config '{"respect_robots_txt":false,"retry_codes":[429],"retry_count":2}' --format json --browser-mode never)
 
-    local val_status_code
-    val_status_code=$(echo "$output" | jq -r '.status_code')
-    assert_equals "$val_status_code" '200' 'status_code'
+  local val_status_code
+  val_status_code=$(echo "$output" | jq -r '.status_code')
+  assert_equals "$val_status_code" '200' 'status_code'
 }
 
 test_rate_limit_basic_delay() {
-    # Rate limiter adds delay between requests to the same domain
-    kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_BASIC_DELAY:-${MOCK_SERVER_URL}/fixtures/rate_limit_basic_delay}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
+  # Rate limiter adds delay between requests to the same domain
+  kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_BASIC_DELAY:-${MOCK_SERVER_URL}/fixtures/rate_limit_basic_delay}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
-    # skipped: field 'rate_limit.min_duration_ms' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'rate_limit.min_duration_ms' not available on result type
 }
 
 test_rate_limit_per_domain() {
-    # Per-domain rate limiting applies delay between requests to same domain
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_PER_DOMAIN:-${MOCK_SERVER_URL}/fixtures/rate_limit_per_domain}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
+  # Per-domain rate limiting applies delay between requests to same domain
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_PER_DOMAIN:-${MOCK_SERVER_URL}/fixtures/rate_limit_per_domain}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never)
 
-    # skipped: field 'pages.length' not available on result type
-    local val_status_code
-    val_status_code=$(echo "$output" | jq -r '.status_code')
-    assert_equals "$val_status_code" '200' 'status_code'
+  # skipped: field 'pages.length' not available on result type
+  local val_status_code
+  val_status_code=$(echo "$output" | jq -r '.status_code')
+  assert_equals "$val_status_code" '200' 'status_code'
 }
 
 test_rate_limit_robots_crawl_delay() {
-    # Respects Crawl-delay directive in robots.txt
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_ROBOTS_CRAWL_DELAY:-${MOCK_SERVER_URL}/fixtures/rate_limit_robots_crawl_delay}" --config '{"max_depth":1,"respect_robots_txt":true,"user_agent":"TestBot"}' --format json --browser-mode never)
+  # Respects Crawl-delay directive in robots.txt
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_ROBOTS_CRAWL_DELAY:-${MOCK_SERVER_URL}/fixtures/rate_limit_robots_crawl_delay}" --config '{"max_depth":1,"respect_robots_txt":true,"user_agent":"TestBot"}' --format json --browser-mode never)
 
-    # skipped: field 'pages.length' not available on result type
-    local val_status_code
-    val_status_code=$(echo "$output" | jq -r '.status_code')
-    assert_equals "$val_status_code" '200' 'status_code'
+  # skipped: field 'pages.length' not available on result type
+  local val_status_code
+  val_status_code=$(echo "$output" | jq -r '.status_code')
+  assert_equals "$val_status_code" '200' 'status_code'
 }
 
 test_rate_limit_zero_no_delay() {
-    # Rate limiter with zero delay does not slow crawling
-    kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_ZERO_NO_DELAY:-${MOCK_SERVER_URL}/fixtures/rate_limit_zero_no_delay}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
+  # Rate limiter with zero delay does not slow crawling
+  kreuzcrawl scrape "${MOCK_SERVER_RATE_LIMIT_ZERO_NO_DELAY:-${MOCK_SERVER_URL}/fixtures/rate_limit_zero_no_delay}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
 }
 
 run_tests_rate_limit() {
-    run_test test_rate_limit_adaptive_backoff
-    run_test test_rate_limit_basic_delay
-    run_test test_rate_limit_per_domain
-    run_test test_rate_limit_robots_crawl_delay
-    run_test test_rate_limit_zero_no_delay
+  run_test test_rate_limit_adaptive_backoff
+  run_test test_rate_limit_basic_delay
+  run_test test_rate_limit_per_domain
+  run_test test_rate_limit_robots_crawl_delay
+  run_test test_rate_limit_zero_no_delay
 }

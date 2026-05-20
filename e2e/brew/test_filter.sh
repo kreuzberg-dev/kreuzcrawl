@@ -8,60 +8,60 @@
 set -euo pipefail
 
 test_filter_bm25_crawl_integration() {
-    # BM25 filter works during multi-page crawl, keeping relevant pages
-    kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_CRAWL_INTEGRATION:-${MOCK_SERVER_URL}/fixtures/filter_bm25_crawl_integration}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never >/dev/null
+  # BM25 filter works during multi-page crawl, keeping relevant pages
+  kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_CRAWL_INTEGRATION:-${MOCK_SERVER_URL}/fixtures/filter_bm25_crawl_integration}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'filter.remaining_contain_keyword' not available on result type
+  # skipped: field 'filter.remaining_contain_keyword' not available on result type
 }
 
 test_filter_bm25_empty_query() {
-    # BM25 filter with empty query passes all pages through
-    kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_EMPTY_QUERY:-${MOCK_SERVER_URL}/fixtures/filter_bm25_empty_query}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
+  # BM25 filter with empty query passes all pages through
+  kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_EMPTY_QUERY:-${MOCK_SERVER_URL}/fixtures/filter_bm25_empty_query}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
 }
 
 test_filter_bm25_high_threshold() {
-    # BM25 filter with very high threshold filters out all pages
-    kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_HIGH_THRESHOLD:-${MOCK_SERVER_URL}/fixtures/filter_bm25_high_threshold}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
+  # BM25 filter with very high threshold filters out all pages
+  kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_HIGH_THRESHOLD:-${MOCK_SERVER_URL}/fixtures/filter_bm25_high_threshold}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'filter.pages_after_filter' not available on result type
+  # skipped: field 'filter.pages_after_filter' not available on result type
 }
 
 test_filter_bm25_relevant_pages() {
-    # BM25 filter keeps only pages relevant to the query
-    kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_RELEVANT_PAGES:-${MOCK_SERVER_URL}/fixtures/filter_bm25_relevant_pages}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
+  # BM25 filter keeps only pages relevant to the query
+  kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_RELEVANT_PAGES:-${MOCK_SERVER_URL}/fixtures/filter_bm25_relevant_pages}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'filter.remaining_contain_keyword' not available on result type
+  # skipped: field 'filter.remaining_contain_keyword' not available on result type
 }
 
 test_filter_bm25_threshold_zero() {
-    # BM25 filter with zero threshold passes all pages
-    kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_THRESHOLD_ZERO:-${MOCK_SERVER_URL}/fixtures/filter_bm25_threshold_zero}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
+  # BM25 filter with zero threshold passes all pages
+  kreuzcrawl scrape "${MOCK_SERVER_FILTER_BM25_THRESHOLD_ZERO:-${MOCK_SERVER_URL}/fixtures/filter_bm25_threshold_zero}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
 }
 
 test_filter_noop_crawl_all_kept() {
-    # NoopFilter keeps all pages during a multi-page crawl
-    kreuzcrawl scrape "${MOCK_SERVER_FILTER_NOOP_CRAWL_ALL_KEPT:-${MOCK_SERVER_URL}/fixtures/filter_noop_crawl_all_kept}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never >/dev/null
+  # NoopFilter keeps all pages during a multi-page crawl
+  kreuzcrawl scrape "${MOCK_SERVER_FILTER_NOOP_CRAWL_ALL_KEPT:-${MOCK_SERVER_URL}/fixtures/filter_noop_crawl_all_kept}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'filter.pages_after_filter' not available on result type
+  # skipped: field 'filter.pages_after_filter' not available on result type
 }
 
 test_filter_noop_passes_all() {
-    # No content filter passes all crawled pages through
-    kreuzcrawl scrape "${MOCK_SERVER_FILTER_NOOP_PASSES_ALL:-${MOCK_SERVER_URL}/fixtures/filter_noop_passes_all}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
+  # No content filter passes all crawled pages through
+  kreuzcrawl scrape "${MOCK_SERVER_FILTER_NOOP_PASSES_ALL:-${MOCK_SERVER_URL}/fixtures/filter_noop_passes_all}" --config '{"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
 }
 
 run_tests_filter() {
-    run_test test_filter_bm25_crawl_integration
-    run_test test_filter_bm25_empty_query
-    run_test test_filter_bm25_high_threshold
-    run_test test_filter_bm25_relevant_pages
-    run_test test_filter_bm25_threshold_zero
-    run_test test_filter_noop_crawl_all_kept
-    run_test test_filter_noop_passes_all
+  run_test test_filter_bm25_crawl_integration
+  run_test test_filter_bm25_empty_query
+  run_test test_filter_bm25_high_threshold
+  run_test test_filter_bm25_relevant_pages
+  run_test test_filter_bm25_threshold_zero
+  run_test test_filter_noop_crawl_all_kept
+  run_test test_filter_noop_passes_all
 }

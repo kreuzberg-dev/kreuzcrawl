@@ -8,47 +8,47 @@
 set -euo pipefail
 
 test_strategy_adaptive_saturation() {
-    # Adaptive strategy stops early when encountering saturation (duplicate content)
-    kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_ADAPTIVE_SATURATION:-${MOCK_SERVER_URL}/fixtures/strategy_adaptive_saturation}" --config '{"max_concurrent":1,"max_depth":2,"respect_robots_txt":false}' --format json --browser-mode never >/dev/null
+  # Adaptive strategy stops early when encountering saturation (duplicate content)
+  kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_ADAPTIVE_SATURATION:-${MOCK_SERVER_URL}/fixtures/strategy_adaptive_saturation}" --config '{"max_concurrent":1,"max_depth":2,"respect_robots_txt":false}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
 }
 
 test_strategy_adaptive_window() {
-    # Adaptive strategy crawls more pages when content is diverse
-    kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_ADAPTIVE_WINDOW:-${MOCK_SERVER_URL}/fixtures/strategy_adaptive_window}" --config '{"max_concurrent":1,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never >/dev/null
+  # Adaptive strategy crawls more pages when content is diverse
+  kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_ADAPTIVE_WINDOW:-${MOCK_SERVER_URL}/fixtures/strategy_adaptive_window}" --config '{"max_concurrent":1,"max_depth":1,"respect_robots_txt":false}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
 }
 
 test_strategy_best_first_seed() {
-    # BestFirst strategy always processes the seed URL first
-    kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_BEST_FIRST_SEED:-${MOCK_SERVER_URL}/fixtures/strategy_best_first_seed}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never >/dev/null
+  # BestFirst strategy always processes the seed URL first
+  kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_BEST_FIRST_SEED:-${MOCK_SERVER_URL}/fixtures/strategy_best_first_seed}" --config '{"max_concurrent":1,"max_depth":1}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
-    # skipped: field 'strategy.first_page_url_contains' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'strategy.first_page_url_contains' not available on result type
 }
 
 test_strategy_bfs_default_order() {
-    # BFS strategy visits pages in breadth-first order
-    kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_BFS_DEFAULT_ORDER:-${MOCK_SERVER_URL}/fixtures/strategy_bfs_default_order}" --config '{"max_concurrent":1,"max_depth":2}' --format json --browser-mode never >/dev/null
+  # BFS strategy visits pages in breadth-first order
+  kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_BFS_DEFAULT_ORDER:-${MOCK_SERVER_URL}/fixtures/strategy_bfs_default_order}" --config '{"max_concurrent":1,"max_depth":2}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
-    # skipped: field 'strategy.crawl_order' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'strategy.crawl_order' not available on result type
 }
 
 test_strategy_dfs_depth_first() {
-    # DFS strategy visits pages in depth-first order
-    kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_DFS_DEPTH_FIRST:-${MOCK_SERVER_URL}/fixtures/strategy_dfs_depth_first}" --config '{"max_concurrent":1,"max_depth":2}' --format json --browser-mode never >/dev/null
+  # DFS strategy visits pages in depth-first order
+  kreuzcrawl scrape "${MOCK_SERVER_STRATEGY_DFS_DEPTH_FIRST:-${MOCK_SERVER_URL}/fixtures/strategy_dfs_depth_first}" --config '{"max_concurrent":1,"max_depth":2}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'crawl.pages_crawled' not available on result type
-    # skipped: field 'strategy.crawl_order' not available on result type
+  # skipped: field 'crawl.pages_crawled' not available on result type
+  # skipped: field 'strategy.crawl_order' not available on result type
 }
 
 run_tests_strategy() {
-    run_test test_strategy_adaptive_saturation
-    run_test test_strategy_adaptive_window
-    run_test test_strategy_best_first_seed
-    run_test test_strategy_bfs_default_order
-    run_test test_strategy_dfs_depth_first
+  run_test test_strategy_adaptive_saturation
+  run_test test_strategy_adaptive_window
+  run_test test_strategy_best_first_seed
+  run_test test_strategy_bfs_default_order
+  run_test test_strategy_dfs_depth_first
 }

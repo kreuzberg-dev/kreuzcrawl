@@ -8,25 +8,25 @@
 set -euo pipefail
 
 test_warc_basic_output() {
-    # Scrape single page with WARC output enabled writes to file
-    local output
-    output=$(kreuzcrawl scrape "${MOCK_SERVER_WARC_BASIC_OUTPUT:-${MOCK_SERVER_URL}/fixtures/warc_basic_output}" --config '{"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_test.warc"}' --format json --browser-mode never)
+  # Scrape single page with WARC output enabled writes to file
+  local output
+  output=$(kreuzcrawl scrape "${MOCK_SERVER_WARC_BASIC_OUTPUT:-${MOCK_SERVER_URL}/fixtures/warc_basic_output}" --config '{"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_test.warc"}' --format json --browser-mode never)
 
-    local val_status_code
-    val_status_code=$(echo "$output" | jq -r '.status_code')
-    assert_equals "$val_status_code" '200' 'status_code'
-    # skipped: field 'pages.length' not available on result type
+  local val_status_code
+  val_status_code=$(echo "$output" | jq -r '.status_code')
+  assert_equals "$val_status_code" '200' 'status_code'
+  # skipped: field 'pages.length' not available on result type
 }
 
 test_warc_multi_page_crawl() {
-    # Crawl multiple pages with depth=1 and WARC output enabled
-    kreuzcrawl scrape "${MOCK_SERVER_WARC_MULTI_PAGE_CRAWL:-${MOCK_SERVER_URL}/fixtures/warc_multi_page_crawl}" --config '{"max_depth":1,"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_crawl.warc"}' --format json --browser-mode never >/dev/null
+  # Crawl multiple pages with depth=1 and WARC output enabled
+  kreuzcrawl scrape "${MOCK_SERVER_WARC_MULTI_PAGE_CRAWL:-${MOCK_SERVER_URL}/fixtures/warc_multi_page_crawl}" --config '{"max_depth":1,"respect_robots_txt":false,"warc_output":"/tmp/kreuzcrawl_crawl.warc"}' --format json --browser-mode never >/dev/null
 
-    # skipped: field 'pages.length' not available on result type
-    # skipped: field 'stayed_on_domain' not available on result type
+  # skipped: field 'pages.length' not available on result type
+  # skipped: field 'stayed_on_domain' not available on result type
 }
 
 run_tests_warc() {
-    run_test test_warc_basic_output
-    run_test test_warc_multi_page_crawl
+  run_test test_warc_basic_output
+  run_test test_warc_multi_page_crawl
 }
