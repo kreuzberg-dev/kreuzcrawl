@@ -120,6 +120,29 @@ public static func mapUrls(engine: CrawlEngineHandle, url: String) throws -> Map
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```swift
+public static func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) throws -> InteractionResult
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `String`            | Yes      | The URL to fetch        |
+| `actions` | `[PageAction]`      | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Throws `CrawlError`.
+
+---
+
 #### batchScrape()
 
 Scrape multiple URLs concurrently.

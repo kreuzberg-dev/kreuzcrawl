@@ -124,6 +124,30 @@ fun mapUrls(engine: CrawlEngineHandle, url: String): MapResult
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```kotlin
+@Throws(CrawlError::class)
+fun interact(engine: CrawlEngineHandle, url: String, actions: List<PageAction>): InteractionResult
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `String`            | Yes      | The URL to fetch        |
+| `actions` | `List<PageAction>`  | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Throws `CrawlError`.
+
+---
+
 #### batchScrape()
 
 Scrape multiple URLs concurrently.

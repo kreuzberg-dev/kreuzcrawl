@@ -120,6 +120,29 @@ def map_urls(engine: CrawlEngineHandle, url: str) -> MapResult
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```python
+def interact(engine: CrawlEngineHandle, url: str, actions: list[PageAction]) -> InteractionResult
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `str`               | Yes      | The URL to fetch        |
+| `actions` | `list[PageAction]`  | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Raises `CrawlError`.
+
+---
+
 #### batch_scrape()
 
 Scrape multiple URLs concurrently.
@@ -999,25 +1022,25 @@ Errors that can occur during crawling, scraping, or mapping operations.
 
 **Base class:** `CrawlError(Exception)`
 
-| Exception                    | Description                                                                        |
-| ---------------------------- | ---------------------------------------------------------------------------------- |
-| `NotFound(CrawlError)`       | The requested page was not found (HTTP 404).                                       |
-| `Unauthorized(CrawlError)`   | The request was unauthorized (HTTP 401).                                           |
-| `Forbidden(CrawlError)`      | The request was forbidden (HTTP 403).                                              |
-| `WafBlocked(CrawlError)`     | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). |
-| `Timeout(CrawlError)`        | The request timed out.                                                             |
-| `RateLimited(CrawlError)`    | The request was rate-limited (HTTP 429).                                           |
-| `ServerError(CrawlError)`    | A server error occurred (HTTP 5xx).                                                |
-| `BadGateway(CrawlError)`     | A bad gateway error occurred (HTTP 502).                                           |
-| `Gone(CrawlError)`           | The resource is permanently gone (HTTP 410).                                       |
-| `Connection(CrawlError)`     | A connection error occurred.                                                       |
-| `Dns(CrawlError)`            | A DNS resolution error occurred.                                                   |
-| `Ssl(CrawlError)`            | An SSL/TLS error occurred.                                                         |
-| `DataLoss(CrawlError)`       | Data was lost or truncated during transfer.                                        |
-| `BrowserError(CrawlError)`   | The browser failed to launch, connect, or navigate.                                |
-| `BrowserTimeout(CrawlError)` | The browser page load or rendering timed out.                                      |
-| `InvalidConfig(CrawlError)`  | The provided configuration is invalid.                                             |
-| `Unsupported(CrawlError)`    | The requested capability is not supported by the active backend or build.          |
-| `Other(CrawlError)`          | An unclassified error occurred.                                                    |
+| Exception | Description |
+|-----------|-------------|
+| `NotFound(CrawlError)` | The requested page was not found (HTTP 404). |
+| `Unauthorized(CrawlError)` | The request was unauthorized (HTTP 401). |
+| `Forbidden(CrawlError)` | The request was forbidden (HTTP 403). |
+| `WafBlocked(CrawlError)` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). |
+| `Timeout(CrawlError)` | The request timed out. |
+| `RateLimited(CrawlError)` | The request was rate-limited (HTTP 429). |
+| `ServerError(CrawlError)` | A server error occurred (HTTP 5xx). |
+| `BadGateway(CrawlError)` | A bad gateway error occurred (HTTP 502). |
+| `Gone(CrawlError)` | The resource is permanently gone (HTTP 410). |
+| `Connection(CrawlError)` | A connection error occurred. |
+| `Dns(CrawlError)` | A DNS resolution error occurred. |
+| `Ssl(CrawlError)` | An SSL/TLS error occurred. |
+| `DataLoss(CrawlError)` | Data was lost or truncated during transfer. |
+| `BrowserError(CrawlError)` | The browser failed to launch, connect, or navigate. |
+| `BrowserTimeout(CrawlError)` | The browser page load or rendering timed out. |
+| `InvalidConfig(CrawlError)` | The provided configuration is invalid. |
+| `Unsupported(CrawlError)` | The requested capability is not supported by the active backend or build. |
+| `Other(CrawlError)` | An unclassified error occurred. |
 
 ---

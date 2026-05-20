@@ -3741,6 +3741,7 @@ pub fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<B
 /// `Option<OpaqueRust>` support varies across versions, while `Result<String,
 /// String>` is well-tested. An empty string `""` is the EOF sentinel —
 /// no valid JSON value is the empty string.
+#[allow(clippy::type_complexity)]
 pub struct CrawlEngineHandleCrawlStreamStreamHandle {
     rt: ::tokio::runtime::Runtime,
     stream: ::std::sync::Mutex<
@@ -3778,6 +3779,7 @@ pub fn crawl_engine_handle_crawl_stream_start(
     })
 }
 
+#[allow(clippy::should_implement_trait)]
 impl CrawlEngineHandleCrawlStreamStreamHandle {
     /// Advance the stream and return the next chunk JSON, or `""` on clean
     /// end-of-stream. Returns `Err(message)` on a stream-level error.
@@ -3815,6 +3817,7 @@ impl CrawlEngineHandleCrawlStreamStreamHandle {
 /// `Option<OpaqueRust>` support varies across versions, while `Result<String,
 /// String>` is well-tested. An empty string `""` is the EOF sentinel —
 /// no valid JSON value is the empty string.
+#[allow(clippy::type_complexity)]
 pub struct CrawlEngineHandleBatchCrawlStreamStreamHandle {
     rt: ::tokio::runtime::Runtime,
     stream: ::std::sync::Mutex<
@@ -3858,6 +3861,7 @@ pub fn crawl_engine_handle_batch_crawl_stream_start(
     })
 }
 
+#[allow(clippy::should_implement_trait)]
 impl CrawlEngineHandleBatchCrawlStreamStreamHandle {
     /// Advance the stream and return the next chunk JSON, or `""` on clean
     /// end-of-stream. Returns `Err(message)` on a stream-level error.

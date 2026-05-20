@@ -120,6 +120,29 @@ def self.map_urls(engine, url)
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```ruby
+def self.interact(engine, url, actions)
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `String`            | Yes      | The URL to fetch        |
+| `actions` | `Array<PageAction>` | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Raises `CrawlError`.
+
+---
+
 #### batch_scrape()
 
 Scrape multiple URLs concurrently.

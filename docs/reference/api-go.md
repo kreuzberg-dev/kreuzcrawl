@@ -120,6 +120,29 @@ func MapUrls(engine CrawlEngineHandle, url string) (MapResult, error)
 
 ---
 
+#### Interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```go
+func Interact(engine CrawlEngineHandle, url string, actions []PageAction) (InteractionResult, error)
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `Engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `Url`     | `string`            | Yes      | The URL to fetch        |
+| `Actions` | `[]PageAction`      | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Returns `error`.
+
+---
+
 #### BatchScrape()
 
 Scrape multiple URLs concurrently.

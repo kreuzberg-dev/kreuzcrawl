@@ -120,6 +120,29 @@ pub async fn map_urls(engine: CrawlEngineHandle, url: &str) -> Result<MapResult,
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```rust
+pub async fn interact(engine: CrawlEngineHandle, url: &str, actions: Vec<PageAction>) -> Result<InteractionResult, CrawlError>
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `String`            | Yes      | The URL to fetch        |
+| `actions` | `Vec<PageAction>`   | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Returns `Err(CrawlError)`.
+
+---
+
 #### batch_scrape()
 
 Scrape multiple URLs concurrently.

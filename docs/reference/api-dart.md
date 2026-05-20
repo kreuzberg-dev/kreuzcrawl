@@ -120,6 +120,29 @@ MapResult mapUrls(CrawlEngineHandle engine, String url)
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```dart
+InteractionResult interact(CrawlEngineHandle engine, String url, List<PageAction> actions)
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `String`            | Yes      | The URL to fetch        |
+| `actions` | `List<PageAction>`  | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Throws `CrawlError`.
+
+---
+
 #### batchScrape()
 
 Scrape multiple URLs concurrently.

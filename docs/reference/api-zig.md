@@ -120,6 +120,29 @@ pub fn map_urls(engine: CrawlEngineHandle, url: [:0]const u8) CrawlError!MapResu
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```zig
+pub fn interact(engine: CrawlEngineHandle, url: [:0]const u8, actions: []const PageAction) CrawlError!InteractionResult
+```
+
+**Parameters:**
+
+| Name      | Type                 | Required | Description             |
+| --------- | -------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle`  | Yes      | The crawl engine handle |
+| `url`     | `[:0]const u8`       | Yes      | The URL to fetch        |
+| `actions` | `[]const PageAction` | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Throws `CrawlError`.
+
+---
+
 #### batchScrape()
 
 Scrape multiple URLs concurrently.

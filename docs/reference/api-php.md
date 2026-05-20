@@ -120,6 +120,29 @@ public static function mapUrls(CrawlEngineHandle $engine, string $url): MapResul
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```php
+public static function interact(CrawlEngineHandle $engine, string $url, array<PageAction> $actions): InteractionResult
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `string`            | Yes      | The URL to fetch        |
+| `actions` | `array<PageAction>` | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Throws `CrawlError`.
+
+---
+
 #### batchScrape()
 
 Scrape multiple URLs concurrently.

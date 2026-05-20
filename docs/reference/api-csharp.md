@@ -120,6 +120,29 @@ public static async Task<MapResult> MapUrlsAsync(CrawlEngineHandle engine, strin
 
 ---
 
+#### Interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```csharp
+public static async Task<InteractionResult> InteractAsync(CrawlEngineHandle engine, string url, List<PageAction> actions)
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `Engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `Url`     | `string`            | Yes      | The URL to fetch        |
+| `Actions` | `List<PageAction>`  | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Throws `CrawlError`.
+
+---
+
 #### BatchScrape()
 
 Scrape multiple URLs concurrently.

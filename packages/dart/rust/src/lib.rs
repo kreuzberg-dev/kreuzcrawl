@@ -1025,6 +1025,47 @@ pub enum ScrollDirection {
     Down,
 }
 
+/// Errors that can occur during crawling, scraping, or mapping operations.
+#[frb(mirror(CrawlError))]
+pub enum CrawlError {
+    /// The requested page was not found (HTTP 404).
+    NotFound { field0: String },
+    /// The request was unauthorized (HTTP 401).
+    Unauthorized { field0: String },
+    /// The request was forbidden (HTTP 403).
+    Forbidden { field0: String },
+    /// The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators).
+    WafBlocked { field0: String },
+    /// The request timed out.
+    Timeout { field0: String },
+    /// The request was rate-limited (HTTP 429).
+    RateLimited { field0: String },
+    /// A server error occurred (HTTP 5xx).
+    ServerError { field0: String },
+    /// A bad gateway error occurred (HTTP 502).
+    BadGateway { field0: String },
+    /// The resource is permanently gone (HTTP 410).
+    Gone { field0: String },
+    /// A connection error occurred.
+    Connection { field0: String },
+    /// A DNS resolution error occurred.
+    Dns { field0: String },
+    /// An SSL/TLS error occurred.
+    Ssl { field0: String },
+    /// Data was lost or truncated during transfer.
+    DataLoss { field0: String },
+    /// The browser failed to launch, connect, or navigate.
+    BrowserError { field0: String },
+    /// The browser page load or rendering timed out.
+    BrowserTimeout { field0: String },
+    /// The provided configuration is invalid.
+    InvalidConfig { field0: String },
+    /// The requested capability is not supported by the active backend or build.
+    Unsupported { field0: String },
+    /// An unclassified error occurred.
+    Other { field0: String },
+}
+
 // From<SourceT> conversions for bridge return types.
 
 impl From<kreuzcrawl::ExtractionMeta> for ExtractionMeta {
@@ -1819,6 +1860,47 @@ impl From<AssetCategory> for kreuzcrawl::AssetCategory {
     }
 }
 
+impl From<PageAction> for kreuzcrawl::PageAction {
+    fn from(v: PageAction) -> Self {
+        match v {
+            PageAction::Click { selector } => kreuzcrawl::PageAction::Click { selector },
+            PageAction::TypeText { selector, text } => kreuzcrawl::PageAction::TypeText { selector, text },
+            PageAction::Press { key } => kreuzcrawl::PageAction::Press { key },
+            PageAction::Scroll {
+                direction,
+                selector,
+                amount,
+            } => kreuzcrawl::PageAction::Scroll {
+                direction: direction.into(),
+                selector: if selector.is_empty() { None } else { Some(selector) },
+                amount: if amount == 0 { None } else { Some(amount as _) },
+            },
+            PageAction::Wait { milliseconds, selector } => kreuzcrawl::PageAction::Wait {
+                milliseconds: if milliseconds == 0 {
+                    None
+                } else {
+                    Some(milliseconds as _)
+                },
+                selector: if selector.is_empty() { None } else { Some(selector) },
+            },
+            PageAction::Screenshot { full_page } => kreuzcrawl::PageAction::Screenshot {
+                full_page: if full_page { Some(full_page) } else { None },
+            },
+            PageAction::ExecuteJs { script } => kreuzcrawl::PageAction::ExecuteJs { script },
+            PageAction::Scrape => kreuzcrawl::PageAction::Scrape,
+        }
+    }
+}
+
+impl From<ScrollDirection> for kreuzcrawl::ScrollDirection {
+    fn from(v: ScrollDirection) -> Self {
+        match v {
+            ScrollDirection::Up => kreuzcrawl::ScrollDirection::Up,
+            ScrollDirection::Down => kreuzcrawl::ScrollDirection::Down,
+        }
+    }
+}
+
 // From<T> for SourceT conversions for streaming-adapter mirror request types.
 
 impl From<BatchCrawlStreamRequest> for kreuzcrawl::BatchCrawlStreamRequest {
@@ -1884,9 +1966,14 @@ pub async fn interact(
     url: String,
     actions: Vec<PageAction>,
 ) -> Result<InteractionResult, String> {
-    kreuzcrawl::interact(&engine.inner, &url, unsafe {
-        std::mem::transmute::<Vec<PageAction>, Vec<kreuzcrawl::PageAction>>(actions)
-    })
+    kreuzcrawl::interact(
+        &engine.inner,
+        &url,
+        actions
+            .into_iter()
+            .map(kreuzcrawl::PageAction::from)
+            .collect::<Vec<_>>(),
+    )
     .await
     .map(InteractionResult::from)
     .map_err(|e| e.to_string())

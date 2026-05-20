@@ -120,6 +120,29 @@ KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url
 
 ---
 
+#### kcrawl_interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```c
+KcrawlInteractionResult* kcrawl_interact(KcrawlCrawlEngineHandle engine, const char* url, KcrawlPageAction* actions);
+```
+
+**Parameters:**
+
+| Name      | Type                      | Required | Description             |
+| --------- | ------------------------- | -------- | ----------------------- |
+| `engine`  | `KcrawlCrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `const char*`             | Yes      | The URL to fetch        |
+| `actions` | `KcrawlPageAction*`       | Yes      | The actions             |
+
+**Returns:** `KcrawlInteractionResult`
+**Errors:** Returns `NULL` on error.
+
+---
+
 #### kcrawl_batch_scrape()
 
 Scrape multiple URLs concurrently.

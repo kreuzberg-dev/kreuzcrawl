@@ -120,6 +120,33 @@ function mapUrls(engine: CrawlEngineHandle, url: string): Promise<MapResult>;
 
 ---
 
+#### interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```typescript
+function interact(
+  engine: CrawlEngineHandle,
+  url: string,
+  actions: Array<PageAction>,
+): Promise<InteractionResult>;
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `string`            | Yes      | The URL to fetch        |
+| `actions` | `Array<PageAction>` | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Throws `Error` with a descriptive message.
+
+---
+
 #### batchScrape()
 
 Scrape multiple URLs concurrently.

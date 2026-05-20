@@ -47,6 +47,36 @@ pub fn build(b: *std.Build) void {
     const browser_run = b.addRunArtifact(browser_tests);
     test_step.dependOn(&browser_run.step);
 
+    const cache_module = b.createModule(.{
+        .root_source_file = b.path("src/cache_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    cache_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const cache_tests = b.addTest(.{
+        .name = "cache_test",
+        .root_module = cache_module,
+        .use_llvm = true,
+    });
+    const cache_run = b.addRunArtifact(cache_tests);
+    test_step.dependOn(&cache_run.step);
+
+    const concurrent_module = b.createModule(.{
+        .root_source_file = b.path("src/concurrent_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    concurrent_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const concurrent_tests = b.addTest(.{
+        .name = "concurrent_test",
+        .root_module = concurrent_module,
+        .use_llvm = true,
+    });
+    const concurrent_run = b.addRunArtifact(concurrent_tests);
+    test_step.dependOn(&concurrent_run.step);
+
     const content_module = b.createModule(.{
         .root_source_file = b.path("src/content_test.zig"),
         .target = target,
@@ -92,6 +122,21 @@ pub fn build(b: *std.Build) void {
     const crawl_run = b.addRunArtifact(crawl_tests);
     test_step.dependOn(&crawl_run.step);
 
+    const download_module = b.createModule(.{
+        .root_source_file = b.path("src/download_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    download_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const download_tests = b.addTest(.{
+        .name = "download_test",
+        .root_module = download_module,
+        .use_llvm = true,
+    });
+    const download_run = b.addRunArtifact(download_tests);
+    test_step.dependOn(&download_run.step);
+
     const encoding_module = b.createModule(.{
         .root_source_file = b.path("src/encoding_test.zig"),
         .target = target,
@@ -136,6 +181,21 @@ pub fn build(b: *std.Build) void {
     });
     const error_run = b.addRunArtifact(error_tests);
     test_step.dependOn(&error_run.step);
+
+    const filter_module = b.createModule(.{
+        .root_source_file = b.path("src/filter_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    filter_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const filter_tests = b.addTest(.{
+        .name = "filter_test",
+        .root_module = filter_module,
+        .use_llvm = true,
+    });
+    const filter_run = b.addRunArtifact(filter_tests);
+    test_step.dependOn(&filter_run.step);
 
     const interaction_module = b.createModule(.{
         .root_source_file = b.path("src/interaction_test.zig"),
@@ -212,6 +272,36 @@ pub fn build(b: *std.Build) void {
     const metadata_run = b.addRunArtifact(metadata_tests);
     test_step.dependOn(&metadata_run.step);
 
+    const proxy_module = b.createModule(.{
+        .root_source_file = b.path("src/proxy_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    proxy_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const proxy_tests = b.addTest(.{
+        .name = "proxy_test",
+        .root_module = proxy_module,
+        .use_llvm = true,
+    });
+    const proxy_run = b.addRunArtifact(proxy_tests);
+    test_step.dependOn(&proxy_run.step);
+
+    const rate_limit_module = b.createModule(.{
+        .root_source_file = b.path("src/rate_limit_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    rate_limit_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const rate_limit_tests = b.addTest(.{
+        .name = "rate_limit_test",
+        .root_module = rate_limit_module,
+        .use_llvm = true,
+    });
+    const rate_limit_run = b.addRunArtifact(rate_limit_tests);
+    test_step.dependOn(&rate_limit_run.step);
+
     const redirect_module = b.createModule(.{
         .root_source_file = b.path("src/redirect_test.zig"),
         .target = target,
@@ -272,6 +362,51 @@ pub fn build(b: *std.Build) void {
     const sitemap_run = b.addRunArtifact(sitemap_tests);
     test_step.dependOn(&sitemap_run.step);
 
+    const stealth_module = b.createModule(.{
+        .root_source_file = b.path("src/stealth_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    stealth_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const stealth_tests = b.addTest(.{
+        .name = "stealth_test",
+        .root_module = stealth_module,
+        .use_llvm = true,
+    });
+    const stealth_run = b.addRunArtifact(stealth_tests);
+    test_step.dependOn(&stealth_run.step);
+
+    const strategy_module = b.createModule(.{
+        .root_source_file = b.path("src/strategy_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    strategy_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const strategy_tests = b.addTest(.{
+        .name = "strategy_test",
+        .root_module = strategy_module,
+        .use_llvm = true,
+    });
+    const strategy_run = b.addRunArtifact(strategy_tests);
+    test_step.dependOn(&strategy_run.step);
+
+    const stream_module = b.createModule(.{
+        .root_source_file = b.path("src/stream_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    stream_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const stream_tests = b.addTest(.{
+        .name = "stream_test",
+        .root_module = stream_module,
+        .use_llvm = true,
+    });
+    const stream_run = b.addRunArtifact(stream_tests);
+    test_step.dependOn(&stream_run.step);
+
     const validation_module = b.createModule(.{
         .root_source_file = b.path("src/validation_test.zig"),
         .target = target,
@@ -286,4 +421,19 @@ pub fn build(b: *std.Build) void {
     });
     const validation_run = b.addRunArtifact(validation_tests);
     test_step.dependOn(&validation_run.step);
+
+    const warc_module = b.createModule(.{
+        .root_source_file = b.path("src/warc_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    warc_module.addImport("kreuzcrawl", kreuzcrawl_module);
+    const warc_tests = b.addTest(.{
+        .name = "warc_test",
+        .root_module = warc_module,
+        .use_llvm = true,
+    });
+    const warc_run = b.addRunArtifact(warc_tests);
+    test_step.dependOn(&warc_run.step);
 }
