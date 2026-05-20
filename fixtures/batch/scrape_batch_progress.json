@@ -35,12 +35,12 @@
 	"assertions": [
 		{
 			"type": "equals",
-			"field": "batch.total_count",
+			"field": "total_count",
 			"value": 2
 		},
 		{
 			"type": "contains",
-			"field": "batch.results",
+			"field": "results",
 			"value": "/target"
 		}
 	]
