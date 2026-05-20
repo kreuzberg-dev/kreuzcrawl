@@ -80,7 +80,12 @@ pub(crate) fn safe_default_args() -> Vec<&'static str> {
 }
 
 /// Configuration for a [`BrowserPool`].
+///
+/// Rust-only: this type is excluded from alef-generated polyglot bindings.
+/// Pool reuse is intended for long-lived Rust processes (e.g. the cloud
+/// worker); language bindings construct pools internally per-call.
 #[derive(Debug, Clone)]
+#[cfg_attr(alef, alef(skip))]
 pub struct BrowserPoolConfig {
     /// Maximum number of concurrent pages (tabs) the pool will open.
     pub max_pages: usize,
@@ -113,6 +118,11 @@ struct BrowserState {
 /// A pool that keeps a single Chrome browser alive and hands out pages (tabs),
 /// limiting concurrency via a semaphore. If Chrome crashes the pool will
 /// attempt to relaunch on the next [`acquire_page`](Self::acquire_page) call.
+///
+/// Rust-only: excluded from alef-generated polyglot bindings. Downstream
+/// language clients should rely on per-call browser construction inside
+/// kreuzcrawl rather than managing a pool themselves.
+#[cfg_attr(alef, alef(skip))]
 pub struct BrowserPool {
     config: BrowserPoolConfig,
     state: Mutex<Option<BrowserState>>,

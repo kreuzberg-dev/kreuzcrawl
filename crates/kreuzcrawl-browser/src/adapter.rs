@@ -184,7 +184,12 @@ pub struct NativeInteractionResult {
 }
 
 /// Configuration for [`NativeBrowserExecutor`].
+///
+/// Rust-only: excluded from alef-generated polyglot bindings. Intended for
+/// long-lived Rust processes that own an executor at the application layer
+/// and reuse it across crawls.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(alef, alef(skip))]
 pub struct NativeBrowserExecutorConfig {
     /// Number of dedicated browser worker threads.
     pub workers: usize,
@@ -221,7 +226,11 @@ impl Default for NativeBrowserExecutorConfig {
 /// page state and V8 `JsRuntime`s are created and used only inside a worker, so
 /// public executor futures stay `Send` without sharing V8 isolates across
 /// threads.
+///
+/// Rust-only: excluded from alef-generated polyglot bindings. Bindings drive
+/// the engine API directly and don't manipulate the executor.
 #[derive(Clone)]
+#[cfg_attr(alef, alef(skip))]
 pub struct NativeBrowserExecutor {
     inner: Arc<NativeBrowserExecutorInner>,
 }

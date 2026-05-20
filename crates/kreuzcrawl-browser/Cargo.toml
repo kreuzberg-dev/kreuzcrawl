@@ -53,3 +53,6 @@ wreq = { version = "6.0.0-rc.28", optional = true }
 
 [build-dependencies]
 deno_core = { workspace = true }
+
+[lints]
+workspace = true

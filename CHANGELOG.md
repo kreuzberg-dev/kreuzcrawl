@@ -24,6 +24,15 @@ All notable changes to kreuzcrawl are documented here.
   pre-built native browser worker pool into the engine. Takes precedence over the executor
   constructed from config. Gated on `#[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]`.
 
+- **`#[cfg_attr(alef, alef(skip))]` annotations** on `BrowserPool`, `BrowserPoolConfig`,
+  `NativeBrowserExecutor`, `NativeBrowserExecutorConfig`, and both new builder methods —
+  these types are Rust-only and intentionally excluded from alef-generated polyglot
+  bindings. Language clients drive the engine API directly and never touch the pool layer.
+
+- **`[lints] workspace = true`** added to `kreuzcrawl-browser/Cargo.toml` so the workspace
+  `check-cfg = ['cfg(alef)']` registration applies to the browser crate; without it the
+  new annotations emit `unexpected_cfgs` warnings in regular builds.
+
 ### Notes
 
 - The existing `CrawlConfig.browser_pool` field (added in rc.20) remains the canonical
