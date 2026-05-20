@@ -42,14 +42,12 @@ pub(crate) mod warc;
 
 #[cfg(feature = "api")]
 pub use api::serve_with_config as serve_api;
-#[cfg(feature = "browser")]
-pub use browser_pool::{BrowserPool, BrowserPoolConfig};
-#[cfg(feature = "browser-native")]
-pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecutorConfig};
 pub use bindings::{
     BatchCrawlResult, BatchCrawlResults, BatchScrapeResult, BatchScrapeResults, CrawlEngineHandle, batch_crawl,
     batch_scrape, crawl, create_engine, interact, map_urls, scrape,
 };
+#[cfg(feature = "browser")]
+pub use browser_pool::{BrowserPool, BrowserPoolConfig};
 pub use citations::{CitationReference, CitationResult, generate_citations};
 pub use defaults::{
     AdaptiveStrategy, BestFirstStrategy, BfsStrategy, DfsStrategy, InMemoryFrontier, NoopCache, NoopEmitter,
@@ -61,6 +59,8 @@ pub use interact::{
     MAX_ACTIONS, MAX_SCRIPT_LEN, MAX_SCROLL_AMOUNT, MAX_SELECTOR_LEN, MAX_SINGLE_WAIT_MS, MAX_TEXT_LEN,
     MAX_TOTAL_WAIT_SECS, PageAction, ScrollDirection, validate_actions,
 };
+#[cfg(feature = "browser-native")]
+pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecutorConfig};
 #[cfg(feature = "mcp")]
 pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use types::{

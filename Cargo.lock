@@ -2904,7 +2904,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-dart"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "flutter_rust_bridge",
  "futures-util",
@@ -2914,7 +2914,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-ffi"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "cbindgen",
  "futures-util",
@@ -2937,7 +2937,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-node"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "futures-util",
  "kreuzcrawl",
@@ -2950,7 +2950,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-php"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "ext-php-rs",
  "futures-util",
@@ -2962,7 +2962,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-py"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "futures",
  "kreuzcrawl",
@@ -2975,7 +2975,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-swift"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "async-trait",
  "futures-util",
@@ -2989,7 +2989,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-wasm"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.21"
 dependencies = [
  "futures",
  "futures-util",

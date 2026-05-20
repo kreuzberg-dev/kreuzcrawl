@@ -154,10 +154,7 @@ impl CrawlEngineBuilder {
     /// [`NativeBrowserExecutor`]: kreuzcrawl_browser::adapter::NativeBrowserExecutor
     #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
     #[cfg_attr(alef, alef(skip))]
-    pub fn with_native_executor(
-        mut self,
-        executor: Arc<kreuzcrawl_browser::adapter::NativeBrowserExecutor>,
-    ) -> Self {
+    pub fn with_native_executor(mut self, executor: Arc<kreuzcrawl_browser::adapter::NativeBrowserExecutor>) -> Self {
         self.native_executor = Some(executor);
         self
     }

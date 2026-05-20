@@ -4,7 +4,7 @@ requires = ["maturin>=1.0,<2.0"]
 
 [project]
 name = "kreuzcrawl"
-version = "0.3.0rc20"
+version = "0.3.0rc21"
 description = "High-performance web crawling engine"
 keywords = ["crawl", "scrape", "spider", "web"]
 license = "Elastic-2.0"

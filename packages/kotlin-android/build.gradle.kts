@@ -75,7 +75,7 @@ publishing {
             }
             groupId = "dev.kreuzberg.kreuzcrawl.android"
             artifactId = "kreuzcrawl-android"
-            version = "0.3.0-rc.20"
+            version = "0.3.0-rc.21"
         }
     }
 }
