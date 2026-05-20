@@ -544,8 +544,6 @@ fields_array = [
 ]
 fields_enum = [
   "links[].link_type",
-  "browser.js_render_hint",
-  "browser.browser_used",
   "assets[].category",
 ]
 result_fields = [
@@ -1341,6 +1339,9 @@ description = "metadata.description"
 "scrape_result.markdown" = "MarkdownResult"
 "scrape_result.extraction_meta" = "ExtractionMeta"
 "scrape_result.downloaded_document" = "DownloadedDocument"
+"scrape_result.browser" = "BrowserExtras"
+# CrawlResult JSON array fields (char* — use alef_json_array_count for .length)
+"crawl_result.pages" = "char*"
 # PageMetadata primitive fields
 "page_metadata.word_count" = "uintptr_t"
 # PageMetadata JSON array fields (char* — use alef_json_array_count for .length)

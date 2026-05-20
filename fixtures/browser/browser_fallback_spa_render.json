@@ -21,12 +21,12 @@
 	"assertions": [
 		{
 			"type": "equals",
-			"field": "browser.js_render_hint",
+			"field": "js_render_hint",
 			"value": true
 		},
 		{
 			"type": "equals",
-			"field": "browser.browser_used",
+			"field": "browser_used",
 			"value": true
 		}
 	]

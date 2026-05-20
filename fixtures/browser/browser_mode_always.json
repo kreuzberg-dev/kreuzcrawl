@@ -21,7 +21,7 @@
 	"assertions": [
 		{
 			"type": "equals",
-			"field": "browser.browser_used",
+			"field": "browser_used",
 			"value": true
 		}
 	]
