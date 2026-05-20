@@ -33,6 +33,12 @@ All notable changes to kreuzcrawl are documented here.
   `check-cfg = ['cfg(alef)']` registration applies to the browser crate; without it the
   new annotations emit `unexpected_cfgs` warnings in regular builds.
 
+- **`CrawlEngineHandle::from_engine(engine: CrawlEngine) -> Self`** — wrap a builder-built
+  `CrawlEngine` as a `CrawlEngineHandle`. Required when injecting a pre-built
+  `NativeBrowserExecutor` via `CrawlEngineBuilder::with_native_executor`, since the
+  `create_engine(Option<CrawlConfig>)` shorthand has no way to thread an executor through
+  (only `CrawlConfig.browser_pool` for chromiumoxide). Rust-only: `#[cfg_attr(alef, alef(skip))]`.
+
 ### Notes
 
 - The existing `CrawlConfig.browser_pool` field (added in rc.20) remains the canonical

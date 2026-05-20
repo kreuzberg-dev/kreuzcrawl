@@ -26,6 +26,23 @@ pub struct CrawlEngineHandle {
     inner: CrawlEngine,
 }
 
+impl CrawlEngineHandle {
+    /// Wrap a pre-built [`CrawlEngine`] as a handle.
+    ///
+    /// Use this when you need to inject Rust-only components (a pre-built
+    /// [`crate::browser_pool::BrowserPool`] or
+    /// [`kreuzcrawl_browser::adapter::NativeBrowserExecutor`]) via
+    /// [`crate::CrawlEngineBuilder`] and then expose the result through the
+    /// binding-friendly `CrawlEngineHandle` API.
+    ///
+    /// Rust-only: excluded from alef-generated polyglot bindings. Language
+    /// clients construct handles via [`create_engine`] alone.
+    #[cfg_attr(alef, alef(skip))]
+    pub fn from_engine(engine: CrawlEngine) -> Self {
+        Self { inner: engine }
+    }
+}
+
 #[cfg(not(target_arch = "wasm32"))]
 impl CrawlEngineHandle {
     /// Stream a single-URL crawl, yielding [`CrawlEvent`]s as pages are processed.
