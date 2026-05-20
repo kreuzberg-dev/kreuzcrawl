@@ -275,9 +275,9 @@ Browser fallback configuration.
 | `robots_user_agent`      | `str \| None`         | `None`                         | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
 | `capture_network_events` | `bool`                | `False`                        | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
-##### Methods
+### Methods
 
-###### default()
+#### default()
 
 **Signature:**
 
@@ -349,9 +349,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrap_width`                 | `int`         | `80`         | Wrap width when `wrap` is enabled. Default: `80`.                                                                                                                                                                                                                                                                                                   |
 | `include_document_structure` | `bool`        | `True`       | Include document structure tree in output. Default: `True`.                                                                                                                                                                                                                                                                                         |
 
-##### Methods
+### Methods
 
-###### default()
+#### default()
 
 **Signature:**
 
@@ -418,9 +418,9 @@ Configuration for crawl, scrape, and map operations.
 | `browser_profile`      | `str \| None`         | `None`    | Named browser profile for persistent sessions (cookies, localStorage).                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `save_browser_profile` | `bool`                | `False`   | Whether to save changes back to the browser profile on exit.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-##### Methods
+### Methods
 
-###### default()
+#### default()
 
 **Signature:**
 
@@ -429,7 +429,7 @@ Configuration for crawl, scrape, and map operations.
 def default() -> CrawlConfig
 ```
 
-###### validate()
+#### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -448,9 +448,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-##### Methods
+### Methods
 
-###### crawl_stream()
+#### crawl_stream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -465,7 +465,7 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 def crawl_stream(self, req: CrawlStreamRequest) -> str
 ```
 
-###### batch_crawl_stream()
+#### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -525,9 +525,9 @@ The result of a multi-page crawl operation.
 | `cookies`         | `list[CookieInfo]`      | `[]`    | Cookies collected during the crawl.                                       |
 | `normalized_urls` | `list[str]`             | `[]`    | Normalized URLs encountered during crawling (for deduplication counting). |
 
-##### Methods
+### Methods
 
-###### unique_normalized_urls()
+#### unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -1022,25 +1022,25 @@ Errors that can occur during crawling, scraping, or mapping operations.
 
 **Base class:** `CrawlError(Exception)`
 
-| Exception | Description |
-|-----------|-------------|
-| `NotFound(CrawlError)` | The requested page was not found (HTTP 404). |
-| `Unauthorized(CrawlError)` | The request was unauthorized (HTTP 401). |
-| `Forbidden(CrawlError)` | The request was forbidden (HTTP 403). |
-| `WafBlocked(CrawlError)` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). |
-| `Timeout(CrawlError)` | The request timed out. |
-| `RateLimited(CrawlError)` | The request was rate-limited (HTTP 429). |
-| `ServerError(CrawlError)` | A server error occurred (HTTP 5xx). |
-| `BadGateway(CrawlError)` | A bad gateway error occurred (HTTP 502). |
-| `Gone(CrawlError)` | The resource is permanently gone (HTTP 410). |
-| `Connection(CrawlError)` | A connection error occurred. |
-| `Dns(CrawlError)` | A DNS resolution error occurred. |
-| `Ssl(CrawlError)` | An SSL/TLS error occurred. |
-| `DataLoss(CrawlError)` | Data was lost or truncated during transfer. |
-| `BrowserError(CrawlError)` | The browser failed to launch, connect, or navigate. |
-| `BrowserTimeout(CrawlError)` | The browser page load or rendering timed out. |
-| `InvalidConfig(CrawlError)` | The provided configuration is invalid. |
-| `Unsupported(CrawlError)` | The requested capability is not supported by the active backend or build. |
-| `Other(CrawlError)` | An unclassified error occurred. |
+| Exception                    | Description                                                                        |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| `NotFound(CrawlError)`       | The requested page was not found (HTTP 404).                                       |
+| `Unauthorized(CrawlError)`   | The request was unauthorized (HTTP 401).                                           |
+| `Forbidden(CrawlError)`      | The request was forbidden (HTTP 403).                                              |
+| `WafBlocked(CrawlError)`     | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). |
+| `Timeout(CrawlError)`        | The request timed out.                                                             |
+| `RateLimited(CrawlError)`    | The request was rate-limited (HTTP 429).                                           |
+| `ServerError(CrawlError)`    | A server error occurred (HTTP 5xx).                                                |
+| `BadGateway(CrawlError)`     | A bad gateway error occurred (HTTP 502).                                           |
+| `Gone(CrawlError)`           | The resource is permanently gone (HTTP 410).                                       |
+| `Connection(CrawlError)`     | A connection error occurred.                                                       |
+| `Dns(CrawlError)`            | A DNS resolution error occurred.                                                   |
+| `Ssl(CrawlError)`            | An SSL/TLS error occurred.                                                         |
+| `DataLoss(CrawlError)`       | Data was lost or truncated during transfer.                                        |
+| `BrowserError(CrawlError)`   | The browser failed to launch, connect, or navigate.                                |
+| `BrowserTimeout(CrawlError)` | The browser page load or rendering timed out.                                      |
+| `InvalidConfig(CrawlError)`  | The provided configuration is invalid.                                             |
+| `Unsupported(CrawlError)`    | The requested capability is not supported by the active backend or build.          |
+| `Other(CrawlError)`          | An unclassified error occurred.                                                    |
 
 ---

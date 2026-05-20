@@ -275,9 +275,9 @@ Browser fallback configuration.
 | `robots_user_agent`      | `const char**`         | `NULL`                        | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
 | `capture_network_events` | `bool`                 | `false`                       | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
-##### Methods
+### Methods
 
-###### kcrawl_default()
+#### kcrawl_default()
 
 **Signature:**
 
@@ -348,9 +348,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrap_width`                 | `uintptr_t`    | `80`         | Wrap width when `wrap` is enabled. Default: `80`.                                                                                                                                                                                                                                                                                                   |
 | `include_document_structure` | `bool`         | `true`       | Include document structure tree in output. Default: `true`.                                                                                                                                                                                                                                                                                         |
 
-##### Methods
+### Methods
 
-###### kcrawl_default()
+#### kcrawl_default()
 
 **Signature:**
 
@@ -416,9 +416,9 @@ Configuration for crawl, scrape, and map operations.
 | `browser_profile`      | `const char**`         | `NULL`    | Named browser profile for persistent sessions (cookies, localStorage).                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `save_browser_profile` | `bool`                 | `false`   | Whether to save changes back to the browser profile on exit.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-##### Methods
+### Methods
 
-###### kcrawl_default()
+#### kcrawl_default()
 
 **Signature:**
 
@@ -426,7 +426,7 @@ Configuration for crawl, scrape, and map operations.
 KcrawlCrawlConfig kcrawl_default();
 ```
 
-###### kcrawl_validate()
+#### kcrawl_validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -445,9 +445,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-##### Methods
+### Methods
 
-###### kcrawl_crawl_stream()
+#### kcrawl_crawl_stream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -462,7 +462,7 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 const char* kcrawl_crawl_stream(KcrawlCrawlStreamRequest req);
 ```
 
-###### kcrawl_batch_crawl_stream()
+#### kcrawl_batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -522,9 +522,9 @@ The result of a multi-page crawl operation.
 | `cookies`         | `KcrawlCookieInfo*`      | `NULL`  | Cookies collected during the crawl.                                       |
 | `normalized_urls` | `const char**`           | `NULL`  | Normalized URLs encountered during crawling (for deduplication counting). |
 
-##### Methods
+### Methods
 
-###### kcrawl_unique_normalized_urls()
+#### kcrawl_unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 

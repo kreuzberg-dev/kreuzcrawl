@@ -275,9 +275,9 @@ Browser fallback configuration.
 | `robots_user_agent`      | `String?`        | `nil`            | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
 | `capture_network_events` | `Boolean`        | `false`          | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
-##### Methods
+### Methods
 
-###### default()
+#### default()
 
 **Signature:**
 
@@ -348,9 +348,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrap_width`                 | `Integer`       | `80`         | Wrap width when `wrap` is enabled. Default: `80`.                                                                                                                                                                                                                                                                                                   |
 | `include_document_structure` | `Boolean`       | `true`       | Include document structure tree in output. Default: `true`.                                                                                                                                                                                                                                                                                         |
 
-##### Methods
+### Methods
 
-###### default()
+#### default()
 
 **Signature:**
 
@@ -416,9 +416,9 @@ Configuration for crawl, scrape, and map operations.
 | `browser_profile`      | `String?`              | `nil`     | Named browser profile for persistent sessions (cookies, localStorage).                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `save_browser_profile` | `Boolean`              | `false`   | Whether to save changes back to the browser profile on exit.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-##### Methods
+### Methods
 
-###### default()
+#### default()
 
 **Signature:**
 
@@ -426,7 +426,7 @@ Configuration for crawl, scrape, and map operations.
 def self.default()
 ```
 
-###### validate()
+#### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -445,9 +445,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-##### Methods
+### Methods
 
-###### crawl_stream()
+#### crawl_stream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -462,7 +462,7 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 def crawl_stream(req)
 ```
 
-###### batch_crawl_stream()
+#### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -522,9 +522,9 @@ The result of a multi-page crawl operation.
 | `cookies`         | `Array<CookieInfo>`      | `[]`    | Cookies collected during the crawl.                                       |
 | `normalized_urls` | `Array<String>`          | `[]`    | Normalized URLs encountered during crawling (for deduplication counting). |
 
-##### Methods
+### Methods
 
-###### unique_normalized_urls()
+#### unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 

@@ -1230,3 +1230,72 @@ public func generateCitations(markdown: String) -> CitationResult {
 public func createEngine(config: CrawlConfig?) throws -> CrawlEngineHandle {
     return try RustBridge.createEngine(config)
 }
+
+// MARK: - Streaming free functions
+// These adapters are owned by opaque handle types that do not have a
+// Swift class wrapper (no client_constructor_body in alef.toml).  The
+// streaming methods are therefore exposed as module-level free functions
+// that accept the owner handle as their first parameter.
+
+// MARK: - Sendable conformance for CrawlEngineHandle (streaming owner)
+// swift-bridge opaque types are not automatically Sendable.
+// Captured by Task.detached in streaming free functions — Rust type is Send + Sync.
+extension RustBridge.CrawlEngineHandle: @unchecked Sendable {}
+
+// MARK: - Sendable conformance for CrawlEngineHandleCrawlStreamStreamHandle
+// swift-bridge opaque types are not automatically Sendable.  The Rust
+// side uses Mutex<stream> + tokio Runtime — both Send + Sync — so
+// @unchecked is correct: thread-safety is enforced by Rust.
+extension RustBridge.CrawlEngineHandleCrawlStreamStreamHandle: @unchecked Sendable {}
+
+// MARK: - Sendable conformance for CrawlEngineHandleBatchCrawlStreamStreamHandle
+// swift-bridge opaque types are not automatically Sendable.  The Rust
+// side uses Mutex<stream> + tokio Runtime — both Send + Sync — so
+// @unchecked is correct: thread-safety is enforced by Rust.
+extension RustBridge.CrawlEngineHandleBatchCrawlStreamStreamHandle: @unchecked Sendable {}
+
+public func crawlStream(_ crawlEngineHandle: CrawlEngineHandle, _ req: CrawlStreamRequest) async throws -> AsyncThrowingStream<CrawlEvent, Error> {
+    let handle = try await Task.detached(priority: .userInitiated) {
+        try RustBridge.crawlEngineHandleCrawlStreamStart(crawlEngineHandle, (try req.intoRust()))
+    }.value
+
+    return AsyncThrowingStream<CrawlEvent, Error> { continuation in
+        let task = Task.detached(priority: .userInitiated) {
+            do {
+                while !Task.isCancelled {
+                    let json = try handle.next().toString()
+                    if json.isEmpty { break }
+                    let chunk = try RustBridge.crawlEventFromJson(json)
+                    continuation.yield(chunk)
+                }
+                continuation.finish()
+            } catch {
+                continuation.finish(throwing: error)
+            }
+        }
+        continuation.onTermination = { _ in task.cancel() }
+    }
+}
+
+public func batchCrawlStream(_ crawlEngineHandle: CrawlEngineHandle, _ req: BatchCrawlStreamRequest) async throws -> AsyncThrowingStream<CrawlEvent, Error> {
+    let handle = try await Task.detached(priority: .userInitiated) {
+        try RustBridge.crawlEngineHandleBatchCrawlStreamStart(crawlEngineHandle, (try req.intoRust()))
+    }.value
+
+    return AsyncThrowingStream<CrawlEvent, Error> { continuation in
+        let task = Task.detached(priority: .userInitiated) {
+            do {
+                while !Task.isCancelled {
+                    let json = try handle.next().toString()
+                    if json.isEmpty { break }
+                    let chunk = try RustBridge.crawlEventFromJson(json)
+                    continuation.yield(chunk)
+                }
+                continuation.finish()
+            } catch {
+                continuation.finish(throwing: error)
+            }
+        }
+        continuation.onTermination = { _ in task.cancel() }
+    }
+}
