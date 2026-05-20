@@ -233,7 +233,9 @@ types = [
   "CitationReference",
   "CrawlEngineHandle",
   "BatchScrapeResult",
+  "BatchScrapeResults",
   "BatchCrawlResult",
+  "BatchCrawlResults",
   "CrawlError",
   "CrawlEvent",
   "CrawlStreamRequest",
@@ -689,14 +691,24 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
-result_is_array = true
 select_when = { category = "batch", input_has = "batch_urls" }
 # Elixir, zig, swift bindings and brew CLI do not expose batch functions.
 # For elixir/zig/swift: unsafe NIF tuple marshalling with mixed-type arrays.
 # For brew: CLI only supports scrape, crawl, map subcommands.
 skip_languages = ["elixir", "zig", "swift", "brew"]
-# BatchScrapeResult is { url, result: Option<ScrapeResult>, error: Option<String> }.
-result_fields = ["url", "result", "error"]
+# BatchScrapeResults wraps Vec<BatchScrapeResult> with precomputed counts.
+# Top-level fields: results (Vec), total_count, completed_count, failed_count.
+# Per-element fields (url, result, error) are kept here so fixtures asserting on
+# `results[].url`, `results[].error`, etc. pass the result_fields gate.
+result_fields = [
+  "results",
+  "total_count",
+  "completed_count",
+  "failed_count",
+  "url",
+  "result",
+  "error",
+]
 
 [[crates.e2e.calls.batch_scrape.args]]
 name = "engine"
@@ -1029,13 +1041,23 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
-result_is_array = true
 select_when = { category = "batch", id_prefix = "batch_crawl" }
 # Same constraints as batch_scrape: NIF tuple marshalling for mixed-type arrays
 # is unsafe in elixir/zig/swift, and brew CLI lacks a batch subcommand.
 skip_languages = ["elixir", "zig", "swift", "brew"]
-# BatchCrawlResult is { url, result: Option<CrawlResult>, error: Option<String> }.
-result_fields = ["url", "result", "error"]
+# BatchCrawlResults wraps Vec<BatchCrawlResult> with precomputed counts.
+# Top-level fields: results (Vec), total_count, completed_count, failed_count.
+# Per-element fields (url, result, error) are kept here so fixtures asserting on
+# `results[].url`, `results[].error`, etc. pass the result_fields gate.
+result_fields = [
+  "results",
+  "total_count",
+  "completed_count",
+  "failed_count",
+  "url",
+  "result",
+  "error",
+]
 
 [[crates.e2e.calls.batch_crawl.args]]
 name = "engine"
