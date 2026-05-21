@@ -174,6 +174,7 @@ struct FetchResult {
     is_binary: bool,
     is_pdf: bool,
     detected_charset: Option<String>,
+    browser_used: bool,
 }
 
 /// Result of blocking HTML extraction within a fetch task.
@@ -464,7 +465,7 @@ impl CrawlEngine {
                 join_set.spawn(async move {
                     let _permit = permit;
 
-                    let (resp, _browser_used) = engine
+                    let (resp, browser_used) = engine
                         .fetch_response(&entry.url)
                         .await
                         .map_err(|e| (entry.clone(), e))?;
@@ -494,6 +495,7 @@ impl CrawlEngine {
                         is_binary: page_ext.is_binary,
                         is_pdf: page_ext.is_pdf,
                         detected_charset: page_ext.detected_charset,
+                        browser_used,
                     })
                 });
             }
@@ -672,6 +674,7 @@ impl CrawlEngine {
             extracted_data: None,
             extraction_meta: None,
             downloaded_document: None,
+            browser_used: fetch.browser_used,
         };
 
         // Apply content filter — filtered pages still contribute to link discovery above

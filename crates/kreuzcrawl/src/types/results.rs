@@ -90,6 +90,8 @@ pub struct ActionResult {
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
     pub status_code: u16,
+    /// The final URL after following all redirects.
+    pub final_url: String,
     /// The Content-Type header value.
     pub content_type: String,
     /// The HTML body of the response.
@@ -196,6 +198,8 @@ pub struct CrawlPageResult {
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub downloaded_document: Option<DownloadedDocument>,
+    /// Whether the browser fallback was used to fetch this page.
+    pub browser_used: bool,
 }
 
 /// The result of a multi-page crawl operation.
@@ -216,6 +220,8 @@ pub struct CrawlResult {
     pub cookies: Vec<CookieInfo>,
     /// Whether all crawled pages stayed on the same domain as the start URL.
     pub stayed_on_domain: bool,
+    /// Whether the browser fallback was used for any page in this crawl.
+    pub browser_used: bool,
     /// Normalized URLs encountered during crawling (for deduplication counting).
     #[serde(default, skip_serializing)]
     #[cfg_attr(alef, alef(skip))]
@@ -235,6 +241,7 @@ impl CrawlResult {
         stayed_on_domain: bool,
         normalized_urls: Vec<String>,
     ) -> Self {
+        let browser_used = pages.iter().any(|p| p.browser_used);
         Self {
             pages,
             final_url,
@@ -243,6 +250,7 @@ impl CrawlResult {
             error,
             cookies,
             stayed_on_domain,
+            browser_used,
             normalized_urls,
         }
     }

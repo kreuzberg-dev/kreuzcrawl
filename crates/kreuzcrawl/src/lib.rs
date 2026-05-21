@@ -46,6 +46,8 @@ pub use bindings::{
     BatchCrawlResult, BatchCrawlResults, BatchScrapeResult, BatchScrapeResults, CrawlEngineHandle, batch_crawl,
     batch_scrape, crawl, create_engine, interact, map_urls, scrape,
 };
+#[cfg(not(target_arch = "wasm32"))]
+pub use bindings::{batch_crawl_stream, crawl_stream};
 #[cfg(feature = "browser")]
 pub use browser_pool::{BrowserPool, BrowserPoolConfig};
 pub use citations::{CitationReference, CitationResult, generate_citations};

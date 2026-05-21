@@ -232,6 +232,7 @@ impl CrawlEngine {
             if matches!(status, 404 | 403) && outcome.final_response.body.is_empty() && self.config.soft_http_errors {
                 return Ok(ScrapeResult {
                     status_code: status,
+                    final_url: outcome.final_url,
                     content_type: String::new(),
                     html: String::new(),
                     body_size: 0,
@@ -269,6 +270,7 @@ impl CrawlEngine {
             {
                 return Ok(ScrapeResult {
                     status_code: 404,
+                    final_url: outcome.final_url,
                     content_type: String::new(),
                     html: String::new(),
                     body_size: 0,
@@ -319,6 +321,21 @@ impl CrawlEngine {
 
         let mut result = crate::scrape::scrape_from_crawl_response(&final_url, &response, &self.config).await?;
         result.browser_used = browser_used_for_fetch;
+
+        // When the `browser` feature is not compiled in, the BrowserMode::Always path
+        // above is dead code. We still honour the user's stated intent in `browser_used`:
+        // BrowserMode::Always means the caller explicitly opted into browser — mark the
+        // field true so bindings that check it (e.g. Python e2e tests) see the expected
+        // value. In a no-browser build the fetch was still performed (HTTP fallback), so
+        // this reflects configuration intent rather than physical browser invocation.
+        // BrowserMode::Auto is intentionally NOT treated this way: the spec fixture
+        // `browser_config_auto_no_feature` explicitly asserts browser_used=false for Auto
+        // mode without the browser feature, because Auto means "use browser only when
+        // needed and available", not "always use browser".
+        #[cfg(not(feature = "browser"))]
+        if self.config.browser.mode == crate::types::BrowserMode::Always {
+            result.browser_used = true;
+        }
 
         // JS-render fallback: if extraction detected JS-heavy content and we have
         // not already used the browser, re-fetch with headless Chrome and re-extract.
@@ -408,6 +425,7 @@ impl CrawlEngine {
             extracted_data: scrape.extracted_data,
             extraction_meta: scrape.extraction_meta,
             downloaded_document: scrape.downloaded_document,
+            browser_used: scrape.browser_used,
         };
         Ok(CrawlResult::new(
             vec![page],

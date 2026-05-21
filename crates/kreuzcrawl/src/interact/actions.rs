@@ -70,7 +70,11 @@ pub enum PageAction {
     /// Take a screenshot of the current page.
     Screenshot {
         /// Whether to capture the full scrollable page. Defaults to viewport only.
-        #[serde(rename = "fullPage", skip_serializing_if = "Option::is_none")]
+        ///
+        /// Accepts both the canonical `fullPage` (camelCase) form and the
+        /// `full_page` (snake_case) alias so language bindings and fixtures can
+        /// use either convention without error.
+        #[serde(rename = "fullPage", alias = "full_page", skip_serializing_if = "Option::is_none")]
         full_page: Option<bool>,
     },
     /// Execute arbitrary JavaScript in the page context.

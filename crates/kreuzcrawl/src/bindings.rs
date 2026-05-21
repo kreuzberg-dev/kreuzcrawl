@@ -226,6 +226,33 @@ pub async fn batch_scrape(engine: &CrawlEngineHandle, urls: Vec<String>) -> Resu
     Ok(BatchScrapeResults::from(per_url))
 }
 
+/// Stream a single-URL crawl, yielding [`CrawlEvent`]s as pages are processed.
+///
+/// Free-function counterpart to [`CrawlEngineHandle::crawl_stream`] that accepts
+/// a bare URL (rather than a [`CrawlStreamRequest`]) so it mirrors the calling
+/// convention of [`scrape`] / [`crawl`] / [`map_urls`] for the polyglot e2e
+/// surface.
+#[cfg(not(target_arch = "wasm32"))]
+pub async fn crawl_stream(
+    engine: &CrawlEngineHandle,
+    url: &str,
+) -> Result<BoxStream<'static, Result<CrawlEvent, CrawlError>>, CrawlError> {
+    engine.crawl_stream(CrawlStreamRequest { url: url.to_string() }).await
+}
+
+/// Stream a multi-URL crawl, yielding [`CrawlEvent`]s across all seeds.
+///
+/// Free-function counterpart to [`CrawlEngineHandle::batch_crawl_stream`] that
+/// accepts a bare URL list (rather than a [`BatchCrawlStreamRequest`]) for
+/// symmetry with [`batch_scrape`] / [`batch_crawl`].
+#[cfg(not(target_arch = "wasm32"))]
+pub async fn batch_crawl_stream(
+    engine: &CrawlEngineHandle,
+    urls: Vec<String>,
+) -> Result<BoxStream<'static, Result<CrawlEvent, CrawlError>>, CrawlError> {
+    engine.batch_crawl_stream(BatchCrawlStreamRequest { urls }).await
+}
+
 /// Crawl multiple seed URLs concurrently, each following links to configured depth.
 pub async fn batch_crawl(engine: &CrawlEngineHandle, urls: Vec<String>) -> Result<BatchCrawlResults, CrawlError> {
     if urls.is_empty() {
