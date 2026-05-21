@@ -6,6 +6,13 @@ All notable changes to kreuzcrawl are documented here.
 
 ### Changed
 
+- **Split pub.dev publish into a dedicated `publish-pubdev.yaml` workflow
+  triggered by `push: tags: v*`.** pub.dev OIDC trusted publishing rejects
+  tokens from `release` events; only `push` and `workflow_dispatch` events
+  produce accepted tokens. The new workflow builds the Dart package and
+  publishes independently. **One-time setup required:** configure pub.dev →
+  kreuzcrawl package → Admin → Automated publishing with workflow path
+  `.github/workflows/publish-pubdev.yaml`.
 - **Regenerated all alef bindings against `alef 0.17.8`** (was `0.17.2`). Two
   behaviour changes flow through to the per-language bindings:
   - Rustdoc intra-doc links of the form `[Type::method]` are now emitted as
