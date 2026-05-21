@@ -3,7 +3,7 @@
 
 version = '4.0'
 name = 'Kreuzcrawl'
-description = 'Web crawler with Rust core and Python/TypeScript bindings'
+description = 'Web crawling and scraping library with active Python, TypeScript/Node, Ruby, PHP, Go, Java/JNI, C#, Elixir, WebAssembly, Dart, Kotlin Android, Swift, Zig, and C FFI bindings'
 gitignore = true
 presets = ['claude', 'copilot', 'cursor', 'antigravity', 'codex']
 builtins = [
@@ -16,6 +16,14 @@ builtins = [
   'php',
   'csharp',
   'elixir',
+  'wasm',
+  'pyo3',
+  'napi-rs',
+  'magnus',
+  'ext-php-rs',
+  'rustler',
+  'cgo',
+  'jni-rs',
   'default-commands',
 ]
 
