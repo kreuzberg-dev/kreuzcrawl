@@ -457,8 +457,13 @@ pub const MarkdownResult = struct {
     tables: []const []const u8,
     /// Non-fatal processing warnings.
     warnings: []const []const u8,
-    /// Content with links replaced by numbered citations.
-    citations: ?CitationResult,
+    /// Whether citation conversion was applied and produced at least one reference.
+    ///
+    /// `true` when the markdown contained inline links that were converted to
+    /// numbered citation references. The converted content (with `[N]` markers)
+    /// is available in `content`; the full reference list is accessible via
+    /// `generate_citations` if needed separately.
+    citations: bool,
     /// Content-filtered markdown optimized for LLM consumption.
     fit_content: ?[]const u8,
 };

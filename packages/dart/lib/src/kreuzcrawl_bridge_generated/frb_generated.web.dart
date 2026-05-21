@@ -99,9 +99,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BrowserExtras dco_decode_box_autoadd_browser_extras(dynamic raw);
 
   @protected
-  CitationResult dco_decode_box_autoadd_citation_result(dynamic raw);
-
-  @protected
   CrawlConfig dco_decode_box_autoadd_crawl_config(dynamic raw);
 
   @protected
@@ -315,9 +312,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BrowserExtras? dco_decode_opt_box_autoadd_browser_extras(dynamic raw);
 
   @protected
-  CitationResult? dco_decode_opt_box_autoadd_citation_result(dynamic raw);
-
-  @protected
   CrawlConfig? dco_decode_opt_box_autoadd_crawl_config(dynamic raw);
 
   @protected
@@ -481,11 +475,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BrowserExtras sse_decode_box_autoadd_browser_extras(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  CitationResult sse_decode_box_autoadd_citation_result(
     SseDeserializer deserializer,
   );
 
@@ -747,11 +736,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  CitationResult? sse_decode_opt_box_autoadd_citation_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   CrawlConfig? sse_decode_opt_box_autoadd_crawl_config(
     SseDeserializer deserializer,
   );
@@ -961,12 +945,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_browser_extras(
     BrowserExtras self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_box_autoadd_citation_result(
-    CitationResult self,
     SseSerializer serializer,
   );
 
@@ -1309,12 +1287,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_browser_extras(
     BrowserExtras? self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_opt_box_autoadd_citation_result(
-    CitationResult? self,
     SseSerializer serializer,
   );
 

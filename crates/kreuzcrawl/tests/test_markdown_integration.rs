@@ -43,13 +43,8 @@ async fn test_markdown_output_is_populated() {
         "markdown content should contain link text"
     );
 
-    // Citations should exist.
-    assert!(
-        md.citations.is_some(),
-        "citations should be populated for pages with links"
-    );
-    let citations = md.citations.unwrap();
-    assert!(!citations.references.is_empty(), "should have citation references");
+    // Citations should be present for pages with inline links.
+    assert!(md.citations, "citations flag should be true for pages with links");
 
     // Fit markdown should exist.
     assert!(md.fit_content.is_some(), "fit content should be populated");

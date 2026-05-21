@@ -1831,8 +1831,13 @@ class MarkdownResult {
   /// Non-fatal processing warnings.
   final List<String> warnings;
 
-  /// Content with links replaced by numbered citations.
-  final CitationResult? citations;
+  /// Whether citation conversion was applied and produced at least one reference.
+  ///
+  /// `true` when the markdown contained inline links that were converted to
+  /// numbered citation references. The converted content (with `[N]` markers)
+  /// is available in `content`; the full reference list is accessible via
+  /// `generate_citations` if needed separately.
+  final bool citations;
 
   /// Content-filtered markdown optimized for LLM consumption.
   final String? fitContent;
@@ -1842,7 +1847,7 @@ class MarkdownResult {
     this.documentStructure,
     required this.tables,
     required this.warnings,
-    this.citations,
+    required this.citations,
     this.fitContent,
   });
 

@@ -1668,7 +1668,7 @@ const _: fn() = || {
         let _: Option<String> = MarkdownResult.document_structure;
         let _: Vec<String> = MarkdownResult.tables;
         let _: Vec<String> = MarkdownResult.warnings;
-        let _: Option<crate::CitationResult> = MarkdownResult.citations;
+        let _: bool = MarkdownResult.citations;
         let _: Option<String> = MarkdownResult.fit_content;
     }
     match None::<crate::PageAction>.unwrap() {
@@ -2896,7 +2896,7 @@ impl SseDecode for crate::MarkdownResult {
         let mut var_documentStructure = <Option<String>>::sse_decode(deserializer);
         let mut var_tables = <Vec<String>>::sse_decode(deserializer);
         let mut var_warnings = <Vec<String>>::sse_decode(deserializer);
-        let mut var_citations = <Option<crate::CitationResult>>::sse_decode(deserializer);
+        let mut var_citations = <bool>::sse_decode(deserializer);
         let mut var_fitContent = <Option<String>>::sse_decode(deserializer);
         return crate::MarkdownResult {
             content: var_content,
@@ -2947,17 +2947,6 @@ impl SseDecode for Option<crate::BrowserExtras> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<crate::BrowserExtras>::sse_decode(deserializer));
-        } else {
-            return None;
-        }
-    }
-}
-
-impl SseDecode for Option<crate::CitationResult> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        if (<bool>::sse_decode(deserializer)) {
-            return Some(<crate::CitationResult>::sse_decode(deserializer));
         } else {
             return None;
         }
@@ -5328,7 +5317,7 @@ impl SseEncode for crate::MarkdownResult {
         <Option<String>>::sse_encode(self.document_structure, serializer);
         <Vec<String>>::sse_encode(self.tables, serializer);
         <Vec<String>>::sse_encode(self.warnings, serializer);
-        <Option<crate::CitationResult>>::sse_encode(self.citations, serializer);
+        <bool>::sse_encode(self.citations, serializer);
         <Option<String>>::sse_encode(self.fit_content, serializer);
     }
 }
@@ -5369,16 +5358,6 @@ impl SseEncode for Option<crate::BrowserExtras> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <crate::BrowserExtras>::sse_encode(value, serializer);
-        }
-    }
-}
-
-impl SseEncode for Option<crate::CitationResult> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.is_some(), serializer);
-        if let Some(value) = self {
-            <crate::CitationResult>::sse_encode(value, serializer);
         }
     }
 }

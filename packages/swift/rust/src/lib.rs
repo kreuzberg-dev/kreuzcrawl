@@ -524,7 +524,7 @@ mod ffi {
             document_structure: Option<String>,
             tables: Vec<String>,
             warnings: Vec<String>,
-            citations: Option<CitationResult>,
+            citations: bool,
             fit_content: Option<String>,
         ) -> MarkdownResult;
         fn content(&self) -> String;
@@ -532,7 +532,7 @@ mod ffi {
         fn document_structure(&self) -> Option<String>;
         fn tables(&self) -> Vec<String>;
         fn warnings(&self) -> Vec<String>;
-        fn citations(&self) -> Option<CitationResult>;
+        fn citations(&self) -> bool;
         #[swift_bridge(swift_name = "fitContent")]
         fn fit_content(&self) -> Option<String>;
     }
@@ -2680,7 +2680,7 @@ impl MarkdownResult {
         document_structure: Option<String>,
         tables: Vec<String>,
         warnings: Vec<String>,
-        citations: Option<CitationResult>,
+        citations: bool,
         fit_content: Option<String>,
     ) -> MarkdownResult {
         let mut __target: kreuzcrawl::MarkdownResult = ::std::default::Default::default();
@@ -2716,9 +2716,7 @@ impl MarkdownResult {
                 __target.warnings = t;
             }
         }
-        if let Some(w) = citations {
-            __target.citations = Some(w.0);
-        }
+        __target.citations = citations;
         if let Some(s) = fit_content {
             // Try JSON parse first (handles enum/object values); on parse failure
             // treat the raw input as a JSON string scalar so plain `String` /
@@ -2753,8 +2751,11 @@ impl MarkdownResult {
             .and_then(|j| ::serde_json::from_value(j).ok())
             .unwrap_or_default()
     }
-    pub fn citations(&self) -> Option<CitationResult> {
-        self.0.citations.clone().map(CitationResult)
+    pub fn citations(&self) -> bool {
+        ::serde_json::to_value(&self.0.citations)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
     }
     pub fn fit_content(&self) -> Option<String> {
         self.0.fit_content.clone()

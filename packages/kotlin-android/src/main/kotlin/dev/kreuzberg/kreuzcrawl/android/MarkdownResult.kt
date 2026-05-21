@@ -31,8 +31,15 @@ data class MarkdownResult(
     val tables: List<Any> = emptyList(),
     /** Non-fatal processing warnings. */
     val warnings: List<String> = emptyList(),
-    /** Content with links replaced by numbered citations. */
-    val citations: CitationResult? = null,
+    /**
+     * Whether citation conversion was applied and produced at least one reference.
+     *
+     * `true` when the markdown contained inline links that were converted to
+     * numbered citation references. The converted content (with `[N]` markers)
+     * is available in `content`; the full reference list is accessible via
+     * `generate_citations` if needed separately.
+     */
+    val citations: Boolean = false,
     /** Content-filtered markdown optimized for LLM consumption. */
     val fitContent: String? = null
 )

@@ -1951,12 +1951,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  CitationResult dco_decode_box_autoadd_citation_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_citation_result(raw);
-  }
-
-  @protected
   CrawlConfig dco_decode_box_autoadd_crawl_config(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_crawl_config(raw);
@@ -2611,7 +2605,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       documentStructure: dco_decode_opt_String(arr[1]),
       tables: dco_decode_list_String(arr[2]),
       warnings: dco_decode_list_String(arr[3]),
-      citations: dco_decode_opt_box_autoadd_citation_result(arr[4]),
+      citations: dco_decode_bool(arr[4]),
       fitContent: dco_decode_opt_String(arr[5]),
     );
   }
@@ -2638,12 +2632,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BrowserExtras? dco_decode_opt_box_autoadd_browser_extras(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_browser_extras(raw);
-  }
-
-  @protected
-  CitationResult? dco_decode_opt_box_autoadd_citation_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_citation_result(raw);
   }
 
   @protected
@@ -3169,14 +3157,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_browser_extras(deserializer));
-  }
-
-  @protected
-  CitationResult sse_decode_box_autoadd_citation_result(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_citation_result(deserializer));
   }
 
   @protected
@@ -4076,9 +4056,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_documentStructure = sse_decode_opt_String(deserializer);
     var var_tables = sse_decode_list_String(deserializer);
     var var_warnings = sse_decode_list_String(deserializer);
-    var var_citations = sse_decode_opt_box_autoadd_citation_result(
-      deserializer,
-    );
+    var var_citations = sse_decode_bool(deserializer);
     var var_fitContent = sse_decode_opt_String(deserializer);
     return MarkdownResult(
       content: var_content,
@@ -4135,19 +4113,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_browser_extras(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  CitationResult? sse_decode_opt_box_autoadd_citation_result(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_citation_result(deserializer));
     } else {
       return null;
     }
@@ -4844,15 +4809,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_browser_extras(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_citation_result(
-    CitationResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_citation_result(self, serializer);
   }
 
   @protected
@@ -5586,7 +5542,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.documentStructure, serializer);
     sse_encode_list_String(self.tables, serializer);
     sse_encode_list_String(self.warnings, serializer);
-    sse_encode_opt_box_autoadd_citation_result(self.citations, serializer);
+    sse_encode_bool(self.citations, serializer);
     sse_encode_opt_String(self.fitContent, serializer);
   }
 
@@ -5636,19 +5592,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_box_autoadd_browser_extras(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_opt_box_autoadd_citation_result(
-    CitationResult? self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_citation_result(self, serializer);
     }
   }
 

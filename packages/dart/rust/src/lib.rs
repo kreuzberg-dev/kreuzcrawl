@@ -433,8 +433,13 @@ pub struct MarkdownResult {
     pub tables: Vec<String>,
     /// Non-fatal processing warnings.
     pub warnings: Vec<String>,
-    /// Content with links replaced by numbered citations.
-    pub citations: Option<CitationResult>,
+    /// Whether citation conversion was applied and produced at least one reference.
+    ///
+    /// `true` when the markdown contained inline links that were converted to
+    /// numbered citation references. The converted content (with `[N]` markers)
+    /// is available in `content`; the full reference list is accessible via
+    /// `generate_citations` if needed separately.
+    pub citations: bool,
     /// Content-filtered markdown optimized for LLM consumption.
     pub fit_content: Option<String>,
 }
@@ -1391,7 +1396,7 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
                 .map(|j| serde_json::to_string(&j).unwrap_or_default())
                 .collect(),
             warnings: v.warnings.into_iter().map(|s| s.into()).collect(),
-            citations: v.citations.map(CitationResult::from),
+            citations: v.citations as _,
             fit_content: v.fit_content.map(|s| s.into()),
         }
     }
