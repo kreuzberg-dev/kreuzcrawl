@@ -42,6 +42,8 @@ pub(crate) struct RedirectOutcome {
     pub(crate) redirect_count: usize,
     /// Response headers from each intermediate redirect hop (for cookie extraction).
     pub(crate) intermediate_headers: Vec<HashMap<String, Vec<String>>>,
+    /// Whether headless-browser fetch was used for the final hop.
+    pub(crate) browser_used: bool,
 }
 
 /// Follow HTTP 3xx, `Refresh` header, and `<meta http-equiv="refresh">` redirects.
@@ -71,8 +73,9 @@ pub(crate) async fn follow_redirects(
     let mut redirect_count: usize = 0;
     let mut intermediate_headers: Vec<HashMap<String, Vec<String>>> = Vec::new();
 
+    let mut browser_used = false;
     loop {
-        let (resp, _browser_used) = match engine.fetch_response(&current_url).await {
+        let (resp, hop_browser_used) = match engine.fetch_response(&current_url).await {
             Ok(pair) => pair,
             // A 404 reached after at least one redirect is always soft-failed regardless
             // of `soft_http_errors`. The caller opted into redirect-following, so receiving
@@ -93,10 +96,12 @@ pub(crate) async fn follow_redirects(
                     final_response: synthetic,
                     redirect_count,
                     intermediate_headers,
+                    browser_used,
                 });
             }
             Err(e) => return Err(e),
         };
+        browser_used = hop_browser_used;
         let status = resp.status;
 
         // HTTP 3xx redirect via Location header
@@ -154,6 +159,7 @@ pub(crate) async fn follow_redirects(
             final_response: resp,
             redirect_count,
             intermediate_headers,
+            browser_used,
         });
     }
 }

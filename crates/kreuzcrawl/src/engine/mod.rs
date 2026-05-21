@@ -300,7 +300,7 @@ impl CrawlEngine {
                     browser: None,
                 });
             }
-            (outcome.final_url, outcome.final_response, false)
+            (outcome.final_url, outcome.final_response, outcome.browser_used)
         };
 
         #[cfg(target_arch = "wasm32")]
