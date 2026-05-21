@@ -222,7 +222,10 @@ impl BrowserPool {
 
         let mut guard = self.state.lock().await;
         if let Some(bs) = guard.take() {
-            drop(bs.browser);
+            let mut browser = bs.browser;
+            let _ = browser.close().await;
+            let _ = browser.wait().await;
+            drop(browser);
             let _ = tokio::time::timeout(HANDLER_SHUTDOWN_TIMEOUT, bs.handler_handle).await;
             if let Some(dir) = bs.user_data_dir {
                 let _ = std::fs::remove_dir_all(dir);
@@ -272,7 +275,10 @@ impl BrowserPool {
         // Tear down old state and relaunch.
         self.healthy.store(false, Ordering::Release);
         if let Some(old) = guard.take() {
-            drop(old.browser);
+            let mut browser = old.browser;
+            let _ = browser.close().await;
+            let _ = browser.wait().await;
+            drop(browser);
             let _ = tokio::time::timeout(HANDLER_SHUTDOWN_TIMEOUT, old.handler_handle).await;
             if let Some(dir) = old.user_data_dir {
                 let _ = std::fs::remove_dir_all(dir);

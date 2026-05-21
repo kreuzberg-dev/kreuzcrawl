@@ -55,7 +55,7 @@ async fn chromiumoxide_fetch(
         pooled.close().await;
         result
     } else {
-        let (browser, mut handler, data_dir) = launch_or_connect(config).await?;
+        let (mut browser, mut handler, data_dir) = launch_or_connect(config).await?;
         let handler_handle = tokio::spawn(async move { while handler.next().await.is_some() {} });
 
         let page = browser
@@ -65,6 +65,8 @@ async fn chromiumoxide_fetch(
 
         let result = page_fetch(url, config, &page, prior_cookies).await;
 
+        let _ = browser.close().await;
+        let _ = browser.wait().await;
         drop(browser);
         let _ = tokio::time::timeout(Duration::from_secs(5), handler_handle).await;
 

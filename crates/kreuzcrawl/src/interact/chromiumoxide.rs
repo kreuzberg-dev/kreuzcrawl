@@ -17,11 +17,13 @@ pub(super) async fn run(
     actions: &[PageAction],
     config: &CrawlConfig,
 ) -> Result<InteractionResult, CrawlError> {
-    let (browser, mut handler, data_dir) = launch_or_connect(config).await?;
+    let (mut browser, mut handler, data_dir) = launch_or_connect(config).await?;
     let handler_handle = tokio::spawn(async move { while handler.next().await.is_some() {} });
 
     let result = run_with_browser(&browser, url, actions, config).await;
 
+    let _ = browser.close().await;
+    let _ = browser.wait().await;
     drop(browser);
     let _ = tokio::time::timeout(Duration::from_secs(5), handler_handle).await;
     if let Some(dir) = data_dir {

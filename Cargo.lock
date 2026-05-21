@@ -2910,6 +2910,7 @@ dependencies = [
  "futures-util",
  "kreuzcrawl",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]
