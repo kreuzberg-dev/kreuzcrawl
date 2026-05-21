@@ -289,8 +289,8 @@ type = "BatchCrawlStreamRequest"
 
 [crates.lint.python]
 precondition = "command -v ruff >/dev/null 2>&1"
-before = "cd packages/python && uv sync"
-typecheck = "cd packages/python && uv run mypy ."
+before = "cd packages/python && uv sync --no-install-project --no-install-workspace"
+typecheck = "cd packages/python && uv run --no-sync mypy ."
 
 [crates.lint.ruby]
 precondition = "command -v bundle >/dev/null 2>&1"

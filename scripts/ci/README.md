@@ -186,9 +186,9 @@ For comprehensive workflow-to-script mapping and usage examples, see `SCRIPT_MAP
   run: |
     cd packages/python
     if [ "${{ matrix.coverage }}" = "true" ]; then
-      uv run pytest -vv --cov=kreuzcrawl --cov-report=lcov:coverage.lcov ...
+      uv run --no-sync pytest -vv --cov=kreuzcrawl --cov-report=lcov:coverage.lcov ...
     else
-      uv run pytest -vv --reruns 1 --reruns-delay 1
+      uv run --no-sync pytest -vv --reruns 1 --reruns-delay 1
     fi
 ```
 
