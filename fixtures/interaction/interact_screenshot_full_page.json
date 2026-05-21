@@ -41,7 +41,7 @@
 			"value": "screenshot"
 		},
 		{
-			"type": "is_true",
+			"type": "not_empty",
 			"field": "interaction.action_results[0].data"
 		}
 	]
