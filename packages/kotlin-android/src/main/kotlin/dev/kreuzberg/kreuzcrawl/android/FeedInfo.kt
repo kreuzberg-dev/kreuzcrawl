@@ -24,9 +24,9 @@ package dev.kreuzberg.kreuzcrawl.android
 /** Information about a feed link found on a page. */
 data class FeedInfo(
     /** The feed URL. */
-    val url: String,
+    val url: String = "",
     /** The feed title, if present. */
-    val title: String? = null,
+    val title: String? = "",
     /** The type of feed. */
     val feedType: FeedType = FeedType.RSS
 )

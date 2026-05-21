@@ -24,13 +24,13 @@ package dev.kreuzberg.kreuzcrawl.android
 /** Information about a link found on a page. */
 data class LinkInfo(
     /** The resolved URL of the link. */
-    val url: String,
+    val url: String = "",
     /** The visible text of the link. */
-    val text: String,
+    val text: String = "",
     /** The classification of the link. */
     val linkType: LinkType = LinkType.INTERNAL,
     /** The `rel` attribute value, if present. */
-    val rel: String? = null,
+    val rel: String? = "",
     /** Whether the link has `rel="nofollow"`. */
-    val nofollow: Boolean
+    val nofollow: Boolean = false
 )

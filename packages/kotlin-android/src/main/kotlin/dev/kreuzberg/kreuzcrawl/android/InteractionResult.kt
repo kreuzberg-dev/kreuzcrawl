@@ -26,9 +26,9 @@ data class InteractionResult(
     /** Results from each executed action. */
     val actionResults: List<ActionResult> = emptyList(),
     /** Final page HTML after all actions completed. */
-    val finalHtml: String,
+    val finalHtml: String = "",
     /** Final page URL (may have changed due to navigation). */
-    val finalUrl: String,
+    val finalUrl: String = "",
     /** Screenshot taken after all actions, if requested. */
     val screenshot: ByteArray? = null
 )

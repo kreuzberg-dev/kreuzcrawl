@@ -24,7 +24,7 @@ package dev.kreuzberg.kreuzcrawl.android
 /** An hreflang alternate link entry. */
 data class HreflangEntry(
     /** The language code (e.g., "en", "fr", "x-default"). */
-    val lang: String,
+    val lang: String = "",
     /** The URL for this language variant. */
-    val url: String
+    val url: String = ""
 )

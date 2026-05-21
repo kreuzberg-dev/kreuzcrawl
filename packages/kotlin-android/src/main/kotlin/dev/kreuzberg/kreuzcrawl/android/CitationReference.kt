@@ -27,9 +27,9 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 data class CitationReference(
     /** 1-based reference number as it appears in the source text. */
-    val index: Long,
+    val index: Long = 0L,
     /** Resolved absolute URL for this reference. */
-    val url: String,
+    val url: String = "",
     /** Human-readable anchor text or title for the reference. */
-    val text: String
+    val text: String = ""
 )

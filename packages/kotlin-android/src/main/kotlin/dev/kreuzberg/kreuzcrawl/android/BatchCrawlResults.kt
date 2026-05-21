@@ -31,9 +31,9 @@ data class BatchCrawlResults(
     /** Per-URL crawl results, in the order seed URLs were submitted. */
     val results: List<BatchCrawlResult> = emptyList(),
     /** Total number of seed URLs in the batch (equal to `results.len()`). */
-    val totalCount: Long,
+    val totalCount: Long = 0L,
     /** Number of seed URLs whose crawl succeeded (`error` is `null`). */
-    val completedCount: Long,
+    val completedCount: Long = 0L,
     /** Number of seed URLs whose crawl failed (`error` is `Some`). */
-    val failedCount: Long
+    val failedCount: Long = 0L
 )

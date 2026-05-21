@@ -31,9 +31,9 @@ data class BatchScrapeResults(
     /** Per-URL scrape results, in the order URLs were submitted. */
     val results: List<BatchScrapeResult> = emptyList(),
     /** Total number of URLs in the batch (equal to `results.len()`). */
-    val totalCount: Long,
+    val totalCount: Long = 0L,
     /** Number of URLs whose scrape succeeded (`error` is `null`). */
-    val completedCount: Long,
+    val completedCount: Long = 0L,
     /** Number of URLs whose scrape failed (`error` is `Some`). */
-    val failedCount: Long
+    val failedCount: Long = 0L
 )

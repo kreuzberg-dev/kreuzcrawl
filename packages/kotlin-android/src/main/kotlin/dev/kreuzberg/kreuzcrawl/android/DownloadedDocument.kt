@@ -30,17 +30,17 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 data class DownloadedDocument(
     /** The URL the document was fetched from. */
-    val url: String,
+    val url: String = "",
     /** The MIME type from the Content-Type header. */
-    val mimeType: String,
+    val mimeType: String = "",
     /** Raw document bytes. Skipped during JSON serialization. */
     val content: ByteArray,
     /** Size of the document in bytes. */
-    val size: Long,
+    val size: Long = 0L,
     /** Filename extracted from Content-Disposition or URL path. */
-    val filename: String? = null,
+    val filename: String? = "",
     /** SHA-256 hex digest of the content. */
-    val contentHash: String,
+    val contentHash: String = "",
     /** Selected response headers. */
     val headers: Map<String, String> = emptyMap()
 )

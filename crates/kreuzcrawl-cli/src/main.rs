@@ -2,7 +2,8 @@ use std::time::Duration;
 
 use clap::{Parser, Subcommand, ValueEnum};
 use kreuzcrawl::{
-    BrowserConfig, BrowserMode, CrawlConfig, ProxyConfig, batch_crawl, crawl, create_engine, map_urls, scrape,
+    BrowserConfig, BrowserMode, CrawlConfig, PageAction, ProxyConfig, batch_crawl, crawl, create_engine, interact,
+    map_urls, scrape,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
@@ -177,6 +178,41 @@ enum Commands {
         /// Respect robots.txt
         #[arg(long)]
         respect_robots_txt: bool,
+        /// Output format: json or markdown
+        #[arg(long, default_value = "json")]
+        format: String,
+        /// Request timeout in milliseconds
+        #[arg(long, default_value = "30000")]
+        timeout: u64,
+        /// When to use the browser: auto, always, or never
+        #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
+        browser_mode: CliBrowserMode,
+        /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
+        #[arg(long, value_parser = parse_browser_endpoint)]
+        browser_endpoint: Option<String>,
+        /// Configuration as JSON string or @file.json
+        #[arg(long, value_name = "JSON")]
+        config: Option<String>,
+    },
+    /// Execute browser actions on a single page
+    Interact {
+        /// URL to interact with
+        url: String,
+        /// Actions as JSON array (e.g. '[{"type":"click","selector":"#submit"}]')
+        #[arg(long, value_name = "JSON")]
+        actions: String,
+        /// Output format: json or markdown
+        #[arg(long, default_value = "json")]
+        format: String,
+        /// Request timeout in milliseconds
+        #[arg(long, default_value = "30000")]
+        timeout: u64,
+        /// When to use the browser: auto, always, or never
+        #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
+        browser_mode: CliBrowserMode,
+        /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
+        #[arg(long, value_parser = parse_browser_endpoint)]
+        browser_endpoint: Option<String>,
         /// Configuration as JSON string or @file.json
         #[arg(long, value_name = "JSON")]
         config: Option<String>,
@@ -372,12 +408,19 @@ async fn main() {
             limit,
             search,
             respect_robots_txt,
+            format,
+            timeout,
+            browser_mode,
+            browser_endpoint,
             config: config_str,
         } => {
+            let timeout_duration = Duration::from_millis(timeout);
             let mut config = CrawlConfig {
                 respect_robots_txt,
                 map_limit: limit,
                 map_search: search,
+                request_timeout: timeout_duration,
+                browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
                 ..Default::default()
             };
 
@@ -392,8 +435,68 @@ async fn main() {
             let handle = create_engine(Some(config)).expect("failed to create crawl engine");
             match map_urls(&handle, &url).await {
                 Ok(result) => {
-                    for url_entry in &result.urls {
-                        println!("{}", url_entry.url);
+                    if format == "markdown" {
+                        for url_entry in &result.urls {
+                            println!("{}", url_entry.url);
+                        }
+                    } else {
+                        println!(
+                            "{}",
+                            serde_json::to_string_pretty(&result).expect("result is serializable")
+                        );
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error: {e}");
+                    std::process::exit(1);
+                }
+            }
+        }
+        Commands::Interact {
+            url,
+            actions,
+            format,
+            timeout,
+            browser_mode,
+            browser_endpoint,
+            config: config_str,
+        } => {
+            let timeout_duration = Duration::from_millis(timeout);
+            let mut config = CrawlConfig {
+                request_timeout: timeout_duration,
+                browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
+                ..Default::default()
+            };
+
+            // Apply JSON config if provided.
+            if let Some(config_json) = config_str
+                && let Err(e) = merge_json_config(&mut config, &config_json)
+            {
+                eprintln!("Error: invalid config: {e}");
+                std::process::exit(1);
+            }
+
+            let parsed_actions: Vec<PageAction> = match serde_json::from_str(&actions) {
+                Ok(value) => value,
+                Err(e) => {
+                    eprintln!("Error: invalid actions JSON: {e}");
+                    std::process::exit(1);
+                }
+            };
+
+            let handle = create_engine(Some(config)).expect("failed to create crawl engine");
+            match interact(&handle, &url, parsed_actions).await {
+                Ok(result) => {
+                    if format == "markdown" {
+                        println!("{}", result.final_html);
+                    } else {
+                        // Wrap under `interaction` to match the assertion path used by
+                        // fixture-driven brew tests (`interaction.action_results[...]`).
+                        let wrapped = serde_json::json!({ "interaction": result });
+                        println!(
+                            "{}",
+                            serde_json::to_string_pretty(&wrapped).expect("result is serializable")
+                        );
                     }
                 }
                 Err(e) => {

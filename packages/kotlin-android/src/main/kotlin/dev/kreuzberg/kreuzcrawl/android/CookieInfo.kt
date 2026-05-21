@@ -24,11 +24,11 @@ package dev.kreuzberg.kreuzcrawl.android
 /** Information about an HTTP cookie received from a response. */
 data class CookieInfo(
     /** The cookie name. */
-    val name: String,
+    val name: String = "",
     /** The cookie value. */
-    val value: String,
+    val value: String = "",
     /** The cookie domain, if specified. */
-    val domain: String? = null,
+    val domain: String? = "",
     /** The cookie path, if specified. */
-    val path: String? = null
+    val path: String? = ""
 )

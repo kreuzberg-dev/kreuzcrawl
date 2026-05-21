@@ -102,7 +102,7 @@ data class CrawlConfig(
      */
     val downloadDocuments: Boolean = true,
     /** Maximum size in bytes for document downloads. Defaults to 50 MB. */
-    val documentMaxSize: Long? = null,
+    val documentMaxSize: Long? = 0L,
     /** Allowlist of MIME types to download. If empty, uses built-in defaults. */
     val documentMimeTypes: List<String> = emptyList(),
     /** Path to write WARC output. If `null`, WARC output is disabled. */

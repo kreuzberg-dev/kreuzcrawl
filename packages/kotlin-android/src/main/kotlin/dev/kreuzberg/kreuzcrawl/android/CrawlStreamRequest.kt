@@ -30,5 +30,5 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 data class CrawlStreamRequest(
     /** The seed URL to crawl. */
-    val url: String
+    val url: String = ""
 )

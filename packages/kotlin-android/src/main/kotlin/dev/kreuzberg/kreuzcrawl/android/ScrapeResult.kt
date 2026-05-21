@@ -24,15 +24,15 @@ package dev.kreuzberg.kreuzcrawl.android
 /** The result of a single-page scrape operation. */
 data class ScrapeResult(
     /** The HTTP status code of the response. */
-    val statusCode: Short,
+    val statusCode: Short = 0,
     /** The final URL after following all redirects. */
-    val finalUrl: String,
+    val finalUrl: String = "",
     /** The Content-Type header value. */
-    val contentType: String,
+    val contentType: String = "",
     /** The HTML body of the response. */
-    val html: String,
+    val html: String = "",
     /** The size of the response body in bytes. */
-    val bodySize: Long,
+    val bodySize: Long = 0L,
     /** Extracted metadata from the page. */
     val metadata: PageMetadata,
     /** Links found on the page. */
@@ -44,35 +44,35 @@ data class ScrapeResult(
     /** JSON-LD entries found on the page. */
     val jsonLd: List<JsonLdEntry> = emptyList(),
     /** Whether the URL is allowed by robots.txt. */
-    val isAllowed: Boolean,
+    val isAllowed: Boolean = false,
     /** The crawl delay from robots.txt, in seconds. */
-    val crawlDelay: Long? = null,
+    val crawlDelay: Long? = 0L,
     /** Whether a noindex directive was detected. */
-    val noindexDetected: Boolean,
+    val noindexDetected: Boolean = false,
     /** Whether a nofollow directive was detected. */
-    val nofollowDetected: Boolean,
+    val nofollowDetected: Boolean = false,
     /** The X-Robots-Tag header value, if present. */
-    val xRobotsTag: String? = null,
+    val xRobotsTag: String? = "",
     /** Whether the content is a PDF. */
-    val isPdf: Boolean,
+    val isPdf: Boolean = false,
     /** Whether the page was skipped (binary or PDF content). */
-    val wasSkipped: Boolean,
+    val wasSkipped: Boolean = false,
     /** The detected character set encoding. */
-    val detectedCharset: String? = null,
+    val detectedCharset: String? = "",
     /** Whether an authentication header was sent with the request. */
-    val authHeaderSent: Boolean,
+    val authHeaderSent: Boolean = false,
     /** Response metadata extracted from HTTP headers. */
     val responseMeta: ResponseMeta? = null,
     /** Downloaded assets from the page. */
     val assets: List<DownloadedAsset> = emptyList(),
     /** Whether the page content suggests JavaScript rendering is needed. */
-    val jsRenderHint: Boolean,
+    val jsRenderHint: Boolean = false,
     /** Whether the browser fallback was used to fetch this page. */
-    val browserUsed: Boolean,
+    val browserUsed: Boolean = false,
     /** Markdown conversion of the page content. */
     val markdown: MarkdownResult? = null,
     /** Structured data extracted by LLM. Populated when extraction is configured. */
-    val extractedData: String? = null,
+    val extractedData: Any? = null,
     /** Metadata about the LLM extraction pass (cost, tokens, model). */
     val extractionMeta: ExtractionMeta? = null,
     /**

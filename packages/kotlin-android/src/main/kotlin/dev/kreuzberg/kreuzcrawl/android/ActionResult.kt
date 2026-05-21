@@ -24,13 +24,13 @@ package dev.kreuzberg.kreuzcrawl.android
 /** Result from a single page action execution. */
 data class ActionResult(
     /** Zero-based index of the action in the sequence. */
-    val actionIndex: Long,
+    val actionIndex: Long = 0L,
     /** The type of action that was executed. */
-    val actionType: String,
+    val actionType: String = "",
     /** Whether the action completed successfully. */
-    val success: Boolean,
+    val success: Boolean = false,
     /** Action-specific return data (screenshot bytes, JS return value, scraped HTML). */
-    val data: String? = null,
+    val data: Any? = null,
     /** Error message if the action failed. */
-    val error: String? = null
+    val error: String? = ""
 )

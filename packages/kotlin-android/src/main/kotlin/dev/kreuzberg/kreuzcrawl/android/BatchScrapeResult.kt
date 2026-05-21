@@ -24,9 +24,9 @@ package dev.kreuzberg.kreuzcrawl.android
 /** Result from a single URL in a batch scrape operation. */
 data class BatchScrapeResult(
     /** The URL that was scraped. */
-    val url: String,
+    val url: String = "",
     /** The scrape result, if successful. */
     val result: ScrapeResult? = null,
     /** The error message, if the scrape failed. */
-    val error: String? = null
+    val error: String? = ""
 )

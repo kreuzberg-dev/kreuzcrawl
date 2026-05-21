@@ -24,9 +24,9 @@ package dev.kreuzberg.kreuzcrawl.android
 /** Result from a single URL in a batch crawl operation. */
 data class BatchCrawlResult(
     /** The seed URL that was crawled. */
-    val url: String,
+    val url: String = "",
     /** The crawl result, if successful. */
     val result: CrawlResult? = null,
     /** The error message, if the crawl failed. */
-    val error: String? = null
+    val error: String? = ""
 )

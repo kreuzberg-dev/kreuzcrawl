@@ -24,13 +24,13 @@ package dev.kreuzberg.kreuzcrawl.android
 /** Article metadata extracted from `article:*` Open Graph tags. */
 data class ArticleMetadata(
     /** The article publication time. */
-    val publishedTime: String? = null,
+    val publishedTime: String? = "",
     /** The article modification time. */
-    val modifiedTime: String? = null,
+    val modifiedTime: String? = "",
     /** The article author. */
-    val author: String? = null,
+    val author: String? = "",
     /** The article section. */
-    val section: String? = null,
+    val section: String? = "",
     /** The article tags. */
     val tags: List<String> = emptyList()
 )

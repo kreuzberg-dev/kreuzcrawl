@@ -28,7 +28,7 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 data class BrowserExtras(
     /** Return value of `BrowserConfig.eval_script`, if provided. */
-    val evalResult: String? = null,
+    val evalResult: Any? = null,
     /**
      * Network events captured during page navigation (only populated when
      * `BrowserConfig.capture_network_events` is true).

@@ -24,17 +24,17 @@ package dev.kreuzberg.kreuzcrawl.android
 /** The result of crawling a single page during a crawl operation. */
 data class CrawlPageResult(
     /** The original URL of the page. */
-    val url: String,
+    val url: String = "",
     /** The normalized URL of the page. */
-    val normalizedUrl: String,
+    val normalizedUrl: String = "",
     /** The HTTP status code of the response. */
-    val statusCode: Short,
+    val statusCode: Short = 0,
     /** The Content-Type header value. */
-    val contentType: String,
+    val contentType: String = "",
     /** The HTML body of the response. */
-    val html: String,
+    val html: String = "",
     /** The size of the response body in bytes. */
-    val bodySize: Long,
+    val bodySize: Long = 0L,
     /** Extracted metadata from the page. */
     val metadata: PageMetadata,
     /** Links found on the page. */
@@ -46,23 +46,23 @@ data class CrawlPageResult(
     /** JSON-LD entries found on the page. */
     val jsonLd: List<JsonLdEntry> = emptyList(),
     /** The depth of this page from the start URL. */
-    val depth: Long,
+    val depth: Long = 0L,
     /** Whether this page is on the same domain as the start URL. */
-    val stayedOnDomain: Boolean,
+    val stayedOnDomain: Boolean = false,
     /** Whether this page was skipped (binary or PDF content). */
-    val wasSkipped: Boolean,
+    val wasSkipped: Boolean = false,
     /** Whether the content is a PDF. */
-    val isPdf: Boolean,
+    val isPdf: Boolean = false,
     /** The detected character set encoding. */
-    val detectedCharset: String? = null,
+    val detectedCharset: String? = "",
     /** Markdown conversion of the page content. */
     val markdown: MarkdownResult? = null,
     /** Structured data extracted by LLM. Populated when extraction is configured. */
-    val extractedData: String? = null,
+    val extractedData: Any? = null,
     /** Metadata about the LLM extraction pass (cost, tokens, model). */
     val extractionMeta: ExtractionMeta? = null,
     /** Downloaded non-HTML document (PDF, DOCX, image, code, etc.). */
     val downloadedDocument: DownloadedDocument? = null,
     /** Whether the browser fallback was used to fetch this page. */
-    val browserUsed: Boolean
+    val browserUsed: Boolean = false
 )

@@ -1,0 +1,23 @@
+{
+  "object": {
+    "artifacts": [],
+    "dependencies": [
+      {
+        "basedOn": null,
+        "packageRef": {
+          "identity": "swift",
+          "kind": "fileSystem",
+          "location": "/Users/naamanhirschfeld/workspace/kreuzberg-dev/kreuzcrawl/packages/swift",
+          "name": "Kreuzcrawl"
+        },
+        "state": {
+          "name": "fileSystem",
+          "path": "/Users/naamanhirschfeld/workspace/kreuzberg-dev/kreuzcrawl/packages/swift"
+        },
+        "subpath": "swift"
+      }
+    ],
+    "prebuilts": []
+  },
+  "version": 7
+}
