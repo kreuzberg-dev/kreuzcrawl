@@ -195,6 +195,71 @@ async fn scrape_stops_at_max_redirects() {
     assert_eq!(page.status_code, 302, "final status must be the last unfollowed 3xx");
 }
 
+/// scrape() must populate `final_url` with the post-redirect URL, not the
+/// original request URL. Closes GitHub issue #12 (partial: final_url field).
+#[tokio::test]
+async fn scrape_final_url_reflects_redirect_target() {
+    let mock = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/source"))
+        .respond_with(
+            ResponseTemplate::new(302)
+                .append_header("location", "/target")
+                .append_header("content-type", "text/html"),
+        )
+        .mount(&mock)
+        .await;
+
+    Mock::given(method("GET"))
+        .and(path("/target"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string("<html><body>Target</body></html>")
+                .append_header("content-type", "text/html"),
+        )
+        .mount(&mock)
+        .await;
+
+    let handle = default_engine();
+    let url = format!("{}/source", mock.uri());
+    let result = scrape(&handle, &url).await.expect("scrape must succeed");
+
+    assert!(
+        result.final_url.contains("/target"),
+        "final_url must contain '/target', got: {}",
+        result.final_url
+    );
+    assert_eq!(result.status_code, 200);
+}
+
+/// scrape() on a page with no redirects must populate `final_url` equal to
+/// the requested URL.
+#[tokio::test]
+async fn scrape_final_url_matches_request_url_when_no_redirect() {
+    let mock = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/page"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string("<html><body>Page</body></html>")
+                .append_header("content-type", "text/html"),
+        )
+        .mount(&mock)
+        .await;
+
+    let handle = default_engine();
+    let url = format!("{}/page", mock.uri());
+    let result = scrape(&handle, &url).await.expect("scrape must succeed");
+
+    assert!(
+        result.final_url.contains("/page"),
+        "final_url must contain '/page', got: {}",
+        result.final_url
+    );
+}
+
 /// When a redirect points to an unreachable host (connection refused), scrape()
 /// must propagate a `[network:connection]` error rather than silently succeeding.
 #[tokio::test]

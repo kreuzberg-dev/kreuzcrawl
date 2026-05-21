@@ -62,6 +62,7 @@ are not available.
 ```bash
 pnpm add @kreuzberg/kreuzcrawl-wasm
 ```
+
 ## Quick Start
 
 ```javascript title="WASM"
@@ -86,6 +87,7 @@ async function main() {
 
 main().catch((error) => console.error(error));
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

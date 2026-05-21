@@ -117,14 +117,18 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
             return 0;
         }
     };
-    let config: core_crate::CrawlConfig = match serde_json::from_str(&config_str) {
-        Ok(v) => v,
-        Err(e) => {
-            throw_jni_error(env, &format!("deserialize: {e}"));
-            return 0;
+    let config: Option<core_crate::CrawlConfig> = if config_str.is_empty() {
+        None
+    } else {
+        match serde_json::from_str::<core_crate::CrawlConfig>(&config_str) {
+            Ok(v) => Some(v),
+            Err(e) => {
+                throw_jni_error(env, &format!("deserialize: {e}"));
+                return 0;
+            }
         }
     };
-    let result = core_crate::create_engine(Some(config));
+    let result = core_crate::create_engine(config);
     match result {
         Err(e) => {
             throw_jni_error(env, &format!("{e}"));

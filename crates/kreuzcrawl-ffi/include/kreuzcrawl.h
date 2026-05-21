@@ -1241,6 +1241,13 @@ void kcrawl_scrape_result_free(KCRAWLScrapeResult *ptr);
 uint16_t kcrawl_scrape_result_status_code(const KCRAWLScrapeResult *ptr);
 
 /**
+ * Get the `final_url` field from a `ScrapeResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_scrape_result_final_url(const KCRAWLScrapeResult *ptr);
+
+/**
  * Get the `content_type` field from a `ScrapeResult`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
@@ -1593,6 +1600,13 @@ KCRAWLExtractionMeta *kcrawl_crawl_page_result_extraction_meta(const KCRAWLCrawl
 KCRAWLDownloadedDocument *kcrawl_crawl_page_result_downloaded_document(const KCRAWLCrawlPageResult *ptr);
 
 /**
+ * Get the `browser_used` field from a `CrawlPageResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_crawl_page_result_browser_used(const KCRAWLCrawlPageResult *ptr);
+
+/**
  * Create a `CrawlResult` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -1663,6 +1677,13 @@ char *kcrawl_crawl_result_cookies(const KCRAWLCrawlResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 int32_t kcrawl_crawl_result_stayed_on_domain(const KCRAWLCrawlResult *ptr);
+
+/**
+ * Get the `browser_used` field from a `CrawlResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_crawl_result_browser_used(const KCRAWLCrawlResult *ptr);
 
 /**
  * Get the `normalized_urls` field from a `CrawlResult`.
