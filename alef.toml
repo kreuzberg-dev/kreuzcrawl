@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.17.10"
+alef_version = "0.17.17"
 languages = [
   "python",
   "node",
@@ -531,13 +531,19 @@ fields_optional = [
   "assets.mime_type",
   "assets[].html_tag",
   "assets.html_tag",
+  "action_results[].data",
+  "action_results.data",
+  "action_results[].error",
+  "action_results.error",
 ]
 fields_array = [
+  "cookies",
   "links",
   "images",
   "feeds",
   "json_ld",
   "assets",
+  "action_results",
   "metadata.headings",
   "metadata.hreflangs",
   "metadata.favicons",
@@ -714,7 +720,7 @@ optional = false
 [[crates.e2e.calls.batch_scrape.args]]
 name = "urls"
 field = "batch_urls"
-type = "json_object"
+type = "mock_url_list"
 optional = false
 owned = true
 
@@ -751,8 +757,8 @@ module = "kreuzcrawl"
 # so the engine-factory codepath is still taken (the named call won't inherit it).
 [crates.e2e.calls.batch_scrape.overrides.c]
 function = "batch_scrape"
-result_type = "char*"
-raw_c_result_type = "char*"
+result_type = "BatchScrapeResults"
+raw_c_result_type = "BatchScrapeResults"
 c_engine_factory = "CrawlConfig"
 
 # Named call config for crawl — auto-selected for fixtures tagged "crawl".
@@ -1073,7 +1079,7 @@ optional = false
 [[crates.e2e.calls.batch_crawl.args]]
 name = "urls"
 field = "batch_urls"
-type = "json_object"
+type = "mock_url_list"
 element_type = "String"
 owned = true
 optional = false
@@ -1116,8 +1122,8 @@ proxy = "WasmProxyConfig"
 
 [crates.e2e.calls.batch_crawl.overrides.c]
 function = "batch_crawl"
-result_type = "char*"
-raw_c_result_type = "char*"
+result_type = "BatchCrawlResults"
+raw_c_result_type = "BatchCrawlResults"
 c_engine_factory = "CrawlConfig"
 
 # Named call config for crawl_stream — auto-selected for fixtures in the
@@ -1230,7 +1236,7 @@ optional = false
 [[crates.e2e.calls.batch_crawl_stream.args]]
 name = "urls"
 field = "batch_urls"
-type = "json_object"
+type = "mock_url_list"
 element_type = "String"
 owned = true
 optional = false
@@ -1370,6 +1376,12 @@ description = "metadata.description"
 "map_result.has_lastmod" = "skip"
 # InteractionResult fields — action_results is a JSON array returned as char*
 "interaction_result.action_results" = "char*"
+# DownloadedDocument has no mime_type field on the C FFI surface — skip the
+# assertion path so the codegen does not emit a call to a non-existent symbol.
+"downloaded_document.mime_type" = "skip"
+# MarkdownResult.citations returns an opaque CitationResult* handle, not a JSON
+# string. Marking it PascalCase activates the opaque-leaf-handle codegen path.
+"markdown_result.citations" = "CitationResult"
 # PageMetadata primitive fields
 "page_metadata.word_count" = "uintptr_t"
 # PageMetadata JSON array fields (char* — use alef_json_array_count for .length)
