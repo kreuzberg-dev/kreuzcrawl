@@ -547,6 +547,14 @@ fields_array = [
   "metadata.headings",
   "metadata.hreflangs",
   "metadata.favicons",
+  "pages",
+  "urls",
+  "results",
+  "network_events",
+  "markdown.tables",
+  "markdown.warnings",
+  "browser.network_events",
+  "browser.cookies",
 ]
 fields_enum = ["links[].link_type", "assets[].category"]
 result_fields = [
