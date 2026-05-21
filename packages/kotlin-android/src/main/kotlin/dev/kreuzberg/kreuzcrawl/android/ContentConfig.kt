@@ -30,7 +30,7 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 data class ContentConfig(
     /** Output format: `"markdown"` (default), `"plain"`, `"djot"`. */
-    val outputFormat: String,
+    val outputFormat: String = "markdown",
     /**
      * Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`.
      *
@@ -38,18 +38,18 @@ data class ContentConfig(
      * - Standard: also removes nav, nav-hinted headers/footers/asides, forms.
      * - Aggressive: removes all footers/asides unconditionally.
      */
-    val preprocessingPreset: String,
+    val preprocessingPreset: String = "standard",
     /** Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. */
-    val removeNavigation: Boolean,
+    val removeNavigation: Boolean = true,
     /** Remove form elements. Default: `true`. */
-    val removeForms: Boolean,
+    val removeForms: Boolean = true,
     /**
      * HTML tag names to strip (render children only, remove the tag wrapper).
      * Default: `["noscript"]`.
      */
-    val stripTags: List<String>,
+    val stripTags: List<String> = emptyList(),
     /** HTML tag names to preserve as raw HTML in output. */
-    val preserveTags: List<String>,
+    val preserveTags: List<String> = emptyList(),
     /**
      * CSS selectors for elements to exclude entirely (element + all content).
      *
@@ -59,15 +59,15 @@ data class ContentConfig(
      *
      * Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]`
      */
-    val excludeSelectors: List<String>,
+    val excludeSelectors: List<String> = emptyList(),
     /** Skip image elements in output. Default: `false`. */
-    val skipImages: Boolean,
+    val skipImages: Boolean = false,
     /** Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. */
-    val maxDepth: Long?,
+    val maxDepth: Long? = null,
     /** Enable line wrapping. Default: `false`. */
-    val wrap: Boolean,
+    val wrap: Boolean = false,
     /** Wrap width when `wrap` is enabled. Default: `80`. */
-    val wrapWidth: Long,
+    val wrapWidth: Long = 80L,
     /** Include document structure tree in output. Default: `true`. */
-    val includeDocumentStructure: Boolean
+    val includeDocumentStructure: Boolean = true
 )

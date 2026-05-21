@@ -26,11 +26,11 @@ data class ImageInfo(
     /** The image URL. */
     val url: String,
     /** The alt text, if present. */
-    val alt: String?,
+    val alt: String? = null,
     /** The width attribute, if present and parseable. */
-    val width: Int?,
+    val width: Int? = null,
     /** The height attribute, if present and parseable. */
-    val height: Int?,
+    val height: Int? = null,
     /** The source of the image reference. */
-    val source: ImageSource
+    val source: ImageSource = ImageSource.IMG
 )

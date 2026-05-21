@@ -38,13 +38,13 @@ data class CrawlPageResult(
     /** Extracted metadata from the page. */
     val metadata: PageMetadata,
     /** Links found on the page. */
-    val links: List<LinkInfo>,
+    val links: List<LinkInfo> = emptyList(),
     /** Images found on the page. */
-    val images: List<ImageInfo>,
+    val images: List<ImageInfo> = emptyList(),
     /** Feed links found on the page. */
-    val feeds: List<FeedInfo>,
+    val feeds: List<FeedInfo> = emptyList(),
     /** JSON-LD entries found on the page. */
-    val jsonLd: List<JsonLdEntry>,
+    val jsonLd: List<JsonLdEntry> = emptyList(),
     /** The depth of this page from the start URL. */
     val depth: Long,
     /** Whether this page is on the same domain as the start URL. */
@@ -54,13 +54,15 @@ data class CrawlPageResult(
     /** Whether the content is a PDF. */
     val isPdf: Boolean,
     /** The detected character set encoding. */
-    val detectedCharset: String?,
+    val detectedCharset: String? = null,
     /** Markdown conversion of the page content. */
-    val markdown: MarkdownResult?,
+    val markdown: MarkdownResult? = null,
     /** Structured data extracted by LLM. Populated when extraction is configured. */
-    val extractedData: String?,
+    val extractedData: String? = null,
     /** Metadata about the LLM extraction pass (cost, tokens, model). */
-    val extractionMeta: ExtractionMeta?,
+    val extractionMeta: ExtractionMeta? = null,
     /** Downloaded non-HTML document (PDF, DOCX, image, code, etc.). */
-    val downloadedDocument: DownloadedDocument?
+    val downloadedDocument: DownloadedDocument? = null,
+    /** Whether the browser fallback was used to fetch this page. */
+    val browserUsed: Boolean
 )

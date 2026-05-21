@@ -1607,8 +1607,8 @@ public class CrawlResult: CrawlResultRefMut {
     }
 }
 extension CrawlResult {
-    public convenience init<GenericIntoRustString: IntoRustString>(_ pages: RustVec<CrawlPageResult>, _ final_url: GenericIntoRustString, _ redirect_count: UInt, _ was_skipped: Bool, _ error: Optional<GenericIntoRustString>, _ cookies: RustVec<CookieInfo>) {
-        self.init(ptr: __swift_bridge__$CrawlResult$new({ let val = pages; val.isOwned = false; return val.ptr }(), { let rustString = final_url.intoRustString(); rustString.isOwned = false; return rustString.ptr }(), redirect_count, was_skipped, { if let rustString = optionalStringIntoRustString(error) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), { let val = cookies; val.isOwned = false; return val.ptr }()))
+    public convenience init<GenericIntoRustString: IntoRustString>(_ pages: RustVec<CrawlPageResult>, _ final_url: GenericIntoRustString, _ redirect_count: UInt, _ was_skipped: Bool, _ error: Optional<GenericIntoRustString>, _ cookies: RustVec<CookieInfo>, _ stayed_on_domain: Bool) {
+        self.init(ptr: __swift_bridge__$CrawlResult$new({ let val = pages; val.isOwned = false; return val.ptr }(), { let rustString = final_url.intoRustString(); rustString.isOwned = false; return rustString.ptr }(), redirect_count, was_skipped, { if let rustString = optionalStringIntoRustString(error) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), { let val = cookies; val.isOwned = false; return val.ptr }(), stayed_on_domain))
     }
 }
 public class CrawlResultRefMut: CrawlResultRef {
@@ -1646,6 +1646,10 @@ extension CrawlResultRef {
 
     public func cookies() -> RustVec<CookieInfo> {
         RustVec(ptr: __swift_bridge__$CrawlResult$cookies(ptr))
+    }
+
+    public func stayedOnDomain() -> Bool {
+        __swift_bridge__$CrawlResult$stayed_on_domain(ptr)
     }
 }
 extension CrawlResult: Vectorizable {

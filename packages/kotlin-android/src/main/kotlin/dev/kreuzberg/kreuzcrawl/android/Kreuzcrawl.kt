@@ -21,12 +21,14 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object Kreuzcrawl {
     private val mapper = jacksonObjectMapper()
+        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
 
     /**
      * Convert markdown links to numbered citations.

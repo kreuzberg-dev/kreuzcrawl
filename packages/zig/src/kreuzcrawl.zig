@@ -306,6 +306,8 @@ pub const ActionResult = struct {
 pub const ScrapeResult = struct {
     /// The HTTP status code of the response.
     status_code: u16,
+    /// The final URL after following all redirects.
+    final_url: []const u8,
     /// The Content-Type header value.
     content_type: []const u8,
     /// The HTML body of the response.
@@ -403,6 +405,8 @@ pub const CrawlPageResult = struct {
     extraction_meta: ?ExtractionMeta,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     downloaded_document: ?DownloadedDocument,
+    /// Whether the browser fallback was used to fetch this page.
+    browser_used: bool,
 };
 
 /// The result of a multi-page crawl operation.
@@ -421,6 +425,8 @@ pub const CrawlResult = struct {
     cookies: []const CookieInfo,
     /// Whether all crawled pages stayed on the same domain as the start URL.
     stayed_on_domain: bool,
+    /// Whether the browser fallback was used for any page in this crawl.
+    browser_used: bool,
 };
 
 /// A URL entry from a sitemap.
@@ -1152,9 +1158,9 @@ pub const CrawlEngineHandle = struct {
             return _first_error(CrawlError);
         }
         defer c.kcrawl_crawl_engine_handle_crawl_stream_free(_stream_handle);
-        var _buf = std.ArrayList(u8).init(std.heap.c_allocator);
-        defer _buf.deinit();
-        try _buf.append('[');
+        var _buf = try std.ArrayList(u8).initCapacity(std.heap.c_allocator, 0);
+        defer _buf.deinit(std.heap.c_allocator);
+        try _buf.append(std.heap.c_allocator, '[');
         var _first = true;
         while (true) {
             const _chunk = c.kcrawl_crawl_engine_handle_crawl_stream_next(_stream_handle);
@@ -1162,14 +1168,14 @@ pub const CrawlEngineHandle = struct {
             const _chunk_json_ptr = c.kcrawl_crawl_event_to_json(_chunk);
             c.kcrawl_crawl_event_free(_chunk);
             if (_chunk_json_ptr == null) continue;
-            if (!_first) try _buf.append(',');
+            if (!_first) try _buf.append(std.heap.c_allocator, ',');
             _first = false;
             const _chunk_slice = std.mem.span(_chunk_json_ptr);
-            try _buf.appendSlice(_chunk_slice);
+            try _buf.appendSlice(std.heap.c_allocator, _chunk_slice);
             c.kcrawl_free_string(_chunk_json_ptr);
         }
-        try _buf.append(']');
-        return _buf.toOwnedSlice();
+        try _buf.append(std.heap.c_allocator, ']');
+        return _buf.toOwnedSlice(std.heap.c_allocator);
     }
 
     /// Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -1191,9 +1197,9 @@ pub const CrawlEngineHandle = struct {
             return _first_error(CrawlError);
         }
         defer c.kcrawl_crawl_engine_handle_batch_crawl_stream_free(_stream_handle);
-        var _buf = std.ArrayList(u8).init(std.heap.c_allocator);
-        defer _buf.deinit();
-        try _buf.append('[');
+        var _buf = try std.ArrayList(u8).initCapacity(std.heap.c_allocator, 0);
+        defer _buf.deinit(std.heap.c_allocator);
+        try _buf.append(std.heap.c_allocator, '[');
         var _first = true;
         while (true) {
             const _chunk = c.kcrawl_crawl_engine_handle_batch_crawl_stream_next(_stream_handle);
@@ -1201,14 +1207,14 @@ pub const CrawlEngineHandle = struct {
             const _chunk_json_ptr = c.kcrawl_crawl_event_to_json(_chunk);
             c.kcrawl_crawl_event_free(_chunk);
             if (_chunk_json_ptr == null) continue;
-            if (!_first) try _buf.append(',');
+            if (!_first) try _buf.append(std.heap.c_allocator, ',');
             _first = false;
             const _chunk_slice = std.mem.span(_chunk_json_ptr);
-            try _buf.appendSlice(_chunk_slice);
+            try _buf.appendSlice(std.heap.c_allocator, _chunk_slice);
             c.kcrawl_free_string(_chunk_json_ptr);
         }
-        try _buf.append(']');
-        return _buf.toOwnedSlice();
+        try _buf.append(std.heap.c_allocator, ']');
+        return _buf.toOwnedSlice(std.heap.c_allocator);
     }
 
     /// Release the underlying FFI handle. Safe to call once per instance.

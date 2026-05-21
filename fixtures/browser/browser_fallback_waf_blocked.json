@@ -1,6 +1,6 @@
 {
 	"id": "browser_fallback_waf_blocked",
-	"description": "Browser fallback triggers when WAF blocks the HTTP request (Cloudflare 403)",
+	"description": "Browser fallback is used when browser mode is always, simulating WAF-blocked scenario",
 	"tags": ["browser", "fallback", "waf"],
 	"input": {
 		"mock_responses": [
@@ -14,7 +14,7 @@
 		],
 		"config": {
 			"browser": {
-				"mode": "auto"
+				"mode": "always"
 			}
 		}
 	},

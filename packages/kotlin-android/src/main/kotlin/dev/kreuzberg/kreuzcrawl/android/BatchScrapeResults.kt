@@ -29,7 +29,7 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 data class BatchScrapeResults(
     /** Per-URL scrape results, in the order URLs were submitted. */
-    val results: List<BatchScrapeResult>,
+    val results: List<BatchScrapeResult> = emptyList(),
     /** Total number of URLs in the batch (equal to `results.len()`). */
     val totalCount: Long,
     /** Number of URLs whose scrape succeeded (`error` is `null`). */

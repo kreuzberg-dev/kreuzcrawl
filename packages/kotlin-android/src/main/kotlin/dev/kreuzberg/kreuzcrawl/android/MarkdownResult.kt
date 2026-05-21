@@ -26,13 +26,13 @@ data class MarkdownResult(
     /** Converted markdown text. */
     val content: String,
     /** Structured document tree with semantic nodes. */
-    val documentStructure: String?,
+    val documentStructure: String? = null,
     /** Extracted tables with structured cell data. */
-    val tables: List<String>,
+    val tables: List<String> = emptyList(),
     /** Non-fatal processing warnings. */
-    val warnings: List<String>,
+    val warnings: List<String> = emptyList(),
     /** Content with links replaced by numbered citations. */
-    val citations: CitationResult?,
+    val citations: CitationResult? = null,
     /** Content-filtered markdown optimized for LLM consumption. */
-    val fitContent: String?
+    val fitContent: String? = null
 )

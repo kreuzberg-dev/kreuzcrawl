@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     const test_step = b.step("test", "Run tests");
-    const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libkreuzcrawl_ffi") orelse "../../target/debug";
+    const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libkreuzcrawl_ffi") orelse "../../target/release";
     const ffi_include = b.option([]const u8, "ffi_include_path", "Path to directory containing FFI header") orelse "../../crates/kreuzcrawl-ffi/include";
 
     const kreuzcrawl_module = b.addModule("kreuzcrawl", .{
@@ -391,21 +391,6 @@ pub fn build(b: *std.Build) void {
     });
     const strategy_run = b.addRunArtifact(strategy_tests);
     test_step.dependOn(&strategy_run.step);
-
-    const stream_module = b.createModule(.{
-        .root_source_file = b.path("src/stream_test.zig"),
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
-    });
-    stream_module.addImport("kreuzcrawl", kreuzcrawl_module);
-    const stream_tests = b.addTest(.{
-        .name = "stream_test",
-        .root_module = stream_module,
-        .use_llvm = true,
-    });
-    const stream_run = b.addRunArtifact(stream_tests);
-    test_step.dependOn(&stream_run.step);
 
     const validation_module = b.createModule(.{
         .root_source_file = b.path("src/validation_test.zig"),

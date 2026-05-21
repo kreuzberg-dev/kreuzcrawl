@@ -29,7 +29,7 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 data class BatchCrawlResults(
     /** Per-URL crawl results, in the order seed URLs were submitted. */
-    val results: List<BatchCrawlResult>,
+    val results: List<BatchCrawlResult> = emptyList(),
     /** Total number of seed URLs in the batch (equal to `results.len()`). */
     val totalCount: Long,
     /** Number of seed URLs whose crawl succeeded (`error` is `null`). */

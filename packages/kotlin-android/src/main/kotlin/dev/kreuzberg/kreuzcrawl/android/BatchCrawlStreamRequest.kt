@@ -33,5 +33,5 @@ data class BatchCrawlStreamRequest(
      * The seed URLs to crawl. Each URL is followed independently up to the
      * engine's configured depth.
      */
-    val urls: List<String>
+    val urls: List<String> = emptyList()
 )

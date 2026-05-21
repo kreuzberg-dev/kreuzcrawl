@@ -26,7 +26,7 @@ data class BatchCrawlResult(
     /** The seed URL that was crawled. */
     val url: String,
     /** The crawl result, if successful. */
-    val result: CrawlResult?,
+    val result: CrawlResult? = null,
     /** The error message, if the crawl failed. */
-    val error: String?
+    val error: String? = null
 )

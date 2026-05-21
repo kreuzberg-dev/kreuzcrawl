@@ -27,13 +27,13 @@ import kotlin.time.Duration
 /** Configuration for crawl, scrape, and map operations. */
 data class CrawlConfig(
     /** Maximum crawl depth (number of link hops from the start URL). */
-    val maxDepth: Long?,
+    val maxDepth: Long? = null,
     /** Maximum number of pages to crawl. */
-    val maxPages: Long?,
+    val maxPages: Long? = null,
     /** Maximum number of concurrent requests. */
-    val maxConcurrent: Long?,
+    val maxConcurrent: Long? = null,
     /** Whether to respect robots.txt directives. */
-    val respectRobotsTxt: Boolean,
+    val respectRobotsTxt: Boolean = false,
     /**
      * When true, HTTP-level error responses (404 NotFound, 403 Forbidden, WAF blocks)
      * are surfaced as `ScrapeResult` records with the matching `status_code` rather
@@ -43,72 +43,72 @@ data class CrawlConfig(
      * the user opted into redirect-following, so receiving a 404 there is part of
      * the normal flow rather than an unexpected error.
      */
-    val softHttpErrors: Boolean,
+    val softHttpErrors: Boolean = false,
     /** Custom user-agent string. */
-    val userAgent: String?,
+    val userAgent: String? = null,
     /** Whether to restrict crawling to the same domain. */
-    val stayOnDomain: Boolean,
+    val stayOnDomain: Boolean = false,
     /** Whether to allow subdomains when `stay_on_domain` is true. */
-    val allowSubdomains: Boolean,
+    val allowSubdomains: Boolean = false,
     /** Regex patterns for paths to include during crawling. */
-    val includePaths: List<String>,
+    val includePaths: List<String> = emptyList(),
     /** Regex patterns for paths to exclude during crawling. */
-    val excludePaths: List<String>,
+    val excludePaths: List<String> = emptyList(),
     /** Custom HTTP headers to send with each request. */
-    val customHeaders: Map<String, String>,
+    val customHeaders: Map<String, String> = emptyMap(),
     /** Timeout for individual HTTP requests (in milliseconds when serialized). */
-    val requestTimeout: Duration,
+    val requestTimeout: Duration = 30000,
     /**
      * Per-domain rate limit in milliseconds. When set, enforces a minimum delay
      * between requests to the same domain. Defaults to 200ms when `null`.
      */
-    val rateLimitMs: Long?,
+    val rateLimitMs: Long? = null,
     /** Maximum number of redirects to follow. */
-    val maxRedirects: Long,
+    val maxRedirects: Long = 10L,
     /** Number of retry attempts for failed requests. */
-    val retryCount: Long,
+    val retryCount: Long = 0L,
     /** HTTP status codes that should trigger a retry. */
-    val retryCodes: List<Short>,
+    val retryCodes: List<Short> = emptyList(),
     /** Whether to enable cookie handling. */
-    val cookiesEnabled: Boolean,
+    val cookiesEnabled: Boolean = false,
     /** Authentication configuration. */
-    val auth: AuthConfig?,
+    val auth: AuthConfig? = null,
     /** Maximum response body size in bytes. */
-    val maxBodySize: Long?,
+    val maxBodySize: Long? = null,
     /** CSS selectors for tags to remove from HTML before processing. */
-    val removeTags: List<String>,
+    val removeTags: List<String> = emptyList(),
     /** Content extraction and conversion configuration. */
     val content: ContentConfig,
     /** Maximum number of URLs to return from a map operation. */
-    val mapLimit: Long?,
+    val mapLimit: Long? = null,
     /** Search filter for map results (case-insensitive substring match on URLs). */
-    val mapSearch: String?,
+    val mapSearch: String? = null,
     /** Whether to download assets (CSS, JS, images, etc.) from the page. */
-    val downloadAssets: Boolean,
+    val downloadAssets: Boolean = false,
     /** Filter for asset categories to download. */
-    val assetTypes: List<AssetCategory>,
+    val assetTypes: List<AssetCategory> = emptyList(),
     /** Maximum size in bytes for individual asset downloads. */
-    val maxAssetSize: Long?,
+    val maxAssetSize: Long? = null,
     /** Browser configuration. */
     val browser: BrowserConfig,
     /** Proxy configuration for HTTP requests. */
-    val proxy: ProxyConfig?,
+    val proxy: ProxyConfig? = null,
     /** List of user-agent strings for rotation. If non-empty, overrides `user_agent`. */
-    val userAgents: List<String>,
+    val userAgents: List<String> = emptyList(),
     /** Whether to capture a screenshot when using the browser. */
-    val captureScreenshot: Boolean,
+    val captureScreenshot: Boolean = false,
     /**
      * Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them.
      */
-    val downloadDocuments: Boolean,
+    val downloadDocuments: Boolean = true,
     /** Maximum size in bytes for document downloads. Defaults to 50 MB. */
-    val documentMaxSize: Long?,
+    val documentMaxSize: Long? = null,
     /** Allowlist of MIME types to download. If empty, uses built-in defaults. */
-    val documentMimeTypes: List<String>,
+    val documentMimeTypes: List<String> = emptyList(),
     /** Path to write WARC output. If `null`, WARC output is disabled. */
-    val warcOutput: Path?,
+    val warcOutput: Path? = null,
     /** Named browser profile for persistent sessions (cookies, localStorage). */
-    val browserProfile: String?,
+    val browserProfile: String? = null,
     /** Whether to save changes back to the browser profile on exit. */
-    val saveBrowserProfile: Boolean
+    val saveBrowserProfile: Boolean = false
 )

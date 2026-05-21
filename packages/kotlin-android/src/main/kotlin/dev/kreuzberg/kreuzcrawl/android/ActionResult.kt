@@ -30,7 +30,7 @@ data class ActionResult(
     /** Whether the action completed successfully. */
     val success: Boolean,
     /** Action-specific return data (screenshot bytes, JS return value, scraped HTML). */
-    val data: String?,
+    val data: String? = null,
     /** Error message if the action failed. */
-    val error: String?
+    val error: String? = null
 )

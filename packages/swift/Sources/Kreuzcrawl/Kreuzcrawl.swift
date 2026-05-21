@@ -30,6 +30,14 @@ public struct ExtractionMeta: Codable, Sendable, Hashable {
         case model = "model"
         case chunksProcessed = "chunks_processed"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.cost = try container.decodeIfPresent(Double.self, forKey: .cost) ?? nil
+        self.promptTokens = try container.decodeIfPresent(UInt64.self, forKey: .promptTokens) ?? nil
+        self.completionTokens = try container.decodeIfPresent(UInt64.self, forKey: .completionTokens) ?? nil
+        self.model = try container.decodeIfPresent(String.self, forKey: .model) ?? nil
+        self.chunksProcessed = try container.decodeIfPresent(UInt.self, forKey: .chunksProcessed) ?? 0
+    }
 }
 
 // MARK: - Internal FFI conversions for ExtractionMeta
@@ -58,6 +66,17 @@ public struct ProxyConfig: Codable, Sendable, Hashable {
         self.url = url
         self.username = username
         self.password = password
+    }
+    private enum CodingKeys: String, CodingKey {
+        case url = "url"
+        case username = "username"
+        case password = "password"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        self.username = try container.decodeIfPresent(String.self, forKey: .username) ?? nil
+        self.password = try container.decodeIfPresent(String.self, forKey: .password) ?? nil
     }
 }
 
@@ -142,6 +161,21 @@ public struct ContentConfig: Codable, Sendable, Hashable {
         case wrapWidth = "wrap_width"
         case includeDocumentStructure = "include_document_structure"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.outputFormat = try container.decodeIfPresent(String.self, forKey: .outputFormat) ?? "markdown"
+        self.preprocessingPreset = try container.decodeIfPresent(String.self, forKey: .preprocessingPreset) ?? "standard"
+        self.removeNavigation = try container.decodeIfPresent(Bool.self, forKey: .removeNavigation) ?? true
+        self.removeForms = try container.decodeIfPresent(Bool.self, forKey: .removeForms) ?? true
+        self.stripTags = try container.decodeIfPresent([String].self, forKey: .stripTags) ?? []
+        self.preserveTags = try container.decodeIfPresent([String].self, forKey: .preserveTags) ?? []
+        self.excludeSelectors = try container.decodeIfPresent([String].self, forKey: .excludeSelectors) ?? []
+        self.skipImages = try container.decodeIfPresent(Bool.self, forKey: .skipImages) ?? false
+        self.maxDepth = try container.decodeIfPresent(UInt.self, forKey: .maxDepth) ?? nil
+        self.wrap = try container.decodeIfPresent(Bool.self, forKey: .wrap) ?? false
+        self.wrapWidth = try container.decodeIfPresent(UInt.self, forKey: .wrapWidth) ?? 80
+        self.includeDocumentStructure = try container.decodeIfPresent(Bool.self, forKey: .includeDocumentStructure) ?? true
+    }
 }
 
 // MARK: - Internal FFI conversions for ContentConfig
@@ -220,6 +254,19 @@ public struct SitemapUrl: Codable, Sendable, Hashable {
         self.changefreq = changefreq
         self.priority = priority
     }
+    private enum CodingKeys: String, CodingKey {
+        case url = "url"
+        case lastmod = "lastmod"
+        case changefreq = "changefreq"
+        case priority = "priority"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        self.lastmod = try container.decodeIfPresent(String.self, forKey: .lastmod) ?? nil
+        self.changefreq = try container.decodeIfPresent(String.self, forKey: .changefreq) ?? nil
+        self.priority = try container.decodeIfPresent(String.self, forKey: .priority) ?? nil
+    }
 }
 
 // MARK: - Internal FFI conversions for SitemapUrl
@@ -241,6 +288,13 @@ public struct MapResult: Codable, Sendable, Hashable {
     public let urls: [SitemapUrl]
     public init(urls: [SitemapUrl]) {
         self.urls = urls
+    }
+    private enum CodingKeys: String, CodingKey {
+        case urls = "urls"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.urls = try container.decodeIfPresent([SitemapUrl].self, forKey: .urls) ?? []
     }
 }
 
@@ -285,6 +339,14 @@ public struct LinkInfo: Codable, Sendable, Hashable {
         case rel = "rel"
         case nofollow = "nofollow"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        self.text = try container.decodeIfPresent(String.self, forKey: .text) ?? ""
+        self.linkType = try container.decode(LinkType.self, forKey: .linkType)
+        self.rel = try container.decodeIfPresent(String.self, forKey: .rel) ?? nil
+        self.nofollow = try container.decodeIfPresent(Bool.self, forKey: .nofollow) ?? false
+    }
 }
 
 // MARK: - Internal FFI conversions for LinkInfo
@@ -320,6 +382,21 @@ public struct ImageInfo: Codable, Sendable, Hashable {
         self.height = height
         self.source = source
     }
+    private enum CodingKeys: String, CodingKey {
+        case url = "url"
+        case alt = "alt"
+        case width = "width"
+        case height = "height"
+        case source = "source"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        self.alt = try container.decodeIfPresent(String.self, forKey: .alt) ?? nil
+        self.width = try container.decodeIfPresent(UInt32.self, forKey: .width) ?? nil
+        self.height = try container.decodeIfPresent(UInt32.self, forKey: .height) ?? nil
+        self.source = try container.decode(ImageSource.self, forKey: .source)
+    }
 }
 
 // MARK: - Internal FFI conversions for ImageInfo
@@ -354,6 +431,12 @@ public struct FeedInfo: Codable, Sendable, Hashable {
         case title = "title"
         case feedType = "feed_type"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        self.title = try container.decodeIfPresent(String.self, forKey: .title) ?? nil
+        self.feedType = try container.decode(FeedType.self, forKey: .feedType)
+    }
 }
 
 // MARK: - Internal FFI conversions for FeedInfo
@@ -386,6 +469,12 @@ public struct JsonLdEntry: Codable, Sendable, Hashable {
         case name = "name"
         case raw = "raw"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.schemaType = try container.decodeIfPresent(String.self, forKey: .schemaType) ?? ""
+        self.name = try container.decodeIfPresent(String.self, forKey: .name) ?? nil
+        self.raw = try container.decodeIfPresent(String.self, forKey: .raw) ?? ""
+    }
 }
 
 // MARK: - Internal FFI conversions for JsonLdEntry
@@ -415,6 +504,19 @@ public struct CookieInfo: Codable, Sendable, Hashable {
         self.value = value
         self.domain = domain
         self.path = path
+    }
+    private enum CodingKeys: String, CodingKey {
+        case name = "name"
+        case value = "value"
+        case domain = "domain"
+        case path = "path"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
+        self.value = try container.decodeIfPresent(String.self, forKey: .value) ?? ""
+        self.domain = try container.decodeIfPresent(String.self, forKey: .domain) ?? nil
+        self.path = try container.decodeIfPresent(String.self, forKey: .path) ?? nil
     }
 }
 
@@ -461,6 +563,15 @@ public struct DownloadedAsset: Codable, Sendable, Hashable {
         case assetCategory = "asset_category"
         case htmlTag = "html_tag"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        self.contentHash = try container.decodeIfPresent(String.self, forKey: .contentHash) ?? ""
+        self.mimeType = try container.decodeIfPresent(String.self, forKey: .mimeType) ?? nil
+        self.size = try container.decodeIfPresent(UInt.self, forKey: .size) ?? 0
+        self.assetCategory = try container.decode(AssetCategory.self, forKey: .assetCategory)
+        self.htmlTag = try container.decodeIfPresent(String.self, forKey: .htmlTag) ?? nil
+    }
 }
 
 // MARK: - Internal FFI conversions for DownloadedAsset
@@ -504,6 +615,14 @@ public struct ArticleMetadata: Codable, Sendable, Hashable {
         case section = "section"
         case tags = "tags"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.publishedTime = try container.decodeIfPresent(String.self, forKey: .publishedTime) ?? nil
+        self.modifiedTime = try container.decodeIfPresent(String.self, forKey: .modifiedTime) ?? nil
+        self.author = try container.decodeIfPresent(String.self, forKey: .author) ?? nil
+        self.section = try container.decodeIfPresent(String.self, forKey: .section) ?? nil
+        self.tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+    }
 }
 
 // MARK: - Internal FFI conversions for ArticleMetadata
@@ -531,6 +650,15 @@ public struct HreflangEntry: Codable, Sendable, Hashable {
     public init(lang: String, url: String) {
         self.lang = lang
         self.url = url
+    }
+    private enum CodingKeys: String, CodingKey {
+        case lang = "lang"
+        case url = "url"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.lang = try container.decodeIfPresent(String.self, forKey: .lang) ?? ""
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
     }
 }
 
@@ -567,6 +695,13 @@ public struct FaviconInfo: Codable, Sendable, Hashable {
         case sizes = "sizes"
         case mimeType = "mime_type"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        self.rel = try container.decodeIfPresent(String.self, forKey: .rel) ?? ""
+        self.sizes = try container.decodeIfPresent(String.self, forKey: .sizes) ?? nil
+        self.mimeType = try container.decodeIfPresent(String.self, forKey: .mimeType) ?? nil
+    }
 }
 
 // MARK: - Internal FFI conversions for FaviconInfo
@@ -591,6 +726,15 @@ public struct HeadingInfo: Codable, Sendable, Hashable {
     public init(level: UInt8, text: String) {
         self.level = level
         self.text = text
+    }
+    private enum CodingKeys: String, CodingKey {
+        case level = "level"
+        case text = "text"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.level = try container.decodeIfPresent(UInt8.self, forKey: .level) ?? 0
+        self.text = try container.decodeIfPresent(String.self, forKey: .text) ?? ""
     }
 }
 
@@ -638,6 +782,16 @@ public struct ResponseMeta: Codable, Sendable, Hashable {
         case xPoweredBy = "x_powered_by"
         case contentLanguage = "content_language"
         case contentEncoding = "content_encoding"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.etag = try container.decodeIfPresent(String.self, forKey: .etag) ?? nil
+        self.lastModified = try container.decodeIfPresent(String.self, forKey: .lastModified) ?? nil
+        self.cacheControl = try container.decodeIfPresent(String.self, forKey: .cacheControl) ?? nil
+        self.server = try container.decodeIfPresent(String.self, forKey: .server) ?? nil
+        self.xPoweredBy = try container.decodeIfPresent(String.self, forKey: .xPoweredBy) ?? nil
+        self.contentLanguage = try container.decodeIfPresent(String.self, forKey: .contentLanguage) ?? nil
+        self.contentEncoding = try container.decodeIfPresent(String.self, forKey: .contentEncoding) ?? nil
     }
 }
 
@@ -835,6 +989,52 @@ public struct PageMetadata: Codable, Sendable, Hashable {
         case headings = "headings"
         case wordCount = "word_count"
     }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.title = try container.decodeIfPresent(String.self, forKey: .title) ?? nil
+        self.description = try container.decodeIfPresent(String.self, forKey: .description) ?? nil
+        self.canonicalUrl = try container.decodeIfPresent(String.self, forKey: .canonicalUrl) ?? nil
+        self.keywords = try container.decodeIfPresent(String.self, forKey: .keywords) ?? nil
+        self.author = try container.decodeIfPresent(String.self, forKey: .author) ?? nil
+        self.viewport = try container.decodeIfPresent(String.self, forKey: .viewport) ?? nil
+        self.themeColor = try container.decodeIfPresent(String.self, forKey: .themeColor) ?? nil
+        self.generator = try container.decodeIfPresent(String.self, forKey: .generator) ?? nil
+        self.robots = try container.decodeIfPresent(String.self, forKey: .robots) ?? nil
+        self.htmlLang = try container.decodeIfPresent(String.self, forKey: .htmlLang) ?? nil
+        self.htmlDir = try container.decodeIfPresent(String.self, forKey: .htmlDir) ?? nil
+        self.ogTitle = try container.decodeIfPresent(String.self, forKey: .ogTitle) ?? nil
+        self.ogType = try container.decodeIfPresent(String.self, forKey: .ogType) ?? nil
+        self.ogImage = try container.decodeIfPresent(String.self, forKey: .ogImage) ?? nil
+        self.ogDescription = try container.decodeIfPresent(String.self, forKey: .ogDescription) ?? nil
+        self.ogUrl = try container.decodeIfPresent(String.self, forKey: .ogUrl) ?? nil
+        self.ogSiteName = try container.decodeIfPresent(String.self, forKey: .ogSiteName) ?? nil
+        self.ogLocale = try container.decodeIfPresent(String.self, forKey: .ogLocale) ?? nil
+        self.ogVideo = try container.decodeIfPresent(String.self, forKey: .ogVideo) ?? nil
+        self.ogAudio = try container.decodeIfPresent(String.self, forKey: .ogAudio) ?? nil
+        self.ogLocaleAlternates = try container.decodeIfPresent([String].self, forKey: .ogLocaleAlternates) ?? nil
+        self.twitterCard = try container.decodeIfPresent(String.self, forKey: .twitterCard) ?? nil
+        self.twitterTitle = try container.decodeIfPresent(String.self, forKey: .twitterTitle) ?? nil
+        self.twitterDescription = try container.decodeIfPresent(String.self, forKey: .twitterDescription) ?? nil
+        self.twitterImage = try container.decodeIfPresent(String.self, forKey: .twitterImage) ?? nil
+        self.twitterSite = try container.decodeIfPresent(String.self, forKey: .twitterSite) ?? nil
+        self.twitterCreator = try container.decodeIfPresent(String.self, forKey: .twitterCreator) ?? nil
+        self.dcTitle = try container.decodeIfPresent(String.self, forKey: .dcTitle) ?? nil
+        self.dcCreator = try container.decodeIfPresent(String.self, forKey: .dcCreator) ?? nil
+        self.dcSubject = try container.decodeIfPresent(String.self, forKey: .dcSubject) ?? nil
+        self.dcDescription = try container.decodeIfPresent(String.self, forKey: .dcDescription) ?? nil
+        self.dcPublisher = try container.decodeIfPresent(String.self, forKey: .dcPublisher) ?? nil
+        self.dcDate = try container.decodeIfPresent(String.self, forKey: .dcDate) ?? nil
+        self.dcType = try container.decodeIfPresent(String.self, forKey: .dcType) ?? nil
+        self.dcFormat = try container.decodeIfPresent(String.self, forKey: .dcFormat) ?? nil
+        self.dcIdentifier = try container.decodeIfPresent(String.self, forKey: .dcIdentifier) ?? nil
+        self.dcLanguage = try container.decodeIfPresent(String.self, forKey: .dcLanguage) ?? nil
+        self.dcRights = try container.decodeIfPresent(String.self, forKey: .dcRights) ?? nil
+        self.article = try container.decodeIfPresent(ArticleMetadata.self, forKey: .article) ?? nil
+        self.hreflangs = try container.decodeIfPresent([HreflangEntry].self, forKey: .hreflangs) ?? nil
+        self.favicons = try container.decodeIfPresent([FaviconInfo].self, forKey: .favicons) ?? nil
+        self.headings = try container.decodeIfPresent([HeadingInfo].self, forKey: .headings) ?? nil
+        self.wordCount = try container.decodeIfPresent(UInt.self, forKey: .wordCount) ?? nil
+    }
 }
 
 // MARK: - Internal FFI conversions for PageMetadata
@@ -902,6 +1102,13 @@ public struct CrawlStreamRequest: Codable, Sendable, Hashable {
     public init(url: String) {
         self.url = url
     }
+    private enum CodingKeys: String, CodingKey {
+        case url = "url"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+    }
 }
 
 // MARK: - Internal FFI conversions for CrawlStreamRequest
@@ -926,6 +1133,13 @@ public struct BatchCrawlStreamRequest: Codable, Sendable, Hashable {
     public init(urls: [String]) {
         self.urls = urls
     }
+    private enum CodingKeys: String, CodingKey {
+        case urls = "urls"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.urls = try container.decodeIfPresent([String].self, forKey: .urls) ?? []
+    }
 }
 
 // MARK: - Internal FFI conversions for BatchCrawlStreamRequest
@@ -949,6 +1163,15 @@ public struct CitationResult: Codable, Sendable, Hashable {
     public init(content: String, references: [CitationReference]) {
         self.content = content
         self.references = references
+    }
+    private enum CodingKeys: String, CodingKey {
+        case content = "content"
+        case references = "references"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.content = try container.decodeIfPresent(String.self, forKey: .content) ?? ""
+        self.references = try container.decodeIfPresent([CitationReference].self, forKey: .references) ?? []
     }
 }
 
@@ -978,6 +1201,17 @@ public struct CitationReference: Codable, Sendable, Hashable {
         self.index = index
         self.url = url
         self.text = text
+    }
+    private enum CodingKeys: String, CodingKey {
+        case index = "index"
+        case url = "url"
+        case text = "text"
+    }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.index = try container.decodeIfPresent(UInt.self, forKey: .index) ?? 0
+        self.url = try container.decodeIfPresent(String.self, forKey: .url) ?? ""
+        self.text = try container.decodeIfPresent(String.self, forKey: .text) ?? ""
     }
 }
 

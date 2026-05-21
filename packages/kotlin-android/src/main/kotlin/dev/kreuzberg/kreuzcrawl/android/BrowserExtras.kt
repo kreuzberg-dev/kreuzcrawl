@@ -28,15 +28,15 @@ package dev.kreuzberg.kreuzcrawl.android
  */
 data class BrowserExtras(
     /** Return value of `BrowserConfig.eval_script`, if provided. */
-    val evalResult: String?,
+    val evalResult: String? = null,
     /**
      * Network events captured during page navigation (only populated when
      * `BrowserConfig.capture_network_events` is true).
      */
-    val networkEvents: List<ResponseMeta>,
+    val networkEvents: List<ResponseMeta> = emptyList(),
     /**
      * All non-expired cookies present in the browser's cookie jar after
      * navigation completes (includes both prior cookies and server Set-Cookie).
      */
-    val cookies: List<CookieInfo>
+    val cookies: List<CookieInfo> = emptyList()
 )

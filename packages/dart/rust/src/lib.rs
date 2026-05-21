@@ -277,6 +277,8 @@ pub struct ActionResult {
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
     pub status_code: i64,
+    /// The final URL after following all redirects.
+    pub final_url: String,
     /// The Content-Type header value.
     pub content_type: String,
     /// The HTML body of the response.
@@ -375,6 +377,8 @@ pub struct CrawlPageResult {
     pub extraction_meta: Option<ExtractionMeta>,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     pub downloaded_document: Option<DownloadedDocument>,
+    /// Whether the browser fallback was used to fetch this page.
+    pub browser_used: bool,
 }
 
 /// The result of a multi-page crawl operation.
@@ -394,6 +398,8 @@ pub struct CrawlResult {
     pub cookies: Vec<CookieInfo>,
     /// Whether all crawled pages stayed on the same domain as the start URL.
     pub stayed_on_domain: bool,
+    /// Whether the browser fallback was used for any page in this crawl.
+    pub browser_used: bool,
 }
 
 /// A URL entry from a sitemap.
@@ -794,9 +800,17 @@ impl CrawlEngineHandle {
     #[frb]
     pub fn crawl_stream(&self, req: CrawlStreamRequest, sink: crate::frb_generated::StreamSink<CrawlEvent>) {
         use futures_util::StreamExt;
+        use std::sync::OnceLock;
+        static FRB_STREAM_TOKIO_RT: OnceLock<tokio::runtime::Runtime> = OnceLock::new();
+        let _rt = FRB_STREAM_TOKIO_RT.get_or_init(|| {
+            tokio::runtime::Builder::new_multi_thread()
+                .enable_all()
+                .build()
+                .expect("failed to build tokio runtime for FRB streaming")
+        });
         let inner = self.inner.clone();
         let core_req: kreuzcrawl::CrawlStreamRequest = req.into();
-        flutter_rust_bridge::spawn(async move {
+        _rt.spawn(async move {
             match inner.crawl_stream(core_req).await {
                 Ok(mut stream) => {
                     while let Some(item) = stream.next().await {
@@ -820,9 +834,17 @@ impl CrawlEngineHandle {
     #[frb]
     pub fn batch_crawl_stream(&self, req: BatchCrawlStreamRequest, sink: crate::frb_generated::StreamSink<CrawlEvent>) {
         use futures_util::StreamExt;
+        use std::sync::OnceLock;
+        static FRB_STREAM_TOKIO_RT: OnceLock<tokio::runtime::Runtime> = OnceLock::new();
+        let _rt = FRB_STREAM_TOKIO_RT.get_or_init(|| {
+            tokio::runtime::Builder::new_multi_thread()
+                .enable_all()
+                .build()
+                .expect("failed to build tokio runtime for FRB streaming")
+        });
         let inner = self.inner.clone();
         let core_req: kreuzcrawl::BatchCrawlStreamRequest = req.into();
-        flutter_rust_bridge::spawn(async move {
+        _rt.spawn(async move {
             match inner.batch_crawl_stream(core_req).await {
                 Ok(mut stream) => {
                     while let Some(item) = stream.next().await {
@@ -1034,6 +1056,10 @@ pub enum PageAction {
     /// Take a screenshot of the current page.
     Screenshot {
         /// Whether to capture the full scrollable page. Defaults to viewport only.
+        ///
+        /// Accepts both the canonical `fullPage` (camelCase) form and the
+        /// `full_page` (snake_case) alias so language bindings and fixtures can
+        /// use either convention without error.
         full_page: bool,
     },
     /// Execute arbitrary JavaScript in the page context.
@@ -1259,6 +1285,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
     fn from(v: kreuzcrawl::ScrapeResult) -> Self {
         ScrapeResult {
             status_code: v.status_code as _,
+            final_url: v.final_url.into(),
             content_type: v.content_type.into(),
             html: v.html.into(),
             body_size: v.body_size as _,
@@ -1312,6 +1339,7 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
             extracted_data: v.extracted_data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
             extraction_meta: v.extraction_meta.map(ExtractionMeta::from),
             downloaded_document: v.downloaded_document.map(DownloadedDocument::from),
+            browser_used: v.browser_used as _,
         }
     }
 }
@@ -1326,6 +1354,7 @@ impl From<kreuzcrawl::CrawlResult> for CrawlResult {
             error: v.error.map(|s| s.into()),
             cookies: v.cookies.into_iter().map(CookieInfo::from).collect(),
             stayed_on_domain: v.stayed_on_domain as _,
+            browser_used: v.browser_used as _,
         }
     }
 }
