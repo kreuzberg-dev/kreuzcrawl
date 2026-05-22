@@ -21,4 +21,4 @@ This project is licensed under [Elastic License 2.0](https://github.com/kreuzber
 - [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
 - [GitHub Repository](https://github.com/kreuzberg-dev/kreuzcrawl)
 - [Issue Tracker](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
-- [Discussions](https://github.com/kreuzberg-dev/kreuzcrawl/discussions)
+- [Issues](https://github.com/kreuzberg-dev/kreuzcrawl/issues)

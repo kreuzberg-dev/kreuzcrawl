@@ -63,17 +63,29 @@
   </a>
 </div>
 
-<img width="3384" height="573" alt="Kreuzcrawl" src="https://github.com/user-attachments/assets/1b6c6ad7-3b6d-4171-b1c9-f2026cc9deb8" />
+<div align="center" style="margin: 24px 0 0;">
+  <a href="https://kreuzberg.dev">
+    <img width="3384" height="573" alt="Kreuzcrawl" src="https://github.com/user-attachments/assets/1b6c6ad7-3b6d-4171-b1c9-f2026cc9deb8" />
+  </a>
+</div>
 
-<div align="center" style="margin-top: 20px;">
+<div align="center" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 28px 0 24px;">
   <a href="https://discord.gg/xt9WY3GnKR">
-      <img height="22" src="https://img.shields.io/badge/Discord-Join%20our%20community-007ec6?logo=discord&logoColor=white" alt="Discord">
+    <img height="32" src="https://img.shields.io/badge/Discord-Join%20our%20community-007ec6?logo=discord&logoColor=white" alt="Join Discord">
   </a>
 </div>
 
 WebAssembly bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Built with
 wasm-bindgen for use in browsers and Node.js. Single-threaded; features requiring `std::thread`
 are not available.
+
+## What This Package Provides
+
+- **Same crawler as every binding** — one Rust engine behind Python, Node.js, Ruby, Go, Java, .NET, PHP, Elixir, Dart, Kotlin Android, Swift, Zig, WASM, and C FFI.
+- **Structured scrape output** — HTML, Markdown, metadata, links, assets, response headers, and extraction warnings with consistent field names.
+- **Crawl controls** — depth, page limits, concurrency, URL filters, robots/sitemap handling, rate limits, and partial failure reporting.
+- **Rendering path** — optional browser rendering for JavaScript-heavy pages; direct HTTP path for fast static pages.
+- **WASM package** — browser and edge-compatible binding for environments where native libraries are unavailable.
 
 ## Installation
 
@@ -140,4 +152,4 @@ This project is licensed under [Elastic License 2.0](https://github.com/kreuzber
 - [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
 - [GitHub Repository](https://github.com/kreuzberg-dev/kreuzcrawl)
 - [Issue Tracker](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
-- [Discussions](https://github.com/kreuzberg-dev/kreuzcrawl/discussions)
+- [Issues](https://github.com/kreuzberg-dev/kreuzcrawl/issues)

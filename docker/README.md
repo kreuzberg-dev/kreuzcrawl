@@ -243,7 +243,7 @@ gh api repos/kreuzberg-dev/kreuzcrawl/dispatches \
 
 ## References
 
-- [Dockerfile best practices](https://docs.docker.com/develop/dev-best-practices/dockerfile_best-practices/)
+- [Dockerfile best practices](https://docs.docker.com/build/building/best-practices/)
 - [Alpine Linux security](https://alpinelinux.org/)
 - [Multi-stage Docker builds](https://docs.docker.com/build/building/multi-stage/)
 - [Docker buildx multi-platform builds](https://docs.docker.com/build/building/multi-platform/)

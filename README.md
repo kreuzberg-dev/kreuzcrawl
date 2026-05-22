@@ -63,11 +63,15 @@
   </a>
 </div>
 
-<img width="3384" height="573" alt="Kreuzcrawl" src="https://github.com/user-attachments/assets/1b6c6ad7-3b6d-4171-b1c9-f2026cc9deb8" />
+<div align="center" style="margin: 24px 0 0;">
+  <a href="https://kreuzberg.dev">
+    <img width="3384" height="573" alt="Kreuzcrawl" src="https://github.com/user-attachments/assets/1b6c6ad7-3b6d-4171-b1c9-f2026cc9deb8" />
+  </a>
+</div>
 
-<div align="center" style="margin-top: 20px;">
+<div align="center" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 28px 0 24px;">
   <a href="https://discord.gg/xt9WY3GnKR">
-      <img height="22" src="https://img.shields.io/badge/Discord-Join%20our%20community-007ec6?logo=discord&logoColor=white" alt="Discord">
+    <img height="32" src="https://img.shields.io/badge/Discord-Join%20our%20community-007ec6?logo=discord&logoColor=white" alt="Join Discord">
   </a>
 </div>
 
@@ -96,7 +100,7 @@ High-performance Rust web crawling engine for structured data extraction. Scrape
 | Language                                                                                 | Package                                                                                    | Install                                                                           |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
 | **[Python](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/python)**      | [kreuzcrawl](https://pypi.org/project/kreuzcrawl/)                                         | `pip install kreuzcrawl`                                                          |
-| **[Node.js](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/typescript)** | [@kreuzberg/kreuzcrawl](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl)               | `npm install @kreuzberg/kreuzcrawl`                                               |
+| **[Node.js](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-node)** | [@kreuzberg/kreuzcrawl](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl)               | `npm install @kreuzberg/kreuzcrawl`                                               |
 | **[Rust](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl)**      | [kreuzcrawl](https://crates.io/crates/kreuzcrawl)                                          | `cargo add kreuzcrawl`                                                            |
 | **[Go](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/go)**              | [pkg.go.dev](https://pkg.go.dev/github.com/kreuzberg-dev/kreuzcrawl/packages/go)           | `go get github.com/kreuzberg-dev/kreuzcrawl/packages/go`                          |
 | **[Java](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java)**          | [Maven Central](https://central.sonatype.com/artifact/dev.kreuzberg.kreuzcrawl/kreuzcrawl) | See [README](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/java) |
@@ -104,7 +108,7 @@ High-performance Rust web crawling engine for structured data extraction. Scrape
 | **[Ruby](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/ruby)**          | [kreuzcrawl](https://rubygems.org/gems/kreuzcrawl)                                         | `gem install kreuzcrawl`                                                          |
 | **[PHP](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/php)**            | [kreuzberg-dev/kreuzcrawl](https://packagist.org/packages/kreuzberg-dev/kreuzcrawl)        | `composer require kreuzberg-dev/kreuzcrawl`                                       |
 | **[Elixir](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/elixir)**      | [kreuzcrawl](https://hex.pm/packages/kreuzcrawl)                                           | `{:kreuzcrawl, "~> 0.2"}`                                                         |
-| **[WASM](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/wasm)**          | [@kreuzberg/kreuzcrawl-wasm](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-wasm)     | `npm install @kreuzberg/kreuzcrawl-wasm`                                          |
+| **[WASM](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-wasm)**          | [@kreuzberg/kreuzcrawl-wasm](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-wasm)     | `npm install @kreuzberg/kreuzcrawl-wasm`                                          |
 | **[C FFI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-ffi)** | [GitHub Releases](https://github.com/kreuzberg-dev/kreuzcrawl/releases)                    | C header + shared library                                                         |
 | **[CLI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-cli)**   | [crates.io](https://crates.io/crates/kreuzcrawl-cli)                                       | `cargo install kreuzcrawl-cli`                                                    |
 | **CLI (Homebrew)**                                                                       | [kreuzberg-dev/tap](https://github.com/kreuzberg-dev/homebrew-tap)                         | `brew install kreuzberg-dev/tap/kreuzcrawl`                                       |
@@ -128,7 +132,7 @@ print(len(result.links))
 </details>
 
 <details>
-<summary><strong>Node.js / TypeScript</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/typescript">Full docs</a></summary>
+<summary><strong>Node.js / TypeScript</strong> — <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-node">Full docs</a></summary>
 
 ```typescript
 import { createEngine, scrape } from "@kreuzberg/kreuzcrawl";
@@ -299,5 +303,5 @@ Contributions are welcome! See our [Contributing Guide](https://github.com/kreuz
 - [API Reference](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-rust/)
 - [GitHub](https://github.com/kreuzberg-dev/kreuzcrawl)
 - [Issues](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
-- [Discussions](https://github.com/kreuzberg-dev/kreuzcrawl/discussions)
+- [Issues](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
 - [Discord](https://discord.gg/xt9WY3GnKR)
