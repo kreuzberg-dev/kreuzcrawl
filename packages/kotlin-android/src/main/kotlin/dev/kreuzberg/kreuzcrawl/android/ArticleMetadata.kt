@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -32,5 +33,5 @@ data class ArticleMetadata(
     /** The article section. */
     val section: String? = null,
     /** The article tags. */
-    val tags: List<String> = emptyList(),
+    val tags: List<String> = emptyList()
 )

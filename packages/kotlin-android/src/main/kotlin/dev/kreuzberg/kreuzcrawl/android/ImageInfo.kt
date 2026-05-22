@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -32,5 +33,5 @@ data class ImageInfo(
     /** The height attribute, if present and parseable. */
     val height: Int? = null,
     /** The source of the image reference. */
-    val source: ImageSource = ImageSource.IMG,
+    val source: ImageSource = ImageSource.IMG
 )

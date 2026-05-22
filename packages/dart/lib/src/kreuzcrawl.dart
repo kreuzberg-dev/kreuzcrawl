@@ -79,11 +79,17 @@ class KreuzcrawlBridge {
     return await rust_bridge.batchCrawl(engine: engine, urls: urls);
   }
 
-  static Stream<CrawlEvent> crawlStream(CrawlStreamRequest req) {
-    return rust_bridge.crawlStream(req: req);
+  static Stream<CrawlEvent> crawlStream(
+    CrawlEngineHandle crawlEngineHandle,
+    CrawlStreamRequest req,
+  ) {
+    return crawlEngineHandle.crawlStream(req: req);
   }
 
-  static Stream<CrawlEvent> batchCrawlStream(BatchCrawlStreamRequest req) {
-    return rust_bridge.batchCrawlStream(req: req);
+  static Stream<CrawlEvent> batchCrawlStream(
+    CrawlEngineHandle crawlEngineHandle,
+    BatchCrawlStreamRequest req,
+  ) {
+    return crawlEngineHandle.batchCrawlStream(req: req);
   }
 }

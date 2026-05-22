@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -28,5 +29,5 @@ data class ProxyConfig(
     /** Optional username for proxy authentication. */
     val username: String? = null,
     /** Optional password for proxy authentication. */
-    val password: String? = null,
+    val password: String? = null
 )

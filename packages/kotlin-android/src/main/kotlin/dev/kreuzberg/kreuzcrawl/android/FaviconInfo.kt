@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -30,5 +31,5 @@ data class FaviconInfo(
     /** The `sizes` attribute, if present. */
     val sizes: String? = null,
     /** The MIME type, if present. */
-    val mimeType: String? = null,
+    val mimeType: String? = null
 )

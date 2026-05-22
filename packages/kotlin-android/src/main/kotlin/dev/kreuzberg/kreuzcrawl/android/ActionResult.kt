@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -32,5 +33,5 @@ data class ActionResult(
     /** Action-specific return data (screenshot bytes, JS return value, scraped HTML). */
     val data: Any? = null,
     /** Error message if the action failed. */
-    val error: String? = null,
+    val error: String? = null
 )

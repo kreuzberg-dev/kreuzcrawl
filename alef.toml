@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.17.26"
+alef_version = "0.17.29"
 languages = [
   "python",
   "node",
@@ -172,6 +172,16 @@ package_name = "Kreuzcrawl"
 
 [crates.zig]
 module_name = "kreuzcrawl"
+
+# wasm32-unknown-unknown cannot compile chromiumoxide: enabling
+# `browser-chromiumoxide` (directly or via `interact` → `browser`) pulls
+# tokio's net/process features and therefore `mio`, which has no wasm32
+# backend (~48 compile errors). Override the default
+# ["interact", "browser-chromiumoxide"] feature set with an empty list so the
+# wasm crate builds at all; browser/interaction/streaming fixtures are already
+# skipped for wasm via per-fixture `skip.languages` and adapter `skip_languages`.
+[crates.wasm]
+features = []
 
 [crates.output]
 python = "crates/kreuzcrawl-py/src/"

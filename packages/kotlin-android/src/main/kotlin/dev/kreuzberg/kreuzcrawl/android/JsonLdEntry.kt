@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -28,5 +29,5 @@ data class JsonLdEntry(
     /** The `name` value, if present. */
     val name: String? = null,
     /** The raw JSON-LD string. */
-    val raw: String = "",
+    val raw: String = ""
 )

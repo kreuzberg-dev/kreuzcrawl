@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -64,5 +65,5 @@ data class CrawlPageResult(
     /** Downloaded non-HTML document (PDF, DOCX, image, code, etc.). */
     val downloadedDocument: DownloadedDocument? = null,
     /** Whether the browser fallback was used to fetch this page. */
-    val browserUsed: Boolean = false,
+    val browserUsed: Boolean = false
 )

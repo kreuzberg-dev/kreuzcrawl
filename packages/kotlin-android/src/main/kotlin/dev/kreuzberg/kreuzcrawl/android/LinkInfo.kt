@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -32,5 +33,5 @@ data class LinkInfo(
     /** The `rel` attribute value, if present. */
     val rel: String? = null,
     /** Whether the link has `rel="nofollow"`. */
-    val nofollow: Boolean = false,
+    val nofollow: Boolean = false
 )

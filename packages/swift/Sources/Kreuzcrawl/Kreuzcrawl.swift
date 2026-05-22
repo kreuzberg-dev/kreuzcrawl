@@ -1742,6 +1742,50 @@ public func createEngine(config: CrawlConfig?) throws -> CrawlEngineHandle {
     return try RustBridge.createEngine(config)
 }
 
+/// Scrape a single URL, returning extracted page data.
+public func scrape(engine: CrawlEngineHandle, url: String) async throws -> ScrapeResult {
+    return try await Task.detached(priority: .userInitiated) {
+        try RustBridge.scrape(engine, url)
+    }.value
+}
+
+/// Crawl a website starting from `url`, following links up to the configured depth.
+public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlResult {
+    return try await Task.detached(priority: .userInitiated) {
+        try RustBridge.crawl(engine, url)
+    }.value
+}
+
+/// Discover all pages on a website by following links and sitemaps.
+public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapResult {
+    return try await Task.detached(priority: .userInitiated) {
+        try RustBridge.mapUrls(engine, url)
+    }.value
+}
+
+/// Execute browser actions on a single page.
+public func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) async throws -> InteractionResult {
+    return try await Task.detached(priority: .userInitiated) {
+        try RustBridge.interact(engine, url, actions)
+    }.value
+}
+
+/// Scrape multiple URLs concurrently.
+public func batchScrape(engine: CrawlEngineHandle, urls: [String]) async throws -> BatchScrapeResults {
+    let _rb_urls: RustVec<RustString> = { let v = RustVec<RustString>(); for s in urls { v.push(value: RustString(s)) }; return v }()
+    return try await Task.detached(priority: .userInitiated) {
+        try RustBridge.batchScrape(engine, _rb_urls)
+    }.value
+}
+
+/// Crawl multiple seed URLs concurrently, each following links to configured depth.
+public func batchCrawl(engine: CrawlEngineHandle, urls: [String]) async throws -> BatchCrawlResults {
+    let _rb_urls: RustVec<RustString> = { let v = RustVec<RustString>(); for s in urls { v.push(value: RustString(s)) }; return v }()
+    return try await Task.detached(priority: .userInitiated) {
+        try RustBridge.batchCrawl(engine, _rb_urls)
+    }.value
+}
+
 // MARK: - Streaming free functions
 // These adapters are owned by opaque handle types that do not have a
 // Swift class wrapper (no client_constructor_body in alef.toml).  The

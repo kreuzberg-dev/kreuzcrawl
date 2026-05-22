@@ -17,6 +17,7 @@
     "FunctionParameterNaming",
     "LongParameterList",
     "CyclomaticComplexMethod",
+    "LongMethod",
 )
 
 package dev.kreuzberg.kreuzcrawl.android
@@ -30,5 +31,5 @@ data class CookieInfo(
     /** The cookie domain, if specified. */
     val domain: String? = null,
     /** The cookie path, if specified. */
-    val path: String? = null,
+    val path: String? = null
 )
