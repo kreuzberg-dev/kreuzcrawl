@@ -46,14 +46,8 @@ pub(crate) fn build_downloaded_document(
     let hash_bytes = hasher.finalize();
     let content_hash: Box<str> = hash_bytes.iter().map(|b| format!("{b:02x}")).collect::<String>().into();
 
-    let mime_type: std::borrow::Cow<'static, str> = std::borrow::Cow::Owned(
-        content_type
-            .split(';')
-            .next()
-            .unwrap_or(content_type)
-            .trim()
-            .to_owned(),
-    );
+    let mime_type: std::borrow::Cow<'static, str> =
+        std::borrow::Cow::Owned(content_type.split(';').next().unwrap_or(content_type).trim().to_owned());
 
     let filename = parsed_url
         .path_segments()
@@ -87,8 +81,14 @@ mod tests {
             download_documents: false,
             ..Default::default()
         };
-        let doc =
-            build_downloaded_document(pdf_url().as_str(), &pdf_url(), "application/pdf", b"%PDF-1.4", true, &config);
+        let doc = build_downloaded_document(
+            pdf_url().as_str(),
+            &pdf_url(),
+            "application/pdf",
+            b"%PDF-1.4",
+            true,
+            &config,
+        );
         assert!(doc.is_none(), "disabled downloads must yield None");
     }
 
@@ -96,7 +96,14 @@ mod tests {
     fn returns_none_for_non_document_page() {
         let config = CrawlConfig::default();
         let html_url = Url::parse("https://example.com/page").expect("valid url");
-        let doc = build_downloaded_document(html_url.as_str(), &html_url, "text/html", b"<html></html>", false, &config);
+        let doc = build_downloaded_document(
+            html_url.as_str(),
+            &html_url,
+            "text/html",
+            b"<html></html>",
+            false,
+            &config,
+        );
         assert!(doc.is_none(), "an HTML page must yield None");
     }
 
@@ -114,7 +121,10 @@ mod tests {
         .expect("a document is expected");
         assert_eq!(doc.content.as_slice(), b"%PDF-1.4 body");
         assert_eq!(doc.size, 13);
-        assert_eq!(&*doc.mime_type, "application/pdf", "mime must drop the charset parameter");
+        assert_eq!(
+            &*doc.mime_type, "application/pdf",
+            "mime must drop the charset parameter"
+        );
         assert_eq!(doc.filename.as_deref(), Some("report.pdf"));
         assert_eq!(doc.content_hash.len(), 64, "sha-256 hex digest is 64 chars");
     }
@@ -125,9 +135,20 @@ mod tests {
             document_max_size: Some(4),
             ..Default::default()
         };
-        let doc = build_downloaded_document(pdf_url().as_str(), &pdf_url(), "application/pdf", b"0123456789", true, &config)
-            .expect("a document is expected");
-        assert_eq!(doc.content.as_slice(), b"0123", "content must be capped at document_max_size");
+        let doc = build_downloaded_document(
+            pdf_url().as_str(),
+            &pdf_url(),
+            "application/pdf",
+            b"0123456789",
+            true,
+            &config,
+        )
+        .expect("a document is expected");
+        assert_eq!(
+            doc.content.as_slice(),
+            b"0123",
+            "content must be capped at document_max_size"
+        );
         assert_eq!(doc.size, 4);
     }
 }

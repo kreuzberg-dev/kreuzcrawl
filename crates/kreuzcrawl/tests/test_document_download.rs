@@ -48,10 +48,7 @@ async fn crawl_loop_downloads_linked_pdf_document() {
         .await
         .expect("batch_crawl should succeed");
 
-    let crawl = results.results[0]
-        .result
-        .as_ref()
-        .expect("seed crawl should succeed");
+    let crawl = results.results[0].result.as_ref().expect("seed crawl should succeed");
 
     let pdf_page = crawl
         .pages
@@ -64,7 +61,11 @@ async fn crawl_loop_downloads_linked_pdf_document() {
         .downloaded_document
         .as_ref()
         .expect("the crawl loop must populate downloaded_document for a PDF");
-    assert_eq!(doc.content.as_slice(), PDF_BYTES, "downloaded bytes must match the served PDF");
+    assert_eq!(
+        doc.content.as_slice(),
+        PDF_BYTES,
+        "downloaded bytes must match the served PDF"
+    );
     assert_eq!(&*doc.mime_type, "application/pdf");
     assert_eq!(doc.size, PDF_BYTES.len());
     assert_eq!(doc.filename.as_deref(), Some("paper.pdf"));
