@@ -65,7 +65,7 @@
 
 <div align="center" style="margin: 24px 0 0;">
   <a href="https://kreuzberg.dev">
-    <img alt="Kreuzcrawl" src="https://github.com/user-attachments/assets/1b6c6ad7-3b6d-4171-b1c9-f2026cc9deb8" />
+    <img alt="Kreuzcrawl" src="https://raw.githubusercontent.com/kreuzberg-dev/kreuzcrawl/main/docs/assets/docs_top_banner.svg" />
   </a>
 </div>
 
