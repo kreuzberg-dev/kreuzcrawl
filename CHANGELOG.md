@@ -31,6 +31,20 @@ All notable changes to kreuzcrawl are documented here.
   `errors.md`)** regenerated with the new alef table renderer — content is
   identical, table formatting is the new canonical style.
 
+### Fixed
+
+- **The multi-page crawl loop now materializes discovered non-HTML documents
+  (PDF, DOCX, …) into `CrawlPageResult.downloaded_document`.** The
+  `download_documents` config flag was previously honored only by the
+  single-page `scrape()` path; the crawl loop fetched a linked PDF, flagged
+  the page `was_skipped`/`is_pdf`, then discarded the bytes and left
+  `downloaded_document` hardcoded to `None`. Crawling a site for its linked
+  documents therefore yielded zero documents. The crawl loop now preserves
+  the raw response bytes through the fetch task and builds the
+  `DownloadedDocument` via a shared `build_downloaded_document` helper used by
+  both the scrape and crawl paths, so the two cannot diverge. Skipped (binary)
+  pages also no longer run HTML→markdown conversion on their lossy-UTF-8 body.
+
 ## [0.3.0-rc.23] - 2026-05-20
 
 ### Fixed

@@ -1,6 +1,5 @@
 //! Single-page scrape operation.
 
-use sha2::{Digest, Sha256};
 use tl::ParserOptions;
 use url::Url;
 
@@ -14,7 +13,7 @@ use crate::html::{
 use crate::http::{build_client, http_fetch};
 use crate::normalize::robots_url;
 use crate::robots::{is_path_allowed, parse_robots_txt};
-use crate::types::{CrawlConfig, DownloadedDocument, ScrapeResult};
+use crate::types::{CrawlConfig, ScrapeResult};
 
 /// Build a `ScrapeResult` from a Tower [`CrawlResponse`](crate::tower::CrawlResponse).
 ///
@@ -96,44 +95,15 @@ pub(crate) async fn scrape_from_crawl_response(
     let was_skipped = is_binary_content_type(&content_type) || is_binary_url(parsed_url.as_str()) || is_pdf;
 
     // Populate downloaded_document when download_documents is enabled and the
-    // response is non-HTML (PDF, DOCX, image, etc.).
-    let downloaded_document = if config.download_documents && was_skipped {
-        let max_size = config.document_max_size.unwrap_or(50 * 1024 * 1024);
-        let content = if resp.body_bytes.len() <= max_size {
-            resp.body_bytes.clone()
-        } else {
-            resp.body_bytes[..max_size].to_vec()
-        };
-        let mut hasher = Sha256::new();
-        hasher.update(&content);
-        let hash_bytes = hasher.finalize();
-        let content_hash: Box<str> = hash_bytes.iter().map(|b| format!("{b:02x}")).collect::<String>().into();
-        let mime_type: std::borrow::Cow<'static, str> = std::borrow::Cow::Owned(
-            content_type
-                .split(';')
-                .next()
-                .unwrap_or(&content_type)
-                .trim()
-                .to_owned(),
-        );
-        let filename = parsed_url
-            .path_segments()
-            .and_then(|mut s| s.next_back())
-            .filter(|s| !s.is_empty())
-            .map(|s| s.into());
-        let size = content.len();
-        Some(DownloadedDocument {
-            url: url.to_owned(),
-            mime_type,
-            size,
-            content,
-            filename,
-            content_hash,
-            headers: std::collections::HashMap::new(),
-        })
-    } else {
-        None
-    };
+    // response is a non-HTML document (PDF, DOCX, image, …).
+    let downloaded_document = crate::document::build_downloaded_document(
+        url,
+        &parsed_url,
+        &content_type,
+        &resp.body_bytes,
+        was_skipped,
+        config,
+    );
 
     let is_html = is_html_content(&content_type, &body);
 

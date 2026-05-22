@@ -14,6 +14,7 @@ pub(crate) mod browser_profile;
 pub(crate) mod citations;
 
 pub(crate) mod defaults;
+mod document;
 pub(crate) mod engine;
 mod error;
 #[cfg(not(target_arch = "wasm32"))]

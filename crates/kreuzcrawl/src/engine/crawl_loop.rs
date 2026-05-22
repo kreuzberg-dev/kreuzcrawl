@@ -175,6 +175,9 @@ struct FetchResult {
     status_code: u16,
     content_type: String,
     body: String,
+    /// Raw response bytes, preserved so non-HTML documents (PDF, …) can be
+    /// materialized into a [`DownloadedDocument`](crate::types::DownloadedDocument).
+    body_bytes: Vec<u8>,
     headers: HashMap<String, Vec<String>>,
     extraction: HtmlExtraction,
     is_binary: bool,
@@ -480,6 +483,7 @@ impl CrawlEngine {
                     let content_type = resp.content_type.clone();
                     let headers = resp.headers.clone();
                     let body = resp.body.clone();
+                    let body_bytes = resp.body_bytes;
 
                     let url_for_extract = entry.url.clone();
                     let content_type_clone = content_type.clone();
@@ -496,6 +500,7 @@ impl CrawlEngine {
                         status_code,
                         content_type,
                         body,
+                        body_bytes,
                         headers,
                         extraction: page_ext.extraction,
                         is_binary: page_ext.is_binary,
@@ -692,7 +697,25 @@ impl CrawlEngine {
             .await?;
         }
 
-        let markdown = crate::markdown::convert_to_markdown(&body, &self.config.content).await;
+        // Materialize the raw document bytes for non-HTML responses (PDF,
+        // DOCX, …) so the caller can hand them to a document-extraction
+        // pipeline. HTML pages leave this `None`.
+        let downloaded_document = crate::document::build_downloaded_document(
+            &page_url,
+            &page_parsed,
+            &fetch.content_type,
+            &fetch.body_bytes,
+            page_was_skipped,
+            &self.config,
+        );
+
+        // A skipped page is a binary document — its lossy-UTF-8 `body` is not
+        // meaningful HTML, so don't spend CPU converting it to markdown.
+        let markdown = if page_was_skipped {
+            None
+        } else {
+            crate::markdown::convert_to_markdown(&body, &self.config.content).await
+        };
 
         let page = CrawlPageResult {
             url: page_url.clone(),
@@ -714,7 +737,7 @@ impl CrawlEngine {
             markdown,
             extracted_data: None,
             extraction_meta: None,
-            downloaded_document: None,
+            downloaded_document,
             browser_used: fetch.browser_used,
         };
 
