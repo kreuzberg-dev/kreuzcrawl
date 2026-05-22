@@ -61,6 +61,7 @@ NAPI-RS with full TypeScript types, async/await support, and native performance.
 ```bash
 pnpm add @kreuzberg/kreuzcrawl
 ```
+
 ## Quick Start
 
 ```typescript title="TypeScript"
@@ -85,6 +86,7 @@ main().catch((error) => {
   process.exit(1);
 });
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

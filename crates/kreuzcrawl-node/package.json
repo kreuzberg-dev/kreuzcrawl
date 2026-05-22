@@ -3,6 +3,10 @@
   "version": "0.3.0-rc.23",
   "description": "High-performance web crawling engine",
   "license": "Elastic-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kreuzberg-dev/kreuzcrawl.git"
+  },
   "files": [
     "index.js",
     "index.d.ts",

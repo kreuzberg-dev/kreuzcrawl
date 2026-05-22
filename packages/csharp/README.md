@@ -61,6 +61,7 @@ P/Invoke with the C FFI layer, supporting .NET 8+ with async/await and nullable 
 ```bash
 dotnet add package Kreuzcrawl
 ```
+
 ## Quick Start
 
 ```csharp title="C#"
@@ -95,6 +96,7 @@ internal static class BasicUsage
     }
 }
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

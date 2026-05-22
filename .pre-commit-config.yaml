@@ -42,7 +42,7 @@ repos:
       - id: pyproject-fmt
         exclude: ^test_apps/python/pyproject\.toml$
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.13
+    rev: v0.15.14
     hooks:
       - id: ruff
         args:
@@ -210,7 +210,7 @@ repos:
         exclude: ^test_apps/
       - id: hadolint
   - repo: https://github.com/kreuzberg-dev/alef
-    rev: v0.17.17
+    rev: v0.17.25
     hooks:
       - id: alef-verify
       - id: alef-sync-versions

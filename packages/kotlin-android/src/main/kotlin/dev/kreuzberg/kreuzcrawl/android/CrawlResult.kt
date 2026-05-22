@@ -40,5 +40,5 @@ data class CrawlResult(
     /** Whether the browser fallback was used for any page in this crawl. */
     val browserUsed: Boolean = false,
     /** Normalized URLs encountered during crawling (for deduplication counting). */
-    val normalizedUrls: List<String> = emptyList()
+    val normalizedUrls: List<String> = emptyList(),
 )

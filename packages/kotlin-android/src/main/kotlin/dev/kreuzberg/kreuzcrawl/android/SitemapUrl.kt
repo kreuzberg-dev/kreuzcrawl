@@ -30,5 +30,5 @@ data class SitemapUrl(
     /** The change frequency, if present. */
     val changefreq: String? = null,
     /** The priority, if present. */
-    val priority: String? = null
+    val priority: String? = null,
 )

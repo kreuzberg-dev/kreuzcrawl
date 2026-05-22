@@ -32,5 +32,5 @@ data class ExtractionMeta(
     /** The model identifier used for extraction. */
     val model: String? = null,
     /** Number of content chunks sent to the LLM. */
-    val chunksProcessed: Long = 0L
+    val chunksProcessed: Long = 0L,
 )
