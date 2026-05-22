@@ -24,6 +24,7 @@ package dev.kreuzberg.kreuzcrawl.android
 
 import java.nio.file.Path
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /** Configuration for crawl, scrape, and map operations. */
 data class CrawlConfig(

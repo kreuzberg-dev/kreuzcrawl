@@ -23,6 +23,7 @@
 package dev.kreuzberg.kreuzcrawl.android
 
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /** Browser fallback configuration. */
 data class BrowserConfig(
