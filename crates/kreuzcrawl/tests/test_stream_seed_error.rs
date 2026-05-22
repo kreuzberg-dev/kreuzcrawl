@@ -38,12 +38,11 @@ async fn test_batch_crawl_stream_seed_500_emits_error_event() {
     };
     let engine = create_engine(Some(config)).unwrap();
 
-    let urls = vec![
-        format!("{}/ok", mock.uri()),
-        format!("{}/fail", mock.uri()),
-    ];
+    let urls = vec![format!("{}/ok", mock.uri()), format!("{}/fail", mock.uri())];
 
-    let stream = batch_crawl_stream(&engine, urls).await.expect("batch_crawl_stream should not fail to initialise");
+    let stream = batch_crawl_stream(&engine, urls)
+        .await
+        .expect("batch_crawl_stream should not fail to initialise");
     let events: Vec<CrawlEvent> = stream
         .map(|r| r.expect("stream item should not be Err"))
         .collect()
@@ -82,7 +81,9 @@ async fn test_crawl_stream_seed_500_emits_error_event() {
     let engine = create_engine(Some(config)).unwrap();
     let url = format!("{}/fail", mock.uri());
 
-    let stream = crawl_stream(&engine, &url).await.expect("crawl_stream should not fail to initialise");
+    let stream = crawl_stream(&engine, &url)
+        .await
+        .expect("crawl_stream should not fail to initialise");
     let events: Vec<CrawlEvent> = stream
         .map(|r| r.expect("stream item should not be Err"))
         .collect()
