@@ -14,9 +14,9 @@ package kreuzcrawl
 // The CFLAGS directive below provides the include path for the header file.
 // LDFLAGS must be provided externally (via env vars or cgo_flags.go).
 
-#cgo CFLAGS: -I${SRCDIR}/include
+#cgo CFLAGS: -I${SRCDIR}/internal/ffi
 
-#include "include/kreuzcrawl.h"
+#include "internal/ffi/kreuzcrawl.h"
 #include <stdlib.h>
 #include <stdint.h>
 */
