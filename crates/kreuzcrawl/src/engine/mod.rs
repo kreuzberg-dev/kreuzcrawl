@@ -308,6 +308,10 @@ impl CrawlEngine {
             let client = crate::http::build_client(&self.config)?;
             let resp =
                 crate::http::fetch_with_retry(url, &self.config, &std::collections::HashMap::new(), &client).await?;
+            // Use the URL from the response: on wasm the browser follows redirects
+            // transparently, so `resp.final_url` is the post-redirect URL — not
+            // necessarily equal to the original `url` that was requested.
+            let post_redirect_url = resp.final_url.clone();
             // fetch_with_retry returns HttpResponse; convert to CrawlResponse
             let crawl_resp = crate::tower::CrawlResponse {
                 status: resp.status,
@@ -316,7 +320,7 @@ impl CrawlEngine {
                 body_bytes: resp.body_bytes,
                 headers: resp.headers,
             };
-            (url.to_owned(), crawl_resp, false)
+            (post_redirect_url, crawl_resp, false)
         };
 
         let mut result = crate::scrape::scrape_from_crawl_response(&final_url, &response, &self.config).await?;

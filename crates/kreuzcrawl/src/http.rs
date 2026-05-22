@@ -29,6 +29,17 @@ pub(crate) struct HttpResponse {
     pub(crate) headers: std::collections::HashMap<String, Vec<String>>,
     #[allow(dead_code)]
     pub(crate) browser_extras: Option<BrowserExtras>,
+    /// The URL of the final response after any transparent redirect following.
+    ///
+    /// On native targets reqwest uses `Policy::none()` so this always equals
+    /// the request URL (redirects are handled manually by `follow_redirects`).
+    /// On wasm targets the browser's `fetch` follows redirects transparently
+    /// and `reqwest::Response::url()` returns the post-redirect URL — which is
+    /// what the wasm scrape path needs to populate `ScrapeResult::final_url`.
+    // `dead_code` fires on native because the wasm scrape path (the only
+    // consumer) is gated on `#[cfg(target_arch = "wasm32")]`.
+    #[allow(dead_code)]
+    pub(crate) final_url: String,
 }
 
 /// Perform a single HTTP GET request with the given configuration.
@@ -80,6 +91,11 @@ pub(crate) async fn http_fetch(
     let resp = req.send().await.map_err(|e| classify_reqwest_error(&e))?;
 
     let status = resp.status().as_u16();
+    // Capture the final URL before consuming the response. On native targets
+    // (redirect Policy::none) this equals the request URL. On wasm targets
+    // the browser follows redirects transparently, so this is the real
+    // post-redirect URL.
+    let final_url = resp.url().to_string();
 
     // Get content type from the last value (wiremock appends headers)
     let content_type = resp
@@ -182,6 +198,7 @@ pub(crate) async fn http_fetch(
         body_bytes: body_bytes_vec,
         headers: headers_map,
         browser_extras: None,
+        final_url,
     })
 }
 
@@ -397,4 +414,57 @@ pub(crate) fn detect_waf_vendor(server: &str, body: &str) -> &'static str {
         return "aws-waf";
     }
     "unknown"
+}
+
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod tests {
+    use super::*;
+    use wiremock::matchers::{method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    /// `http_fetch` must populate `final_url` from the reqwest response URL.
+    ///
+    /// On native targets (Policy::none) this equals the request URL because
+    /// redirects are not followed transparently.  The test verifies the field
+    /// is set to a non-empty value matching the requested URL — confirming
+    /// the plumbing that the wasm path relies on to capture the post-redirect
+    /// URL is in place.
+    ///
+    /// Note: the wasm-specific transparent-redirect behaviour (browser `fetch`
+    /// following 3xx and returning the final URL via `response.url()`) cannot
+    /// be exercised under `cargo test` because it requires a wasm32 target and
+    /// a real browser runtime.  The build-time check (`cargo build --target
+    /// wasm32-unknown-unknown`) verifies the changed code path compiles
+    /// correctly for wasm.
+    #[tokio::test]
+    async fn http_fetch_populates_final_url() {
+        let mock = MockServer::start().await;
+
+        Mock::given(method("GET"))
+            .and(path("/page"))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    .set_body_string("<html><body>Hello</body></html>")
+                    .append_header("content-type", "text/html"),
+            )
+            .mount(&mock)
+            .await;
+
+        let url = format!("{}/page", mock.uri());
+        let config = CrawlConfig::default();
+        let client = build_client(&config).expect("client must build");
+        let resp = http_fetch(&url, &config, &std::collections::HashMap::new(), &client)
+            .await
+            .expect("http_fetch must succeed");
+
+        assert!(
+            !resp.final_url.is_empty(),
+            "final_url must not be empty after a successful fetch"
+        );
+        assert!(
+            resp.final_url.contains("/page"),
+            "final_url must contain the requested path, got: {}",
+            resp.final_url
+        );
+    }
 }

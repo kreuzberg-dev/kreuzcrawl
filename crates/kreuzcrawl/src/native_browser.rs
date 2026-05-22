@@ -149,5 +149,10 @@ pub(crate) async fn native_browser_fetch(
         body_bytes,
         headers: rendered.headers.into_iter().map(|(k, v)| (k, vec![v])).collect(),
         browser_extras: Some(extras),
+        // Browser navigation resolves the URL internally; use the input URL as
+        // the final URL. The native scrape path tracks final_url via
+        // follow_redirects / RedirectOutcome — this field is only used by the
+        // wasm path which does not go through browser backends.
+        final_url: url.to_owned(),
     })
 }

@@ -201,6 +201,11 @@ async fn page_fetch(
         body_bytes,
         headers: std::collections::HashMap::new(),
         browser_extras: None,
+        // CDP navigation resolves the URL internally; use the input URL as the
+        // final URL. The native scrape path tracks final_url via
+        // follow_redirects — this field is only consumed by the wasm scrape
+        // path which does not use browser backends.
+        final_url: url.to_owned(),
     })
 }
 
