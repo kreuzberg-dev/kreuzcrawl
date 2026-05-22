@@ -292,8 +292,17 @@ impl CrawlEngine {
         // ── Phase 1: resolve initial redirects ──────────────────────────
         let final_url = self.resolve_initial_redirects(url, max_redirects, &mut state).await;
 
-        // If we have an error already (from redirects), return early
-        if state.error.is_some() {
+        // If we have an error already (from redirects or seed fetch failure), emit a
+        // CrawlEvent::Error so streaming consumers observe the failure, then return early.
+        if let Some(ref error_msg) = state.error {
+            if let Some(sender) = &tx {
+                let _ = sender
+                    .send(CrawlEvent::Error {
+                        url: final_url.clone(),
+                        error: error_msg.clone(),
+                    })
+                    .await;
+            }
             return Ok(state.into_result(final_url));
         }
 
