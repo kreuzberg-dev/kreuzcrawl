@@ -5,7 +5,7 @@
 	"input": {
 		"mock_responses": [
 			{
-				"path": "__BASE__/success1",
+				"path": "/success1",
 				"status_code": 200,
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
@@ -13,7 +13,7 @@
 				"body_inline": "<html><body><h1>Success 1</h1></body></html>"
 			},
 			{
-				"path": "__BASE__/success2",
+				"path": "/success2",
 				"status_code": 200,
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
@@ -21,7 +21,7 @@
 				"body_inline": "<html><body><h1>Success 2</h1></body></html>"
 			},
 			{
-				"path": "__BASE__/fail",
+				"path": "/fail",
 				"status_code": 500,
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
@@ -32,7 +32,7 @@
 		"config": {
 			"max_concurrent": 1
 		},
-		"urls": ["__BASE__/success1", "__BASE__/fail", "__BASE__/success2"]
+		"batch_urls": ["/success1", "/fail", "/success2"]
 	},
 	"assertions": [
 		{
