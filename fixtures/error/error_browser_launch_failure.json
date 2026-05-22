@@ -22,9 +22,9 @@
     ],
     "config": {
       "browser": {
-        "mode": "always"
-      },
-      "browser_launch_timeout_ms": 1
+        "mode": "always",
+        "timeout": 1
+      }
     }
   },
   "assertions": [

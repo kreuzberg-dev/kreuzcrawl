@@ -23,9 +23,9 @@
     ],
     "config": {
       "browser": {
-        "mode": "always"
-      },
-      "page_load_timeout_ms": 1
+        "mode": "always",
+        "timeout": 1
+      }
     }
   },
   "assertions": [
