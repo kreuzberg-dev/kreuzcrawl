@@ -1,6 +1,6 @@
 {
 	"id": "scrape_batch_progress",
-	"description": "Batch scrape results include specific URL",
+	"description": "Batch scrape of 2 URLs completes with 2 results",
 	"tags": ["batch"],
 	"input": {
 		"mock_responses": [
@@ -39,9 +39,9 @@
 			"value": 2
 		},
 		{
-			"type": "contains",
-			"field": "results",
-			"value": "/target"
+			"type": "equals",
+			"field": "completed_count",
+			"value": 2
 		}
 	]
 }

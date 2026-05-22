@@ -6,7 +6,11 @@
     "detection"
   ],
   "input": {
-    "config": {},
+    "config": {
+      "browser": {
+        "mode": "never"
+      }
+    },
     "mock_responses": [
       {
         "status_code": 200,

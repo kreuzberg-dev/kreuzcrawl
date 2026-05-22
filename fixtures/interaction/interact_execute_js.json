@@ -25,7 +25,7 @@
 		"actions": [
 			{
 				"type": "executeJs",
-				"script": "return document.title"
+				"script": "document.title"
 			}
 		]
 	},

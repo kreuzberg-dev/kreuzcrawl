@@ -5,7 +5,7 @@
 	"input": {
 		"mock_responses": [
 			{
-				"path": "/page1",
+				"path": "__BASE__/page1",
 				"status_code": 200,
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
@@ -13,7 +13,7 @@
 				"body_inline": "<html><body><h1>Page 1</h1></body></html>"
 			},
 			{
-				"path": "/page2",
+				"path": "__BASE__/page2",
 				"status_code": 200,
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
@@ -21,7 +21,7 @@
 				"body_inline": "<html><body><h1>Page 2</h1></body></html>"
 			},
 			{
-				"path": "/page3",
+				"path": "__BASE__/page3",
 				"status_code": 200,
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
@@ -32,11 +32,7 @@
 		"config": {
 			"max_concurrent": 2
 		},
-		"urls": [
-			"__BASE__/page1",
-			"__BASE__/page2",
-			"__BASE__/page3"
-		]
+		"urls": ["__BASE__/page1", "__BASE__/page2", "__BASE__/page3"]
 	},
 	"assertions": [
 		{

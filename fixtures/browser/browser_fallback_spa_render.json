@@ -14,7 +14,7 @@
 		],
 		"config": {
 			"browser": {
-				"mode": "auto"
+				"mode": "always"
 			}
 		}
 	},

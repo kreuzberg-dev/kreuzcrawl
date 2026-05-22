@@ -14,7 +14,7 @@
 				"headers": {
 					"content-type": "text/html; charset=utf-8"
 				},
-				"body_inline": "<html><head><title>Sequence Test</title></head><body><button id=\"open\">Open Form</button><input type=\"text\" id=\"field\" style=\"display:none\"><button id=\"submit\" style=\"display:none\">Submit</button></body></html>"
+				"body_inline": "<html><head><title>Sequence Test</title></head><body><button id=\"open\">Open Form</button><input type=\"text\" id=\"field\"><button id=\"submit\">Submit</button><script>document.getElementById('open').addEventListener('click',function(){document.getElementById('field').focus();});</script></body></html>"
 			}
 		],
 		"config": {
