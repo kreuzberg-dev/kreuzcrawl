@@ -65,6 +65,7 @@ async fn chromiumoxide_fetch(
 
         let result = page_fetch(url, config, &page, prior_cookies).await;
 
+        let _ = page.close().await;
         let _ = browser.close().await;
         let _ = browser.wait().await;
         drop(browser);

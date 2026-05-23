@@ -44,61 +44,67 @@ async fn run_with_browser(
         .await
         .map_err(|e| CrawlError::BrowserError(format!("failed to create page: {e}")))?;
 
-    prepare_page(&page, config).await?;
-    navigate_and_wait(&page, url, config).await?;
-    if let Some(ref script) = config.browser.eval_script {
-        evaluate_json(&page, script).await.map_err(|e| {
-            CrawlError::BrowserError(format!(
-                "post-navigation eval_script failed before interaction actions: {e}"
-            ))
-        })?;
-    }
+    let result = async {
+        prepare_page(&page, config).await?;
+        navigate_and_wait(&page, url, config).await?;
+        if let Some(ref script) = config.browser.eval_script {
+            evaluate_json(&page, script).await.map_err(|e| {
+                CrawlError::BrowserError(format!(
+                    "post-navigation eval_script failed before interaction actions: {e}"
+                ))
+            })?;
+        }
 
-    let mut action_results = Vec::with_capacity(actions.len());
-    let mut screenshot = None;
+        let mut action_results = Vec::with_capacity(actions.len());
+        let mut screenshot = None;
 
-    for (index, action) in actions.iter().enumerate() {
-        match execute_action(&page, action).await {
-            Ok(action_data) => {
-                if let Some(bytes) = action_data.screenshot {
-                    screenshot = Some(bytes);
+        for (index, action) in actions.iter().enumerate() {
+            match execute_action(&page, action).await {
+                Ok(action_data) => {
+                    if let Some(bytes) = action_data.screenshot {
+                        screenshot = Some(bytes);
+                    }
+                    action_results.push(ActionResult {
+                        action_index: index,
+                        action_type: action_type(action).into(),
+                        success: true,
+                        data: action_data.data,
+                        error: None,
+                    });
                 }
-                action_results.push(ActionResult {
-                    action_index: index,
-                    action_type: action_type(action).into(),
-                    success: true,
-                    data: action_data.data,
-                    error: None,
-                });
-            }
-            Err(error) => {
-                action_results.push(ActionResult {
-                    action_index: index,
-                    action_type: action_type(action).into(),
-                    success: false,
-                    data: None,
-                    error: Some(error.to_string()),
-                });
+                Err(error) => {
+                    action_results.push(ActionResult {
+                        action_index: index,
+                        action_type: action_type(action).into(),
+                        success: false,
+                        data: None,
+                        error: Some(error.to_string()),
+                    });
+                }
             }
         }
+
+        let final_html = page
+            .content()
+            .await
+            .map_err(|e| CrawlError::BrowserError(format!("failed to extract final HTML: {e}")))?;
+        let final_url = evaluate_json(&page, "location.href")
+            .await
+            .ok()
+            .and_then(|value| value.as_str().map(str::to_owned))
+            .unwrap_or_else(|| url.to_owned());
+
+        Ok(InteractionResult {
+            action_results,
+            final_html,
+            final_url,
+            screenshot,
+        })
     }
+    .await;
 
-    let final_html = page
-        .content()
-        .await
-        .map_err(|e| CrawlError::BrowserError(format!("failed to extract final HTML: {e}")))?;
-    let final_url = evaluate_json(&page, "location.href")
-        .await
-        .ok()
-        .and_then(|value| value.as_str().map(str::to_owned))
-        .unwrap_or_else(|| url.to_owned());
-
-    Ok(InteractionResult {
-        action_results,
-        final_html,
-        final_url,
-        screenshot,
-    })
+    let _ = page.close().await;
+    result
 }
 
 async fn prepare_page(page: &chromiumoxide::Page, config: &CrawlConfig) -> Result<(), CrawlError> {
