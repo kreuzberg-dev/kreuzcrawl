@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.17.33"
+alef_version = "0.17.35"
 languages = [
   "python",
   "node",
@@ -977,6 +977,10 @@ result_var = "result"
 async = true
 returns_result = true
 select_when = { input_has = "actions" }
+# Brew CLI cannot support interact: interaction requires serializing Vec<PageAction>
+# (complex discriminated enum) to a JSON CLI argument, which the current shell-based
+# e2e test generator does not support. See unsupported_in mechanism in alef-core.
+unsupported_in = { brew = "interact requires serializing Vec<PageAction> enums to JSON CLI arguments" }
 # InteractionResult top-level fields (per crates/kreuzcrawl/src/types/results.rs).
 # `screenshot` is `#[alef(skip)]` so omitted; `final_html` is included for parity
 # with assertions that may reference it. `scraped_data` / `action_results` /
@@ -1057,10 +1061,6 @@ proxy = "WasmProxyConfig"
 function = "interact"
 result_type = "InteractionResult"
 c_engine_factory = "CrawlConfig"
-
-[crates.e2e.calls.interact.overrides.brew]
-function = "interact"
-cli_args = ["--format", "json"]
 
 # Named call config for batch_crawl — auto-selected for fixtures in the
 # `batch` category whose id starts with `batch_crawl`. Alphabetical name
