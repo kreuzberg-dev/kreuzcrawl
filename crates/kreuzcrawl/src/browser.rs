@@ -261,6 +261,13 @@ async fn launch_or_connect(config: &CrawlConfig) -> Result<(Browser, Handler, Op
             .new_headless_mode()
             .user_data_dir(&user_data_dir)
             .disable_default_args();
+        // macOS 26 + Chrome 148+ trip Apple's fork-safety check on Chrome's
+        // internal helper-process forks. See browser_pool::launch_browser for
+        // the long-form rationale; same env-var pair applied here so both
+        // launch paths (one-shot vs. pooled) behave consistently.
+        builder = builder
+            .env("OBJC_DISABLE_INITIALIZE_FORK_SAFETY", "YES")
+            .env("OS_ACTIVITY_MODE", "disable");
         for arg in crate::browser_pool::safe_default_args() {
             builder = builder.arg(arg);
         }

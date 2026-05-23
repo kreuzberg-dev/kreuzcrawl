@@ -20,7 +20,7 @@ tasks:
   alef:install:
     desc: Install the alef CLI from the sibling repo (../alef) at HEAD
     cmds:
-      - cargo install --path ../alef/crates/alef-cli --locked
+      - cargo install --path ../alef --locked
 
   alef:regen:
     desc: Regenerate bindings, packages, READMEs, docs, and e2e tests against the installed alef

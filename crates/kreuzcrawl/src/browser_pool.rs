@@ -314,6 +314,17 @@ impl BrowserPool {
                 .new_headless_mode()
                 .user_data_dir(&user_data_dir)
                 .disable_default_args();
+            // macOS 26 + Chrome 148+ trip Apple's fork-safety check (libsystem_c
+            // detects a multi-threaded fork-then-exec and SIGTRAPs the child
+            // pre-exec, producing `*** multi-threaded process forked *** /
+            // crashed on child side of fork pre-exec`). Chrome forks
+            // internally to launch renderer/GPU/utility helpers; the launch
+            // path predates macOS 26's stricter runtime check. Silence the
+            // ObjC fork-safety abort so Chrome's helper subprocesses can
+            // exec(). Harmless on older macOS / Linux.
+            builder = builder
+                .env("OBJC_DISABLE_INITIALIZE_FORK_SAFETY", "YES")
+                .env("OS_ACTIVITY_MODE", "disable");
             for arg in safe_default_args() {
                 builder = builder.arg(arg);
             }

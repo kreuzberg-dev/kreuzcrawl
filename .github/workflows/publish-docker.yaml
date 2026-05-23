@@ -108,7 +108,7 @@ jobs:
           ref: ${{ needs.prepare.outputs.tag }}
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v4.1.0
+        uses: docker/login-action@v4.2.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -173,7 +173,7 @@ jobs:
 
       - name: Log in to GitHub Container Registry
         if: ${{ needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
-        uses: docker/login-action@v4.1.0
+        uses: docker/login-action@v4.2.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
