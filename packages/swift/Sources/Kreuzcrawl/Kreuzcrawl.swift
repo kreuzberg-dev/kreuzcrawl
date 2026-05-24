@@ -1765,8 +1765,9 @@ public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapR
 
 /// Execute browser actions on a single page.
 public func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) async throws -> InteractionResult {
+    let _rb_actions: RustVec<RustString> = try ({ () throws -> RustVec<RustString> in let v = RustVec<RustString>(); for item in actions { let data = try JSONEncoder().encode(item); let json = String(data: data, encoding: .utf8) ?? "null"; v.push(value: RustString(json)) }; return v }())
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.interact(engine, url, actions)
+        try RustBridge.interact(engine, RustString(url), _rb_actions)
     }.value
 }
 
