@@ -490,8 +490,8 @@ jobs:
 
   python-sdist:
     name: Build Python sdist
-    needs: [prepare, check-pypi]
-    if: ${{ needs.prepare.outputs.release_python == 'true' && (needs.check-pypi.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-pypi, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_python == 'true' && (needs.check-pypi.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.2
@@ -505,18 +505,10 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Build sdist via maturin
-        # Inline: maturin sdist is a one-liner; no shared action wraps it.
-        # maturin's -m flag requires a Cargo.toml. In kreuzcrawl the Python
-        # package (pyproject.toml) and the PyO3 crate (Cargo.toml) are in
-        # separate directories, so cd into packages/python/ to let maturin
-        # auto-discover pyproject.toml + follow its manifest-path setting.
-        shell: bash
-        run: |
-          python -m pip install --upgrade pip maturin
-          mkdir -p dist
-          cd packages/python
-          maturin sdist -o "$GITHUB_WORKSPACE/dist"
+      - uses: kreuzberg-dev/actions/build-python-sdist@v1
+        with:
+          package-dir: packages/python
+          output-dir: dist
 
       - uses: actions/upload-artifact@v7.0.1
         with:
@@ -619,8 +611,8 @@ jobs:
 
   ruby-gem:
     name: Build Ruby gem (${{ matrix.label }})
-    needs: [prepare, check-rubygems]
-    if: ${{ needs.prepare.outputs.release_ruby == 'true' && (needs.check-rubygems.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-rubygems, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_ruby == 'true' && (needs.check-rubygems.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     env:
@@ -672,8 +664,8 @@ jobs:
 
   php-extension:
     name: Build PHP extension (php${{ matrix.php }} ${{ matrix.platform.label }})
-    needs: [prepare, check-packagist]
-    if: ${{ needs.prepare.outputs.release_php == 'true' && (needs.check-packagist.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-packagist, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_php == 'true' && (needs.check-packagist.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ${{ matrix.platform.os }}
     timeout-minutes: 60
     strategy:
@@ -1154,8 +1146,8 @@ jobs:
 
   elixir-natives:
     name: Build Elixir NIF (${{ matrix.label }} nif-${{ matrix.nif }})
-    needs: [prepare, check-elixir-release]
-    if: ${{ needs.prepare.outputs.release_elixir == 'true' && (needs.check-elixir-release.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-elixir-release, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_elixir == 'true' && (needs.check-elixir-release.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     strategy:
@@ -1207,8 +1199,8 @@ jobs:
 
   elixir-natives-musl:
     name: Build Elixir NIF (linux-musl-${{ matrix.arch }} nif-${{ matrix.nif }})
-    needs: [prepare, check-elixir-release]
-    if: ${{ needs.prepare.outputs.release_elixir == 'true' && (needs.check-elixir-release.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-elixir-release, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_elixir == 'true' && (needs.check-elixir-release.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     strategy:
