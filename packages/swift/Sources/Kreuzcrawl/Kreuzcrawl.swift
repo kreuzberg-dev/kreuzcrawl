@@ -1302,6 +1302,51 @@ public enum AuthConfig: Codable, Sendable, Hashable {
     case bearer(token: String)
     /// Custom authentication header.
     case header(name: String, value: String)
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case name
+        case password
+        case token
+        case username
+        case value
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+        switch type {
+        case "basic":
+            self = .basic(username: try container.decode(String.self, forKey: .username), password: try container.decode(String.self, forKey: .password))
+        case "bearer":
+            self = .bearer(token: try container.decode(String.self, forKey: .token))
+        case "header":
+            self = .header(name: try container.decode(String.self, forKey: .name), value: try container.decode(String.self, forKey: .value))
+        default:
+            throw DecodingError.dataCorruptedError(
+                forKey: .type,
+                in: container,
+                debugDescription: "Unknown AuthConfig type: \(type)"
+            )
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .basic(let username, let password):
+            try container.encode("basic", forKey: .type)
+            try container.encode(username, forKey: .username)
+            try container.encode(password, forKey: .password)
+        case .bearer(let token):
+            try container.encode("bearer", forKey: .type)
+            try container.encode(token, forKey: .token)
+        case .header(let name, let value):
+            try container.encode("header", forKey: .type)
+            try container.encode(name, forKey: .name)
+            try container.encode(value, forKey: .value)
+        }
+    }
 }
 extension AuthConfig {
     func intoRust() throws -> RustBridge.AuthConfig {
@@ -1434,6 +1479,80 @@ public enum PageAction: Codable, Sendable, Hashable {
     case executeJs(script: String)
     /// Scrape the current page HTML.
     case scrape
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case amount
+        case direction
+        case fullPage
+        case key
+        case milliseconds
+        case script
+        case selector
+        case text
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+        switch type {
+        case "click":
+            self = .click(selector: try container.decode(String.self, forKey: .selector))
+        case "type":
+            self = .typeText(selector: try container.decode(String.self, forKey: .selector), text: try container.decode(String.self, forKey: .text))
+        case "press":
+            self = .press(key: try container.decode(String.self, forKey: .key))
+        case "scroll":
+            self = .scroll(direction: try container.decode(ScrollDirection.self, forKey: .direction), selector: try container.decodeIfPresent(String.self, forKey: .selector), amount: try container.decodeIfPresent(Int64.self, forKey: .amount))
+        case "wait":
+            self = .wait(milliseconds: try container.decodeIfPresent(Int64.self, forKey: .milliseconds), selector: try container.decodeIfPresent(String.self, forKey: .selector))
+        case "screenshot":
+            self = .screenshot(fullPage: try container.decodeIfPresent(Bool.self, forKey: .fullPage))
+        case "executeJs":
+            self = .executeJs(script: try container.decode(String.self, forKey: .script))
+        case "scrape":
+            self = .scrape
+        default:
+            throw DecodingError.dataCorruptedError(
+                forKey: .type,
+                in: container,
+                debugDescription: "Unknown PageAction type: \(type)"
+            )
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .click(let selector):
+            try container.encode("click", forKey: .type)
+            try container.encode(selector, forKey: .selector)
+        case .typeText(let selector, let text):
+            try container.encode("type", forKey: .type)
+            try container.encode(selector, forKey: .selector)
+            try container.encode(text, forKey: .text)
+        case .press(let key):
+            try container.encode("press", forKey: .type)
+            try container.encode(key, forKey: .key)
+        case .scroll(let direction, let selector, let amount):
+            try container.encode("scroll", forKey: .type)
+            try container.encode(direction, forKey: .direction)
+            try container.encodeIfPresent(selector, forKey: .selector)
+            try container.encodeIfPresent(amount, forKey: .amount)
+        case .wait(let milliseconds, let selector):
+            try container.encode("wait", forKey: .type)
+            try container.encodeIfPresent(milliseconds, forKey: .milliseconds)
+            try container.encodeIfPresent(selector, forKey: .selector)
+        case .screenshot(let fullPage):
+            try container.encode("screenshot", forKey: .type)
+            try container.encodeIfPresent(fullPage, forKey: .fullPage)
+        case .executeJs(let script):
+            try container.encode("executeJs", forKey: .type)
+            try container.encode(script, forKey: .script)
+        case .scrape:
+            try container.encode("scrape", forKey: .type)
+        }
+    }
 }
 extension PageAction {
     func intoRust() throws -> RustBridge.PageAction {
