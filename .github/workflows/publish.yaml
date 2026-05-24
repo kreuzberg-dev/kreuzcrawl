@@ -1968,7 +1968,11 @@ jobs:
           - { os: ubuntu-latest, bottle_tag: x86_64_linux }
           - { os: ubuntu-24.04-arm, bottle_tag: arm64_linux }
     steps:
-      - uses: actions/checkout@v6.0.2
+      # actions/checkout@v6 regression on macos-15-intel: the includeIf-gated
+      # credential helper isn't honored by git 2.54 on that runner image, so
+      # the fetch falls back to interactive auth and fails. v5 writes the
+      # extraheader directly into .git/config and works on every runner.
+      - uses: actions/checkout@v5
         with:
           ref: ${{ needs.prepare.outputs.checkout_ref }}
           fetch-depth: 0
