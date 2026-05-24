@@ -16,8 +16,8 @@ crate-type = ["cdylib"]
 [dependencies]
 futures = "0.3"
 kreuzcrawl = { version = "0.3.0-rc.23", path = "../../../../../crates/kreuzcrawl", features = [
-    "interact",
-    "browser-chromiumoxide",
+  "interact",
+  "browser-chromiumoxide",
 ] }
 magnus = "0.8"
 serde = { version = "1", features = ["derive"] }

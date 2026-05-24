@@ -22,8 +22,8 @@ crate-type = ["cdylib"]
 [dependencies]
 futures-util = "0.3"
 kreuzcrawl = { version = "0.3.0-rc.23", path = "../kreuzcrawl", features = [
-    "interact",
-    "browser-chromiumoxide",
+  "interact",
+  "browser-chromiumoxide",
 ] }
 napi = { version = "3", features = ["async", "serde-json"] }
 napi-derive = "3"
