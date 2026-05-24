@@ -1,7 +1,11 @@
 {
 	"id": "rate_limit_per_domain",
 	"description": "Per-domain rate limiting applies delay between requests to same domain",
-	"tags": ["rate_limit", "per_domain"],
+	"tags": [
+		"rate_limit",
+		"per_domain",
+		"crawl"
+	],
 	"input": {
 		"mock_responses": [
 			{
@@ -43,7 +47,7 @@
 		},
 		{
 			"type": "equals",
-			"field": "status_code",
+			"field": "pages[0].status_code",
 			"value": 200
 		}
 	]

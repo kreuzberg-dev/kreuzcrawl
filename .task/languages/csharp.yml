@@ -129,15 +129,15 @@ tasks:
   e2e:generate:
     desc: Generate and format C# E2E tests from fixtures
     cmds:
-      - cargo run -p kreuzcrawl-e2e-generator -- generate --lang csharp --fixtures fixtures --output e2e
+      - alef e2e generate --lang csharp
       - task: e2e:format
 
   e2e:format:
     desc: Format C# E2E code
     cmds:
-      - cmd: bash -c "cd e2e/csharp && dotnet format Kreuzcrawl.E2E.csproj"
+      - cmd: bash -c "cd e2e/csharp && dotnet format Kreuzcrawl.E2eTests.csproj"
         platforms: [linux, darwin]
-      - cmd: cd e2e/csharp && dotnet format Kreuzcrawl.E2E.csproj
+      - cmd: cd e2e/csharp && dotnet format Kreuzcrawl.E2eTests.csproj
         platforms: [windows]
 
   e2e:lint:
@@ -155,7 +155,7 @@ tasks:
     cmds:
       - cmd: bash scripts/e2e/csharp/test.sh
         platforms: [linux, darwin]
-      - cmd: cd e2e/csharp && dotnet test Kreuzcrawl.E2E.csproj -c Release
+      - cmd: cd e2e/csharp && dotnet test Kreuzcrawl.E2eTests.csproj -c Release
         platforms: [windows]
 
   e2e:verify:

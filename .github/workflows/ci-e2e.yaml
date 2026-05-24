@@ -231,7 +231,7 @@ jobs:
 
       - name: Setup Ruby
         if: matrix.ruby-version
-        uses: ruby/setup-ruby@v1.307.0
+        uses: ruby/setup-ruby@v1.310.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
@@ -292,7 +292,9 @@ jobs:
         uses: kreuzberg-dev/actions/setup-wasm-pack@v1
 
       - name: Setup Chrome
-        if: matrix.lang == 'brew'
+        # Every binding has browser-using fixtures (chromiumoxide fallback,
+        # interact, etc.), so chromium has to be on PATH for the whole matrix
+        # — not only the brew formula test.
         uses: kreuzberg-dev/actions/setup-chrome@v1
 
       - name: Setup library paths for FFI bindings

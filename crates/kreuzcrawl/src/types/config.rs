@@ -48,6 +48,17 @@ pub enum BrowserWait {
     Fixed,
 }
 
+/// Browser backend used for JavaScript rendering.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum BrowserBackend {
+    /// Existing Chromium/CDP backend powered by chromiumoxide.
+    #[default]
+    Chromiumoxide,
+    /// Kreuzcrawl-owned native browser backend derived from Obscura.
+    Native,
+}
+
 pub(crate) mod duration_ms {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use std::time::Duration;
@@ -94,13 +105,26 @@ pub struct ProxyConfig {
 pub enum AuthConfig {
     /// HTTP Basic authentication.
     #[serde(rename = "basic")]
-    Basic { username: String, password: String },
+    Basic {
+        /// Username sent in the `Authorization: Basic` header.
+        username: String,
+        /// Password sent in the `Authorization: Basic` header.
+        password: String,
+    },
     /// Bearer token authentication.
     #[serde(rename = "bearer")]
-    Bearer { token: String },
+    Bearer {
+        /// Token sent in the `Authorization: Bearer` header.
+        token: String,
+    },
     /// Custom authentication header.
     #[serde(rename = "header")]
-    Header { name: String, value: String },
+    Header {
+        /// HTTP header name to set on each request.
+        name: String,
+        /// HTTP header value to send.
+        value: String,
+    },
 }
 
 impl Default for AuthConfig {
@@ -185,6 +209,8 @@ impl Default for ContentConfig {
 pub struct BrowserConfig {
     /// When to use the headless browser fallback.
     pub mode: BrowserMode,
+    /// Browser backend used to render JavaScript-heavy pages.
+    pub backend: BrowserBackend,
     /// CDP WebSocket endpoint for connecting to an external browser instance.
     pub endpoint: Option<String>,
     /// Timeout for browser page load and rendering (in milliseconds when serialized).
@@ -197,17 +223,53 @@ pub struct BrowserConfig {
     /// Extra time to wait after the wait condition is met.
     #[serde(default, with = "option_duration_ms")]
     pub extra_wait: Option<Duration>,
+    /// Enable browser-realistic TLS fingerprint via the stealth HTTP client.
+    /// Only honored by `BrowserBackend::Native` — chromiumoxide is already
+    /// full-stealth via Chrome's TLS stack.
+    #[serde(default)]
+    pub stealth: bool,
+    /// Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set.
+    /// Native backend supports http/https only (no SOCKS5).
+    #[serde(default)]
+    pub proxy: Option<ProxyConfig>,
+    /// URL patterns to block before the network request fires. Supports `*`
+    /// wildcards. Useful for skipping ads/analytics/large images. Honored by
+    /// `BrowserBackend::Native`; chromiumoxide ignores this field today.
+    #[serde(default)]
+    pub block_url_patterns: Vec<String>,
+    /// JavaScript snippet evaluated after navigation completes.
+    ///
+    /// Scraping captures the native backend result in `ScrapeResult.browser.eval_result`.
+    /// Interactions run this script before page actions on both browser backends but do
+    /// not include the script result in `InteractionResult`.
+    #[serde(default)]
+    pub eval_script: Option<String>,
+    /// User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent`
+    /// (or kreuzcrawl's default) if unset. Native only.
+    #[serde(default)]
+    pub robots_user_agent: Option<String>,
+    /// Capture the full network event stream into the result. Default false
+    /// (only the document event is captured). Native only.
+    #[serde(default)]
+    pub capture_network_events: bool,
 }
 
 impl Default for BrowserConfig {
     fn default() -> Self {
         Self {
             mode: BrowserMode::Auto,
+            backend: BrowserBackend::Chromiumoxide,
             endpoint: None,
             timeout: Duration::from_secs(30),
             wait: BrowserWait::default(),
             wait_selector: None,
             extra_wait: None,
+            stealth: false,
+            proxy: None,
+            block_url_patterns: Vec::new(),
+            eval_script: None,
+            robots_user_agent: None,
+            capture_network_events: false,
         }
     }
 }
@@ -444,6 +506,11 @@ impl CrawlConfig {
                 "browser.endpoint must start with ws:// or wss://, got: {endpoint:?}"
             )));
         }
+        if self.browser.backend == BrowserBackend::Native && self.browser.endpoint.is_some() {
+            return Err(CrawlError::InvalidConfig(
+                "browser.endpoint is only supported by the chromiumoxide backend".into(),
+            ));
+        }
         Ok(())
     }
 }
@@ -500,5 +567,25 @@ mod tests {
             ..Default::default()
         };
         assert!(config.validate().is_ok());
+    }
+
+    #[test]
+    fn browser_backend_defaults_to_chromiumoxide() {
+        assert_eq!(BrowserConfig::default().backend, BrowserBackend::Chromiumoxide);
+    }
+
+    #[test]
+    fn validate_rejects_native_endpoint() {
+        let config = CrawlConfig {
+            browser: BrowserConfig {
+                backend: BrowserBackend::Native,
+                endpoint: Some("ws://localhost:9222".into()),
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+        let err = config.validate().unwrap_err();
+        let msg = err.to_string();
+        assert!(msg.contains("chromiumoxide"), "unexpected error: {msg}");
     }
 }

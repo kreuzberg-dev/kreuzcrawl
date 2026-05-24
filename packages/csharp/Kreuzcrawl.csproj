@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Kreuzcrawl</RootNamespace>
     <PackageId>Kreuzcrawl</PackageId>
-    <Version>0.3.0-rc.20</Version>
+    <Version>0.3.0-rc.27</Version>
     <Description>High-performance web crawling engine</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/kreuzberg-dev/kreuzcrawl</RepositoryUrl>
@@ -11,6 +11,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Kreuzcrawl/obj/**;Kreuzcrawl/bin/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>

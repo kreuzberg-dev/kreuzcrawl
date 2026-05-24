@@ -1,6 +1,9 @@
 # kreuzcrawl
 
 <div align="center" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 20px 0;">
+  <a href="https://github.com/kreuzberg-dev/alef">
+    <img src="https://img.shields.io/badge/Bindings-alef%20%D7%90-007ec6" alt="Bindings">
+  </a>
   <!-- Language Bindings -->
   <a href="https://crates.io/crates/kreuzcrawl">
     <img src="https://img.shields.io/crates/v/kreuzcrawl?label=Rust&color=007ec6" alt="Rust">
@@ -18,7 +21,7 @@
     <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.kreuzcrawl/kreuzcrawl?label=Java&color=007ec6" alt="Java">
   </a>
   <a href="https://pkg.go.dev/github.com/kreuzberg-dev/kreuzcrawl/packages/go">
-    <img src="https://img.shields.io/github/v/tag/kreuzberg-dev/kreuzcrawl?label=Go&color=007ec6&filter=v0.3.0-rc.20" alt="Go">
+    <img src="https://img.shields.io/github/v/tag/kreuzberg-dev/kreuzcrawl?label=Go&color=007ec6" alt="Go">
   </a>
   <a href="https://www.nuget.org/packages/Kreuzcrawl/">
     <img src="https://img.shields.io/nuget/v/Kreuzcrawl?label=C%23&color=007ec6" alt="C#">
@@ -32,24 +35,43 @@
   <a href="https://hex.pm/packages/kreuzcrawl">
     <img src="https://img.shields.io/hexpm/v/kreuzcrawl?label=Elixir&color=007ec6" alt="Elixir">
   </a>
+  <a href="https://pub.dev/packages/kreuzcrawl">
+    <img src="https://img.shields.io/pub/v/kreuzcrawl?label=Dart&color=007ec6" alt="Dart">
+  </a>
+  <a href="https://central.sonatype.com/artifact/dev.kreuzberg.kreuzcrawl.android/kreuzcrawl-android">
+    <img src="https://img.shields.io/maven-central/v/dev.kreuzberg.kreuzcrawl.android/kreuzcrawl-android?label=Kotlin&color=007ec6" alt="Kotlin">
+  </a>
+  <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/swift">
+    <img src="https://img.shields.io/badge/Swift-SPM-007ec6" alt="Swift">
+  </a>
+  <a href="https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/zig">
+    <img src="https://img.shields.io/badge/Zig-package-007ec6" alt="Zig">
+  </a>
   <a href="https://github.com/kreuzberg-dev/kreuzcrawl/releases">
-    <img src="https://img.shields.io/badge/C-FFI-007ec6" alt="C">
+    <img src="https://img.shields.io/badge/C-FFI-007ec6" alt="C FFI">
+  </a>
+  <a href="https://github.com/kreuzberg-dev/kreuzcrawl/pkgs/container/kreuzcrawl">
+    <img src="https://img.shields.io/badge/Docker-ghcr.io-007ec6?logo=docker&logoColor=white" alt="Docker">
   </a>
 
   <!-- Project Info -->
-  <a href="https://docs.kreuzcrawl.kreuzberg.dev">
-    <img src="https://img.shields.io/badge/Docs-kreuzcrawl.dev-007ec6" alt="Documentation">
-  </a>
   <a href="https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-Elastic--2.0-blue.svg" alt="License">
+    <img src="https://img.shields.io/badge/License-Elastic--2.0-007ec6" alt="License">
+  </a>
+  <a href="https://docs.kreuzcrawl.kreuzberg.dev">
+    <img src="https://img.shields.io/badge/Docs-kreuzcrawl-007ec6" alt="Documentation">
   </a>
 </div>
 
-<img width="3384" height="573" alt="Kreuzcrawl" src="https://github.com/user-attachments/assets/1b6c6ad7-3b6d-4171-b1c9-f2026cc9deb8" />
+<div align="center" style="margin: 24px 0 0;">
+  <a href="https://kreuzberg.dev">
+    <img alt="Kreuzcrawl" src="https://raw.githubusercontent.com/kreuzberg-dev/kreuzcrawl/main/docs/assets/docs_top_banner.svg" />
+  </a>
+</div>
 
-<div align="center" style="margin-top: 20px;">
+<div align="center" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 28px 0 24px;">
   <a href="https://discord.gg/xt9WY3GnKR">
-      <img height="22" src="https://img.shields.io/badge/Discord-Join%20our%20community-7289da?logo=discord&logoColor=white" alt="Discord">
+    <img height="22" src="https://img.shields.io/badge/Discord-Chat-007ec6?logo=discord&logoColor=white" alt="Join Discord">
   </a>
 </div>
 
@@ -57,15 +79,55 @@ Android (AAR) bindings for **kreuzcrawl** — a high-performance Rust web crawli
 JNI-based with bundled per-ABI native libraries and a coroutine-friendly Kotlin facade.
 JVM consumers should use the canonical `dev.kreuzberg.kreuzcrawl:kreuzcrawl-java` artifact directly.
 
+## What This Package Provides
+
+- **Same crawler as every binding** — one Rust engine behind Python, Node.js, Ruby, Go, Java, .NET, PHP, Elixir, Dart, Kotlin Android, Swift, Zig, WASM, and C FFI.
+- **Structured scrape output** — HTML, Markdown, metadata, links, assets, response headers, and extraction warnings with consistent field names.
+- **Crawl controls** — depth, page limits, concurrency, URL filters, robots/sitemap handling, rate limits, and partial failure reporting.
+- **Rendering path** — optional browser rendering for JavaScript-heavy pages; direct HTTP path for fast static pages.
+- **Android AAR** — JNI-backed Android package with bundled native libraries.
+
 ## Installation
 
 ```bash
-implementation("dev.kreuzberg.kreuzcrawl:kreuzcrawl-android:0.3.0-rc.20")
+implementation("dev.kreuzberg.kreuzcrawl:kreuzcrawl-android:0.3.0-rc.27")
+
 ```
 
 ## Quick Start
 
-<!-- snippet not found: getting-started/basic_usage.md -->
+```kotlin title="Kotlin (Android)"
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import dev.kreuzberg.kreuzcrawl.android.CrawlConfig
+import dev.kreuzberg.kreuzcrawl.android.Kreuzcrawl
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    // Simplest case: scrape a single page with default settings.
+    val engine = Kreuzcrawl.createEngine()
+    val result = Kreuzcrawl.scrapeAsync(engine, "https://example.com/")
+    println("Title: ${result.metadata.title}")
+    println("Status: ${result.statusCode}")
+    println("Links found: ${result.links.size}")
+
+    // Crawl from a seed URL, limited to one hop and a handful of pages.
+    val mapper = ObjectMapper()
+        .registerKotlinModule()
+        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+    val config = mapper.readValue(
+        "{\"max_depth\":1,\"max_pages\":5}",
+        CrawlConfig::class.java,
+    )
+    val crawlEngine = Kreuzcrawl.createEngine(config)
+    val crawlResult = Kreuzcrawl.crawlAsync(
+        crawlEngine,
+        "https://en.wikipedia.org/wiki/Web_scraping",
+    )
+    println("Pages crawled: ${crawlResult.pages.size}")
+}
+```
 
 ## API Reference
 
@@ -86,7 +148,7 @@ Contributions are welcome! Please see our [Contributing Guide](https://github.co
 
 ## Part of Kreuzberg.dev
 
-- [Kreuzberg](https://github.com/kreuzberg-dev/kreuzberg) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
+- [Kreuzberg](https://github.com/kreuzberg-dev/kreuzberg) — document intelligence: text, tables, metadata from 90+ formats with optional OCR.
 - [Kreuzberg Cloud](https://github.com/kreuzberg-dev/kreuzberg-cloud) — managed extraction API with SDKs, dashboards, and observability.
 - [html-to-markdown](https://github.com/kreuzberg-dev/html-to-markdown) — fast, lossless HTML→Markdown engine.
 - [liter-llm](https://github.com/kreuzberg-dev/liter-llm) — universal LLM API client with native bindings for 14 languages and 143 providers.
@@ -103,4 +165,4 @@ This project is licensed under [Elastic License 2.0](https://github.com/kreuzber
 - [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
 - [GitHub Repository](https://github.com/kreuzberg-dev/kreuzcrawl)
 - [Issue Tracker](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
-- [Discussions](https://github.com/kreuzberg-dev/kreuzcrawl/discussions)
+- [Issues](https://github.com/kreuzberg-dev/kreuzcrawl/issues)

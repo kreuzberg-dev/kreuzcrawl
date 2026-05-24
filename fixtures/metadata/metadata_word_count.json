@@ -24,12 +24,12 @@
     },
     {
       "type": "greater_than",
-      "field": "computed.word_count",
+      "field": "metadata.word_count",
       "value": 99
     },
     {
       "type": "less_than",
-      "field": "computed.word_count",
+      "field": "metadata.word_count",
       "value": 301
     }
   ]

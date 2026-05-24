@@ -8,39 +8,68 @@ All types defined by the library, grouped by category. Types are shown using Rus
 
 ### Result Types
 
+#### InteractionResult
+
+Result of executing a sequence of page interaction actions.
+
+| Field            | Type                | Default              | Description                                          |
+| ---------------- | ------------------- | -------------------- | ---------------------------------------------------- |
+| `action_results` | `Vec<ActionResult>` | `vec![]`             | Results from each executed action.                   |
+| `final_html`     | `String`            | —                    | Final page HTML after all actions completed.         |
+| `final_url`      | `String`            | —                    | Final page URL (may have changed due to navigation). |
+| `screenshot`     | `Option<Vec<u8>>`   | `Default::default()` | Screenshot taken after all actions, if requested.    |
+
+---
+
+#### ActionResult
+
+Result from a single page action execution.
+
+| Field          | Type                        | Default              | Description                                                                    |
+| -------------- | --------------------------- | -------------------- | ------------------------------------------------------------------------------ |
+| `action_index` | `usize`                     | —                    | Zero-based index of the action in the sequence.                                |
+| `action_type`  | `String`                    | —                    | The type of action that was executed.                                          |
+| `success`      | `bool`                      | —                    | Whether the action completed successfully.                                     |
+| `data`         | `Option<serde_json::Value>` | `Default::default()` | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
+| `error`        | `Option<String>`            | `Default::default()` | Error message if the action failed.                                            |
+
+---
+
 #### ScrapeResult
 
 The result of a single-page scrape operation.
 
-| Field                 | Type                         | Default              | Description                                                                                            |
-| --------------------- | ---------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------ |
-| `status_code`         | `u16`                        | —                    | The HTTP status code of the response.                                                                  |
-| `content_type`        | `String`                     | —                    | The Content-Type header value.                                                                         |
-| `html`                | `String`                     | —                    | The HTML body of the response.                                                                         |
-| `body_size`           | `usize`                      | —                    | The size of the response body in bytes.                                                                |
-| `metadata`            | `PageMetadata`               | —                    | Extracted metadata from the page.                                                                      |
-| `links`               | `Vec<LinkInfo>`              | `vec![]`             | Links found on the page.                                                                               |
-| `images`              | `Vec<ImageInfo>`             | `vec![]`             | Images found on the page.                                                                              |
-| `feeds`               | `Vec<FeedInfo>`              | `vec![]`             | Feed links found on the page.                                                                          |
-| `json_ld`             | `Vec<JsonLdEntry>`           | `vec![]`             | JSON-LD entries found on the page.                                                                     |
-| `is_allowed`          | `bool`                       | —                    | Whether the URL is allowed by robots.txt.                                                              |
-| `crawl_delay`         | `Option<u64>`                | `Default::default()` | The crawl delay from robots.txt, in seconds.                                                           |
-| `noindex_detected`    | `bool`                       | —                    | Whether a noindex directive was detected.                                                              |
-| `nofollow_detected`   | `bool`                       | —                    | Whether a nofollow directive was detected.                                                             |
-| `x_robots_tag`        | `Option<String>`             | `Default::default()` | The X-Robots-Tag header value, if present.                                                             |
-| `is_pdf`              | `bool`                       | —                    | Whether the content is a PDF.                                                                          |
-| `was_skipped`         | `bool`                       | —                    | Whether the page was skipped (binary or PDF content).                                                  |
-| `detected_charset`    | `Option<String>`             | `Default::default()` | The detected character set encoding.                                                                   |
-| `auth_header_sent`    | `bool`                       | —                    | Whether an authentication header was sent with the request.                                            |
-| `response_meta`       | `Option<ResponseMeta>`       | `Default::default()` | Response metadata extracted from HTTP headers.                                                         |
-| `assets`              | `Vec<DownloadedAsset>`       | `vec![]`             | Downloaded assets from the page.                                                                       |
-| `js_render_hint`      | `bool`                       | —                    | Whether the page content suggests JavaScript rendering is needed.                                      |
-| `browser_used`        | `bool`                       | —                    | Whether the browser fallback was used to fetch this page.                                              |
-| `markdown`            | `Option<MarkdownResult>`     | `Default::default()` | Markdown conversion of the page content.                                                               |
-| `extracted_data`      | `Option<serde_json::Value>`  | `Default::default()` | Structured data extracted by LLM. Populated when extraction is configured.                             |
-| `extraction_meta`     | `Option<ExtractionMeta>`     | `Default::default()` | Metadata about the LLM extraction pass (cost, tokens, model).                                          |
-| `screenshot`          | `Option<Vec<u8>>`            | `Default::default()` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
-| `downloaded_document` | `Option<DownloadedDocument>` | `Default::default()` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).                                           |
+| Field                 | Type                         | Default              | Description                                                                                                                            |
+| --------------------- | ---------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `status_code`         | `u16`                        | —                    | The HTTP status code of the response.                                                                                                  |
+| `final_url`           | `String`                     | —                    | The final URL after following all redirects.                                                                                           |
+| `content_type`        | `String`                     | —                    | The Content-Type header value.                                                                                                         |
+| `html`                | `String`                     | —                    | The HTML body of the response.                                                                                                         |
+| `body_size`           | `usize`                      | —                    | The size of the response body in bytes.                                                                                                |
+| `metadata`            | `PageMetadata`               | —                    | Extracted metadata from the page.                                                                                                      |
+| `links`               | `Vec<LinkInfo>`              | `vec![]`             | Links found on the page.                                                                                                               |
+| `images`              | `Vec<ImageInfo>`             | `vec![]`             | Images found on the page.                                                                                                              |
+| `feeds`               | `Vec<FeedInfo>`              | `vec![]`             | Feed links found on the page.                                                                                                          |
+| `json_ld`             | `Vec<JsonLdEntry>`           | `vec![]`             | JSON-LD entries found on the page.                                                                                                     |
+| `is_allowed`          | `bool`                       | —                    | Whether the URL is allowed by robots.txt.                                                                                              |
+| `crawl_delay`         | `Option<u64>`                | `Default::default()` | The crawl delay from robots.txt, in seconds.                                                                                           |
+| `noindex_detected`    | `bool`                       | —                    | Whether a noindex directive was detected.                                                                                              |
+| `nofollow_detected`   | `bool`                       | —                    | Whether a nofollow directive was detected.                                                                                             |
+| `x_robots_tag`        | `Option<String>`             | `Default::default()` | The X-Robots-Tag header value, if present.                                                                                             |
+| `is_pdf`              | `bool`                       | —                    | Whether the content is a PDF.                                                                                                          |
+| `was_skipped`         | `bool`                       | —                    | Whether the page was skipped (binary or PDF content).                                                                                  |
+| `detected_charset`    | `Option<String>`             | `Default::default()` | The detected character set encoding.                                                                                                   |
+| `auth_header_sent`    | `bool`                       | —                    | Whether an authentication header was sent with the request.                                                                            |
+| `response_meta`       | `Option<ResponseMeta>`       | `Default::default()` | Response metadata extracted from HTTP headers.                                                                                         |
+| `assets`              | `Vec<DownloadedAsset>`       | `vec![]`             | Downloaded assets from the page.                                                                                                       |
+| `js_render_hint`      | `bool`                       | —                    | Whether the page content suggests JavaScript rendering is needed.                                                                      |
+| `browser_used`        | `bool`                       | —                    | Whether the browser fallback was used to fetch this page.                                                                              |
+| `markdown`            | `Option<MarkdownResult>`     | `Default::default()` | Markdown conversion of the page content.                                                                                               |
+| `extracted_data`      | `Option<serde_json::Value>`  | `Default::default()` | Structured data extracted by LLM. Populated when extraction is configured.                                                             |
+| `extraction_meta`     | `Option<ExtractionMeta>`     | `Default::default()` | Metadata about the LLM extraction pass (cost, tokens, model).                                                                          |
+| `screenshot`          | `Option<Vec<u8>>`            | `Default::default()` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.                                 |
+| `downloaded_document` | `Option<DownloadedDocument>` | `Default::default()` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).                                                                           |
+| `browser`             | `Option<BrowserExtras>`      | `Default::default()` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 ---
 
@@ -70,6 +99,7 @@ The result of crawling a single page during a crawl operation.
 | `extracted_data`      | `Option<serde_json::Value>`  | `Default::default()` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta`     | `Option<ExtractionMeta>`     | `Default::default()` | Metadata about the LLM extraction pass (cost, tokens, model).              |
 | `downloaded_document` | `Option<DownloadedDocument>` | `Default::default()` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).               |
+| `browser_used`        | `bool`                       | —                    | Whether the browser fallback was used to fetch this page.                  |
 
 ---
 
@@ -77,15 +107,17 @@ The result of crawling a single page during a crawl operation.
 
 The result of a multi-page crawl operation.
 
-| Field             | Type                   | Default              | Description                                                               |
-| ----------------- | ---------------------- | -------------------- | ------------------------------------------------------------------------- |
-| `pages`           | `Vec<CrawlPageResult>` | `vec![]`             | The list of crawled pages.                                                |
-| `final_url`       | `String`               | —                    | The final URL after following redirects.                                  |
-| `redirect_count`  | `usize`                | —                    | The number of redirects followed.                                         |
-| `was_skipped`     | `bool`                 | —                    | Whether any page was skipped during crawling.                             |
-| `error`           | `Option<String>`       | `Default::default()` | An error message, if the crawl encountered an issue.                      |
-| `cookies`         | `Vec<CookieInfo>`      | `vec![]`             | Cookies collected during the crawl.                                       |
-| `normalized_urls` | `Vec<String>`          | `vec![]`             | Normalized URLs encountered during crawling (for deduplication counting). |
+| Field              | Type                   | Default              | Description                                                               |
+| ------------------ | ---------------------- | -------------------- | ------------------------------------------------------------------------- |
+| `pages`            | `Vec<CrawlPageResult>` | `vec![]`             | The list of crawled pages.                                                |
+| `final_url`        | `String`               | —                    | The final URL after following redirects.                                  |
+| `redirect_count`   | `usize`                | —                    | The number of redirects followed.                                         |
+| `was_skipped`      | `bool`                 | —                    | Whether any page was skipped during crawling.                             |
+| `error`            | `Option<String>`       | `Default::default()` | An error message, if the crawl encountered an issue.                      |
+| `cookies`          | `Vec<CookieInfo>`      | `vec![]`             | Cookies collected during the crawl.                                       |
+| `stayed_on_domain` | `bool`                 | —                    | Whether all crawled pages stayed on the same domain as the start URL.     |
+| `browser_used`     | `bool`                 | —                    | Whether the browser fallback was used for any page in this crawl.         |
+| `normalized_urls`  | `Vec<String>`          | `vec![]`             | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ---
 
@@ -103,14 +135,14 @@ The result of a map operation, containing discovered URLs.
 
 Rich markdown conversion result from HTML processing.
 
-| Field                | Type                        | Default              | Description                                              |
-| -------------------- | --------------------------- | -------------------- | -------------------------------------------------------- |
-| `content`            | `String`                    | —                    | Converted markdown text.                                 |
-| `document_structure` | `Option<serde_json::Value>` | `Default::default()` | Structured document tree with semantic nodes.            |
-| `tables`             | `Vec<serde_json::Value>`    | `vec![]`             | Extracted tables with structured cell data.              |
-| `warnings`           | `Vec<String>`               | `vec![]`             | Non-fatal processing warnings.                           |
-| `citations`          | `Option<CitationResult>`    | `Default::default()` | Content with links replaced by numbered citations.       |
-| `fit_content`        | `Option<String>`            | `Default::default()` | Content-filtered markdown optimized for LLM consumption. |
+| Field                | Type                        | Default              | Description                                                                                                                                                                                                                                                                                                                                  |
+| -------------------- | --------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content`            | `String`                    | —                    | Converted markdown text.                                                                                                                                                                                                                                                                                                                     |
+| `document_structure` | `Option<serde_json::Value>` | `Default::default()` | Structured document tree with semantic nodes.                                                                                                                                                                                                                                                                                                |
+| `tables`             | `Vec<serde_json::Value>`    | `vec![]`             | Extracted tables with structured cell data.                                                                                                                                                                                                                                                                                                  |
+| `warnings`           | `Vec<String>`               | `vec![]`             | Non-fatal processing warnings.                                                                                                                                                                                                                                                                                                               |
+| `citations`          | `bool`                      | —                    | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `fit_content`        | `Option<String>`            | `Default::default()` | Content-filtered markdown optimized for LLM consumption.                                                                                                                                                                                                                                                                                     |
 
 ---
 
@@ -146,6 +178,38 @@ Result from a single URL in a batch crawl operation.
 | `url`    | `String`              | —                    | The seed URL that was crawled.          |
 | `result` | `Option<CrawlResult>` | `Default::default()` | The crawl result, if successful.        |
 | `error`  | `Option<String>`      | `Default::default()` | The error message, if the crawl failed. |
+
+---
+
+#### BatchScrapeResults
+
+Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
+
+The counts are derived once at construction so every binding language can read them
+as plain integer fields without re-iterating the `results` vector.
+
+| Field             | Type                     | Default  | Description                                                   |
+| ----------------- | ------------------------ | -------- | ------------------------------------------------------------- |
+| `results`         | `Vec<BatchScrapeResult>` | `vec![]` | Per-URL scrape results, in the order URLs were submitted.     |
+| `total_count`     | `usize`                  | —        | Total number of URLs in the batch (equal to `results.len()`). |
+| `completed_count` | `usize`                  | —        | Number of URLs whose scrape succeeded (`error` is `None`).    |
+| `failed_count`    | `usize`                  | —        | Number of URLs whose scrape failed (`error` is `Some`).       |
+
+---
+
+#### BatchCrawlResults
+
+Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
+
+The counts are derived once at construction so every binding language can read them
+as plain integer fields without re-iterating the `results` vector.
+
+| Field             | Type                    | Default  | Description                                                        |
+| ----------------- | ----------------------- | -------- | ------------------------------------------------------------------ |
+| `results`         | `Vec<BatchCrawlResult>` | `vec![]` | Per-URL crawl results, in the order seed URLs were submitted.      |
+| `total_count`     | `usize`                 | —        | Total number of seed URLs in the batch (equal to `results.len()`). |
+| `completed_count` | `usize`                 | —        | Number of seed URLs whose crawl succeeded (`error` is `None`).     |
+| `failed_count`    | `usize`                 | —        | Number of seed URLs whose crawl failed (`error` is `Some`).        |
 
 ---
 
@@ -194,14 +258,21 @@ html-to-markdown-rs as the conversion engine for all formats
 
 Browser fallback configuration.
 
-| Field           | Type               | Default                    | Description                                                                    |
-| --------------- | ------------------ | -------------------------- | ------------------------------------------------------------------------------ |
-| `mode`          | `BrowserMode`      | `BrowserMode::Auto`        | When to use the headless browser fallback.                                     |
-| `endpoint`      | `Option<String>`   | `None`                     | CDP WebSocket endpoint for connecting to an external browser instance.         |
-| `timeout`       | `Duration`         | `30000ms`                  | Timeout for browser page load and rendering (in milliseconds when serialized). |
-| `wait`          | `BrowserWait`      | `BrowserWait::NetworkIdle` | Wait strategy after browser navigation.                                        |
-| `wait_selector` | `Option<String>`   | `None`                     | CSS selector to wait for when `wait` is `Selector`.                            |
-| `extra_wait`    | `Option<Duration>` | `None`                     | Extra time to wait after the wait condition is met.                            |
+| Field                    | Type                  | Default                         | Description                                                                                                                                                                                                                                                                        |
+| ------------------------ | --------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`                   | `BrowserMode`         | `BrowserMode::Auto`             | When to use the headless browser fallback.                                                                                                                                                                                                                                         |
+| `backend`                | `BrowserBackend`      | `BrowserBackend::Chromiumoxide` | Browser backend used to render JavaScript-heavy pages.                                                                                                                                                                                                                             |
+| `endpoint`               | `Option<String>`      | `None`                          | CDP WebSocket endpoint for connecting to an external browser instance.                                                                                                                                                                                                             |
+| `timeout`                | `Duration`            | `30000ms`                       | Timeout for browser page load and rendering (in milliseconds when serialized).                                                                                                                                                                                                     |
+| `wait`                   | `BrowserWait`         | `BrowserWait::NetworkIdle`      | Wait strategy after browser navigation.                                                                                                                                                                                                                                            |
+| `wait_selector`          | `Option<String>`      | `None`                          | CSS selector to wait for when `wait` is `Selector`.                                                                                                                                                                                                                                |
+| `extra_wait`             | `Option<Duration>`    | `None`                          | Extra time to wait after the wait condition is met.                                                                                                                                                                                                                                |
+| `stealth`                | `bool`                | `false`                         | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.                                                                                                      |
+| `proxy`                  | `Option<ProxyConfig>` | `None`                          | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5).                                                                                                                                                            |
+| `block_url_patterns`     | `Vec<String>`         | `vec![]`                        | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today.                                                                        |
+| `eval_script`            | `Option<String>`      | `None`                          | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
+| `robots_user_agent`      | `Option<String>`      | `None`                          | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
+| `capture_network_events` | `bool`                | `false`                         | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
 ---
 
@@ -247,6 +318,20 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output`          | `Option<PathBuf>`         | `None`               | Path to write WARC output. If `None`, WARC output is disabled.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `browser_profile`      | `Option<String>`          | `None`               | Named browser profile for persistent sessions (cookies, localStorage).                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `save_browser_profile` | `bool`                    | `false`              | Whether to save changes back to the browser profile on exit.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+
+---
+
+#### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field            | Type                        | Default              | Description                                                                                                                                 |
+| ---------------- | --------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `eval_result`    | `Option<serde_json::Value>` | `Default::default()` | Return value of `BrowserConfig.eval_script`, if provided.                                                                                   |
+| `network_events` | `Vec<ResponseMeta>`         | `vec![]`             | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true).                        |
+| `cookies`        | `Vec<CookieInfo>`           | `vec![]`             | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
 
 ---
 
@@ -398,13 +483,44 @@ A heading element extracted from the page.
 
 ---
 
+#### CrawlStreamRequest
+
+Request to begin a single-URL streaming crawl.
+
+Wraps a single seed URL for delivery through the streaming-adapter binding
+surface. Required as a struct because alef's streaming adapter requires a
+named request type — primitives are not supported.
+
+| Field | Type     | Default | Description            |
+| ----- | -------- | ------- | ---------------------- |
+| `url` | `String` | —       | The seed URL to crawl. |
+
+---
+
+#### BatchCrawlStreamRequest
+
+Request to begin a multi-URL streaming crawl.
+
+Wraps a set of seed URLs for delivery through the streaming-adapter binding
+surface. Required as a struct because alef's streaming adapter requires a
+named request type — primitives are not supported.
+
+| Field  | Type          | Default  | Description                                                                                     |
+| ------ | ------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| `urls` | `Vec<String>` | `vec![]` | The seed URLs to crawl. Each URL is followed independently up to the engine's configured depth. |
+
+---
+
 #### CitationReference
 
-| Field   | Type     | Default | Description |
-| ------- | -------- | ------- | ----------- |
-| `index` | `usize`  | —       | Index       |
-| `url`   | `String` | —       | Url         |
-| `text`  | `String` | —       | Text        |
+A single numbered reference in a citation list — produced by the citation
+extractor when content uses inline `[N]`-style markers.
+
+| Field   | Type     | Default | Description                                                |
+| ------- | -------- | ------- | ---------------------------------------------------------- |
+| `index` | `usize`  | —       | 1-based reference number as it appears in the source text. |
+| `url`   | `String` | —       | Resolved absolute URL for this reference.                  |
+| `text`  | `String` | —       | Human-readable anchor text or title for the reference.     |
 
 ---
 
@@ -552,6 +668,17 @@ Authentication configuration.
 
 ---
 
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Variant         | Wire value      | Description                                                   |
+| --------------- | --------------- | ------------------------------------------------------------- |
+| `Chromiumoxide` | `chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide.       |
+| `Native`        | `native`        | Kreuzcrawl-owned native browser backend derived from Obscura. |
+
+---
+
 #### BrowserMode
 
 When to use the headless browser fallback.
@@ -573,6 +700,26 @@ Wait strategy for browser page rendering.
 | `NetworkIdle` | `network_idle` | Wait until network activity is idle.                   |
 | `Selector`    | `selector`     | Wait for a specific CSS selector to appear in the DOM. |
 | `Fixed`       | `fixed`        | Wait for a fixed duration after navigation.            |
+
+---
+
+#### CrawlEvent
+
+An event emitted during a streaming crawl operation.
+
+Not available on `wasm32` targets — streaming requires native concurrency
+primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+
+Delivered to bindings via alef's streaming-adapter pattern. The
+`crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+expose this as the per-language streaming idiom (Python `AsyncIterator`,
+Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+
+| Variant    | Wire value | Description                                                                          |
+| ---------- | ---------- | ------------------------------------------------------------------------------------ |
+| `Page`     | `page`     | A single page has been crawled. — Fields: `result`: `CrawlPageResult`                |
+| `Error`    | `error`    | An error occurred while crawling a URL. — Fields: `url`: `String`, `error`: `String` |
+| `Complete` | `complete` | The crawl has completed. — Fields: `pages_crawled`: `usize`                          |
 
 ---
 
@@ -611,5 +758,36 @@ The classification of a link.
 | `External` | `external` | A link to a different domain.                       |
 | `Anchor`   | `anchor`   | A fragment-only link (e.g., `#section`).            |
 | `Document` | `document` | A link to a downloadable document (PDF, DOC, etc.). |
+
+---
+
+#### PageAction
+
+A single page interaction action.
+
+Actions are serialized with a `type` tag using camelCase naming,
+except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
+
+| Variant      | Wire value   | Description                                                                                                                                                                                             |
+| ------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Click`      | `click`      | Click on an element matching the given CSS selector. — Fields: `selector`: `String`                                                                                                                     |
+| `TypeText`   | `type`       | Type text into an element matching the given CSS selector. — Fields: `selector`: `String`, `text`: `String`                                                                                             |
+| `Press`      | `press`      | Press a keyboard key (e.g. "Enter", "Tab", "Escape"). — Fields: `key`: `String`                                                                                                                         |
+| `Scroll`     | `scroll`     | Scroll the page or a specific element. — Fields: `direction`: `ScrollDirection`, `selector`: `String`, `amount`: `i64`                                                                                  |
+| `Wait`       | `wait`       | Wait for a duration or for an element to appear. — Fields: `milliseconds`: `i64`, `selector`: `String`                                                                                                  |
+| `Screenshot` | `screenshot` | Take a screenshot of the current page. — Fields: `full_page`: `bool`                                                                                                                                    |
+| `ExecuteJs`  | `executeJs`  | Execute arbitrary JavaScript in the page context. **Safety:** The script runs with full page privileges in the browser context. Only execute scripts from trusted sources. — Fields: `script`: `String` |
+| `Scrape`     | `scrape`     | Scrape the current page HTML.                                                                                                                                                                           |
+
+---
+
+#### ScrollDirection
+
+Direction for a scroll action.
+
+| Variant | Wire value | Description      |
+| ------- | ---------- | ---------------- |
+| `Up`    | `up`       | Scroll upward.   |
+| `Down`  | `down`     | Scroll downward. |
 
 ---

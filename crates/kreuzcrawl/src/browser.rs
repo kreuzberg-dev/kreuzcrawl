@@ -12,7 +12,7 @@ use tokio_stream::StreamExt;
 use crate::browser_pool::BrowserPool;
 use crate::error::CrawlError;
 use crate::http::HttpResponse;
-use crate::types::{AuthConfig, BrowserWait, CookieInfo, CrawlConfig};
+use crate::types::{AuthConfig, BrowserBackend, BrowserWait, CookieInfo, CrawlConfig};
 
 /// Fetch a URL using a headless Chrome browser via CDP.
 ///
@@ -26,6 +26,28 @@ pub(crate) async fn browser_fetch(
     config: &CrawlConfig,
     prior_cookies: Option<&[CookieInfo]>,
     pool: Option<&BrowserPool>,
+    #[cfg(feature = "browser-native")] native_executor: Option<&kreuzcrawl_browser::adapter::NativeBrowserExecutor>,
+) -> Result<HttpResponse, CrawlError> {
+    match config.browser.backend {
+        BrowserBackend::Chromiumoxide => chromiumoxide_fetch(url, config, prior_cookies, pool).await,
+        BrowserBackend::Native => {
+            #[cfg(feature = "browser-native")]
+            {
+                native_fetch(url, config, prior_cookies, native_executor).await
+            }
+            #[cfg(not(feature = "browser-native"))]
+            {
+                native_fetch(url, config, prior_cookies).await
+            }
+        }
+    }
+}
+
+async fn chromiumoxide_fetch(
+    url: &str,
+    config: &CrawlConfig,
+    prior_cookies: Option<&[CookieInfo]>,
+    pool: Option<&BrowserPool>,
 ) -> Result<HttpResponse, CrawlError> {
     if let Some(pool) = pool {
         let pooled = pool.acquire_page().await?;
@@ -33,7 +55,7 @@ pub(crate) async fn browser_fetch(
         pooled.close().await;
         result
     } else {
-        let (browser, mut handler, data_dir) = launch_or_connect(config).await?;
+        let (mut browser, mut handler, data_dir) = launch_or_connect(config).await?;
         let handler_handle = tokio::spawn(async move { while handler.next().await.is_some() {} });
 
         let page = browser
@@ -43,6 +65,9 @@ pub(crate) async fn browser_fetch(
 
         let result = page_fetch(url, config, &page, prior_cookies).await;
 
+        let _ = page.close().await;
+        let _ = browser.close().await;
+        let _ = browser.wait().await;
         drop(browser);
         let _ = tokio::time::timeout(Duration::from_secs(5), handler_handle).await;
 
@@ -53,6 +78,30 @@ pub(crate) async fn browser_fetch(
 
         result
     }
+}
+
+#[cfg(feature = "browser-native")]
+async fn native_fetch(
+    url: &str,
+    config: &CrawlConfig,
+    prior_cookies: Option<&[CookieInfo]>,
+    native_executor: Option<&kreuzcrawl_browser::adapter::NativeBrowserExecutor>,
+) -> Result<HttpResponse, CrawlError> {
+    let native_executor = native_executor.ok_or_else(|| {
+        CrawlError::BrowserError("native browser executor is not available for BrowserBackend::Native".into())
+    })?;
+    crate::native_browser::native_browser_fetch(url, config, prior_cookies, native_executor).await
+}
+
+#[cfg(not(feature = "browser-native"))]
+async fn native_fetch(
+    _url: &str,
+    _config: &CrawlConfig,
+    _prior_cookies: Option<&[CookieInfo]>,
+) -> Result<HttpResponse, CrawlError> {
+    Err(CrawlError::InvalidConfig(
+        "browser.backend = native requires the browser-native feature".into(),
+    ))
 }
 
 /// Navigate a pre-existing CDP page to `url`, wait for rendering, and extract
@@ -152,6 +201,12 @@ async fn page_fetch(
         body: html,
         body_bytes,
         headers: std::collections::HashMap::new(),
+        browser_extras: None,
+        // CDP navigation resolves the URL internally; use the input URL as the
+        // final URL. The native scrape path tracks final_url via
+        // follow_redirects — this field is only consumed by the wasm scrape
+        // path which does not use browser backends.
+        final_url: url.to_owned(),
     })
 }
 
@@ -207,6 +262,13 @@ async fn launch_or_connect(config: &CrawlConfig) -> Result<(Browser, Handler, Op
             .new_headless_mode()
             .user_data_dir(&user_data_dir)
             .disable_default_args();
+        // macOS 26 + Chrome 148+ trip Apple's fork-safety check on Chrome's
+        // internal helper-process forks. See browser_pool::launch_browser for
+        // the long-form rationale; same env-var pair applied here so both
+        // launch paths (one-shot vs. pooled) behave consistently.
+        builder = builder
+            .env("OBJC_DISABLE_INITIALIZE_FORK_SAFETY", "YES")
+            .env("OS_ACTIVITY_MODE", "disable");
         for arg in crate::browser_pool::safe_default_args() {
             builder = builder.arg(arg);
         }

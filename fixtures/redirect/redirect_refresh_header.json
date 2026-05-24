@@ -1,7 +1,11 @@
 {
 	"id": "redirect_refresh_header",
 	"description": "Handles HTTP Refresh header redirect",
-	"tags": ["redirect"],
+	"tags": ["redirect", "crawl"],
+	"skip": {
+		"languages": ["wasm"],
+		"reason": "wasm reqwest only follows HTTP 3xx, not application-layer redirects (Refresh header)"
+	},
 	"input": {
 		"mock_responses": [
 			{

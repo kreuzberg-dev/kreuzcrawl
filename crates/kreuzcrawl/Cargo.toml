@@ -27,23 +27,35 @@ default = ["native-runtime"]
 # error that occurs when tokio's net/fs/signal/process features are requested
 # on wasm32-unknown-unknown.
 native-runtime = []
-browser = ["dep:chromiumoxide", "dep:dirs", "native-runtime"]
+browser = ["browser-chromiumoxide"]
+browser-chromiumoxide = ["dep:chromiumoxide", "dep:dirs", "native-runtime"]
+browser-native = ["dep:kreuzcrawl-browser", "native-runtime"]
 ai = ["dep:liter-llm", "dep:minijinja"]
 tracing = ["dep:tracing"]
 interact = ["browser"]
 mcp = ["dep:rmcp", "dep:schemars"]
 api = [
-  "dep:axum",
-  "dep:tower-http",
-  "dep:utoipa",
-  "dep:uuid",
-  "dep:dashmap",
-  "dep:base64",
-  "native-runtime",
+    "dep:axum",
+    "dep:tower-http",
+    "dep:utoipa",
+    "dep:uuid",
+    "dep:dashmap",
+    "dep:base64",
+    "native-runtime",
 ]
 mcp-http = ["mcp", "api"]
 warc = ["dep:uuid"]
-full = ["browser", "ai", "tracing", "interact", "mcp", "api", "mcp-http", "warc"]
+full = [
+    "browser",
+    "browser-native",
+    "ai",
+    "tracing",
+    "interact",
+    "mcp",
+    "api",
+    "mcp-http",
+    "warc",
+]
 
 [dependencies]
 ahash = { workspace = true }
@@ -57,7 +69,9 @@ dashmap = { workspace = true, optional = true }
 dirs = { workspace = true, optional = true }
 encoding_rs = { workspace = true }
 flate2 = { workspace = true }
+futures = { workspace = true }
 html-to-markdown-rs = { workspace = true }
+kreuzcrawl-browser = { workspace = true, optional = true }
 liter-llm = { workspace = true, optional = true }
 memchr = { workspace = true }
 minijinja = { workspace = true, optional = true }
@@ -86,12 +100,12 @@ uuid = { workspace = true, optional = true }
 # requested on wasm32-unknown-unknown.
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 tokio = { version = "1", features = [
-  "rt-multi-thread",
-  "net",
-  "fs",
-  "signal",
-  "process",
-  "io-util",
+    "rt-multi-thread",
+    "net",
+    "fs",
+    "signal",
+    "process",
+    "io-util",
 ] }
 
 # wasm32: getrandom must use the JS backend for both the v0.3 and v0.4 API
@@ -105,11 +119,16 @@ getrandom03 = { package = "getrandom", version = "0.3", features = ["wasm_js"] }
 
 [dev-dependencies]
 async-trait = { workspace = true }
+criterion = { workspace = true }
 serde_json = { workspace = true }
 tempfile = { workspace = true }
 tokio = { workspace = true }
 tokio-stream = { workspace = true }
 wiremock = "0.6"
+
+[[bench]]
+name = "citations"
+harness = false
 
 [lints]
 workspace = true

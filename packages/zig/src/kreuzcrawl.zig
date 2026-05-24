@@ -48,6 +48,7 @@ pub const CrawlError = error{
     BrowserError,
     BrowserTimeout,
     InvalidConfig,
+    Unsupported,
     Other,
     OutOfMemory,
 };
@@ -123,6 +124,8 @@ pub const ContentConfig = struct {
 pub const BrowserConfig = struct {
     /// When to use the headless browser fallback.
     mode: BrowserMode,
+    /// Browser backend used to render JavaScript-heavy pages.
+    backend: BrowserBackend,
     /// CDP WebSocket endpoint for connecting to an external browser instance.
     endpoint: ?[]const u8,
     /// Timeout for browser page load and rendering (in milliseconds when serialized).
@@ -133,6 +136,29 @@ pub const BrowserConfig = struct {
     wait_selector: ?[]const u8,
     /// Extra time to wait after the wait condition is met.
     extra_wait: ?i64,
+    /// Enable browser-realistic TLS fingerprint via the stealth HTTP client.
+    /// Only honored by `BrowserBackend.Native` — chromiumoxide is already
+    /// full-stealth via Chrome's TLS stack.
+    stealth: bool,
+    /// Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set.
+    /// Native backend supports http/https only (no SOCKS5).
+    proxy: ?ProxyConfig,
+    /// URL patterns to block before the network request fires. Supports `*`
+    /// wildcards. Useful for skipping ads/analytics/large images. Honored by
+    /// `BrowserBackend.Native`; chromiumoxide ignores this field today.
+    block_url_patterns: []const []const u8,
+    /// JavaScript snippet evaluated after navigation completes.
+    ///
+    /// Scraping captures the native backend result in `ScrapeResult.browser.eval_result`.
+    /// Interactions run this script before page actions on both browser backends but do
+    /// not include the script result in `InteractionResult`.
+    eval_script: ?[]const u8,
+    /// User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent`
+    /// (or kreuzcrawl's default) if unset. Native only.
+    robots_user_agent: ?[]const u8,
+    /// Capture the full network event stream into the result. Default false
+    /// (only the document event is captured). Native only.
+    capture_network_events: bool,
 };
 
 /// Configuration for crawl, scrape, and map operations.
@@ -218,6 +244,20 @@ pub const CrawlConfig = struct {
     save_browser_profile: bool,
 };
 
+/// Browser-specific extras populated when the native browser backend was used.
+///
+/// Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+pub const BrowserExtras = struct {
+    /// Return value of `BrowserConfig.eval_script`, if provided.
+    eval_result: ?[]const u8,
+    /// Network events captured during page navigation (only populated when
+    /// `BrowserConfig.capture_network_events` is true).
+    network_events: []const ResponseMeta,
+    /// All non-expired cookies present in the browser's cookie jar after
+    /// navigation completes (includes both prior cookies and server Set-Cookie).
+    cookies: []const CookieInfo,
+};
+
 /// A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 ///
 /// When the crawler encounters non-HTML content and `download_documents` is
@@ -238,10 +278,36 @@ pub const DownloadedDocument = struct {
     headers: std.StringHashMap([]const u8),
 };
 
+/// Result of executing a sequence of page interaction actions.
+pub const InteractionResult = struct {
+    /// Results from each executed action.
+    action_results: []const ActionResult,
+    /// Final page HTML after all actions completed.
+    final_html: []const u8,
+    /// Final page URL (may have changed due to navigation).
+    final_url: []const u8,
+};
+
+/// Result from a single page action execution.
+pub const ActionResult = struct {
+    /// Zero-based index of the action in the sequence.
+    action_index: u64,
+    /// The type of action that was executed.
+    action_type: []const u8,
+    /// Whether the action completed successfully.
+    success: bool,
+    /// Action-specific return data (screenshot bytes, JS return value, scraped HTML).
+    data: ?[]const u8,
+    /// Error message if the action failed.
+    error_: ?[]const u8,
+};
+
 /// The result of a single-page scrape operation.
 pub const ScrapeResult = struct {
     /// The HTTP status code of the response.
     status_code: u16,
+    /// The final URL after following all redirects.
+    final_url: []const u8,
     /// The Content-Type header value.
     content_type: []const u8,
     /// The HTML body of the response.
@@ -292,6 +358,9 @@ pub const ScrapeResult = struct {
     extraction_meta: ?ExtractionMeta,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     downloaded_document: ?DownloadedDocument,
+    /// Browser-specific extras (eval result, network events, cookies). Only
+    /// populated when `BrowserBackend.Native` was used for this request.
+    browser: ?BrowserExtras,
 };
 
 /// The result of crawling a single page during a crawl operation.
@@ -336,6 +405,8 @@ pub const CrawlPageResult = struct {
     extraction_meta: ?ExtractionMeta,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     downloaded_document: ?DownloadedDocument,
+    /// Whether the browser fallback was used to fetch this page.
+    browser_used: bool,
 };
 
 /// The result of a multi-page crawl operation.
@@ -352,8 +423,10 @@ pub const CrawlResult = struct {
     error_: ?[]const u8,
     /// Cookies collected during the crawl.
     cookies: []const CookieInfo,
-    /// Normalized URLs encountered during crawling (for deduplication counting).
-    normalized_urls: []const []const u8,
+    /// Whether all crawled pages stayed on the same domain as the start URL.
+    stayed_on_domain: bool,
+    /// Whether the browser fallback was used for any page in this crawl.
+    browser_used: bool,
 };
 
 /// A URL entry from a sitemap.
@@ -384,8 +457,13 @@ pub const MarkdownResult = struct {
     tables: []const []const u8,
     /// Non-fatal processing warnings.
     warnings: []const []const u8,
-    /// Content with links replaced by numbered citations.
-    citations: ?CitationResult,
+    /// Whether citation conversion was applied and produced at least one reference.
+    ///
+    /// `true` when the markdown contained inline links that were converted to
+    /// numbered citation references. The converted content (with `[N]` markers)
+    /// is available in `content`; the full reference list is accessible via
+    /// `generate_citations` if needed separately.
+    citations: bool,
     /// Content-filtered markdown optimized for LLM consumption.
     fit_content: ?[]const u8,
 };
@@ -616,6 +694,27 @@ pub const PageMetadata = struct {
     word_count: ?u64,
 };
 
+/// Request to begin a single-URL streaming crawl.
+///
+/// Wraps a single seed URL for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+pub const CrawlStreamRequest = struct {
+    /// The seed URL to crawl.
+    url: []const u8,
+};
+
+/// Request to begin a multi-URL streaming crawl.
+///
+/// Wraps a set of seed URLs for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+pub const BatchCrawlStreamRequest = struct {
+    /// The seed URLs to crawl. Each URL is followed independently up to the
+    /// engine's configured depth.
+    urls: []const []const u8,
+};
+
 /// Result of citation conversion.
 pub const CitationResult = struct {
     /// Markdown with links replaced by numbered citations.
@@ -624,9 +723,14 @@ pub const CitationResult = struct {
     references: []const CitationReference,
 };
 
+/// A single numbered reference in a citation list — produced by the citation
+/// extractor when content uses inline `[N]`-style markers.
 pub const CitationReference = struct {
+    /// 1-based reference number as it appears in the source text.
     index: u64,
+    /// Resolved absolute URL for this reference.
     url: []const u8,
+    /// Human-readable anchor text or title for the reference.
     text: []const u8,
 };
 
@@ -650,6 +754,36 @@ pub const BatchCrawlResult = struct {
     error_: ?[]const u8,
 };
 
+/// Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
+///
+/// The counts are derived once at construction so every binding language can read them
+/// as plain integer fields without re-iterating the `results` vector.
+pub const BatchScrapeResults = struct {
+    /// Per-URL scrape results, in the order URLs were submitted.
+    results: []const BatchScrapeResult,
+    /// Total number of URLs in the batch (equal to `results.len()`).
+    total_count: u64,
+    /// Number of URLs whose scrape succeeded (`error` is `null`).
+    completed_count: u64,
+    /// Number of URLs whose scrape failed (`error` is `Some`).
+    failed_count: u64,
+};
+
+/// Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
+///
+/// The counts are derived once at construction so every binding language can read them
+/// as plain integer fields without re-iterating the `results` vector.
+pub const BatchCrawlResults = struct {
+    /// Per-URL crawl results, in the order seed URLs were submitted.
+    results: []const BatchCrawlResult,
+    /// Total number of seed URLs in the batch (equal to `results.len()`).
+    total_count: u64,
+    /// Number of seed URLs whose crawl succeeded (`error` is `null`).
+    completed_count: u64,
+    /// Number of seed URLs whose crawl failed (`error` is `Some`).
+    failed_count: u64,
+};
+
 /// When to use the headless browser fallback.
 pub const BrowserMode = enum {
     /// Automatically detect when JS rendering is needed and fall back to browser.
@@ -668,6 +802,14 @@ pub const BrowserWait = enum {
     selector,
     /// Wait for a fixed duration after navigation.
     fixed,
+};
+
+/// Browser backend used for JavaScript rendering.
+pub const BrowserBackend = enum {
+    /// Existing Chromium/CDP backend powered by chromiumoxide.
+    chromiumoxide,
+    /// Kreuzcrawl-owned native browser backend derived from Obscura.
+    native,
 };
 
 /// Authentication configuration.
@@ -705,9 +847,9 @@ pub const ImageSource = enum {
     /// A `<source>` tag inside `<picture>`.
     picture_source,
     /// An `og:image` meta tag.
-    og: image,
+    og_image,
     /// A `twitter:image` meta tag.
-    twitter: image,
+    twitter_image,
 };
 
 /// The type of a feed (RSS, Atom, or JSON Feed).
@@ -743,6 +885,108 @@ pub const AssetCategory = enum {
     /// An unrecognized asset type.
     other,
 };
+
+/// An event emitted during a streaming crawl operation.
+///
+/// Not available on `wasm32` targets — streaming requires native concurrency
+/// primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+///
+/// Delivered to bindings via alef's streaming-adapter pattern. The
+/// `crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+/// expose this as the per-language streaming idiom (Python `AsyncIterator`,
+/// Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+pub const CrawlEvent = union(enum) {
+    /// A single page has been crawled.
+    page: CrawlPageResult,
+    /// An error occurred while crawling a URL.
+    error_: struct {
+        url: []const u8,
+        error_: []const u8,
+    },
+    /// The crawl has completed.
+    complete: u64,
+};
+
+/// A single page interaction action.
+///
+/// Actions are serialized with a `type` tag using camelCase naming,
+/// except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
+pub const PageAction = union(enum) {
+    /// Click on an element matching the given CSS selector.
+    click: []const u8,
+    /// Type text into an element matching the given CSS selector.
+    type: struct {
+        selector: []const u8,
+        text: []const u8,
+    },
+    /// Press a keyboard key (e.g. "Enter", "Tab", "Escape").
+    press: []const u8,
+    /// Scroll the page or a specific element.
+    scroll: struct {
+        direction: ScrollDirection,
+        selector: ?[]const u8,
+        amount: ?i64,
+    },
+    /// Wait for a duration or for an element to appear.
+    wait: struct {
+        milliseconds: ?i64,
+        selector: ?[]const u8,
+    },
+    /// Take a screenshot of the current page.
+    screenshot: ?bool,
+    /// Execute arbitrary JavaScript in the page context.
+    ///
+    /// **Safety:**
+    ///
+    /// The script runs with full page privileges in the browser context.
+    /// Only execute scripts from trusted sources.
+    executeJs: []const u8,
+    /// Scrape the current page HTML.
+    scrape: void,
+};
+
+/// Direction for a scroll action.
+pub const ScrollDirection = enum {
+    /// Scroll upward.
+    up,
+    /// Scroll downward.
+    down,
+};
+
+/// Convert markdown links to numbered citations.
+///
+/// `[Example](https://example.com)` becomes `Example[1]`
+/// with `[1]: https://example.com` in the reference list.
+/// Images `![alt](url)` are preserved unchanged.
+pub fn generate_citations(markdown: []const u8) error{OutOfMemory}![]u8 {
+    const markdown_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{markdown}, 0);
+    defer std.heap.c_allocator.free(markdown_z);
+    const _result = c.kcrawl_generate_citations(markdown_z);
+    return blk: {
+        const _json_ptr = c.kcrawl_citation_result_to_json(_result.?);
+        defer _free_string(_json_ptr);
+        c.kcrawl_citation_result_free(_result.?);
+        const slice = std.mem.sliceTo(_json_ptr, 0);
+        const owned = try std.heap.c_allocator.dupe(u8, slice);
+        break :blk owned;
+    };
+}
+
+/// Create a new crawl engine with the given configuration.
+///
+/// If `config` is `null`, uses `CrawlConfig.default()`.
+/// Returns an error if the configuration is invalid.
+pub fn create_engine(config: ?[]const u8) CrawlError!CrawlEngineHandle {
+    const config_z: ?[:0]u8 = if (config) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    defer if (config_z) |z| std.heap.c_allocator.free(z);
+    const config_handle = if (config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
+    const _result = c.kcrawl_create_engine(config_handle);
+    if (c.kcrawl_last_error_code() != 0) {
+        return _first_error(CrawlError);
+    }
+    if (config_handle) |h| c.kcrawl_crawl_config_free(h);
+    return CrawlEngineHandle{ ._handle = _result.? };
+}
 
 /// Scrape a single URL, returning extracted page data.
 pub fn scrape(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
@@ -816,6 +1060,33 @@ pub fn map_urls(engine: ?[]const u8, url: []const u8) CrawlError![]u8 {
     };
 }
 
+/// Execute browser actions on a single page.
+pub fn interact(engine: ?[]const u8, url: []const u8, actions: []const u8) CrawlError![]u8 {
+    const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
+    const engine_config_handle = if (engine_config_z) |z| c.kcrawl_crawl_config_from_json(z) else null;
+    const engine_handle = c.kcrawl_create_engine(engine_config_handle);
+    const url_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{url}, 0);
+    defer std.heap.c_allocator.free(url_z);
+    // Vec/Map parameters are passed as JSON strings across the FFI boundary.
+    const actions_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{actions}, 0);
+    defer std.heap.c_allocator.free(actions_z);
+    const _result = c.kcrawl_interact(engine_handle, url_z, actions_z);
+    if (c.kcrawl_last_error_code() != 0) {
+        return _first_error(CrawlError);
+    }
+    if (engine_config_z) |z| std.heap.c_allocator.free(z);
+    if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
+    if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
+    return blk: {
+        const _json_ptr = c.kcrawl_interaction_result_to_json(_result.?);
+        defer _free_string(_json_ptr);
+        c.kcrawl_interaction_result_free(_result.?);
+        const slice = std.mem.sliceTo(_json_ptr, 0);
+        const owned = try std.heap.c_allocator.dupe(u8, slice);
+        break :blk owned;
+    };
+}
+
 /// Scrape multiple URLs concurrently.
 pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     const engine_config_z: ?[:0]u8 = if (engine) |v| try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{v}, 0) else null;
@@ -825,7 +1096,6 @@ pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     const urls_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{urls}, 0);
     defer std.heap.c_allocator.free(urls_z);
     const _result = c.kcrawl_batch_scrape(engine_handle, urls_z);
-    const _result_len = c.kcrawl_batch_scrape_len(engine_handle, urls_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
     }
@@ -833,9 +1103,11 @@ pub fn batch_scrape(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
     return blk: {
-        const slice = _result[0.._result_len];
+        const _json_ptr = c.kcrawl_batch_scrape_results_to_json(_result.?);
+        defer _free_string(_json_ptr);
+        c.kcrawl_batch_scrape_results_free(_result.?);
+        const slice = std.mem.sliceTo(_json_ptr, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
-        _free_string(_result);
         break :blk owned;
     };
 }
@@ -849,7 +1121,6 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     const urls_z = try std.fmt.allocPrintSentinel(std.heap.c_allocator, "{s}", .{urls}, 0);
     defer std.heap.c_allocator.free(urls_z);
     const _result = c.kcrawl_batch_crawl(engine_handle, urls_z);
-    const _result_len = c.kcrawl_batch_crawl_len(engine_handle, urls_z);
     if (c.kcrawl_last_error_code() != 0) {
         return _first_error(CrawlError);
     }
@@ -857,12 +1128,40 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     if (engine_config_handle) |h| c.kcrawl_crawl_config_free(h);
     if (engine_handle) |h| c.kcrawl_crawl_engine_handle_free(h);
     return blk: {
-        const slice = _result[0.._result_len];
+        const _json_ptr = c.kcrawl_batch_crawl_results_to_json(_result.?);
+        defer _free_string(_json_ptr);
+        c.kcrawl_batch_crawl_results_free(_result.?);
+        const slice = std.mem.sliceTo(_json_ptr, 0);
         const owned = try std.heap.c_allocator.dupe(u8, slice);
-        _free_string(_result);
         break :blk owned;
     };
 }
+
+/// Iterator over `CrawlEvent` items in a streaming response.
+pub const CrawlEventStream = struct {
+    _handle: *c.KCRAWLCrawlEventStream,
+
+    /// Fetch the next item from the stream, or null at end-of-stream.
+    /// Returns an error on mid-stream failure; null on clean EOS.
+    pub fn next(self: *CrawlEventStream) (CrawlError || error{OutOfMemory})!?CrawlEvent {
+        const _chunk = c.kcrawl_crawl_engine_handle_crawl_stream_next(self._handle);
+        if (_chunk == null) {
+            // Check errno: 0 = clean EOS, != 0 = error
+            if (c.kcrawl_last_error_code() != 0) return _first_error(CrawlError);
+            return null;
+        }
+        defer c.kcrawl_crawl_event_free(_chunk);
+        const _json = c.kcrawl_crawl_event_to_json(_chunk);
+        defer c.kcrawl_free_string(_json);
+        const _json_slice = std.mem.span(_json);
+        return try std.json.parseFromSliceLeaky(CrawlEvent, std.heap.c_allocator, _json_slice, .{ .ignore_unknown_fields = true, .allocate = .alloc_always });
+    }
+
+    /// Release the underlying stream handle.
+    pub fn deinit(self: *CrawlEventStream) void {
+        c.kcrawl_crawl_engine_handle_crawl_stream_free(self._handle);
+    }
+};
 
 /// Opaque handle to a configured crawl engine.
 ///
@@ -870,6 +1169,48 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
 /// Default implementations for all pluggable components are used internally.
 pub const CrawlEngineHandle = struct {
     _handle: *anyopaque,
+
+    /// Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
+    ///
+    /// Returns an async stream that emits one event per crawled page, plus a
+    /// terminal `Complete` event. On per-URL failure during the crawl, emits an
+    /// `Error` event followed by `Complete`. The stream item type is wrapped in
+    /// a `Result` to surface transport-level errors; today every emit is `Ok`.
+    pub fn crawl_stream(self: *CrawlEngineHandle, req: []const u8) (CrawlError || error{OutOfMemory})!CrawlEventStream {
+        const req_z = try std.heap.c_allocator.dupeZ(u8, req);
+        const req_handle = c.kcrawl_crawl_stream_request_from_json(req_z.ptr);
+        std.heap.c_allocator.free(req_z);
+        if (req_handle == null) {
+            return _first_error(CrawlError);
+        }
+        defer c.kcrawl_crawl_stream_request_free(req_handle);
+        const _stream_handle = c.kcrawl_crawl_engine_handle_crawl_stream_start(@as(*c.KCRAWLCrawlEngineHandle, @ptrCast(self._handle)), req_handle);
+        if (_stream_handle == null) {
+            return _first_error(CrawlError);
+        }
+        return CrawlEventStream{ ._handle = _stream_handle };
+    }
+
+    /// Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
+    ///
+    /// Returns an async stream that emits one event per crawled page across all
+    /// seeds, plus terminal `Complete` and `Error` events as appropriate. The
+    /// stream item type is wrapped in a `Result` to surface transport-level
+    /// errors; today every emit is `Ok`.
+    pub fn batch_crawl_stream(self: *CrawlEngineHandle, req: []const u8) (CrawlError || error{OutOfMemory})!CrawlEventStream {
+        const req_z = try std.heap.c_allocator.dupeZ(u8, req);
+        const req_handle = c.kcrawl_batch_crawl_stream_request_from_json(req_z.ptr);
+        std.heap.c_allocator.free(req_z);
+        if (req_handle == null) {
+            return _first_error(CrawlError);
+        }
+        defer c.kcrawl_batch_crawl_stream_request_free(req_handle);
+        const _stream_handle = c.kcrawl_crawl_engine_handle_batch_crawl_stream_start(@as(*c.KCRAWLCrawlEngineHandle, @ptrCast(self._handle)), req_handle);
+        if (_stream_handle == null) {
+            return _first_error(CrawlError);
+        }
+        return CrawlEventStream{ ._handle = _stream_handle };
+    }
 
     /// Release the underlying FFI handle. Safe to call once per instance.
     pub fn free(self: *CrawlEngineHandle) void {

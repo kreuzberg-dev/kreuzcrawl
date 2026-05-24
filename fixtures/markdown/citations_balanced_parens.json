@@ -1,0 +1,34 @@
+{
+	"id": "citations_balanced_parens",
+	"description": "Citations correctly handle links inside parentheses with balanced rendering",
+	"tags": ["markdown", "citations", "parens"],
+	"input": {
+		"mock_responses": [
+			{
+				"path": "/",
+				"status_code": 200,
+				"headers": {
+					"content-type": "text/html; charset=utf-8"
+				},
+				"body_inline": "<html><body><p>The project (see <a href=\"https://github.com/example/repo\">GitHub</a>) is open source. Another example: (<a href=\"https://docs.example.com\">documentation</a> available). Nested case: (visit <a href=\"https://example.com\">example.com</a> for details).</p></body></html>"
+			}
+		],
+		"config": {}
+	},
+	"assertions": [
+		{
+			"type": "equals",
+			"field": "status_code",
+			"value": 200
+		},
+		{
+			"type": "not_empty",
+			"field": "markdown.content"
+		},
+		{
+			"type": "contains",
+			"field": "markdown.content",
+			"value": "("
+		}
+	]
+}

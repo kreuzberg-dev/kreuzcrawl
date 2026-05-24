@@ -6,7 +6,8 @@
 		"error"
 	],
 	"skip": {
-		"languages": ["wasm"]
+		"languages": ["wasm"],
+		"reason": "Proxy handling diverges in wasm runtime — wasm fetch shim does not honor proxy config"
 	},
 	"input": {
 		"mock_responses": [

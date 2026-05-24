@@ -8,7 +8,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 MOCK_SERVER_BIN="${REPO_ROOT}/e2e/rust/target/release/mock-server"
 FIXTURES_DIR="${REPO_ROOT}/fixtures"
 E2E_ZIG_DIR="${REPO_ROOT}/e2e/zig"
-FFI_PATH="${REPO_ROOT}/target/debug"
+FFI_PATH="${REPO_ROOT}/target/release"
 FFI_INCLUDE="${REPO_ROOT}/crates/kreuzcrawl-ffi/include"
 
 if [ ! -f "$MOCK_SERVER_BIN" ]; then

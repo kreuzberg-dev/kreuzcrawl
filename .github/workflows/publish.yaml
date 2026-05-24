@@ -490,8 +490,8 @@ jobs:
 
   python-sdist:
     name: Build Python sdist
-    needs: [prepare, check-pypi]
-    if: ${{ needs.prepare.outputs.release_python == 'true' && (needs.check-pypi.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-pypi, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_python == 'true' && (needs.check-pypi.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.2
@@ -505,18 +505,11 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Build sdist via maturin
-        # Inline: maturin sdist is a one-liner; no shared action wraps it.
-        # maturin's -m flag requires a Cargo.toml. In kreuzcrawl the Python
-        # package (pyproject.toml) and the PyO3 crate (Cargo.toml) are in
-        # separate directories, so cd into packages/python/ to let maturin
-        # auto-discover pyproject.toml + follow its manifest-path setting.
-        shell: bash
-        run: |
-          python -m pip install --upgrade pip maturin
-          mkdir -p dist
-          cd packages/python
-          maturin sdist -o "$GITHUB_WORKSPACE/dist"
+      - uses: kreuzberg-dev/actions/build-python-sdist@v1
+        with:
+          package-dir: packages/python
+          output-dir: dist
+          dry-run: ${{ needs.prepare.outputs.dry_run }}
 
       - uses: actions/upload-artifact@v7.0.1
         with:
@@ -619,8 +612,8 @@ jobs:
 
   ruby-gem:
     name: Build Ruby gem (${{ matrix.label }})
-    needs: [prepare, check-rubygems]
-    if: ${{ needs.prepare.outputs.release_ruby == 'true' && (needs.check-rubygems.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-rubygems, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_ruby == 'true' && (needs.check-rubygems.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     env:
@@ -649,7 +642,7 @@ jobs:
         with:
           cache-key-prefix: publish-ruby-${{ matrix.label }}
 
-      - uses: ruby/setup-ruby@v1.307.0
+      - uses: ruby/setup-ruby@v1.308.0
         with:
           ruby-version: "3.3"
           bundler-cache: false
@@ -657,6 +650,7 @@ jobs:
       - uses: kreuzberg-dev/actions/build-ruby-gem@v1
         with:
           package-dir: packages/ruby
+          dry-run: ${{ needs.prepare.outputs.dry_run }}
 
       - name: Package gem
         # Inline: rake build emits the .gem under pkg/; no shared action wraps it.
@@ -672,8 +666,8 @@ jobs:
 
   php-extension:
     name: Build PHP extension (php${{ matrix.php }} ${{ matrix.platform.label }})
-    needs: [prepare, check-packagist]
-    if: ${{ needs.prepare.outputs.release_php == 'true' && (needs.check-packagist.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-packagist, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_php == 'true' && (needs.check-packagist.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ${{ matrix.platform.os }}
     timeout-minutes: 60
     strategy:
@@ -708,6 +702,7 @@ jobs:
           lib-name: kreuzcrawl_php
           php-version: ${{ matrix.php }}
           php-ts: nts
+          dry-run: ${{ needs.prepare.outputs.dry_run }}
 
       - name: Determine Windows compiler
         if: runner.os == 'Windows'
@@ -1043,17 +1038,24 @@ jobs:
 
       - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
-      - uses: kreuzberg-dev/actions/setup-rust@v1
-        with:
-          target: ${{ matrix.target }}
-          cache-key-prefix: publish-java-${{ matrix.classifier }}
+      - name: Build musl FFI via Docker
+        # Inline: building cdylib for musl on the host runner fails to link
+        # libgcc_s.so.1; kreuzcrawl's Dockerfile.musl-ffi runs on Alpine
+        # (native musl) and produces a self-contained libkreuzcrawl_ffi.so.
+        shell: bash
+        run: |
+          docker build -f docker/Dockerfile.musl-ffi --output type=local,dest=./dist .
+          file dist/libkreuzcrawl_ffi.so
 
-      - uses: kreuzberg-dev/actions/build-java-natives@v1
-        with:
-          target: ${{ matrix.target }}
-          crate-name: kreuzcrawl-ffi
-          lib-name: kreuzcrawl_ffi
-          classifier: ${{ matrix.classifier }}
+      - name: Stage musl libkreuzcrawl_ffi.so under Java natives layout
+        shell: bash
+        env:
+          CLASSIFIER: ${{ matrix.classifier }}
+        run: |
+          STAGE="dist/java-natives/native/${CLASSIFIER}"
+          mkdir -p "$STAGE"
+          cp dist/libkreuzcrawl_ffi.so "$STAGE/libkreuzcrawl_ffi.so"
+          ls -la "$STAGE"
 
       - uses: actions/upload-artifact@v7.0.1
         with:
@@ -1154,8 +1156,8 @@ jobs:
 
   elixir-natives:
     name: Build Elixir NIF (${{ matrix.label }} nif-${{ matrix.nif }})
-    needs: [prepare, check-elixir-release]
-    if: ${{ needs.prepare.outputs.release_elixir == 'true' && (needs.check-elixir-release.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-elixir-release, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_elixir == 'true' && (needs.check-elixir-release.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     strategy:
@@ -1179,7 +1181,7 @@ jobs:
         if: runner.os == 'Linux'
         uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
-      - uses: erlef/setup-beam@v1.24.0
+      - uses: erlef/setup-beam@v1.24
         with:
           elixir-version: "1.17"
           otp-version: "27"
@@ -1207,8 +1209,8 @@ jobs:
 
   elixir-natives-musl:
     name: Build Elixir NIF (linux-musl-${{ matrix.arch }} nif-${{ matrix.nif }})
-    needs: [prepare, check-elixir-release]
-    if: ${{ needs.prepare.outputs.release_elixir == 'true' && (needs.check-elixir-release.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, check-elixir-release, publish-crates]
+    if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_elixir == 'true' && (needs.check-elixir-release.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     strategy:
@@ -1227,7 +1229,7 @@ jobs:
 
       - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
-      - uses: erlef/setup-beam@v1.24.0
+      - uses: erlef/setup-beam@v1.24
         with:
           elixir-version: "1.17"
           otp-version: "27"
@@ -1496,9 +1498,12 @@ jobs:
 
       - uses: kreuzberg-dev/actions/publish-crates@v1
         with:
-          # Order matters: bindings-common is depended on by everything,
-          # kreuzcrawl is depended on by kreuzcrawl-cli.
-          crates: kreuzcrawl-bindings-common kreuzcrawl kreuzcrawl-cli
+          # Order matters: kreuzcrawl-browser is a hard dep of kreuzcrawl
+          # (path-only deps are rejected by cargo publish), and kreuzcrawl
+          # is depended on by both kreuzcrawl-bindings-common and
+          # kreuzcrawl-cli, so each must land on the index before its
+          # dependents try to resolve.
+          crates: kreuzcrawl-browser kreuzcrawl kreuzcrawl-bindings-common kreuzcrawl-cli
           version: ${{ needs.prepare.outputs.version }}
           dry-run: ${{ needs.prepare.outputs.dry_run }}
 
@@ -1542,7 +1547,7 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - uses: ruby/setup-ruby@v1.307.0
+      - uses: ruby/setup-ruby@v1.308.0
         with:
           ruby-version: "3.3"
           bundler-cache: false
@@ -1577,7 +1582,6 @@ jobs:
       - uses: kreuzberg-dev/actions/setup-node-workspace@v1
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org/"
 
       - name: Stage platform packages with napi
         # Inline: napi artifacts → per-platform npm/ subpackages plus build the
@@ -1603,8 +1607,6 @@ jobs:
           packages-dir: crates/kreuzcrawl-node/npm
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
           dry-run: ${{ needs.prepare.outputs.dry_run }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Wait for npm indexing (linux-x64-gnu)
         if: ${{ needs.prepare.outputs.dry_run != 'true' }}
@@ -1621,8 +1623,6 @@ jobs:
           package-dir: crates/kreuzcrawl-node
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
           dry-run: ${{ needs.prepare.outputs.dry_run }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-wasm:
     name: Publish WASM package
@@ -1646,7 +1646,6 @@ jobs:
       - uses: kreuzberg-dev/actions/setup-node-workspace@v1
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org/"
 
       - uses: kreuzberg-dev/actions/publish-npm@v1
         with:
@@ -1654,8 +1653,6 @@ jobs:
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
           provenance: "true"
           dry-run: ${{ needs.prepare.outputs.dry_run }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-packagist:
     name: Trigger Packagist update
@@ -1792,12 +1789,15 @@ jobs:
       - uses: actions/checkout@v6.0.2
         with:
           ref: ${{ needs.prepare.outputs.ref }}
+          fetch-depth: 0
           submodules: recursive
 
-      - uses: erlef/setup-beam@v1.24.0
+      - uses: erlef/setup-beam@v1.24
         with:
           elixir-version: "1.17"
           otp-version: "27"
+
+      - uses: kreuzberg-dev/actions/setup-rust@v1
 
       - name: Generate NIF checksum file
         uses: kreuzberg-dev/actions/generate-elixir-checksums@v1
@@ -1809,6 +1809,12 @@ jobs:
           nif-versions: "2.16,2.17"
           targets: x86_64-unknown-linux-gnu,aarch64-unknown-linux-gnu,x86_64-unknown-linux-musl,aarch64-unknown-linux-musl,aarch64-apple-darwin,x86_64-apple-darwin,x86_64-pc-windows-msvc
           output-path: packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs
+
+      - uses: kreuzberg-dev/actions/build-elixir-hex@v1
+        with:
+          package-dir: packages/elixir
+          nif-crate-path: packages/elixir/native/kreuzcrawl_nif
+          dry-run: ${{ needs.prepare.outputs.dry_run }}
 
       - uses: kreuzberg-dev/actions/publish-hex@v1
         with:
@@ -1854,7 +1860,7 @@ jobs:
           abi: ${{ matrix.abi }}
           target: ${{ matrix.target }}
 
-      - uses: actions/upload-artifact@v8
+      - uses: actions/upload-artifact@v7.0.1
         with:
           name: kotlin-android-${{ matrix.abi }}
           path: dist/android-natives/${{ matrix.abi }}/
@@ -1898,25 +1904,6 @@ jobs:
           MAVEN_GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-  publish-pub:
-    name: Publish Dart package to pub.dev
-    needs: [prepare, dart-package, check-pub]
-    if: ${{ needs.prepare.outputs.release_dart == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.check-pub.outputs.exists != 'true' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v8.0.1
-        with:
-          name: dart-package
-          path: packages/dart
-
-      - uses: kreuzberg-dev/actions/publish-pub@v1
-        with:
-          package-dir: packages/dart
-          dry-run: ${{ needs.prepare.outputs.dry_run }}
-
   publish-swift:
     name: Notify Swift Package Index
     needs: [prepare, swift-package, swift-artifactbundle, check-spi-swift]
@@ -1953,123 +1940,178 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # ─── Homebrew (CLI bottle build + formula update) ─────────────────────
+  # ─── Homebrew (real-brew bottles) ─────────────────────────────────────
   #
-  # kreuzcrawl ships a single-binary CLI; bottles are synthetic tarballs
-  # built from a freshly compiled CLI binary. Topology:
-  #   1. homebrew-bottles         — build per-platform bottle tarballs
-  #   2. upload-homebrew-bottles  — attach bottles to the GitHub release
-  #   3. publish-homebrew         — update the formula in the tap repo
+  # Three-job topology mirrors tslp/h2m: update formula source URL+SHA in
+  # the tap first so `brew install --build-bottle` has a buildable formula,
+  # then build real bottles per platform via `homebrew-build-bottles@v1`,
+  # then merge per-platform JSON manifests into the formula's `bottle do`
+  # block via `homebrew-merge-bottles@v1`.
+
+  publish-homebrew-formula:
+    name: Update Homebrew formula source
+    needs: [prepare, check-homebrew, upload-cli-release]
+    if: |
+      always() &&
+      needs.prepare.outputs.release_homebrew == 'true' &&
+      needs.prepare.outputs.is_tag == 'true' &&
+      needs.prepare.outputs.dry_run != 'true' &&
+      needs.upload-cli-release.result == 'success' &&
+      (needs.check-homebrew.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v6.0.2
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
+
+      - name: Checkout homebrew-tap
+        uses: actions/checkout@v6.0.2
+        with:
+          repository: kreuzberg-dev/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TOKEN }}
+          path: homebrew-tap
+
+      - name: Update formula source url + sha256
+        env:
+          TAG: ${{ needs.prepare.outputs.tag }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          TAP_DIR: ${{ github.workspace }}/homebrew-tap
+        run: scripts/publish/update-homebrew-formula.sh
+
+      - name: Commit and push to tap
+        working-directory: homebrew-tap
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
+        # Inline: tap-side commit/push — bot identity is repo-specific.
+        run: |
+          git config user.name "kreuzberg-bot"
+          git config user.email "bot@kreuzberg.dev"
+          if git diff --quiet Formula/; then
+            echo "No formula changes; skipping commit."
+            exit 0
+          fi
+          git add Formula/kreuzcrawl.rb
+          git commit -m "kreuzcrawl ${{ needs.prepare.outputs.version }}"
+          git push origin HEAD
 
   homebrew-bottles:
     name: Build Homebrew bottle (${{ matrix.bottle_tag }})
-    needs: [prepare, check-homebrew]
-    if: ${{ needs.prepare.outputs.release_homebrew == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-homebrew.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: [prepare, publish-homebrew-formula]
+    if: |
+      always() &&
+      needs.prepare.outputs.dry_run != 'true' &&
+      needs.publish-homebrew-formula.result == 'success'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { os: macos-latest, bottle_tag: arm64_sequoia }
-          - { os: macos-15-intel, bottle_tag: sequoia }
-          - { os: ubuntu-latest, bottle_tag: x86_64_linux }
-          - { os: ubuntu-24.04-arm, bottle_tag: arm64_linux }
+          - { os: macos-latest, bottle_tag: arm64_sequoia, install_brew: false }
+          - { os: macos-15-intel, bottle_tag: sequoia, install_brew: false }
+          - { os: ubuntu-latest, bottle_tag: x86_64_linux, install_brew: true }
+          - { os: ubuntu-24.04-arm, bottle_tag: arm64_linux, install_brew: true }
     steps:
-      - uses: actions/checkout@v6.0.2
+      # actions/checkout@v6 regression on macos-15-intel: the includeIf-gated
+      # credential helper isn't honored by git 2.54 on that runner image, so
+      # the fetch falls back to interactive auth and fails. v5 writes the
+      # extraheader directly into .git/config and works on every runner.
+      - uses: actions/checkout@v5
         with:
           ref: ${{ needs.prepare.outputs.checkout_ref }}
-          fetch-depth: 0
-          submodules: recursive
 
       - name: Free disk space
         if: runner.os == 'Linux'
         uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
-      - uses: kreuzberg-dev/actions/setup-rust@v1
-        with:
-          cache-key-prefix: publish-homebrew-${{ matrix.bottle_tag }}
+      - name: Install Homebrew (Linux)
+        if: ${{ matrix.install_brew }}
+        uses: kreuzberg-dev/actions/install-homebrew-linux@v1
 
-      - uses: kreuzberg-dev/actions/build-rust-cli@v1
-        id: build
+      - name: Build bottles
+        uses: kreuzberg-dev/actions/homebrew-build-bottles@v1
         with:
-          package-name: kreuzcrawl-cli
-          binary-name: kreuzcrawl
-          extra-cargo-args: --features all
-
-      - uses: kreuzberg-dev/actions/build-homebrew-bottle@v1
-        id: bottle
-        with:
-          binary-path: ${{ steps.build.outputs.binary-path }}
-          formula-name: kreuzcrawl
+          tag: ${{ needs.prepare.outputs.tag }}
           version: ${{ needs.prepare.outputs.version }}
-          bottle-tag: ${{ matrix.bottle_tag }}
+          tap: kreuzberg-dev/homebrew-tap
+          formulas: |
+            kreuzcrawl
+          out-dir: ${{ github.workspace }}/bottle-json
+          github-repo: ${{ github.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/upload-artifact@v7.0.1
+      - name: Upload bottle JSON manifests
+        uses: actions/upload-artifact@v7.0.1
         with:
-          name: homebrew-bottle-${{ matrix.bottle_tag }}
-          path: ${{ steps.bottle.outputs.path }}
+          name: homebrew-bottle-json-${{ matrix.bottle_tag }}
+          path: ${{ github.workspace }}/bottle-json/*.json
           if-no-files-found: error
           retention-days: 14
 
-  upload-homebrew-bottles:
-    name: Upload Homebrew bottles to GitHub Release
-    needs: [prepare, homebrew-bottles]
-    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.homebrew-bottles.result == 'success' }}
+  publish-homebrew-bottles:
+    name: Merge Homebrew bottle DSL
+    needs: [prepare, publish-homebrew-formula, homebrew-bottles]
+    if: |
+      always() &&
+      needs.prepare.outputs.dry_run != 'true' &&
+      needs.publish-homebrew-formula.result == 'success' &&
+      needs.homebrew-bottles.result == 'success'
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v8.0.1
-        with:
-          pattern: homebrew-bottle-*
-          path: dist/homebrew
-          merge-multiple: true
-
-      - uses: kreuzberg-dev/actions/upload-release-assets@v1
-        with:
-          tag: ${{ needs.prepare.outputs.tag }}
-          working-directory: dist/homebrew
-          dry-run: ${{ needs.prepare.outputs.dry_run }}
-          assets: kreuzcrawl-*.bottle.tar.gz
-
-  publish-homebrew:
-    name: Update Homebrew formula
-    needs: [prepare, check-homebrew, upload-cli-release, upload-homebrew-bottles]
-    if: ${{ needs.prepare.outputs.release_homebrew == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.upload-cli-release.result == 'success' && needs.upload-homebrew-bottles.result == 'success' && (needs.check-homebrew.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
-    runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6.0.2
+      - name: Checkout source repo
+        uses: actions/checkout@v6.0.2
         with:
           ref: ${{ needs.prepare.outputs.checkout_ref }}
-          submodules: recursive
 
-      - uses: actions/download-artifact@v8.0.1
+      - name: Checkout homebrew-tap
+        uses: actions/checkout@v6.0.2
         with:
-          pattern: homebrew-bottle-*
-          path: dist/homebrew
+          repository: kreuzberg-dev/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TOKEN }}
+          path: homebrew-tap
+
+      - name: Download all bottle JSON manifests
+        uses: actions/download-artifact@v8.0.1
+        with:
+          path: ${{ github.workspace }}/bottle-json
+          pattern: homebrew-bottle-json-*
           merge-multiple: true
 
-      - name: Configure tap-bot Git credentials
-        env:
-          GH_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
-        # Inline: tap-side credential setup — bot identity is repo-specific.
-        run: |
-          git config --global credential.helper store
-          echo "https://x-access-token:${GH_TOKEN}@github.com" > ~/.git-credentials
-          git config --global user.name "kreuzberg-bot"
-          git config --global user.email "bot@kreuzberg.dev"
-
-      - uses: kreuzberg-dev/actions/publish-homebrew@v1
+      - name: Merge bottle DSL into formula
+        uses: kreuzberg-dev/actions/homebrew-merge-bottles@v1
         with:
-          bottles-dir: dist/homebrew
-          formula-name: kreuzcrawl
-          tap-repo: kreuzberg-dev/homebrew-tap
           tag: ${{ needs.prepare.outputs.tag }}
           version: ${{ needs.prepare.outputs.version }}
+          tap-dir: ${{ github.workspace }}/homebrew-tap
+          json-dir: ${{ github.workspace }}/bottle-json
+          formulas: |
+            kreuzcrawl
           github-repo: ${{ github.repository }}
-          dry-run: ${{ needs.prepare.outputs.dry_run }}
-          token: ${{ secrets.HOMEBREW_TOKEN }}
+
+      - name: Commit and push bottle DSL
+        working-directory: homebrew-tap
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
+        # Inline: tap-side commit/push — bot identity is repo-specific.
+        run: |
+          git config user.name "kreuzberg-bot"
+          git config user.email "bot@kreuzberg.dev"
+          if git diff --quiet Formula/; then
+            echo "No bottle DSL changes; skipping commit."
+            exit 0
+          fi
+          git add Formula/kreuzcrawl.rb
+          git commit -m "kreuzcrawl ${{ needs.prepare.outputs.version }} bottles"
+          git push origin HEAD
 
   # ─── Finalization ─────────────────────────────────────────────────────
 
@@ -2088,10 +2130,10 @@ jobs:
       - publish-kotlin-android
       - publish-nuget
       - publish-hex
-      - publish-pub
       - publish-swift
       - publish-zig
-      - publish-homebrew
+      - publish-homebrew-formula
+      - publish-homebrew-bottles
       - upload-cli-release
       - upload-go-release
       - upload-c-ffi-release
@@ -2125,10 +2167,10 @@ jobs:
       - publish-kotlin-android
       - publish-nuget
       - publish-hex
-      - publish-pub
       - publish-swift
       - publish-zig
-      - publish-homebrew
+      - publish-homebrew-formula
+      - publish-homebrew-bottles
       - upload-cli-release
       - upload-go-release
       - upload-c-ffi-release

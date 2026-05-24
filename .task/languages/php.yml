@@ -177,6 +177,8 @@ tasks:
   e2e:test:
     desc: Run PHP E2E tests
     dir: e2e/php
+    deps:
+      - task: build
     cmds:
       - cmd: bash ../../scripts/ci/php/create-ci-php-ini.sh
         platforms: [linux, darwin, windows]

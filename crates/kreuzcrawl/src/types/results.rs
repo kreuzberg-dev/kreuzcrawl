@@ -8,6 +8,24 @@ use super::{
     CookieInfo, DownloadedAsset, ExtractionMeta, FeedInfo, ImageInfo, JsonLdEntry, LinkInfo, PageMetadata, ResponseMeta,
 };
 
+/// Browser-specific extras populated when the native browser backend was used.
+///
+/// Available on `ScrapeResult.browser` when `BrowserBackend::Native` handled the request.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct BrowserExtras {
+    /// Return value of `BrowserConfig.eval_script`, if provided.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub eval_result: Option<serde_json::Value>,
+    /// Network events captured during page navigation (only populated when
+    /// `BrowserConfig.capture_network_events` is true).
+    #[serde(default)]
+    pub network_events: Vec<ResponseMeta>,
+    /// All non-expired cookies present in the browser's cookie jar after
+    /// navigation completes (includes both prior cookies and server Set-Cookie).
+    #[serde(default)]
+    pub cookies: Vec<CookieInfo>,
+}
+
 /// A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 ///
 /// When the crawler encounters non-HTML content and `download_documents` is
@@ -36,7 +54,6 @@ pub struct DownloadedDocument {
 
 /// Result of executing a sequence of page interaction actions.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
-#[allow(dead_code)]
 pub struct InteractionResult {
     /// Results from each executed action.
     pub action_results: Vec<ActionResult>,
@@ -46,12 +63,12 @@ pub struct InteractionResult {
     pub final_url: String,
     /// Screenshot taken after all actions, if requested.
     #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
     pub screenshot: Option<Vec<u8>>,
 }
 
 /// Result from a single page action execution.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
-#[allow(dead_code)]
 pub struct ActionResult {
     /// Zero-based index of the action in the sequence.
     pub action_index: usize,
@@ -73,6 +90,8 @@ pub struct ActionResult {
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
     pub status_code: u16,
+    /// The final URL after following all redirects.
+    pub final_url: String,
     /// The Content-Type header value.
     pub content_type: String,
     /// The HTML body of the response.
@@ -128,6 +147,10 @@ pub struct ScrapeResult {
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub downloaded_document: Option<DownloadedDocument>,
+    /// Browser-specific extras (eval result, network events, cookies). Only
+    /// populated when `BrowserBackend::Native` was used for this request.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub browser: Option<BrowserExtras>,
 }
 
 /// The result of crawling a single page during a crawl operation.
@@ -175,6 +198,8 @@ pub struct CrawlPageResult {
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub downloaded_document: Option<DownloadedDocument>,
+    /// Whether the browser fallback was used to fetch this page.
+    pub browser_used: bool,
 }
 
 /// The result of a multi-page crawl operation.
@@ -193,13 +218,19 @@ pub struct CrawlResult {
     pub error: Option<String>,
     /// Cookies collected during the crawl.
     pub cookies: Vec<CookieInfo>,
+    /// Whether all crawled pages stayed on the same domain as the start URL.
+    pub stayed_on_domain: bool,
+    /// Whether the browser fallback was used for any page in this crawl.
+    pub browser_used: bool,
     /// Normalized URLs encountered during crawling (for deduplication counting).
     #[serde(default, skip_serializing)]
+    #[cfg_attr(alef, alef(skip))]
     pub normalized_urls: Vec<String>,
 }
 
 impl CrawlResult {
     /// Create a new `CrawlResult` with the given fields.
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         pages: Vec<CrawlPageResult>,
         final_url: String,
@@ -207,8 +238,10 @@ impl CrawlResult {
         was_skipped: bool,
         error: Option<String>,
         cookies: Vec<CookieInfo>,
+        stayed_on_domain: bool,
         normalized_urls: Vec<String>,
     ) -> Self {
+        let browser_used = pages.iter().any(|p| p.browser_used);
         Self {
             pages,
             final_url,
@@ -216,6 +249,8 @@ impl CrawlResult {
             was_skipped,
             error,
             cookies,
+            stayed_on_domain,
+            browser_used,
             normalized_urls,
         }
     }
@@ -264,20 +299,37 @@ pub struct MarkdownResult {
     pub tables: Vec<serde_json::Value>,
     /// Non-fatal processing warnings.
     pub warnings: Vec<String>,
-    /// Content with links replaced by numbered citations.
-    pub citations: Option<crate::citations::CitationResult>,
+    /// Whether citation conversion was applied and produced at least one reference.
+    ///
+    /// `true` when the markdown contained inline links that were converted to
+    /// numbered citation references. The converted content (with `[N]` markers)
+    /// is available in `content`; the full reference list is accessible via
+    /// [`crate::citations::generate_citations`] if needed separately.
+    pub citations: bool,
     /// Content-filtered markdown optimized for LLM consumption.
     pub fit_content: Option<String>,
 }
 
 /// Cached page data for HTTP response caching.
+///
+/// Used only by the `CrawlCache` storage-backend trait, which is not part of
+/// the polyglot binding surface. Hidden from alef so bindings don't expose a
+/// type they can never receive.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[cfg_attr(alef, alef(skip))]
 pub struct CachedPage {
+    /// Absolute URL of the cached page.
     pub url: String,
+    /// HTTP status code returned at the time the page was cached.
     pub status_code: u16,
+    /// `Content-Type` header captured from the original response.
     pub content_type: String,
+    /// Raw response body stored verbatim in the cache.
     pub body: String,
+    /// `ETag` header value, if any — used for conditional revalidation.
     pub etag: Option<String>,
+    /// `Last-Modified` header value, if any — used for conditional revalidation.
     pub last_modified: Option<String>,
+    /// Unix timestamp (seconds) when the entry was written to the cache.
     pub cached_at: u64,
 }

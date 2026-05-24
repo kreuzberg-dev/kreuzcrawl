@@ -1,9 +1,10 @@
 {
 	"id": "redirect_to_404",
 	"description": "Redirect target returns 404 Not Found",
-	"tags": ["redirect", "error"],
+	"tags": ["redirect", "error", "crawl"],
 	"skip": {
-		"languages": ["wasm"]
+		"languages": ["wasm"],
+		"reason": "Redirect-to-404 semantics differ on wasm fetch shim (status mapping)"
 	},
 	"input": {
 		"mock_responses": [

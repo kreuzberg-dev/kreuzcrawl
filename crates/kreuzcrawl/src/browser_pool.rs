@@ -80,7 +80,12 @@ pub(crate) fn safe_default_args() -> Vec<&'static str> {
 }
 
 /// Configuration for a [`BrowserPool`].
+///
+/// Rust-only: this type is excluded from alef-generated polyglot bindings.
+/// Pool reuse is intended for long-lived Rust processes (e.g. the cloud
+/// worker); language bindings construct pools internally per-call.
 #[derive(Debug, Clone)]
+#[cfg_attr(alef, alef(skip))]
 pub struct BrowserPoolConfig {
     /// Maximum number of concurrent pages (tabs) the pool will open.
     pub max_pages: usize,
@@ -113,6 +118,11 @@ struct BrowserState {
 /// A pool that keeps a single Chrome browser alive and hands out pages (tabs),
 /// limiting concurrency via a semaphore. If Chrome crashes the pool will
 /// attempt to relaunch on the next [`acquire_page`](Self::acquire_page) call.
+///
+/// Rust-only: excluded from alef-generated polyglot bindings. Downstream
+/// language clients should rely on per-call browser construction inside
+/// kreuzcrawl rather than managing a pool themselves.
+#[cfg_attr(alef, alef(skip))]
 pub struct BrowserPool {
     config: BrowserPoolConfig,
     state: Mutex<Option<BrowserState>>,
@@ -212,7 +222,10 @@ impl BrowserPool {
 
         let mut guard = self.state.lock().await;
         if let Some(bs) = guard.take() {
-            drop(bs.browser);
+            let mut browser = bs.browser;
+            let _ = browser.close().await;
+            let _ = browser.wait().await;
+            drop(browser);
             let _ = tokio::time::timeout(HANDLER_SHUTDOWN_TIMEOUT, bs.handler_handle).await;
             if let Some(dir) = bs.user_data_dir {
                 let _ = std::fs::remove_dir_all(dir);
@@ -262,7 +275,10 @@ impl BrowserPool {
         // Tear down old state and relaunch.
         self.healthy.store(false, Ordering::Release);
         if let Some(old) = guard.take() {
-            drop(old.browser);
+            let mut browser = old.browser;
+            let _ = browser.close().await;
+            let _ = browser.wait().await;
+            drop(browser);
             let _ = tokio::time::timeout(HANDLER_SHUTDOWN_TIMEOUT, old.handler_handle).await;
             if let Some(dir) = old.user_data_dir {
                 let _ = std::fs::remove_dir_all(dir);
@@ -298,6 +314,17 @@ impl BrowserPool {
                 .new_headless_mode()
                 .user_data_dir(&user_data_dir)
                 .disable_default_args();
+            // macOS 26 + Chrome 148+ trip Apple's fork-safety check (libsystem_c
+            // detects a multi-threaded fork-then-exec and SIGTRAPs the child
+            // pre-exec, producing `*** multi-threaded process forked *** /
+            // crashed on child side of fork pre-exec`). Chrome forks
+            // internally to launch renderer/GPU/utility helpers; the launch
+            // path predates macOS 26's stricter runtime check. Silence the
+            // ObjC fork-safety abort so Chrome's helper subprocesses can
+            // exec(). Harmless on older macOS / Linux.
+            builder = builder
+                .env("OBJC_DISABLE_INITIALIZE_FORK_SAFETY", "YES")
+                .env("OS_ACTIVITY_MODE", "disable");
             for arg in safe_default_args() {
                 builder = builder.arg(arg);
             }

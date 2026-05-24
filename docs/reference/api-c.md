@@ -2,9 +2,33 @@
 title: "C API Reference"
 ---
 
-## C API Reference <span class="version-badge">v0.3.0-rc.20</span>
+## C API Reference <span class="version-badge">v0.3.0-rc.27</span>
 
 ### Functions
+
+#### kcrawl_generate_citations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```c
+KcrawlCitationResult* kcrawl_generate_citations(const char* markdown);
+```
+
+**Parameters:**
+
+| Name       | Type          | Required | Description  |
+| ---------- | ------------- | -------- | ------------ |
+| `markdown` | `const char*` | Yes      | The markdown |
+
+**Returns:** `KcrawlCitationResult`
+
+---
 
 #### kcrawl_create_engine()
 
@@ -96,6 +120,29 @@ KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url
 
 ---
 
+#### kcrawl_interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```c
+KcrawlInteractionResult* kcrawl_interact(KcrawlCrawlEngineHandle engine, const char* url, KcrawlPageAction* actions);
+```
+
+**Parameters:**
+
+| Name      | Type                      | Required | Description             |
+| --------- | ------------------------- | -------- | ----------------------- |
+| `engine`  | `KcrawlCrawlEngineHandle` | Yes      | The crawl engine handle |
+| `url`     | `const char*`             | Yes      | The URL to fetch        |
+| `actions` | `KcrawlPageAction*`       | Yes      | The actions             |
+
+**Returns:** `KcrawlInteractionResult`
+**Errors:** Returns `NULL` on error.
+
+---
+
 #### kcrawl_batch_scrape()
 
 Scrape multiple URLs concurrently.
@@ -103,7 +150,7 @@ Scrape multiple URLs concurrently.
 **Signature:**
 
 ```c
-KcrawlBatchScrapeResult* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, const char** urls);
+KcrawlBatchScrapeResults* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, const char** urls);
 ```
 
 **Parameters:**
@@ -113,7 +160,7 @@ KcrawlBatchScrapeResult* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, con
 | `engine` | `KcrawlCrawlEngineHandle` | Yes      | The crawl engine handle |
 | `urls`   | `const char**`            | Yes      | The urls                |
 
-**Returns:** `KcrawlBatchScrapeResult*`
+**Returns:** `KcrawlBatchScrapeResults`
 **Errors:** Returns `NULL` on error.
 
 ---
@@ -125,7 +172,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 **Signature:**
 
 ```c
-KcrawlBatchCrawlResult* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const char** urls);
+KcrawlBatchCrawlResults* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const char** urls);
 ```
 
 **Parameters:**
@@ -135,12 +182,26 @@ KcrawlBatchCrawlResult* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const
 | `engine` | `KcrawlCrawlEngineHandle` | Yes      | The crawl engine handle |
 | `urls`   | `const char**`            | Yes      | The urls                |
 
-**Returns:** `KcrawlBatchCrawlResult*`
+**Returns:** `KcrawlBatchCrawlResults`
 **Errors:** Returns `NULL` on error.
 
 ---
 
 ### Types
+
+#### KcrawlActionResult
+
+Result from a single page action execution.
+
+| Field          | Type           | Default | Description                                                                    |
+| -------------- | -------------- | ------- | ------------------------------------------------------------------------------ |
+| `action_index` | `uintptr_t`    | —       | Zero-based index of the action in the sequence.                                |
+| `action_type`  | `const char*`  | —       | The type of action that was executed.                                          |
+| `success`      | `bool`         | —       | Whether the action completed successfully.                                     |
+| `data`         | `void**`       | `NULL`  | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
+| `error`        | `const char**` | `NULL`  | Error message if the action failed.                                            |
+
+---
 
 #### KcrawlArticleMetadata
 
@@ -168,6 +229,36 @@ Result from a single URL in a batch crawl operation.
 
 ---
 
+#### KcrawlBatchCrawlResults
+
+Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
+
+The counts are derived once at construction so every binding language can read them
+as plain integer fields without re-iterating the `results` vector.
+
+| Field             | Type                      | Default | Description                                                        |
+| ----------------- | ------------------------- | ------- | ------------------------------------------------------------------ |
+| `results`         | `KcrawlBatchCrawlResult*` | `NULL`  | Per-URL crawl results, in the order seed URLs were submitted.      |
+| `total_count`     | `uintptr_t`               | —       | Total number of seed URLs in the batch (equal to `results.len()`). |
+| `completed_count` | `uintptr_t`               | —       | Number of seed URLs whose crawl succeeded (`error` is `NULL`).     |
+| `failed_count`    | `uintptr_t`               | —       | Number of seed URLs whose crawl failed (`error` is `Some`).        |
+
+---
+
+#### KcrawlBatchCrawlStreamRequest
+
+Request to begin a multi-URL streaming crawl.
+
+Wraps a set of seed URLs for delivery through the streaming-adapter binding
+surface. Required as a struct because alef's streaming adapter requires a
+named request type — primitives are not supported.
+
+| Field  | Type           | Default | Description                                                                                     |
+| ------ | -------------- | ------- | ----------------------------------------------------------------------------------------------- |
+| `urls` | `const char**` | `NULL`  | The seed URLs to crawl. Each URL is followed independently up to the engine's configured depth. |
+
+---
+
 #### KcrawlBatchScrapeResult
 
 Result from a single URL in a batch scrape operation.
@@ -180,22 +271,45 @@ Result from a single URL in a batch scrape operation.
 
 ---
 
+#### KcrawlBatchScrapeResults
+
+Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
+
+The counts are derived once at construction so every binding language can read them
+as plain integer fields without re-iterating the `results` vector.
+
+| Field             | Type                       | Default | Description                                                   |
+| ----------------- | -------------------------- | ------- | ------------------------------------------------------------- |
+| `results`         | `KcrawlBatchScrapeResult*` | `NULL`  | Per-URL scrape results, in the order URLs were submitted.     |
+| `total_count`     | `uintptr_t`                | —       | Total number of URLs in the batch (equal to `results.len()`). |
+| `completed_count` | `uintptr_t`                | —       | Number of URLs whose scrape succeeded (`error` is `NULL`).    |
+| `failed_count`    | `uintptr_t`                | —       | Number of URLs whose scrape failed (`error` is `Some`).       |
+
+---
+
 #### KcrawlBrowserConfig
 
 Browser fallback configuration.
 
-| Field           | Type                | Default                      | Description                                                                    |
-| --------------- | ------------------- | ---------------------------- | ------------------------------------------------------------------------------ |
-| `mode`          | `KcrawlBrowserMode` | `KCRAWL_KCRAWL_AUTO`         | When to use the headless browser fallback.                                     |
-| `endpoint`      | `const char**`      | `NULL`                       | CDP WebSocket endpoint for connecting to an external browser instance.         |
-| `timeout`       | `uint64_t`          | `30000ms`                    | Timeout for browser page load and rendering (in milliseconds when serialized). |
-| `wait`          | `KcrawlBrowserWait` | `KCRAWL_KCRAWL_NETWORK_IDLE` | Wait strategy after browser navigation.                                        |
-| `wait_selector` | `const char**`      | `NULL`                       | CSS selector to wait for when `wait` is `Selector`.                            |
-| `extra_wait`    | `uint64_t*`         | `NULL`                       | Extra time to wait after the wait condition is met.                            |
+| Field                    | Type                   | Default                       | Description                                                                                                                                                                                                                                                                        |
+| ------------------------ | ---------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`                   | `KcrawlBrowserMode`    | `KCRAWL_KCRAWL_AUTO`          | When to use the headless browser fallback.                                                                                                                                                                                                                                         |
+| `backend`                | `KcrawlBrowserBackend` | `KCRAWL_KCRAWL_CHROMIUMOXIDE` | Browser backend used to render JavaScript-heavy pages.                                                                                                                                                                                                                             |
+| `endpoint`               | `const char**`         | `NULL`                        | CDP WebSocket endpoint for connecting to an external browser instance.                                                                                                                                                                                                             |
+| `timeout`                | `uint64_t`             | `30000ms`                     | Timeout for browser page load and rendering (in milliseconds when serialized).                                                                                                                                                                                                     |
+| `wait`                   | `KcrawlBrowserWait`    | `KCRAWL_KCRAWL_NETWORK_IDLE`  | Wait strategy after browser navigation.                                                                                                                                                                                                                                            |
+| `wait_selector`          | `const char**`         | `NULL`                        | CSS selector to wait for when `wait` is `Selector`.                                                                                                                                                                                                                                |
+| `extra_wait`             | `uint64_t*`            | `NULL`                        | Extra time to wait after the wait condition is met.                                                                                                                                                                                                                                |
+| `stealth`                | `bool`                 | `false`                       | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.                                                                                                      |
+| `proxy`                  | `KcrawlProxyConfig*`   | `NULL`                        | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5).                                                                                                                                                            |
+| `block_url_patterns`     | `const char**`         | `NULL`                        | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today.                                                                        |
+| `eval_script`            | `const char**`         | `NULL`                        | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
+| `robots_user_agent`      | `const char**`         | `NULL`                        | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
+| `capture_network_events` | `bool`                 | `false`                       | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
-##### Methods
+### Methods
 
-###### kcrawl_default()
+#### kcrawl_default()
 
 **Signature:**
 
@@ -205,13 +319,30 @@ KcrawlBrowserConfig kcrawl_default();
 
 ---
 
+#### KcrawlBrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field            | Type                  | Default | Description                                                                                                                                 |
+| ---------------- | --------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `eval_result`    | `void**`              | `NULL`  | Return value of `BrowserConfig.eval_script`, if provided.                                                                                   |
+| `network_events` | `KcrawlResponseMeta*` | `NULL`  | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true).                        |
+| `cookies`        | `KcrawlCookieInfo*`   | `NULL`  | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
+---
+
 #### KcrawlCitationReference
 
-| Field   | Type          | Default | Description |
-| ------- | ------------- | ------- | ----------- |
-| `index` | `uintptr_t`   | —       | Index       |
-| `url`   | `const char*` | —       | Url         |
-| `text`  | `const char*` | —       | Text        |
+A single numbered reference in a citation list — produced by the citation
+extractor when content uses inline `[N]`-style markers.
+
+| Field   | Type          | Default | Description                                                |
+| ------- | ------------- | ------- | ---------------------------------------------------------- |
+| `index` | `uintptr_t`   | —       | 1-based reference number as it appears in the source text. |
+| `url`   | `const char*` | —       | Resolved absolute URL for this reference.                  |
+| `text`  | `const char*` | —       | Human-readable anchor text or title for the reference.     |
 
 ---
 
@@ -249,9 +380,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrap_width`                 | `uintptr_t`    | `80`         | Wrap width when `wrap` is enabled. Default: `80`.                                                                                                                                                                                                                                                                                                   |
 | `include_document_structure` | `bool`         | `true`       | Include document structure tree in output. Default: `true`.                                                                                                                                                                                                                                                                                         |
 
-##### Methods
+### Methods
 
-###### kcrawl_default()
+#### kcrawl_default()
 
 **Signature:**
 
@@ -317,9 +448,9 @@ Configuration for crawl, scrape, and map operations.
 | `browser_profile`      | `const char**`         | `NULL`    | Named browser profile for persistent sessions (cookies, localStorage).                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `save_browser_profile` | `bool`                 | `false`   | Whether to save changes back to the browser profile on exit.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-##### Methods
+### Methods
 
-###### kcrawl_default()
+#### kcrawl_default()
 
 **Signature:**
 
@@ -327,7 +458,7 @@ Configuration for crawl, scrape, and map operations.
 KcrawlCrawlConfig kcrawl_default();
 ```
 
-###### kcrawl_validate()
+#### kcrawl_validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -345,6 +476,38 @@ Opaque handle to a configured crawl engine.
 
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
+
+### Methods
+
+#### kcrawl_crawl_stream()
+
+Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
+
+Returns an async stream that emits one event per crawled page, plus a
+terminal `Complete` event. On per-URL failure during the crawl, emits an
+`Error` event followed by `Complete`. The stream item type is wrapped in
+a `Result` to surface transport-level errors; today every emit is `Ok`.
+
+**Signature:**
+
+```c
+const char* kcrawl_crawl_stream(KcrawlCrawlStreamRequest req);
+```
+
+#### kcrawl_batch_crawl_stream()
+
+Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
+
+Returns an async stream that emits one event per crawled page across all
+seeds, plus terminal `Complete` and `Error` events as appropriate. The
+stream item type is wrapped in a `Result` to surface transport-level
+errors; today every emit is `Ok`.
+
+**Signature:**
+
+```c
+const char* kcrawl_batch_crawl_stream(KcrawlBatchCrawlStreamRequest req);
+```
 
 ---
 
@@ -374,6 +537,7 @@ The result of crawling a single page during a crawl operation.
 | `extracted_data`      | `void**`                    | `NULL`  | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta`     | `KcrawlExtractionMeta*`     | `NULL`  | Metadata about the LLM extraction pass (cost, tokens, model).              |
 | `downloaded_document` | `KcrawlDownloadedDocument*` | `NULL`  | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).               |
+| `browser_used`        | `bool`                      | —       | Whether the browser fallback was used to fetch this page.                  |
 
 ---
 
@@ -381,19 +545,21 @@ The result of crawling a single page during a crawl operation.
 
 The result of a multi-page crawl operation.
 
-| Field             | Type                     | Default | Description                                                               |
-| ----------------- | ------------------------ | ------- | ------------------------------------------------------------------------- |
-| `pages`           | `KcrawlCrawlPageResult*` | `NULL`  | The list of crawled pages.                                                |
-| `final_url`       | `const char*`            | —       | The final URL after following redirects.                                  |
-| `redirect_count`  | `uintptr_t`              | —       | The number of redirects followed.                                         |
-| `was_skipped`     | `bool`                   | —       | Whether any page was skipped during crawling.                             |
-| `error`           | `const char**`           | `NULL`  | An error message, if the crawl encountered an issue.                      |
-| `cookies`         | `KcrawlCookieInfo*`      | `NULL`  | Cookies collected during the crawl.                                       |
-| `normalized_urls` | `const char**`           | `NULL`  | Normalized URLs encountered during crawling (for deduplication counting). |
+| Field              | Type                     | Default | Description                                                               |
+| ------------------ | ------------------------ | ------- | ------------------------------------------------------------------------- |
+| `pages`            | `KcrawlCrawlPageResult*` | `NULL`  | The list of crawled pages.                                                |
+| `final_url`        | `const char*`            | —       | The final URL after following redirects.                                  |
+| `redirect_count`   | `uintptr_t`              | —       | The number of redirects followed.                                         |
+| `was_skipped`      | `bool`                   | —       | Whether any page was skipped during crawling.                             |
+| `error`            | `const char**`           | `NULL`  | An error message, if the crawl encountered an issue.                      |
+| `cookies`          | `KcrawlCookieInfo*`      | `NULL`  | Cookies collected during the crawl.                                       |
+| `stayed_on_domain` | `bool`                   | —       | Whether all crawled pages stayed on the same domain as the start URL.     |
+| `browser_used`     | `bool`                   | —       | Whether the browser fallback was used for any page in this crawl.         |
+| `normalized_urls`  | `const char**`           | `NULL`  | Normalized URLs encountered during crawling (for deduplication counting). |
 
-##### Methods
+### Methods
 
-###### kcrawl_unique_normalized_urls()
+#### kcrawl_unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -402,6 +568,20 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```c
 uintptr_t kcrawl_unique_normalized_urls();
 ```
+
+---
+
+#### KcrawlCrawlStreamRequest
+
+Request to begin a single-URL streaming crawl.
+
+Wraps a single seed URL for delivery through the streaming-adapter binding
+surface. Required as a struct because alef's streaming adapter requires a
+named request type — primitives are not supported.
+
+| Field | Type          | Default | Description            |
+| ----- | ------------- | ------- | ---------------------- |
+| `url` | `const char*` | —       | The seed URL to crawl. |
 
 ---
 
@@ -515,6 +695,19 @@ Information about an image found on a page.
 
 ---
 
+#### KcrawlInteractionResult
+
+Result of executing a sequence of page interaction actions.
+
+| Field            | Type                  | Default | Description                                          |
+| ---------------- | --------------------- | ------- | ---------------------------------------------------- |
+| `action_results` | `KcrawlActionResult*` | `NULL`  | Results from each executed action.                   |
+| `final_html`     | `const char*`         | —       | Final page HTML after all actions completed.         |
+| `final_url`      | `const char*`         | —       | Final page URL (may have changed due to navigation). |
+| `screenshot`     | `const uint8_t**`     | `NULL`  | Screenshot taken after all actions, if requested.    |
+
+---
+
 #### KcrawlJsonLdEntry
 
 A JSON-LD structured data entry found on a page.
@@ -555,14 +748,14 @@ The result of a map operation, containing discovered URLs.
 
 Rich markdown conversion result from HTML processing.
 
-| Field                | Type                    | Default | Description                                              |
-| -------------------- | ----------------------- | ------- | -------------------------------------------------------- |
-| `content`            | `const char*`           | —       | Converted markdown text.                                 |
-| `document_structure` | `void**`                | `NULL`  | Structured document tree with semantic nodes.            |
-| `tables`             | `void**`                | `NULL`  | Extracted tables with structured cell data.              |
-| `warnings`           | `const char**`          | `NULL`  | Non-fatal processing warnings.                           |
-| `citations`          | `KcrawlCitationResult*` | `NULL`  | Content with links replaced by numbered citations.       |
-| `fit_content`        | `const char**`          | `NULL`  | Content-filtered markdown optimized for LLM consumption. |
+| Field                | Type           | Default | Description                                                                                                                                                                                                                                                                                                                                  |
+| -------------------- | -------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content`            | `const char*`  | —       | Converted markdown text.                                                                                                                                                                                                                                                                                                                     |
+| `document_structure` | `void**`       | `NULL`  | Structured document tree with semantic nodes.                                                                                                                                                                                                                                                                                                |
+| `tables`             | `void**`       | `NULL`  | Extracted tables with structured cell data.                                                                                                                                                                                                                                                                                                  |
+| `warnings`           | `const char**` | `NULL`  | Non-fatal processing warnings.                                                                                                                                                                                                                                                                                                               |
+| `citations`          | `bool`         | —       | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `fit_content`        | `const char**` | `NULL`  | Content-filtered markdown optimized for LLM consumption.                                                                                                                                                                                                                                                                                     |
 
 ---
 
@@ -650,35 +843,37 @@ Response metadata extracted from HTTP headers.
 
 The result of a single-page scrape operation.
 
-| Field                 | Type                        | Default | Description                                                                                            |
-| --------------------- | --------------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
-| `status_code`         | `uint16_t`                  | —       | The HTTP status code of the response.                                                                  |
-| `content_type`        | `const char*`               | —       | The Content-Type header value.                                                                         |
-| `html`                | `const char*`               | —       | The HTML body of the response.                                                                         |
-| `body_size`           | `uintptr_t`                 | —       | The size of the response body in bytes.                                                                |
-| `metadata`            | `KcrawlPageMetadata`        | —       | Extracted metadata from the page.                                                                      |
-| `links`               | `KcrawlLinkInfo*`           | `NULL`  | Links found on the page.                                                                               |
-| `images`              | `KcrawlImageInfo*`          | `NULL`  | Images found on the page.                                                                              |
-| `feeds`               | `KcrawlFeedInfo*`           | `NULL`  | Feed links found on the page.                                                                          |
-| `json_ld`             | `KcrawlJsonLdEntry*`        | `NULL`  | JSON-LD entries found on the page.                                                                     |
-| `is_allowed`          | `bool`                      | —       | Whether the URL is allowed by robots.txt.                                                              |
-| `crawl_delay`         | `uint64_t*`                 | `NULL`  | The crawl delay from robots.txt, in seconds.                                                           |
-| `noindex_detected`    | `bool`                      | —       | Whether a noindex directive was detected.                                                              |
-| `nofollow_detected`   | `bool`                      | —       | Whether a nofollow directive was detected.                                                             |
-| `x_robots_tag`        | `const char**`              | `NULL`  | The X-Robots-Tag header value, if present.                                                             |
-| `is_pdf`              | `bool`                      | —       | Whether the content is a PDF.                                                                          |
-| `was_skipped`         | `bool`                      | —       | Whether the page was skipped (binary or PDF content).                                                  |
-| `detected_charset`    | `const char**`              | `NULL`  | The detected character set encoding.                                                                   |
-| `auth_header_sent`    | `bool`                      | —       | Whether an authentication header was sent with the request.                                            |
-| `response_meta`       | `KcrawlResponseMeta*`       | `NULL`  | Response metadata extracted from HTTP headers.                                                         |
-| `assets`              | `KcrawlDownloadedAsset*`    | `NULL`  | Downloaded assets from the page.                                                                       |
-| `js_render_hint`      | `bool`                      | —       | Whether the page content suggests JavaScript rendering is needed.                                      |
-| `browser_used`        | `bool`                      | —       | Whether the browser fallback was used to fetch this page.                                              |
-| `markdown`            | `KcrawlMarkdownResult*`     | `NULL`  | Markdown conversion of the page content.                                                               |
-| `extracted_data`      | `void**`                    | `NULL`  | Structured data extracted by LLM. Populated when extraction is configured.                             |
-| `extraction_meta`     | `KcrawlExtractionMeta*`     | `NULL`  | Metadata about the LLM extraction pass (cost, tokens, model).                                          |
-| `screenshot`          | `const uint8_t**`           | `NULL`  | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
-| `downloaded_document` | `KcrawlDownloadedDocument*` | `NULL`  | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).                                           |
+| Field                 | Type                        | Default | Description                                                                                                                            |
+| --------------------- | --------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `status_code`         | `uint16_t`                  | —       | The HTTP status code of the response.                                                                                                  |
+| `final_url`           | `const char*`               | —       | The final URL after following all redirects.                                                                                           |
+| `content_type`        | `const char*`               | —       | The Content-Type header value.                                                                                                         |
+| `html`                | `const char*`               | —       | The HTML body of the response.                                                                                                         |
+| `body_size`           | `uintptr_t`                 | —       | The size of the response body in bytes.                                                                                                |
+| `metadata`            | `KcrawlPageMetadata`        | —       | Extracted metadata from the page.                                                                                                      |
+| `links`               | `KcrawlLinkInfo*`           | `NULL`  | Links found on the page.                                                                                                               |
+| `images`              | `KcrawlImageInfo*`          | `NULL`  | Images found on the page.                                                                                                              |
+| `feeds`               | `KcrawlFeedInfo*`           | `NULL`  | Feed links found on the page.                                                                                                          |
+| `json_ld`             | `KcrawlJsonLdEntry*`        | `NULL`  | JSON-LD entries found on the page.                                                                                                     |
+| `is_allowed`          | `bool`                      | —       | Whether the URL is allowed by robots.txt.                                                                                              |
+| `crawl_delay`         | `uint64_t*`                 | `NULL`  | The crawl delay from robots.txt, in seconds.                                                                                           |
+| `noindex_detected`    | `bool`                      | —       | Whether a noindex directive was detected.                                                                                              |
+| `nofollow_detected`   | `bool`                      | —       | Whether a nofollow directive was detected.                                                                                             |
+| `x_robots_tag`        | `const char**`              | `NULL`  | The X-Robots-Tag header value, if present.                                                                                             |
+| `is_pdf`              | `bool`                      | —       | Whether the content is a PDF.                                                                                                          |
+| `was_skipped`         | `bool`                      | —       | Whether the page was skipped (binary or PDF content).                                                                                  |
+| `detected_charset`    | `const char**`              | `NULL`  | The detected character set encoding.                                                                                                   |
+| `auth_header_sent`    | `bool`                      | —       | Whether an authentication header was sent with the request.                                                                            |
+| `response_meta`       | `KcrawlResponseMeta*`       | `NULL`  | Response metadata extracted from HTTP headers.                                                                                         |
+| `assets`              | `KcrawlDownloadedAsset*`    | `NULL`  | Downloaded assets from the page.                                                                                                       |
+| `js_render_hint`      | `bool`                      | —       | Whether the page content suggests JavaScript rendering is needed.                                                                      |
+| `browser_used`        | `bool`                      | —       | Whether the browser fallback was used to fetch this page.                                                                              |
+| `markdown`            | `KcrawlMarkdownResult*`     | `NULL`  | Markdown conversion of the page content.                                                                                               |
+| `extracted_data`      | `void**`                    | `NULL`  | Structured data extracted by LLM. Populated when extraction is configured.                                                             |
+| `extraction_meta`     | `KcrawlExtractionMeta*`     | `NULL`  | Metadata about the LLM extraction pass (cost, tokens, model).                                                                          |
+| `screenshot`          | `const uint8_t**`           | `NULL`  | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.                                 |
+| `downloaded_document` | `KcrawlDownloadedDocument*` | `NULL`  | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).                                                                           |
+| `browser`             | `KcrawlBrowserExtras*`      | `NULL`  | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 ---
 
@@ -718,6 +913,17 @@ Wait strategy for browser page rendering.
 | `KCRAWL_NETWORK_IDLE` | Wait until network activity is idle.                   |
 | `KCRAWL_SELECTOR`     | Wait for a specific CSS selector to appear in the DOM. |
 | `KCRAWL_FIXED`        | Wait for a fixed duration after navigation.            |
+
+---
+
+#### KcrawlBrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Value                  | Description                                                   |
+| ---------------------- | ------------------------------------------------------------- |
+| `KCRAWL_CHROMIUMOXIDE` | Existing Chromium/CDP backend powered by chromiumoxide.       |
+| `KCRAWL_NATIVE`        | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 ---
 
@@ -790,6 +996,57 @@ The category of a downloaded asset.
 
 ---
 
+#### KcrawlCrawlEvent
+
+An event emitted during a streaming crawl operation.
+
+Not available on `wasm32` targets — streaming requires native concurrency
+primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+
+Delivered to bindings via alef's streaming-adapter pattern. The
+`crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+expose this as the per-language streaming idiom (Python `AsyncIterator`,
+Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+
+| Value             | Description                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| `KCRAWL_PAGE`     | A single page has been crawled. — Fields: `result`: `KcrawlCrawlPageResult`                    |
+| `KCRAWL_ERROR`    | An error occurred while crawling a URL. — Fields: `url`: `const char*`, `error`: `const char*` |
+| `KCRAWL_COMPLETE` | The crawl has completed. — Fields: `pages_crawled`: `uintptr_t`                                |
+
+---
+
+#### KcrawlPageAction
+
+A single page interaction action.
+
+Actions are serialized with a `type` tag using camelCase naming,
+except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
+
+| Value               | Description                                                                                                                                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `KCRAWL_CLICK`      | Click on an element matching the given CSS selector. — Fields: `selector`: `const char*`                                                                                                                     |
+| `KCRAWL_TYPE_TEXT`  | Type text into an element matching the given CSS selector. — Fields: `selector`: `const char*`, `text`: `const char*`                                                                                        |
+| `KCRAWL_PRESS`      | Press a keyboard key (e.g. "Enter", "Tab", "Escape"). — Fields: `key`: `const char*`                                                                                                                         |
+| `KCRAWL_SCROLL`     | Scroll the page or a specific element. — Fields: `direction`: `KcrawlScrollDirection`, `selector`: `const char*`, `amount`: `int64_t`                                                                        |
+| `KCRAWL_WAIT`       | Wait for a duration or for an element to appear. — Fields: `milliseconds`: `int64_t`, `selector`: `const char*`                                                                                              |
+| `KCRAWL_SCREENSHOT` | Take a screenshot of the current page. — Fields: `full_page`: `bool`                                                                                                                                         |
+| `KCRAWL_EXECUTE_JS` | Execute arbitrary JavaScript in the page context. **Safety:** The script runs with full page privileges in the browser context. Only execute scripts from trusted sources. — Fields: `script`: `const char*` |
+| `KCRAWL_SCRAPE`     | Scrape the current page HTML.                                                                                                                                                                                |
+
+---
+
+#### KcrawlScrollDirection
+
+Direction for a scroll action.
+
+| Value         | Description      |
+| ------------- | ---------------- |
+| `KCRAWL_UP`   | Scroll upward.   |
+| `KCRAWL_DOWN` | Scroll downward. |
+
+---
+
 ### Errors
 
 #### KcrawlCrawlError
@@ -814,6 +1071,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `KCRAWL_BROWSER_ERROR`   | The browser failed to launch, connect, or navigate.                                |
 | `KCRAWL_BROWSER_TIMEOUT` | The browser page load or rendering timed out.                                      |
 | `KCRAWL_INVALID_CONFIG`  | The provided configuration is invalid.                                             |
+| `KCRAWL_UNSUPPORTED`     | The requested capability is not supported by the active backend or build.          |
 | `KCRAWL_OTHER`           | An unclassified error occurred.                                                    |
 
 ---

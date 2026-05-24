@@ -1,7 +1,11 @@
 {
 	"id": "cookies_per_domain",
 	"description": "Isolates cookies per domain during crawl",
-	"tags": ["cookies", "isolation"],
+	"tags": ["cookies", "isolation", "crawl"],
+	"skip": {
+		"languages": ["wasm"],
+		"reason": "wasm has no Tower middleware for HTTP header cookie extraction"
+	},
 	"input": {
 		"mock_responses": [
 			{

@@ -4,6 +4,6 @@
 
 pub use kreuzcrawl;
 pub use kreuzcrawl::{
-    BatchCrawlResult, BatchScrapeResult, CrawlEngineHandle, batch_crawl, batch_scrape, crawl, create_engine, map_urls,
-    scrape,
+    BatchCrawlResult, BatchCrawlResults, BatchScrapeResult, BatchScrapeResults, CrawlEngineHandle, batch_crawl,
+    batch_scrape, crawl, create_engine, map_urls, scrape,
 };

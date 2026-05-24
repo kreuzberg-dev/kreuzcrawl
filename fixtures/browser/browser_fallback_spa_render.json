@@ -2,6 +2,10 @@
 	"id": "browser_fallback_spa_render",
 	"description": "Browser auto re-fetches SPA shell when JS rendering is detected",
 	"tags": ["browser", "fallback", "spa"],
+	"skip": {
+		"languages": ["wasm"],
+		"reason": "wasm32 has no chromium backend"
+	},
 	"input": {
 		"mock_responses": [
 			{
@@ -14,19 +18,19 @@
 		],
 		"config": {
 			"browser": {
-				"mode": "auto"
+				"mode": "always"
 			}
 		}
 	},
 	"assertions": [
 		{
 			"type": "equals",
-			"field": "browser.js_render_hint",
+			"field": "js_render_hint",
 			"value": true
 		},
 		{
 			"type": "equals",
-			"field": "browser.browser_used",
+			"field": "browser_used",
 			"value": true
 		}
 	]

@@ -1,6 +1,6 @@
 [package]
 name = "kreuzcrawl-rb"
-version = "0.3.0-rc.19"
+version = "0.3.0-rc.26"
 edition = "2024"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"
@@ -14,7 +14,11 @@ path = "../src/lib.rs"
 crate-type = ["cdylib"]
 
 [dependencies]
-kreuzcrawl = { path = "../../../../../crates/kreuzcrawl" }
+futures = "0.3"
+kreuzcrawl = { version = "0.3.0-rc.26", path = "../../../../../crates/kreuzcrawl", features = [
+    "interact",
+    "browser-chromiumoxide",
+] }
 magnus = "0.8"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

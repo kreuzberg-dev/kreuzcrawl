@@ -1,7 +1,10 @@
 {
 	"id": "concurrent_respects_max_pages",
 	"description": "Concurrent crawling respects max_pages limit",
-	"tags": ["concurrent"],
+	"tags": [
+		"concurrent",
+		"crawl"
+	],
 	"input": {
 		"mock_responses": [
 			{

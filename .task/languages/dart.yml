@@ -150,6 +150,7 @@ tasks:
     precondition: "command -v dart >/dev/null 2>&1"
     deps:
       - task: :_dev_wf:mock-server:rebuild
+      - task: build
     env:
       DYLD_FALLBACK_LIBRARY_PATH: "{{.ROOT_DIR}}/target/release"
       LD_LIBRARY_PATH: "{{.ROOT_DIR}}/target/release"

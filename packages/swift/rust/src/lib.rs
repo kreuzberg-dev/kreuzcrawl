@@ -16,6 +16,21 @@
     clippy::inherent_to_string
 )]
 
+/// Process-wide tokio runtime shared across every swift-bridge async wrapper.
+///
+/// alef-emitted; see shims.rs for the rationale (orphaned reqwest connection
+/// pools when each call creates and drops its own current-thread runtime).
+fn __alef_tokio_runtime() -> &'static ::tokio::runtime::Runtime {
+    use std::sync::OnceLock;
+    static RT: OnceLock<::tokio::runtime::Runtime> = OnceLock::new();
+    RT.get_or_init(|| {
+        ::tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .build()
+            .expect("build process-wide alef tokio runtime")
+    })
+}
+
 #[swift_bridge::bridge]
 mod ffi {
     extern "Rust" {
@@ -29,9 +44,12 @@ mod ffi {
             chunks_processed: usize,
         ) -> ExtractionMeta;
         fn cost(&self) -> Option<f64>;
+        #[swift_bridge(swift_name = "promptTokens")]
         fn prompt_tokens(&self) -> Option<u64>;
+        #[swift_bridge(swift_name = "completionTokens")]
         fn completion_tokens(&self) -> Option<u64>;
         fn model(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "chunksProcessed")]
         fn chunks_processed(&self) -> usize;
     }
 
@@ -61,17 +79,28 @@ mod ffi {
             wrap_width: usize,
             include_document_structure: bool,
         ) -> ContentConfig;
+        #[swift_bridge(swift_name = "outputFormat")]
         fn output_format(&self) -> String;
+        #[swift_bridge(swift_name = "preprocessingPreset")]
         fn preprocessing_preset(&self) -> String;
+        #[swift_bridge(swift_name = "removeNavigation")]
         fn remove_navigation(&self) -> bool;
+        #[swift_bridge(swift_name = "removeForms")]
         fn remove_forms(&self) -> bool;
+        #[swift_bridge(swift_name = "stripTags")]
         fn strip_tags(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "preserveTags")]
         fn preserve_tags(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "excludeSelectors")]
         fn exclude_selectors(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "skipImages")]
         fn skip_images(&self) -> bool;
+        #[swift_bridge(swift_name = "maxDepth")]
         fn max_depth(&self) -> Option<usize>;
         fn wrap(&self) -> bool;
+        #[swift_bridge(swift_name = "wrapWidth")]
         fn wrap_width(&self) -> usize;
+        #[swift_bridge(swift_name = "includeDocumentStructure")]
         fn include_document_structure(&self) -> bool;
     }
 
@@ -80,18 +109,38 @@ mod ffi {
         #[swift_bridge(init)]
         fn new(
             mode: BrowserMode,
+            backend: BrowserBackend,
             endpoint: Option<String>,
             timeout: u64,
             wait: BrowserWait,
             wait_selector: Option<String>,
             extra_wait: Option<u64>,
+            stealth: bool,
+            proxy: Option<ProxyConfig>,
+            block_url_patterns: Vec<String>,
+            eval_script: Option<String>,
+            robots_user_agent: Option<String>,
+            capture_network_events: bool,
         ) -> BrowserConfig;
         fn mode(&self) -> String;
+        fn backend(&self) -> String;
         fn endpoint(&self) -> Option<String>;
         fn timeout(&self) -> u64;
         fn wait(&self) -> String;
+        #[swift_bridge(swift_name = "waitSelector")]
         fn wait_selector(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "extraWait")]
         fn extra_wait(&self) -> Option<u64>;
+        fn stealth(&self) -> bool;
+        fn proxy(&self) -> Option<ProxyConfig>;
+        #[swift_bridge(swift_name = "blockUrlPatterns")]
+        fn block_url_patterns(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "evalScript")]
+        fn eval_script(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "robotsUserAgent")]
+        fn robots_user_agent(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "captureNetworkEvents")]
+        fn capture_network_events(&self) -> bool;
     }
 
     extern "Rust" {
@@ -135,42 +184,89 @@ mod ffi {
             browser_profile: Option<String>,
             save_browser_profile: bool,
         ) -> CrawlConfig;
+        #[swift_bridge(swift_name = "maxDepth")]
         fn max_depth(&self) -> Option<usize>;
+        #[swift_bridge(swift_name = "maxPages")]
         fn max_pages(&self) -> Option<usize>;
+        #[swift_bridge(swift_name = "maxConcurrent")]
         fn max_concurrent(&self) -> Option<usize>;
+        #[swift_bridge(swift_name = "respectRobotsTxt")]
         fn respect_robots_txt(&self) -> bool;
+        #[swift_bridge(swift_name = "softHttpErrors")]
         fn soft_http_errors(&self) -> bool;
+        #[swift_bridge(swift_name = "userAgent")]
         fn user_agent(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "stayOnDomain")]
         fn stay_on_domain(&self) -> bool;
+        #[swift_bridge(swift_name = "allowSubdomains")]
         fn allow_subdomains(&self) -> bool;
+        #[swift_bridge(swift_name = "includePaths")]
         fn include_paths(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "excludePaths")]
         fn exclude_paths(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "customHeaders")]
         fn custom_headers(&self) -> String;
+        #[swift_bridge(swift_name = "requestTimeout")]
         fn request_timeout(&self) -> u64;
+        #[swift_bridge(swift_name = "rateLimitMs")]
         fn rate_limit_ms(&self) -> Option<u64>;
+        #[swift_bridge(swift_name = "maxRedirects")]
         fn max_redirects(&self) -> usize;
+        #[swift_bridge(swift_name = "retryCount")]
         fn retry_count(&self) -> usize;
+        #[swift_bridge(swift_name = "retryCodes")]
         fn retry_codes(&self) -> Vec<u16>;
+        #[swift_bridge(swift_name = "cookiesEnabled")]
         fn cookies_enabled(&self) -> bool;
         fn auth(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "maxBodySize")]
         fn max_body_size(&self) -> Option<usize>;
+        #[swift_bridge(swift_name = "removeTags")]
         fn remove_tags(&self) -> Vec<String>;
         fn content(&self) -> ContentConfig;
+        #[swift_bridge(swift_name = "mapLimit")]
         fn map_limit(&self) -> Option<usize>;
+        #[swift_bridge(swift_name = "mapSearch")]
         fn map_search(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "downloadAssets")]
         fn download_assets(&self) -> bool;
+        #[swift_bridge(swift_name = "assetTypes")]
         fn asset_types(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "maxAssetSize")]
         fn max_asset_size(&self) -> Option<usize>;
         fn browser(&self) -> BrowserConfig;
         fn proxy(&self) -> Option<ProxyConfig>;
+        #[swift_bridge(swift_name = "userAgents")]
         fn user_agents(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "captureScreenshot")]
         fn capture_screenshot(&self) -> bool;
+        #[swift_bridge(swift_name = "downloadDocuments")]
         fn download_documents(&self) -> bool;
+        #[swift_bridge(swift_name = "documentMaxSize")]
         fn document_max_size(&self) -> Option<usize>;
+        #[swift_bridge(swift_name = "documentMimeTypes")]
         fn document_mime_types(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "warcOutput")]
         fn warc_output(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "browserProfile")]
         fn browser_profile(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "saveBrowserProfile")]
         fn save_browser_profile(&self) -> bool;
+    }
+
+    extern "Rust" {
+        type BrowserExtras;
+        #[swift_bridge(init)]
+        fn new(
+            eval_result: Option<String>,
+            network_events: Vec<ResponseMeta>,
+            cookies: Vec<CookieInfo>,
+        ) -> BrowserExtras;
+        #[swift_bridge(swift_name = "evalResult")]
+        fn eval_result(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "networkEvents")]
+        fn network_events(&self) -> Vec<ResponseMeta>;
+        fn cookies(&self) -> Vec<CookieInfo>;
     }
 
     extern "Rust" {
@@ -185,11 +281,44 @@ mod ffi {
             headers: String,
         ) -> DownloadedDocument;
         fn url(&self) -> String;
+        #[swift_bridge(swift_name = "mimeType")]
         fn mime_type(&self) -> String;
         fn size(&self) -> usize;
         fn filename(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "contentHash")]
         fn content_hash(&self) -> String;
         fn headers(&self) -> String;
+    }
+
+    extern "Rust" {
+        type InteractionResult;
+        #[swift_bridge(init)]
+        fn new(action_results: Vec<ActionResult>, final_html: String, final_url: String) -> InteractionResult;
+        #[swift_bridge(swift_name = "actionResults")]
+        fn action_results(&self) -> Vec<ActionResult>;
+        #[swift_bridge(swift_name = "finalHtml")]
+        fn final_html(&self) -> String;
+        #[swift_bridge(swift_name = "finalUrl")]
+        fn final_url(&self) -> String;
+    }
+
+    extern "Rust" {
+        type ActionResult;
+        #[swift_bridge(init)]
+        fn new(
+            action_index: usize,
+            action_type: String,
+            success: bool,
+            data: Option<String>,
+            error: Option<String>,
+        ) -> ActionResult;
+        #[swift_bridge(swift_name = "actionIndex")]
+        fn action_index(&self) -> usize;
+        #[swift_bridge(swift_name = "actionType")]
+        fn action_type(&self) -> String;
+        fn success(&self) -> bool;
+        fn data(&self) -> Option<String>;
+        fn error(&self) -> Option<String>;
     }
 
     extern "Rust" {
@@ -197,6 +326,7 @@ mod ffi {
         #[swift_bridge(init)]
         fn new(
             status_code: u16,
+            final_url: String,
             content_type: String,
             html: String,
             body_size: usize,
@@ -222,33 +352,56 @@ mod ffi {
             extracted_data: Option<String>,
             extraction_meta: Option<ExtractionMeta>,
             downloaded_document: Option<DownloadedDocument>,
+            browser: Option<BrowserExtras>,
         ) -> ScrapeResult;
+        #[swift_bridge(swift_name = "statusCode")]
         fn status_code(&self) -> u16;
+        #[swift_bridge(swift_name = "finalUrl")]
+        fn final_url(&self) -> String;
+        #[swift_bridge(swift_name = "contentType")]
         fn content_type(&self) -> String;
         fn html(&self) -> String;
+        #[swift_bridge(swift_name = "bodySize")]
         fn body_size(&self) -> usize;
         fn metadata(&self) -> PageMetadata;
         fn links(&self) -> Vec<LinkInfo>;
         fn images(&self) -> Vec<ImageInfo>;
         fn feeds(&self) -> Vec<FeedInfo>;
+        #[swift_bridge(swift_name = "jsonLd")]
         fn json_ld(&self) -> Vec<JsonLdEntry>;
+        #[swift_bridge(swift_name = "isAllowed")]
         fn is_allowed(&self) -> bool;
+        #[swift_bridge(swift_name = "crawlDelay")]
         fn crawl_delay(&self) -> Option<u64>;
+        #[swift_bridge(swift_name = "noindexDetected")]
         fn noindex_detected(&self) -> bool;
+        #[swift_bridge(swift_name = "nofollowDetected")]
         fn nofollow_detected(&self) -> bool;
+        #[swift_bridge(swift_name = "xRobotsTag")]
         fn x_robots_tag(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "isPdf")]
         fn is_pdf(&self) -> bool;
+        #[swift_bridge(swift_name = "wasSkipped")]
         fn was_skipped(&self) -> bool;
+        #[swift_bridge(swift_name = "detectedCharset")]
         fn detected_charset(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "authHeaderSent")]
         fn auth_header_sent(&self) -> bool;
+        #[swift_bridge(swift_name = "responseMeta")]
         fn response_meta(&self) -> Option<ResponseMeta>;
         fn assets(&self) -> Vec<DownloadedAsset>;
+        #[swift_bridge(swift_name = "jsRenderHint")]
         fn js_render_hint(&self) -> bool;
+        #[swift_bridge(swift_name = "browserUsed")]
         fn browser_used(&self) -> bool;
         fn markdown(&self) -> Option<MarkdownResult>;
+        #[swift_bridge(swift_name = "extractedData")]
         fn extracted_data(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "extractionMeta")]
         fn extraction_meta(&self) -> Option<ExtractionMeta>;
+        #[swift_bridge(swift_name = "downloadedDocument")]
         fn downloaded_document(&self) -> Option<DownloadedDocument>;
+        fn browser(&self) -> Option<BrowserExtras>;
     }
 
     extern "Rust" {
@@ -275,27 +428,42 @@ mod ffi {
             extracted_data: Option<String>,
             extraction_meta: Option<ExtractionMeta>,
             downloaded_document: Option<DownloadedDocument>,
+            browser_used: bool,
         ) -> CrawlPageResult;
         fn url(&self) -> String;
+        #[swift_bridge(swift_name = "normalizedUrl")]
         fn normalized_url(&self) -> String;
+        #[swift_bridge(swift_name = "statusCode")]
         fn status_code(&self) -> u16;
+        #[swift_bridge(swift_name = "contentType")]
         fn content_type(&self) -> String;
         fn html(&self) -> String;
+        #[swift_bridge(swift_name = "bodySize")]
         fn body_size(&self) -> usize;
         fn metadata(&self) -> PageMetadata;
         fn links(&self) -> Vec<LinkInfo>;
         fn images(&self) -> Vec<ImageInfo>;
         fn feeds(&self) -> Vec<FeedInfo>;
+        #[swift_bridge(swift_name = "jsonLd")]
         fn json_ld(&self) -> Vec<JsonLdEntry>;
         fn depth(&self) -> usize;
+        #[swift_bridge(swift_name = "stayedOnDomain")]
         fn stayed_on_domain(&self) -> bool;
+        #[swift_bridge(swift_name = "wasSkipped")]
         fn was_skipped(&self) -> bool;
+        #[swift_bridge(swift_name = "isPdf")]
         fn is_pdf(&self) -> bool;
+        #[swift_bridge(swift_name = "detectedCharset")]
         fn detected_charset(&self) -> Option<String>;
         fn markdown(&self) -> Option<MarkdownResult>;
+        #[swift_bridge(swift_name = "extractedData")]
         fn extracted_data(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "extractionMeta")]
         fn extraction_meta(&self) -> Option<ExtractionMeta>;
+        #[swift_bridge(swift_name = "downloadedDocument")]
         fn downloaded_document(&self) -> Option<DownloadedDocument>;
+        #[swift_bridge(swift_name = "browserUsed")]
+        fn browser_used(&self) -> bool;
     }
 
     extern "Rust" {
@@ -308,15 +476,22 @@ mod ffi {
             was_skipped: bool,
             error: Option<String>,
             cookies: Vec<CookieInfo>,
-            normalized_urls: Vec<String>,
+            stayed_on_domain: bool,
+            browser_used: bool,
         ) -> CrawlResult;
         fn pages(&self) -> Vec<CrawlPageResult>;
+        #[swift_bridge(swift_name = "finalUrl")]
         fn final_url(&self) -> String;
+        #[swift_bridge(swift_name = "redirectCount")]
         fn redirect_count(&self) -> usize;
+        #[swift_bridge(swift_name = "wasSkipped")]
         fn was_skipped(&self) -> bool;
         fn error(&self) -> Option<String>;
         fn cookies(&self) -> Vec<CookieInfo>;
-        fn normalized_urls(&self) -> Vec<String>;
+        #[swift_bridge(swift_name = "stayedOnDomain")]
+        fn stayed_on_domain(&self) -> bool;
+        #[swift_bridge(swift_name = "browserUsed")]
+        fn browser_used(&self) -> bool;
     }
 
     extern "Rust" {
@@ -349,14 +524,16 @@ mod ffi {
             document_structure: Option<String>,
             tables: Vec<String>,
             warnings: Vec<String>,
-            citations: Option<CitationResult>,
+            citations: bool,
             fit_content: Option<String>,
         ) -> MarkdownResult;
         fn content(&self) -> String;
+        #[swift_bridge(swift_name = "documentStructure")]
         fn document_structure(&self) -> Option<String>;
         fn tables(&self) -> Vec<String>;
         fn warnings(&self) -> Vec<String>;
-        fn citations(&self) -> Option<CitationResult>;
+        fn citations(&self) -> bool;
+        #[swift_bridge(swift_name = "fitContent")]
         fn fit_content(&self) -> Option<String>;
     }
 
@@ -366,6 +543,7 @@ mod ffi {
         fn new(url: String, text: String, link_type: LinkType, rel: Option<String>, nofollow: bool) -> LinkInfo;
         fn url(&self) -> String;
         fn text(&self) -> String;
+        #[swift_bridge(swift_name = "linkType")]
         fn link_type(&self) -> String;
         fn rel(&self) -> Option<String>;
         fn nofollow(&self) -> bool;
@@ -394,6 +572,7 @@ mod ffi {
         fn new(url: String, title: Option<String>, feed_type: FeedType) -> FeedInfo;
         fn url(&self) -> String;
         fn title(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "feedType")]
         fn feed_type(&self) -> String;
     }
 
@@ -401,6 +580,7 @@ mod ffi {
         type JsonLdEntry;
         #[swift_bridge(init)]
         fn new(schema_type: String, name: Option<String>, raw: String) -> JsonLdEntry;
+        #[swift_bridge(swift_name = "schemaType")]
         fn schema_type(&self) -> String;
         fn name(&self) -> Option<String>;
         fn raw(&self) -> String;
@@ -428,10 +608,14 @@ mod ffi {
             html_tag: Option<String>,
         ) -> DownloadedAsset;
         fn url(&self) -> String;
+        #[swift_bridge(swift_name = "contentHash")]
         fn content_hash(&self) -> String;
+        #[swift_bridge(swift_name = "mimeType")]
         fn mime_type(&self) -> Option<String>;
         fn size(&self) -> usize;
+        #[swift_bridge(swift_name = "assetCategory")]
         fn asset_category(&self) -> String;
+        #[swift_bridge(swift_name = "htmlTag")]
         fn html_tag(&self) -> Option<String>;
     }
 
@@ -445,7 +629,9 @@ mod ffi {
             section: Option<String>,
             tags: Vec<String>,
         ) -> ArticleMetadata;
+        #[swift_bridge(swift_name = "publishedTime")]
         fn published_time(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "modifiedTime")]
         fn modified_time(&self) -> Option<String>;
         fn author(&self) -> Option<String>;
         fn section(&self) -> Option<String>;
@@ -467,6 +653,7 @@ mod ffi {
         fn url(&self) -> String;
         fn rel(&self) -> String;
         fn sizes(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "mimeType")]
         fn mime_type(&self) -> Option<String>;
     }
 
@@ -491,11 +678,16 @@ mod ffi {
             content_encoding: Option<String>,
         ) -> ResponseMeta;
         fn etag(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "lastModified")]
         fn last_modified(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "cacheControl")]
         fn cache_control(&self) -> Option<String>;
         fn server(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "xPoweredBy")]
         fn x_powered_by(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "contentLanguage")]
         fn content_language(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "contentEncoding")]
         fn content_encoding(&self) -> Option<String>;
     }
 
@@ -549,47 +741,93 @@ mod ffi {
         ) -> PageMetadata;
         fn title(&self) -> Option<String>;
         fn description(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "canonicalUrl")]
         fn canonical_url(&self) -> Option<String>;
         fn keywords(&self) -> Option<String>;
         fn author(&self) -> Option<String>;
         fn viewport(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "themeColor")]
         fn theme_color(&self) -> Option<String>;
         fn generator(&self) -> Option<String>;
         fn robots(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "htmlLang")]
         fn html_lang(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "htmlDir")]
         fn html_dir(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogTitle")]
         fn og_title(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogType")]
         fn og_type(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogImage")]
         fn og_image(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogDescription")]
         fn og_description(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogUrl")]
         fn og_url(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogSiteName")]
         fn og_site_name(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogLocale")]
         fn og_locale(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogVideo")]
         fn og_video(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogAudio")]
         fn og_audio(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "ogLocaleAlternates")]
         fn og_locale_alternates(&self) -> Option<Vec<String>>;
+        #[swift_bridge(swift_name = "twitterCard")]
         fn twitter_card(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "twitterTitle")]
         fn twitter_title(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "twitterDescription")]
         fn twitter_description(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "twitterImage")]
         fn twitter_image(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "twitterSite")]
         fn twitter_site(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "twitterCreator")]
         fn twitter_creator(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcTitle")]
         fn dc_title(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcCreator")]
         fn dc_creator(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcSubject")]
         fn dc_subject(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcDescription")]
         fn dc_description(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcPublisher")]
         fn dc_publisher(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcDate")]
         fn dc_date(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcType")]
         fn dc_type(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcFormat")]
         fn dc_format(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcIdentifier")]
         fn dc_identifier(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcLanguage")]
         fn dc_language(&self) -> Option<String>;
+        #[swift_bridge(swift_name = "dcRights")]
         fn dc_rights(&self) -> Option<String>;
         fn article(&self) -> Option<ArticleMetadata>;
         fn hreflangs(&self) -> Option<Vec<HreflangEntry>>;
         fn favicons(&self) -> Option<Vec<FaviconInfo>>;
         fn headings(&self) -> Option<Vec<HeadingInfo>>;
+        #[swift_bridge(swift_name = "wordCount")]
         fn word_count(&self) -> Option<usize>;
+    }
+
+    extern "Rust" {
+        type CrawlStreamRequest;
+        #[swift_bridge(init)]
+        fn new(url: String) -> CrawlStreamRequest;
+        fn url(&self) -> String;
+    }
+
+    extern "Rust" {
+        type BatchCrawlStreamRequest;
+        #[swift_bridge(init)]
+        fn new(urls: Vec<String>) -> BatchCrawlStreamRequest;
+        fn urls(&self) -> Vec<String>;
     }
 
     extern "Rust" {
@@ -632,12 +870,53 @@ mod ffi {
     }
 
     extern "Rust" {
+        type BatchScrapeResults;
+        #[swift_bridge(init)]
+        fn new(
+            results: Vec<BatchScrapeResult>,
+            total_count: usize,
+            completed_count: usize,
+            failed_count: usize,
+        ) -> BatchScrapeResults;
+        fn results(&self) -> Vec<BatchScrapeResult>;
+        #[swift_bridge(swift_name = "totalCount")]
+        fn total_count(&self) -> usize;
+        #[swift_bridge(swift_name = "completedCount")]
+        fn completed_count(&self) -> usize;
+        #[swift_bridge(swift_name = "failedCount")]
+        fn failed_count(&self) -> usize;
+    }
+
+    extern "Rust" {
+        type BatchCrawlResults;
+        #[swift_bridge(init)]
+        fn new(
+            results: Vec<BatchCrawlResult>,
+            total_count: usize,
+            completed_count: usize,
+            failed_count: usize,
+        ) -> BatchCrawlResults;
+        fn results(&self) -> Vec<BatchCrawlResult>;
+        #[swift_bridge(swift_name = "totalCount")]
+        fn total_count(&self) -> usize;
+        #[swift_bridge(swift_name = "completedCount")]
+        fn completed_count(&self) -> usize;
+        #[swift_bridge(swift_name = "failedCount")]
+        fn failed_count(&self) -> usize;
+    }
+
+    extern "Rust" {
         type BrowserMode;
         fn to_string(&self) -> String;
     }
 
     extern "Rust" {
         type BrowserWait;
+        fn to_string(&self) -> String;
+    }
+
+    extern "Rust" {
+        type BrowserBackend;
         fn to_string(&self) -> String;
     }
 
@@ -667,22 +946,154 @@ mod ffi {
     }
 
     extern "Rust" {
+        type CrawlEvent;
+        fn to_string(&self) -> String;
+    }
+
+    extern "Rust" {
+        type PageAction;
+        fn to_string(&self) -> String;
+    }
+
+    extern "Rust" {
+        type ScrollDirection;
+        fn to_string(&self) -> String;
+    }
+
+    extern "Rust" {
+        #[swift_bridge(swift_name = "generateCitations")]
+        fn generate_citations(markdown: String) -> CitationResult;
         #[swift_bridge(swift_name = "createEngine")]
         fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, String>;
         fn scrape(engine: CrawlEngineHandle, url: String) -> Result<ScrapeResult, String>;
         fn crawl(engine: CrawlEngineHandle, url: String) -> Result<CrawlResult, String>;
         #[swift_bridge(swift_name = "mapUrls")]
         fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResult, String>;
+        fn interact(engine: CrawlEngineHandle, url: String, actions: Vec<String>) -> Result<InteractionResult, String>;
         #[swift_bridge(swift_name = "batchScrape")]
-        fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, String>;
+        fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchScrapeResults, String>;
         #[swift_bridge(swift_name = "batchCrawl")]
-        fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, String>;
+        fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchCrawlResults, String>;
+    }
+
+    extern "Rust" {
+        type CrawlEngineHandleCrawlStreamStreamHandle;
+        type CrawlEngineHandleBatchCrawlStreamStreamHandle;
+
+        #[swift_bridge(swift_name = "crawlEngineHandleCrawlStreamStart")]
+        fn crawl_engine_handle_crawl_stream_start(
+            client: &CrawlEngineHandle,
+            req: &CrawlStreamRequest,
+        ) -> Result<CrawlEngineHandleCrawlStreamStreamHandle, String>;
+        fn next(self: &mut CrawlEngineHandleCrawlStreamStreamHandle) -> Result<String, String>;
+        #[swift_bridge(swift_name = "crawlEngineHandleBatchCrawlStreamStart")]
+        fn crawl_engine_handle_batch_crawl_stream_start(
+            client: &CrawlEngineHandle,
+            req: &BatchCrawlStreamRequest,
+        ) -> Result<CrawlEngineHandleBatchCrawlStreamStreamHandle, String>;
+        fn next(self: &mut CrawlEngineHandleBatchCrawlStreamStreamHandle) -> Result<String, String>;
     }
 
     extern "Rust" {
 
         #[swift_bridge(swift_name = "crawlConfigFromJson")]
         fn crawl_config_from_json(json: String) -> Result<CrawlConfig, String>;
+        #[swift_bridge(swift_name = "crawlStreamRequestFromJson")]
+        fn crawl_stream_request_from_json(json: String) -> Result<CrawlStreamRequest, String>;
+        #[swift_bridge(swift_name = "batchCrawlStreamRequestFromJson")]
+        fn batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String>;
+    }
+    extern "Rust" {
+
+        #[swift_bridge(swift_name = "extractionMetaFromJson")]
+        fn extraction_meta_from_json(json: String) -> Result<ExtractionMeta, String>;
+        #[swift_bridge(swift_name = "proxyConfigFromJson")]
+        fn proxy_config_from_json(json: String) -> Result<ProxyConfig, String>;
+        #[swift_bridge(swift_name = "contentConfigFromJson")]
+        fn content_config_from_json(json: String) -> Result<ContentConfig, String>;
+        #[swift_bridge(swift_name = "browserConfigFromJson")]
+        fn browser_config_from_json(json: String) -> Result<BrowserConfig, String>;
+        #[swift_bridge(swift_name = "browserExtrasFromJson")]
+        fn browser_extras_from_json(json: String) -> Result<BrowserExtras, String>;
+        #[swift_bridge(swift_name = "downloadedDocumentFromJson")]
+        fn downloaded_document_from_json(json: String) -> Result<DownloadedDocument, String>;
+        #[swift_bridge(swift_name = "interactionResultFromJson")]
+        fn interaction_result_from_json(json: String) -> Result<InteractionResult, String>;
+        #[swift_bridge(swift_name = "actionResultFromJson")]
+        fn action_result_from_json(json: String) -> Result<ActionResult, String>;
+        #[swift_bridge(swift_name = "scrapeResultFromJson")]
+        fn scrape_result_from_json(json: String) -> Result<ScrapeResult, String>;
+        #[swift_bridge(swift_name = "crawlPageResultFromJson")]
+        fn crawl_page_result_from_json(json: String) -> Result<CrawlPageResult, String>;
+        #[swift_bridge(swift_name = "crawlResultFromJson")]
+        fn crawl_result_from_json(json: String) -> Result<CrawlResult, String>;
+        #[swift_bridge(swift_name = "sitemapUrlFromJson")]
+        fn sitemap_url_from_json(json: String) -> Result<SitemapUrl, String>;
+        #[swift_bridge(swift_name = "mapResultFromJson")]
+        fn map_result_from_json(json: String) -> Result<MapResult, String>;
+        #[swift_bridge(swift_name = "markdownResultFromJson")]
+        fn markdown_result_from_json(json: String) -> Result<MarkdownResult, String>;
+        #[swift_bridge(swift_name = "linkInfoFromJson")]
+        fn link_info_from_json(json: String) -> Result<LinkInfo, String>;
+        #[swift_bridge(swift_name = "imageInfoFromJson")]
+        fn image_info_from_json(json: String) -> Result<ImageInfo, String>;
+        #[swift_bridge(swift_name = "feedInfoFromJson")]
+        fn feed_info_from_json(json: String) -> Result<FeedInfo, String>;
+        #[swift_bridge(swift_name = "jsonLdEntryFromJson")]
+        fn json_ld_entry_from_json(json: String) -> Result<JsonLdEntry, String>;
+        #[swift_bridge(swift_name = "cookieInfoFromJson")]
+        fn cookie_info_from_json(json: String) -> Result<CookieInfo, String>;
+        #[swift_bridge(swift_name = "downloadedAssetFromJson")]
+        fn downloaded_asset_from_json(json: String) -> Result<DownloadedAsset, String>;
+        #[swift_bridge(swift_name = "articleMetadataFromJson")]
+        fn article_metadata_from_json(json: String) -> Result<ArticleMetadata, String>;
+        #[swift_bridge(swift_name = "hreflangEntryFromJson")]
+        fn hreflang_entry_from_json(json: String) -> Result<HreflangEntry, String>;
+        #[swift_bridge(swift_name = "faviconInfoFromJson")]
+        fn favicon_info_from_json(json: String) -> Result<FaviconInfo, String>;
+        #[swift_bridge(swift_name = "headingInfoFromJson")]
+        fn heading_info_from_json(json: String) -> Result<HeadingInfo, String>;
+        #[swift_bridge(swift_name = "responseMetaFromJson")]
+        fn response_meta_from_json(json: String) -> Result<ResponseMeta, String>;
+        #[swift_bridge(swift_name = "pageMetadataFromJson")]
+        fn page_metadata_from_json(json: String) -> Result<PageMetadata, String>;
+        #[swift_bridge(swift_name = "citationResultFromJson")]
+        fn citation_result_from_json(json: String) -> Result<CitationResult, String>;
+        #[swift_bridge(swift_name = "citationReferenceFromJson")]
+        fn citation_reference_from_json(json: String) -> Result<CitationReference, String>;
+        #[swift_bridge(swift_name = "batchScrapeResultFromJson")]
+        fn batch_scrape_result_from_json(json: String) -> Result<BatchScrapeResult, String>;
+        #[swift_bridge(swift_name = "batchCrawlResultFromJson")]
+        fn batch_crawl_result_from_json(json: String) -> Result<BatchCrawlResult, String>;
+        #[swift_bridge(swift_name = "batchScrapeResultsFromJson")]
+        fn batch_scrape_results_from_json(json: String) -> Result<BatchScrapeResults, String>;
+        #[swift_bridge(swift_name = "batchCrawlResultsFromJson")]
+        fn batch_crawl_results_from_json(json: String) -> Result<BatchCrawlResults, String>;
+    }
+    extern "Rust" {
+
+        #[swift_bridge(swift_name = "browserModeFromJson")]
+        fn browser_mode_from_json(json: String) -> Result<BrowserMode, String>;
+        #[swift_bridge(swift_name = "browserWaitFromJson")]
+        fn browser_wait_from_json(json: String) -> Result<BrowserWait, String>;
+        #[swift_bridge(swift_name = "browserBackendFromJson")]
+        fn browser_backend_from_json(json: String) -> Result<BrowserBackend, String>;
+        #[swift_bridge(swift_name = "authConfigFromJson")]
+        fn auth_config_from_json(json: String) -> Result<AuthConfig, String>;
+        #[swift_bridge(swift_name = "linkTypeFromJson")]
+        fn link_type_from_json(json: String) -> Result<LinkType, String>;
+        #[swift_bridge(swift_name = "imageSourceFromJson")]
+        fn image_source_from_json(json: String) -> Result<ImageSource, String>;
+        #[swift_bridge(swift_name = "feedTypeFromJson")]
+        fn feed_type_from_json(json: String) -> Result<FeedType, String>;
+        #[swift_bridge(swift_name = "assetCategoryFromJson")]
+        fn asset_category_from_json(json: String) -> Result<AssetCategory, String>;
+        #[swift_bridge(swift_name = "crawlEventFromJson")]
+        fn crawl_event_from_json(json: String) -> Result<CrawlEvent, String>;
+        #[swift_bridge(swift_name = "pageActionFromJson")]
+        fn page_action_from_json(json: String) -> Result<PageAction, String>;
+        #[swift_bridge(swift_name = "scrollDirectionFromJson")]
+        fn scroll_direction_from_json(json: String) -> Result<ScrollDirection, String>;
     }
 }
 
@@ -700,10 +1111,13 @@ impl ExtractionMeta {
         __target.prompt_tokens = prompt_tokens;
         __target.completion_tokens = completion_tokens;
         if let Some(s) = model {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.model = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.model = Some(t);
             }
         }
         __target.chunks_processed = chunks_processed;
@@ -745,23 +1159,35 @@ pub struct ProxyConfig(pub kreuzcrawl::ProxyConfig);
 impl ProxyConfig {
     pub fn new(url: String, username: Option<String>, password: Option<String>) -> ProxyConfig {
         let mut __target: kreuzcrawl::ProxyConfig = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
         if let Some(s) = username {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.username = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.username = Some(t);
             }
         }
         if let Some(s) = password {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.password = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.password = Some(t);
             }
         }
         ProxyConfig(__target)
@@ -794,13 +1220,25 @@ impl ContentConfig {
         include_document_structure: bool,
     ) -> ContentConfig {
         let mut __target: kreuzcrawl::ContentConfig = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&output_format) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&output_format)
+                .unwrap_or(::serde_json::Value::String(output_format.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.output_format = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&preprocessing_preset) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&preprocessing_preset)
+                .unwrap_or(::serde_json::Value::String(preprocessing_preset.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.preprocessing_preset = t;
             }
         }
@@ -901,35 +1339,82 @@ pub struct BrowserConfig(pub kreuzcrawl::BrowserConfig);
 impl BrowserConfig {
     pub fn new(
         mode: BrowserMode,
+        backend: BrowserBackend,
         endpoint: Option<String>,
         timeout: u64,
         wait: BrowserWait,
         wait_selector: Option<String>,
         extra_wait: Option<u64>,
+        stealth: bool,
+        proxy: Option<ProxyConfig>,
+        block_url_patterns: Vec<String>,
+        eval_script: Option<String>,
+        robots_user_agent: Option<String>,
+        capture_network_events: bool,
     ) -> BrowserConfig {
         let mut __target: kreuzcrawl::BrowserConfig = ::std::default::Default::default();
         // alef: mode (BrowserMode) is an enum; reverse From not generated — left at default
+        // alef: backend (BrowserBackend) is an enum; reverse From not generated — left at default
         if let Some(s) = endpoint {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.endpoint = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.endpoint = Some(t);
             }
         }
         __target.timeout = std::time::Duration::from_millis(timeout);
         // alef: wait (BrowserWait) is an enum; reverse From not generated — left at default
         if let Some(s) = wait_selector {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.wait_selector = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.wait_selector = Some(t);
             }
         }
         __target.extra_wait = extra_wait.map(std::time::Duration::from_millis);
+        __target.stealth = stealth;
+        if let Some(w) = proxy {
+            __target.proxy = Some(w.0);
+        }
+        if let Ok(__v) = ::serde_json::to_value(block_url_patterns) {
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.block_url_patterns = t;
+            }
+        }
+        if let Some(s) = eval_script {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.eval_script = Some(t);
+            }
+        }
+        if let Some(s) = robots_user_agent {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.robots_user_agent = Some(t);
+            }
+        }
+        __target.capture_network_events = capture_network_events;
         BrowserConfig(__target)
     }
     pub fn mode(&self) -> String {
         BrowserMode::from(self.0.mode.clone()).to_string()
+    }
+    pub fn backend(&self) -> String {
+        BrowserBackend::from(self.0.backend.clone()).to_string()
     }
     pub fn endpoint(&self) -> Option<String> {
         self.0.endpoint.clone()
@@ -945,6 +1430,33 @@ impl BrowserConfig {
     }
     pub fn extra_wait(&self) -> Option<u64> {
         self.0.extra_wait.map(|d| d.as_millis() as u64)
+    }
+    pub fn stealth(&self) -> bool {
+        ::serde_json::to_value(&self.0.stealth)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn proxy(&self) -> Option<ProxyConfig> {
+        self.0.proxy.clone().map(ProxyConfig)
+    }
+    pub fn block_url_patterns(&self) -> Vec<String> {
+        ::serde_json::to_value(&self.0.block_url_patterns)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn eval_script(&self) -> Option<String> {
+        self.0.eval_script.clone()
+    }
+    pub fn robots_user_agent(&self) -> Option<String> {
+        self.0.robots_user_agent.clone()
+    }
+    pub fn capture_network_events(&self) -> bool {
+        ::serde_json::to_value(&self.0.capture_network_events)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
     }
 }
 
@@ -995,10 +1507,13 @@ impl CrawlConfig {
         __target.respect_robots_txt = respect_robots_txt;
         __target.soft_http_errors = soft_http_errors;
         if let Some(s) = user_agent {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.user_agent = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.user_agent = Some(t);
             }
         }
         __target.stay_on_domain = stay_on_domain;
@@ -1038,10 +1553,13 @@ impl CrawlConfig {
         __target.content = content.0;
         __target.map_limit = map_limit;
         if let Some(s) = map_search {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.map_search = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.map_search = Some(t);
             }
         }
         __target.download_assets = download_assets;
@@ -1065,17 +1583,23 @@ impl CrawlConfig {
             }
         }
         if let Some(s) = warc_output {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.warc_output = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.warc_output = Some(t);
             }
         }
         if let Some(s) = browser_profile {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.browser_profile = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.browser_profile = Some(t);
             }
         }
         __target.save_browser_profile = save_browser_profile;
@@ -1278,6 +1802,43 @@ impl CrawlConfig {
     }
 }
 
+pub struct BrowserExtras(pub kreuzcrawl::BrowserExtras);
+impl BrowserExtras {
+    pub fn new(
+        eval_result: Option<String>,
+        network_events: Vec<ResponseMeta>,
+        cookies: Vec<CookieInfo>,
+    ) -> BrowserExtras {
+        let mut __target: kreuzcrawl::BrowserExtras = ::std::default::Default::default();
+        if let Some(s) = eval_result {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.eval_result = Some(t);
+            }
+        }
+        __target.network_events = network_events.into_iter().map(|w| w.0).collect();
+        __target.cookies = cookies.into_iter().map(|w| w.0).collect();
+        BrowserExtras(__target)
+    }
+    pub fn eval_result(&self) -> Option<String> {
+        self.0.eval_result.as_ref().and_then(|v| serde_json::to_string(v).ok())
+    }
+    pub fn network_events(&self) -> Vec<ResponseMeta> {
+        self.0
+            .network_events
+            .iter()
+            .map(|elem| ResponseMeta(elem.clone()))
+            .collect()
+    }
+    pub fn cookies(&self) -> Vec<CookieInfo> {
+        self.0.cookies.iter().map(|elem| CookieInfo(elem.clone())).collect()
+    }
+}
+
 pub struct DownloadedDocument(pub kreuzcrawl::DownloadedDocument);
 impl DownloadedDocument {
     pub fn new(
@@ -1289,26 +1850,47 @@ impl DownloadedDocument {
         headers: String,
     ) -> DownloadedDocument {
         let mut __target: kreuzcrawl::DownloadedDocument = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&mime_type) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&mime_type)
+                .unwrap_or(::serde_json::Value::String(mime_type.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.mime_type = t;
             }
         }
         __target.size = size;
         if let Some(s) = filename {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.filename = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.filename = Some(t);
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&content_hash) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&content_hash)
+                .unwrap_or(::serde_json::Value::String(content_hash.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.content_hash = t;
             }
         }
@@ -1342,10 +1924,123 @@ impl DownloadedDocument {
     }
 }
 
+pub struct InteractionResult(pub kreuzcrawl::InteractionResult);
+impl InteractionResult {
+    pub fn new(action_results: Vec<ActionResult>, final_html: String, final_url: String) -> InteractionResult {
+        let mut __target: kreuzcrawl::InteractionResult = ::std::default::Default::default();
+        __target.action_results = action_results.into_iter().map(|w| w.0).collect();
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&final_html)
+                .unwrap_or(::serde_json::Value::String(final_html.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.final_html = t;
+            }
+        }
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&final_url)
+                .unwrap_or(::serde_json::Value::String(final_url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.final_url = t;
+            }
+        }
+        InteractionResult(__target)
+    }
+    pub fn action_results(&self) -> Vec<ActionResult> {
+        self.0
+            .action_results
+            .iter()
+            .map(|elem| ActionResult(elem.clone()))
+            .collect()
+    }
+    pub fn final_html(&self) -> String {
+        self.0.final_html.clone()
+    }
+    pub fn final_url(&self) -> String {
+        self.0.final_url.clone()
+    }
+}
+
+pub struct ActionResult(pub kreuzcrawl::ActionResult);
+impl ActionResult {
+    pub fn new(
+        action_index: usize,
+        action_type: String,
+        success: bool,
+        data: Option<String>,
+        error: Option<String>,
+    ) -> ActionResult {
+        let mut __target: kreuzcrawl::ActionResult = ::std::default::Default::default();
+        __target.action_index = action_index;
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&action_type)
+                .unwrap_or(::serde_json::Value::String(action_type.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.action_type = t;
+            }
+        }
+        __target.success = success;
+        if let Some(s) = data {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.data = Some(t);
+            }
+        }
+        if let Some(s) = error {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.error = Some(t);
+            }
+        }
+        ActionResult(__target)
+    }
+    pub fn action_index(&self) -> usize {
+        ::serde_json::to_value(&self.0.action_index)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn action_type(&self) -> String {
+        self.0.action_type.to_string()
+    }
+    pub fn success(&self) -> bool {
+        ::serde_json::to_value(&self.0.success)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn data(&self) -> Option<String> {
+        self.0.data.as_ref().and_then(|v| serde_json::to_string(v).ok())
+    }
+    pub fn error(&self) -> Option<String> {
+        self.0.error.clone()
+    }
+}
+
 pub struct ScrapeResult(pub kreuzcrawl::ScrapeResult);
 impl ScrapeResult {
     pub fn new(
         status_code: u16,
+        final_url: String,
         content_type: String,
         html: String,
         body_size: usize,
@@ -1371,16 +2066,40 @@ impl ScrapeResult {
         extracted_data: Option<String>,
         extraction_meta: Option<ExtractionMeta>,
         downloaded_document: Option<DownloadedDocument>,
+        browser: Option<BrowserExtras>,
     ) -> ScrapeResult {
         let mut __target: kreuzcrawl::ScrapeResult = ::std::default::Default::default();
         __target.status_code = status_code;
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&content_type) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&final_url)
+                .unwrap_or(::serde_json::Value::String(final_url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.final_url = t;
+            }
+        }
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&content_type)
+                .unwrap_or(::serde_json::Value::String(content_type.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.content_type = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&html) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&html)
+                .unwrap_or(::serde_json::Value::String(html.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.html = t;
             }
         }
@@ -1395,19 +2114,25 @@ impl ScrapeResult {
         __target.noindex_detected = noindex_detected;
         __target.nofollow_detected = nofollow_detected;
         if let Some(s) = x_robots_tag {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.x_robots_tag = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.x_robots_tag = Some(t);
             }
         }
         __target.is_pdf = is_pdf;
         __target.was_skipped = was_skipped;
         if let Some(s) = detected_charset {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.detected_charset = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.detected_charset = Some(t);
             }
         }
         __target.auth_header_sent = auth_header_sent;
@@ -1421,10 +2146,13 @@ impl ScrapeResult {
             __target.markdown = Some(w.0);
         }
         if let Some(s) = extracted_data {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.extracted_data = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.extracted_data = Some(t);
             }
         }
         if let Some(w) = extraction_meta {
@@ -1433,6 +2161,9 @@ impl ScrapeResult {
         if let Some(w) = downloaded_document {
             __target.downloaded_document = Some(w.0);
         }
+        if let Some(w) = browser {
+            __target.browser = Some(w.0);
+        }
         ScrapeResult(__target)
     }
     pub fn status_code(&self) -> u16 {
@@ -1440,6 +2171,9 @@ impl ScrapeResult {
             .ok()
             .and_then(|j| ::serde_json::from_value(j).ok())
             .unwrap_or_default()
+    }
+    pub fn final_url(&self) -> String {
+        self.0.final_url.clone()
     }
     pub fn content_type(&self) -> String {
         self.0.content_type.clone()
@@ -1550,6 +2284,9 @@ impl ScrapeResult {
     pub fn downloaded_document(&self) -> Option<DownloadedDocument> {
         self.0.downloaded_document.clone().map(DownloadedDocument)
     }
+    pub fn browser(&self) -> Option<BrowserExtras> {
+        self.0.browser.clone().map(BrowserExtras)
+    }
 }
 
 pub struct CrawlPageResult(pub kreuzcrawl::CrawlPageResult);
@@ -1575,26 +2312,51 @@ impl CrawlPageResult {
         extracted_data: Option<String>,
         extraction_meta: Option<ExtractionMeta>,
         downloaded_document: Option<DownloadedDocument>,
+        browser_used: bool,
     ) -> CrawlPageResult {
         let mut __target: kreuzcrawl::CrawlPageResult = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&normalized_url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&normalized_url)
+                .unwrap_or(::serde_json::Value::String(normalized_url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.normalized_url = t;
             }
         }
         __target.status_code = status_code;
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&content_type) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&content_type)
+                .unwrap_or(::serde_json::Value::String(content_type.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.content_type = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&html) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&html)
+                .unwrap_or(::serde_json::Value::String(html.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.html = t;
             }
         }
@@ -1609,20 +2371,26 @@ impl CrawlPageResult {
         __target.was_skipped = was_skipped;
         __target.is_pdf = is_pdf;
         if let Some(s) = detected_charset {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.detected_charset = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.detected_charset = Some(t);
             }
         }
         if let Some(w) = markdown {
             __target.markdown = Some(w.0);
         }
         if let Some(s) = extracted_data {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.extracted_data = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.extracted_data = Some(t);
             }
         }
         if let Some(w) = extraction_meta {
@@ -1631,6 +2399,7 @@ impl CrawlPageResult {
         if let Some(w) = downloaded_document {
             __target.downloaded_document = Some(w.0);
         }
+        __target.browser_used = browser_used;
         CrawlPageResult(__target)
     }
     pub fn url(&self) -> String {
@@ -1714,6 +2483,12 @@ impl CrawlPageResult {
     pub fn downloaded_document(&self) -> Option<DownloadedDocument> {
         self.0.downloaded_document.clone().map(DownloadedDocument)
     }
+    pub fn browser_used(&self) -> bool {
+        ::serde_json::to_value(&self.0.browser_used)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
 }
 
 pub struct CrawlResult(pub kreuzcrawl::CrawlResult);
@@ -1725,30 +2500,37 @@ impl CrawlResult {
         was_skipped: bool,
         error: Option<String>,
         cookies: Vec<CookieInfo>,
-        normalized_urls: Vec<String>,
+        stayed_on_domain: bool,
+        browser_used: bool,
     ) -> CrawlResult {
         let mut __target: kreuzcrawl::CrawlResult = ::std::default::Default::default();
         __target.pages = pages.into_iter().map(|w| w.0).collect();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&final_url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&final_url)
+                .unwrap_or(::serde_json::Value::String(final_url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.final_url = t;
             }
         }
         __target.redirect_count = redirect_count;
         __target.was_skipped = was_skipped;
         if let Some(s) = error {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.error = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.error = Some(t);
             }
         }
         __target.cookies = cookies.into_iter().map(|w| w.0).collect();
-        if let Ok(__v) = ::serde_json::to_value(normalized_urls) {
-            if let Ok(t) = ::serde_json::from_value(__v) {
-                __target.normalized_urls = t;
-            }
-        }
+        __target.stayed_on_domain = stayed_on_domain;
+        __target.browser_used = browser_used;
         CrawlResult(__target)
     }
     pub fn pages(&self) -> Vec<CrawlPageResult> {
@@ -1775,8 +2557,14 @@ impl CrawlResult {
     pub fn cookies(&self) -> Vec<CookieInfo> {
         self.0.cookies.iter().map(|elem| CookieInfo(elem.clone())).collect()
     }
-    pub fn normalized_urls(&self) -> Vec<String> {
-        ::serde_json::to_value(&self.0.normalized_urls)
+    pub fn stayed_on_domain(&self) -> bool {
+        ::serde_json::to_value(&self.0.stayed_on_domain)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn browser_used(&self) -> bool {
+        ::serde_json::to_value(&self.0.browser_used)
             .ok()
             .and_then(|j| ::serde_json::from_value(j).ok())
             .unwrap_or_default()
@@ -1792,30 +2580,45 @@ impl SitemapUrl {
         priority: Option<String>,
     ) -> SitemapUrl {
         let mut __target: kreuzcrawl::SitemapUrl = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
         if let Some(s) = lastmod {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.lastmod = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.lastmod = Some(t);
             }
         }
         if let Some(s) = changefreq {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.changefreq = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.changefreq = Some(t);
             }
         }
         if let Some(s) = priority {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.priority = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.priority = Some(t);
             }
         }
         SitemapUrl(__target)
@@ -1853,20 +2656,29 @@ impl MarkdownResult {
         document_structure: Option<String>,
         tables: Vec<String>,
         warnings: Vec<String>,
-        citations: Option<CitationResult>,
+        citations: bool,
         fit_content: Option<String>,
     ) -> MarkdownResult {
         let mut __target: kreuzcrawl::MarkdownResult = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&content) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&content)
+                .unwrap_or(::serde_json::Value::String(content.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.content = t;
             }
         }
         if let Some(s) = document_structure {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.document_structure = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.document_structure = Some(t);
             }
         }
         if let Ok(__v) = ::serde_json::to_value(tables) {
@@ -1879,14 +2691,15 @@ impl MarkdownResult {
                 __target.warnings = t;
             }
         }
-        if let Some(w) = citations {
-            __target.citations = Some(w.0);
-        }
+        __target.citations = citations;
         if let Some(s) = fit_content {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.fit_content = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.fit_content = Some(t);
             }
         }
         MarkdownResult(__target)
@@ -1912,8 +2725,11 @@ impl MarkdownResult {
             .and_then(|j| ::serde_json::from_value(j).ok())
             .unwrap_or_default()
     }
-    pub fn citations(&self) -> Option<CitationResult> {
-        self.0.citations.clone().map(CitationResult)
+    pub fn citations(&self) -> bool {
+        ::serde_json::to_value(&self.0.citations)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
     }
     pub fn fit_content(&self) -> Option<String> {
         self.0.fit_content.clone()
@@ -1924,22 +2740,37 @@ pub struct LinkInfo(pub kreuzcrawl::LinkInfo);
 impl LinkInfo {
     pub fn new(url: String, text: String, link_type: LinkType, rel: Option<String>, nofollow: bool) -> LinkInfo {
         let mut __target: kreuzcrawl::LinkInfo = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&text) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&text)
+                .unwrap_or(::serde_json::Value::String(text.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.text = t;
             }
         }
         // alef: link_type (LinkType) is an enum; reverse From not generated — left at default
         if let Some(s) = rel {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.rel = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.rel = Some(t);
             }
         }
         __target.nofollow = nofollow;
@@ -1975,16 +2806,25 @@ impl ImageInfo {
         source: ImageSource,
     ) -> ImageInfo {
         let mut __target: kreuzcrawl::ImageInfo = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
         if let Some(s) = alt {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.alt = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.alt = Some(t);
             }
         }
         __target.width = width;
@@ -2021,16 +2861,25 @@ pub struct FeedInfo(pub kreuzcrawl::FeedInfo);
 impl FeedInfo {
     pub fn new(url: String, title: Option<String>, feed_type: FeedType) -> FeedInfo {
         let mut __target: kreuzcrawl::FeedInfo = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
         if let Some(s) = title {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.title = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.title = Some(t);
             }
         }
         // alef: feed_type (FeedType) is an enum; reverse From not generated — left at default
@@ -2051,20 +2900,35 @@ pub struct JsonLdEntry(pub kreuzcrawl::JsonLdEntry);
 impl JsonLdEntry {
     pub fn new(schema_type: String, name: Option<String>, raw: String) -> JsonLdEntry {
         let mut __target: kreuzcrawl::JsonLdEntry = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&schema_type) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&schema_type)
+                .unwrap_or(::serde_json::Value::String(schema_type.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.schema_type = t;
             }
         }
         if let Some(s) = name {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.name = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.name = Some(t);
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&raw) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&raw).unwrap_or(::serde_json::Value::String(raw.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.raw = t;
             }
         }
@@ -2085,28 +2949,46 @@ pub struct CookieInfo(pub kreuzcrawl::CookieInfo);
 impl CookieInfo {
     pub fn new(name: String, value: String, domain: Option<String>, path: Option<String>) -> CookieInfo {
         let mut __target: kreuzcrawl::CookieInfo = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&name) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&name)
+                .unwrap_or(::serde_json::Value::String(name.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.name = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&value) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&value)
+                .unwrap_or(::serde_json::Value::String(value.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.value = t;
             }
         }
         if let Some(s) = domain {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.domain = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.domain = Some(t);
             }
         }
         if let Some(s) = path {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.path = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.path = Some(t);
             }
         }
         CookieInfo(__target)
@@ -2136,30 +3018,48 @@ impl DownloadedAsset {
         html_tag: Option<String>,
     ) -> DownloadedAsset {
         let mut __target: kreuzcrawl::DownloadedAsset = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&content_hash) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&content_hash)
+                .unwrap_or(::serde_json::Value::String(content_hash.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.content_hash = t;
             }
         }
         if let Some(s) = mime_type {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.mime_type = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.mime_type = Some(t);
             }
         }
         __target.size = size;
         // alef: asset_category (AssetCategory) is an enum; reverse From not generated — left at default
         if let Some(s) = html_tag {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.html_tag = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.html_tag = Some(t);
             }
         }
         DownloadedAsset(__target)
@@ -2198,31 +3098,43 @@ impl ArticleMetadata {
     ) -> ArticleMetadata {
         let mut __target: kreuzcrawl::ArticleMetadata = ::std::default::Default::default();
         if let Some(s) = published_time {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.published_time = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.published_time = Some(t);
             }
         }
         if let Some(s) = modified_time {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.modified_time = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.modified_time = Some(t);
             }
         }
         if let Some(s) = author {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.author = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.author = Some(t);
             }
         }
         if let Some(s) = section {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.section = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.section = Some(t);
             }
         }
         if let Ok(__v) = ::serde_json::to_value(tags) {
@@ -2256,13 +3168,25 @@ pub struct HreflangEntry(pub kreuzcrawl::HreflangEntry);
 impl HreflangEntry {
     pub fn new(lang: String, url: String) -> HreflangEntry {
         let mut __target: kreuzcrawl::HreflangEntry = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&lang) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&lang)
+                .unwrap_or(::serde_json::Value::String(lang.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.lang = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
@@ -2280,28 +3204,46 @@ pub struct FaviconInfo(pub kreuzcrawl::FaviconInfo);
 impl FaviconInfo {
     pub fn new(url: String, rel: String, sizes: Option<String>, mime_type: Option<String>) -> FaviconInfo {
         let mut __target: kreuzcrawl::FaviconInfo = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&rel) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&rel).unwrap_or(::serde_json::Value::String(rel.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.rel = t;
             }
         }
         if let Some(s) = sizes {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.sizes = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.sizes = Some(t);
             }
         }
         if let Some(s) = mime_type {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.mime_type = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.mime_type = Some(t);
             }
         }
         FaviconInfo(__target)
@@ -2325,8 +3267,14 @@ impl HeadingInfo {
     pub fn new(level: u8, text: String) -> HeadingInfo {
         let mut __target: kreuzcrawl::HeadingInfo = ::std::default::Default::default();
         __target.level = level;
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&text) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&text)
+                .unwrap_or(::serde_json::Value::String(text.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.text = t;
             }
         }
@@ -2356,52 +3304,73 @@ impl ResponseMeta {
     ) -> ResponseMeta {
         let mut __target: kreuzcrawl::ResponseMeta = ::std::default::Default::default();
         if let Some(s) = etag {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.etag = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.etag = Some(t);
             }
         }
         if let Some(s) = last_modified {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.last_modified = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.last_modified = Some(t);
             }
         }
         if let Some(s) = cache_control {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.cache_control = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.cache_control = Some(t);
             }
         }
         if let Some(s) = server {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.server = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.server = Some(t);
             }
         }
         if let Some(s) = x_powered_by {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.x_powered_by = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.x_powered_by = Some(t);
             }
         }
         if let Some(s) = content_language {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.content_language = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.content_language = Some(t);
             }
         }
         if let Some(s) = content_encoding {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.content_encoding = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.content_encoding = Some(t);
             }
         }
         ResponseMeta(__target)
@@ -2478,143 +3447,203 @@ impl PageMetadata {
     ) -> PageMetadata {
         let mut __target: kreuzcrawl::PageMetadata = ::std::default::Default::default();
         if let Some(s) = title {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.title = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.title = Some(t);
             }
         }
         if let Some(s) = description {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.description = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.description = Some(t);
             }
         }
         if let Some(s) = canonical_url {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.canonical_url = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.canonical_url = Some(t);
             }
         }
         if let Some(s) = keywords {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.keywords = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.keywords = Some(t);
             }
         }
         if let Some(s) = author {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.author = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.author = Some(t);
             }
         }
         if let Some(s) = viewport {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.viewport = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.viewport = Some(t);
             }
         }
         if let Some(s) = theme_color {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.theme_color = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.theme_color = Some(t);
             }
         }
         if let Some(s) = generator {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.generator = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.generator = Some(t);
             }
         }
         if let Some(s) = robots {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.robots = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.robots = Some(t);
             }
         }
         if let Some(s) = html_lang {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.html_lang = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.html_lang = Some(t);
             }
         }
         if let Some(s) = html_dir {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.html_dir = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.html_dir = Some(t);
             }
         }
         if let Some(s) = og_title {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_title = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_title = Some(t);
             }
         }
         if let Some(s) = og_type {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_type = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_type = Some(t);
             }
         }
         if let Some(s) = og_image {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_image = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_image = Some(t);
             }
         }
         if let Some(s) = og_description {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_description = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_description = Some(t);
             }
         }
         if let Some(s) = og_url {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_url = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_url = Some(t);
             }
         }
         if let Some(s) = og_site_name {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_site_name = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_site_name = Some(t);
             }
         }
         if let Some(s) = og_locale {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_locale = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_locale = Some(t);
             }
         }
         if let Some(s) = og_video {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_video = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_video = Some(t);
             }
         }
         if let Some(s) = og_audio {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.og_audio = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.og_audio = Some(t);
             }
         }
         if let Ok(__v) = ::serde_json::to_value(og_locale_alternates) {
@@ -2623,122 +3652,173 @@ impl PageMetadata {
             }
         }
         if let Some(s) = twitter_card {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.twitter_card = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.twitter_card = Some(t);
             }
         }
         if let Some(s) = twitter_title {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.twitter_title = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.twitter_title = Some(t);
             }
         }
         if let Some(s) = twitter_description {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.twitter_description = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.twitter_description = Some(t);
             }
         }
         if let Some(s) = twitter_image {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.twitter_image = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.twitter_image = Some(t);
             }
         }
         if let Some(s) = twitter_site {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.twitter_site = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.twitter_site = Some(t);
             }
         }
         if let Some(s) = twitter_creator {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.twitter_creator = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.twitter_creator = Some(t);
             }
         }
         if let Some(s) = dc_title {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_title = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_title = Some(t);
             }
         }
         if let Some(s) = dc_creator {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_creator = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_creator = Some(t);
             }
         }
         if let Some(s) = dc_subject {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_subject = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_subject = Some(t);
             }
         }
         if let Some(s) = dc_description {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_description = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_description = Some(t);
             }
         }
         if let Some(s) = dc_publisher {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_publisher = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_publisher = Some(t);
             }
         }
         if let Some(s) = dc_date {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_date = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_date = Some(t);
             }
         }
         if let Some(s) = dc_type {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_type = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_type = Some(t);
             }
         }
         if let Some(s) = dc_format {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_format = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_format = Some(t);
             }
         }
         if let Some(s) = dc_identifier {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_identifier = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_identifier = Some(t);
             }
         }
         if let Some(s) = dc_language {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_language = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_language = Some(t);
             }
         }
         if let Some(s) = dc_rights {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.dc_rights = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.dc_rights = Some(t);
             }
         }
         if let Some(w) = article {
@@ -2904,12 +3984,59 @@ impl PageMetadata {
     }
 }
 
+pub struct CrawlStreamRequest(pub kreuzcrawl::CrawlStreamRequest);
+impl CrawlStreamRequest {
+    pub fn new(url: String) -> CrawlStreamRequest {
+        let mut __target: kreuzcrawl::CrawlStreamRequest = ::std::default::Default::default();
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.url = t;
+            }
+        }
+        CrawlStreamRequest(__target)
+    }
+    pub fn url(&self) -> String {
+        self.0.url.clone()
+    }
+}
+
+pub struct BatchCrawlStreamRequest(pub kreuzcrawl::BatchCrawlStreamRequest);
+impl BatchCrawlStreamRequest {
+    pub fn new(urls: Vec<String>) -> BatchCrawlStreamRequest {
+        let mut __target: kreuzcrawl::BatchCrawlStreamRequest = ::std::default::Default::default();
+        if let Ok(__v) = ::serde_json::to_value(urls) {
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.urls = t;
+            }
+        }
+        BatchCrawlStreamRequest(__target)
+    }
+    pub fn urls(&self) -> Vec<String> {
+        ::serde_json::to_value(&self.0.urls)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+}
+
 pub struct CitationResult(pub kreuzcrawl::CitationResult);
 impl CitationResult {
     pub fn new(content: String, references: Vec<CitationReference>) -> CitationResult {
         let mut __target: kreuzcrawl::CitationResult = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&content) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&content)
+                .unwrap_or(::serde_json::Value::String(content.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.content = t;
             }
         }
@@ -2933,13 +4060,25 @@ impl CitationReference {
     pub fn new(index: usize, url: String, text: String) -> CitationReference {
         let mut __target: kreuzcrawl::CitationReference = ::std::default::Default::default();
         __target.index = index;
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&text) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&text)
+                .unwrap_or(::serde_json::Value::String(text.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.text = t;
             }
         }
@@ -2965,8 +4104,14 @@ pub struct BatchScrapeResult(pub kreuzcrawl::BatchScrapeResult);
 impl BatchScrapeResult {
     pub fn new(url: String, result: Option<ScrapeResult>, error: Option<String>) -> BatchScrapeResult {
         let mut __target: kreuzcrawl::BatchScrapeResult = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
@@ -2974,10 +4119,13 @@ impl BatchScrapeResult {
             __target.result = Some(w.0);
         }
         if let Some(s) = error {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.error = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.error = Some(t);
             }
         }
         BatchScrapeResult(__target)
@@ -2997,8 +4145,14 @@ pub struct BatchCrawlResult(pub kreuzcrawl::BatchCrawlResult);
 impl BatchCrawlResult {
     pub fn new(url: String, result: Option<CrawlResult>, error: Option<String>) -> BatchCrawlResult {
         let mut __target: kreuzcrawl::BatchCrawlResult = ::std::default::Default::default();
-        if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&url) {
-            if let Ok(t) = ::serde_json::from_value(v) {
+        {
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v =
+                ::serde_json::from_str::<::serde_json::Value>(&url).unwrap_or(::serde_json::Value::String(url.clone()));
+            if let Ok(t) = ::serde_json::from_value(__v) {
                 __target.url = t;
             }
         }
@@ -3006,10 +4160,13 @@ impl BatchCrawlResult {
             __target.result = Some(w.0);
         }
         if let Some(s) = error {
-            if let Ok(v) = ::serde_json::from_str::<::serde_json::Value>(&s) {
-                if let Ok(t) = ::serde_json::from_value(v) {
-                    __target.error = Some(t);
-                }
+            // Try JSON parse first (handles enum/object values); on parse failure
+            // treat the raw input as a JSON string scalar so plain `String` /
+            // string-like enum fields don't end up empty for inputs that aren't
+            // valid JSON tokens (e.g. `tts-1`).
+            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
+            if let Ok(t) = ::serde_json::from_value(__v) {
+                __target.error = Some(t);
             }
         }
         BatchCrawlResult(__target)
@@ -3022,6 +4179,90 @@ impl BatchCrawlResult {
     }
     pub fn error(&self) -> Option<String> {
         self.0.error.clone()
+    }
+}
+
+pub struct BatchScrapeResults(pub kreuzcrawl::BatchScrapeResults);
+impl BatchScrapeResults {
+    pub fn new(
+        results: Vec<BatchScrapeResult>,
+        total_count: usize,
+        completed_count: usize,
+        failed_count: usize,
+    ) -> BatchScrapeResults {
+        let mut __target: kreuzcrawl::BatchScrapeResults = ::std::default::Default::default();
+        __target.results = results.into_iter().map(|w| w.0).collect();
+        __target.total_count = total_count;
+        __target.completed_count = completed_count;
+        __target.failed_count = failed_count;
+        BatchScrapeResults(__target)
+    }
+    pub fn results(&self) -> Vec<BatchScrapeResult> {
+        self.0
+            .results
+            .iter()
+            .map(|elem| BatchScrapeResult(elem.clone()))
+            .collect()
+    }
+    pub fn total_count(&self) -> usize {
+        ::serde_json::to_value(&self.0.total_count)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn completed_count(&self) -> usize {
+        ::serde_json::to_value(&self.0.completed_count)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn failed_count(&self) -> usize {
+        ::serde_json::to_value(&self.0.failed_count)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+}
+
+pub struct BatchCrawlResults(pub kreuzcrawl::BatchCrawlResults);
+impl BatchCrawlResults {
+    pub fn new(
+        results: Vec<BatchCrawlResult>,
+        total_count: usize,
+        completed_count: usize,
+        failed_count: usize,
+    ) -> BatchCrawlResults {
+        let mut __target: kreuzcrawl::BatchCrawlResults = ::std::default::Default::default();
+        __target.results = results.into_iter().map(|w| w.0).collect();
+        __target.total_count = total_count;
+        __target.completed_count = completed_count;
+        __target.failed_count = failed_count;
+        BatchCrawlResults(__target)
+    }
+    pub fn results(&self) -> Vec<BatchCrawlResult> {
+        self.0
+            .results
+            .iter()
+            .map(|elem| BatchCrawlResult(elem.clone()))
+            .collect()
+    }
+    pub fn total_count(&self) -> usize {
+        ::serde_json::to_value(&self.0.total_count)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn completed_count(&self) -> usize {
+        ::serde_json::to_value(&self.0.completed_count)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
+    pub fn failed_count(&self) -> usize {
+        ::serde_json::to_value(&self.0.failed_count)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
     }
 }
 
@@ -3077,15 +4318,41 @@ impl BrowserWait {
     }
 }
 
+pub enum BrowserBackend {
+    Chromiumoxide,
+    Native,
+}
+
+impl From<kreuzcrawl::BrowserBackend> for BrowserBackend {
+    fn from(val: kreuzcrawl::BrowserBackend) -> Self {
+        match val {
+            kreuzcrawl::BrowserBackend::Chromiumoxide => Self::Chromiumoxide,
+            kreuzcrawl::BrowserBackend::Native => Self::Native,
+        }
+    }
+}
+
+impl BrowserBackend {
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Chromiumoxide => "chromiumoxide".to_string(),
+            Self::Native => "native".to_string(),
+        }
+    }
+}
+
 pub enum AuthConfig {
-    /// Data variants not directly bridgeable — represented as Unknown.
-    Unknown,
+    Basic,
+    Bearer,
+    Header,
 }
 
 impl From<kreuzcrawl::AuthConfig> for AuthConfig {
     fn from(val: kreuzcrawl::AuthConfig) -> Self {
         match val {
-            _ => Self::Unknown,
+            kreuzcrawl::AuthConfig::Basic { .. } => Self::Basic,
+            kreuzcrawl::AuthConfig::Bearer { .. } => Self::Bearer,
+            kreuzcrawl::AuthConfig::Header { .. } => Self::Header,
         }
     }
 }
@@ -3093,7 +4360,9 @@ impl From<kreuzcrawl::AuthConfig> for AuthConfig {
 impl AuthConfig {
     pub fn to_string(&self) -> String {
         match self {
-            Self::Unknown => "unknown".to_string(),
+            Self::Basic => "basic".to_string(),
+            Self::Bearer => "bearer".to_string(),
+            Self::Header => "header".to_string(),
         }
     }
 }
@@ -3229,6 +4498,100 @@ impl AssetCategory {
     }
 }
 
+pub enum CrawlEvent {
+    Page,
+    Error,
+    Complete,
+}
+
+impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
+    fn from(val: kreuzcrawl::CrawlEvent) -> Self {
+        match val {
+            kreuzcrawl::CrawlEvent::Page { .. } => Self::Page,
+            kreuzcrawl::CrawlEvent::Error { .. } => Self::Error,
+            kreuzcrawl::CrawlEvent::Complete { .. } => Self::Complete,
+        }
+    }
+}
+
+impl CrawlEvent {
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Page => "page".to_string(),
+            Self::Error => "error".to_string(),
+            Self::Complete => "complete".to_string(),
+        }
+    }
+}
+
+pub enum PageAction {
+    Click,
+    TypeText,
+    Press,
+    Scroll,
+    Wait,
+    Screenshot,
+    ExecuteJs,
+    Scrape,
+}
+
+impl From<kreuzcrawl::PageAction> for PageAction {
+    fn from(val: kreuzcrawl::PageAction) -> Self {
+        match val {
+            kreuzcrawl::PageAction::Click { .. } => Self::Click,
+            kreuzcrawl::PageAction::TypeText { .. } => Self::TypeText,
+            kreuzcrawl::PageAction::Press { .. } => Self::Press,
+            kreuzcrawl::PageAction::Scroll { .. } => Self::Scroll,
+            kreuzcrawl::PageAction::Wait { .. } => Self::Wait,
+            kreuzcrawl::PageAction::Screenshot { .. } => Self::Screenshot,
+            kreuzcrawl::PageAction::ExecuteJs { .. } => Self::ExecuteJs,
+            kreuzcrawl::PageAction::Scrape => Self::Scrape,
+        }
+    }
+}
+
+impl PageAction {
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Click => "click".to_string(),
+            Self::TypeText => "type".to_string(),
+            Self::Press => "press".to_string(),
+            Self::Scroll => "scroll".to_string(),
+            Self::Wait => "wait".to_string(),
+            Self::Screenshot => "screenshot".to_string(),
+            Self::ExecuteJs => "executeJs".to_string(),
+            Self::Scrape => "scrape".to_string(),
+        }
+    }
+}
+
+pub enum ScrollDirection {
+    Up,
+    Down,
+}
+
+impl From<kreuzcrawl::ScrollDirection> for ScrollDirection {
+    fn from(val: kreuzcrawl::ScrollDirection) -> Self {
+        match val {
+            kreuzcrawl::ScrollDirection::Up => Self::Up,
+            kreuzcrawl::ScrollDirection::Down => Self::Down,
+        }
+    }
+}
+
+impl ScrollDirection {
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Up => "up".to_string(),
+            Self::Down => "down".to_string(),
+        }
+    }
+}
+
+pub fn generate_citations(markdown: String) -> CitationResult {
+    CitationResult(kreuzcrawl::generate_citations(&markdown))
+}
+
 pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, String> {
     kreuzcrawl::create_engine(config.map(|w| w.0))
         .map_err(|e| e.to_string())
@@ -3236,72 +4599,444 @@ pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, S
 }
 
 pub fn scrape(engine: CrawlEngineHandle, url: String) -> Result<ScrapeResult, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::scrape(&engine.0, &url)
-                .await
-                .map_err(|e| e.to_string())
-                .map(ScrapeResult)
-        })
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::scrape(&engine.0, &url)
+            .await
+            .map_err(|e| e.to_string())
+            .map(ScrapeResult)
+    })
 }
 
 pub fn crawl(engine: CrawlEngineHandle, url: String) -> Result<CrawlResult, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::crawl(&engine.0, &url)
-                .await
-                .map_err(|e| e.to_string())
-                .map(CrawlResult)
-        })
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::crawl(&engine.0, &url)
+            .await
+            .map_err(|e| e.to_string())
+            .map(CrawlResult)
+    })
 }
 
 pub fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResult, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::map_urls(&engine.0, &url)
-                .await
-                .map_err(|e| e.to_string())
-                .map(MapResult)
-        })
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::map_urls(&engine.0, &url)
+            .await
+            .map_err(|e| e.to_string())
+            .map(MapResult)
+    })
 }
 
-pub fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::batch_scrape(&engine.0, urls)
-                .await
-                .map_err(|e| e.to_string())
-                .map(|v| v.into_iter().map(BatchScrapeResult).collect::<Vec<_>>())
+pub fn interact(engine: CrawlEngineHandle, url: String, actions: Vec<String>) -> Result<InteractionResult, String> {
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::interact(&engine.0, &url, {
+            let values = actions;
+            values
+                .into_iter()
+                .map(|json| ::serde_json::from_str::<kreuzcrawl::PageAction>(&json).expect("valid JSON for actions"))
+                .collect::<Vec<_>>()
         })
+        .await
+        .map_err(|e| e.to_string())
+        .map(InteractionResult)
+    })
 }
 
-pub fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, String> {
-    ::tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .expect("build tokio runtime")
-        .block_on(async {
-            kreuzcrawl::batch_crawl(&engine.0, urls)
-                .await
-                .map_err(|e| e.to_string())
-                .map(|v| v.into_iter().map(BatchCrawlResult).collect::<Vec<_>>())
-        })
+pub fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchScrapeResults, String> {
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::batch_scrape(&engine.0, urls)
+            .await
+            .map_err(|e| e.to_string())
+            .map(BatchScrapeResults)
+    })
+}
+
+pub fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchCrawlResults, String> {
+    crate::__alef_tokio_runtime().block_on(async {
+        kreuzcrawl::batch_crawl(&engine.0, urls)
+            .await
+            .map_err(|e| e.to_string())
+            .map(BatchCrawlResults)
+    })
+}
+
+/// Opaque handle holding a reference to the process-wide tokio runtime
+/// and a boxed `CrawlEvent` stream.
+///
+/// Created by `crawl_engine_handle_crawl_stream_start`, advanced via `next()`. Drop runs when the
+/// Swift handle goes out of scope (swift-bridge generates the matching
+/// `deinit`), so explicit cleanup from Swift is unnecessary.
+///
+/// Items are JSON-encoded at the bridge boundary because swift-bridge's
+/// `Option<OpaqueRust>` support varies across versions, while `Result<String,
+/// String>` is well-tested. An empty string `""` is the EOF sentinel —
+/// no valid JSON value is the empty string.
+#[allow(clippy::type_complexity)]
+pub struct CrawlEngineHandleCrawlStreamStreamHandle {
+    _rt: ::tokio::runtime::Handle,
+    stream: ::std::sync::Mutex<
+        Option<
+            ::futures_util::stream::BoxStream<
+                'static,
+                Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+            >,
+        >,
+    >,
+}
+
+/// Start a streaming `CrawlEngineHandle::crawl_stream` request.
+///
+/// Returns a fresh `CrawlEngineHandleCrawlStreamStreamHandle` whose ownership transfers to the
+/// Swift caller (swift-bridge boxes the handle internally).
+pub fn crawl_engine_handle_crawl_stream_start(
+    client: &CrawlEngineHandle,
+    req: &CrawlStreamRequest,
+) -> Result<CrawlEngineHandleCrawlStreamStreamHandle, String> {
+    use ::futures_util::StreamExt;
+    let rt = crate::__alef_tokio_runtime();
+    let raw = rt.block_on(async { client.0.crawl_stream(req.0.clone()).await.map_err(|e| e.to_string()) })?;
+    let erased: ::futures_util::stream::BoxStream<
+        'static,
+        Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+    > = Box::pin(raw.map(|r| r.map_err(|e| Box::new(e) as Box<dyn ::std::error::Error + Send + Sync + 'static>)));
+    Ok(CrawlEngineHandleCrawlStreamStreamHandle {
+        _rt: rt.handle().clone(),
+        stream: ::std::sync::Mutex::new(Some(erased)),
+    })
+}
+
+#[allow(clippy::should_implement_trait)]
+impl CrawlEngineHandleCrawlStreamStreamHandle {
+    /// Advance the stream and return the next chunk JSON, or `""` on clean
+    /// end-of-stream. Returns `Err(message)` on a stream-level error.
+    pub fn next(&mut self) -> Result<String, String> {
+        let mut guard = self
+            .stream
+            .lock()
+            .map_err(|_| "CrawlEngineHandleCrawlStreamStreamHandle::next: stream mutex poisoned".to_string())?;
+        let stream = match guard.as_mut() {
+            Some(s) => s,
+            None => return Ok(String::new()),
+        };
+        use ::futures_util::StreamExt;
+        match crate::__alef_tokio_runtime().block_on(stream.next()) {
+            Some(Ok(item)) => ::serde_json::to_string(&item).map_err(|e| e.to_string()),
+            Some(Err(e)) => {
+                *guard = None;
+                Err(e.to_string())
+            }
+            None => {
+                *guard = None;
+                Ok(String::new())
+            }
+        }
+    }
+}
+
+/// Opaque handle holding a reference to the process-wide tokio runtime
+/// and a boxed `CrawlEvent` stream.
+///
+/// Created by `crawl_engine_handle_batch_crawl_stream_start`, advanced via `next()`. Drop runs when the
+/// Swift handle goes out of scope (swift-bridge generates the matching
+/// `deinit`), so explicit cleanup from Swift is unnecessary.
+///
+/// Items are JSON-encoded at the bridge boundary because swift-bridge's
+/// `Option<OpaqueRust>` support varies across versions, while `Result<String,
+/// String>` is well-tested. An empty string `""` is the EOF sentinel —
+/// no valid JSON value is the empty string.
+#[allow(clippy::type_complexity)]
+pub struct CrawlEngineHandleBatchCrawlStreamStreamHandle {
+    _rt: ::tokio::runtime::Handle,
+    stream: ::std::sync::Mutex<
+        Option<
+            ::futures_util::stream::BoxStream<
+                'static,
+                Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+            >,
+        >,
+    >,
+}
+
+/// Start a streaming `CrawlEngineHandle::batch_crawl_stream` request.
+///
+/// Returns a fresh `CrawlEngineHandleBatchCrawlStreamStreamHandle` whose ownership transfers to the
+/// Swift caller (swift-bridge boxes the handle internally).
+pub fn crawl_engine_handle_batch_crawl_stream_start(
+    client: &CrawlEngineHandle,
+    req: &BatchCrawlStreamRequest,
+) -> Result<CrawlEngineHandleBatchCrawlStreamStreamHandle, String> {
+    use ::futures_util::StreamExt;
+    let rt = crate::__alef_tokio_runtime();
+    let raw = rt.block_on(async {
+        client
+            .0
+            .batch_crawl_stream(req.0.clone())
+            .await
+            .map_err(|e| e.to_string())
+    })?;
+    let erased: ::futures_util::stream::BoxStream<
+        'static,
+        Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
+    > = Box::pin(raw.map(|r| r.map_err(|e| Box::new(e) as Box<dyn ::std::error::Error + Send + Sync + 'static>)));
+    Ok(CrawlEngineHandleBatchCrawlStreamStreamHandle {
+        _rt: rt.handle().clone(),
+        stream: ::std::sync::Mutex::new(Some(erased)),
+    })
+}
+
+#[allow(clippy::should_implement_trait)]
+impl CrawlEngineHandleBatchCrawlStreamStreamHandle {
+    /// Advance the stream and return the next chunk JSON, or `""` on clean
+    /// end-of-stream. Returns `Err(message)` on a stream-level error.
+    pub fn next(&mut self) -> Result<String, String> {
+        let mut guard = self
+            .stream
+            .lock()
+            .map_err(|_| "CrawlEngineHandleBatchCrawlStreamStreamHandle::next: stream mutex poisoned".to_string())?;
+        let stream = match guard.as_mut() {
+            Some(s) => s,
+            None => return Ok(String::new()),
+        };
+        use ::futures_util::StreamExt;
+        match crate::__alef_tokio_runtime().block_on(stream.next()) {
+            Some(Ok(item)) => ::serde_json::to_string(&item).map_err(|e| e.to_string()),
+            Some(Err(e)) => {
+                *guard = None;
+                Err(e.to_string())
+            }
+            None => {
+                *guard = None;
+                Ok(String::new())
+            }
+        }
+    }
 }
 
 pub fn crawl_config_from_json(json: String) -> Result<CrawlConfig, String> {
     serde_json::from_str::<kreuzcrawl::CrawlConfig>(&json)
         .map(CrawlConfig)
+        .map_err(|e| e.to_string())
+}
+pub fn crawl_stream_request_from_json(json: String) -> Result<CrawlStreamRequest, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlStreamRequest>(&json)
+        .map(CrawlStreamRequest)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlStreamRequest>(&json)
+        .map(BatchCrawlStreamRequest)
+        .map_err(|e| e.to_string())
+}
+pub fn extraction_meta_from_json(json: String) -> Result<ExtractionMeta, String> {
+    serde_json::from_str::<kreuzcrawl::ExtractionMeta>(&json)
+        .map(ExtractionMeta)
+        .map_err(|e| e.to_string())
+}
+pub fn proxy_config_from_json(json: String) -> Result<ProxyConfig, String> {
+    serde_json::from_str::<kreuzcrawl::ProxyConfig>(&json)
+        .map(ProxyConfig)
+        .map_err(|e| e.to_string())
+}
+pub fn content_config_from_json(json: String) -> Result<ContentConfig, String> {
+    serde_json::from_str::<kreuzcrawl::ContentConfig>(&json)
+        .map(ContentConfig)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_config_from_json(json: String) -> Result<BrowserConfig, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserConfig>(&json)
+        .map(BrowserConfig)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_extras_from_json(json: String) -> Result<BrowserExtras, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserExtras>(&json)
+        .map(BrowserExtras)
+        .map_err(|e| e.to_string())
+}
+pub fn downloaded_document_from_json(json: String) -> Result<DownloadedDocument, String> {
+    serde_json::from_str::<kreuzcrawl::DownloadedDocument>(&json)
+        .map(DownloadedDocument)
+        .map_err(|e| e.to_string())
+}
+pub fn interaction_result_from_json(json: String) -> Result<InteractionResult, String> {
+    serde_json::from_str::<kreuzcrawl::InteractionResult>(&json)
+        .map(InteractionResult)
+        .map_err(|e| e.to_string())
+}
+pub fn action_result_from_json(json: String) -> Result<ActionResult, String> {
+    serde_json::from_str::<kreuzcrawl::ActionResult>(&json)
+        .map(ActionResult)
+        .map_err(|e| e.to_string())
+}
+pub fn scrape_result_from_json(json: String) -> Result<ScrapeResult, String> {
+    serde_json::from_str::<kreuzcrawl::ScrapeResult>(&json)
+        .map(ScrapeResult)
+        .map_err(|e| e.to_string())
+}
+pub fn crawl_page_result_from_json(json: String) -> Result<CrawlPageResult, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlPageResult>(&json)
+        .map(CrawlPageResult)
+        .map_err(|e| e.to_string())
+}
+pub fn crawl_result_from_json(json: String) -> Result<CrawlResult, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlResult>(&json)
+        .map(CrawlResult)
+        .map_err(|e| e.to_string())
+}
+pub fn sitemap_url_from_json(json: String) -> Result<SitemapUrl, String> {
+    serde_json::from_str::<kreuzcrawl::SitemapUrl>(&json)
+        .map(SitemapUrl)
+        .map_err(|e| e.to_string())
+}
+pub fn map_result_from_json(json: String) -> Result<MapResult, String> {
+    serde_json::from_str::<kreuzcrawl::MapResult>(&json)
+        .map(MapResult)
+        .map_err(|e| e.to_string())
+}
+pub fn markdown_result_from_json(json: String) -> Result<MarkdownResult, String> {
+    serde_json::from_str::<kreuzcrawl::MarkdownResult>(&json)
+        .map(MarkdownResult)
+        .map_err(|e| e.to_string())
+}
+pub fn link_info_from_json(json: String) -> Result<LinkInfo, String> {
+    serde_json::from_str::<kreuzcrawl::LinkInfo>(&json)
+        .map(LinkInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn image_info_from_json(json: String) -> Result<ImageInfo, String> {
+    serde_json::from_str::<kreuzcrawl::ImageInfo>(&json)
+        .map(ImageInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn feed_info_from_json(json: String) -> Result<FeedInfo, String> {
+    serde_json::from_str::<kreuzcrawl::FeedInfo>(&json)
+        .map(FeedInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn json_ld_entry_from_json(json: String) -> Result<JsonLdEntry, String> {
+    serde_json::from_str::<kreuzcrawl::JsonLdEntry>(&json)
+        .map(JsonLdEntry)
+        .map_err(|e| e.to_string())
+}
+pub fn cookie_info_from_json(json: String) -> Result<CookieInfo, String> {
+    serde_json::from_str::<kreuzcrawl::CookieInfo>(&json)
+        .map(CookieInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn downloaded_asset_from_json(json: String) -> Result<DownloadedAsset, String> {
+    serde_json::from_str::<kreuzcrawl::DownloadedAsset>(&json)
+        .map(DownloadedAsset)
+        .map_err(|e| e.to_string())
+}
+pub fn article_metadata_from_json(json: String) -> Result<ArticleMetadata, String> {
+    serde_json::from_str::<kreuzcrawl::ArticleMetadata>(&json)
+        .map(ArticleMetadata)
+        .map_err(|e| e.to_string())
+}
+pub fn hreflang_entry_from_json(json: String) -> Result<HreflangEntry, String> {
+    serde_json::from_str::<kreuzcrawl::HreflangEntry>(&json)
+        .map(HreflangEntry)
+        .map_err(|e| e.to_string())
+}
+pub fn favicon_info_from_json(json: String) -> Result<FaviconInfo, String> {
+    serde_json::from_str::<kreuzcrawl::FaviconInfo>(&json)
+        .map(FaviconInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn heading_info_from_json(json: String) -> Result<HeadingInfo, String> {
+    serde_json::from_str::<kreuzcrawl::HeadingInfo>(&json)
+        .map(HeadingInfo)
+        .map_err(|e| e.to_string())
+}
+pub fn response_meta_from_json(json: String) -> Result<ResponseMeta, String> {
+    serde_json::from_str::<kreuzcrawl::ResponseMeta>(&json)
+        .map(ResponseMeta)
+        .map_err(|e| e.to_string())
+}
+pub fn page_metadata_from_json(json: String) -> Result<PageMetadata, String> {
+    serde_json::from_str::<kreuzcrawl::PageMetadata>(&json)
+        .map(PageMetadata)
+        .map_err(|e| e.to_string())
+}
+pub fn citation_result_from_json(json: String) -> Result<CitationResult, String> {
+    serde_json::from_str::<kreuzcrawl::CitationResult>(&json)
+        .map(CitationResult)
+        .map_err(|e| e.to_string())
+}
+pub fn citation_reference_from_json(json: String) -> Result<CitationReference, String> {
+    serde_json::from_str::<kreuzcrawl::CitationReference>(&json)
+        .map(CitationReference)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_scrape_result_from_json(json: String) -> Result<BatchScrapeResult, String> {
+    serde_json::from_str::<kreuzcrawl::BatchScrapeResult>(&json)
+        .map(BatchScrapeResult)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_crawl_result_from_json(json: String) -> Result<BatchCrawlResult, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlResult>(&json)
+        .map(BatchCrawlResult)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_scrape_results_from_json(json: String) -> Result<BatchScrapeResults, String> {
+    serde_json::from_str::<kreuzcrawl::BatchScrapeResults>(&json)
+        .map(BatchScrapeResults)
+        .map_err(|e| e.to_string())
+}
+pub fn batch_crawl_results_from_json(json: String) -> Result<BatchCrawlResults, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlResults>(&json)
+        .map(BatchCrawlResults)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_mode_from_json(json: String) -> Result<BrowserMode, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserMode>(&json)
+        .map(BrowserMode::from)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_wait_from_json(json: String) -> Result<BrowserWait, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserWait>(&json)
+        .map(BrowserWait::from)
+        .map_err(|e| e.to_string())
+}
+pub fn browser_backend_from_json(json: String) -> Result<BrowserBackend, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserBackend>(&json)
+        .map(BrowserBackend::from)
+        .map_err(|e| e.to_string())
+}
+pub fn auth_config_from_json(json: String) -> Result<AuthConfig, String> {
+    serde_json::from_str::<kreuzcrawl::AuthConfig>(&json)
+        .map(AuthConfig::from)
+        .map_err(|e| e.to_string())
+}
+pub fn link_type_from_json(json: String) -> Result<LinkType, String> {
+    serde_json::from_str::<kreuzcrawl::LinkType>(&json)
+        .map(LinkType::from)
+        .map_err(|e| e.to_string())
+}
+pub fn image_source_from_json(json: String) -> Result<ImageSource, String> {
+    serde_json::from_str::<kreuzcrawl::ImageSource>(&json)
+        .map(ImageSource::from)
+        .map_err(|e| e.to_string())
+}
+pub fn feed_type_from_json(json: String) -> Result<FeedType, String> {
+    serde_json::from_str::<kreuzcrawl::FeedType>(&json)
+        .map(FeedType::from)
+        .map_err(|e| e.to_string())
+}
+pub fn asset_category_from_json(json: String) -> Result<AssetCategory, String> {
+    serde_json::from_str::<kreuzcrawl::AssetCategory>(&json)
+        .map(AssetCategory::from)
+        .map_err(|e| e.to_string())
+}
+pub fn crawl_event_from_json(json: String) -> Result<CrawlEvent, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlEvent>(&json)
+        .map(CrawlEvent::from)
+        .map_err(|e| e.to_string())
+}
+pub fn page_action_from_json(json: String) -> Result<PageAction, String> {
+    serde_json::from_str::<kreuzcrawl::PageAction>(&json)
+        .map(PageAction::from)
+        .map_err(|e| e.to_string())
+}
+pub fn scroll_direction_from_json(json: String) -> Result<ScrollDirection, String> {
+    serde_json::from_str::<kreuzcrawl::ScrollDirection>(&json)
+        .map(ScrollDirection::from)
         .map_err(|e| e.to_string())
 }

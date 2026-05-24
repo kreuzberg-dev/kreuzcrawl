@@ -4,9 +4,12 @@ mod config;
 mod discovery;
 mod metadata;
 mod results;
+#[cfg(not(target_arch = "wasm32"))]
+mod streaming;
 
 pub use config::{
-    AuthConfig, BrowserConfig, BrowserMode, BrowserWait, ContentConfig, CrawlConfig, ExtractionMeta, ProxyConfig,
+    AuthConfig, BrowserBackend, BrowserConfig, BrowserMode, BrowserWait, ContentConfig, CrawlConfig, ExtractionMeta,
+    ProxyConfig,
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use discovery::CrawlEvent;
@@ -16,5 +19,8 @@ pub use discovery::{
 };
 pub use metadata::{ArticleMetadata, FaviconInfo, HeadingInfo, HreflangEntry, PageMetadata, ResponseMeta};
 pub use results::{
-    CachedPage, CrawlPageResult, CrawlResult, DownloadedDocument, MapResult, MarkdownResult, ScrapeResult, SitemapUrl,
+    ActionResult, BrowserExtras, CachedPage, CrawlPageResult, CrawlResult, DownloadedDocument, InteractionResult,
+    MapResult, MarkdownResult, ScrapeResult, SitemapUrl,
 };
+#[cfg(not(target_arch = "wasm32"))]
+pub use streaming::{BatchCrawlStreamRequest, CrawlStreamRequest};

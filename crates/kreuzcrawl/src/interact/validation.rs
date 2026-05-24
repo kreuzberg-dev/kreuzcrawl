@@ -36,7 +36,7 @@ pub fn validate_actions(actions: &[PageAction]) -> Result<(), CrawlError> {
                     )));
                 }
             }
-            PageAction::Type { selector, text } => {
+            PageAction::TypeText { selector, text } => {
                 if selector.is_empty() {
                     return Err(CrawlError::InvalidConfig(format!(
                         "action[{i}]: type selector must not be empty"
@@ -60,14 +60,23 @@ pub fn validate_actions(actions: &[PageAction]) -> Result<(), CrawlError> {
                     )));
                 }
             }
-            PageAction::Wait { milliseconds, .. } => {
+            PageAction::Wait { milliseconds, selector } => {
                 if let Some(ms) = milliseconds {
-                    if *ms > MAX_SINGLE_WAIT_MS {
+                    if *ms < 0 {
+                        return Err(CrawlError::InvalidConfig(format!(
+                            "action[{i}]: wait time {ms}ms must not be negative"
+                        )));
+                    }
+                    let ms = *ms as u64;
+                    if ms > MAX_SINGLE_WAIT_MS {
                         return Err(CrawlError::InvalidConfig(format!(
                             "action[{i}]: wait time {ms}ms exceeds maximum of {MAX_SINGLE_WAIT_MS}ms"
                         )));
                     }
-                    total_wait_ms = total_wait_ms.saturating_add(*ms);
+                    total_wait_ms = total_wait_ms.saturating_add(ms);
+                }
+                if let Some(selector) = selector {
+                    validate_selector(i, "wait", selector)?;
                 }
             }
             PageAction::ExecuteJs { script } => {
@@ -82,17 +91,20 @@ pub fn validate_actions(actions: &[PageAction]) -> Result<(), CrawlError> {
                     )));
                 }
             }
-            PageAction::Scroll { amount, .. } => {
+            PageAction::Scroll { selector, amount, .. } => {
+                if let Some(selector) = selector {
+                    validate_selector(i, "scroll", selector)?;
+                }
                 if let Some(a) = amount
-                    && a.abs() > MAX_SCROLL_AMOUNT
+                    && a.unsigned_abs() > MAX_SCROLL_AMOUNT as u64
                 {
                     return Err(CrawlError::InvalidConfig(format!(
                         "action[{i}]: scroll amount {} exceeds maximum of {MAX_SCROLL_AMOUNT}",
-                        a.abs()
+                        a.unsigned_abs()
                     )));
                 }
             }
-            PageAction::Screenshot { .. } | PageAction::Scrape {} => {}
+            PageAction::Screenshot { .. } | PageAction::Scrape => {}
         }
     }
 
@@ -103,5 +115,19 @@ pub fn validate_actions(actions: &[PageAction]) -> Result<(), CrawlError> {
         )));
     }
 
+    Ok(())
+}
+
+fn validate_selector(action_index: usize, action_type: &str, selector: &str) -> Result<(), CrawlError> {
+    if selector.is_empty() {
+        return Err(CrawlError::InvalidConfig(format!(
+            "action[{action_index}]: {action_type} selector must not be empty"
+        )));
+    }
+    if selector.len() > MAX_SELECTOR_LEN {
+        return Err(CrawlError::InvalidConfig(format!(
+            "action[{action_index}]: selector exceeds maximum length of {MAX_SELECTOR_LEN} bytes"
+        )));
+    }
     Ok(())
 }

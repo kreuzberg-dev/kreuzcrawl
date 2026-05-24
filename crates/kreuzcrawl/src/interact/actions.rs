@@ -27,6 +27,7 @@ pub const MAX_SCROLL_AMOUNT: i64 = 100_000;
 /// except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "camelCase", deny_unknown_fields)]
+#[derive(Default)]
 pub enum PageAction {
     /// Click on an element matching the given CSS selector.
     Click {
@@ -34,7 +35,8 @@ pub enum PageAction {
         selector: String,
     },
     /// Type text into an element matching the given CSS selector.
-    Type {
+    #[serde(rename = "type")]
+    TypeText {
         /// CSS selector for the input element.
         selector: String,
         /// Text to type into the element.
@@ -50,25 +52,34 @@ pub enum PageAction {
         /// Direction to scroll.
         direction: ScrollDirection,
         /// Optional CSS selector for a scrollable element. Scrolls the page if absent.
-        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(default, skip_serializing_if = "Option::is_none")]
         selector: Option<String>,
         /// Optional pixel amount to scroll. Uses a default if absent.
-        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(default, skip_serializing_if = "Option::is_none")]
         amount: Option<i64>,
     },
     /// Wait for a duration or for an element to appear.
     Wait {
         /// Milliseconds to wait. Ignored if `selector` is provided.
-        #[serde(skip_serializing_if = "Option::is_none")]
-        milliseconds: Option<u64>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        milliseconds: Option<i64>,
         /// CSS selector to wait for.
-        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(default, skip_serializing_if = "Option::is_none")]
         selector: Option<String>,
     },
     /// Take a screenshot of the current page.
     Screenshot {
         /// Whether to capture the full scrollable page. Defaults to viewport only.
-        #[serde(rename = "fullPage", skip_serializing_if = "Option::is_none")]
+        ///
+        /// Accepts both the canonical `fullPage` (camelCase) form and the
+        /// `full_page` (snake_case) alias so language bindings and fixtures can
+        /// use either convention without error.
+        #[serde(
+            default,
+            rename = "fullPage",
+            alias = "full_page",
+            skip_serializing_if = "Option::is_none"
+        )]
         full_page: Option<bool>,
     },
     /// Execute arbitrary JavaScript in the page context.
@@ -83,15 +94,138 @@ pub enum PageAction {
         script: String,
     },
     /// Scrape the current page HTML.
-    Scrape {},
+    #[default]
+    Scrape,
 }
 
 /// Direction for a scroll action.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ScrollDirection {
     /// Scroll upward.
     Up,
     /// Scroll downward.
+    #[default]
     Down,
+}
+
+impl From<ScrollDirection> for String {
+    fn from(direction: ScrollDirection) -> Self {
+        match direction {
+            ScrollDirection::Up => "up".to_owned(),
+            ScrollDirection::Down => "down".to_owned(),
+        }
+    }
+}
+
+impl From<String> for ScrollDirection {
+    fn from(value: String) -> Self {
+        value.as_str().into()
+    }
+}
+
+impl From<&str> for ScrollDirection {
+    fn from(value: &str) -> Self {
+        match value {
+            "up" | "Up" | "UP" => Self::Up,
+            _ => Self::Down,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn deserialize_wait_with_only_required_fields() {
+        // Both optional fields absent — must not fail deserialization.
+        let json = r#"{"type":"wait"}"#;
+        let action: PageAction = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            action,
+            PageAction::Wait {
+                milliseconds: None,
+                selector: None
+            }
+        );
+    }
+
+    #[test]
+    fn deserialize_wait_selector_only() {
+        let json = r##"{"type":"wait","selector":"#content"}"##;
+        let action: PageAction = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            action,
+            PageAction::Wait {
+                milliseconds: None,
+                selector: Some("#content".to_owned())
+            }
+        );
+    }
+
+    #[test]
+    fn deserialize_wait_milliseconds_only() {
+        let json = r#"{"type":"wait","milliseconds":500}"#;
+        let action: PageAction = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            action,
+            PageAction::Wait {
+                milliseconds: Some(500),
+                selector: None
+            }
+        );
+    }
+
+    #[test]
+    fn deserialize_scroll_direction_only() {
+        // selector and amount absent — must default to None.
+        let json = r#"{"type":"scroll","direction":"down"}"#;
+        let action: PageAction = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            action,
+            PageAction::Scroll {
+                direction: ScrollDirection::Down,
+                selector: None,
+                amount: None
+            }
+        );
+    }
+
+    #[test]
+    fn deserialize_scroll_with_selector_no_amount() {
+        let json = r##"{"type":"scroll","direction":"up","selector":"#list"}"##;
+        let action: PageAction = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            action,
+            PageAction::Scroll {
+                direction: ScrollDirection::Up,
+                selector: Some("#list".to_owned()),
+                amount: None,
+            }
+        );
+    }
+
+    #[test]
+    fn deserialize_screenshot_no_fields() {
+        // full_page absent — must default to None.
+        let json = r#"{"type":"screenshot"}"#;
+        let action: PageAction = serde_json::from_str(json).unwrap();
+        assert_eq!(action, PageAction::Screenshot { full_page: None });
+    }
+
+    #[test]
+    fn deserialize_screenshot_full_page_true() {
+        let json = r#"{"type":"screenshot","fullPage":true}"#;
+        let action: PageAction = serde_json::from_str(json).unwrap();
+        assert_eq!(action, PageAction::Screenshot { full_page: Some(true) });
+    }
+
+    #[test]
+    fn deserialize_screenshot_full_page_alias() {
+        // snake_case alias must also work.
+        let json = r#"{"type":"screenshot","full_page":false}"#;
+        let action: PageAction = serde_json::from_str(json).unwrap();
+        assert_eq!(action, PageAction::Screenshot { full_page: Some(false) });
+    }
 }

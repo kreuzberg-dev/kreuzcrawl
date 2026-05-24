@@ -1,6 +1,6 @@
 [package]
 name = "kreuzcrawl_nif"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.27"
 edition = "2024"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"
@@ -12,10 +12,15 @@ categories = ["text-processing"]
 
 [lib]
 name = "kreuzcrawl_nif"
+
 crate-type = ["cdylib"]
 
 [dependencies]
-kreuzcrawl = { path = "../../../../crates/kreuzcrawl" }
+futures-util = "0.3"
+kreuzcrawl = { version = "0.3.0-rc.27", path = "../../../../crates/kreuzcrawl", features = [
+    "interact",
+    "browser-chromiumoxide",
+] }
 rustler = "0.37"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

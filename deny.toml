@@ -9,7 +9,7 @@ feature-depth = 1
 [advisories]
 ignore = [
   "RUSTSEC-2024-0436", # paste crate unmaintained - transitive dep from biblatex/tokenizers
-  "RUSTSEC-2025-0119", # number_prefix unmaintained - transitive dep from indicatif -> hf-hub -> fastembed
+  "RUSTSEC-2025-0141", # bincode 1.3.3 unmaintained - build-dep of deno_core 0.400 (kreuzcrawl-browser)
 ]
 
 [licenses]
@@ -43,6 +43,14 @@ exceptions = [
   { allow = ["MPL-2.0"], crate = "option-ext" },
   # r-efi: UEFI bindings, platform-specific transitive dep, never linked
   { allow = ["LGPL-2.1-or-later"], crate = "r-efi" },
+  # kreuzcrawl-browser DOM/CSS deps (Servo) — vendored from Apache-2.0 Obscura
+  # into a `publish = false` crate; mainstream Servo libs widely used in Rust.
+  { allow = ["MPL-2.0"], crate = "cssparser" },
+  { allow = ["MPL-2.0"], crate = "cssparser-macros" },
+  { allow = ["MPL-2.0"], crate = "dtoa-short" },
+  { allow = ["MPL-2.0"], crate = "selectors" },
+  # cooked-waker: deno_core build-time dep, never linked into the final binary
+  { allow = ["MPL-2.0"], crate = "cooked-waker" },
 ]
 
 [licenses.private]

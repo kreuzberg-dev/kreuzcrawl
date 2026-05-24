@@ -1,7 +1,11 @@
 {
 	"id": "stealth_ua_rotation_single_domain",
 	"description": "Custom user-agent string is applied for single domain crawl",
-	"tags": ["stealth", "user-agent"],
+	"tags": [
+		"stealth",
+		"user-agent",
+		"crawl"
+	],
 	"input": {
 		"mock_responses": [
 			{
@@ -14,7 +18,9 @@
 			}
 		],
 		"config": {
-			"user_agents": ["Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)"],
+			"user_agents": [
+				"Mozilla/5.0 TestBot/1.0 (+http://example.com/bot)"
+			],
 			"max_depth": 0,
 			"stay_on_domain": true
 		}
@@ -22,7 +28,7 @@
 	"assertions": [
 		{
 			"type": "equals",
-			"field": "status_code",
+			"field": "pages[0].status_code",
 			"value": 200
 		},
 		{

@@ -11,6 +11,10 @@
 #include <stdlib.h>
 /* Opaque type forward declarations */
 /**
+ * Result from a single page action execution.
+ */
+typedef struct KCRAWLActionResult KCRAWLActionResult;
+/**
  * Article metadata extracted from `article:*` Open Graph tags.
  */
 typedef struct KCRAWLArticleMetadata KCRAWLArticleMetadata;
@@ -27,13 +31,45 @@ typedef struct KCRAWLAuthConfig KCRAWLAuthConfig;
  */
 typedef struct KCRAWLBatchCrawlResult KCRAWLBatchCrawlResult;
 /**
+ * Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
+ *
+ * The counts are derived once at construction so every binding language can read them
+ * as plain integer fields without re-iterating the `results` vector.
+ */
+typedef struct KCRAWLBatchCrawlResults KCRAWLBatchCrawlResults;
+/**
+ * Request to begin a multi-URL streaming crawl.
+ *
+ * Wraps a set of seed URLs for delivery through the streaming-adapter binding
+ * surface. Required as a struct because alef's streaming adapter requires a
+ * named request type â primitives are not supported.
+ */
+typedef struct KCRAWLBatchCrawlStreamRequest KCRAWLBatchCrawlStreamRequest;
+/**
  * Result from a single URL in a batch scrape operation.
  */
 typedef struct KCRAWLBatchScrapeResult KCRAWLBatchScrapeResult;
 /**
+ * Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
+ *
+ * The counts are derived once at construction so every binding language can read them
+ * as plain integer fields without re-iterating the `results` vector.
+ */
+typedef struct KCRAWLBatchScrapeResults KCRAWLBatchScrapeResults;
+/**
+ * Browser backend used for JavaScript rendering.
+ */
+typedef struct KCRAWLBrowserBackend KCRAWLBrowserBackend;
+/**
  * Browser fallback configuration.
  */
 typedef struct KCRAWLBrowserConfig KCRAWLBrowserConfig;
+/**
+ * Browser-specific extras populated when the native browser backend was used.
+ *
+ * Available on `ScrapeResult.browser` when `BrowserBackend::Native` handled the request.
+ */
+typedef struct KCRAWLBrowserExtras KCRAWLBrowserExtras;
 /**
  * When to use the headless browser fallback.
  */
@@ -42,6 +78,10 @@ typedef struct KCRAWLBrowserMode KCRAWLBrowserMode;
  * Wait strategy for browser page rendering.
  */
 typedef struct KCRAWLBrowserWait KCRAWLBrowserWait;
+/**
+ * A single numbered reference in a citation list â produced by the citation
+ * extractor when content uses inline `[N]`-style markers.
+ */
 typedef struct KCRAWLCitationReference KCRAWLCitationReference;
 /**
  * Result of citation conversion.
@@ -71,6 +111,18 @@ typedef struct KCRAWLCrawlConfig KCRAWLCrawlConfig;
  */
 typedef struct KCRAWLCrawlEngineHandle KCRAWLCrawlEngineHandle;
 /**
+ * An event emitted during a streaming crawl operation.
+ *
+ * Not available on `wasm32` targets â streaming requires native concurrency
+ * primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+ *
+ * Delivered to bindings via alef's streaming-adapter pattern. The
+ * `crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+ * expose this as the per-language streaming idiom (Python `AsyncIterator`,
+ * Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+ */
+typedef struct KCRAWLCrawlEvent KCRAWLCrawlEvent;
+/**
  * The result of crawling a single page during a crawl operation.
  */
 typedef struct KCRAWLCrawlPageResult KCRAWLCrawlPageResult;
@@ -78,6 +130,14 @@ typedef struct KCRAWLCrawlPageResult KCRAWLCrawlPageResult;
  * The result of a multi-page crawl operation.
  */
 typedef struct KCRAWLCrawlResult KCRAWLCrawlResult;
+/**
+ * Request to begin a single-URL streaming crawl.
+ *
+ * Wraps a single seed URL for delivery through the streaming-adapter binding
+ * surface. Required as a struct because alef's streaming adapter requires a
+ * named request type â primitives are not supported.
+ */
+typedef struct KCRAWLCrawlStreamRequest KCRAWLCrawlStreamRequest;
 /**
  * A downloaded asset from a page.
  */
@@ -123,6 +183,10 @@ typedef struct KCRAWLImageInfo KCRAWLImageInfo;
  */
 typedef struct KCRAWLImageSource KCRAWLImageSource;
 /**
+ * Result of executing a sequence of page interaction actions.
+ */
+typedef struct KCRAWLInteractionResult KCRAWLInteractionResult;
+/**
  * A JSON-LD structured data entry found on a page.
  */
 typedef struct KCRAWLJsonLdEntry KCRAWLJsonLdEntry;
@@ -143,6 +207,13 @@ typedef struct KCRAWLMapResult KCRAWLMapResult;
  */
 typedef struct KCRAWLMarkdownResult KCRAWLMarkdownResult;
 /**
+ * A single page interaction action.
+ *
+ * Actions are serialized with a `type` tag using camelCase naming,
+ * except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
+ */
+typedef struct KCRAWLPageAction KCRAWLPageAction;
+/**
  * Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
  */
 typedef struct KCRAWLPageMetadata KCRAWLPageMetadata;
@@ -159,10 +230,37 @@ typedef struct KCRAWLResponseMeta KCRAWLResponseMeta;
  */
 typedef struct KCRAWLScrapeResult KCRAWLScrapeResult;
 /**
+ * Direction for a scroll action.
+ */
+typedef struct KCRAWLScrollDirection KCRAWLScrollDirection;
+/**
  * A URL entry from a sitemap.
  */
 typedef struct KCRAWLSitemapUrl KCRAWLSitemapUrl;
 
+
+/**
+ * Opaque handle owning a tokio runtime and a boxed chat-stream for iterator-style consumption.
+ *
+ * Created by `kcrawl_crawl_engine_handle_batch_crawl_stream_start`, advanced by `kcrawl_crawl_engine_handle_batch_crawl_stream_next`, destroyed by `kcrawl_crawl_engine_handle_batch_crawl_stream_free`.
+ * The handle is NOT thread-safe — callers must ensure only one thread calls `_next` at a time.
+ */
+typedef struct KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle;
+
+/**
+ * Opaque handle owning a tokio runtime and a boxed chat-stream for iterator-style consumption.
+ *
+ * Created by `kcrawl_crawl_engine_handle_crawl_stream_start`, advanced by `kcrawl_crawl_engine_handle_crawl_stream_next`, destroyed by `kcrawl_crawl_engine_handle_crawl_stream_free`.
+ * The handle is NOT thread-safe — callers must ensure only one thread calls `_next` at a time.
+ */
+typedef struct KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle;
+
+/**
+ * Callback invoked for each streamed chunk.
+ * `chunk_json` is a JSON-encoded chunk; `user_data` is forwarded from the caller.
+ */
+typedef void (*KCRAWLKcrawlStreamCallback)(const char *chunk_json,
+                                           void *user_data);
 
 /**
  * Return the last error code (0 means no error).
@@ -206,6 +304,90 @@ void kcrawl_free_bytes(uint8_t *ptr,
  * Returned pointers must be freed with the appropriate free function.
  */
 const char *kcrawl_version(void);
+
+/**
+ * Start a streaming chat completion and return an opaque iterator handle.
+ *
+ * Returns null and sets `kcrawl_last_error_code` on failure (null pointers or stream-open error).
+ * On success the caller owns the returned pointer and MUST call `kcrawl_crawl_engine_handle_crawl_stream_free` when done.
+ *
+ * # Safety
+ * `client` must be a non-null valid pointer to a live `kreuzcrawl::CrawlEngineHandle` produced by this library.
+ * `req` must be a non-null valid pointer to a live `kreuzcrawl::CrawlStreamRequest` produced by this library.
+ * Both pointers must remain valid until this function returns.
+ */
+struct KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *kcrawl_crawl_engine_handle_crawl_stream_start(const KCRAWLCrawlEngineHandle *client,
+                                                                                                           const KCRAWLCrawlStreamRequest *req);
+
+/**
+ * Advance the stream and return a heap-allocated chunk, or null.
+ *
+ * Returns null in two cases:
+ * - Clean end-of-stream: `kcrawl_last_error_code()` returns 0.
+ * - Stream error: `kcrawl_last_error_code()` returns non-zero.
+ *
+ * The returned pointer is heap-allocated and the caller MUST free it by calling
+ * `kcrawl_crawl_engine_handle_CrawlEvent_free` (or the appropriate type-free function).
+ *
+ * # Safety
+ * `handle` must be a non-null valid pointer previously returned by `kcrawl_crawl_engine_handle_crawl_stream_start` and not yet
+ * freed. Calling `_next` after `_free` is undefined behaviour. The handle must not be shared
+ * across threads without external synchronisation.
+ */
+KCRAWLCrawlEvent *kcrawl_crawl_engine_handle_crawl_stream_next(struct KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *handle);
+
+/**
+ * Free a stream handle created by `kcrawl_crawl_engine_handle_crawl_stream_start`.
+ *
+ * Safe to call with a null pointer (no-op). After this call the handle pointer is invalid.
+ *
+ * # Safety
+ * `handle` must either be null or a valid pointer previously returned by `kcrawl_crawl_engine_handle_crawl_stream_start` and
+ * not yet freed. Double-free is undefined behaviour.
+ */
+void kcrawl_crawl_engine_handle_crawl_stream_free(struct KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *handle);
+
+/**
+ * Start a streaming chat completion and return an opaque iterator handle.
+ *
+ * Returns null and sets `kcrawl_last_error_code` on failure (null pointers or stream-open error).
+ * On success the caller owns the returned pointer and MUST call `kcrawl_crawl_engine_handle_batch_crawl_stream_free` when done.
+ *
+ * # Safety
+ * `client` must be a non-null valid pointer to a live `kreuzcrawl::CrawlEngineHandle` produced by this library.
+ * `req` must be a non-null valid pointer to a live `kreuzcrawl::BatchCrawlStreamRequest` produced by this library.
+ * Both pointers must remain valid until this function returns.
+ */
+struct KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *kcrawl_crawl_engine_handle_batch_crawl_stream_start(const KCRAWLCrawlEngineHandle *client,
+                                                                                                                      const KCRAWLBatchCrawlStreamRequest *req);
+
+/**
+ * Advance the stream and return a heap-allocated chunk, or null.
+ *
+ * Returns null in two cases:
+ * - Clean end-of-stream: `kcrawl_last_error_code()` returns 0.
+ * - Stream error: `kcrawl_last_error_code()` returns non-zero.
+ *
+ * The returned pointer is heap-allocated and the caller MUST free it by calling
+ * `kcrawl_crawl_engine_handle_CrawlEvent_free` (or the appropriate type-free function).
+ *
+ * # Safety
+ * `handle` must be a non-null valid pointer previously returned by `kcrawl_crawl_engine_handle_batch_crawl_stream_start` and not yet
+ * freed. Calling `_next` after `_free` is undefined behaviour. The handle must not be shared
+ * across threads without external synchronisation.
+ */
+KCRAWLCrawlEvent *kcrawl_crawl_engine_handle_batch_crawl_stream_next(struct KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *handle);
+
+/**
+ * Free a stream handle created by `kcrawl_crawl_engine_handle_batch_crawl_stream_start`.
+ *
+ * Safe to call with a null pointer (no-op). After this call the handle pointer is invalid.
+ *
+ * # Safety
+ * `handle` must either be null or a valid pointer previously returned by `kcrawl_crawl_engine_handle_batch_crawl_stream_start` and
+ * not yet freed. Double-free is undefined behaviour.
+ */
+void kcrawl_crawl_engine_handle_batch_crawl_stream_free(struct KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *handle);
 
 /**
  * Create a `ExtractionMeta` from a JSON string. Returns null on failure.
@@ -453,6 +635,13 @@ void kcrawl_browser_config_free(KCRAWLBrowserConfig *ptr);
 KCRAWLBrowserMode *kcrawl_browser_config_mode(const KCRAWLBrowserConfig *ptr);
 
 /**
+ * Get the `backend` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KCRAWLBrowserBackend *kcrawl_browser_config_backend(const KCRAWLBrowserConfig *ptr);
+
+/**
  * Get the `endpoint` field from a `BrowserConfig`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
@@ -486,6 +675,48 @@ char *kcrawl_browser_config_wait_selector(const KCRAWLBrowserConfig *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 uint64_t kcrawl_browser_config_extra_wait(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `stealth` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_browser_config_stealth(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `proxy` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KCRAWLProxyConfig *kcrawl_browser_config_proxy(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `block_url_patterns` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_config_block_url_patterns(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `eval_script` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_config_eval_script(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `robots_user_agent` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_config_robots_user_agent(const KCRAWLBrowserConfig *ptr);
+
+/**
+ * Get the `capture_network_events` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_browser_config_capture_network_events(const KCRAWLBrowserConfig *ptr);
 
 /**
  * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
@@ -782,6 +1013,50 @@ KCRAWLCrawlConfig *kcrawl_crawl_config_default(void);
 int32_t kcrawl_crawl_config_validate(const KCRAWLCrawlConfig *this_);
 
 /**
+ * Create a `BrowserExtras` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_browser_extras_free`.
+ */
+KCRAWLBrowserExtras *kcrawl_browser_extras_from_json(const char *json);
+
+/**
+ * Serialize a `BrowserExtras` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_extras_to_json(const KCRAWLBrowserExtras *ptr);
+
+/**
+ * Free a `BrowserExtras` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_browser_extras_free(KCRAWLBrowserExtras *ptr);
+
+/**
+ * Get the `eval_result` field from a `BrowserExtras`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_extras_eval_result(const KCRAWLBrowserExtras *ptr);
+
+/**
+ * Get the `network_events` field from a `BrowserExtras`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_extras_network_events(const KCRAWLBrowserExtras *ptr);
+
+/**
+ * Get the `cookies` field from a `BrowserExtras`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_browser_extras_cookies(const KCRAWLBrowserExtras *ptr);
+
+/**
  * Create a `DownloadedDocument` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -812,6 +1087,13 @@ void kcrawl_downloaded_document_free(KCRAWLDownloadedDocument *ptr);
 char *kcrawl_downloaded_document_url(const KCRAWLDownloadedDocument *ptr);
 
 /**
+ * Get the `mime_type` field from a `DownloadedDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_downloaded_document_mime_type(const KCRAWLDownloadedDocument *ptr);
+
+/**
  * Get the `content` field from a `DownloadedDocument`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
@@ -827,11 +1109,134 @@ uint8_t *kcrawl_downloaded_document_content(const KCRAWLDownloadedDocument *ptr,
 uintptr_t kcrawl_downloaded_document_size(const KCRAWLDownloadedDocument *ptr);
 
 /**
+ * Get the `filename` field from a `DownloadedDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_downloaded_document_filename(const KCRAWLDownloadedDocument *ptr);
+
+/**
+ * Get the `content_hash` field from a `DownloadedDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_downloaded_document_content_hash(const KCRAWLDownloadedDocument *ptr);
+
+/**
  * Get the `headers` field from a `DownloadedDocument`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
 char *kcrawl_downloaded_document_headers(const KCRAWLDownloadedDocument *ptr);
+
+/**
+ * Create a `InteractionResult` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_interaction_result_free`.
+ */
+KCRAWLInteractionResult *kcrawl_interaction_result_from_json(const char *json);
+
+/**
+ * Serialize a `InteractionResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_interaction_result_to_json(const KCRAWLInteractionResult *ptr);
+
+/**
+ * Free a `InteractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_interaction_result_free(KCRAWLInteractionResult *ptr);
+
+/**
+ * Get the `action_results` field from a `InteractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_interaction_result_action_results(const KCRAWLInteractionResult *ptr);
+
+/**
+ * Get the `final_html` field from a `InteractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_interaction_result_final_html(const KCRAWLInteractionResult *ptr);
+
+/**
+ * Get the `final_url` field from a `InteractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_interaction_result_final_url(const KCRAWLInteractionResult *ptr);
+
+/**
+ * Get the `screenshot` field from a `InteractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kcrawl_interaction_result_screenshot(const KCRAWLInteractionResult *ptr);
+
+/**
+ * Create a `ActionResult` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_action_result_free`.
+ */
+KCRAWLActionResult *kcrawl_action_result_from_json(const char *json);
+
+/**
+ * Serialize a `ActionResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_action_result_to_json(const KCRAWLActionResult *ptr);
+
+/**
+ * Free a `ActionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_action_result_free(KCRAWLActionResult *ptr);
+
+/**
+ * Get the `action_index` field from a `ActionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_action_result_action_index(const KCRAWLActionResult *ptr);
+
+/**
+ * Get the `action_type` field from a `ActionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_action_result_action_type(const KCRAWLActionResult *ptr);
+
+/**
+ * Get the `success` field from a `ActionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_action_result_success(const KCRAWLActionResult *ptr);
+
+/**
+ * Get the `data` field from a `ActionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_action_result_data(const KCRAWLActionResult *ptr);
+
+/**
+ * Get the `error` field from a `ActionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_action_result_error(const KCRAWLActionResult *ptr);
 
 /**
  * Create a `ScrapeResult` from a JSON string. Returns null on failure.
@@ -862,6 +1267,13 @@ void kcrawl_scrape_result_free(KCRAWLScrapeResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 uint16_t kcrawl_scrape_result_status_code(const KCRAWLScrapeResult *ptr);
+
+/**
+ * Get the `final_url` field from a `ScrapeResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_scrape_result_final_url(const KCRAWLScrapeResult *ptr);
 
 /**
  * Get the `content_type` field from a `ScrapeResult`.
@@ -1046,6 +1458,13 @@ uint8_t *kcrawl_scrape_result_screenshot(const KCRAWLScrapeResult *ptr);
 KCRAWLDownloadedDocument *kcrawl_scrape_result_downloaded_document(const KCRAWLScrapeResult *ptr);
 
 /**
+ * Get the `browser` field from a `ScrapeResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KCRAWLBrowserExtras *kcrawl_scrape_result_browser(const KCRAWLScrapeResult *ptr);
+
+/**
  * Create a `CrawlPageResult` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -1209,6 +1628,13 @@ KCRAWLExtractionMeta *kcrawl_crawl_page_result_extraction_meta(const KCRAWLCrawl
 KCRAWLDownloadedDocument *kcrawl_crawl_page_result_downloaded_document(const KCRAWLCrawlPageResult *ptr);
 
 /**
+ * Get the `browser_used` field from a `CrawlPageResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_crawl_page_result_browser_used(const KCRAWLCrawlPageResult *ptr);
+
+/**
  * Create a `CrawlResult` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -1272,6 +1698,20 @@ char *kcrawl_crawl_result_error(const KCRAWLCrawlResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 char *kcrawl_crawl_result_cookies(const KCRAWLCrawlResult *ptr);
+
+/**
+ * Get the `stayed_on_domain` field from a `CrawlResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_crawl_result_stayed_on_domain(const KCRAWLCrawlResult *ptr);
+
+/**
+ * Get the `browser_used` field from a `CrawlResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_crawl_result_browser_used(const KCRAWLCrawlResult *ptr);
 
 /**
  * Get the `normalized_urls` field from a `CrawlResult`.
@@ -1424,7 +1864,7 @@ char *kcrawl_markdown_result_warnings(const KCRAWLMarkdownResult *ptr);
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
-KCRAWLCitationResult *kcrawl_markdown_result_citations(const KCRAWLMarkdownResult *ptr);
+int32_t kcrawl_markdown_result_citations(const KCRAWLMarkdownResult *ptr);
 
 /**
  * Get the `fit_content` field from a `MarkdownResult`.
@@ -2333,6 +2773,66 @@ char *kcrawl_page_metadata_headings(const KCRAWLPageMetadata *ptr);
 uintptr_t kcrawl_page_metadata_word_count(const KCRAWLPageMetadata *ptr);
 
 /**
+ * Create a `CrawlStreamRequest` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_crawl_stream_request_free`.
+ */
+KCRAWLCrawlStreamRequest *kcrawl_crawl_stream_request_from_json(const char *json);
+
+/**
+ * Serialize a `CrawlStreamRequest` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_crawl_stream_request_to_json(const KCRAWLCrawlStreamRequest *ptr);
+
+/**
+ * Free a `CrawlStreamRequest` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_crawl_stream_request_free(KCRAWLCrawlStreamRequest *ptr);
+
+/**
+ * Get the `url` field from a `CrawlStreamRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_crawl_stream_request_url(const KCRAWLCrawlStreamRequest *ptr);
+
+/**
+ * Create a `BatchCrawlStreamRequest` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_batch_crawl_stream_request_free`.
+ */
+KCRAWLBatchCrawlStreamRequest *kcrawl_batch_crawl_stream_request_from_json(const char *json);
+
+/**
+ * Serialize a `BatchCrawlStreamRequest` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_batch_crawl_stream_request_to_json(const KCRAWLBatchCrawlStreamRequest *ptr);
+
+/**
+ * Free a `BatchCrawlStreamRequest` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_batch_crawl_stream_request_free(KCRAWLBatchCrawlStreamRequest *ptr);
+
+/**
+ * Get the `urls` field from a `BatchCrawlStreamRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_batch_crawl_stream_request_urls(const KCRAWLBatchCrawlStreamRequest *ptr);
+
+/**
  * Create a `CitationResult` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -2419,6 +2919,36 @@ char *kcrawl_citation_reference_text(const KCRAWLCitationReference *ptr);
  * Pointer must have been returned by this library, or be null.
  */
 void kcrawl_crawl_engine_handle_free(KCRAWLCrawlEngineHandle *ptr);
+
+/**
+ * Stream a single-URL crawl, yielding [`CrawlEvent`]s as pages are processed.
+ *
+ * Returns an async stream that emits one event per crawled page, plus a
+ * terminal `Complete` event. On per-URL failure during the crawl, emits an
+ * `Error` event followed by `Complete`. The stream item type is wrapped in
+ * a `Result` to surface transport-level errors; today every emit is `Ok`.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
+ */
+int32_t kcrawl_crawl_engine_handle_crawl_stream(const KCRAWLCrawlEngineHandle *client,
+                                                const char *request_json,
+                                                KCRAWLKcrawlStreamCallback callback,
+                                                void *user_data);
+
+/**
+ * Stream a multi-URL crawl, yielding [`CrawlEvent`]s across all seeds.
+ *
+ * Returns an async stream that emits one event per crawled page across all
+ * seeds, plus terminal `Complete` and `Error` events as appropriate. The
+ * stream item type is wrapped in a `Result` to surface transport-level
+ * errors; today every emit is `Ok`.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
+ */
+int32_t kcrawl_crawl_engine_handle_batch_crawl_stream(const KCRAWLCrawlEngineHandle *client,
+                                                      const char *request_json,
+                                                      KCRAWLKcrawlStreamCallback callback,
+                                                      void *user_data);
 
 /**
  * Create a `BatchScrapeResult` from a JSON string. Returns null on failure.
@@ -2509,6 +3039,108 @@ KCRAWLCrawlResult *kcrawl_batch_crawl_result_result(const KCRAWLBatchCrawlResult
 char *kcrawl_batch_crawl_result_error(const KCRAWLBatchCrawlResult *ptr);
 
 /**
+ * Create a `BatchScrapeResults` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_batch_scrape_results_free`.
+ */
+KCRAWLBatchScrapeResults *kcrawl_batch_scrape_results_from_json(const char *json);
+
+/**
+ * Serialize a `BatchScrapeResults` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_batch_scrape_results_to_json(const KCRAWLBatchScrapeResults *ptr);
+
+/**
+ * Free a `BatchScrapeResults` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_batch_scrape_results_free(KCRAWLBatchScrapeResults *ptr);
+
+/**
+ * Get the `results` field from a `BatchScrapeResults`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_batch_scrape_results_results(const KCRAWLBatchScrapeResults *ptr);
+
+/**
+ * Get the `total_count` field from a `BatchScrapeResults`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_batch_scrape_results_total_count(const KCRAWLBatchScrapeResults *ptr);
+
+/**
+ * Get the `completed_count` field from a `BatchScrapeResults`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_batch_scrape_results_completed_count(const KCRAWLBatchScrapeResults *ptr);
+
+/**
+ * Get the `failed_count` field from a `BatchScrapeResults`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_batch_scrape_results_failed_count(const KCRAWLBatchScrapeResults *ptr);
+
+/**
+ * Create a `BatchCrawlResults` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_batch_crawl_results_free`.
+ */
+KCRAWLBatchCrawlResults *kcrawl_batch_crawl_results_from_json(const char *json);
+
+/**
+ * Serialize a `BatchCrawlResults` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_batch_crawl_results_to_json(const KCRAWLBatchCrawlResults *ptr);
+
+/**
+ * Free a `BatchCrawlResults` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_batch_crawl_results_free(KCRAWLBatchCrawlResults *ptr);
+
+/**
+ * Get the `results` field from a `BatchCrawlResults`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_batch_crawl_results_results(const KCRAWLBatchCrawlResults *ptr);
+
+/**
+ * Get the `total_count` field from a `BatchCrawlResults`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_batch_crawl_results_total_count(const KCRAWLBatchCrawlResults *ptr);
+
+/**
+ * Get the `completed_count` field from a `BatchCrawlResults`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_batch_crawl_results_completed_count(const KCRAWLBatchCrawlResults *ptr);
+
+/**
+ * Get the `failed_count` field from a `BatchCrawlResults`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kcrawl_batch_crawl_results_failed_count(const KCRAWLBatchCrawlResults *ptr);
+
+/**
  * Convert an integer to a `BrowserMode` variant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
@@ -2537,6 +3169,21 @@ int32_t kcrawl_browser_wait_from_i32(int32_t value);
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
 int32_t kcrawl_browser_wait_from_str(const char *name);
+
+/**
+ * Convert an integer to a `BrowserBackend` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kcrawl_browser_backend_from_i32(int32_t value);
+
+/**
+ * Convert a `BrowserBackend` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kcrawl_browser_backend_from_str(const char *name);
 
 /**
  * Convert an integer to a `AuthConfig` variant. Returns -1 on invalid input.
@@ -2614,6 +3261,51 @@ int32_t kcrawl_asset_category_from_i32(int32_t value);
 int32_t kcrawl_asset_category_from_str(const char *name);
 
 /**
+ * Convert an integer to a `CrawlEvent` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kcrawl_crawl_event_from_i32(int32_t value);
+
+/**
+ * Convert a `CrawlEvent` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kcrawl_crawl_event_from_str(const char *name);
+
+/**
+ * Convert an integer to a `PageAction` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kcrawl_page_action_from_i32(int32_t value);
+
+/**
+ * Convert a `PageAction` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kcrawl_page_action_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ScrollDirection` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kcrawl_scroll_direction_from_i32(int32_t value);
+
+/**
+ * Convert a `ScrollDirection` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kcrawl_scroll_direction_from_str(const char *name);
+
+/**
  * Free a heap-allocated `BrowserMode` returned by a pointer-returning FFI function.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -2662,6 +3354,31 @@ char *kcrawl_browser_wait_to_json(const KCRAWLBrowserWait *ptr);
  * The returned string must be freed with `kcrawl_free_string`.
  */
 char *kcrawl_browser_wait_to_string(const KCRAWLBrowserWait *ptr);
+
+/**
+ * Free a heap-allocated `BrowserBackend` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_browser_backend_free(KCRAWLBrowserBackend *ptr);
+
+/**
+ * Serialize a heap-allocated `BrowserBackend` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_backend_to_json(const KCRAWLBrowserBackend *ptr);
+
+/**
+ * Render a heap-allocated `BrowserBackend` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_browser_backend_to_string(const KCRAWLBrowserBackend *ptr);
 
 /**
  * Free a heap-allocated `AuthConfig` returned by a pointer-returning FFI function.
@@ -2789,6 +3506,42 @@ char *kcrawl_asset_category_to_json(const KCRAWLAssetCategory *ptr);
 char *kcrawl_asset_category_to_string(const KCRAWLAssetCategory *ptr);
 
 /**
+ * Free a heap-allocated `CrawlEvent` returned by a pointer-returning FFI function.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_crawl_event_free(KCRAWLCrawlEvent *ptr);
+
+/**
+ * Serialize a heap-allocated `CrawlEvent` to a JSON string.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_crawl_event_to_json(const KCRAWLCrawlEvent *ptr);
+
+/**
+ * Render a heap-allocated `CrawlEvent` as its string representation
+ * (the unit-variant name as serialized by serde — e.g. `"completed"`,
+ * without surrounding JSON quotes).
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_crawl_event_to_string(const KCRAWLCrawlEvent *ptr);
+
+/**
+ * Convert markdown links to numbered citations.
+ *
+ * `Example (https://example.com)` becomes `Example[1]`
+ * with `[1]: https://example.com` in the reference list.
+ * Images `!alt (url)` are preserved unchanged.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
+ */
+KCRAWLCitationResult *kcrawl_generate_citations(const char *markdown);
+
+/**
  * Create a new crawl engine with the given configuration.
  *
  * If `config` is `None`, uses [`CrawlConfig::default()`].
@@ -2823,37 +3576,28 @@ KCRAWLMapResult *kcrawl_map_urls(const KCRAWLCrawlEngineHandle *engine,
                                  const char *url);
 
 /**
+ * Execute browser actions on a single page.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
+ */
+KCRAWLInteractionResult *kcrawl_interact(const KCRAWLCrawlEngineHandle *engine,
+                                         const char *url,
+                                         const char *actions);
+
+/**
  * Scrape multiple URLs concurrently.
  * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
  * freed with the appropriate free function.
  */
-char *kcrawl_batch_scrape(const KCRAWLCrawlEngineHandle *engine,
-                          const char *urls);
-
-/**
- * Return the byte length of the C string that `kcrawl_batch_scrape` would return for the same
- * arguments, without allocating. Returns 0 when the underlying value is None or an error occurs.
- * Enables safe slice construction in Zig and Java FFM Panama without a NUL-scan.
- * \note SAFETY: All pointer parameters obey the same validity rules as `kcrawl_batch_scrape`.
- */
-uintptr_t kcrawl_batch_scrape_len(const KCRAWLCrawlEngineHandle *engine,
-                                  const char *urls);
+KCRAWLBatchScrapeResults *kcrawl_batch_scrape(const KCRAWLCrawlEngineHandle *engine,
+                                              const char *urls);
 
 /**
  * Crawl multiple seed URLs concurrently, each following links to configured depth.
  * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
  * freed with the appropriate free function.
  */
-char *kcrawl_batch_crawl(const KCRAWLCrawlEngineHandle *engine,
-                         const char *urls);
-
-/**
- * Return the byte length of the C string that `kcrawl_batch_crawl` would return for the same
- * arguments, without allocating. Returns 0 when the underlying value is None or an error occurs.
- * Enables safe slice construction in Zig and Java FFM Panama without a NUL-scan.
- * \note SAFETY: All pointer parameters obey the same validity rules as `kcrawl_batch_crawl`.
- */
-uintptr_t kcrawl_batch_crawl_len(const KCRAWLCrawlEngineHandle *engine,
-                                 const char *urls);
+KCRAWLBatchCrawlResults *kcrawl_batch_crawl(const KCRAWLCrawlEngineHandle *engine,
+                                            const char *urls);
 
 #endif  /* KCRAWL_H */

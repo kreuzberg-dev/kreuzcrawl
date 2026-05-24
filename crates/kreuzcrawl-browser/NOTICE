@@ -1,0 +1,8 @@
+kreuzcrawl-browser
+
+This crate contains code derived from Obscura
+(https://github.com/h4ckf0r0day/obscura, commit e371e94,
+licensed under Apache License 2.0).
+
+Original copyright (c) the Obscura authors.
+Modifications copyright (c) the kreuzberg.dev maintainers.

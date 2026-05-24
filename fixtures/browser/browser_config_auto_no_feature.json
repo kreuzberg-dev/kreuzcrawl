@@ -1,6 +1,6 @@
 {
 	"id": "browser_config_auto_no_feature",
-	"description": "Browser mode 'auto' without browser feature enabled does not use browser",
+	"description": "Browser mode 'never' prevents browser use even when JS render hint is set",
 	"tags": ["browser", "config"],
 	"input": {
 		"mock_responses": [
@@ -14,7 +14,7 @@
 		],
 		"config": {
 			"browser": {
-				"mode": "auto"
+				"mode": "never"
 			}
 		}
 	},
@@ -26,12 +26,12 @@
 		},
 		{
 			"type": "equals",
-			"field": "browser.js_render_hint",
+			"field": "js_render_hint",
 			"value": true
 		},
 		{
 			"type": "equals",
-			"field": "browser.browser_used",
+			"field": "browser_used",
 			"value": false
 		}
 	]

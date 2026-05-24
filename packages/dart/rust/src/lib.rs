@@ -89,6 +89,8 @@ pub struct ContentConfig {
 pub struct BrowserConfig {
     /// When to use the headless browser fallback.
     pub mode: BrowserMode,
+    /// Browser backend used to render JavaScript-heavy pages.
+    pub backend: BrowserBackend,
     /// CDP WebSocket endpoint for connecting to an external browser instance.
     pub endpoint: Option<String>,
     /// Timeout for browser page load and rendering (in milliseconds when serialized).
@@ -99,6 +101,29 @@ pub struct BrowserConfig {
     pub wait_selector: Option<String>,
     /// Extra time to wait after the wait condition is met.
     pub extra_wait: Option<i64>,
+    /// Enable browser-realistic TLS fingerprint via the stealth HTTP client.
+    /// Only honored by `BrowserBackend::Native` — chromiumoxide is already
+    /// full-stealth via Chrome's TLS stack.
+    pub stealth: bool,
+    /// Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set.
+    /// Native backend supports http/https only (no SOCKS5).
+    pub proxy: Option<ProxyConfig>,
+    /// URL patterns to block before the network request fires. Supports `*`
+    /// wildcards. Useful for skipping ads/analytics/large images. Honored by
+    /// `BrowserBackend::Native`; chromiumoxide ignores this field today.
+    pub block_url_patterns: Vec<String>,
+    /// JavaScript snippet evaluated after navigation completes.
+    ///
+    /// Scraping captures the native backend result in `ScrapeResult.browser.eval_result`.
+    /// Interactions run this script before page actions on both browser backends but do
+    /// not include the script result in `InteractionResult`.
+    pub eval_script: Option<String>,
+    /// User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent`
+    /// (or kreuzcrawl's default) if unset. Native only.
+    pub robots_user_agent: Option<String>,
+    /// Capture the full network event stream into the result. Default false
+    /// (only the document event is captured). Native only.
+    pub capture_network_events: bool,
 }
 
 /// Configuration for crawl, scrape, and map operations.
@@ -185,6 +210,21 @@ pub struct CrawlConfig {
     pub save_browser_profile: bool,
 }
 
+/// Browser-specific extras populated when the native browser backend was used.
+///
+/// Available on `ScrapeResult.browser` when `BrowserBackend::Native` handled the request.
+#[frb(mirror(BrowserExtras))]
+pub struct BrowserExtras {
+    /// Return value of `BrowserConfig.eval_script`, if provided.
+    pub eval_result: Option<String>,
+    /// Network events captured during page navigation (only populated when
+    /// `BrowserConfig.capture_network_events` is true).
+    pub network_events: Vec<ResponseMeta>,
+    /// All non-expired cookies present in the browser's cookie jar after
+    /// navigation completes (includes both prior cookies and server Set-Cookie).
+    pub cookies: Vec<CookieInfo>,
+}
+
 /// A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
 ///
 /// When the crawler encounters non-HTML content and `download_documents` is
@@ -206,11 +246,39 @@ pub struct DownloadedDocument {
     pub headers: std::collections::HashMap<String, String>,
 }
 
+/// Result of executing a sequence of page interaction actions.
+#[frb(mirror(InteractionResult))]
+pub struct InteractionResult {
+    /// Results from each executed action.
+    pub action_results: Vec<ActionResult>,
+    /// Final page HTML after all actions completed.
+    pub final_html: String,
+    /// Final page URL (may have changed due to navigation).
+    pub final_url: String,
+}
+
+/// Result from a single page action execution.
+#[frb(mirror(ActionResult))]
+pub struct ActionResult {
+    /// Zero-based index of the action in the sequence.
+    pub action_index: i64,
+    /// The type of action that was executed.
+    pub action_type: String,
+    /// Whether the action completed successfully.
+    pub success: bool,
+    /// Action-specific return data (screenshot bytes, JS return value, scraped HTML).
+    pub data: Option<String>,
+    /// Error message if the action failed.
+    pub error: Option<String>,
+}
+
 /// The result of a single-page scrape operation.
 #[frb(mirror(ScrapeResult))]
 pub struct ScrapeResult {
     /// The HTTP status code of the response.
     pub status_code: i64,
+    /// The final URL after following all redirects.
+    pub final_url: String,
     /// The Content-Type header value.
     pub content_type: String,
     /// The HTML body of the response.
@@ -261,6 +329,9 @@ pub struct ScrapeResult {
     pub extraction_meta: Option<ExtractionMeta>,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     pub downloaded_document: Option<DownloadedDocument>,
+    /// Browser-specific extras (eval result, network events, cookies). Only
+    /// populated when `BrowserBackend::Native` was used for this request.
+    pub browser: Option<BrowserExtras>,
 }
 
 /// The result of crawling a single page during a crawl operation.
@@ -306,6 +377,8 @@ pub struct CrawlPageResult {
     pub extraction_meta: Option<ExtractionMeta>,
     /// Downloaded non-HTML document (PDF, DOCX, image, code, etc.).
     pub downloaded_document: Option<DownloadedDocument>,
+    /// Whether the browser fallback was used to fetch this page.
+    pub browser_used: bool,
 }
 
 /// The result of a multi-page crawl operation.
@@ -323,8 +396,10 @@ pub struct CrawlResult {
     pub error: Option<String>,
     /// Cookies collected during the crawl.
     pub cookies: Vec<CookieInfo>,
-    /// Normalized URLs encountered during crawling (for deduplication counting).
-    pub normalized_urls: Vec<String>,
+    /// Whether all crawled pages stayed on the same domain as the start URL.
+    pub stayed_on_domain: bool,
+    /// Whether the browser fallback was used for any page in this crawl.
+    pub browser_used: bool,
 }
 
 /// A URL entry from a sitemap.
@@ -358,8 +433,13 @@ pub struct MarkdownResult {
     pub tables: Vec<String>,
     /// Non-fatal processing warnings.
     pub warnings: Vec<String>,
-    /// Content with links replaced by numbered citations.
-    pub citations: Option<CitationResult>,
+    /// Whether citation conversion was applied and produced at least one reference.
+    ///
+    /// `true` when the markdown contained inline links that were converted to
+    /// numbered citation references. The converted content (with `[N]` markers)
+    /// is available in `content`; the full reference list is accessible via
+    /// `generate_citations` if needed separately.
+    pub citations: bool,
     /// Content-filtered markdown optimized for LLM consumption.
     pub fit_content: Option<String>,
 }
@@ -602,6 +682,29 @@ pub struct PageMetadata {
     pub word_count: Option<i64>,
 }
 
+/// Request to begin a single-URL streaming crawl.
+///
+/// Wraps a single seed URL for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+#[frb(mirror(CrawlStreamRequest))]
+pub struct CrawlStreamRequest {
+    /// The seed URL to crawl.
+    pub url: String,
+}
+
+/// Request to begin a multi-URL streaming crawl.
+///
+/// Wraps a set of seed URLs for delivery through the streaming-adapter binding
+/// surface. Required as a struct because alef's streaming adapter requires a
+/// named request type — primitives are not supported.
+#[frb(mirror(BatchCrawlStreamRequest))]
+pub struct BatchCrawlStreamRequest {
+    /// The seed URLs to crawl. Each URL is followed independently up to the
+    /// engine's configured depth.
+    pub urls: Vec<String>,
+}
+
 /// Result of citation conversion.
 #[frb(mirror(CitationResult))]
 pub struct CitationResult {
@@ -611,10 +714,15 @@ pub struct CitationResult {
     pub references: Vec<CitationReference>,
 }
 
+/// A single numbered reference in a citation list — produced by the citation
+/// extractor when content uses inline `[N]`-style markers.
 #[frb(mirror(CitationReference))]
 pub struct CitationReference {
+    /// 1-based reference number as it appears in the source text.
     pub index: i64,
+    /// Resolved absolute URL for this reference.
     pub url: String,
+    /// Human-readable anchor text or title for the reference.
     pub text: String,
 }
 
@@ -661,6 +769,109 @@ pub struct BatchCrawlResult {
     pub error: Option<String>,
 }
 
+/// Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
+///
+/// The counts are derived once at construction so every binding language can read them
+/// as plain integer fields without re-iterating the `results` vector.
+#[frb(mirror(BatchScrapeResults))]
+pub struct BatchScrapeResults {
+    /// Per-URL scrape results, in the order URLs were submitted.
+    pub results: Vec<BatchScrapeResult>,
+    /// Total number of URLs in the batch (equal to `results.len()`).
+    pub total_count: i64,
+    /// Number of URLs whose scrape succeeded (`error` is `None`).
+    pub completed_count: i64,
+    /// Number of URLs whose scrape failed (`error` is `Some`).
+    pub failed_count: i64,
+}
+
+/// Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
+///
+/// The counts are derived once at construction so every binding language can read them
+/// as plain integer fields without re-iterating the `results` vector.
+#[frb(mirror(BatchCrawlResults))]
+pub struct BatchCrawlResults {
+    /// Per-URL crawl results, in the order seed URLs were submitted.
+    pub results: Vec<BatchCrawlResult>,
+    /// Total number of seed URLs in the batch (equal to `results.len()`).
+    pub total_count: i64,
+    /// Number of seed URLs whose crawl succeeded (`error` is `None`).
+    pub completed_count: i64,
+    /// Number of seed URLs whose crawl failed (`error` is `Some`).
+    pub failed_count: i64,
+}
+
+impl CrawlEngineHandle {
+    #[frb]
+    pub fn crawl_stream(&self, req: CrawlStreamRequest, sink: crate::frb_generated::StreamSink<CrawlEvent>) {
+        use futures_util::StreamExt;
+        use std::sync::OnceLock;
+        static FRB_STREAM_TOKIO_RT: OnceLock<tokio::runtime::Runtime> = OnceLock::new();
+        let _rt = FRB_STREAM_TOKIO_RT.get_or_init(|| {
+            tokio::runtime::Builder::new_multi_thread()
+                .enable_all()
+                .build()
+                .expect("failed to build tokio runtime for FRB streaming")
+        });
+        let inner = self.inner.clone();
+        let core_req: kreuzcrawl::CrawlStreamRequest = req.into();
+        _rt.spawn(async move {
+            match inner.crawl_stream(core_req).await {
+                Ok(mut stream) => {
+                    while let Some(item) = stream.next().await {
+                        match item {
+                            Ok(chunk) => {
+                                let _ = sink.add(CrawlEvent::from(chunk));
+                            }
+                            Err(e) => {
+                                let _ = sink.add_error(e.to_string());
+                                break;
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    let _ = sink.add_error(e.to_string());
+                }
+            }
+        });
+    }
+    #[frb]
+    pub fn batch_crawl_stream(&self, req: BatchCrawlStreamRequest, sink: crate::frb_generated::StreamSink<CrawlEvent>) {
+        use futures_util::StreamExt;
+        use std::sync::OnceLock;
+        static FRB_STREAM_TOKIO_RT: OnceLock<tokio::runtime::Runtime> = OnceLock::new();
+        let _rt = FRB_STREAM_TOKIO_RT.get_or_init(|| {
+            tokio::runtime::Builder::new_multi_thread()
+                .enable_all()
+                .build()
+                .expect("failed to build tokio runtime for FRB streaming")
+        });
+        let inner = self.inner.clone();
+        let core_req: kreuzcrawl::BatchCrawlStreamRequest = req.into();
+        _rt.spawn(async move {
+            match inner.batch_crawl_stream(core_req).await {
+                Ok(mut stream) => {
+                    while let Some(item) = stream.next().await {
+                        match item {
+                            Ok(chunk) => {
+                                let _ = sink.add(CrawlEvent::from(chunk));
+                            }
+                            Err(e) => {
+                                let _ = sink.add_error(e.to_string());
+                                break;
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    let _ = sink.add_error(e.to_string());
+                }
+            }
+        });
+    }
+}
+
 /// When to use the headless browser fallback.
 #[frb(mirror(BrowserMode))]
 pub enum BrowserMode {
@@ -683,15 +894,37 @@ pub enum BrowserWait {
     Fixed,
 }
 
+/// Browser backend used for JavaScript rendering.
+#[frb(mirror(BrowserBackend))]
+pub enum BrowserBackend {
+    /// Existing Chromium/CDP backend powered by chromiumoxide.
+    Chromiumoxide,
+    /// Kreuzcrawl-owned native browser backend derived from Obscura.
+    Native,
+}
+
 /// Authentication configuration.
 #[frb(mirror(AuthConfig))]
 pub enum AuthConfig {
     /// HTTP Basic authentication.
-    Basic { username: String, password: String },
+    Basic {
+        /// Username sent in the `Authorization: Basic` header.
+        username: String,
+        /// Password sent in the `Authorization: Basic` header.
+        password: String,
+    },
     /// Bearer token authentication.
-    Bearer { token: String },
+    Bearer {
+        /// Token sent in the `Authorization: Bearer` header.
+        token: String,
+    },
     /// Custom authentication header.
-    Header { name: String, value: String },
+    Header {
+        /// HTTP header name to set on each request.
+        name: String,
+        /// HTTP header value to send.
+        value: String,
+    },
 }
 
 /// The classification of a link.
@@ -756,6 +989,148 @@ pub enum AssetCategory {
     Other,
 }
 
+/// An event emitted during a streaming crawl operation.
+///
+/// Not available on `wasm32` targets — streaming requires native concurrency
+/// primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+///
+/// Delivered to bindings via alef's streaming-adapter pattern. The
+/// `crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+/// expose this as the per-language streaming idiom (Python `AsyncIterator`,
+/// Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+#[frb(mirror(CrawlEvent))]
+pub enum CrawlEvent {
+    /// A single page has been crawled.
+    Page {
+        /// The crawled page result.
+        result: CrawlPageResult,
+    },
+    /// An error occurred while crawling a URL.
+    Error {
+        /// The URL that failed.
+        url: String,
+        /// The error message.
+        error: String,
+    },
+    /// The crawl has completed.
+    Complete {
+        /// Total number of pages crawled.
+        pages_crawled: i64,
+    },
+}
+
+/// A single page interaction action.
+///
+/// Actions are serialized with a `type` tag using camelCase naming,
+/// except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
+#[frb(mirror(PageAction))]
+pub enum PageAction {
+    /// Click on an element matching the given CSS selector.
+    Click {
+        /// CSS selector for the element to click.
+        selector: String,
+    },
+    /// Type text into an element matching the given CSS selector.
+    TypeText {
+        /// CSS selector for the input element.
+        selector: String,
+        /// Text to type into the element.
+        text: String,
+    },
+    /// Press a keyboard key (e.g. "Enter", "Tab", "Escape").
+    Press {
+        /// Key name to press.
+        key: String,
+    },
+    /// Scroll the page or a specific element.
+    Scroll {
+        /// Direction to scroll.
+        direction: ScrollDirection,
+        /// Optional CSS selector for a scrollable element. Scrolls the page if absent.
+        selector: String,
+        /// Optional pixel amount to scroll. Uses a default if absent.
+        amount: i64,
+    },
+    /// Wait for a duration or for an element to appear.
+    Wait {
+        /// Milliseconds to wait. Ignored if `selector` is provided.
+        milliseconds: i64,
+        /// CSS selector to wait for.
+        selector: String,
+    },
+    /// Take a screenshot of the current page.
+    Screenshot {
+        /// Whether to capture the full scrollable page. Defaults to viewport only.
+        ///
+        /// Accepts both the canonical `fullPage` (camelCase) form and the
+        /// `full_page` (snake_case) alias so language bindings and fixtures can
+        /// use either convention without error.
+        full_page: bool,
+    },
+    /// Execute arbitrary JavaScript in the page context.
+    ///
+    /// # Safety
+    ///
+    /// The script runs with full page privileges in the browser context.
+    /// Only execute scripts from trusted sources.
+    ExecuteJs {
+        /// JavaScript source code to execute. Max 1 MB.
+        script: String,
+    },
+    /// Scrape the current page HTML.
+    Scrape,
+}
+
+/// Direction for a scroll action.
+#[frb(mirror(ScrollDirection))]
+pub enum ScrollDirection {
+    /// Scroll upward.
+    Up,
+    /// Scroll downward.
+    Down,
+}
+
+/// Errors that can occur during crawling, scraping, or mapping operations.
+#[frb(mirror(CrawlError))]
+pub enum CrawlError {
+    /// The requested page was not found (HTTP 404).
+    NotFound { field0: String },
+    /// The request was unauthorized (HTTP 401).
+    Unauthorized { field0: String },
+    /// The request was forbidden (HTTP 403).
+    Forbidden { field0: String },
+    /// The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators).
+    WafBlocked { field0: String },
+    /// The request timed out.
+    Timeout { field0: String },
+    /// The request was rate-limited (HTTP 429).
+    RateLimited { field0: String },
+    /// A server error occurred (HTTP 5xx).
+    ServerError { field0: String },
+    /// A bad gateway error occurred (HTTP 502).
+    BadGateway { field0: String },
+    /// The resource is permanently gone (HTTP 410).
+    Gone { field0: String },
+    /// A connection error occurred.
+    Connection { field0: String },
+    /// A DNS resolution error occurred.
+    Dns { field0: String },
+    /// An SSL/TLS error occurred.
+    Ssl { field0: String },
+    /// Data was lost or truncated during transfer.
+    DataLoss { field0: String },
+    /// The browser failed to launch, connect, or navigate.
+    BrowserError { field0: String },
+    /// The browser page load or rendering timed out.
+    BrowserTimeout { field0: String },
+    /// The provided configuration is invalid.
+    InvalidConfig { field0: String },
+    /// The requested capability is not supported by the active backend or build.
+    Unsupported { field0: String },
+    /// An unclassified error occurred.
+    Other { field0: String },
+}
+
 // From<SourceT> conversions for bridge return types.
 
 impl From<kreuzcrawl::ExtractionMeta> for ExtractionMeta {
@@ -803,11 +1178,18 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
     fn from(v: kreuzcrawl::BrowserConfig) -> Self {
         BrowserConfig {
             mode: BrowserMode::from(v.mode),
+            backend: BrowserBackend::from(v.backend),
             endpoint: v.endpoint.map(|s| s.into()),
             timeout: v.timeout.as_millis() as i64,
             wait: BrowserWait::from(v.wait),
             wait_selector: v.wait_selector.map(|s| s.into()),
             extra_wait: v.extra_wait.map(|d| d.as_millis() as i64),
+            stealth: v.stealth as _,
+            proxy: v.proxy.map(ProxyConfig::from),
+            block_url_patterns: v.block_url_patterns.into_iter().map(|s| s.into()).collect(),
+            eval_script: v.eval_script.map(|s| s.into()),
+            robots_user_agent: v.robots_user_agent.map(|s| s.into()),
+            capture_network_events: v.capture_network_events as _,
         }
     }
 }
@@ -859,15 +1241,47 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
     }
 }
 
+impl From<kreuzcrawl::BrowserExtras> for BrowserExtras {
+    fn from(v: kreuzcrawl::BrowserExtras) -> Self {
+        BrowserExtras {
+            eval_result: v.eval_result.map(|j| serde_json::to_string(&j).unwrap_or_default()),
+            network_events: v.network_events.into_iter().map(ResponseMeta::from).collect(),
+            cookies: v.cookies.into_iter().map(CookieInfo::from).collect(),
+        }
+    }
+}
+
 impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     fn from(v: kreuzcrawl::DownloadedDocument) -> Self {
         DownloadedDocument {
             url: v.url.into(),
-            mime_type: v.mime_type.into_owned(),
+            mime_type: v.mime_type.into(),
             size: v.size as _,
-            filename: Default::default(),
-            content_hash: Default::default(),
+            filename: v.filename.map(|s| s.into()),
+            content_hash: v.content_hash.into(),
             headers: v.headers.into_iter().map(|(k, v)| (k.into(), v.into())).collect(),
+        }
+    }
+}
+
+impl From<kreuzcrawl::InteractionResult> for InteractionResult {
+    fn from(v: kreuzcrawl::InteractionResult) -> Self {
+        InteractionResult {
+            action_results: v.action_results.into_iter().map(ActionResult::from).collect(),
+            final_html: v.final_html.into(),
+            final_url: v.final_url.into(),
+        }
+    }
+}
+
+impl From<kreuzcrawl::ActionResult> for ActionResult {
+    fn from(v: kreuzcrawl::ActionResult) -> Self {
+        ActionResult {
+            action_index: v.action_index as _,
+            action_type: v.action_type.into(),
+            success: v.success as _,
+            data: v.data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
+            error: v.error.map(|s| s.into()),
         }
     }
 }
@@ -876,6 +1290,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
     fn from(v: kreuzcrawl::ScrapeResult) -> Self {
         ScrapeResult {
             status_code: v.status_code as _,
+            final_url: v.final_url.into(),
             content_type: v.content_type.into(),
             html: v.html.into(),
             body_size: v.body_size as _,
@@ -901,6 +1316,7 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             extracted_data: v.extracted_data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
             extraction_meta: v.extraction_meta.map(ExtractionMeta::from),
             downloaded_document: v.downloaded_document.map(DownloadedDocument::from),
+            browser: v.browser.map(BrowserExtras::from),
         }
     }
 }
@@ -928,6 +1344,7 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
             extracted_data: v.extracted_data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
             extraction_meta: v.extraction_meta.map(ExtractionMeta::from),
             downloaded_document: v.downloaded_document.map(DownloadedDocument::from),
+            browser_used: v.browser_used as _,
         }
     }
 }
@@ -941,7 +1358,8 @@ impl From<kreuzcrawl::CrawlResult> for CrawlResult {
             was_skipped: v.was_skipped as _,
             error: v.error.map(|s| s.into()),
             cookies: v.cookies.into_iter().map(CookieInfo::from).collect(),
-            normalized_urls: v.normalized_urls.into_iter().map(|s| s.into()).collect(),
+            stayed_on_domain: v.stayed_on_domain as _,
+            browser_used: v.browser_used as _,
         }
     }
 }
@@ -978,7 +1396,7 @@ impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
                 .map(|j| serde_json::to_string(&j).unwrap_or_default())
                 .collect(),
             warnings: v.warnings.into_iter().map(|s| s.into()).collect(),
-            citations: v.citations.map(CitationResult::from),
+            citations: v.citations as _,
             fit_content: v.fit_content.map(|s| s.into()),
         }
     }
@@ -1161,6 +1579,20 @@ impl From<kreuzcrawl::PageMetadata> for PageMetadata {
     }
 }
 
+impl From<kreuzcrawl::CrawlStreamRequest> for CrawlStreamRequest {
+    fn from(v: kreuzcrawl::CrawlStreamRequest) -> Self {
+        CrawlStreamRequest { url: v.url.into() }
+    }
+}
+
+impl From<kreuzcrawl::BatchCrawlStreamRequest> for BatchCrawlStreamRequest {
+    fn from(v: kreuzcrawl::BatchCrawlStreamRequest) -> Self {
+        BatchCrawlStreamRequest {
+            urls: v.urls.into_iter().map(|s| s.into()).collect(),
+        }
+    }
+}
+
 impl From<kreuzcrawl::CitationResult> for CitationResult {
     fn from(v: kreuzcrawl::CitationResult) -> Self {
         CitationResult {
@@ -1200,6 +1632,28 @@ impl From<kreuzcrawl::BatchCrawlResult> for BatchCrawlResult {
     }
 }
 
+impl From<kreuzcrawl::BatchScrapeResults> for BatchScrapeResults {
+    fn from(v: kreuzcrawl::BatchScrapeResults) -> Self {
+        BatchScrapeResults {
+            results: v.results.into_iter().map(BatchScrapeResult::from).collect(),
+            total_count: v.total_count as _,
+            completed_count: v.completed_count as _,
+            failed_count: v.failed_count as _,
+        }
+    }
+}
+
+impl From<kreuzcrawl::BatchCrawlResults> for BatchCrawlResults {
+    fn from(v: kreuzcrawl::BatchCrawlResults) -> Self {
+        BatchCrawlResults {
+            results: v.results.into_iter().map(BatchCrawlResult::from).collect(),
+            total_count: v.total_count as _,
+            completed_count: v.completed_count as _,
+            failed_count: v.failed_count as _,
+        }
+    }
+}
+
 impl From<kreuzcrawl::BrowserMode> for BrowserMode {
     fn from(v: kreuzcrawl::BrowserMode) -> Self {
         match v {
@@ -1216,6 +1670,15 @@ impl From<kreuzcrawl::BrowserWait> for BrowserWait {
             kreuzcrawl::BrowserWait::NetworkIdle => BrowserWait::NetworkIdle,
             kreuzcrawl::BrowserWait::Selector => BrowserWait::Selector,
             kreuzcrawl::BrowserWait::Fixed => BrowserWait::Fixed,
+        }
+    }
+}
+
+impl From<kreuzcrawl::BrowserBackend> for BrowserBackend {
+    fn from(v: kreuzcrawl::BrowserBackend) -> Self {
+        match v {
+            kreuzcrawl::BrowserBackend::Chromiumoxide => BrowserBackend::Chromiumoxide,
+            kreuzcrawl::BrowserBackend::Native => BrowserBackend::Native,
         }
     }
 }
@@ -1279,6 +1742,57 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
     }
 }
 
+impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
+    fn from(v: kreuzcrawl::CrawlEvent) -> Self {
+        match v {
+            kreuzcrawl::CrawlEvent::Page { result } => CrawlEvent::Page {
+                result: CrawlPageResult::from(*result),
+            },
+            kreuzcrawl::CrawlEvent::Error { url, error } => CrawlEvent::Error { url, error },
+            kreuzcrawl::CrawlEvent::Complete { pages_crawled } => CrawlEvent::Complete {
+                pages_crawled: pages_crawled as _,
+            },
+        }
+    }
+}
+
+impl From<kreuzcrawl::PageAction> for PageAction {
+    fn from(v: kreuzcrawl::PageAction) -> Self {
+        match v {
+            kreuzcrawl::PageAction::Click { selector } => PageAction::Click { selector },
+            kreuzcrawl::PageAction::TypeText { selector, text } => PageAction::TypeText { selector, text },
+            kreuzcrawl::PageAction::Press { key } => PageAction::Press { key },
+            kreuzcrawl::PageAction::Scroll {
+                direction,
+                selector,
+                amount,
+            } => PageAction::Scroll {
+                direction: ScrollDirection::from(direction),
+                selector: selector.unwrap_or_default(),
+                amount: amount.map(|x| x as _).unwrap_or_default(),
+            },
+            kreuzcrawl::PageAction::Wait { milliseconds, selector } => PageAction::Wait {
+                milliseconds: milliseconds.map(|x| x as _).unwrap_or_default(),
+                selector: selector.unwrap_or_default(),
+            },
+            kreuzcrawl::PageAction::Screenshot { full_page } => PageAction::Screenshot {
+                full_page: full_page.map(|x| x as _).unwrap_or_default(),
+            },
+            kreuzcrawl::PageAction::ExecuteJs { script } => PageAction::ExecuteJs { script },
+            kreuzcrawl::PageAction::Scrape => PageAction::Scrape,
+        }
+    }
+}
+
+impl From<kreuzcrawl::ScrollDirection> for ScrollDirection {
+    fn from(v: kreuzcrawl::ScrollDirection) -> Self {
+        match v {
+            kreuzcrawl::ScrollDirection::Up => ScrollDirection::Up,
+            kreuzcrawl::ScrollDirection::Down => ScrollDirection::Down,
+        }
+    }
+}
+
 // From<T> for SourceT conversions (mirror-to-core direction).
 // Used in bridge functions for types with sanitized fields, and by
 // nested conversions within those types.
@@ -1316,11 +1830,18 @@ impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
     fn from(v: BrowserConfig) -> Self {
         kreuzcrawl::BrowserConfig {
             mode: v.mode.into(),
+            backend: v.backend.into(),
             endpoint: v.endpoint.map(Into::into),
             timeout: std::time::Duration::from_millis(v.timeout as u64),
             wait: v.wait.into(),
             wait_selector: v.wait_selector.map(Into::into),
             extra_wait: v.extra_wait.map(|ms| std::time::Duration::from_millis(ms as u64)),
+            stealth: v.stealth as _,
+            proxy: v.proxy.map(Into::into),
+            block_url_patterns: v.block_url_patterns.into_iter().map(Into::into).collect(),
+            eval_script: v.eval_script.map(Into::into),
+            robots_user_agent: v.robots_user_agent.map(Into::into),
+            capture_network_events: v.capture_network_events as _,
         }
     }
 }
@@ -1394,6 +1915,15 @@ impl From<BrowserWait> for kreuzcrawl::BrowserWait {
     }
 }
 
+impl From<BrowserBackend> for kreuzcrawl::BrowserBackend {
+    fn from(v: BrowserBackend) -> Self {
+        match v {
+            BrowserBackend::Chromiumoxide => kreuzcrawl::BrowserBackend::Chromiumoxide,
+            BrowserBackend::Native => kreuzcrawl::BrowserBackend::Native,
+        }
+    }
+}
+
 impl From<AuthConfig> for kreuzcrawl::AuthConfig {
     fn from(v: AuthConfig) -> Self {
         match v {
@@ -1419,6 +1949,72 @@ impl From<AssetCategory> for kreuzcrawl::AssetCategory {
             AssetCategory::Other => kreuzcrawl::AssetCategory::Other,
         }
     }
+}
+
+impl From<PageAction> for kreuzcrawl::PageAction {
+    fn from(v: PageAction) -> Self {
+        match v {
+            PageAction::Click { selector } => kreuzcrawl::PageAction::Click { selector },
+            PageAction::TypeText { selector, text } => kreuzcrawl::PageAction::TypeText { selector, text },
+            PageAction::Press { key } => kreuzcrawl::PageAction::Press { key },
+            PageAction::Scroll {
+                direction,
+                selector,
+                amount,
+            } => kreuzcrawl::PageAction::Scroll {
+                direction: direction.into(),
+                selector: if selector.is_empty() { None } else { Some(selector) },
+                amount: if amount == 0 { None } else { Some(amount as _) },
+            },
+            PageAction::Wait { milliseconds, selector } => kreuzcrawl::PageAction::Wait {
+                milliseconds: if milliseconds == 0 {
+                    None
+                } else {
+                    Some(milliseconds as _)
+                },
+                selector: if selector.is_empty() { None } else { Some(selector) },
+            },
+            PageAction::Screenshot { full_page } => kreuzcrawl::PageAction::Screenshot {
+                full_page: if full_page { Some(full_page) } else { None },
+            },
+            PageAction::ExecuteJs { script } => kreuzcrawl::PageAction::ExecuteJs { script },
+            PageAction::Scrape => kreuzcrawl::PageAction::Scrape,
+        }
+    }
+}
+
+impl From<ScrollDirection> for kreuzcrawl::ScrollDirection {
+    fn from(v: ScrollDirection) -> Self {
+        match v {
+            ScrollDirection::Up => kreuzcrawl::ScrollDirection::Up,
+            ScrollDirection::Down => kreuzcrawl::ScrollDirection::Down,
+        }
+    }
+}
+
+// From<T> for SourceT conversions for streaming-adapter mirror request types.
+
+impl From<BatchCrawlStreamRequest> for kreuzcrawl::BatchCrawlStreamRequest {
+    fn from(v: BatchCrawlStreamRequest) -> Self {
+        kreuzcrawl::BatchCrawlStreamRequest {
+            urls: v.urls.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<CrawlStreamRequest> for kreuzcrawl::CrawlStreamRequest {
+    fn from(v: CrawlStreamRequest) -> Self {
+        kreuzcrawl::CrawlStreamRequest { url: v.url.into() }
+    }
+}
+
+/// Convert markdown links to numbered citations.
+///
+/// `[Example](https://example.com)` becomes `Example[1]`
+/// with `[1]: https://example.com` in the reference list.
+/// Images `![alt](url)` are preserved unchanged.
+pub fn generate_citations(markdown: String) -> CitationResult {
+    (CitationResult::from)(kreuzcrawl::generate_citations(&markdown))
 }
 
 /// Create a new crawl engine with the given configuration.
@@ -1455,19 +2051,38 @@ pub async fn map_urls(engine: CrawlEngineHandle, url: String) -> Result<MapResul
         .map_err(|e| e.to_string())
 }
 
+/// Execute browser actions on a single page.
+pub async fn interact(
+    engine: CrawlEngineHandle,
+    url: String,
+    actions: Vec<PageAction>,
+) -> Result<InteractionResult, String> {
+    kreuzcrawl::interact(
+        &engine.inner,
+        &url,
+        actions
+            .into_iter()
+            .map(kreuzcrawl::PageAction::from)
+            .collect::<Vec<_>>(),
+    )
+    .await
+    .map(InteractionResult::from)
+    .map_err(|e| e.to_string())
+}
+
 /// Scrape multiple URLs concurrently.
-pub async fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchScrapeResult>, String> {
+pub async fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchScrapeResults, String> {
     kreuzcrawl::batch_scrape(&engine.inner, urls)
         .await
-        .map(|v| v.into_iter().map(BatchScrapeResult::from).collect())
+        .map(BatchScrapeResults::from)
         .map_err(|e| e.to_string())
 }
 
 /// Crawl multiple seed URLs concurrently, each following links to configured depth.
-pub async fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Vec<BatchCrawlResult>, String> {
+pub async fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchCrawlResults, String> {
     kreuzcrawl::batch_crawl(&engine.inner, urls)
         .await
-        .map(|v| v.into_iter().map(BatchCrawlResult::from).collect())
+        .map(BatchCrawlResults::from)
         .map_err(|e| e.to_string())
 }
 
@@ -1509,9 +2124,30 @@ pub fn create_crawl_config_from_json(json: String) -> Result<CrawlConfig, String
 }
 
 #[frb]
+pub fn create_browser_extras_from_json(json: String) -> Result<BrowserExtras, String> {
+    serde_json::from_str::<kreuzcrawl::BrowserExtras>(&json)
+        .map(BrowserExtras::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
 pub fn create_downloaded_document_from_json(json: String) -> Result<DownloadedDocument, String> {
     serde_json::from_str::<kreuzcrawl::DownloadedDocument>(&json)
         .map(DownloadedDocument::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
+pub fn create_interaction_result_from_json(json: String) -> Result<InteractionResult, String> {
+    serde_json::from_str::<kreuzcrawl::InteractionResult>(&json)
+        .map(InteractionResult::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
+pub fn create_action_result_from_json(json: String) -> Result<ActionResult, String> {
+    serde_json::from_str::<kreuzcrawl::ActionResult>(&json)
+        .map(ActionResult::from)
         .map_err(|e| e.to_string())
 }
 
@@ -1642,6 +2278,20 @@ pub fn create_page_metadata_from_json(json: String) -> Result<PageMetadata, Stri
 }
 
 #[frb]
+pub fn create_crawl_stream_request_from_json(json: String) -> Result<CrawlStreamRequest, String> {
+    serde_json::from_str::<kreuzcrawl::CrawlStreamRequest>(&json)
+        .map(CrawlStreamRequest::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
+pub fn create_batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlStreamRequest>(&json)
+        .map(BatchCrawlStreamRequest::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
 pub fn create_citation_result_from_json(json: String) -> Result<CitationResult, String> {
     serde_json::from_str::<kreuzcrawl::CitationResult>(&json)
         .map(CitationResult::from)
@@ -1666,5 +2316,19 @@ pub fn create_batch_scrape_result_from_json(json: String) -> Result<BatchScrapeR
 pub fn create_batch_crawl_result_from_json(json: String) -> Result<BatchCrawlResult, String> {
     serde_json::from_str::<kreuzcrawl::BatchCrawlResult>(&json)
         .map(BatchCrawlResult::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
+pub fn create_batch_scrape_results_from_json(json: String) -> Result<BatchScrapeResults, String> {
+    serde_json::from_str::<kreuzcrawl::BatchScrapeResults>(&json)
+        .map(BatchScrapeResults::from)
+        .map_err(|e| e.to_string())
+}
+
+#[frb]
+pub fn create_batch_crawl_results_from_json(json: String) -> Result<BatchCrawlResults, String> {
+    serde_json::from_str::<kreuzcrawl::BatchCrawlResults>(&json)
+        .map(BatchCrawlResults::from)
         .map_err(|e| e.to_string())
 }

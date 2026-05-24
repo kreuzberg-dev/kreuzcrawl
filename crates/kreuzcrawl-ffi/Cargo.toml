@@ -1,6 +1,6 @@
 [package]
 name = "kreuzcrawl-ffi"
-version = "0.3.0-rc.20"
+version = "0.3.0-rc.27"
 edition = "2021"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"
@@ -9,10 +9,16 @@ keywords = ["crawl", "scrape", "web", "spider"]
 categories = ["text-processing"]
 repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
 
+# `serde_json` and `tokio` are emitted unconditionally above so the manifest
+# is stable across regens (and so the C FFI codegen can pull them in when an
+# async / Result-typed function appears in the API surface), but for umbrella
+# crates with no async fns and no JSON-marshalled return types they are
+# genuinely unused. The conditional `async-trait` / `futures-util` deps are
+# similarly flagged when the umbrella has trait-bridge / streaming adapters
+# configured but no actual async-trait / async-stream callsite in the
+# generated FFI shim.
 [package.metadata.cargo-machete]
-# tokio is pulled in for its runtime/macros at link time but the generated
-# FFI source never `use`s it directly — cargo-machete would otherwise flag it.
-ignored = ["tokio"]
+ignored = ["serde_json", "tokio", "futures-util"]
 
 [lib]
 crate-type = ["cdylib", "staticlib"]
@@ -21,7 +27,11 @@ crate-type = ["cdylib", "staticlib"]
 default = []
 
 [dependencies]
-kreuzcrawl = { path = "../kreuzcrawl" }
+futures-util = "0.3"
+kreuzcrawl = { path = "../kreuzcrawl", version = "0.3.0-rc.27", features = [
+    "interact",
+    "browser-chromiumoxide",
+] }
 serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 

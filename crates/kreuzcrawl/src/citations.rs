@@ -17,20 +17,37 @@ pub struct CitationResult {
     pub references: Vec<CitationReference>,
 }
 
+/// A single numbered reference in a citation list — produced by the citation
+/// extractor when content uses inline `[N]`-style markers.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CitationReference {
+    /// 1-based reference number as it appears in the source text.
     pub index: usize,
+    /// Resolved absolute URL for this reference.
     pub url: String,
+    /// Human-readable anchor text or title for the reference.
     pub text: String,
 }
 
-// Matches both images ![alt](url) and links [text](url)
-// We distinguish them by checking the character before the match
-// Allows one level of balanced parentheses in URLs (e.g. Wikipedia-style URLs)
-// Pattern: match chars that aren't ), allowing one balanced pair (...) inside
+// Matches both images ![alt](url) and links [text](url).
+// We distinguish them by checking the first character of the full match.
+// Allows one level of balanced parentheses in URLs (e.g. Wikipedia-style URLs).
+//
+// Pattern breakdown for group 2 (URL):
+//   [^)(]*               — chars that are neither ')' nor '(' (prefix before any inner parens)
+//   (?:\([^)]*\)[^)(]*)?  — optionally: one balanced (...) pair followed by more
+//                          chars that are neither ')' nor '(' (suffix after inner parens)
+//
+// This replaces the original two-branch alternation
+//   [^)]*\([^)]*\)[^)]*|[^)]*
+// whose branches overlap (branch 2 is a prefix of branch 1), forcing
+// regex_automata into the BoundedBacktracker strategy on every match.
+// Using [^)(]* (excludes both ')' and '(') in each segment ensures that '(' is
+// only consumed by the explicit \( in the optional group, removing the NFA
+// ambiguity and allowing the linear PikeVM/onepass engine to be selected.
 static LINK_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"!?\[([^\]]*)\]\(([^)]*\([^)]*\)[^)]*|[^)]*)\)").expect("hardcoded regex is valid"));
+    LazyLock::new(|| Regex::new(r"!?\[([^\]]*)\]\(([^)(]*(?:\([^)]*\)[^)(]*)?)\)").expect("hardcoded regex is valid"));
 
 /// Convert markdown links to numbered citations.
 ///

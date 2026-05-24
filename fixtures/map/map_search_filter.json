@@ -1,6 +1,6 @@
 {
 	"id": "map_search_filter",
-	"description": "Filters map results by search keyword",
+	"description": "Filters map results by search keyword; 4 links in page but only 2 match 'blog'",
 	"tags": ["map", "filtering"],
 	"input": {
 		"mock_responses": [
@@ -25,9 +25,9 @@
 			"value": 2
 		},
 		{
-			"type": "contains",
-			"field": "urls",
-			"value": "blog"
+			"type": "less_than_or_equal",
+			"field": "urls.length",
+			"value": 2
 		}
 	]
 }

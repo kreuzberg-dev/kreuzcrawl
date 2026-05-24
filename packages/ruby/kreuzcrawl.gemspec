@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
-  spec.name = 'kreuzcrawl'
-  spec.version = '0.3.0.pre.rc.20'
-  spec.authors       = ['Kreuzberg Team']
-  spec.summary       = 'High-performance web crawling engine'
-  spec.description   = 'High-performance web crawling engine'
-  spec.homepage      = 'https://github.com/kreuzberg-dev/kreuzcrawl'
-  spec.license       = 'Elastic-2.0'
-  spec.required_ruby_version = '>= 3.2.0'
-  spec.metadata['keywords'] = %w[crawl scrape web spider].join(',')
-  spec.metadata['rubygems_mfa_required'] = 'true'
+  spec.name = "kreuzcrawl"
+  spec.version = "0.3.0.pre.rc.27"
+  spec.authors       = ["Kreuzberg Team"]
+  spec.summary       = "High-performance web crawling engine"
+  spec.description   = "High-performance web crawling engine"
+  spec.homepage      = "https://github.com/kreuzberg-dev/kreuzcrawl"
+  spec.license       = "Elastic-2.0"
+  spec.required_ruby_version = ">= 3.2.0"
+  spec.metadata["keywords"] = %w[crawl scrape web spider].join(",")
+  spec.metadata["rubygems_mfa_required"] = "true"
 
   spec.files         = Dir.glob(%w[lib/**/* ext/**/* sig/**/* Steepfile])
-  spec.require_paths = ['lib']
-  spec.extensions    = ['ext/kreuzcrawl_rb/extconf.rb']
+  spec.require_paths = ["lib"]
+  spec.extensions    = ["ext/kreuzcrawl_rb/extconf.rb"]
 
-  spec.add_dependency 'rb_sys', '~> 0.9'
-  spec.add_dependency 'sorbet-runtime', '~> 0.5'
+  spec.add_dependency "rb_sys", "~> 0.9"
+  spec.add_dependency "sorbet-runtime", "~> 0.5"
 end

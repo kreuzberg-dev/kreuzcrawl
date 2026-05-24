@@ -1,26 +1,18 @@
 version: "3"
 
 tasks:
-  mock-server:build:
-    desc: Build the e2e mock HTTP server
-    cmds:
-      - cargo build -p mock-server --release
-    sources:
-      - tools/mock-server/src/**/*.rs
-      - tools/mock-server/Cargo.toml
-    generates:
-      - target/release/mock-server
-
   mock-server:start:
-    desc: Start the e2e mock HTTP server (background)
-    deps: [mock-server:build]
+    desc: Start the alef-generated mock HTTP server (background)
     cmds:
       - |
-        ./target/release/mock-server --fixtures ./fixtures --port 0 > .mock-server.out &
+        ./e2e/rust/target/release/mock-server ./fixtures > .mock-server.out &
         echo $! > .mock-server.pid
         sleep 1
         grep MOCK_SERVER_URL .mock-server.out > .mock-server.env
         cat .mock-server.env
+    preconditions:
+      - sh: test -x e2e/rust/target/release/mock-server
+        msg: "alef mock-server binary not built. Run: task mock-server:rebuild"
     generates:
       - .mock-server.pid
       - .mock-server.env

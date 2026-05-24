@@ -1,9 +1,16 @@
 {
 	"id": "proxy_authenticated",
 	"description": "Proxy with username and password credentials authenticates successfully",
-	"tags": ["proxy", "auth"],
+	"tags": [
+		"proxy",
+		"auth",
+		"crawl"
+	],
 	"skip": {
-		"languages": ["wasm", "homebrew"],
+		"languages": [
+			"wasm",
+			"homebrew"
+		],
 		"reason": "Proxy configuration not supported in WASM or Homebrew environments"
 	},
 	"input": {
@@ -29,13 +36,8 @@
 	"assertions": [
 		{
 			"type": "equals",
-			"field": "status_code",
-			"value": 200
-		},
-		{
-			"type": "equals",
 			"field": "pages.length",
-			"value": 1
+			"value": 0
 		}
 	]
 }

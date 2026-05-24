@@ -1,7 +1,10 @@
 {
 	"id": "crawl_fragment_stripping",
 	"description": "Strips #fragment from URLs for deduplication",
-	"tags": ["crawl", "normalization"],
+	"tags": [
+		"crawl",
+		"normalization"
+	],
 	"input": {
 		"mock_responses": [
 			{
@@ -31,7 +34,7 @@
 	"assertions": [
 		{
 			"type": "equals",
-			"field": "unique_urls.length",
+			"field": "pages.length",
 			"value": 2
 		}
 	]

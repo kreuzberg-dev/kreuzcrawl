@@ -1,0 +1,34 @@
+defmodule Kreuzcrawl.MixProject do
+  use Mix.Project
+
+  def project do
+    [
+      app: :kreuzcrawl,
+      version: "0.3.0-rc.23",
+      elixir: "~> 1.14",
+      elixirc_paths: ["lib", Path.expand("../../../../../packages/elixir/native/kreuzcrawl_nif/src", __DIR__)],
+      rustler_crates: [kreuzcrawl_nif: [mode: :release]],
+      description: "High-performance web crawling engine",
+      package: package(),
+      deps: deps()
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ["Elastic-2.0"],
+      links: %{"GitHub" => "https://github.com/kreuzberg-dev/kreuzcrawl"},
+      files:
+        ~w(.formatter.exs mix.exs README* checksum-*.exs native/kreuzcrawl_nif/Cargo.toml native/kreuzcrawl_nif/Cargo.lock native/kreuzcrawl_nif/src ../../../../../packages/elixir/native/kreuzcrawl_nif/src/*.ex)
+    ]
+  end
+
+  defp deps do
+    [
+      {:rustler, "~> 0.37.0", runtime: false},
+      {:rustler_precompiled, "~> 0.9"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.40", only: :dev, runtime: false}
+    ]
+  end
+end

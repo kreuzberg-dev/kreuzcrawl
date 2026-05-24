@@ -28,6 +28,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `BrowserError`   | browser: {0}                | The browser failed to launch, connect, or navigate.                                |
 | `BrowserTimeout` | browser_timeout: {0}        | The browser page load or rendering timed out.                                      |
 | `InvalidConfig`  | invalid_config: {0}         | The provided configuration is invalid.                                             |
+| `Unsupported`    | unsupported: {0}            | The requested capability is not supported by the active backend or build.          |
 | `Other`          | other: {0}                  | An unclassified error occurred.                                                    |
 
 ---

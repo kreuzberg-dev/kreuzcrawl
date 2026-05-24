@@ -61,14 +61,21 @@ html-to-markdown-rs as the conversion engine for all formats
 
 Browser fallback configuration.
 
-| Field           | Type            | Default                    | Description                                                                    |
-| --------------- | --------------- | -------------------------- | ------------------------------------------------------------------------------ |
-| `mode`          | `BrowserMode`   | `BrowserMode.AUTO`         | When to use the headless browser fallback.                                     |
-| `endpoint`      | `str \| None`   | `None`                     | CDP WebSocket endpoint for connecting to an external browser instance.         |
-| `timeout`       | `float`         | `30000ms`                  | Timeout for browser page load and rendering (in milliseconds when serialized). |
-| `wait`          | `BrowserWait`   | `BrowserWait.NETWORK_IDLE` | Wait strategy after browser navigation.                                        |
-| `wait_selector` | `str \| None`   | `None`                     | CSS selector to wait for when `wait` is `Selector`.                            |
-| `extra_wait`    | `float \| None` | `None`                     | Extra time to wait after the wait condition is met.                            |
+| Field                    | Type                  | Default                        | Description                                                                                                                                                                                                                                                                        |
+| ------------------------ | --------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`                   | `BrowserMode`         | `BrowserMode.AUTO`             | When to use the headless browser fallback.                                                                                                                                                                                                                                         |
+| `backend`                | `BrowserBackend`      | `BrowserBackend.CHROMIUMOXIDE` | Browser backend used to render JavaScript-heavy pages.                                                                                                                                                                                                                             |
+| `endpoint`               | `str \| None`         | `None`                         | CDP WebSocket endpoint for connecting to an external browser instance.                                                                                                                                                                                                             |
+| `timeout`                | `float`               | `30000ms`                      | Timeout for browser page load and rendering (in milliseconds when serialized).                                                                                                                                                                                                     |
+| `wait`                   | `BrowserWait`         | `BrowserWait.NETWORK_IDLE`     | Wait strategy after browser navigation.                                                                                                                                                                                                                                            |
+| `wait_selector`          | `str \| None`         | `None`                         | CSS selector to wait for when `wait` is `Selector`.                                                                                                                                                                                                                                |
+| `extra_wait`             | `float \| None`       | `None`                         | Extra time to wait after the wait condition is met.                                                                                                                                                                                                                                |
+| `stealth`                | `bool`                | `False`                        | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.                                                                                                      |
+| `proxy`                  | `ProxyConfig \| None` | `None`                         | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5).                                                                                                                                                            |
+| `block_url_patterns`     | `list[str]`           | `[]`                           | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today.                                                                        |
+| `eval_script`            | `str \| None`         | `None`                         | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
+| `robots_user_agent`      | `str \| None`         | `None`                         | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
+| `capture_network_events` | `bool`                | `False`                        | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
 ---
 
@@ -117,6 +124,20 @@ Configuration for crawl, scrape, and map operations.
 
 ---
 
+### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field            | Type                     | Default | Description                                                                                                                                 |
+| ---------------- | ------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `eval_result`    | `dict[str, Any] \| None` | `None`  | Return value of `BrowserConfig.eval_script`, if provided.                                                                                   |
+| `network_events` | `list[ResponseMeta]`     | `[]`    | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true).                        |
+| `cookies`        | `list[CookieInfo]`       | `[]`    | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
+---
+
 ### DownloadedDocument
 
 A downloaded non-HTML document (PDF, DOCX, image, code file, etc.).
@@ -137,39 +158,68 @@ skipping the resource.
 
 ---
 
+### InteractionResult
+
+Result of executing a sequence of page interaction actions.
+
+| Field            | Type                 | Default | Description                                          |
+| ---------------- | -------------------- | ------- | ---------------------------------------------------- |
+| `action_results` | `list[ActionResult]` | `[]`    | Results from each executed action.                   |
+| `final_html`     | `str`                | —       | Final page HTML after all actions completed.         |
+| `final_url`      | `str`                | —       | Final page URL (may have changed due to navigation). |
+| `screenshot`     | `bytes \| None`      | `None`  | Screenshot taken after all actions, if requested.    |
+
+---
+
+### ActionResult
+
+Result from a single page action execution.
+
+| Field          | Type                     | Default | Description                                                                    |
+| -------------- | ------------------------ | ------- | ------------------------------------------------------------------------------ |
+| `action_index` | `int`                    | —       | Zero-based index of the action in the sequence.                                |
+| `action_type`  | `str`                    | —       | The type of action that was executed.                                          |
+| `success`      | `bool`                   | —       | Whether the action completed successfully.                                     |
+| `data`         | `dict[str, Any] \| None` | `None`  | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
+| `error`        | `str \| None`            | `None`  | Error message if the action failed.                                            |
+
+---
+
 ### ScrapeResult
 
 The result of a single-page scrape operation.
 
-| Field                 | Type                         | Default | Description                                                                                            |
-| --------------------- | ---------------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
-| `status_code`         | `int`                        | —       | The HTTP status code of the response.                                                                  |
-| `content_type`        | `str`                        | —       | The Content-Type header value.                                                                         |
-| `html`                | `str`                        | —       | The HTML body of the response.                                                                         |
-| `body_size`           | `int`                        | —       | The size of the response body in bytes.                                                                |
-| `metadata`            | `PageMetadata`               | —       | Extracted metadata from the page.                                                                      |
-| `links`               | `list[LinkInfo]`             | `[]`    | Links found on the page.                                                                               |
-| `images`              | `list[ImageInfo]`            | `[]`    | Images found on the page.                                                                              |
-| `feeds`               | `list[FeedInfo]`             | `[]`    | Feed links found on the page.                                                                          |
-| `json_ld`             | `list[JsonLdEntry]`          | `[]`    | JSON-LD entries found on the page.                                                                     |
-| `is_allowed`          | `bool`                       | —       | Whether the URL is allowed by robots.txt.                                                              |
-| `crawl_delay`         | `int \| None`                | `None`  | The crawl delay from robots.txt, in seconds.                                                           |
-| `noindex_detected`    | `bool`                       | —       | Whether a noindex directive was detected.                                                              |
-| `nofollow_detected`   | `bool`                       | —       | Whether a nofollow directive was detected.                                                             |
-| `x_robots_tag`        | `str \| None`                | `None`  | The X-Robots-Tag header value, if present.                                                             |
-| `is_pdf`              | `bool`                       | —       | Whether the content is a PDF.                                                                          |
-| `was_skipped`         | `bool`                       | —       | Whether the page was skipped (binary or PDF content).                                                  |
-| `detected_charset`    | `str \| None`                | `None`  | The detected character set encoding.                                                                   |
-| `auth_header_sent`    | `bool`                       | —       | Whether an authentication header was sent with the request.                                            |
-| `response_meta`       | `ResponseMeta \| None`       | `None`  | Response metadata extracted from HTTP headers.                                                         |
-| `assets`              | `list[DownloadedAsset]`      | `[]`    | Downloaded assets from the page.                                                                       |
-| `js_render_hint`      | `bool`                       | —       | Whether the page content suggests JavaScript rendering is needed.                                      |
-| `browser_used`        | `bool`                       | —       | Whether the browser fallback was used to fetch this page.                                              |
-| `markdown`            | `MarkdownResult \| None`     | `None`  | Markdown conversion of the page content.                                                               |
-| `extracted_data`      | `dict[str, Any] \| None`     | `None`  | Structured data extracted by LLM. Populated when extraction is configured.                             |
-| `extraction_meta`     | `ExtractionMeta \| None`     | `None`  | Metadata about the LLM extraction pass (cost, tokens, model).                                          |
-| `screenshot`          | `bytes \| None`              | `None`  | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
-| `downloaded_document` | `DownloadedDocument \| None` | `None`  | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).                                           |
+| Field                 | Type                         | Default | Description                                                                                                                            |
+| --------------------- | ---------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `status_code`         | `int`                        | —       | The HTTP status code of the response.                                                                                                  |
+| `final_url`           | `str`                        | —       | The final URL after following all redirects.                                                                                           |
+| `content_type`        | `str`                        | —       | The Content-Type header value.                                                                                                         |
+| `html`                | `str`                        | —       | The HTML body of the response.                                                                                                         |
+| `body_size`           | `int`                        | —       | The size of the response body in bytes.                                                                                                |
+| `metadata`            | `PageMetadata`               | —       | Extracted metadata from the page.                                                                                                      |
+| `links`               | `list[LinkInfo]`             | `[]`    | Links found on the page.                                                                                                               |
+| `images`              | `list[ImageInfo]`            | `[]`    | Images found on the page.                                                                                                              |
+| `feeds`               | `list[FeedInfo]`             | `[]`    | Feed links found on the page.                                                                                                          |
+| `json_ld`             | `list[JsonLdEntry]`          | `[]`    | JSON-LD entries found on the page.                                                                                                     |
+| `is_allowed`          | `bool`                       | —       | Whether the URL is allowed by robots.txt.                                                                                              |
+| `crawl_delay`         | `int \| None`                | `None`  | The crawl delay from robots.txt, in seconds.                                                                                           |
+| `noindex_detected`    | `bool`                       | —       | Whether a noindex directive was detected.                                                                                              |
+| `nofollow_detected`   | `bool`                       | —       | Whether a nofollow directive was detected.                                                                                             |
+| `x_robots_tag`        | `str \| None`                | `None`  | The X-Robots-Tag header value, if present.                                                                                             |
+| `is_pdf`              | `bool`                       | —       | Whether the content is a PDF.                                                                                                          |
+| `was_skipped`         | `bool`                       | —       | Whether the page was skipped (binary or PDF content).                                                                                  |
+| `detected_charset`    | `str \| None`                | `None`  | The detected character set encoding.                                                                                                   |
+| `auth_header_sent`    | `bool`                       | —       | Whether an authentication header was sent with the request.                                                                            |
+| `response_meta`       | `ResponseMeta \| None`       | `None`  | Response metadata extracted from HTTP headers.                                                                                         |
+| `assets`              | `list[DownloadedAsset]`      | `[]`    | Downloaded assets from the page.                                                                                                       |
+| `js_render_hint`      | `bool`                       | —       | Whether the page content suggests JavaScript rendering is needed.                                                                      |
+| `browser_used`        | `bool`                       | —       | Whether the browser fallback was used to fetch this page.                                                                              |
+| `markdown`            | `MarkdownResult \| None`     | `None`  | Markdown conversion of the page content.                                                                                               |
+| `extracted_data`      | `dict[str, Any] \| None`     | `None`  | Structured data extracted by LLM. Populated when extraction is configured.                                                             |
+| `extraction_meta`     | `ExtractionMeta \| None`     | `None`  | Metadata about the LLM extraction pass (cost, tokens, model).                                                                          |
+| `screenshot`          | `bytes \| None`              | `None`  | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.                                 |
+| `downloaded_document` | `DownloadedDocument \| None` | `None`  | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).                                                                           |
+| `browser`             | `BrowserExtras \| None`      | `None`  | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 ---
 
@@ -199,6 +249,7 @@ The result of crawling a single page during a crawl operation.
 | `extracted_data`      | `dict[str, Any] \| None`     | `None`  | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta`     | `ExtractionMeta \| None`     | `None`  | Metadata about the LLM extraction pass (cost, tokens, model).              |
 | `downloaded_document` | `DownloadedDocument \| None` | `None`  | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).               |
+| `browser_used`        | `bool`                       | —       | Whether the browser fallback was used to fetch this page.                  |
 
 ---
 
@@ -206,15 +257,17 @@ The result of crawling a single page during a crawl operation.
 
 The result of a multi-page crawl operation.
 
-| Field             | Type                    | Default | Description                                                               |
-| ----------------- | ----------------------- | ------- | ------------------------------------------------------------------------- |
-| `pages`           | `list[CrawlPageResult]` | `[]`    | The list of crawled pages.                                                |
-| `final_url`       | `str`                   | —       | The final URL after following redirects.                                  |
-| `redirect_count`  | `int`                   | —       | The number of redirects followed.                                         |
-| `was_skipped`     | `bool`                  | —       | Whether any page was skipped during crawling.                             |
-| `error`           | `str \| None`           | `None`  | An error message, if the crawl encountered an issue.                      |
-| `cookies`         | `list[CookieInfo]`      | `[]`    | Cookies collected during the crawl.                                       |
-| `normalized_urls` | `list[str]`             | `[]`    | Normalized URLs encountered during crawling (for deduplication counting). |
+| Field              | Type                    | Default | Description                                                               |
+| ------------------ | ----------------------- | ------- | ------------------------------------------------------------------------- |
+| `pages`            | `list[CrawlPageResult]` | `[]`    | The list of crawled pages.                                                |
+| `final_url`        | `str`                   | —       | The final URL after following redirects.                                  |
+| `redirect_count`   | `int`                   | —       | The number of redirects followed.                                         |
+| `was_skipped`      | `bool`                  | —       | Whether any page was skipped during crawling.                             |
+| `error`            | `str \| None`           | `None`  | An error message, if the crawl encountered an issue.                      |
+| `cookies`          | `list[CookieInfo]`      | `[]`    | Cookies collected during the crawl.                                       |
+| `stayed_on_domain` | `bool`                  | —       | Whether all crawled pages stayed on the same domain as the start URL.     |
+| `browser_used`     | `bool`                  | —       | Whether the browser fallback was used for any page in this crawl.         |
+| `normalized_urls`  | `list[str]`             | `[]`    | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ---
 
@@ -245,14 +298,14 @@ The result of a map operation, containing discovered URLs.
 
 Rich markdown conversion result from HTML processing.
 
-| Field                | Type                     | Default | Description                                              |
-| -------------------- | ------------------------ | ------- | -------------------------------------------------------- |
-| `content`            | `str`                    | —       | Converted markdown text.                                 |
-| `document_structure` | `dict[str, Any] \| None` | `None`  | Structured document tree with semantic nodes.            |
-| `tables`             | `list[dict[str, Any]]`   | `[]`    | Extracted tables with structured cell data.              |
-| `warnings`           | `list[str]`              | `[]`    | Non-fatal processing warnings.                           |
-| `citations`          | `CitationResult \| None` | `None`  | Content with links replaced by numbered citations.       |
-| `fit_content`        | `str \| None`            | `None`  | Content-filtered markdown optimized for LLM consumption. |
+| Field                | Type                     | Default | Description                                                                                                                                                                                                                                                                                                                                  |
+| -------------------- | ------------------------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content`            | `str`                    | —       | Converted markdown text.                                                                                                                                                                                                                                                                                                                     |
+| `document_structure` | `dict[str, Any] \| None` | `None`  | Structured document tree with semantic nodes.                                                                                                                                                                                                                                                                                                |
+| `tables`             | `list[dict[str, Any]]`   | `[]`    | Extracted tables with structured cell data.                                                                                                                                                                                                                                                                                                  |
+| `warnings`           | `list[str]`              | `[]`    | Non-fatal processing warnings.                                                                                                                                                                                                                                                                                                               |
+| `citations`          | `bool`                   | —       | Whether citation conversion was applied and produced at least one reference. `True` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `fit_content`        | `str \| None`            | `None`  | Content-filtered markdown optimized for LLM consumption.                                                                                                                                                                                                                                                                                     |
 
 ---
 
@@ -453,6 +506,34 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 
 ---
 
+### CrawlStreamRequest
+
+Request to begin a single-URL streaming crawl.
+
+Wraps a single seed URL for delivery through the streaming-adapter binding
+surface. Required as a struct because alef's streaming adapter requires a
+named request type — primitives are not supported.
+
+| Field | Type  | Default | Description            |
+| ----- | ----- | ------- | ---------------------- |
+| `url` | `str` | —       | The seed URL to crawl. |
+
+---
+
+### BatchCrawlStreamRequest
+
+Request to begin a multi-URL streaming crawl.
+
+Wraps a set of seed URLs for delivery through the streaming-adapter binding
+surface. Required as a struct because alef's streaming adapter requires a
+named request type — primitives are not supported.
+
+| Field  | Type        | Default | Description                                                                                     |
+| ------ | ----------- | ------- | ----------------------------------------------------------------------------------------------- |
+| `urls` | `list[str]` | `[]`    | The seed URLs to crawl. Each URL is followed independently up to the engine's configured depth. |
+
+---
+
 ### CitationResult
 
 Result of citation conversion.
@@ -466,11 +547,14 @@ Result of citation conversion.
 
 ### CitationReference
 
-| Field   | Type  | Default | Description |
-| ------- | ----- | ------- | ----------- |
-| `index` | `int` | —       | Index       |
-| `url`   | `str` | —       | Url         |
-| `text`  | `str` | —       | Text        |
+A single numbered reference in a citation list — produced by the citation
+extractor when content uses inline `[N]`-style markers.
+
+| Field   | Type  | Default | Description                                                |
+| ------- | ----- | ------- | ---------------------------------------------------------- |
+| `index` | `int` | —       | 1-based reference number as it appears in the source text. |
+| `url`   | `str` | —       | Resolved absolute URL for this reference.                  |
+| `text`  | `str` | —       | Human-readable anchor text or title for the reference.     |
 
 ---
 
@@ -495,6 +579,38 @@ Result from a single URL in a batch crawl operation.
 | `url`    | `str`                 | —       | The seed URL that was crawled.          |
 | `result` | `CrawlResult \| None` | `None`  | The crawl result, if successful.        |
 | `error`  | `str \| None`         | `None`  | The error message, if the crawl failed. |
+
+---
+
+### BatchScrapeResults
+
+Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
+
+The counts are derived once at construction so every binding language can read them
+as plain integer fields without re-iterating the `results` vector.
+
+| Field             | Type                      | Default | Description                                                   |
+| ----------------- | ------------------------- | ------- | ------------------------------------------------------------- |
+| `results`         | `list[BatchScrapeResult]` | `[]`    | Per-URL scrape results, in the order URLs were submitted.     |
+| `total_count`     | `int`                     | —       | Total number of URLs in the batch (equal to `results.len()`). |
+| `completed_count` | `int`                     | —       | Number of URLs whose scrape succeeded (`error` is `None`).    |
+| `failed_count`    | `int`                     | —       | Number of URLs whose scrape failed (`error` is `Some`).       |
+
+---
+
+### BatchCrawlResults
+
+Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
+
+The counts are derived once at construction so every binding language can read them
+as plain integer fields without re-iterating the `results` vector.
+
+| Field             | Type                     | Default | Description                                                        |
+| ----------------- | ------------------------ | ------- | ------------------------------------------------------------------ |
+| `results`         | `list[BatchCrawlResult]` | `[]`    | Per-URL crawl results, in the order seed URLs were submitted.      |
+| `total_count`     | `int`                    | —       | Total number of seed URLs in the batch (equal to `results.len()`). |
+| `completed_count` | `int`                    | —       | Number of seed URLs whose crawl succeeded (`error` is `None`).     |
+| `failed_count`    | `int`                    | —       | Number of seed URLs whose crawl failed (`error` is `Some`).        |
 
 ---
 
@@ -528,6 +644,17 @@ Authentication configuration.
 | `Basic`  | `basic`    | HTTP Basic authentication. — Fields: `username`: `String`, `password`: `String` |
 | `Bearer` | `bearer`   | Bearer token authentication. — Fields: `token`: `String`                        |
 | `Header` | `header`   | Custom authentication header. — Fields: `name`: `String`, `value`: `String`     |
+
+---
+
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Variant         | Wire value      | Description                                                   |
+| --------------- | --------------- | ------------------------------------------------------------- |
+| `Chromiumoxide` | `chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide.       |
+| `Native`        | `native`        | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 ---
 

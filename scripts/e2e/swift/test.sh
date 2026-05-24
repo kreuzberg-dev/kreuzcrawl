@@ -7,7 +7,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 MOCK_SERVER_BIN="${REPO_ROOT}/e2e/rust/target/release/mock-server"
 FIXTURES_DIR="${REPO_ROOT}/fixtures"
-SWIFT_PKG_DIR="${REPO_ROOT}/packages/swift"
+SWIFT_PKG_DIR="${REPO_ROOT}/e2e/swift_e2e"
 
 if [ ! -f "$MOCK_SERVER_BIN" ]; then
   echo "mock-server not found at $MOCK_SERVER_BIN" >&2

@@ -42,6 +42,8 @@ pub(crate) struct RedirectOutcome {
     pub(crate) redirect_count: usize,
     /// Response headers from each intermediate redirect hop (for cookie extraction).
     pub(crate) intermediate_headers: Vec<HashMap<String, Vec<String>>>,
+    /// Whether headless-browser fetch was used for the final hop.
+    pub(crate) browser_used: bool,
 }
 
 /// Follow HTTP 3xx, `Refresh` header, and `<meta http-equiv="refresh">` redirects.
@@ -71,8 +73,9 @@ pub(crate) async fn follow_redirects(
     let mut redirect_count: usize = 0;
     let mut intermediate_headers: Vec<HashMap<String, Vec<String>>> = Vec::new();
 
+    let mut browser_used = false;
     loop {
-        let (resp, _browser_used) = match engine.fetch_response(&current_url).await {
+        let (resp, hop_browser_used) = match engine.fetch_response(&current_url).await {
             Ok(pair) => pair,
             // A 404 reached after at least one redirect is always soft-failed regardless
             // of `soft_http_errors`. The caller opted into redirect-following, so receiving
@@ -93,10 +96,12 @@ pub(crate) async fn follow_redirects(
                     final_response: synthetic,
                     redirect_count,
                     intermediate_headers,
+                    browser_used,
                 });
             }
             Err(e) => return Err(e),
         };
+        browser_used = hop_browser_used;
         let status = resp.status;
 
         // HTTP 3xx redirect via Location header
@@ -154,6 +159,7 @@ pub(crate) async fn follow_redirects(
             final_response: resp,
             redirect_count,
             intermediate_headers,
+            browser_used,
         });
     }
 }
@@ -169,11 +175,15 @@ struct FetchResult {
     status_code: u16,
     content_type: String,
     body: String,
+    /// Raw response bytes, preserved so non-HTML documents (PDF, …) can be
+    /// materialized into a [`DownloadedDocument`](crate::types::DownloadedDocument).
+    body_bytes: Vec<u8>,
     headers: HashMap<String, Vec<String>>,
     extraction: HtmlExtraction,
     is_binary: bool,
     is_pdf: bool,
     detected_charset: Option<String>,
+    browser_used: bool,
 }
 
 /// Result of blocking HTML extraction within a fetch task.
@@ -213,6 +223,7 @@ impl CrawlState {
     }
 
     fn into_result(self, final_url: String) -> CrawlResult {
+        let stayed_on_domain = self.pages.iter().all(|p| p.stayed_on_domain);
         CrawlResult::new(
             self.pages,
             final_url,
@@ -220,6 +231,7 @@ impl CrawlState {
             self.was_skipped,
             self.error,
             self.all_cookies,
+            stayed_on_domain,
             self.normalized_urls,
         )
     }
@@ -280,8 +292,17 @@ impl CrawlEngine {
         // ── Phase 1: resolve initial redirects ──────────────────────────
         let final_url = self.resolve_initial_redirects(url, max_redirects, &mut state).await;
 
-        // If we have an error already (from redirects), return early
-        if state.error.is_some() {
+        // If we have an error already (from redirects or seed fetch failure), emit a
+        // CrawlEvent::Error so streaming consumers observe the failure, then return early.
+        if let Some(ref error_msg) = state.error {
+            if let Some(sender) = &tx {
+                let _ = sender
+                    .send(CrawlEvent::Error {
+                        url: final_url.clone(),
+                        error: error_msg.clone(),
+                    })
+                    .await;
+            }
             return Ok(state.into_result(final_url));
         }
 
@@ -462,7 +483,7 @@ impl CrawlEngine {
                 join_set.spawn(async move {
                     let _permit = permit;
 
-                    let (resp, _browser_used) = engine
+                    let (resp, browser_used) = engine
                         .fetch_response(&entry.url)
                         .await
                         .map_err(|e| (entry.clone(), e))?;
@@ -471,6 +492,7 @@ impl CrawlEngine {
                     let content_type = resp.content_type.clone();
                     let headers = resp.headers.clone();
                     let body = resp.body.clone();
+                    let body_bytes = resp.body_bytes;
 
                     let url_for_extract = entry.url.clone();
                     let content_type_clone = content_type.clone();
@@ -487,11 +509,13 @@ impl CrawlEngine {
                         status_code,
                         content_type,
                         body,
+                        body_bytes,
                         headers,
                         extraction: page_ext.extraction,
                         is_binary: page_ext.is_binary,
                         is_pdf: page_ext.is_pdf,
                         detected_charset: page_ext.detected_charset,
+                        browser_used,
                     })
                 });
             }
@@ -533,6 +557,16 @@ impl CrawlEngine {
                         })
                         .await;
                     let _ = self.store.store_error(&entry.url, &error).await;
+                    // Forward the error to the streaming channel so consumers of
+                    // crawl_stream / batch_crawl_stream observe CrawlEvent::Error.
+                    if let Some(sender) = tx {
+                        let _ = sender
+                            .send(CrawlEvent::Error {
+                                url: entry.url.clone(),
+                                error: error.to_string(),
+                            })
+                            .await;
+                    }
                 }
                 Err(_join_error) => {
                     state.pages_failed += 1;
@@ -608,6 +642,31 @@ impl CrawlEngine {
         let page_url = fetch.entry.url.clone();
         let depth = fetch.entry.depth;
 
+        // Treat 5xx responses as errors: emit CrawlEvent::Error and skip page processing.
+        if fetch.status_code >= 500 {
+            state.pages_failed += 1;
+            let error_msg = format!("server_error: HTTP {}", fetch.status_code);
+            self.event_emitter
+                .on_error(&ErrorEvent {
+                    url: page_url.clone(),
+                    error: error_msg.clone(),
+                })
+                .await;
+            let _ = self
+                .store
+                .store_error(&page_url, &CrawlError::ServerError(error_msg.clone()))
+                .await;
+            if let Some(sender) = tx {
+                let _ = sender
+                    .send(CrawlEvent::Error {
+                        url: page_url,
+                        error: error_msg,
+                    })
+                    .await;
+            }
+            return Ok(false);
+        }
+
         if self.config.cookies_enabled {
             state.all_cookies.extend(extract_cookies_from_hashmap(&fetch.headers));
         }
@@ -647,7 +706,25 @@ impl CrawlEngine {
             .await?;
         }
 
-        let markdown = crate::markdown::convert_to_markdown(&body, &self.config.content).await;
+        // Materialize the raw document bytes for non-HTML responses (PDF,
+        // DOCX, …) so the caller can hand them to a document-extraction
+        // pipeline. HTML pages leave this `None`.
+        let downloaded_document = crate::document::build_downloaded_document(
+            &page_url,
+            &page_parsed,
+            &fetch.content_type,
+            &fetch.body_bytes,
+            page_was_skipped,
+            &self.config,
+        );
+
+        // A skipped page is a binary document — its lossy-UTF-8 `body` is not
+        // meaningful HTML, so don't spend CPU converting it to markdown.
+        let markdown = if page_was_skipped {
+            None
+        } else {
+            crate::markdown::convert_to_markdown(&body, &self.config.content).await
+        };
 
         let page = CrawlPageResult {
             url: page_url.clone(),
@@ -669,7 +746,8 @@ impl CrawlEngine {
             markdown,
             extracted_data: None,
             extraction_meta: None,
-            downloaded_document: None,
+            downloaded_document,
+            browser_used: fetch.browser_used,
         };
 
         // Apply content filter — filtered pages still contribute to link discovery above
@@ -694,7 +772,12 @@ impl CrawlEngine {
 
         // Send page event through the channel if streaming
         if let Some(sender) = tx
-            && sender.send(CrawlEvent::Page(Box::new(page.clone()))).await.is_err()
+            && sender
+                .send(CrawlEvent::Page {
+                    result: Box::new(page.clone()),
+                })
+                .await
+                .is_err()
         {
             // Receiver dropped; signal cancellation
             return Ok(true);

@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 2128749657;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 735317409;
 
 // Section: executor
 
@@ -47,6 +47,102 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
+fn wire__crate__CrawlEngineHandle_batch_crawl_stream_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "CrawlEngineHandle_batch_crawl_stream",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that =
+                <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CrawlEngineHandle>>>::sse_decode(
+                    &mut deserializer,
+                );
+            let api_req = <crate::BatchCrawlStreamRequest>::sse_decode(&mut deserializer);
+            let api_sink = <StreamSink<crate::CrawlEvent, flutter_rust_bridge::for_generated::SseCodec>>::sse_decode(
+                &mut deserializer,
+            );
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let mut api_that_guard = None;
+                    let decode_indices_ = flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(&api_that, 0, false),
+                    ]);
+                    for i in decode_indices_ {
+                        match i {
+                            0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                            _ => unreachable!(),
+                        }
+                    }
+                    let api_that_guard = api_that_guard.unwrap();
+                    let output_ok = Result::<_, ()>::Ok({
+                        crate::CrawlEngineHandle::batch_crawl_stream(&*api_that_guard, api_req, api_sink);
+                    })?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__CrawlEngineHandle_crawl_stream_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "CrawlEngineHandle_crawl_stream",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that =
+                <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CrawlEngineHandle>>>::sse_decode(
+                    &mut deserializer,
+                );
+            let api_req = <crate::CrawlStreamRequest>::sse_decode(&mut deserializer);
+            let api_sink = <StreamSink<crate::CrawlEvent, flutter_rust_bridge::for_generated::SseCodec>>::sse_decode(
+                &mut deserializer,
+            );
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let mut api_that_guard = None;
+                    let decode_indices_ = flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(&api_that, 0, false),
+                    ]);
+                    for i in decode_indices_ {
+                        match i {
+                            0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                            _ => unreachable!(),
+                        }
+                    }
+                    let api_that_guard = api_that_guard.unwrap();
+                    let output_ok = Result::<_, ()>::Ok({
+                        crate::CrawlEngineHandle::crawl_stream(&*api_that_guard, api_req, api_sink);
+                    })?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__batch_crawl_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -143,6 +239,34 @@ fn wire__crate__crawl_impl(
         },
     )
 }
+fn wire__crate__create_action_result_from_json_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_action_result_from_json",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::create_action_result_from_json(api_json)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__create_article_metadata_from_json_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -199,6 +323,62 @@ fn wire__crate__create_batch_crawl_result_from_json_impl(
         },
     )
 }
+fn wire__crate__create_batch_crawl_results_from_json_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_batch_crawl_results_from_json",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::create_batch_crawl_results_from_json(api_json)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__create_batch_crawl_stream_request_from_json_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_batch_crawl_stream_request_from_json",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::create_batch_crawl_stream_request_from_json(api_json)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__create_batch_scrape_result_from_json_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -227,6 +407,34 @@ fn wire__crate__create_batch_scrape_result_from_json_impl(
         },
     )
 }
+fn wire__crate__create_batch_scrape_results_from_json_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_batch_scrape_results_from_json",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::create_batch_scrape_results_from_json(api_json)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__create_browser_config_from_json_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -249,6 +457,34 @@ fn wire__crate__create_browser_config_from_json_impl(
             move |context| {
                 transform_result_sse::<_, String>((move || {
                     let output_ok = crate::create_browser_config_from_json(api_json)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__create_browser_extras_from_json_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_browser_extras_from_json",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::create_browser_extras_from_json(api_json)?;
                     Ok(output_ok)
                 })())
             }
@@ -445,6 +681,34 @@ fn wire__crate__create_crawl_result_from_json_impl(
             move |context| {
                 transform_result_sse::<_, String>((move || {
                     let output_ok = crate::create_crawl_result_from_json(api_json)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__create_crawl_stream_request_from_json_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_crawl_stream_request_from_json",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::create_crawl_stream_request_from_json(api_json)?;
                     Ok(output_ok)
                 })())
             }
@@ -703,6 +967,34 @@ fn wire__crate__create_image_info_from_json_impl(
         },
     )
 }
+fn wire__crate__create_interaction_result_from_json_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_interaction_result_from_json",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::create_interaction_result_from_json(api_json)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__create_json_ld_entry_from_json_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -955,6 +1247,67 @@ fn wire__crate__create_sitemap_url_from_json_impl(
         },
     )
 }
+fn wire__crate__generate_citations_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "generate_citations",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_markdown = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(crate::generate_citations(api_markdown))?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__interact_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "interact",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_engine = <CrawlEngineHandle>::sse_decode(&mut deserializer);
+            let api_url = <String>::sse_decode(&mut deserializer);
+            let api_actions = <Vec<crate::PageAction>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let output_ok = crate::interact(api_engine, api_url, api_actions).await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__map_urls_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -1025,6 +1378,14 @@ fn wire__crate__scrape_impl(
 #[allow(clippy::unnecessary_literal_unwrap)]
 const _: fn() = || {
     {
+        let ActionResult = None::<crate::ActionResult>.unwrap();
+        let _: i64 = ActionResult.action_index;
+        let _: String = ActionResult.action_type;
+        let _: bool = ActionResult.success;
+        let _: Option<String> = ActionResult.data;
+        let _: Option<String> = ActionResult.error;
+    }
+    {
         let ArticleMetadata = None::<crate::ArticleMetadata>.unwrap();
         let _: Option<String> = ArticleMetadata.published_time;
         let _: Option<String> = ArticleMetadata.modified_time;
@@ -1052,19 +1413,50 @@ const _: fn() = || {
         let _: Option<String> = BatchCrawlResult.error;
     }
     {
+        let BatchCrawlResults = None::<crate::BatchCrawlResults>.unwrap();
+        let _: Vec<crate::BatchCrawlResult> = BatchCrawlResults.results;
+        let _: i64 = BatchCrawlResults.total_count;
+        let _: i64 = BatchCrawlResults.completed_count;
+        let _: i64 = BatchCrawlResults.failed_count;
+    }
+    {
+        let BatchCrawlStreamRequest = None::<crate::BatchCrawlStreamRequest>.unwrap();
+        let _: Vec<String> = BatchCrawlStreamRequest.urls;
+    }
+    {
         let BatchScrapeResult = None::<crate::BatchScrapeResult>.unwrap();
         let _: String = BatchScrapeResult.url;
         let _: Option<crate::ScrapeResult> = BatchScrapeResult.result;
         let _: Option<String> = BatchScrapeResult.error;
     }
     {
+        let BatchScrapeResults = None::<crate::BatchScrapeResults>.unwrap();
+        let _: Vec<crate::BatchScrapeResult> = BatchScrapeResults.results;
+        let _: i64 = BatchScrapeResults.total_count;
+        let _: i64 = BatchScrapeResults.completed_count;
+        let _: i64 = BatchScrapeResults.failed_count;
+    }
+    {
         let BrowserConfig = None::<crate::BrowserConfig>.unwrap();
         let _: crate::BrowserMode = BrowserConfig.mode;
+        let _: crate::BrowserBackend = BrowserConfig.backend;
         let _: Option<String> = BrowserConfig.endpoint;
         let _: i64 = BrowserConfig.timeout;
         let _: crate::BrowserWait = BrowserConfig.wait;
         let _: Option<String> = BrowserConfig.wait_selector;
         let _: Option<i64> = BrowserConfig.extra_wait;
+        let _: bool = BrowserConfig.stealth;
+        let _: Option<crate::ProxyConfig> = BrowserConfig.proxy;
+        let _: Vec<String> = BrowserConfig.block_url_patterns;
+        let _: Option<String> = BrowserConfig.eval_script;
+        let _: Option<String> = BrowserConfig.robots_user_agent;
+        let _: bool = BrowserConfig.capture_network_events;
+    }
+    {
+        let BrowserExtras = None::<crate::BrowserExtras>.unwrap();
+        let _: Option<String> = BrowserExtras.eval_result;
+        let _: Vec<crate::ResponseMeta> = BrowserExtras.network_events;
+        let _: Vec<crate::CookieInfo> = BrowserExtras.cookies;
     }
     {
         let CitationReference = None::<crate::CitationReference>.unwrap();
@@ -1138,6 +1530,18 @@ const _: fn() = || {
         let _: Option<String> = CrawlConfig.browser_profile;
         let _: bool = CrawlConfig.save_browser_profile;
     }
+    match None::<crate::CrawlEvent>.unwrap() {
+        crate::CrawlEvent::Page { result } => {
+            let _: crate::CrawlPageResult = result;
+        }
+        crate::CrawlEvent::Error { url, error } => {
+            let _: String = url;
+            let _: String = error;
+        }
+        crate::CrawlEvent::Complete { pages_crawled } => {
+            let _: i64 = pages_crawled;
+        }
+    }
     {
         let CrawlPageResult = None::<crate::CrawlPageResult>.unwrap();
         let _: String = CrawlPageResult.url;
@@ -1160,6 +1564,7 @@ const _: fn() = || {
         let _: Option<String> = CrawlPageResult.extracted_data;
         let _: Option<crate::ExtractionMeta> = CrawlPageResult.extraction_meta;
         let _: Option<crate::DownloadedDocument> = CrawlPageResult.downloaded_document;
+        let _: bool = CrawlPageResult.browser_used;
     }
     {
         let CrawlResult = None::<crate::CrawlResult>.unwrap();
@@ -1169,7 +1574,12 @@ const _: fn() = || {
         let _: bool = CrawlResult.was_skipped;
         let _: Option<String> = CrawlResult.error;
         let _: Vec<crate::CookieInfo> = CrawlResult.cookies;
-        let _: Vec<String> = CrawlResult.normalized_urls;
+        let _: bool = CrawlResult.stayed_on_domain;
+        let _: bool = CrawlResult.browser_used;
+    }
+    {
+        let CrawlStreamRequest = None::<crate::CrawlStreamRequest>.unwrap();
+        let _: String = CrawlStreamRequest.url;
     }
     {
         let DownloadedAsset = None::<crate::DownloadedAsset>.unwrap();
@@ -1229,6 +1639,12 @@ const _: fn() = || {
         let _: crate::ImageSource = ImageInfo.source;
     }
     {
+        let InteractionResult = None::<crate::InteractionResult>.unwrap();
+        let _: Vec<crate::ActionResult> = InteractionResult.action_results;
+        let _: String = InteractionResult.final_html;
+        let _: String = InteractionResult.final_url;
+    }
+    {
         let JsonLdEntry = None::<crate::JsonLdEntry>.unwrap();
         let _: String = JsonLdEntry.schema_type;
         let _: Option<String> = JsonLdEntry.name;
@@ -1252,8 +1668,40 @@ const _: fn() = || {
         let _: Option<String> = MarkdownResult.document_structure;
         let _: Vec<String> = MarkdownResult.tables;
         let _: Vec<String> = MarkdownResult.warnings;
-        let _: Option<crate::CitationResult> = MarkdownResult.citations;
+        let _: bool = MarkdownResult.citations;
         let _: Option<String> = MarkdownResult.fit_content;
+    }
+    match None::<crate::PageAction>.unwrap() {
+        crate::PageAction::Click { selector } => {
+            let _: String = selector;
+        }
+        crate::PageAction::TypeText { selector, text } => {
+            let _: String = selector;
+            let _: String = text;
+        }
+        crate::PageAction::Press { key } => {
+            let _: String = key;
+        }
+        crate::PageAction::Scroll {
+            direction,
+            selector,
+            amount,
+        } => {
+            let _: crate::ScrollDirection = direction;
+            let _: String = selector;
+            let _: i64 = amount;
+        }
+        crate::PageAction::Wait { milliseconds, selector } => {
+            let _: i64 = milliseconds;
+            let _: String = selector;
+        }
+        crate::PageAction::Screenshot { full_page } => {
+            let _: bool = full_page;
+        }
+        crate::PageAction::ExecuteJs { script } => {
+            let _: String = script;
+        }
+        crate::PageAction::Scrape => {}
     }
     {
         let PageMetadata = None::<crate::PageMetadata>.unwrap();
@@ -1320,6 +1768,7 @@ const _: fn() = || {
     {
         let ScrapeResult = None::<crate::ScrapeResult>.unwrap();
         let _: i64 = ScrapeResult.status_code;
+        let _: String = ScrapeResult.final_url;
         let _: String = ScrapeResult.content_type;
         let _: String = ScrapeResult.html;
         let _: i64 = ScrapeResult.body_size;
@@ -1345,6 +1794,7 @@ const _: fn() = || {
         let _: Option<String> = ScrapeResult.extracted_data;
         let _: Option<crate::ExtractionMeta> = ScrapeResult.extraction_meta;
         let _: Option<crate::DownloadedDocument> = ScrapeResult.downloaded_document;
+        let _: Option<crate::BrowserExtras> = ScrapeResult.browser;
     }
     {
         let SitemapUrl = None::<crate::SitemapUrl>.unwrap();
@@ -1362,6 +1812,14 @@ flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
 );
 
 // Section: dart2rust
+
+impl SseDecode for flutter_rust_bridge::for_generated::anyhow::Error {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <String>::sse_decode(deserializer);
+        return flutter_rust_bridge::for_generated::anyhow::anyhow!("{}", inner);
+    }
+}
 
 impl SseDecode for CrawlEngineHandle {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1390,11 +1848,37 @@ impl SseDecode for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpa
     }
 }
 
+impl SseDecode for StreamSink<crate::CrawlEvent, flutter_rust_bridge::for_generated::SseCodec> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <String>::sse_decode(deserializer);
+        return StreamSink::deserialize(inner);
+    }
+}
+
 impl SseDecode for String {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <Vec<u8>>::sse_decode(deserializer);
         return String::from_utf8(inner).unwrap();
+    }
+}
+
+impl SseDecode for crate::ActionResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_actionIndex = <i64>::sse_decode(deserializer);
+        let mut var_actionType = <String>::sse_decode(deserializer);
+        let mut var_success = <bool>::sse_decode(deserializer);
+        let mut var_data = <Option<String>>::sse_decode(deserializer);
+        let mut var_error = <Option<String>>::sse_decode(deserializer);
+        return crate::ActionResult {
+            action_index: var_actionIndex,
+            action_type: var_actionType,
+            success: var_success,
+            data: var_data,
+            error: var_error,
+        };
     }
 }
 
@@ -1482,6 +1966,30 @@ impl SseDecode for crate::BatchCrawlResult {
     }
 }
 
+impl SseDecode for crate::BatchCrawlResults {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_results = <Vec<crate::BatchCrawlResult>>::sse_decode(deserializer);
+        let mut var_totalCount = <i64>::sse_decode(deserializer);
+        let mut var_completedCount = <i64>::sse_decode(deserializer);
+        let mut var_failedCount = <i64>::sse_decode(deserializer);
+        return crate::BatchCrawlResults {
+            results: var_results,
+            total_count: var_totalCount,
+            completed_count: var_completedCount,
+            failed_count: var_failedCount,
+        };
+    }
+}
+
+impl SseDecode for crate::BatchCrawlStreamRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_urls = <Vec<String>>::sse_decode(deserializer);
+        return crate::BatchCrawlStreamRequest { urls: var_urls };
+    }
+}
+
 impl SseDecode for crate::BatchScrapeResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1496,6 +2004,22 @@ impl SseDecode for crate::BatchScrapeResult {
     }
 }
 
+impl SseDecode for crate::BatchScrapeResults {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_results = <Vec<crate::BatchScrapeResult>>::sse_decode(deserializer);
+        let mut var_totalCount = <i64>::sse_decode(deserializer);
+        let mut var_completedCount = <i64>::sse_decode(deserializer);
+        let mut var_failedCount = <i64>::sse_decode(deserializer);
+        return crate::BatchScrapeResults {
+            results: var_results,
+            total_count: var_totalCount,
+            completed_count: var_completedCount,
+            failed_count: var_failedCount,
+        };
+    }
+}
+
 impl SseDecode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1503,22 +2027,62 @@ impl SseDecode for bool {
     }
 }
 
+impl SseDecode for crate::BrowserBackend {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::BrowserBackend::Chromiumoxide,
+            1 => crate::BrowserBackend::Native,
+            _ => unreachable!("Invalid variant for BrowserBackend: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::BrowserConfig {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_mode = <crate::BrowserMode>::sse_decode(deserializer);
+        let mut var_backend = <crate::BrowserBackend>::sse_decode(deserializer);
         let mut var_endpoint = <Option<String>>::sse_decode(deserializer);
         let mut var_timeout = <i64>::sse_decode(deserializer);
         let mut var_wait = <crate::BrowserWait>::sse_decode(deserializer);
         let mut var_waitSelector = <Option<String>>::sse_decode(deserializer);
         let mut var_extraWait = <Option<i64>>::sse_decode(deserializer);
+        let mut var_stealth = <bool>::sse_decode(deserializer);
+        let mut var_proxy = <Option<crate::ProxyConfig>>::sse_decode(deserializer);
+        let mut var_blockUrlPatterns = <Vec<String>>::sse_decode(deserializer);
+        let mut var_evalScript = <Option<String>>::sse_decode(deserializer);
+        let mut var_robotsUserAgent = <Option<String>>::sse_decode(deserializer);
+        let mut var_captureNetworkEvents = <bool>::sse_decode(deserializer);
         return crate::BrowserConfig {
             mode: var_mode,
+            backend: var_backend,
             endpoint: var_endpoint,
             timeout: var_timeout,
             wait: var_wait,
             wait_selector: var_waitSelector,
             extra_wait: var_extraWait,
+            stealth: var_stealth,
+            proxy: var_proxy,
+            block_url_patterns: var_blockUrlPatterns,
+            eval_script: var_evalScript,
+            robots_user_agent: var_robotsUserAgent,
+            capture_network_events: var_captureNetworkEvents,
+        };
+    }
+}
+
+impl SseDecode for crate::BrowserExtras {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_evalResult = <Option<String>>::sse_decode(deserializer);
+        let mut var_networkEvents = <Vec<crate::ResponseMeta>>::sse_decode(deserializer);
+        let mut var_cookies = <Vec<crate::CookieInfo>>::sse_decode(deserializer);
+        return crate::BrowserExtras {
+            eval_result: var_evalResult,
+            network_events: var_networkEvents,
+            cookies: var_cookies,
         };
     }
 }
@@ -1703,6 +2267,36 @@ impl SseDecode for crate::CrawlConfig {
     }
 }
 
+impl SseDecode for crate::CrawlEvent {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_result = <crate::CrawlPageResult>::sse_decode(deserializer);
+                return crate::CrawlEvent::Page { result: var_result };
+            }
+            1 => {
+                let mut var_url = <String>::sse_decode(deserializer);
+                let mut var_error = <String>::sse_decode(deserializer);
+                return crate::CrawlEvent::Error {
+                    url: var_url,
+                    error: var_error,
+                };
+            }
+            2 => {
+                let mut var_pagesCrawled = <i64>::sse_decode(deserializer);
+                return crate::CrawlEvent::Complete {
+                    pages_crawled: var_pagesCrawled,
+                };
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for crate::CrawlPageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1726,6 +2320,7 @@ impl SseDecode for crate::CrawlPageResult {
         let mut var_extractedData = <Option<String>>::sse_decode(deserializer);
         let mut var_extractionMeta = <Option<crate::ExtractionMeta>>::sse_decode(deserializer);
         let mut var_downloadedDocument = <Option<crate::DownloadedDocument>>::sse_decode(deserializer);
+        let mut var_browserUsed = <bool>::sse_decode(deserializer);
         return crate::CrawlPageResult {
             url: var_url,
             normalized_url: var_normalizedUrl,
@@ -1747,6 +2342,7 @@ impl SseDecode for crate::CrawlPageResult {
             extracted_data: var_extractedData,
             extraction_meta: var_extractionMeta,
             downloaded_document: var_downloadedDocument,
+            browser_used: var_browserUsed,
         };
     }
 }
@@ -1760,7 +2356,8 @@ impl SseDecode for crate::CrawlResult {
         let mut var_wasSkipped = <bool>::sse_decode(deserializer);
         let mut var_error = <Option<String>>::sse_decode(deserializer);
         let mut var_cookies = <Vec<crate::CookieInfo>>::sse_decode(deserializer);
-        let mut var_normalizedUrls = <Vec<String>>::sse_decode(deserializer);
+        let mut var_stayedOnDomain = <bool>::sse_decode(deserializer);
+        let mut var_browserUsed = <bool>::sse_decode(deserializer);
         return crate::CrawlResult {
             pages: var_pages,
             final_url: var_finalUrl,
@@ -1768,8 +2365,17 @@ impl SseDecode for crate::CrawlResult {
             was_skipped: var_wasSkipped,
             error: var_error,
             cookies: var_cookies,
-            normalized_urls: var_normalizedUrls,
+            stayed_on_domain: var_stayedOnDomain,
+            browser_used: var_browserUsed,
         };
+    }
+}
+
+impl SseDecode for crate::CrawlStreamRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_url = <String>::sse_decode(deserializer);
+        return crate::CrawlStreamRequest { url: var_url };
     }
 }
 
@@ -1951,6 +2557,20 @@ impl SseDecode for crate::ImageSource {
     }
 }
 
+impl SseDecode for crate::InteractionResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_actionResults = <Vec<crate::ActionResult>>::sse_decode(deserializer);
+        let mut var_finalHtml = <String>::sse_decode(deserializer);
+        let mut var_finalUrl = <String>::sse_decode(deserializer);
+        return crate::InteractionResult {
+            action_results: var_actionResults,
+            final_html: var_finalHtml,
+            final_url: var_finalUrl,
+        };
+    }
+}
+
 impl SseDecode for crate::JsonLdEntry {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2004,6 +2624,18 @@ impl SseDecode for Vec<String> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<String>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::ActionResult> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::ActionResult>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -2177,6 +2809,18 @@ impl SseDecode for Vec<crate::LinkInfo> {
     }
 }
 
+impl SseDecode for Vec<crate::PageAction> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::PageAction>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<i64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2213,6 +2857,18 @@ impl SseDecode for Vec<(String, String)> {
     }
 }
 
+impl SseDecode for Vec<crate::ResponseMeta> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::ResponseMeta>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::SitemapUrl> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2240,7 +2896,7 @@ impl SseDecode for crate::MarkdownResult {
         let mut var_documentStructure = <Option<String>>::sse_decode(deserializer);
         let mut var_tables = <Vec<String>>::sse_decode(deserializer);
         let mut var_warnings = <Vec<String>>::sse_decode(deserializer);
-        let mut var_citations = <Option<crate::CitationResult>>::sse_decode(deserializer);
+        let mut var_citations = <bool>::sse_decode(deserializer);
         let mut var_fitContent = <Option<String>>::sse_decode(deserializer);
         return crate::MarkdownResult {
             content: var_content,
@@ -2286,11 +2942,11 @@ impl SseDecode for Option<crate::AuthConfig> {
     }
 }
 
-impl SseDecode for Option<crate::CitationResult> {
+impl SseDecode for Option<crate::BrowserExtras> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
-            return Some(<crate::CitationResult>::sse_decode(deserializer));
+            return Some(<crate::BrowserExtras>::sse_decode(deserializer));
         } else {
             return None;
         }
@@ -2451,6 +3107,65 @@ impl SseDecode for Option<Vec<crate::HreflangEntry>> {
     }
 }
 
+impl SseDecode for crate::PageAction {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_selector = <String>::sse_decode(deserializer);
+                return crate::PageAction::Click { selector: var_selector };
+            }
+            1 => {
+                let mut var_selector = <String>::sse_decode(deserializer);
+                let mut var_text = <String>::sse_decode(deserializer);
+                return crate::PageAction::TypeText {
+                    selector: var_selector,
+                    text: var_text,
+                };
+            }
+            2 => {
+                let mut var_key = <String>::sse_decode(deserializer);
+                return crate::PageAction::Press { key: var_key };
+            }
+            3 => {
+                let mut var_direction = <crate::ScrollDirection>::sse_decode(deserializer);
+                let mut var_selector = <String>::sse_decode(deserializer);
+                let mut var_amount = <i64>::sse_decode(deserializer);
+                return crate::PageAction::Scroll {
+                    direction: var_direction,
+                    selector: var_selector,
+                    amount: var_amount,
+                };
+            }
+            4 => {
+                let mut var_milliseconds = <i64>::sse_decode(deserializer);
+                let mut var_selector = <String>::sse_decode(deserializer);
+                return crate::PageAction::Wait {
+                    milliseconds: var_milliseconds,
+                    selector: var_selector,
+                };
+            }
+            5 => {
+                let mut var_fullPage = <bool>::sse_decode(deserializer);
+                return crate::PageAction::Screenshot {
+                    full_page: var_fullPage,
+                };
+            }
+            6 => {
+                let mut var_script = <String>::sse_decode(deserializer);
+                return crate::PageAction::ExecuteJs { script: var_script };
+            }
+            7 => {
+                return crate::PageAction::Scrape;
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for crate::PageMetadata {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2594,6 +3309,7 @@ impl SseDecode for crate::ScrapeResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_statusCode = <i64>::sse_decode(deserializer);
+        let mut var_finalUrl = <String>::sse_decode(deserializer);
         let mut var_contentType = <String>::sse_decode(deserializer);
         let mut var_html = <String>::sse_decode(deserializer);
         let mut var_bodySize = <i64>::sse_decode(deserializer);
@@ -2619,8 +3335,10 @@ impl SseDecode for crate::ScrapeResult {
         let mut var_extractedData = <Option<String>>::sse_decode(deserializer);
         let mut var_extractionMeta = <Option<crate::ExtractionMeta>>::sse_decode(deserializer);
         let mut var_downloadedDocument = <Option<crate::DownloadedDocument>>::sse_decode(deserializer);
+        let mut var_browser = <Option<crate::BrowserExtras>>::sse_decode(deserializer);
         return crate::ScrapeResult {
             status_code: var_statusCode,
+            final_url: var_finalUrl,
             content_type: var_contentType,
             html: var_html,
             body_size: var_bodySize,
@@ -2646,6 +3364,19 @@ impl SseDecode for crate::ScrapeResult {
             extracted_data: var_extractedData,
             extraction_meta: var_extractionMeta,
             downloaded_document: var_downloadedDocument,
+            browser: var_browser,
+        };
+    }
+}
+
+impl SseDecode for crate::ScrollDirection {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::ScrollDirection::Up,
+            1 => crate::ScrollDirection::Down,
+            _ => unreachable!("Invalid variant for ScrollDirection: {}", inner),
         };
     }
 }
@@ -2673,6 +3404,11 @@ impl SseDecode for u8 {
     }
 }
 
+impl SseDecode for () {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {}
+}
+
 impl SseDecode for usize {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2689,40 +3425,51 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => wire__crate__batch_crawl_impl(port, ptr, rust_vec_len, data_len),
-        2 => wire__crate__batch_scrape_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__crate__crawl_impl(port, ptr, rust_vec_len, data_len),
-        4 => wire__crate__create_article_metadata_from_json_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__crate__create_batch_crawl_result_from_json_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__create_batch_scrape_result_from_json_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__create_browser_config_from_json_impl(port, ptr, rust_vec_len, data_len),
-        8 => wire__crate__create_citation_reference_from_json_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__crate__create_citation_result_from_json_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__create_content_config_from_json_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__create_cookie_info_from_json_impl(port, ptr, rust_vec_len, data_len),
-        12 => wire__crate__create_crawl_config_from_json_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__create_crawl_page_result_from_json_impl(port, ptr, rust_vec_len, data_len),
-        14 => wire__crate__create_crawl_result_from_json_impl(port, ptr, rust_vec_len, data_len),
-        15 => wire__crate__create_downloaded_asset_from_json_impl(port, ptr, rust_vec_len, data_len),
-        16 => wire__crate__create_downloaded_document_from_json_impl(port, ptr, rust_vec_len, data_len),
-        17 => wire__crate__create_engine_impl(port, ptr, rust_vec_len, data_len),
-        18 => wire__crate__create_extraction_meta_from_json_impl(port, ptr, rust_vec_len, data_len),
-        19 => wire__crate__create_favicon_info_from_json_impl(port, ptr, rust_vec_len, data_len),
-        20 => wire__crate__create_feed_info_from_json_impl(port, ptr, rust_vec_len, data_len),
-        21 => wire__crate__create_heading_info_from_json_impl(port, ptr, rust_vec_len, data_len),
-        22 => wire__crate__create_hreflang_entry_from_json_impl(port, ptr, rust_vec_len, data_len),
-        23 => wire__crate__create_image_info_from_json_impl(port, ptr, rust_vec_len, data_len),
-        24 => wire__crate__create_json_ld_entry_from_json_impl(port, ptr, rust_vec_len, data_len),
-        25 => wire__crate__create_link_info_from_json_impl(port, ptr, rust_vec_len, data_len),
-        26 => wire__crate__create_map_result_from_json_impl(port, ptr, rust_vec_len, data_len),
-        27 => wire__crate__create_markdown_result_from_json_impl(port, ptr, rust_vec_len, data_len),
-        28 => wire__crate__create_page_metadata_from_json_impl(port, ptr, rust_vec_len, data_len),
-        29 => wire__crate__create_proxy_config_from_json_impl(port, ptr, rust_vec_len, data_len),
-        30 => wire__crate__create_response_meta_from_json_impl(port, ptr, rust_vec_len, data_len),
-        31 => wire__crate__create_scrape_result_from_json_impl(port, ptr, rust_vec_len, data_len),
-        32 => wire__crate__create_sitemap_url_from_json_impl(port, ptr, rust_vec_len, data_len),
-        33 => wire__crate__map_urls_impl(port, ptr, rust_vec_len, data_len),
-        34 => wire__crate__scrape_impl(port, ptr, rust_vec_len, data_len),
+        1 => wire__crate__CrawlEngineHandle_batch_crawl_stream_impl(port, ptr, rust_vec_len, data_len),
+        2 => wire__crate__CrawlEngineHandle_crawl_stream_impl(port, ptr, rust_vec_len, data_len),
+        3 => wire__crate__batch_crawl_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire__crate__batch_scrape_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__crawl_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__crate__create_action_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__create_article_metadata_from_json_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__create_batch_crawl_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        9 => wire__crate__create_batch_crawl_results_from_json_impl(port, ptr, rust_vec_len, data_len),
+        10 => wire__crate__create_batch_crawl_stream_request_from_json_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__crate__create_batch_scrape_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__crate__create_batch_scrape_results_from_json_impl(port, ptr, rust_vec_len, data_len),
+        13 => wire__crate__create_browser_config_from_json_impl(port, ptr, rust_vec_len, data_len),
+        14 => wire__crate__create_browser_extras_from_json_impl(port, ptr, rust_vec_len, data_len),
+        15 => wire__crate__create_citation_reference_from_json_impl(port, ptr, rust_vec_len, data_len),
+        16 => wire__crate__create_citation_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        17 => wire__crate__create_content_config_from_json_impl(port, ptr, rust_vec_len, data_len),
+        18 => wire__crate__create_cookie_info_from_json_impl(port, ptr, rust_vec_len, data_len),
+        19 => wire__crate__create_crawl_config_from_json_impl(port, ptr, rust_vec_len, data_len),
+        20 => wire__crate__create_crawl_page_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        21 => wire__crate__create_crawl_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        22 => wire__crate__create_crawl_stream_request_from_json_impl(port, ptr, rust_vec_len, data_len),
+        23 => wire__crate__create_downloaded_asset_from_json_impl(port, ptr, rust_vec_len, data_len),
+        24 => wire__crate__create_downloaded_document_from_json_impl(port, ptr, rust_vec_len, data_len),
+        25 => wire__crate__create_engine_impl(port, ptr, rust_vec_len, data_len),
+        26 => wire__crate__create_extraction_meta_from_json_impl(port, ptr, rust_vec_len, data_len),
+        27 => wire__crate__create_favicon_info_from_json_impl(port, ptr, rust_vec_len, data_len),
+        28 => wire__crate__create_feed_info_from_json_impl(port, ptr, rust_vec_len, data_len),
+        29 => wire__crate__create_heading_info_from_json_impl(port, ptr, rust_vec_len, data_len),
+        30 => wire__crate__create_hreflang_entry_from_json_impl(port, ptr, rust_vec_len, data_len),
+        31 => wire__crate__create_image_info_from_json_impl(port, ptr, rust_vec_len, data_len),
+        32 => wire__crate__create_interaction_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        33 => wire__crate__create_json_ld_entry_from_json_impl(port, ptr, rust_vec_len, data_len),
+        34 => wire__crate__create_link_info_from_json_impl(port, ptr, rust_vec_len, data_len),
+        35 => wire__crate__create_map_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        36 => wire__crate__create_markdown_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        37 => wire__crate__create_page_metadata_from_json_impl(port, ptr, rust_vec_len, data_len),
+        38 => wire__crate__create_proxy_config_from_json_impl(port, ptr, rust_vec_len, data_len),
+        39 => wire__crate__create_response_meta_from_json_impl(port, ptr, rust_vec_len, data_len),
+        40 => wire__crate__create_scrape_result_from_json_impl(port, ptr, rust_vec_len, data_len),
+        41 => wire__crate__create_sitemap_url_from_json_impl(port, ptr, rust_vec_len, data_len),
+        42 => wire__crate__generate_citations_impl(port, ptr, rust_vec_len, data_len),
+        43 => wire__crate__interact_impl(port, ptr, rust_vec_len, data_len),
+        44 => wire__crate__map_urls_impl(port, ptr, rust_vec_len, data_len),
+        45 => wire__crate__scrape_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -2755,6 +3502,25 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<CrawlEngineHandle>> for CrawlE
     }
 }
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::ActionResult> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.0.action_index.into_into_dart().into_dart(),
+            self.0.action_type.into_into_dart().into_dart(),
+            self.0.success.into_into_dart().into_dart(),
+            self.0.data.into_into_dart().into_dart(),
+            self.0.error.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::ActionResult> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::ActionResult>> for crate::ActionResult {
+    fn into_into_dart(self) -> FrbWrapper<crate::ActionResult> {
+        self.into()
+    }
+}
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::ArticleMetadata> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
@@ -2845,6 +3611,36 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BatchCrawlResult>> for 
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BatchCrawlResults> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.0.results.into_into_dart().into_dart(),
+            self.0.total_count.into_into_dart().into_dart(),
+            self.0.completed_count.into_into_dart().into_dart(),
+            self.0.failed_count.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::BatchCrawlResults> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BatchCrawlResults>> for crate::BatchCrawlResults {
+    fn into_into_dart(self) -> FrbWrapper<crate::BatchCrawlResults> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BatchCrawlStreamRequest> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [self.0.urls.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::BatchCrawlStreamRequest> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BatchCrawlStreamRequest>> for crate::BatchCrawlStreamRequest {
+    fn into_into_dart(self) -> FrbWrapper<crate::BatchCrawlStreamRequest> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BatchScrapeResult> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -2862,15 +3658,56 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BatchScrapeResult>> for
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BatchScrapeResults> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.0.results.into_into_dart().into_dart(),
+            self.0.total_count.into_into_dart().into_dart(),
+            self.0.completed_count.into_into_dart().into_dart(),
+            self.0.failed_count.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::BatchScrapeResults> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BatchScrapeResults>> for crate::BatchScrapeResults {
+    fn into_into_dart(self) -> FrbWrapper<crate::BatchScrapeResults> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BrowserBackend> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self.0 {
+            crate::BrowserBackend::Chromiumoxide => 0.into_dart(),
+            crate::BrowserBackend::Native => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::BrowserBackend> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BrowserBackend>> for crate::BrowserBackend {
+    fn into_into_dart(self) -> FrbWrapper<crate::BrowserBackend> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BrowserConfig> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.0.mode.into_into_dart().into_dart(),
+            self.0.backend.into_into_dart().into_dart(),
             self.0.endpoint.into_into_dart().into_dart(),
             self.0.timeout.into_into_dart().into_dart(),
             self.0.wait.into_into_dart().into_dart(),
             self.0.wait_selector.into_into_dart().into_dart(),
             self.0.extra_wait.into_into_dart().into_dart(),
+            self.0.stealth.into_into_dart().into_dart(),
+            self.0.proxy.into_into_dart().into_dart(),
+            self.0.block_url_patterns.into_into_dart().into_dart(),
+            self.0.eval_script.into_into_dart().into_dart(),
+            self.0.robots_user_agent.into_into_dart().into_dart(),
+            self.0.capture_network_events.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2878,6 +3715,23 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BrowserConfig> {
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::BrowserConfig> {}
 impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BrowserConfig>> for crate::BrowserConfig {
     fn into_into_dart(self) -> FrbWrapper<crate::BrowserConfig> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BrowserExtras> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.0.eval_result.into_into_dart().into_dart(),
+            self.0.network_events.into_into_dart().into_dart(),
+            self.0.cookies.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::BrowserExtras> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::BrowserExtras>> for crate::BrowserExtras {
+    fn into_into_dart(self) -> FrbWrapper<crate::BrowserExtras> {
         self.into()
     }
 }
@@ -3043,6 +3897,32 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::CrawlConfig>> for crate
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlEvent> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self.0 {
+            crate::CrawlEvent::Page { result } => [0.into_dart(), result.into_into_dart().into_dart()].into_dart(),
+            crate::CrawlEvent::Error { url, error } => [
+                1.into_dart(),
+                url.into_into_dart().into_dart(),
+                error.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::CrawlEvent::Complete { pages_crawled } => {
+                [2.into_dart(), pages_crawled.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::CrawlEvent> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::CrawlEvent>> for crate::CrawlEvent {
+    fn into_into_dart(self) -> FrbWrapper<crate::CrawlEvent> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlPageResult> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -3066,6 +3946,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlPageResult> {
             self.0.extracted_data.into_into_dart().into_dart(),
             self.0.extraction_meta.into_into_dart().into_dart(),
             self.0.downloaded_document.into_into_dart().into_dart(),
+            self.0.browser_used.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -3086,7 +3967,8 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlResult> {
             self.0.was_skipped.into_into_dart().into_dart(),
             self.0.error.into_into_dart().into_dart(),
             self.0.cookies.into_into_dart().into_dart(),
-            self.0.normalized_urls.into_into_dart().into_dart(),
+            self.0.stayed_on_domain.into_into_dart().into_dart(),
+            self.0.browser_used.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -3094,6 +3976,18 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlResult> {
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::CrawlResult> {}
 impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::CrawlResult>> for crate::CrawlResult {
     fn into_into_dart(self) -> FrbWrapper<crate::CrawlResult> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlStreamRequest> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [self.0.url.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::CrawlStreamRequest> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::CrawlStreamRequest>> for crate::CrawlStreamRequest {
+    fn into_into_dart(self) -> FrbWrapper<crate::CrawlStreamRequest> {
         self.into()
     }
 }
@@ -3278,6 +4172,23 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::ImageSource>> for crate
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::InteractionResult> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.0.action_results.into_into_dart().into_dart(),
+            self.0.final_html.into_into_dart().into_dart(),
+            self.0.final_url.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::InteractionResult> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::InteractionResult>> for crate::InteractionResult {
+    fn into_into_dart(self) -> FrbWrapper<crate::InteractionResult> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::JsonLdEntry> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -3360,6 +4271,52 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::MarkdownResult> {
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::MarkdownResult> {}
 impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::MarkdownResult>> for crate::MarkdownResult {
     fn into_into_dart(self) -> FrbWrapper<crate::MarkdownResult> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::PageAction> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self.0 {
+            crate::PageAction::Click { selector } => [0.into_dart(), selector.into_into_dart().into_dart()].into_dart(),
+            crate::PageAction::TypeText { selector, text } => [
+                1.into_dart(),
+                selector.into_into_dart().into_dart(),
+                text.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::PageAction::Press { key } => [2.into_dart(), key.into_into_dart().into_dart()].into_dart(),
+            crate::PageAction::Scroll {
+                direction,
+                selector,
+                amount,
+            } => [
+                3.into_dart(),
+                direction.into_into_dart().into_dart(),
+                selector.into_into_dart().into_dart(),
+                amount.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::PageAction::Wait { milliseconds, selector } => [
+                4.into_dart(),
+                milliseconds.into_into_dart().into_dart(),
+                selector.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::PageAction::Screenshot { full_page } => {
+                [5.into_dart(), full_page.into_into_dart().into_dart()].into_dart()
+            }
+            crate::PageAction::ExecuteJs { script } => [6.into_dart(), script.into_into_dart().into_dart()].into_dart(),
+            crate::PageAction::Scrape => [7.into_dart()].into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::PageAction> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::PageAction>> for crate::PageAction {
+    fn into_into_dart(self) -> FrbWrapper<crate::PageAction> {
         self.into()
     }
 }
@@ -3463,6 +4420,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::ScrapeResult> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.0.status_code.into_into_dart().into_dart(),
+            self.0.final_url.into_into_dart().into_dart(),
             self.0.content_type.into_into_dart().into_dart(),
             self.0.html.into_into_dart().into_dart(),
             self.0.body_size.into_into_dart().into_dart(),
@@ -3488,6 +4446,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::ScrapeResult> {
             self.0.extracted_data.into_into_dart().into_dart(),
             self.0.extraction_meta.into_into_dart().into_dart(),
             self.0.downloaded_document.into_into_dart().into_dart(),
+            self.0.browser.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -3495,6 +4454,22 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::ScrapeResult> {
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::ScrapeResult> {}
 impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::ScrapeResult>> for crate::ScrapeResult {
     fn into_into_dart(self) -> FrbWrapper<crate::ScrapeResult> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::ScrollDirection> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self.0 {
+            crate::ScrollDirection::Up => 0.into_dart(),
+            crate::ScrollDirection::Down => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::ScrollDirection> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::ScrollDirection>> for crate::ScrollDirection {
+    fn into_into_dart(self) -> FrbWrapper<crate::ScrollDirection> {
         self.into()
     }
 }
@@ -3514,6 +4489,13 @@ impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<
 impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::SitemapUrl>> for crate::SitemapUrl {
     fn into_into_dart(self) -> FrbWrapper<crate::SitemapUrl> {
         self.into()
+    }
+}
+
+impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(format!("{:?}", self), serializer);
     }
 }
 
@@ -3543,10 +4525,28 @@ impl SseEncode for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpa
     }
 }
 
+impl SseEncode for StreamSink<crate::CrawlEvent, flutter_rust_bridge::for_generated::SseCodec> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        unimplemented!("")
+    }
+}
+
 impl SseEncode for String {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.into_bytes(), serializer);
+    }
+}
+
+impl SseEncode for crate::ActionResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i64>::sse_encode(self.action_index, serializer);
+        <String>::sse_encode(self.action_type, serializer);
+        <bool>::sse_encode(self.success, serializer);
+        <Option<String>>::sse_encode(self.data, serializer);
+        <Option<String>>::sse_encode(self.error, serializer);
     }
 }
 
@@ -3619,12 +4619,39 @@ impl SseEncode for crate::BatchCrawlResult {
     }
 }
 
+impl SseEncode for crate::BatchCrawlResults {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<crate::BatchCrawlResult>>::sse_encode(self.results, serializer);
+        <i64>::sse_encode(self.total_count, serializer);
+        <i64>::sse_encode(self.completed_count, serializer);
+        <i64>::sse_encode(self.failed_count, serializer);
+    }
+}
+
+impl SseEncode for crate::BatchCrawlStreamRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<String>>::sse_encode(self.urls, serializer);
+    }
+}
+
 impl SseEncode for crate::BatchScrapeResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.url, serializer);
         <Option<crate::ScrapeResult>>::sse_encode(self.result, serializer);
         <Option<String>>::sse_encode(self.error, serializer);
+    }
+}
+
+impl SseEncode for crate::BatchScrapeResults {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<crate::BatchScrapeResult>>::sse_encode(self.results, serializer);
+        <i64>::sse_encode(self.total_count, serializer);
+        <i64>::sse_encode(self.completed_count, serializer);
+        <i64>::sse_encode(self.failed_count, serializer);
     }
 }
 
@@ -3635,15 +4662,47 @@ impl SseEncode for bool {
     }
 }
 
+impl SseEncode for crate::BrowserBackend {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::BrowserBackend::Chromiumoxide => 0,
+                crate::BrowserBackend::Native => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for crate::BrowserConfig {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <crate::BrowserMode>::sse_encode(self.mode, serializer);
+        <crate::BrowserBackend>::sse_encode(self.backend, serializer);
         <Option<String>>::sse_encode(self.endpoint, serializer);
         <i64>::sse_encode(self.timeout, serializer);
         <crate::BrowserWait>::sse_encode(self.wait, serializer);
         <Option<String>>::sse_encode(self.wait_selector, serializer);
         <Option<i64>>::sse_encode(self.extra_wait, serializer);
+        <bool>::sse_encode(self.stealth, serializer);
+        <Option<crate::ProxyConfig>>::sse_encode(self.proxy, serializer);
+        <Vec<String>>::sse_encode(self.block_url_patterns, serializer);
+        <Option<String>>::sse_encode(self.eval_script, serializer);
+        <Option<String>>::sse_encode(self.robots_user_agent, serializer);
+        <bool>::sse_encode(self.capture_network_events, serializer);
+    }
+}
+
+impl SseEncode for crate::BrowserExtras {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<String>>::sse_encode(self.eval_result, serializer);
+        <Vec<crate::ResponseMeta>>::sse_encode(self.network_events, serializer);
+        <Vec<crate::CookieInfo>>::sse_encode(self.cookies, serializer);
     }
 }
 
@@ -3768,6 +4827,30 @@ impl SseEncode for crate::CrawlConfig {
     }
 }
 
+impl SseEncode for crate::CrawlEvent {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::CrawlEvent::Page { result } => {
+                <i32>::sse_encode(0, serializer);
+                <crate::CrawlPageResult>::sse_encode(result, serializer);
+            }
+            crate::CrawlEvent::Error { url, error } => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(url, serializer);
+                <String>::sse_encode(error, serializer);
+            }
+            crate::CrawlEvent::Complete { pages_crawled } => {
+                <i32>::sse_encode(2, serializer);
+                <i64>::sse_encode(pages_crawled, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for crate::CrawlPageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3791,6 +4874,7 @@ impl SseEncode for crate::CrawlPageResult {
         <Option<String>>::sse_encode(self.extracted_data, serializer);
         <Option<crate::ExtractionMeta>>::sse_encode(self.extraction_meta, serializer);
         <Option<crate::DownloadedDocument>>::sse_encode(self.downloaded_document, serializer);
+        <bool>::sse_encode(self.browser_used, serializer);
     }
 }
 
@@ -3803,7 +4887,15 @@ impl SseEncode for crate::CrawlResult {
         <bool>::sse_encode(self.was_skipped, serializer);
         <Option<String>>::sse_encode(self.error, serializer);
         <Vec<crate::CookieInfo>>::sse_encode(self.cookies, serializer);
-        <Vec<String>>::sse_encode(self.normalized_urls, serializer);
+        <bool>::sse_encode(self.stayed_on_domain, serializer);
+        <bool>::sse_encode(self.browser_used, serializer);
+    }
+}
+
+impl SseEncode for crate::CrawlStreamRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.url, serializer);
     }
 }
 
@@ -3944,6 +5036,15 @@ impl SseEncode for crate::ImageSource {
     }
 }
 
+impl SseEncode for crate::InteractionResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<crate::ActionResult>>::sse_encode(self.action_results, serializer);
+        <String>::sse_encode(self.final_html, serializer);
+        <String>::sse_encode(self.final_url, serializer);
+    }
+}
+
 impl SseEncode for crate::JsonLdEntry {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3988,6 +5089,16 @@ impl SseEncode for Vec<String> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <String>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::ActionResult> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::ActionResult>::sse_encode(item, serializer);
         }
     }
 }
@@ -4132,6 +5243,16 @@ impl SseEncode for Vec<crate::LinkInfo> {
     }
 }
 
+impl SseEncode for Vec<crate::PageAction> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::PageAction>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<i64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -4162,6 +5283,16 @@ impl SseEncode for Vec<(String, String)> {
     }
 }
 
+impl SseEncode for Vec<crate::ResponseMeta> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::ResponseMeta>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::SitemapUrl> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -4186,7 +5317,7 @@ impl SseEncode for crate::MarkdownResult {
         <Option<String>>::sse_encode(self.document_structure, serializer);
         <Vec<String>>::sse_encode(self.tables, serializer);
         <Vec<String>>::sse_encode(self.warnings, serializer);
-        <Option<crate::CitationResult>>::sse_encode(self.citations, serializer);
+        <bool>::sse_encode(self.citations, serializer);
         <Option<String>>::sse_encode(self.fit_content, serializer);
     }
 }
@@ -4221,12 +5352,12 @@ impl SseEncode for Option<crate::AuthConfig> {
     }
 }
 
-impl SseEncode for Option<crate::CitationResult> {
+impl SseEncode for Option<crate::BrowserExtras> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
-            <crate::CitationResult>::sse_encode(value, serializer);
+            <crate::BrowserExtras>::sse_encode(value, serializer);
         }
     }
 }
@@ -4371,6 +5502,56 @@ impl SseEncode for Option<Vec<crate::HreflangEntry>> {
     }
 }
 
+impl SseEncode for crate::PageAction {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::PageAction::Click { selector } => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(selector, serializer);
+            }
+            crate::PageAction::TypeText { selector, text } => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(selector, serializer);
+                <String>::sse_encode(text, serializer);
+            }
+            crate::PageAction::Press { key } => {
+                <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(key, serializer);
+            }
+            crate::PageAction::Scroll {
+                direction,
+                selector,
+                amount,
+            } => {
+                <i32>::sse_encode(3, serializer);
+                <crate::ScrollDirection>::sse_encode(direction, serializer);
+                <String>::sse_encode(selector, serializer);
+                <i64>::sse_encode(amount, serializer);
+            }
+            crate::PageAction::Wait { milliseconds, selector } => {
+                <i32>::sse_encode(4, serializer);
+                <i64>::sse_encode(milliseconds, serializer);
+                <String>::sse_encode(selector, serializer);
+            }
+            crate::PageAction::Screenshot { full_page } => {
+                <i32>::sse_encode(5, serializer);
+                <bool>::sse_encode(full_page, serializer);
+            }
+            crate::PageAction::ExecuteJs { script } => {
+                <i32>::sse_encode(6, serializer);
+                <String>::sse_encode(script, serializer);
+            }
+            crate::PageAction::Scrape => {
+                <i32>::sse_encode(7, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for crate::PageMetadata {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -4454,6 +5635,7 @@ impl SseEncode for crate::ScrapeResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i64>::sse_encode(self.status_code, serializer);
+        <String>::sse_encode(self.final_url, serializer);
         <String>::sse_encode(self.content_type, serializer);
         <String>::sse_encode(self.html, serializer);
         <i64>::sse_encode(self.body_size, serializer);
@@ -4479,6 +5661,23 @@ impl SseEncode for crate::ScrapeResult {
         <Option<String>>::sse_encode(self.extracted_data, serializer);
         <Option<crate::ExtractionMeta>>::sse_encode(self.extraction_meta, serializer);
         <Option<crate::DownloadedDocument>>::sse_encode(self.downloaded_document, serializer);
+        <Option<crate::BrowserExtras>>::sse_encode(self.browser, serializer);
+    }
+}
+
+impl SseEncode for crate::ScrollDirection {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::ScrollDirection::Up => 0,
+                crate::ScrollDirection::Down => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 
@@ -4497,6 +5696,11 @@ impl SseEncode for u8 {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_u8(self).unwrap();
     }
+}
+
+impl SseEncode for () {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {}
 }
 
 impl SseEncode for usize {

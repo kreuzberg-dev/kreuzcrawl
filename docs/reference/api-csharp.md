@@ -2,9 +2,33 @@
 title: "C# API Reference"
 ---
 
-## C# API Reference <span class="version-badge">v0.3.0-rc.20</span>
+## C# API Reference <span class="version-badge">v0.3.0-rc.27</span>
 
 ### Functions
+
+#### GenerateCitations()
+
+Convert markdown links to numbered citations.
+
+`[Example](https://example.com)` becomes `Example[1]`
+with `[1]: <https://example.com`> in the reference list.
+Images `![alt](url)` are preserved unchanged.
+
+**Signature:**
+
+```csharp
+public static CitationResult GenerateCitations(string markdown)
+```
+
+**Parameters:**
+
+| Name       | Type     | Required | Description  |
+| ---------- | -------- | -------- | ------------ |
+| `Markdown` | `string` | Yes      | The markdown |
+
+**Returns:** `CitationResult`
+
+---
 
 #### CreateEngine()
 
@@ -96,6 +120,29 @@ public static async Task<MapResult> MapUrlsAsync(CrawlEngineHandle engine, strin
 
 ---
 
+#### Interact()
+
+Execute browser actions on a single page.
+
+**Signature:**
+
+```csharp
+public static async Task<InteractionResult> InteractAsync(CrawlEngineHandle engine, string url, List<PageAction> actions)
+```
+
+**Parameters:**
+
+| Name      | Type                | Required | Description             |
+| --------- | ------------------- | -------- | ----------------------- |
+| `Engine`  | `CrawlEngineHandle` | Yes      | The crawl engine handle |
+| `Url`     | `string`            | Yes      | The URL to fetch        |
+| `Actions` | `List<PageAction>`  | Yes      | The actions             |
+
+**Returns:** `InteractionResult`
+**Errors:** Throws `CrawlError`.
+
+---
+
 #### BatchScrape()
 
 Scrape multiple URLs concurrently.
@@ -103,7 +150,7 @@ Scrape multiple URLs concurrently.
 **Signature:**
 
 ```csharp
-public static async Task<List<BatchScrapeResult>> BatchScrapeAsync(CrawlEngineHandle engine, List<string> urls)
+public static async Task<BatchScrapeResults> BatchScrapeAsync(CrawlEngineHandle engine, List<string> urls)
 ```
 
 **Parameters:**
@@ -113,7 +160,7 @@ public static async Task<List<BatchScrapeResult>> BatchScrapeAsync(CrawlEngineHa
 | `Engine` | `CrawlEngineHandle` | Yes      | The crawl engine handle |
 | `Urls`   | `List<string>`      | Yes      | The urls                |
 
-**Returns:** `List<BatchScrapeResult>`
+**Returns:** `BatchScrapeResults`
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -125,7 +172,7 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 **Signature:**
 
 ```csharp
-public static async Task<List<BatchCrawlResult>> BatchCrawlAsync(CrawlEngineHandle engine, List<string> urls)
+public static async Task<BatchCrawlResults> BatchCrawlAsync(CrawlEngineHandle engine, List<string> urls)
 ```
 
 **Parameters:**
@@ -135,12 +182,26 @@ public static async Task<List<BatchCrawlResult>> BatchCrawlAsync(CrawlEngineHand
 | `Engine` | `CrawlEngineHandle` | Yes      | The crawl engine handle |
 | `Urls`   | `List<string>`      | Yes      | The urls                |
 
-**Returns:** `List<BatchCrawlResult>`
+**Returns:** `BatchCrawlResults`
 **Errors:** Throws `CrawlError`.
 
 ---
 
 ### Types
+
+#### ActionResult
+
+Result from a single page action execution.
+
+| Field         | Type      | Default | Description                                                                    |
+| ------------- | --------- | ------- | ------------------------------------------------------------------------------ |
+| `ActionIndex` | `nuint`   | —       | Zero-based index of the action in the sequence.                                |
+| `ActionType`  | `string`  | —       | The type of action that was executed.                                          |
+| `Success`     | `bool`    | —       | Whether the action completed successfully.                                     |
+| `Data`        | `object?` | `null`  | Action-specific return data (screenshot bytes, JS return value, scraped HTML). |
+| `Error`       | `string?` | `null`  | Error message if the action failed.                                            |
+
+---
 
 #### ArticleMetadata
 
@@ -168,6 +229,36 @@ Result from a single URL in a batch crawl operation.
 
 ---
 
+#### BatchCrawlResults
+
+Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
+
+The counts are derived once at construction so every binding language can read them
+as plain integer fields without re-iterating the `results` vector.
+
+| Field            | Type                     | Default                        | Description                                                        |
+| ---------------- | ------------------------ | ------------------------------ | ------------------------------------------------------------------ |
+| `Results`        | `List<BatchCrawlResult>` | `new List<BatchCrawlResult>()` | Per-URL crawl results, in the order seed URLs were submitted.      |
+| `TotalCount`     | `nuint`                  | —                              | Total number of seed URLs in the batch (equal to `results.len()`). |
+| `CompletedCount` | `nuint`                  | —                              | Number of seed URLs whose crawl succeeded (`error` is `null`).     |
+| `FailedCount`    | `nuint`                  | —                              | Number of seed URLs whose crawl failed (`error` is `Some`).        |
+
+---
+
+#### BatchCrawlStreamRequest
+
+Request to begin a multi-URL streaming crawl.
+
+Wraps a set of seed URLs for delivery through the streaming-adapter binding
+surface. Required as a struct because alef's streaming adapter requires a
+named request type — primitives are not supported.
+
+| Field  | Type           | Default              | Description                                                                                     |
+| ------ | -------------- | -------------------- | ----------------------------------------------------------------------------------------------- |
+| `Urls` | `List<string>` | `new List<string>()` | The seed URLs to crawl. Each URL is followed independently up to the engine's configured depth. |
+
+---
+
 #### BatchScrapeResult
 
 Result from a single URL in a batch scrape operation.
@@ -180,22 +271,45 @@ Result from a single URL in a batch scrape operation.
 
 ---
 
+#### BatchScrapeResults
+
+Aggregate result of a batch scrape, exposing per-URL results plus precomputed counts.
+
+The counts are derived once at construction so every binding language can read them
+as plain integer fields without re-iterating the `results` vector.
+
+| Field            | Type                      | Default                         | Description                                                   |
+| ---------------- | ------------------------- | ------------------------------- | ------------------------------------------------------------- |
+| `Results`        | `List<BatchScrapeResult>` | `new List<BatchScrapeResult>()` | Per-URL scrape results, in the order URLs were submitted.     |
+| `TotalCount`     | `nuint`                   | —                               | Total number of URLs in the batch (equal to `results.len()`). |
+| `CompletedCount` | `nuint`                   | —                               | Number of URLs whose scrape succeeded (`error` is `null`).    |
+| `FailedCount`    | `nuint`                   | —                               | Number of URLs whose scrape failed (`error` is `Some`).       |
+
+---
+
 #### BrowserConfig
 
 Browser fallback configuration.
 
-| Field          | Type          | Default                   | Description                                                                    |
-| -------------- | ------------- | ------------------------- | ------------------------------------------------------------------------------ |
-| `Mode`         | `BrowserMode` | `BrowserMode.Auto`        | When to use the headless browser fallback.                                     |
-| `Endpoint`     | `string?`     | `null`                    | CDP WebSocket endpoint for connecting to an external browser instance.         |
-| `Timeout`      | `TimeSpan`    | `30000ms`                 | Timeout for browser page load and rendering (in milliseconds when serialized). |
-| `Wait`         | `BrowserWait` | `BrowserWait.NetworkIdle` | Wait strategy after browser navigation.                                        |
-| `WaitSelector` | `string?`     | `null`                    | CSS selector to wait for when `wait` is `Selector`.                            |
-| `ExtraWait`    | `TimeSpan?`   | `null`                    | Extra time to wait after the wait condition is met.                            |
+| Field                  | Type             | Default                        | Description                                                                                                                                                                                                                                                                        |
+| ---------------------- | ---------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Mode`                 | `BrowserMode`    | `BrowserMode.Auto`             | When to use the headless browser fallback.                                                                                                                                                                                                                                         |
+| `Backend`              | `BrowserBackend` | `BrowserBackend.Chromiumoxide` | Browser backend used to render JavaScript-heavy pages.                                                                                                                                                                                                                             |
+| `Endpoint`             | `string?`        | `null`                         | CDP WebSocket endpoint for connecting to an external browser instance.                                                                                                                                                                                                             |
+| `Timeout`              | `TimeSpan`       | `30000ms`                      | Timeout for browser page load and rendering (in milliseconds when serialized).                                                                                                                                                                                                     |
+| `Wait`                 | `BrowserWait`    | `BrowserWait.NetworkIdle`      | Wait strategy after browser navigation.                                                                                                                                                                                                                                            |
+| `WaitSelector`         | `string?`        | `null`                         | CSS selector to wait for when `wait` is `Selector`.                                                                                                                                                                                                                                |
+| `ExtraWait`            | `TimeSpan?`      | `null`                         | Extra time to wait after the wait condition is met.                                                                                                                                                                                                                                |
+| `Stealth`              | `bool`           | `false`                        | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack.                                                                                                      |
+| `Proxy`                | `ProxyConfig?`   | `null`                         | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5).                                                                                                                                                            |
+| `BlockUrlPatterns`     | `List<string>`   | `new List<string>()`           | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today.                                                                        |
+| `EvalScript`           | `string?`        | `null`                         | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
+| `RobotsUserAgent`      | `string?`        | `null`                         | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only.                                                                                                                                                  |
+| `CaptureNetworkEvents` | `bool`           | `false`                        | Capture the full network event stream into the result. Default false (only the document event is captured). Native only.                                                                                                                                                           |
 
-##### Methods
+### Methods
 
-###### CreateDefault()
+#### CreateDefault()
 
 **Signature:**
 
@@ -205,13 +319,30 @@ public BrowserConfig CreateDefault()
 
 ---
 
+#### BrowserExtras
+
+Browser-specific extras populated when the native browser backend was used.
+
+Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the request.
+
+| Field           | Type                 | Default                    | Description                                                                                                                                 |
+| --------------- | -------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EvalResult`    | `object?`            | `null`                     | Return value of `BrowserConfig.eval_script`, if provided.                                                                                   |
+| `NetworkEvents` | `List<ResponseMeta>` | `new List<ResponseMeta>()` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true).                        |
+| `Cookies`       | `List<CookieInfo>`   | `new List<CookieInfo>()`   | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+
+---
+
 #### CitationReference
 
-| Field   | Type     | Default | Description |
-| ------- | -------- | ------- | ----------- |
-| `Index` | `nuint`  | —       | Index       |
-| `Url`   | `string` | —       | Url         |
-| `Text`  | `string` | —       | Text        |
+A single numbered reference in a citation list — produced by the citation
+extractor when content uses inline `[N]`-style markers.
+
+| Field   | Type     | Default | Description                                                |
+| ------- | -------- | ------- | ---------------------------------------------------------- |
+| `Index` | `nuint`  | —       | 1-based reference number as it appears in the source text. |
+| `Url`   | `string` | —       | Resolved absolute URL for this reference.                  |
+| `Text`  | `string` | —       | Human-readable anchor text or title for the reference.     |
 
 ---
 
@@ -249,9 +380,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `WrapWidth`                | `nuint`        | `80`                 | Wrap width when `wrap` is enabled. Default: `80`.                                                                                                                                                                                                                                                                                                   |
 | `IncludeDocumentStructure` | `bool`         | `true`               | Include document structure tree in output. Default: `true`.                                                                                                                                                                                                                                                                                         |
 
-##### Methods
+### Methods
 
-###### CreateDefault()
+#### CreateDefault()
 
 **Signature:**
 
@@ -317,9 +448,9 @@ Configuration for crawl, scrape, and map operations.
 | `BrowserProfile`     | `string?`                    | `null`                             | Named browser profile for persistent sessions (cookies, localStorage).                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `SaveBrowserProfile` | `bool`                       | `false`                            | Whether to save changes back to the browser profile on exit.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-##### Methods
+### Methods
 
-###### CreateDefault()
+#### CreateDefault()
 
 **Signature:**
 
@@ -327,7 +458,7 @@ Configuration for crawl, scrape, and map operations.
 public CrawlConfig CreateDefault()
 ```
 
-###### Validate()
+#### Validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -345,6 +476,38 @@ Opaque handle to a configured crawl engine.
 
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
+
+### Methods
+
+#### CrawlStream()
+
+Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
+
+Returns an async stream that emits one event per crawled page, plus a
+terminal `Complete` event. On per-URL failure during the crawl, emits an
+`Error` event followed by `Complete`. The stream item type is wrapped in
+a `Result` to surface transport-level errors; today every emit is `Ok`.
+
+**Signature:**
+
+```csharp
+public async Task<string> CrawlStreamAsync(CrawlStreamRequest req)
+```
+
+#### BatchCrawlStream()
+
+Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
+
+Returns an async stream that emits one event per crawled page across all
+seeds, plus terminal `Complete` and `Error` events as appropriate. The
+stream item type is wrapped in a `Result` to surface transport-level
+errors; today every emit is `Ok`.
+
+**Signature:**
+
+```csharp
+public async Task<string> BatchCrawlStreamAsync(BatchCrawlStreamRequest req)
+```
 
 ---
 
@@ -374,6 +537,7 @@ The result of crawling a single page during a crawl operation.
 | `ExtractedData`      | `object?`             | `null`                    | Structured data extracted by LLM. Populated when extraction is configured. |
 | `ExtractionMeta`     | `ExtractionMeta?`     | `null`                    | Metadata about the LLM extraction pass (cost, tokens, model).              |
 | `DownloadedDocument` | `DownloadedDocument?` | `null`                    | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).               |
+| `BrowserUsed`        | `bool`                | —                         | Whether the browser fallback was used to fetch this page.                  |
 
 ---
 
@@ -389,11 +553,13 @@ The result of a multi-page crawl operation.
 | `WasSkipped`     | `bool`                  | —                             | Whether any page was skipped during crawling.                             |
 | `Error`          | `string?`               | `null`                        | An error message, if the crawl encountered an issue.                      |
 | `Cookies`        | `List<CookieInfo>`      | `new List<CookieInfo>()`      | Cookies collected during the crawl.                                       |
+| `StayedOnDomain` | `bool`                  | —                             | Whether all crawled pages stayed on the same domain as the start URL.     |
+| `BrowserUsed`    | `bool`                  | —                             | Whether the browser fallback was used for any page in this crawl.         |
 | `NormalizedUrls` | `List<string>`          | `new List<string>()`          | Normalized URLs encountered during crawling (for deduplication counting). |
 
-##### Methods
+### Methods
 
-###### UniqueNormalizedUrls()
+#### UniqueNormalizedUrls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -402,6 +568,20 @@ Returns the count of unique normalized URLs encountered during crawling.
 ```csharp
 public nuint UniqueNormalizedUrls()
 ```
+
+---
+
+#### CrawlStreamRequest
+
+Request to begin a single-URL streaming crawl.
+
+Wraps a single seed URL for delivery through the streaming-adapter binding
+surface. Required as a struct because alef's streaming adapter requires a
+named request type — primitives are not supported.
+
+| Field | Type     | Default | Description            |
+| ----- | -------- | ------- | ---------------------- |
+| `Url` | `string` | —       | The seed URL to crawl. |
 
 ---
 
@@ -515,6 +695,19 @@ Information about an image found on a page.
 
 ---
 
+#### InteractionResult
+
+Result of executing a sequence of page interaction actions.
+
+| Field           | Type                 | Default                    | Description                                          |
+| --------------- | -------------------- | -------------------------- | ---------------------------------------------------- |
+| `ActionResults` | `List<ActionResult>` | `new List<ActionResult>()` | Results from each executed action.                   |
+| `FinalHtml`     | `string`             | —                          | Final page HTML after all actions completed.         |
+| `FinalUrl`      | `string`             | —                          | Final page URL (may have changed due to navigation). |
+| `Screenshot`    | `byte[]?`            | `null`                     | Screenshot taken after all actions, if requested.    |
+
+---
+
 #### JsonLdEntry
 
 A JSON-LD structured data entry found on a page.
@@ -555,14 +748,14 @@ The result of a map operation, containing discovered URLs.
 
 Rich markdown conversion result from HTML processing.
 
-| Field               | Type              | Default              | Description                                              |
-| ------------------- | ----------------- | -------------------- | -------------------------------------------------------- |
-| `Content`           | `string`          | —                    | Converted markdown text.                                 |
-| `DocumentStructure` | `object?`         | `null`               | Structured document tree with semantic nodes.            |
-| `Tables`            | `List<object>`    | `new List<object>()` | Extracted tables with structured cell data.              |
-| `Warnings`          | `List<string>`    | `new List<string>()` | Non-fatal processing warnings.                           |
-| `Citations`         | `CitationResult?` | `null`               | Content with links replaced by numbered citations.       |
-| `FitContent`        | `string?`         | `null`               | Content-filtered markdown optimized for LLM consumption. |
+| Field               | Type           | Default              | Description                                                                                                                                                                                                                                                                                                                                  |
+| ------------------- | -------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Content`           | `string`       | —                    | Converted markdown text.                                                                                                                                                                                                                                                                                                                     |
+| `DocumentStructure` | `object?`      | `null`               | Structured document tree with semantic nodes.                                                                                                                                                                                                                                                                                                |
+| `Tables`            | `List<object>` | `new List<object>()` | Extracted tables with structured cell data.                                                                                                                                                                                                                                                                                                  |
+| `Warnings`          | `List<string>` | `new List<string>()` | Non-fatal processing warnings.                                                                                                                                                                                                                                                                                                               |
+| `Citations`         | `bool`         | —                    | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `FitContent`        | `string?`      | `null`               | Content-filtered markdown optimized for LLM consumption.                                                                                                                                                                                                                                                                                     |
 
 ---
 
@@ -650,35 +843,37 @@ Response metadata extracted from HTTP headers.
 
 The result of a single-page scrape operation.
 
-| Field                | Type                    | Default                       | Description                                                                                            |
-| -------------------- | ----------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `StatusCode`         | `ushort`                | —                             | The HTTP status code of the response.                                                                  |
-| `ContentType`        | `string`                | —                             | The Content-Type header value.                                                                         |
-| `Html`               | `string`                | —                             | The HTML body of the response.                                                                         |
-| `BodySize`           | `nuint`                 | —                             | The size of the response body in bytes.                                                                |
-| `Metadata`           | `PageMetadata`          | —                             | Extracted metadata from the page.                                                                      |
-| `Links`              | `List<LinkInfo>`        | `new List<LinkInfo>()`        | Links found on the page.                                                                               |
-| `Images`             | `List<ImageInfo>`       | `new List<ImageInfo>()`       | Images found on the page.                                                                              |
-| `Feeds`              | `List<FeedInfo>`        | `new List<FeedInfo>()`        | Feed links found on the page.                                                                          |
-| `JsonLd`             | `List<JsonLdEntry>`     | `new List<JsonLdEntry>()`     | JSON-LD entries found on the page.                                                                     |
-| `IsAllowed`          | `bool`                  | —                             | Whether the URL is allowed by robots.txt.                                                              |
-| `CrawlDelay`         | `ulong?`                | `null`                        | The crawl delay from robots.txt, in seconds.                                                           |
-| `NoindexDetected`    | `bool`                  | —                             | Whether a noindex directive was detected.                                                              |
-| `NofollowDetected`   | `bool`                  | —                             | Whether a nofollow directive was detected.                                                             |
-| `XRobotsTag`         | `string?`               | `null`                        | The X-Robots-Tag header value, if present.                                                             |
-| `IsPdf`              | `bool`                  | —                             | Whether the content is a PDF.                                                                          |
-| `WasSkipped`         | `bool`                  | —                             | Whether the page was skipped (binary or PDF content).                                                  |
-| `DetectedCharset`    | `string?`               | `null`                        | The detected character set encoding.                                                                   |
-| `AuthHeaderSent`     | `bool`                  | —                             | Whether an authentication header was sent with the request.                                            |
-| `ResponseMeta`       | `ResponseMeta?`         | `null`                        | Response metadata extracted from HTTP headers.                                                         |
-| `Assets`             | `List<DownloadedAsset>` | `new List<DownloadedAsset>()` | Downloaded assets from the page.                                                                       |
-| `JsRenderHint`       | `bool`                  | —                             | Whether the page content suggests JavaScript rendering is needed.                                      |
-| `BrowserUsed`        | `bool`                  | —                             | Whether the browser fallback was used to fetch this page.                                              |
-| `Markdown`           | `MarkdownResult?`       | `null`                        | Markdown conversion of the page content.                                                               |
-| `ExtractedData`      | `object?`               | `null`                        | Structured data extracted by LLM. Populated when extraction is configured.                             |
-| `ExtractionMeta`     | `ExtractionMeta?`       | `null`                        | Metadata about the LLM extraction pass (cost, tokens, model).                                          |
-| `Screenshot`         | `byte[]?`               | `null`                        | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
-| `DownloadedDocument` | `DownloadedDocument?`   | `null`                        | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).                                           |
+| Field                | Type                    | Default                       | Description                                                                                                                            |
+| -------------------- | ----------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `StatusCode`         | `ushort`                | —                             | The HTTP status code of the response.                                                                                                  |
+| `FinalUrl`           | `string`                | —                             | The final URL after following all redirects.                                                                                           |
+| `ContentType`        | `string`                | —                             | The Content-Type header value.                                                                                                         |
+| `Html`               | `string`                | —                             | The HTML body of the response.                                                                                                         |
+| `BodySize`           | `nuint`                 | —                             | The size of the response body in bytes.                                                                                                |
+| `Metadata`           | `PageMetadata`          | —                             | Extracted metadata from the page.                                                                                                      |
+| `Links`              | `List<LinkInfo>`        | `new List<LinkInfo>()`        | Links found on the page.                                                                                                               |
+| `Images`             | `List<ImageInfo>`       | `new List<ImageInfo>()`       | Images found on the page.                                                                                                              |
+| `Feeds`              | `List<FeedInfo>`        | `new List<FeedInfo>()`        | Feed links found on the page.                                                                                                          |
+| `JsonLd`             | `List<JsonLdEntry>`     | `new List<JsonLdEntry>()`     | JSON-LD entries found on the page.                                                                                                     |
+| `IsAllowed`          | `bool`                  | —                             | Whether the URL is allowed by robots.txt.                                                                                              |
+| `CrawlDelay`         | `ulong?`                | `null`                        | The crawl delay from robots.txt, in seconds.                                                                                           |
+| `NoindexDetected`    | `bool`                  | —                             | Whether a noindex directive was detected.                                                                                              |
+| `NofollowDetected`   | `bool`                  | —                             | Whether a nofollow directive was detected.                                                                                             |
+| `XRobotsTag`         | `string?`               | `null`                        | The X-Robots-Tag header value, if present.                                                                                             |
+| `IsPdf`              | `bool`                  | —                             | Whether the content is a PDF.                                                                                                          |
+| `WasSkipped`         | `bool`                  | —                             | Whether the page was skipped (binary or PDF content).                                                                                  |
+| `DetectedCharset`    | `string?`               | `null`                        | The detected character set encoding.                                                                                                   |
+| `AuthHeaderSent`     | `bool`                  | —                             | Whether an authentication header was sent with the request.                                                                            |
+| `ResponseMeta`       | `ResponseMeta?`         | `null`                        | Response metadata extracted from HTTP headers.                                                                                         |
+| `Assets`             | `List<DownloadedAsset>` | `new List<DownloadedAsset>()` | Downloaded assets from the page.                                                                                                       |
+| `JsRenderHint`       | `bool`                  | —                             | Whether the page content suggests JavaScript rendering is needed.                                                                      |
+| `BrowserUsed`        | `bool`                  | —                             | Whether the browser fallback was used to fetch this page.                                                                              |
+| `Markdown`           | `MarkdownResult?`       | `null`                        | Markdown conversion of the page content.                                                                                               |
+| `ExtractedData`      | `object?`               | `null`                        | Structured data extracted by LLM. Populated when extraction is configured.                                                             |
+| `ExtractionMeta`     | `ExtractionMeta?`       | `null`                        | Metadata about the LLM extraction pass (cost, tokens, model).                                                                          |
+| `Screenshot`         | `byte[]?`               | `null`                        | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled.                                 |
+| `DownloadedDocument` | `DownloadedDocument?`   | `null`                        | Downloaded non-HTML document (PDF, DOCX, image, code, etc.).                                                                           |
+| `Browser`            | `BrowserExtras?`        | `null`                        | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
 ---
 
@@ -718,6 +913,17 @@ Wait strategy for browser page rendering.
 | `NetworkIdle` | Wait until network activity is idle.                   |
 | `Selector`    | Wait for a specific CSS selector to appear in the DOM. |
 | `Fixed`       | Wait for a fixed duration after navigation.            |
+
+---
+
+#### BrowserBackend
+
+Browser backend used for JavaScript rendering.
+
+| Value           | Description                                                   |
+| --------------- | ------------------------------------------------------------- |
+| `Chromiumoxide` | Existing Chromium/CDP backend powered by chromiumoxide.       |
+| `Native`        | Kreuzcrawl-owned native browser backend derived from Obscura. |
 
 ---
 
@@ -790,6 +996,57 @@ The category of a downloaded asset.
 
 ---
 
+#### CrawlEvent
+
+An event emitted during a streaming crawl operation.
+
+Not available on `wasm32` targets — streaming requires native concurrency
+primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
+
+Delivered to bindings via alef's streaming-adapter pattern. The
+`crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
+expose this as the per-language streaming idiom (Python `AsyncIterator`,
+Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+
+| Value      | Description                                                                          |
+| ---------- | ------------------------------------------------------------------------------------ |
+| `Page`     | A single page has been crawled. — Fields: `Result`: `CrawlPageResult`                |
+| `Error`    | An error occurred while crawling a URL. — Fields: `Url`: `string`, `Error`: `string` |
+| `Complete` | The crawl has completed. — Fields: `PagesCrawled`: `nuint`                           |
+
+---
+
+#### PageAction
+
+A single page interaction action.
+
+Actions are serialized with a `type` tag using camelCase naming,
+except `ExecuteJs` which is explicitly renamed to `"executeJs"`.
+
+| Value        | Description                                                                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Click`      | Click on an element matching the given CSS selector. — Fields: `Selector`: `string`                                                                                                                     |
+| `TypeText`   | Type text into an element matching the given CSS selector. — Fields: `Selector`: `string`, `Text`: `string`                                                                                             |
+| `Press`      | Press a keyboard key (e.g. "Enter", "Tab", "Escape"). — Fields: `Key`: `string`                                                                                                                         |
+| `Scroll`     | Scroll the page or a specific element. — Fields: `Direction`: `ScrollDirection`, `Selector`: `string`, `Amount`: `long`                                                                                 |
+| `Wait`       | Wait for a duration or for an element to appear. — Fields: `Milliseconds`: `long`, `Selector`: `string`                                                                                                 |
+| `Screenshot` | Take a screenshot of the current page. — Fields: `FullPage`: `bool`                                                                                                                                     |
+| `ExecuteJs`  | Execute arbitrary JavaScript in the page context. **Safety:** The script runs with full page privileges in the browser context. Only execute scripts from trusted sources. — Fields: `Script`: `string` |
+| `Scrape`     | Scrape the current page HTML.                                                                                                                                                                           |
+
+---
+
+#### ScrollDirection
+
+Direction for a scroll action.
+
+| Value  | Description      |
+| ------ | ---------------- |
+| `Up`   | Scroll upward.   |
+| `Down` | Scroll downward. |
+
+---
+
 ### Errors
 
 #### CrawlError
@@ -814,6 +1071,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `BrowserError`   | The browser failed to launch, connect, or navigate.                                |
 | `BrowserTimeout` | The browser page load or rendering timed out.                                      |
 | `InvalidConfig`  | The provided configuration is invalid.                                             |
+| `Unsupported`    | The requested capability is not supported by the active backend or build.          |
 | `Other`          | An unclassified error occurred.                                                    |
 
 ---

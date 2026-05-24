@@ -6,7 +6,11 @@
     "detection"
   ],
   "input": {
-    "config": {},
+    "config": {
+      "browser": {
+        "mode": "never"
+      }
+    },
     "mock_responses": [
       {
         "status_code": 200,
@@ -24,18 +28,17 @@
       "value": 200
     },
     {
+      "type": "not_empty",
+      "field": "html"
+    },
+    {
       "type": "equals",
-      "field": "html_not_empty",
+      "field": "js_render_hint",
       "value": true
     },
     {
       "type": "equals",
-      "field": "browser.js_render_hint",
-      "value": true
-    },
-    {
-      "type": "equals",
-      "field": "browser.browser_used",
+      "field": "browser_used",
       "value": false
     }
   ]

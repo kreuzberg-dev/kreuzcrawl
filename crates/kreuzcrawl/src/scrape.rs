@@ -94,6 +94,17 @@ pub(crate) async fn scrape_from_crawl_response(
 
     let was_skipped = is_binary_content_type(&content_type) || is_binary_url(parsed_url.as_str()) || is_pdf;
 
+    // Populate downloaded_document when download_documents is enabled and the
+    // response is a non-HTML document (PDF, DOCX, image, …).
+    let downloaded_document = crate::document::build_downloaded_document(
+        url,
+        &parsed_url,
+        &content_type,
+        &resp.body_bytes,
+        was_skipped,
+        config,
+    );
+
     let is_html = is_html_content(&content_type, &body);
 
     let (extraction, asset_refs) = {
@@ -141,6 +152,7 @@ pub(crate) async fn scrape_from_crawl_response(
 
     Ok(ScrapeResult {
         status_code,
+        final_url: url.to_owned(),
         content_type,
         html: body,
         body_size,
@@ -166,6 +178,7 @@ pub(crate) async fn scrape_from_crawl_response(
         extracted_data: None,
         extraction_meta: None,
         screenshot: None,
-        downloaded_document: None,
+        downloaded_document,
+        browser: None,
     })
 }
