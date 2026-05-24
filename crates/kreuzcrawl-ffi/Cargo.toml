@@ -1,6 +1,6 @@
 [package]
 name = "kreuzcrawl-ffi"
-version = "0.3.0-rc.25"
+version = "0.3.0-rc.26"
 edition = "2021"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"
@@ -28,7 +28,7 @@ default = []
 
 [dependencies]
 futures-util = "0.3"
-kreuzcrawl = { path = "../kreuzcrawl", version = "0.3.0-rc.25", features = [
+kreuzcrawl = { path = "../kreuzcrawl", version = "0.3.0-rc.26", features = [
     "interact",
     "browser-chromiumoxide",
 ] }
