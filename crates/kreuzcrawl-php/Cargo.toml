@@ -1,6 +1,6 @@
 [package]
 name = "kreuzcrawl-php"
-version = "0.3.0-rc.23"
+version = "0.3.0-rc.24"
 edition = "2024"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"
@@ -26,7 +26,7 @@ extension-module = []
 [dependencies]
 ext-php-rs = "0.15"
 futures-util = "0.3"
-kreuzcrawl = { version = "0.3.0-rc.23", path = "../kreuzcrawl", features = [
+kreuzcrawl = { version = "0.3.0-rc.24", path = "../kreuzcrawl", features = [
     "interact",
     "browser-chromiumoxide",
 ] }
