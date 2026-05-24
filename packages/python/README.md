@@ -92,6 +92,7 @@ conversion. Wheels published for Linux, macOS, and Windows.
 ```bash
 pip install kreuzcrawl
 ```
+
 ## Quick Start
 
 ```python title="Python"
@@ -115,6 +116,7 @@ async def main() -> None:
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

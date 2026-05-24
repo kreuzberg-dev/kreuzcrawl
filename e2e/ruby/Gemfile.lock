@@ -1,7 +1,7 @@
 PATH
   remote: ../../packages/ruby
   specs:
-    kreuzcrawl (0.3.0.pre.rc.24)
+    kreuzcrawl (0.3.0.pre.rc.26)
       rb_sys (~> 0.9)
       sorbet-runtime (~> 0.5)
 
@@ -88,7 +88,7 @@ CHECKSUMS
   faraday (2.14.2)
   faraday-net_http (3.4.2)
   json (2.19.5)
-  kreuzcrawl (0.3.0.pre.rc.24)
+  kreuzcrawl (0.3.0.pre.rc.26)
   language_server-protocol (3.17.0.5)
   lint_roller (1.1.0)
   logger (1.7.0)
