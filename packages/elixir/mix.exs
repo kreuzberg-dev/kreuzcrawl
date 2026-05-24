@@ -19,7 +19,7 @@ defmodule Kreuzcrawl.MixProject do
       licenses: ["Elastic-2.0"],
       links: %{"GitHub" => "https://github.com/kreuzberg-dev/kreuzcrawl"},
       files:
-        ~w(.formatter.exs mix.exs README* checksum-*.exs native/kreuzcrawl_nif/Cargo.toml native/kreuzcrawl_nif/Cargo.lock native/kreuzcrawl_nif/src native/kreuzcrawl_nif/build.rs)
+        ~w(.formatter.exs mix.exs README* checksum-*.exs native/kreuzcrawl_nif/Cargo.toml native/kreuzcrawl_nif/Cargo.lock native/kreuzcrawl_nif/src ../../packages/elixir/native/kreuzcrawl_nif/src/*.ex)
     ]
   end
 

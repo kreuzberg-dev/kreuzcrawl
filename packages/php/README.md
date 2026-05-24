@@ -91,6 +91,7 @@ extension via ext-php-rs with typed properties, PHP 8.2+ support, and PHPStan ty
 ```bash
 composer require kreuzberg-dev/kreuzcrawl
 ```
+
 ## Quick Start
 
 ```php title="PHP"
@@ -115,6 +116,7 @@ $crawlEngine = Kreuzcrawl::createEngine($config);
 $crawlResult = Kreuzcrawl::crawl($crawlEngine, "https://en.wikipedia.org/wiki/Web_scraping");
 echo "Pages crawled: " . count($crawlResult->pages) . "\n";
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

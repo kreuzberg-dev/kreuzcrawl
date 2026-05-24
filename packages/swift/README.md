@@ -91,6 +91,7 @@ Via swift-bridge for macOS, iOS, and Linux with native Swift types and async/awa
 ```bash
 .package(url: "https://github.com/kreuzberg-dev/kreuzcrawl-swift", from: "0.3.0-rc.23")
 ```
+
 ## Quick Start
 
 ```swift title="Swift"
@@ -115,6 +116,7 @@ struct BasicUsage {
     }
 }
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

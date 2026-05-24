@@ -1,4 +1,6 @@
+// swift-format-ignore-file
 import RustBridgeC
+
 public func generateCitations<GenericIntoRustString: IntoRustString>(_ markdown: GenericIntoRustString) -> CitationResult {
     CitationResult(ptr: __swift_bridge__$generate_citations({ let rustString = markdown.intoRustString(); rustString.isOwned = false; return rustString.ptr }()))
 }
@@ -5172,6 +5174,3 @@ extension CrawlEngineHandleCrawlStreamStreamHandle: Vectorizable {
         __swift_bridge__$Vec_CrawlEngineHandleCrawlStreamStreamHandle$len(vecPtr)
     }
 }
-
-
-
