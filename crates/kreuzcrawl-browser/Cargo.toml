@@ -3,7 +3,10 @@ name = "kreuzcrawl-browser"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-publish = false
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Internal headless-browser fallback used by the kreuzcrawl crawler. Not intended for direct use."
 
 [package.metadata.cargo-machete]
 # boring2 / boring-sys2 / tokio-boring2 are not consumed directly by this

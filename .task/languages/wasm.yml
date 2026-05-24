@@ -230,8 +230,8 @@ tasks:
       # failing to import vite-plugin-wasm from there.
       - pnpm exec vitest run
 
-  e2e:verify:
-    desc: Regenerate and validate WASM E2E suite (generate + lint + test)
+  e2e:deno:verify:
+    desc: Regenerate and validate WASM Deno E2E suite (generate + lint + test)
     cmds:
       - task: e2e:generate
       - task: e2e:lint

@@ -1498,10 +1498,12 @@ jobs:
 
       - uses: kreuzberg-dev/actions/publish-crates@v1
         with:
-          # Order matters: kreuzcrawl is depended on by both
-          # kreuzcrawl-bindings-common and kreuzcrawl-cli, so it must
-          # publish first or the dependents fail to resolve on the index.
-          crates: kreuzcrawl kreuzcrawl-bindings-common kreuzcrawl-cli
+          # Order matters: kreuzcrawl-browser is a hard dep of kreuzcrawl
+          # (path-only deps are rejected by cargo publish), and kreuzcrawl
+          # is depended on by both kreuzcrawl-bindings-common and
+          # kreuzcrawl-cli, so each must land on the index before its
+          # dependents try to resolve.
+          crates: kreuzcrawl-browser kreuzcrawl kreuzcrawl-bindings-common kreuzcrawl-cli
           version: ${{ needs.prepare.outputs.version }}
           dry-run: ${{ needs.prepare.outputs.dry_run }}
 

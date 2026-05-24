@@ -89,7 +89,7 @@ Via swift-bridge for macOS, iOS, and Linux with native Swift types and async/awa
 ## Installation
 
 ```bash
-.package(url: "https://github.com/kreuzberg-dev/kreuzcrawl-swift", from: "0.3.0-rc.26")
+.package(url: "https://github.com/kreuzberg-dev/kreuzcrawl-swift", from: "0.3.0-rc.27")
 ```
 
 ## Quick Start
