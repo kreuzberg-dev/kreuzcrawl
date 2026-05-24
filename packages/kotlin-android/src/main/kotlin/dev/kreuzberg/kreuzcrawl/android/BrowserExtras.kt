@@ -39,5 +39,5 @@ data class BrowserExtras(
      * All non-expired cookies present in the browser's cookie jar after
      * navigation completes (includes both prior cookies and server Set-Cookie).
      */
-    val cookies: List<CookieInfo> = emptyList()
+    val cookies: List<CookieInfo> = emptyList(),
 )

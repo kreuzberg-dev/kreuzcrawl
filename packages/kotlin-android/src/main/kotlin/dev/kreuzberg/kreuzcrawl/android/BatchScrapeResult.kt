@@ -29,5 +29,5 @@ data class BatchScrapeResult(
     /** The scrape result, if successful. */
     val result: ScrapeResult? = null,
     /** The error message, if the scrape failed. */
-    val error: String? = null
+    val error: String? = null,
 )

@@ -86,5 +86,5 @@ data class ScrapeResult(
      * Browser-specific extras (eval result, network events, cookies). Only
      * populated when `BrowserBackend.Native` was used for this request.
      */
-    val browser: BrowserExtras? = null
+    val browser: BrowserExtras? = null,
 )

@@ -70,5 +70,5 @@ data class ContentConfig(
     /** Wrap width when `wrap` is enabled. Default: `80`. */
     val wrapWidth: Long = 80L,
     /** Include document structure tree in output. Default: `true`. */
-    val includeDocumentStructure: Boolean = true
+    val includeDocumentStructure: Boolean = true,
 )

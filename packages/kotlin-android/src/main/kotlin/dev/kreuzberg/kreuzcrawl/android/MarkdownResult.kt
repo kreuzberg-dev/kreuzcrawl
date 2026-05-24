@@ -42,5 +42,5 @@ data class MarkdownResult(
      */
     val citations: Boolean = false,
     /** Content-filtered markdown optimized for LLM consumption. */
-    val fitContent: String? = null
+    val fitContent: String? = null,
 )

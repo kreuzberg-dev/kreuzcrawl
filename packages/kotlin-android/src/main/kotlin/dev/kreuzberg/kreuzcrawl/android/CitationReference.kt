@@ -32,5 +32,5 @@ data class CitationReference(
     /** Resolved absolute URL for this reference. */
     val url: String = "",
     /** Human-readable anchor text or title for the reference. */
-    val text: String = ""
+    val text: String = "",
 )

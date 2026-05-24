@@ -43,5 +43,5 @@ data class DownloadedDocument(
     /** SHA-256 hex digest of the content. */
     val contentHash: String = "",
     /** Selected response headers. */
-    val headers: Map<String, String> = emptyMap()
+    val headers: Map<String, String> = emptyMap(),
 )

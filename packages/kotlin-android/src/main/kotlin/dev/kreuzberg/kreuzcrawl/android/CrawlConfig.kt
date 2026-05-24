@@ -113,5 +113,5 @@ data class CrawlConfig(
     /** Named browser profile for persistent sessions (cookies, localStorage). */
     val browserProfile: String? = null,
     /** Whether to save changes back to the browser profile on exit. */
-    val saveBrowserProfile: Boolean = false
+    val saveBrowserProfile: Boolean = false,
 )

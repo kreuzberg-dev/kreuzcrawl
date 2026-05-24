@@ -29,5 +29,5 @@ data class BatchCrawlResult(
     /** The crawl result, if successful. */
     val result: CrawlResult? = null,
     /** The error message, if the crawl failed. */
-    val error: String? = null
+    val error: String? = null,
 )

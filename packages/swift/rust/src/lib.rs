@@ -4342,14 +4342,17 @@ impl BrowserBackend {
 }
 
 pub enum AuthConfig {
-    /// Data variants not directly bridgeable — represented as Unknown.
-    Unknown,
+    Basic,
+    Bearer,
+    Header,
 }
 
 impl From<kreuzcrawl::AuthConfig> for AuthConfig {
     fn from(val: kreuzcrawl::AuthConfig) -> Self {
         match val {
-            _ => Self::Unknown,
+            kreuzcrawl::AuthConfig::Basic { .. } => Self::Basic,
+            kreuzcrawl::AuthConfig::Bearer { .. } => Self::Bearer,
+            kreuzcrawl::AuthConfig::Header { .. } => Self::Header,
         }
     }
 }
@@ -4357,7 +4360,9 @@ impl From<kreuzcrawl::AuthConfig> for AuthConfig {
 impl AuthConfig {
     pub fn to_string(&self) -> String {
         match self {
-            Self::Unknown => "unknown".to_string(),
+            Self::Basic => "basic".to_string(),
+            Self::Bearer => "bearer".to_string(),
+            Self::Header => "header".to_string(),
         }
     }
 }
@@ -4494,14 +4499,17 @@ impl AssetCategory {
 }
 
 pub enum CrawlEvent {
-    /// Data variants not directly bridgeable — represented as Unknown.
-    Unknown,
+    Page,
+    Error,
+    Complete,
 }
 
 impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
     fn from(val: kreuzcrawl::CrawlEvent) -> Self {
         match val {
-            _ => Self::Unknown,
+            kreuzcrawl::CrawlEvent::Page { .. } => Self::Page,
+            kreuzcrawl::CrawlEvent::Error { .. } => Self::Error,
+            kreuzcrawl::CrawlEvent::Complete { .. } => Self::Complete,
         }
     }
 }
@@ -4509,22 +4517,35 @@ impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
 impl CrawlEvent {
     pub fn to_string(&self) -> String {
         match self {
-            Self::Unknown => "unknown".to_string(),
+            Self::Page => "page".to_string(),
+            Self::Error => "error".to_string(),
+            Self::Complete => "complete".to_string(),
         }
     }
 }
 
 pub enum PageAction {
+    Click,
+    TypeText,
+    Press,
+    Scroll,
+    Wait,
+    Screenshot,
+    ExecuteJs,
     Scrape,
-    /// Data variants not directly bridgeable — represented as Unknown.
-    Unknown,
 }
 
 impl From<kreuzcrawl::PageAction> for PageAction {
     fn from(val: kreuzcrawl::PageAction) -> Self {
         match val {
+            kreuzcrawl::PageAction::Click { .. } => Self::Click,
+            kreuzcrawl::PageAction::TypeText { .. } => Self::TypeText,
+            kreuzcrawl::PageAction::Press { .. } => Self::Press,
+            kreuzcrawl::PageAction::Scroll { .. } => Self::Scroll,
+            kreuzcrawl::PageAction::Wait { .. } => Self::Wait,
+            kreuzcrawl::PageAction::Screenshot { .. } => Self::Screenshot,
+            kreuzcrawl::PageAction::ExecuteJs { .. } => Self::ExecuteJs,
             kreuzcrawl::PageAction::Scrape => Self::Scrape,
-            _ => Self::Unknown,
         }
     }
 }
@@ -4532,8 +4553,14 @@ impl From<kreuzcrawl::PageAction> for PageAction {
 impl PageAction {
     pub fn to_string(&self) -> String {
         match self {
+            Self::Click => "click".to_string(),
+            Self::TypeText => "type".to_string(),
+            Self::Press => "press".to_string(),
+            Self::Scroll => "scroll".to_string(),
+            Self::Wait => "wait".to_string(),
+            Self::Screenshot => "screenshot".to_string(),
+            Self::ExecuteJs => "executeJs".to_string(),
             Self::Scrape => "scrape".to_string(),
-            Self::Unknown => "unknown".to_string(),
         }
     }
 }

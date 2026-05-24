@@ -35,5 +35,5 @@ data class DownloadedAsset(
     /** The category of the asset. */
     val assetCategory: AssetCategory = AssetCategory.IMAGE,
     /** The HTML tag that referenced this asset (e.g., "link", "script", "img"). */
-    val htmlTag: String? = null
+    val htmlTag: String? = null,
 )

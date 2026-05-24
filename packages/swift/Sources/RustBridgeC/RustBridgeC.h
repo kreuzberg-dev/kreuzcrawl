@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <stdbool.h>
+#include <stdbool.h> 
 typedef struct RustStr { uint8_t* const start; uintptr_t len; } RustStr;
 typedef struct __private__FfiSlice { void* const start; uintptr_t len; } __private__FfiSlice;
 void* __swift_bridge__null_pointer(void);
@@ -1121,3 +1121,5 @@ struct __private__ResultPtrAndPtr __swift_bridge__$asset_category_from_json(void
 struct __private__ResultPtrAndPtr __swift_bridge__$crawl_event_from_json(void* json);
 struct __private__ResultPtrAndPtr __swift_bridge__$page_action_from_json(void* json);
 struct __private__ResultPtrAndPtr __swift_bridge__$scroll_direction_from_json(void* json);
+
+

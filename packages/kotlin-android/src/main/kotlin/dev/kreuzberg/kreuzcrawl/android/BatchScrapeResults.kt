@@ -36,5 +36,5 @@ data class BatchScrapeResults(
     /** Number of URLs whose scrape succeeded (`error` is `null`). */
     val completedCount: Long = 0L,
     /** Number of URLs whose scrape failed (`error` is `Some`). */
-    val failedCount: Long = 0L
+    val failedCount: Long = 0L,
 )

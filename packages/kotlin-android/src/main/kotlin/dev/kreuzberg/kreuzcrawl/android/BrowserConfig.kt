@@ -75,5 +75,5 @@ data class BrowserConfig(
      * Capture the full network event stream into the result. Default false
      * (only the document event is captured). Native only.
      */
-    val captureNetworkEvents: Boolean = false
+    val captureNetworkEvents: Boolean = false,
 )

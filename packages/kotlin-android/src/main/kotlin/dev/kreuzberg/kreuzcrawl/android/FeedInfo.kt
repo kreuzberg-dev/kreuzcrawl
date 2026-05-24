@@ -29,5 +29,5 @@ data class FeedInfo(
     /** The feed title, if present. */
     val title: String? = null,
     /** The type of feed. */
-    val feedType: FeedType = FeedType.RSS
+    val feedType: FeedType = FeedType.RSS,
 )

@@ -27,5 +27,5 @@ data class CitationResult(
     /** Markdown with links replaced by numbered citations. */
     val content: String = "",
     /** Numbered reference list: (index, url, text). */
-    val references: List<CitationReference> = emptyList()
+    val references: List<CitationReference> = emptyList(),
 )

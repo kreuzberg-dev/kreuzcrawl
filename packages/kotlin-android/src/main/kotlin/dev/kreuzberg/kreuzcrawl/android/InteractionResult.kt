@@ -31,5 +31,5 @@ data class InteractionResult(
     /** Final page URL (may have changed due to navigation). */
     val finalUrl: String = "",
     /** Screenshot taken after all actions, if requested. */
-    val screenshot: ByteArray? = null
+    val screenshot: ByteArray? = null,
 )
