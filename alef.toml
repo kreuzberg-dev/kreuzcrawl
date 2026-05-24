@@ -1216,6 +1216,7 @@ module = "kreuzcrawl"
 [crates.e2e.calls.crawl_stream.overrides.swift]
 function = "crawlStream"
 module = "Kreuzcrawl"
+unnamed_arg_indices = [0, 1]
 
 [crates.e2e.calls.crawl_stream.overrides.elixir]
 function = "crawl_stream"
