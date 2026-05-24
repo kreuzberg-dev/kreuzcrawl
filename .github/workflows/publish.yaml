@@ -1498,9 +1498,10 @@ jobs:
 
       - uses: kreuzberg-dev/actions/publish-crates@v1
         with:
-          # Order matters: bindings-common is depended on by everything,
-          # kreuzcrawl is depended on by kreuzcrawl-cli.
-          crates: kreuzcrawl-bindings-common kreuzcrawl kreuzcrawl-cli
+          # Order matters: kreuzcrawl is depended on by both
+          # kreuzcrawl-bindings-common and kreuzcrawl-cli, so it must
+          # publish first or the dependents fail to resolve on the index.
+          crates: kreuzcrawl kreuzcrawl-bindings-common kreuzcrawl-cli
           version: ${{ needs.prepare.outputs.version }}
           dry-run: ${{ needs.prepare.outputs.dry_run }}
 
@@ -1579,7 +1580,6 @@ jobs:
       - uses: kreuzberg-dev/actions/setup-node-workspace@v1
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org/"
 
       - name: Stage platform packages with napi
         # Inline: napi artifacts → per-platform npm/ subpackages plus build the
@@ -1605,8 +1605,6 @@ jobs:
           packages-dir: crates/kreuzcrawl-node/npm
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
           dry-run: ${{ needs.prepare.outputs.dry_run }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Wait for npm indexing (linux-x64-gnu)
         if: ${{ needs.prepare.outputs.dry_run != 'true' }}
@@ -1623,8 +1621,6 @@ jobs:
           package-dir: crates/kreuzcrawl-node
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
           dry-run: ${{ needs.prepare.outputs.dry_run }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-wasm:
     name: Publish WASM package
@@ -1648,7 +1644,6 @@ jobs:
       - uses: kreuzberg-dev/actions/setup-node-workspace@v1
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org/"
 
       - uses: kreuzberg-dev/actions/publish-npm@v1
         with:
@@ -1656,8 +1651,6 @@ jobs:
           npm-tag: ${{ needs.prepare.outputs.npm_tag }}
           provenance: "true"
           dry-run: ${{ needs.prepare.outputs.dry_run }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-packagist:
     name: Trigger Packagist update
