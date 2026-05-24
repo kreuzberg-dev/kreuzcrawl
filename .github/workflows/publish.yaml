@@ -1041,6 +1041,8 @@ jobs:
           cache-key-prefix: publish-java-${{ matrix.classifier }}
 
       - uses: kreuzberg-dev/actions/build-java-natives@v1
+        env:
+          RUSTFLAGS: -C target-feature=-crt-static
         with:
           target: ${{ matrix.target }}
           crate-name: kreuzcrawl-ffi
