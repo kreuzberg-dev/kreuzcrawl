@@ -2,6 +2,10 @@
 	"id": "browser_mode_always",
 	"description": "Browser mode 'always' uses browser even for normal server-rendered pages",
 	"tags": ["browser", "config"],
+	"skip": {
+		"languages": ["wasm"],
+		"reason": "wasm32 has no chromium backend"
+	},
 	"input": {
 		"mock_responses": [
 			{

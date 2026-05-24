@@ -2,6 +2,10 @@
 	"id": "browser_fallback_waf_blocked",
 	"description": "Browser fallback is used when browser mode is always, simulating WAF-blocked scenario",
 	"tags": ["browser", "fallback", "waf"],
+	"skip": {
+		"languages": ["wasm"],
+		"reason": "wasm32 has no chromium backend"
+	},
 	"input": {
 		"mock_responses": [
 			{
