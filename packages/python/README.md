@@ -92,13 +92,13 @@ conversion. Wheels published for Linux, macOS, and Windows.
 ```bash
 pip install kreuzcrawl
 ```
+
 ## Quick Start
 
 ```python title="Python"
 import asyncio
 
 from kreuzcrawl import CrawlConfig, create_engine, crawl, scrape
-
 
 async def main() -> None:
     # Simplest case: scrape a single page with default settings.
@@ -113,10 +113,10 @@ async def main() -> None:
     crawl_result = await crawl(crawl_engine, "https://en.wikipedia.org/wiki/Web_scraping")
     print(f"Pages crawled: {len(crawl_result.pages)}")
 
-
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

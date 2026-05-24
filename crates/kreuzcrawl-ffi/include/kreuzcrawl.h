@@ -1087,6 +1087,13 @@ void kcrawl_downloaded_document_free(KCRAWLDownloadedDocument *ptr);
 char *kcrawl_downloaded_document_url(const KCRAWLDownloadedDocument *ptr);
 
 /**
+ * Get the `mime_type` field from a `DownloadedDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_downloaded_document_mime_type(const KCRAWLDownloadedDocument *ptr);
+
+/**
  * Get the `content` field from a `DownloadedDocument`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
@@ -1100,6 +1107,20 @@ uint8_t *kcrawl_downloaded_document_content(const KCRAWLDownloadedDocument *ptr,
  * Pointer must be a valid handle returned by this library.
  */
 uintptr_t kcrawl_downloaded_document_size(const KCRAWLDownloadedDocument *ptr);
+
+/**
+ * Get the `filename` field from a `DownloadedDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_downloaded_document_filename(const KCRAWLDownloadedDocument *ptr);
+
+/**
+ * Get the `content_hash` field from a `DownloadedDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_downloaded_document_content_hash(const KCRAWLDownloadedDocument *ptr);
 
 /**
  * Get the `headers` field from a `DownloadedDocument`.
@@ -1188,6 +1209,13 @@ void kcrawl_action_result_free(KCRAWLActionResult *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 uintptr_t kcrawl_action_result_action_index(const KCRAWLActionResult *ptr);
+
+/**
+ * Get the `action_type` field from a `ActionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_action_result_action_type(const KCRAWLActionResult *ptr);
 
 /**
  * Get the `success` field from a `ActionResult`.

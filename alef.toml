@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.17.35"
+alef_version = "0.18.2"
 languages = [
   "python",
   "node",
@@ -628,6 +628,7 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
+options_type = "CrawlConfig"
 
 [[crates.e2e.call.args]]
 name = "engine"
@@ -644,6 +645,7 @@ optional = true
 [crates.e2e.call.overrides.python]
 module = "kreuzcrawl"
 function = "scrape"
+options_type = "CrawlConfig"
 handle_dict_types = ["auth"]
 
 [crates.e2e.call.overrides.python.handle_nested_types]
@@ -712,6 +714,7 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
+options_type = "CrawlConfig"
 select_when = { category = "batch", input_has = "batch_urls" }
 # Elixir, zig, swift bindings and brew CLI do not expose batch functions.
 # For elixir/zig/swift: unsafe NIF tuple marshalling with mixed-type arrays.
@@ -798,6 +801,7 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
+options_type = "CrawlConfig"
 select_when = { tag = "crawl" }
 # CrawlResult top-level fields (per crates/kreuzcrawl/src/types/results.rs).
 # `stayed_on_domain` is a CrawlPageResult field included here so fixtures asserting
@@ -893,6 +897,7 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
+options_type = "CrawlConfig"
 select_when = { tag = "map" }
 # MapResult top-level fields (per crates/kreuzcrawl/src/types/results.rs).
 result_fields = ["urls", "has_lastmod"]
@@ -976,6 +981,7 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
+options_type = "CrawlConfig"
 select_when = { input_has = "actions" }
 # Brew CLI cannot support interact: interaction requires serializing Vec<PageAction>
 # (complex discriminated enum) to a JSON CLI argument, which the current shell-based
@@ -1072,6 +1078,7 @@ module = "kreuzcrawl"
 result_var = "result"
 async = true
 returns_result = true
+options_type = "CrawlConfig"
 select_when = { category = "batch", id_prefix = "batch_crawl" }
 # Same constraints as batch_scrape: NIF tuple marshalling for mixed-type arrays
 # is unsafe in elixir/zig/swift, and brew CLI lacks a batch subcommand.
@@ -1157,6 +1164,7 @@ result_var = "result"
 async = true
 returns_result = true
 streaming = true
+options_type = "CrawlConfig"
 select_when = { category = "stream" }
 # wasm is excluded for the underlying adapter (see [[crates.adapters]] above);
 # repeat here so codegen skips per-language streaming emission consistently.
@@ -1242,6 +1250,7 @@ result_var = "result"
 async = true
 returns_result = true
 streaming = true
+options_type = "CrawlConfig"
 select_when = { category = "stream", id_prefix = "batch_crawl_stream" }
 # C excluded: callback-based FFI API, same reason as crawl_stream.
 skip_languages = ["wasm", "elixir", "zig", "swift", "brew", "c"]
@@ -1396,9 +1405,6 @@ description = "metadata.description"
 "map_result.has_lastmod" = "skip"
 # InteractionResult fields — action_results is a JSON array returned as char*
 "interaction_result.action_results" = "char*"
-# DownloadedDocument has no mime_type field on the C FFI surface — skip the
-# assertion path so the codegen does not emit a call to a non-existent symbol.
-"downloaded_document.mime_type" = "skip"
 # MarkdownResult.citations returns an opaque CitationResult* handle, not a JSON
 # string. Marking it PascalCase activates the opaque-leaf-handle codegen path.
 "markdown_result.citations" = "CitationResult"

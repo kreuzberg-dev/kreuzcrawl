@@ -1137,6 +1137,58 @@ pub fn batch_crawl(engine: ?[]const u8, urls: []const u8) CrawlError![]u8 {
     };
 }
 
+/// Iterator over `CrawlEvent` items in a streaming response.
+pub const CrawlEventStream = struct {
+    _handle: *c.KCRAWLCrawlEventStream,
+
+    /// Fetch the next item from the stream, or null at end-of-stream.
+    /// Returns an error on mid-stream failure; null on clean EOS.
+    pub fn next(self: *CrawlEventStream) (CrawlError || error{OutOfMemory})!?CrawlEvent {
+        const _chunk = c.kcrawl_crawl_engine_handle_crawl_stream_next(self._handle);
+        if (_chunk == null) {
+            // Check errno: 0 = clean EOS, != 0 = error
+            if (c.kcrawl_last_error_code() != 0) return _first_error(CrawlError);
+            return null;
+        }
+        defer c.kcrawl_crawl_event_free(_chunk);
+        const _json = c.kcrawl_crawl_event_to_json(_chunk);
+        defer c.kcrawl_free_string(_json);
+        const _json_slice = std.mem.span(_json);
+        return try std.json.parseFromSliceLeaky(CrawlEvent, std.heap.c_allocator, _json_slice, .{ .ignore_unknown_fields = true, .allocate = .alloc_always });
+    }
+
+    /// Release the underlying stream handle.
+    pub fn deinit(self: *CrawlEventStream) void {
+        c.kcrawl_crawl_engine_handle_crawl_stream_free(self._handle);
+    }
+};
+
+/// Iterator over `CrawlEvent` items in a streaming response.
+pub const CrawlEventStream = struct {
+    _handle: *c.KCRAWLCrawlEventStream,
+
+    /// Fetch the next item from the stream, or null at end-of-stream.
+    /// Returns an error on mid-stream failure; null on clean EOS.
+    pub fn next(self: *CrawlEventStream) (CrawlError || error{OutOfMemory})!?CrawlEvent {
+        const _chunk = c.kcrawl_crawl_engine_handle_batch_crawl_stream_next(self._handle);
+        if (_chunk == null) {
+            // Check errno: 0 = clean EOS, != 0 = error
+            if (c.kcrawl_last_error_code() != 0) return _first_error(CrawlError);
+            return null;
+        }
+        defer c.kcrawl_crawl_event_free(_chunk);
+        const _json = c.kcrawl_crawl_event_to_json(_chunk);
+        defer c.kcrawl_free_string(_json);
+        const _json_slice = std.mem.span(_json);
+        return try std.json.parseFromSliceLeaky(CrawlEvent, std.heap.c_allocator, _json_slice, .{ .ignore_unknown_fields = true, .allocate = .alloc_always });
+    }
+
+    /// Release the underlying stream handle.
+    pub fn deinit(self: *CrawlEventStream) void {
+        c.kcrawl_crawl_engine_handle_batch_crawl_stream_free(self._handle);
+    }
+};
+
 /// Opaque handle to a configured crawl engine.
 ///
 /// Constructed via `create_engine` with an optional `CrawlConfig`.
@@ -1150,7 +1202,7 @@ pub const CrawlEngineHandle = struct {
     /// terminal `Complete` event. On per-URL failure during the crawl, emits an
     /// `Error` event followed by `Complete`. The stream item type is wrapped in
     /// a `Result` to surface transport-level errors; today every emit is `Ok`.
-    pub fn crawl_stream(self: *CrawlEngineHandle, req: []const u8) (CrawlError || error{OutOfMemory})![]u8 {
+    pub fn crawl_stream(self: *CrawlEngineHandle, req: []const u8) (CrawlError || error{OutOfMemory})!CrawlEventStream {
         const req_z = try std.heap.c_allocator.dupeZ(u8, req);
         const req_handle = c.kcrawl_crawl_stream_request_from_json(req_z.ptr);
         std.heap.c_allocator.free(req_z);
@@ -1162,25 +1214,7 @@ pub const CrawlEngineHandle = struct {
         if (_stream_handle == null) {
             return _first_error(CrawlError);
         }
-        defer c.kcrawl_crawl_engine_handle_crawl_stream_free(_stream_handle);
-        var _buf = try std.ArrayList(u8).initCapacity(std.heap.c_allocator, 0);
-        defer _buf.deinit(std.heap.c_allocator);
-        try _buf.append(std.heap.c_allocator, '[');
-        var _first = true;
-        while (true) {
-            const _chunk = c.kcrawl_crawl_engine_handle_crawl_stream_next(_stream_handle);
-            if (_chunk == null) break;
-            const _chunk_json_ptr = c.kcrawl_crawl_event_to_json(_chunk);
-            c.kcrawl_crawl_event_free(_chunk);
-            if (_chunk_json_ptr == null) continue;
-            if (!_first) try _buf.append(std.heap.c_allocator, ',');
-            _first = false;
-            const _chunk_slice = std.mem.span(_chunk_json_ptr);
-            try _buf.appendSlice(std.heap.c_allocator, _chunk_slice);
-            c.kcrawl_free_string(_chunk_json_ptr);
-        }
-        try _buf.append(std.heap.c_allocator, ']');
-        return _buf.toOwnedSlice(std.heap.c_allocator);
+        return CrawlEventStream{ ._handle = _stream_handle };
     }
 
     /// Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -1189,7 +1223,7 @@ pub const CrawlEngineHandle = struct {
     /// seeds, plus terminal `Complete` and `Error` events as appropriate. The
     /// stream item type is wrapped in a `Result` to surface transport-level
     /// errors; today every emit is `Ok`.
-    pub fn batch_crawl_stream(self: *CrawlEngineHandle, req: []const u8) (CrawlError || error{OutOfMemory})![]u8 {
+    pub fn batch_crawl_stream(self: *CrawlEngineHandle, req: []const u8) (CrawlError || error{OutOfMemory})!CrawlEventStream {
         const req_z = try std.heap.c_allocator.dupeZ(u8, req);
         const req_handle = c.kcrawl_batch_crawl_stream_request_from_json(req_z.ptr);
         std.heap.c_allocator.free(req_z);
@@ -1201,25 +1235,7 @@ pub const CrawlEngineHandle = struct {
         if (_stream_handle == null) {
             return _first_error(CrawlError);
         }
-        defer c.kcrawl_crawl_engine_handle_batch_crawl_stream_free(_stream_handle);
-        var _buf = try std.ArrayList(u8).initCapacity(std.heap.c_allocator, 0);
-        defer _buf.deinit(std.heap.c_allocator);
-        try _buf.append(std.heap.c_allocator, '[');
-        var _first = true;
-        while (true) {
-            const _chunk = c.kcrawl_crawl_engine_handle_batch_crawl_stream_next(_stream_handle);
-            if (_chunk == null) break;
-            const _chunk_json_ptr = c.kcrawl_crawl_event_to_json(_chunk);
-            c.kcrawl_crawl_event_free(_chunk);
-            if (_chunk_json_ptr == null) continue;
-            if (!_first) try _buf.append(std.heap.c_allocator, ',');
-            _first = false;
-            const _chunk_slice = std.mem.span(_chunk_json_ptr);
-            try _buf.appendSlice(std.heap.c_allocator, _chunk_slice);
-            c.kcrawl_free_string(_chunk_json_ptr);
-        }
-        try _buf.append(std.heap.c_allocator, ']');
-        return _buf.toOwnedSlice(std.heap.c_allocator);
+        return CrawlEventStream{ ._handle = _stream_handle };
     }
 
     /// Release the underlying FFI handle. Safe to call once per instance.

@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     const test_step = b.step("test", "Run tests");
-    const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libkreuzcrawl_ffi") orelse "../../target/debug";
+    const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libkreuzcrawl_ffi") orelse "../../target/release";
     const ffi_include = b.option([]const u8, "ffi_include_path", "Path to directory containing FFI header") orelse "../../crates/kreuzcrawl-ffi/include";
 
     const kreuzcrawl_module = b.addModule("kreuzcrawl", .{

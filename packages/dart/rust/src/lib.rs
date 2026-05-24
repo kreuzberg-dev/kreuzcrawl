@@ -1255,10 +1255,10 @@ impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     fn from(v: kreuzcrawl::DownloadedDocument) -> Self {
         DownloadedDocument {
             url: v.url.into(),
-            mime_type: v.mime_type.into_owned(),
+            mime_type: v.mime_type.into(),
             size: v.size as _,
-            filename: Default::default(),
-            content_hash: Default::default(),
+            filename: v.filename.map(|s| s.into()),
+            content_hash: v.content_hash.into(),
             headers: v.headers.into_iter().map(|(k, v)| (k.into(), v.into())).collect(),
         }
     }
@@ -1278,7 +1278,7 @@ impl From<kreuzcrawl::ActionResult> for ActionResult {
     fn from(v: kreuzcrawl::ActionResult) -> Self {
         ActionResult {
             action_index: v.action_index as _,
-            action_type: v.action_type.into_owned(),
+            action_type: v.action_type.into(),
             success: v.success as _,
             data: v.data.map(|j| serde_json::to_string(&j).unwrap_or_default()),
             error: v.error.map(|s| s.into()),
