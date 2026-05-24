@@ -4631,7 +4631,8 @@ pub fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Batch
     })
 }
 
-/// Opaque handle owning a tokio runtime and a boxed `CrawlEvent` stream.
+/// Opaque handle holding a reference to the process-wide tokio runtime
+/// and a boxed `CrawlEvent` stream.
 ///
 /// Created by `crawl_engine_handle_crawl_stream_start`, advanced via `next()`. Drop runs when the
 /// Swift handle goes out of scope (swift-bridge generates the matching
@@ -4643,7 +4644,7 @@ pub fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Batch
 /// no valid JSON value is the empty string.
 #[allow(clippy::type_complexity)]
 pub struct CrawlEngineHandleCrawlStreamStreamHandle {
-    rt: ::tokio::runtime::Runtime,
+    _rt: ::tokio::runtime::Handle,
     stream: ::std::sync::Mutex<
         Option<
             ::futures_util::stream::BoxStream<
@@ -4663,18 +4664,14 @@ pub fn crawl_engine_handle_crawl_stream_start(
     req: &CrawlStreamRequest,
 ) -> Result<CrawlEngineHandleCrawlStreamStreamHandle, String> {
     use ::futures_util::StreamExt;
-    let rt = ::tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(1)
-        .enable_all()
-        .build()
-        .map_err(|e| format!("build tokio runtime: {e}"))?;
+    let rt = crate::__alef_tokio_runtime();
     let raw = rt.block_on(async { client.0.crawl_stream(req.0.clone()).await.map_err(|e| e.to_string()) })?;
     let erased: ::futures_util::stream::BoxStream<
         'static,
         Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
     > = Box::pin(raw.map(|r| r.map_err(|e| Box::new(e) as Box<dyn ::std::error::Error + Send + Sync + 'static>)));
     Ok(CrawlEngineHandleCrawlStreamStreamHandle {
-        rt,
+        _rt: rt.handle().clone(),
         stream: ::std::sync::Mutex::new(Some(erased)),
     })
 }
@@ -4693,7 +4690,7 @@ impl CrawlEngineHandleCrawlStreamStreamHandle {
             None => return Ok(String::new()),
         };
         use ::futures_util::StreamExt;
-        match self.rt.block_on(stream.next()) {
+        match crate::__alef_tokio_runtime().block_on(stream.next()) {
             Some(Ok(item)) => ::serde_json::to_string(&item).map_err(|e| e.to_string()),
             Some(Err(e)) => {
                 *guard = None;
@@ -4707,7 +4704,8 @@ impl CrawlEngineHandleCrawlStreamStreamHandle {
     }
 }
 
-/// Opaque handle owning a tokio runtime and a boxed `CrawlEvent` stream.
+/// Opaque handle holding a reference to the process-wide tokio runtime
+/// and a boxed `CrawlEvent` stream.
 ///
 /// Created by `crawl_engine_handle_batch_crawl_stream_start`, advanced via `next()`. Drop runs when the
 /// Swift handle goes out of scope (swift-bridge generates the matching
@@ -4719,7 +4717,7 @@ impl CrawlEngineHandleCrawlStreamStreamHandle {
 /// no valid JSON value is the empty string.
 #[allow(clippy::type_complexity)]
 pub struct CrawlEngineHandleBatchCrawlStreamStreamHandle {
-    rt: ::tokio::runtime::Runtime,
+    _rt: ::tokio::runtime::Handle,
     stream: ::std::sync::Mutex<
         Option<
             ::futures_util::stream::BoxStream<
@@ -4739,11 +4737,7 @@ pub fn crawl_engine_handle_batch_crawl_stream_start(
     req: &BatchCrawlStreamRequest,
 ) -> Result<CrawlEngineHandleBatchCrawlStreamStreamHandle, String> {
     use ::futures_util::StreamExt;
-    let rt = ::tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(1)
-        .enable_all()
-        .build()
-        .map_err(|e| format!("build tokio runtime: {e}"))?;
+    let rt = crate::__alef_tokio_runtime();
     let raw = rt.block_on(async {
         client
             .0
@@ -4756,7 +4750,7 @@ pub fn crawl_engine_handle_batch_crawl_stream_start(
         Result<kreuzcrawl::CrawlEvent, Box<dyn ::std::error::Error + Send + Sync + 'static>>,
     > = Box::pin(raw.map(|r| r.map_err(|e| Box::new(e) as Box<dyn ::std::error::Error + Send + Sync + 'static>)));
     Ok(CrawlEngineHandleBatchCrawlStreamStreamHandle {
-        rt,
+        _rt: rt.handle().clone(),
         stream: ::std::sync::Mutex::new(Some(erased)),
     })
 }
@@ -4775,7 +4769,7 @@ impl CrawlEngineHandleBatchCrawlStreamStreamHandle {
             None => return Ok(String::new()),
         };
         use ::futures_util::StreamExt;
-        match self.rt.block_on(stream.next()) {
+        match crate::__alef_tokio_runtime().block_on(stream.next()) {
             Some(Ok(item)) => ::serde_json::to_string(&item).map_err(|e| e.to_string()),
             Some(Err(e)) => {
                 *guard = None;

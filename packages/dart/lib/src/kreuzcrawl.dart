@@ -28,7 +28,10 @@ class KreuzcrawlBridge {
 
   /// Scrape a single URL, returning extracted page data.
   /// throws CrawlError on failure
-  static Future<ScrapeResult> scrape(CrawlEngineHandle engine, String url) async {
+  static Future<ScrapeResult> scrape(
+    CrawlEngineHandle engine,
+    String url,
+  ) async {
     return await rust_bridge.scrape(engine: engine, url: url);
   }
 
@@ -46,28 +49,47 @@ class KreuzcrawlBridge {
 
   /// Execute browser actions on a single page.
   /// throws CrawlError on failure
-  static Future<InteractionResult> interact(CrawlEngineHandle engine, String url, List<PageAction> actions) async {
-    return await rust_bridge.interact(engine: engine, url: url, actions: actions);
+  static Future<InteractionResult> interact(
+    CrawlEngineHandle engine,
+    String url,
+    List<PageAction> actions,
+  ) async {
+    return await rust_bridge.interact(
+      engine: engine,
+      url: url,
+      actions: actions,
+    );
   }
 
   /// Scrape multiple URLs concurrently.
   /// throws CrawlError on failure
-  static Future<BatchScrapeResults> batchScrape(CrawlEngineHandle engine, List<String> urls) async {
+  static Future<BatchScrapeResults> batchScrape(
+    CrawlEngineHandle engine,
+    List<String> urls,
+  ) async {
     return await rust_bridge.batchScrape(engine: engine, urls: urls);
   }
 
   /// Crawl multiple seed URLs concurrently, each following links to configured depth.
   /// throws CrawlError on failure
-  static Future<BatchCrawlResults> batchCrawl(CrawlEngineHandle engine, List<String> urls) async {
+  static Future<BatchCrawlResults> batchCrawl(
+    CrawlEngineHandle engine,
+    List<String> urls,
+  ) async {
     return await rust_bridge.batchCrawl(engine: engine, urls: urls);
   }
 
-  static Stream<CrawlEvent> crawlStream(CrawlEngineHandle crawlEngineHandle, CrawlStreamRequest req) {
+  static Stream<CrawlEvent> crawlStream(
+    CrawlEngineHandle crawlEngineHandle,
+    CrawlStreamRequest req,
+  ) {
     return crawlEngineHandle.crawlStream(req: req);
   }
 
-  static Stream<CrawlEvent> batchCrawlStream(CrawlEngineHandle crawlEngineHandle, BatchCrawlStreamRequest req) {
+  static Stream<CrawlEvent> batchCrawlStream(
+    CrawlEngineHandle crawlEngineHandle,
+    BatchCrawlStreamRequest req,
+  ) {
     return crawlEngineHandle.batchCrawlStream(req: req);
   }
-
 }

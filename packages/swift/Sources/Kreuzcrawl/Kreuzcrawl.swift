@@ -1745,21 +1745,24 @@ public func createEngine(config: CrawlConfig?) throws -> CrawlEngineHandle {
 /// Scrape a single URL, returning extracted page data.
 public func scrape(engine: CrawlEngineHandle, url: String) async throws -> ScrapeResult {
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.scrape(engine, RustString(url))
+        let result = try RustBridge.scrape(engine, RustString(url))
+        return result
     }.value
 }
 
 /// Crawl a website starting from `url`, following links up to the configured depth.
 public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlResult {
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.crawl(engine, RustString(url))
+        let result = try RustBridge.crawl(engine, RustString(url))
+        return result
     }.value
 }
 
 /// Discover all pages on a website by following links and sitemaps.
 public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapResult {
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.mapUrls(engine, RustString(url))
+        let _rb_obj = try RustBridge.mapUrls(engine, RustString(url))
+        return try MapResult(_rb_obj)
     }.value
 }
 
@@ -1767,7 +1770,8 @@ public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapR
 public func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) async throws -> InteractionResult {
     let _rb_actions: RustVec<RustString> = try ({ () throws -> RustVec<RustString> in let v = RustVec<RustString>(); for item in actions { let data = try JSONEncoder().encode(item); let json = String(data: data, encoding: .utf8) ?? "null"; v.push(value: RustString(json)) }; return v }())
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.interact(engine, RustString(url), _rb_actions)
+        let result = try RustBridge.interact(engine, RustString(url), _rb_actions)
+        return result
     }.value
 }
 
@@ -1775,7 +1779,8 @@ public func interact(engine: CrawlEngineHandle, url: String, actions: [PageActio
 public func batchScrape(engine: CrawlEngineHandle, urls: [String]) async throws -> BatchScrapeResults {
     let _rb_urls: RustVec<RustString> = { let v = RustVec<RustString>(); for s in urls { v.push(value: RustString(s)) }; return v }()
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.batchScrape(engine, _rb_urls)
+        let result = try RustBridge.batchScrape(engine, _rb_urls)
+        return result
     }.value
 }
 
@@ -1783,7 +1788,8 @@ public func batchScrape(engine: CrawlEngineHandle, urls: [String]) async throws 
 public func batchCrawl(engine: CrawlEngineHandle, urls: [String]) async throws -> BatchCrawlResults {
     let _rb_urls: RustVec<RustString> = { let v = RustVec<RustString>(); for s in urls { v.push(value: RustString(s)) }; return v }()
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.batchCrawl(engine, _rb_urls)
+        let result = try RustBridge.batchCrawl(engine, _rb_urls)
+        return result
     }.value
 }
 
