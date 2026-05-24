@@ -2824,6 +2824,7 @@ dependencies = [
  "blake3",
  "chromiumoxide",
  "chrono",
+ "criterion",
  "dashmap 6.1.0",
  "dirs",
  "encoding_rs",
