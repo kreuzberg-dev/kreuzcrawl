@@ -1035,19 +1035,24 @@ jobs:
 
       - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
-      - uses: kreuzberg-dev/actions/setup-rust@v1
-        with:
-          target: ${{ matrix.target }}
-          cache-key-prefix: publish-java-${{ matrix.classifier }}
+      - name: Build musl FFI via Docker
+        # Inline: building cdylib for musl on the host runner fails to link
+        # libgcc_s.so.1; kreuzcrawl's Dockerfile.musl-ffi runs on Alpine
+        # (native musl) and produces a self-contained libkreuzcrawl_ffi.so.
+        shell: bash
+        run: |
+          docker build -f docker/Dockerfile.musl-ffi --output type=local,dest=./dist .
+          file dist/libkreuzcrawl_ffi.so
 
-      - uses: kreuzberg-dev/actions/build-java-natives@v1
+      - name: Stage musl libkreuzcrawl_ffi.so under Java natives layout
+        shell: bash
         env:
-          RUSTFLAGS: -C target-feature=-crt-static
-        with:
-          target: ${{ matrix.target }}
-          crate-name: kreuzcrawl-ffi
-          lib-name: kreuzcrawl_ffi
-          classifier: ${{ matrix.classifier }}
+          CLASSIFIER: ${{ matrix.classifier }}
+        run: |
+          STAGE="dist/java-natives/native/${CLASSIFIER}"
+          mkdir -p "$STAGE"
+          cp dist/libkreuzcrawl_ffi.so "$STAGE/libkreuzcrawl_ffi.so"
+          ls -la "$STAGE"
 
       - uses: actions/upload-artifact@v7.0.1
         with:
