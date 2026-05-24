@@ -90,4 +90,5 @@ class CrawlEngineHandle internal constructor(internal val handle: Long) : AutoCl
             KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle)
         }
     }
+
 }

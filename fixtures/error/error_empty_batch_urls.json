@@ -1,7 +1,7 @@
 {
-	"id": "validation_empty_batch_urls",
+	"id": "error_empty_batch_urls",
 	"description": "Scraping a URL that cannot be found returns an error containing the URL path",
-	"tags": ["validation"],
+	"tags": ["error"],
 	"input": {
 		"mock_responses": [],
 		"config": {}

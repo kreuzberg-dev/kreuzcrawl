@@ -72,10 +72,7 @@ private class CrawlEventDeserializer : com.fasterxml.jackson.databind.deser.std.
             "error" -> ctx.readTreeAsValue<CrawlEvent.Error>(payload, CrawlEvent.Error::class.java)
             "complete" -> ctx.readTreeAsValue<CrawlEvent.Complete>(payload, CrawlEvent.Complete::class.java)
             else -> throw com.fasterxml.jackson.databind.exc.InvalidFormatException(
-                parser,
-                "Unknown CrawlEvent tag",
-                tag,
-                CrawlEvent::class.java,
+                parser, "Unknown CrawlEvent tag", tag, CrawlEvent::class.java,
             )
         }
     }
@@ -89,31 +86,23 @@ private class CrawlEventSerializer : com.fasterxml.jackson.databind.ser.std.StdS
         provider: com.fasterxml.jackson.databind.SerializerProvider,
     ) {
         @Suppress("UNCHECKED_CAST")
-        val mapper =
-            (gen.codec as? com.fasterxml.jackson.databind.ObjectMapper)
-                ?: com.fasterxml.jackson.databind.ObjectMapper().findAndRegisterModules()
+        val mapper = (gen.codec as? com.fasterxml.jackson.databind.ObjectMapper) ?: com.fasterxml.jackson.databind.ObjectMapper().findAndRegisterModules()
         val node: com.fasterxml.jackson.databind.node.ObjectNode = when (value) {
             is CrawlEvent.Page -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as CrawlEvent.Page
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as CrawlEvent.Page) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "page")
                 n
             }
             is CrawlEvent.Error -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as CrawlEvent.Error
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as CrawlEvent.Error) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "error")
                 n
             }
             is CrawlEvent.Complete -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as CrawlEvent.Complete
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as CrawlEvent.Complete) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "complete")
                 n
             }

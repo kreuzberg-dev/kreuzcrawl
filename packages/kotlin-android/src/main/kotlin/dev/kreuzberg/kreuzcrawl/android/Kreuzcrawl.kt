@@ -59,13 +59,7 @@ object Kreuzcrawl {
      * If `config` is `null`, uses `CrawlConfig.default()`.
      * Returns an error if the configuration is invalid.
      */
-    fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle = CrawlEngineHandle(
-        KreuzcrawlBridge.nativeCreateEngine(
-            config?.let {
-        mapper.writeValueAsString(it)
-    } ?: ""
-        )
-    )
+    fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle = CrawlEngineHandle(KreuzcrawlBridge.nativeCreateEngine(config?.let { mapper.writeValueAsString(it) } ?: ""))
     /** Scrape a single URL, returning extracted page data. */
     fun scrape(engine: CrawlEngineHandle, url: String): ScrapeResult {
         val resultJson = KreuzcrawlBridge.nativeScrape(engine.handle, url)
@@ -125,4 +119,5 @@ object Kreuzcrawl {
     /** Crawl multiple seed URLs concurrently, each following links to configured depth. */
     suspend fun batchCrawlAsync(engine: CrawlEngineHandle, urls: List<String>): BatchCrawlResults =
         withContext(Dispatchers.IO) { batchCrawl(engine, urls) }
+
 }

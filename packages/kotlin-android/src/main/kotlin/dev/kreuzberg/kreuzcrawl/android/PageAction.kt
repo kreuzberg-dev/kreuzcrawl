@@ -108,10 +108,7 @@ private class PageActionDeserializer : com.fasterxml.jackson.databind.deser.std.
             "executeJs" -> ctx.readTreeAsValue<PageAction.ExecuteJs>(payload, PageAction.ExecuteJs::class.java)
             "scrape" -> PageAction.Scrape
             else -> throw com.fasterxml.jackson.databind.exc.InvalidFormatException(
-                parser,
-                "Unknown PageAction tag",
-                tag,
-                PageAction::class.java,
+                parser, "Unknown PageAction tag", tag, PageAction::class.java,
             )
         }
     }
@@ -125,63 +122,47 @@ private class PageActionSerializer : com.fasterxml.jackson.databind.ser.std.StdS
         provider: com.fasterxml.jackson.databind.SerializerProvider,
     ) {
         @Suppress("UNCHECKED_CAST")
-        val mapper =
-            (gen.codec as? com.fasterxml.jackson.databind.ObjectMapper)
-                ?: com.fasterxml.jackson.databind.ObjectMapper().findAndRegisterModules()
+        val mapper = (gen.codec as? com.fasterxml.jackson.databind.ObjectMapper) ?: com.fasterxml.jackson.databind.ObjectMapper().findAndRegisterModules()
         val node: com.fasterxml.jackson.databind.node.ObjectNode = when (value) {
             is PageAction.Click -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as PageAction.Click
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as PageAction.Click) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "click")
                 n
             }
             is PageAction.TypeText -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as PageAction.TypeText
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as PageAction.TypeText) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "type")
                 n
             }
             is PageAction.Press -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as PageAction.Press
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as PageAction.Press) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "press")
                 n
             }
             is PageAction.Scroll -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as PageAction.Scroll
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as PageAction.Scroll) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "scroll")
                 n
             }
             is PageAction.Wait -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as PageAction.Wait
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as PageAction.Wait) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "wait")
                 n
             }
             is PageAction.Screenshot -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as PageAction.Screenshot
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as PageAction.Screenshot) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "screenshot")
                 n
             }
             is PageAction.ExecuteJs -> {
                 @Suppress("UNCHECKED_CAST")
-                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(
-                    value as PageAction.ExecuteJs
-                ) as com.fasterxml.jackson.databind.node.ObjectNode
+                val n = mapper.valueToTree<com.fasterxml.jackson.databind.node.ObjectNode>(value as PageAction.ExecuteJs) as com.fasterxml.jackson.databind.node.ObjectNode
                 n.put("type", "executeJs")
                 n
             }

@@ -13,9 +13,7 @@ package dev.kreuzberg.kreuzcrawl.android
 
 @Suppress("TooManyFunctions")
 object KreuzcrawlBridge {
-    init {
-        System.loadLibrary("kcrawl_jni")
-    }
+    init { System.loadLibrary("kcrawl_jni") }
 
     @Throws(KreuzcrawlBridgeException::class)
     external fun nativeGenerateCitations(markdown: String): String
@@ -46,19 +44,15 @@ object KreuzcrawlBridge {
     // Streaming JNI externs for CrawlEngineHandle.crawlStream
     @Throws(KreuzcrawlBridgeException::class)
     external fun nativeCrawlEngineHandleCrawlStreamStart(clientHandle: Long, requestJson: String): Long
-
     @Throws(KreuzcrawlBridgeException::class)
     external fun nativeCrawlEngineHandleCrawlStreamNext(streamHandle: Long): String?
-
     external fun nativeCrawlEngineHandleCrawlStreamFree(streamHandle: Long)
 
     // Streaming JNI externs for CrawlEngineHandle.batchCrawlStream
     @Throws(KreuzcrawlBridgeException::class)
     external fun nativeCrawlEngineHandleBatchCrawlStreamStart(clientHandle: Long, requestJson: String): Long
-
     @Throws(KreuzcrawlBridgeException::class)
     external fun nativeCrawlEngineHandleBatchCrawlStreamNext(streamHandle: Long): String?
-
     external fun nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle: Long)
 
     // Destructor external funs for opaque handle types.

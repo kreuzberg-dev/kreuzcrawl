@@ -5,13 +5,20 @@
     "error",
     "waf"
   ],
+  "input": {
+    "config": {
+      "browser": {
+        "mode": "never"
+      }
+    }
+  },
   "assertions": [
     {
       "type": "error"
     },
     {
       "type": "error",
-      "value": "forbidden"
+      "value": "waf"
     }
   ],
   "mock_response": {
@@ -19,6 +26,7 @@
     "headers": {
       "content-type": "text/html; charset=utf-8",
       "server": "cloudflare"
-    }
+    },
+    "body": "<html><head><title>Just a moment...</title></head><body><div class=\"cf-browser-verification\"></div></body></html>"
   }
 }

@@ -1745,21 +1745,21 @@ public func createEngine(config: CrawlConfig?) throws -> CrawlEngineHandle {
 /// Scrape a single URL, returning extracted page data.
 public func scrape(engine: CrawlEngineHandle, url: String) async throws -> ScrapeResult {
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.scrape(engine, url)
+        try RustBridge.scrape(engine, RustString(url))
     }.value
 }
 
 /// Crawl a website starting from `url`, following links up to the configured depth.
 public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlResult {
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.crawl(engine, url)
+        try RustBridge.crawl(engine, RustString(url))
     }.value
 }
 
 /// Discover all pages on a website by following links and sitemaps.
 public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapResult {
     return try await Task.detached(priority: .userInitiated) {
-        try RustBridge.mapUrls(engine, url)
+        try RustBridge.mapUrls(engine, RustString(url))
     }.value
 }
 
