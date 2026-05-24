@@ -92,10 +92,11 @@ Panama FFM API (Java 21+) for zero-overhead native calls with full type safety.
 <dependency>
     <groupId>dev.kreuzberg.kreuzcrawl</groupId>
     <artifactId>kreuzcrawl</artifactId>
-    <version>0.3.0-rc.24</version>
+    <version>0.3.0-rc.25</version>
 </dependency>
 
 ```
+
 ## Quick Start
 
 ```java title="Java"
@@ -132,6 +133,7 @@ public final class BasicUsage {
     }
 }
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

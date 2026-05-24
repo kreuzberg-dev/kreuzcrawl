@@ -1,6 +1,6 @@
 {
   "name": "kreuzcrawl-root",
-  "version": "0.3.0-rc.24",
+  "version": "0.3.0-rc.25",
   "private": true,
   "devDependencies": {
     "@napi-rs/cli": "^3.6.2",

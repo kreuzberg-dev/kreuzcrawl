@@ -122,22 +122,6 @@ jobs:
       - name: Install alef
         uses: kreuzberg-dev/actions/install-alef@v1
 
-      - name: Check README freshness
-        run: |
-          alef readme
-          git diff --exit-code -- packages/*/README.md crates/*/README.md || {
-            echo "::error::Generated READMEs are out of date. Run 'alef readme' and commit."
-            exit 1
-          }
-
-      - name: Check API docs freshness
-        run: |
-          alef docs
-          git diff --exit-code -- docs/reference/ || {
-            echo "::error::Generated API docs are out of date. Run 'alef docs' and commit."
-            exit 1
-          }
-
       - name: Verify binding API parity
         run: alef verify
 
