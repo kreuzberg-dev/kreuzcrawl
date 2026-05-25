@@ -210,9 +210,7 @@ pub(crate) async fn http_fetch(
     // it's almost certainly a challenge page rather than real content.
     // Real content pages are overwhelmingly larger than CHALLENGE_BODY_LIMIT
     // and don't contain these specific markers in a script src or inline.
-    if (200..300).contains(&status)
-        && body_bytes_vec.len() <= CHALLENGE_BODY_LIMIT
-        && is_challenge_interstitial(&body)
+    if (200..300).contains(&status) && body_bytes_vec.len() <= CHALLENGE_BODY_LIMIT && is_challenge_interstitial(&body)
     {
         let server_lower = headers
             .get("server")
