@@ -1,0 +1,31 @@
+version: "3"
+
+# Test-apps: validate the *published* version of each binding against its
+# e2e fixture suite. Generated and run by alef from [crates.e2e.registry]
+# in alef.toml — see plan/sprightly-painting-pizza.md.
+#
+# `alef test-apps run` builds + spawns the e2e mock-server itself and
+# tears it down via an RAII guard, so no separate process-management
+# wrapper is needed locally or in CI.
+
+tasks:
+  generate:
+    desc: Regenerate test_apps/ from [crates.e2e.registry] in alef.toml
+    cmds:
+      - alef test-apps generate {{.CLI_ARGS}}
+
+  run:
+    desc: Run test_apps for all languages (or --lang <X> via CLI_ARGS)
+    cmds:
+      - alef test-apps run {{.CLI_ARGS}}
+
+  clean:
+    desc: Wipe test_apps/ build artefacts, lockfiles excluded
+    cmds:
+      - |
+        find test_apps -type d \( \
+          -name node_modules -o -name .venv -o -name _build \
+          -o -name vendor -o -name target -o -name .pytest_cache \
+          -o -name .ruff_cache -o -name __pycache__ -o -name .gradle \
+          -o -name bin -o -name obj \
+        \) -prune -exec rm -rf {} + 2>/dev/null || true

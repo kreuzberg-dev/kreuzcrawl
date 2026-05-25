@@ -3,7 +3,8 @@
   "description": "E2e tests for PHP bindings",
   "type": "project",
   "require": {
-    "kreuzberg-dev/kreuzcrawl": ">=0.1.0-rc.9"
+    "php": ">=8.2",
+    "ext-kreuzcrawl": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^13.1",

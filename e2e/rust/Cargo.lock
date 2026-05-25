@@ -1380,7 +1380,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0-rc.23"
+version = "0.3.0-rc.28"
 dependencies = [
  "ahash",
  "astral-tl",
@@ -1411,7 +1411,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-e2e-rust"
-version = "0.3.0-rc.23"
+version = "0.3.0-rc.28"
 dependencies = [
  "axum",
  "kreuzcrawl",
