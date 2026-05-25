@@ -140,6 +140,31 @@ pub(crate) async fn http_fetch(
         _ => {}
     }
 
+    // 2xx interstitial detection (header-only): modern Cloudflare /
+    // DataDome / PerimeterX serve their JS challenge with 200 OK, not 403.
+    // Without this check the challenge page body is fed downstream as if
+    // it were real content. Header signals (`x-datadome`,
+    // `x-amzn-waf-action`, `x-px-*`, `x-sucuri-id`) are unambiguous WAF
+    // markers regardless of status code — when a WAF stamps its own header
+    // there is no false-positive risk. Body-fingerprint detection on 2xx
+    // happens later (after the body is read) with a body-size guard to
+    // avoid matching legitimate pages that mention vendor names.
+    if (200..300).contains(&status) && headers_only_waf_match(&headers) {
+        let server_lower = headers
+            .get("server")
+            .and_then(|v| v.to_str().ok())
+            .unwrap_or("")
+            .to_lowercase();
+        // We need the body to identify the vendor precisely; read it now
+        // (the body-fingerprint check below would re-read anyway).
+        let body = resp.text().await.unwrap_or_default();
+        let body_lower = body.to_lowercase();
+        return Err(CrawlError::WafBlocked(format!(
+            "waf/blocked detected on 2xx (header): {}",
+            detect_waf_vendor(&server_lower, &body_lower)
+        )));
+    }
+
     // Check content-length mismatch (data_loss)
     let expected_len = headers
         .get("content-length")
@@ -179,6 +204,27 @@ pub(crate) async fn http_fetch(
 
     let body_bytes_vec = body_bytes.to_vec();
     let body = String::from_utf8_lossy(&body_bytes_vec).into_owned();
+
+    // 2xx interstitial detection (body-fingerprint): if a 2xx response has
+    // a small body containing a high-confidence vendor JS fingerprint,
+    // it's almost certainly a challenge page rather than real content.
+    // Real content pages are overwhelmingly larger than CHALLENGE_BODY_LIMIT
+    // and don't contain these specific markers in a script src or inline.
+    if (200..300).contains(&status)
+        && body_bytes_vec.len() <= CHALLENGE_BODY_LIMIT
+        && is_challenge_interstitial(&body)
+    {
+        let server_lower = headers
+            .get("server")
+            .and_then(|v| v.to_str().ok())
+            .unwrap_or("")
+            .to_lowercase();
+        let body_lower = body.to_lowercase();
+        return Err(CrawlError::WafBlocked(format!(
+            "waf/blocked detected on 2xx (body): {}",
+            detect_waf_vendor(&server_lower, &body_lower)
+        )));
+    }
 
     // Extract headers into HashMap<String, Vec<String>>
     let mut headers_map: std::collections::HashMap<String, Vec<String>> = std::collections::HashMap::new();
@@ -322,6 +368,48 @@ pub(crate) fn extract_response_meta_from_hashmap(
         content_language: headers.get("content-language").and_then(|v| v.first().cloned()),
         content_encoding: headers.get("content-encoding").and_then(|v| v.first().cloned()),
     }
+}
+
+/// Maximum body size (bytes) that a 2xx response can have and still be
+/// classified as a WAF interstitial. Real content pages overwhelmingly
+/// exceed this; challenge interstitials are tiny by design.
+const CHALLENGE_BODY_LIMIT: usize = 100 * 1024;
+
+/// Header-only WAF signature. When any WAF stamps its own header on the
+/// response, the verdict is unambiguous regardless of status code.
+fn headers_only_waf_match(headers: &HeaderMap) -> bool {
+    headers.contains_key("x-sucuri-id")
+        || headers.contains_key("x-datadome")
+        || headers.contains_key("x-amzn-waf-action")
+        || headers.keys().any(|k| k.as_str().starts_with("x-px-"))
+}
+
+/// High-confidence interstitial body fingerprints. These markers are
+/// vendor-specific JS hooks / script sources that legitimate content
+/// pages do not embed. Generic phrases like "verifying your connection"
+/// are deliberately excluded — they appear in legitimate support docs.
+fn is_challenge_interstitial(body: &str) -> bool {
+    let lower = body.to_lowercase();
+    // Cloudflare interstitial signatures
+    lower.contains("cf-chl-")
+        || lower.contains("__cf_chl_")
+        || lower.contains("_cf_chl_opt")
+        || lower.contains("cf-browser-verification")
+        || lower.contains("challenge-platform")
+        || lower.contains("/cdn-cgi/challenge-platform/")
+        // DataDome interstitial signatures
+        || lower.contains("https://js.datadome.co/")
+        || lower.contains("geo.captcha-delivery.com")
+        || lower.contains("dd.js")
+        // PerimeterX interstitial signatures
+        || lower.contains("/_px/captcha")
+        || lower.contains("px-captcha")
+        // Imperva / Incapsula
+        || lower.contains("_incap_ses_")
+        // AWS WAF
+        || lower.contains("awswaf.com/token")
+        // Generic Cloudflare turnstile widget
+        || lower.contains("challenges.cloudflare.com/turnstile/")
 }
 
 fn waf_pattern_match(server_lower: &str, body_lower: &str) -> bool {
