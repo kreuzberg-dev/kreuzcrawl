@@ -1591,7 +1591,7 @@ jobs:
         shell: bash
         run: |
           pnpm exec napi create-npm-dirs
-          pnpm exec napi artifacts --dir artifacts --npm-dir npm
+          pnpm exec napi artifacts --output-dir artifacts --npm-dir npm
           pnpm build:ts
 
       - name: Pack platform tarballs for publishing
