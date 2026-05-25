@@ -363,6 +363,37 @@ precondition = "command -v zig >/dev/null 2>&1"
 format = "cd packages/zig && zig fmt src"
 check = "cd packages/zig && zig fmt --check src"
 
+# Update overrides target the consumer package dirs (`packages/<lang>/`) rather
+# than the alef binding-source output dirs (`crates/kreuzcrawl-{lang}/src/`,
+# `packages/ruby/ext/...`), and use `--no-install-project --no-install-workspace`
+# to skip maturin/native-build steps that would otherwise fail at lockfile sync.
+
+[crates.update.python]
+precondition = "command -v uv >/dev/null 2>&1"
+update = "cd packages/python && uv sync --all-extras --no-install-workspace --no-install-project"
+upgrade = "cd packages/python && uv sync --all-extras --upgrade --no-install-workspace --no-install-project"
+
+[crates.update.ruby]
+precondition = "command -v bundle >/dev/null 2>&1"
+update = "cd packages/ruby && bundle update --conservative"
+upgrade = "cd packages/ruby && bundle update --all --conservative=false"
+
+[crates.update.elixir]
+precondition = "command -v mix >/dev/null 2>&1"
+update = "cd packages/elixir && mix deps.update --all"
+upgrade = "cd packages/elixir && mix deps.update --all"
+
+[crates.update.php]
+precondition = "command -v composer >/dev/null 2>&1"
+update = "cd packages/php && composer update --no-interaction"
+upgrade = "cd packages/php && composer update --with-all-dependencies --no-interaction"
+
+# `gradle dependencyUpdates` (ben-manes versions plugin 0.52.0) hits a
+# ConcurrentModificationException on Gradle 9.x — until that's resolved
+# upstream, skip via a precondition that always fails.
+[crates.update.kotlin_android]
+precondition = "false"
+
 [crates.test.python]
 precondition = "command -v python3 >/dev/null 2>&1"
 command = "task python:test"
