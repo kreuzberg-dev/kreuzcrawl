@@ -42,10 +42,10 @@ camino = "1.2"
 chromiumoxide = { version = "0.9", default-features = false }
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
-criterion = { version = "0.5", features = ["html_reports"] }
+criterion = { version = "0.8", features = ["html_reports"] }
 cssparser = "0.37"
 dashmap = "6"
-deno_core = "0.400"
+deno_core = "0.401"
 deno_error = "0.7"
 dirs = "6"
 encoding_rs = "0.8"
