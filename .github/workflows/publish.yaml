@@ -1240,10 +1240,10 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  dart-package:
-    name: Build Dart package
+  assemble-dart-package:
+    name: Assemble Dart package artifact
     needs: [prepare, check-pub]
-    if: ${{ needs.prepare.outputs.release_dart == 'true' && needs.check-pub.outputs.exists != 'true' }}
+    if: ${{ needs.prepare.outputs.release_dart == 'true' && (needs.prepare.outputs.is_tag == 'true' || needs.prepare.outputs.dry_run == 'true') && (needs.check-pub.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.2
@@ -1251,19 +1251,31 @@ jobs:
           ref: ${{ needs.prepare.outputs.checkout_ref }}
           fetch-depth: 0
 
-      - uses: kreuzberg-dev/actions/setup-rust@v1
-
-      - uses: kreuzberg-dev/actions/build-dart-package@v1
-        with:
-          # flutter_rust_bridge.yaml lives in packages/dart/rust/, where rust_root: .
-          package-dir: packages/dart/rust
-          crate-name: kreuzcrawl-dart
-
       - uses: actions/upload-artifact@v7.0.1
         with:
-          name: dart-package
+          name: dart-package-assembled
           path: packages/dart
-          retention-days: 14
+          if-no-files-found: error
+          retention-days: 7
+
+  trigger-pubdev:
+    name: Trigger pub.dev publish workflow
+    needs: [prepare, check-pub, assemble-dart-package]
+    # pub.dev OIDC rejects tokens from `release` events. We dispatch a separate
+    # workflow whose `workflow_dispatch` event produces an accepted token.
+    if: ${{ needs.prepare.outputs.release_dart == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.dry_run != 'true' && (needs.check-pub.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Dispatch publish-pubdev workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh workflow run publish-pubdev.yaml \
+            --ref ${{ github.ref_name }} \
+            -f run_id=${{ github.run_id }}
 
   swift-artifactbundle:
     name: Build Swift artifact bundle
@@ -2163,6 +2175,7 @@ jobs:
       - upload-cli-release
       - upload-go-release
       - upload-c-ffi-release
+      - trigger-pubdev
       - verify-published-packages
     if: |
       always() &&
@@ -2202,6 +2215,7 @@ jobs:
       - upload-c-ffi-release
       - upload-elixir-release
       - upload-php-pie-release
+      - trigger-pubdev
       - verify-published-packages
       - release-finalize
     if: |
