@@ -308,41 +308,6 @@ jobs:
           package: kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
 
-  check-spi-swift:
-    name: Check Swift Package Index for existing tag
-    needs: prepare
-    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_swift == 'true' }}
-    runs-on: ubuntu-latest
-    outputs:
-      exists: ${{ steps.check.outputs.exists }}
-    steps:
-      # Swift has no central registry; SPI auto-discovers GitHub tags, so
-      # existence === GitHub release tag exists.
-      - id: check
-        uses: kreuzberg-dev/actions/check-registry@v1
-        with:
-          registry: swift
-          package: kreuzcrawl
-          version: ${{ needs.prepare.outputs.version }}
-          repo: ${{ github.repository }}
-
-  check-zig:
-    name: Check Zig package presence (tag-based)
-    needs: prepare
-    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_zig == 'true' }}
-    runs-on: ubuntu-latest
-    outputs:
-      exists: ${{ steps.check.outputs.exists }}
-    steps:
-      # Zig has no central registry; existence === GitHub release tag exists.
-      - id: check
-        uses: kreuzberg-dev/actions/check-registry@v1
-        with:
-          registry: zig
-          package: kreuzcrawl
-          version: ${{ needs.prepare.outputs.version }}
-          repo: ${{ github.repository }}
-
   check-maven-kotlin-android:
     name: Check Maven Central for kotlin-android package
     needs: prepare
@@ -1282,8 +1247,8 @@ jobs:
 
   swift-artifactbundle:
     name: Build Swift artifact bundle
-    needs: [prepare, check-spi-swift]
-    if: ${{ needs.prepare.outputs.release_swift == 'true' && (needs.check-spi-swift.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+    needs: prepare
+    if: ${{ needs.prepare.outputs.release_swift == 'true' }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6.0.2
@@ -1305,8 +1270,8 @@ jobs:
 
   swift-package:
     name: Build Swift package
-    needs: [prepare, check-spi-swift]
-    if: ${{ needs.prepare.outputs.release_swift == 'true' && needs.check-spi-swift.outputs.exists != 'true' }}
+    needs: prepare
+    if: ${{ needs.prepare.outputs.release_swift == 'true' }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6.0.2
@@ -1904,42 +1869,6 @@ jobs:
           MAVEN_GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-  publish-swift:
-    name: Notify Swift Package Index
-    needs: [prepare, swift-package, swift-artifactbundle, check-spi-swift]
-    if: ${{ needs.prepare.outputs.release_swift == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.check-spi-swift.outputs.exists != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          ref: ${{ needs.prepare.outputs.ref }}
-
-      - uses: kreuzberg-dev/actions/publish-swift@v1
-        with:
-          working-directory: packages/swift
-          tag: ${{ needs.prepare.outputs.tag }}
-          ping-spi: "true"
-          dry-run: ${{ needs.prepare.outputs.dry_run }}
-
-  publish-zig:
-    name: Publish Zig package metadata
-    needs: [prepare, zig-package, check-zig]
-    if: ${{ needs.prepare.outputs.release_zig == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.check-zig.outputs.exists != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          ref: ${{ needs.prepare.outputs.ref }}
-
-      - uses: kreuzberg-dev/actions/publish-zig@v1
-        with:
-          working-directory: packages/zig
-          tag: ${{ needs.prepare.outputs.tag }}
-          update-release-notes: "true"
-          dry-run: ${{ needs.prepare.outputs.dry_run }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   # ─── Homebrew (real-brew bottles) ─────────────────────────────────────
   #
   # Three-job topology mirrors tslp/h2m: update formula source URL+SHA in
@@ -2130,8 +2059,6 @@ jobs:
       - publish-kotlin-android
       - publish-nuget
       - publish-hex
-      - publish-swift
-      - publish-zig
       - publish-homebrew-formula
       - publish-homebrew-bottles
       - upload-cli-release
@@ -2167,8 +2094,6 @@ jobs:
       - publish-kotlin-android
       - publish-nuget
       - publish-hex
-      - publish-swift
-      - publish-zig
       - publish-homebrew-formula
       - publish-homebrew-bottles
       - upload-cli-release
