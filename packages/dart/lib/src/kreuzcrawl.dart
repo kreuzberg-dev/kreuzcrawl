@@ -22,8 +22,76 @@ class KreuzcrawlBridge {
   /// If `config` is `None`, uses [`CrawlConfig::default()`].
   /// Returns an error if the configuration is invalid.
   /// throws CrawlError on failure
-  static Future<CrawlEngineHandle> createEngine({CrawlConfig? config}) async {
-    return await rust_bridge.createEngine(config: config);
+  static Future<CrawlEngineHandle> createEngine([CrawlConfig? config]) async {
+    return await rust_bridge.createEngine(
+      config:
+          config ??
+          CrawlConfig(
+            maxDepth: null,
+            maxPages: null,
+            maxConcurrent: null,
+            respectRobotsTxt: false,
+            softHttpErrors: false,
+            userAgent: null,
+            stayOnDomain: false,
+            allowSubdomains: false,
+            includePaths: [],
+            excludePaths: [],
+            customHeaders: {},
+            requestTimeout: 30000,
+            rateLimitMs: null,
+            maxRedirects: 10,
+            retryCount: 0,
+            retryCodes: [],
+            cookiesEnabled: false,
+            auth: null,
+            maxBodySize: null,
+            removeTags: [],
+            content: ContentConfig(
+              outputFormat: 'markdown',
+              preprocessingPreset: 'standard',
+              removeNavigation: true,
+              removeForms: true,
+              stripTags: [],
+              preserveTags: [],
+              excludeSelectors: [],
+              skipImages: false,
+              maxDepth: null,
+              wrap: false,
+              wrapWidth: 80,
+              includeDocumentStructure: true,
+            ),
+            mapLimit: null,
+            mapSearch: null,
+            downloadAssets: false,
+            assetTypes: [],
+            maxAssetSize: null,
+            browser: BrowserConfig(
+              mode: BrowserMode.auto,
+              backend: BrowserBackend.chromiumoxide,
+              endpoint: null,
+              timeout: 30000,
+              wait: BrowserWait.networkIdle,
+              waitSelector: null,
+              extraWait: null,
+              stealth: false,
+              proxy: null,
+              blockUrlPatterns: [],
+              evalScript: null,
+              robotsUserAgent: null,
+              captureNetworkEvents: false,
+            ),
+            proxy: null,
+            userAgents: [],
+            captureScreenshot: false,
+            downloadDocuments: true,
+            documentMaxSize: 0,
+            documentMimeTypes: [],
+            warcOutput: null,
+            browserProfile: null,
+            saveBrowserProfile: false,
+          ),
+    );
   }
 
   /// Scrape a single URL, returning extracted page data.
