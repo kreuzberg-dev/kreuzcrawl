@@ -2918,6 +2918,7 @@ dependencies = [
 name = "kreuzcrawl-ffi"
 version = "0.3.0-rc.27"
 dependencies = [
+ "ahash",
  "cbindgen",
  "futures-util",
  "kreuzcrawl",
@@ -2979,6 +2980,7 @@ dependencies = [
 name = "kreuzcrawl-swift"
 version = "0.3.0-rc.27"
 dependencies = [
+ "ahash",
  "async-trait",
  "futures-util",
  "kreuzcrawl",
