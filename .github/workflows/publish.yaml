@@ -293,21 +293,6 @@ jobs:
           package: kreuzcrawl
           version: ${{ needs.prepare.outputs.version }}
 
-  check-pub:
-    name: Check pub.dev for existing version
-    needs: prepare
-    if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.release_dart == 'true' }}
-    runs-on: ubuntu-latest
-    outputs:
-      exists: ${{ steps.check.outputs.exists }}
-    steps:
-      - id: check
-        uses: kreuzberg-dev/actions/check-registry@v1
-        with:
-          registry: pub
-          package: kreuzcrawl
-          version: ${{ needs.prepare.outputs.version }}
-
   check-zig:
     name: Check Zig package presence
     needs: prepare
@@ -1272,43 +1257,6 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  assemble-dart-package:
-    name: Assemble Dart package artifact
-    needs: [prepare, check-pub]
-    if: ${{ needs.prepare.outputs.release_dart == 'true' && (needs.prepare.outputs.is_tag == 'true' || needs.prepare.outputs.dry_run == 'true') && (needs.check-pub.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          ref: ${{ needs.prepare.outputs.checkout_ref }}
-          fetch-depth: 0
-
-      - uses: actions/upload-artifact@v7.0.1
-        with:
-          name: dart-package-assembled
-          path: packages/dart
-          if-no-files-found: error
-          retention-days: 7
-
-  trigger-pubdev:
-    name: Trigger pub.dev publish workflow
-    needs: [prepare, check-pub, assemble-dart-package]
-    # pub.dev OIDC rejects tokens from `release` events. We dispatch a separate
-    # workflow whose `workflow_dispatch` event produces an accepted token.
-    if: ${{ needs.prepare.outputs.release_dart == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.dry_run != 'true' && (needs.check-pub.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-    steps:
-      - name: Dispatch publish-pubdev workflow
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          gh workflow run publish-pubdev.yaml \
-            --ref ${{ github.ref_name }} \
-            -f run_id=${{ github.run_id }}
-
   swift-artifactbundle:
     name: Build Swift artifact bundle
     needs: prepare
@@ -2215,7 +2163,6 @@ jobs:
       - upload-cli-release
       - upload-go-release
       - upload-c-ffi-release
-      - trigger-pubdev
       - verify-published-packages
     if: |
       always() &&
@@ -2255,7 +2202,6 @@ jobs:
       - upload-c-ffi-release
       - upload-elixir-release
       - upload-php-pie-release
-      - trigger-pubdev
       - verify-published-packages
       - release-finalize
     if: |
