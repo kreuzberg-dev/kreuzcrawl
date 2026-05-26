@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"strings"
 )
@@ -96,9 +95,24 @@ func downloadAndExtractLibrary(cacheDir string) error {
 		osName = "macos"
 	}
 
+	// Map Go arch names to the alef platform names used in release asset filenames.
+	// The local .lib/<os>-<goarch>/ directories use Go arch names (matching cgo LDFLAGS),
+	// but alef's packager emits tarballs with its own arch names: x86_64, aarch64.
+	archName := goarch
+	switch goarch {
+	case "amd64":
+		archName = "x86_64"
+	case "arm64":
+		// macOS arm64 stays "arm64" (alef go_java_platform special-cases it);
+		// all other platforms use "aarch64".
+		if goos != "darwin" {
+			archName = "aarch64"
+		}
+	}
+
 	// Clean version for asset name
 	version := strings.TrimPrefix(moduleVersion, "v")
-	assetName := fmt.Sprintf("%s-go-v%s-%s-%s.tar.gz", assetPrefix, version, osName, goarch)
+	assetName := fmt.Sprintf("%s-go-v%s-%s-%s.tar.gz", assetPrefix, version, osName, archName)
 	downloadURL := fmt.Sprintf("%s/releases/download/v%s/%s", repoURL, version, assetName)
 
 	// Create cache directory

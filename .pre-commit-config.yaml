@@ -49,7 +49,7 @@ repos:
           - --fix
       - id: ruff-format
   - repo: https://github.com/kreuzberg-dev/pre-commit-hooks
-    rev: v1.1.18
+    rev: v1.1.19
     hooks:
       - id: cargo-sort
         args:
@@ -210,7 +210,7 @@ repos:
         exclude: ^(test_apps/|e2e/)
       - id: hadolint
   - repo: https://github.com/kreuzberg-dev/alef
-    rev: v0.19.11
+    rev: v0.19.14
     hooks:
       - id: alef-verify
       - id: alef-sync-versions

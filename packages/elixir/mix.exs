@@ -25,6 +25,7 @@ defmodule Kreuzcrawl.MixProject do
 
   defp deps do
     [
+      {:jason, "~> 1.4"},
       {:rustler, "~> 0.37.0", runtime: false},
       {:rustler_precompiled, "~> 0.9"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},

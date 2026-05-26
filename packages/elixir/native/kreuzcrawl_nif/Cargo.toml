@@ -7,6 +7,8 @@ description = "High-performance web crawling engine"
 readme = false
 keywords = ["crawl", "scrape", "web", "spider"]
 categories = ["text-processing"]
+[package.metadata.cargo-machete]
+ignored = ["tokio", "futures-util"]
 
 [workspace]
 

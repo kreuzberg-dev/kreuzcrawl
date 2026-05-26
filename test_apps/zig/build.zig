@@ -4,18 +4,11 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     const test_step = b.step("test", "Run tests");
-    const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libkreuzcrawl_ffi") orelse "../../target/release";
-    const ffi_include = b.option([]const u8, "ffi_include_path", "Path to directory containing FFI header") orelse "../../crates/kreuzcrawl-ffi/include";
 
-    const kreuzcrawl_module = b.addModule("kreuzcrawl", .{
-        .root_source_file = b.path("../../packages/zig/src/kreuzcrawl.zig"),
+    const kreuzcrawl_module = b.dependency("kreuzcrawl", .{
         .target = target,
         .optimize = optimize,
-        .link_libc = true,
-    });
-    kreuzcrawl_module.addLibraryPath(.{ .cwd_relative = ffi_path });
-    kreuzcrawl_module.addIncludePath(.{ .cwd_relative = ffi_include });
-    kreuzcrawl_module.linkSystemLibrary("kreuzcrawl_ffi", .{});
+    }).module("kreuzcrawl");
 
     const _alloc = b.allocator;
     var mock_server_url: ?[]const u8 = b.graph.environ_map.get("MOCK_SERVER_URL");
