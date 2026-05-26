@@ -503,6 +503,7 @@ jobs:
                     - { os: macos-latest, target: aarch64-apple-darwin }
                     - { os: macos-15-intel, target: x86_64-apple-darwin }
                     - { os: windows-latest, target: x86_64-pc-windows-msvc }
+                    - { os: windows-latest, target: aarch64-pc-windows-msvc }
         steps:
             - uses: actions/checkout@v6.0.2
               with:
@@ -1161,12 +1162,16 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - { os: ubuntu-latest, label: linux-x86_64, target: x86_64-unknown-linux-gnu }
-                    - { os: ubuntu-24.04-arm, label: linux-aarch64, target: aarch64-unknown-linux-gnu }
-                    - { os: macos-latest, label: macos-arm64, target: aarch64-apple-darwin }
-                    - { os: macos-15-intel, label: macos-x86_64, target: x86_64-apple-darwin }
-                    - { os: windows-latest, label: windows-x86_64, target: x86_64-pc-windows-msvc }
-                nif: ["2.16", "2.17"]
+                    - { os: ubuntu-latest, label: linux-x86_64, target: x86_64-unknown-linux-gnu, nif: "2.16" }
+                    - { os: ubuntu-latest, label: linux-x86_64, target: x86_64-unknown-linux-gnu, nif: "2.17" }
+                    - { os: ubuntu-24.04-arm, label: linux-aarch64, target: aarch64-unknown-linux-gnu, nif: "2.16" }
+                    - { os: ubuntu-24.04-arm, label: linux-aarch64, target: aarch64-unknown-linux-gnu, nif: "2.17" }
+                    - { os: macos-latest, label: macos-arm64, target: aarch64-apple-darwin, nif: "2.16" }
+                    - { os: macos-latest, label: macos-arm64, target: aarch64-apple-darwin, nif: "2.17" }
+                    - { os: macos-15-intel, label: macos-x86_64, target: x86_64-apple-darwin, nif: "2.16" }
+                    - { os: macos-15-intel, label: macos-x86_64, target: x86_64-apple-darwin, nif: "2.17" }
+                    - { os: windows-latest, label: windows-x86_64, target: x86_64-pc-windows-msvc, nif: "2.16" }
+                    - { os: windows-latest, label: windows-x86_64, target: x86_64-pc-windows-msvc, nif: "2.17" }
         steps:
             - uses: actions/checkout@v6.0.2
               with:
@@ -1214,9 +1219,10 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - { os: ubuntu-latest, arch: x86_64, target: x86_64-unknown-linux-musl }
-                    - { os: ubuntu-24.04-arm, arch: aarch64, target: aarch64-unknown-linux-musl }
-                nif: ["2.16", "2.17"]
+                    - { os: ubuntu-latest, arch: x86_64, target: x86_64-unknown-linux-musl, nif: "2.16" }
+                    - { os: ubuntu-latest, arch: x86_64, target: x86_64-unknown-linux-musl, nif: "2.17" }
+                    - { os: ubuntu-24.04-arm, arch: aarch64, target: aarch64-unknown-linux-musl, nif: "2.16" }
+                    - { os: ubuntu-24.04-arm, arch: aarch64, target: aarch64-unknown-linux-musl, nif: "2.17" }
         steps:
             - uses: actions/checkout@v6.0.2
               with:

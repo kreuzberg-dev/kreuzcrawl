@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.19.18"
+alef_version = "0.19.21"
 languages = [
   "python",
   "node",
@@ -143,6 +143,15 @@ output = "packages/ruby/sig/"
 
 [crates.elixir]
 app_name = "kreuzcrawl"
+nif_targets = [
+  "x86_64-unknown-linux-gnu",
+  "aarch64-unknown-linux-gnu",
+  "x86_64-unknown-linux-musl",
+  "aarch64-unknown-linux-musl",
+  "aarch64-apple-darwin",
+  "x86_64-apple-darwin",
+  "x86_64-pc-windows-msvc",
+]
 
 [crates.ffi]
 prefix = "kcrawl"
