@@ -12,9 +12,7 @@ Gem::Specification.new do |spec|
   spec.metadata["keywords"] = %w[crawl scrape web spider].join(",")
   spec.metadata["rubygems_mfa_required"] = "true"
 
-  spec.files = Dir.glob(%w[lib/**/* ext/**/* sig/**/* Steepfile]).reject do |f|
-    f.include?("/native/target/") || f.include?("/native/tmp/")
-  end
+  spec.files         = Dir.glob(%w[lib/**/* ext/**/* sig/**/* Steepfile]).reject { |f| f.include?("/native/target/") || f.include?("/native/tmp/") }
   spec.require_paths = ["lib"]
   spec.extensions    = ["ext/kreuzcrawl_rb/extconf.rb"]
 

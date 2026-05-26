@@ -2063,8 +2063,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BrowserConfig dco_decode_browser_config(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 13)
-      throw Exception('unexpected arr length: expect 13 but see ${arr.length}');
+    if (arr.length != 14)
+      throw Exception('unexpected arr length: expect 14 but see ${arr.length}');
     return BrowserConfig(
       mode: dco_decode_browser_mode(arr[0]),
       backend: dco_decode_browser_backend(arr[1]),
@@ -2079,6 +2079,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       evalScript: dco_decode_opt_String(arr[10]),
       robotsUserAgent: dco_decode_opt_String(arr[11]),
       captureNetworkEvents: dco_decode_bool(arr[12]),
+      sessionAffinity: dco_decode_bool(arr[13]),
     );
   }
 
@@ -3305,6 +3306,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_evalScript = sse_decode_opt_String(deserializer);
     var var_robotsUserAgent = sse_decode_opt_String(deserializer);
     var var_captureNetworkEvents = sse_decode_bool(deserializer);
+    var var_sessionAffinity = sse_decode_bool(deserializer);
     return BrowserConfig(
       mode: var_mode,
       backend: var_backend,
@@ -3319,6 +3321,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       evalScript: var_evalScript,
       robotsUserAgent: var_robotsUserAgent,
       captureNetworkEvents: var_captureNetworkEvents,
+      sessionAffinity: var_sessionAffinity,
     );
   }
 
@@ -4972,6 +4975,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.evalScript, serializer);
     sse_encode_opt_String(self.robotsUserAgent, serializer);
     sse_encode_bool(self.captureNetworkEvents, serializer);
+    sse_encode_bool(self.sessionAffinity, serializer);
   }
 
   @protected

@@ -121,6 +121,7 @@ mod ffi {
             eval_script: Option<String>,
             robots_user_agent: Option<String>,
             capture_network_events: bool,
+            session_affinity: bool,
         ) -> BrowserConfig;
         fn mode(&self) -> String;
         fn backend(&self) -> String;
@@ -141,6 +142,8 @@ mod ffi {
         fn robots_user_agent(&self) -> Option<String>;
         #[swift_bridge(swift_name = "captureNetworkEvents")]
         fn capture_network_events(&self) -> bool;
+        #[swift_bridge(swift_name = "sessionAffinity")]
+        fn session_affinity(&self) -> bool;
     }
 
     extern "Rust" {
@@ -175,7 +178,6 @@ mod ffi {
             max_asset_size: Option<usize>,
             browser: BrowserConfig,
             proxy: Option<ProxyConfig>,
-            bypass: Option<String>,
             user_agents: Vec<String>,
             capture_screenshot: bool,
             download_documents: bool,
@@ -237,7 +239,6 @@ mod ffi {
         fn max_asset_size(&self) -> Option<usize>;
         fn browser(&self) -> BrowserConfig;
         fn proxy(&self) -> Option<ProxyConfig>;
-        fn bypass(&self) -> Option<String>;
         #[swift_bridge(swift_name = "userAgents")]
         fn user_agents(&self) -> Vec<String>;
         #[swift_bridge(swift_name = "captureScreenshot")]
@@ -1353,6 +1354,7 @@ impl BrowserConfig {
         eval_script: Option<String>,
         robots_user_agent: Option<String>,
         capture_network_events: bool,
+        session_affinity: bool,
     ) -> BrowserConfig {
         let mut __target: kreuzcrawl::BrowserConfig = ::std::default::Default::default();
         // alef: mode (BrowserMode) is an enum; reverse From not generated — left at default
@@ -1410,6 +1412,7 @@ impl BrowserConfig {
             }
         }
         __target.capture_network_events = capture_network_events;
+        __target.session_affinity = session_affinity;
         BrowserConfig(__target)
     }
     pub fn mode(&self) -> String {
@@ -1460,6 +1463,12 @@ impl BrowserConfig {
             .and_then(|j| ::serde_json::from_value(j).ok())
             .unwrap_or_default()
     }
+    pub fn session_affinity(&self) -> bool {
+        ::serde_json::to_value(&self.0.session_affinity)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
+    }
 }
 
 pub struct CrawlConfig(pub kreuzcrawl::CrawlConfig);
@@ -1493,7 +1502,6 @@ impl CrawlConfig {
         max_asset_size: Option<usize>,
         browser: BrowserConfig,
         proxy: Option<ProxyConfig>,
-        bypass: Option<String>,
         user_agents: Vec<String>,
         capture_screenshot: bool,
         download_documents: bool,
@@ -1571,16 +1579,6 @@ impl CrawlConfig {
         __target.browser = browser.0;
         if let Some(w) = proxy {
             __target.proxy = Some(w.0);
-        }
-        if let Some(s) = bypass {
-            // Try JSON parse first (handles enum/object values); on parse failure
-            // treat the raw input as a JSON string scalar so plain `String` /
-            // string-like enum fields don't end up empty for inputs that aren't
-            // valid JSON tokens (e.g. `tts-1`).
-            let __v = ::serde_json::from_str::<::serde_json::Value>(&s).unwrap_or(::serde_json::Value::String(s));
-            if let Ok(t) = ::serde_json::from_value(__v) {
-                __target.bypass = Some(t);
-            }
         }
         if let Ok(__v) = ::serde_json::to_value(user_agents) {
             if let Ok(t) = ::serde_json::from_value(__v) {
@@ -1769,9 +1767,6 @@ impl CrawlConfig {
     }
     pub fn proxy(&self) -> Option<ProxyConfig> {
         self.0.proxy.clone().map(ProxyConfig)
-    }
-    pub fn bypass(&self) -> Option<String> {
-        self.0.bypass.as_ref().and_then(|v| serde_json::to_string(v).ok())
     }
     pub fn user_agents(&self) -> Vec<String> {
         ::serde_json::to_value(&self.0.user_agents)

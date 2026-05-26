@@ -561,6 +561,11 @@ class BrowserConfig {
   /// (only the document event is captured). Native only.
   final bool captureNetworkEvents;
 
+  /// Enable session affinity: reuse chromiumoxide Pages for same-domain
+  /// requests so cookies + fingerprint + solved challenges persist.
+  /// Default: true. When false, each request gets a fresh Page.
+  final bool sessionAffinity;
+
   const BrowserConfig({
     required this.mode,
     required this.backend,
@@ -575,6 +580,7 @@ class BrowserConfig {
     this.evalScript,
     this.robotsUserAgent,
     required this.captureNetworkEvents,
+    required this.sessionAffinity,
   });
 
   @override
@@ -591,7 +597,8 @@ class BrowserConfig {
       blockUrlPatterns.hashCode ^
       evalScript.hashCode ^
       robotsUserAgent.hashCode ^
-      captureNetworkEvents.hashCode;
+      captureNetworkEvents.hashCode ^
+      sessionAffinity.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -610,7 +617,8 @@ class BrowserConfig {
           blockUrlPatterns == other.blockUrlPatterns &&
           evalScript == other.evalScript &&
           robotsUserAgent == other.robotsUserAgent &&
-          captureNetworkEvents == other.captureNetworkEvents;
+          captureNetworkEvents == other.captureNetworkEvents &&
+          sessionAffinity == other.sessionAffinity;
 }
 
 /// Browser-specific extras populated when the native browser backend was used.

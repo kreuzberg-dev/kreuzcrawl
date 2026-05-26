@@ -75,4 +75,10 @@ data class BrowserConfig(
      * is captured). Native only.
      */
     val captureNetworkEvents: Boolean = false,
+    /**
+     * Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies +
+     * fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh
+     * Page.
+     */
+    val sessionAffinity: Boolean = true,
 )

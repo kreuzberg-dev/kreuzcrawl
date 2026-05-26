@@ -7,6 +7,8 @@ description = "High-performance web crawling engine"
 readme = false
 keywords = ["crawl", "scrape", "web", "spider"]
 categories = ["text-processing"]
+[package.metadata.cargo-machete]
+ignored = ["tokio", "futures"]
 
 [lib]
 name = "kreuzcrawl_rb"
@@ -20,5 +22,3 @@ magnus = "0.8"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread"] }
-[package.metadata.cargo-machete]
-ignored = ["tokio", "futures"]

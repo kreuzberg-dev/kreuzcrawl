@@ -380,6 +380,7 @@ pub struct CrawlConfig {
     /// for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the
     /// kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters.
     #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
     pub bypass: Option<crate::types::bypass::DynBypassProvider>,
     /// Shared browser pool for reusing Chrome across requests (not serializable).
     #[cfg(feature = "browser")]

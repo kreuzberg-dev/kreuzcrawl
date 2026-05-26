@@ -1451,6 +1451,7 @@ const _: fn() = || {
         let _: Option<String> = BrowserConfig.eval_script;
         let _: Option<String> = BrowserConfig.robots_user_agent;
         let _: bool = BrowserConfig.capture_network_events;
+        let _: bool = BrowserConfig.session_affinity;
     }
     {
         let BrowserExtras = None::<crate::BrowserExtras>.unwrap();
@@ -2055,6 +2056,7 @@ impl SseDecode for crate::BrowserConfig {
         let mut var_evalScript = <Option<String>>::sse_decode(deserializer);
         let mut var_robotsUserAgent = <Option<String>>::sse_decode(deserializer);
         let mut var_captureNetworkEvents = <bool>::sse_decode(deserializer);
+        let mut var_sessionAffinity = <bool>::sse_decode(deserializer);
         return crate::BrowserConfig {
             mode: var_mode,
             backend: var_backend,
@@ -2069,6 +2071,7 @@ impl SseDecode for crate::BrowserConfig {
             eval_script: var_evalScript,
             robots_user_agent: var_robotsUserAgent,
             capture_network_events: var_captureNetworkEvents,
+            session_affinity: var_sessionAffinity,
         };
     }
 }
@@ -3708,6 +3711,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::BrowserConfig> {
             self.0.eval_script.into_into_dart().into_dart(),
             self.0.robots_user_agent.into_into_dart().into_dart(),
             self.0.capture_network_events.into_into_dart().into_dart(),
+            self.0.session_affinity.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4694,6 +4698,7 @@ impl SseEncode for crate::BrowserConfig {
         <Option<String>>::sse_encode(self.eval_script, serializer);
         <Option<String>>::sse_encode(self.robots_user_agent, serializer);
         <bool>::sse_encode(self.capture_network_events, serializer);
+        <bool>::sse_encode(self.session_affinity, serializer);
     }
 }
 

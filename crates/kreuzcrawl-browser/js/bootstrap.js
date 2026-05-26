@@ -1413,7 +1413,7 @@ class Document extends Node {
 				return true;
 			},
 			nextNode() {
-				let node = this.currentNode;
+				const node = this.currentNode;
 				let child = node.firstChild;
 				while (child) {
 					if (this._accept(child)) {
@@ -1441,7 +1441,7 @@ class Document extends Node {
 				return null;
 			},
 			previousNode() {
-				let node = this.currentNode;
+				const node = this.currentNode;
 				if (node === this.root) return null;
 				let sibling = node.previousSibling;
 				if (sibling) {
@@ -1451,7 +1451,7 @@ class Document extends Node {
 						return sibling;
 					}
 				}
-				let parent = node.parentNode;
+				const parent = node.parentNode;
 				if (parent && parent !== this.root && this._accept(parent)) {
 					this.currentNode = parent;
 					return parent;
@@ -1503,7 +1503,7 @@ class Document extends Node {
 				return null;
 			},
 			parentNode() {
-				let parent = this.currentNode.parentNode;
+				const parent = this.currentNode.parentNode;
 				if (parent && parent !== this.root && this._accept(parent)) {
 					this.currentNode = parent;
 					return parent;
@@ -2728,7 +2728,7 @@ if (typeof TextDecoder === "undefined") {
 			let str = "",
 				i = 0;
 			while (i < bytes.length) {
-				let c = bytes[i++];
+				const c = bytes[i++];
 				if (c < 0x80) str += String.fromCharCode(c);
 				else if (c < 0xe0) str += String.fromCharCode(((c & 0x1f) << 6) | (bytes[i++] & 0x3f));
 				else if (c < 0xf0) {
@@ -3391,7 +3391,7 @@ globalThis.atob =
 	globalThis.atob ||
 	((s) => {
 		const c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		let r = [];
+		const r = [];
 		for (let i = 0; i < s.length; i += 4) {
 			const a = c.indexOf(s[i]),
 				b = c.indexOf(s[i + 1]),

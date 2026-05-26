@@ -5,11 +5,11 @@ message: "If you use this software, please cite it using the metadata below."
 title: kreuzcrawl
 abstract: "Web crawling and scraping with HTML→Markdown and headless-Chrome fallback."
 authors:
-    - family-names: Hirschfeld
-      given-names: "Na'aman"
-      email: "naaman@kreuzberg.dev"
-      orcid: "https://orcid.org/0009-0000-2247-5072"
-    - name: "Kreuzberg, Inc."
+  - family-names: Hirschfeld
+    given-names: "Na'aman"
+    email: "naaman@kreuzberg.dev"
+    orcid: "https://orcid.org/0009-0000-2247-5072"
+  - name: "Kreuzberg, Inc."
 repository-code: "https://github.com/kreuzberg-dev/kreuzcrawl"
 url: "https://kreuzberg.dev"
 license: Elastic-2.0

@@ -719,6 +719,13 @@ char *kcrawl_browser_config_robots_user_agent(const KCRAWLBrowserConfig *ptr);
 int32_t kcrawl_browser_config_capture_network_events(const KCRAWLBrowserConfig *ptr);
 
 /**
+ * Get the `session_affinity` field from a `BrowserConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_browser_config_session_affinity(const KCRAWLBrowserConfig *ptr);
+
+/**
  * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
  * freed with the appropriate free function.
  */

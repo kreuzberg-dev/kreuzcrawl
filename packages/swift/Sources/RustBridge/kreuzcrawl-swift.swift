@@ -507,8 +507,8 @@ public class BrowserConfig: BrowserConfigRefMut {
     }
 }
 extension BrowserConfig {
-    public convenience init<GenericIntoRustString: IntoRustString>(_ mode: BrowserMode, _ backend: BrowserBackend, _ endpoint: Optional<GenericIntoRustString>, _ timeout: UInt64, _ wait: BrowserWait, _ wait_selector: Optional<GenericIntoRustString>, _ extra_wait: Optional<UInt64>, _ stealth: Bool, _ proxy: Optional<ProxyConfig>, _ block_url_patterns: RustVec<GenericIntoRustString>, _ eval_script: Optional<GenericIntoRustString>, _ robots_user_agent: Optional<GenericIntoRustString>, _ capture_network_events: Bool) {
-        self.init(ptr: __swift_bridge__$BrowserConfig$new({mode.isOwned = false; return mode.ptr;}(), {backend.isOwned = false; return backend.ptr;}(), { if let rustString = optionalStringIntoRustString(endpoint) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), timeout, {wait.isOwned = false; return wait.ptr;}(), { if let rustString = optionalStringIntoRustString(wait_selector) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), extra_wait.intoFfiRepr(), stealth, { if let val = proxy { val.isOwned = false; return val.ptr } else { return nil } }(), { let val = block_url_patterns; val.isOwned = false; return val.ptr }(), { if let rustString = optionalStringIntoRustString(eval_script) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), { if let rustString = optionalStringIntoRustString(robots_user_agent) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), capture_network_events))
+    public convenience init<GenericIntoRustString: IntoRustString>(_ mode: BrowserMode, _ backend: BrowserBackend, _ endpoint: Optional<GenericIntoRustString>, _ timeout: UInt64, _ wait: BrowserWait, _ wait_selector: Optional<GenericIntoRustString>, _ extra_wait: Optional<UInt64>, _ stealth: Bool, _ proxy: Optional<ProxyConfig>, _ block_url_patterns: RustVec<GenericIntoRustString>, _ eval_script: Optional<GenericIntoRustString>, _ robots_user_agent: Optional<GenericIntoRustString>, _ capture_network_events: Bool, _ session_affinity: Bool) {
+        self.init(ptr: __swift_bridge__$BrowserConfig$new({mode.isOwned = false; return mode.ptr;}(), {backend.isOwned = false; return backend.ptr;}(), { if let rustString = optionalStringIntoRustString(endpoint) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), timeout, {wait.isOwned = false; return wait.ptr;}(), { if let rustString = optionalStringIntoRustString(wait_selector) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), extra_wait.intoFfiRepr(), stealth, { if let val = proxy { val.isOwned = false; return val.ptr } else { return nil } }(), { let val = block_url_patterns; val.isOwned = false; return val.ptr }(), { if let rustString = optionalStringIntoRustString(eval_script) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), { if let rustString = optionalStringIntoRustString(robots_user_agent) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), capture_network_events, session_affinity))
     }
 }
 public class BrowserConfigRefMut: BrowserConfigRef {
@@ -574,6 +574,10 @@ extension BrowserConfigRef {
 
     public func captureNetworkEvents() -> Bool {
         __swift_bridge__$BrowserConfig$capture_network_events(ptr)
+    }
+
+    public func sessionAffinity() -> Bool {
+        __swift_bridge__$BrowserConfig$session_affinity(ptr)
     }
 }
 extension BrowserConfig: Vectorizable {

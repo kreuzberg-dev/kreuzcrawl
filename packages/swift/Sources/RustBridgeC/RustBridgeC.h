@@ -784,7 +784,7 @@ struct __private__OptionUsize __swift_bridge__$ContentConfig$max_depth(void* sel
 bool __swift_bridge__$ContentConfig$wrap(void* self);
 uintptr_t __swift_bridge__$ContentConfig$wrap_width(void* self);
 bool __swift_bridge__$ContentConfig$include_document_structure(void* self);
-void* __swift_bridge__$BrowserConfig$new(void* mode, void* backend, void* endpoint, uint64_t timeout, void* wait, void* wait_selector, struct __private__OptionU64 extra_wait, bool stealth, void* proxy, void* block_url_patterns, void* eval_script, void* robots_user_agent, bool capture_network_events);
+void* __swift_bridge__$BrowserConfig$new(void* mode, void* backend, void* endpoint, uint64_t timeout, void* wait, void* wait_selector, struct __private__OptionU64 extra_wait, bool stealth, void* proxy, void* block_url_patterns, void* eval_script, void* robots_user_agent, bool capture_network_events, bool session_affinity);
 void* __swift_bridge__$BrowserConfig$mode(void* self);
 void* __swift_bridge__$BrowserConfig$backend(void* self);
 void* __swift_bridge__$BrowserConfig$endpoint(void* self);
@@ -798,6 +798,7 @@ void* __swift_bridge__$BrowserConfig$block_url_patterns(void* self);
 void* __swift_bridge__$BrowserConfig$eval_script(void* self);
 void* __swift_bridge__$BrowserConfig$robots_user_agent(void* self);
 bool __swift_bridge__$BrowserConfig$capture_network_events(void* self);
+bool __swift_bridge__$BrowserConfig$session_affinity(void* self);
 void* __swift_bridge__$CrawlConfig$new(struct __private__OptionUsize max_depth, struct __private__OptionUsize max_pages, struct __private__OptionUsize max_concurrent, bool respect_robots_txt, bool soft_http_errors, void* user_agent, bool stay_on_domain, bool allow_subdomains, void* include_paths, void* exclude_paths, void* custom_headers, uint64_t request_timeout, struct __private__OptionU64 rate_limit_ms, uintptr_t max_redirects, uintptr_t retry_count, void* retry_codes, bool cookies_enabled, void* auth, struct __private__OptionUsize max_body_size, void* remove_tags, void* content, struct __private__OptionUsize map_limit, void* map_search, bool download_assets, void* asset_types, struct __private__OptionUsize max_asset_size, void* browser, void* proxy, void* user_agents, bool capture_screenshot, bool download_documents, struct __private__OptionUsize document_max_size, void* document_mime_types, void* warc_output, void* browser_profile, bool save_browser_profile);
 struct __private__OptionUsize __swift_bridge__$CrawlConfig$max_depth(void* self);
 struct __private__OptionUsize __swift_bridge__$CrawlConfig$max_pages(void* self);

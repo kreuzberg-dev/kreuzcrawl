@@ -124,6 +124,10 @@ pub struct BrowserConfig {
     /// Capture the full network event stream into the result. Default false
     /// (only the document event is captured). Native only.
     pub capture_network_events: bool,
+    /// Enable session affinity: reuse chromiumoxide Pages for same-domain
+    /// requests so cookies + fingerprint + solved challenges persist.
+    /// Default: true. When false, each request gets a fresh Page.
+    pub session_affinity: bool,
 }
 
 /// Configuration for crawl, scrape, and map operations.
@@ -192,11 +196,6 @@ pub struct CrawlConfig {
     pub browser: BrowserConfig,
     /// Proxy configuration for HTTP requests.
     pub proxy: Option<ProxyConfig>,
-    /// Caller-supplied bypass provider. When `Some`, the engine routes every
-    /// URL through the provider, skipping native HTTP and chromiumoxide. Used
-    /// for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the
-    /// kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters.
-    pub bypass: Option<String>,
     /// List of user-agent strings for rotation. If non-empty, overrides `user_agent`.
     pub user_agents: Vec<String>,
     /// Whether to capture a screenshot when using the browser.
@@ -1195,6 +1194,7 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
             eval_script: v.eval_script.map(|s| s.into()),
             robots_user_agent: v.robots_user_agent.map(|s| s.into()),
             capture_network_events: v.capture_network_events as _,
+            session_affinity: v.session_affinity as _,
         }
     }
 }
@@ -1234,7 +1234,6 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             max_asset_size: v.max_asset_size.map(|x| x as _),
             browser: BrowserConfig::from(v.browser),
             proxy: v.proxy.map(ProxyConfig::from),
-            bypass: Default::default(),
             user_agents: v.user_agents.into_iter().map(|s| s.into()).collect(),
             capture_screenshot: v.capture_screenshot as _,
             download_documents: v.download_documents as _,
@@ -1848,6 +1847,7 @@ impl From<BrowserConfig> for kreuzcrawl::BrowserConfig {
             eval_script: v.eval_script.map(Into::into),
             robots_user_agent: v.robots_user_agent.map(Into::into),
             capture_network_events: v.capture_network_events as _,
+            session_affinity: v.session_affinity as _,
         }
     }
 }
@@ -1888,7 +1888,6 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             max_asset_size: v.max_asset_size.map(|x| x as _),
             browser: v.browser.into(),
             proxy: v.proxy.map(Into::into),
-            bypass: Default::default(),
             user_agents: v.user_agents.into_iter().map(Into::into).collect(),
             capture_screenshot: v.capture_screenshot as _,
             download_documents: v.download_documents as _,
@@ -1897,6 +1896,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             warc_output: v.warc_output.map(std::path::PathBuf::from),
             browser_profile: v.browser_profile.map(Into::into),
             save_browser_profile: v.save_browser_profile as _,
+            bypass: Default::default(),
             ..Default::default()
         }
     }

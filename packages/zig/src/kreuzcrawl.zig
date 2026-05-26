@@ -159,6 +159,10 @@ pub const BrowserConfig = struct {
     /// Capture the full network event stream into the result. Default false
     /// (only the document event is captured). Native only.
     capture_network_events: bool,
+    /// Enable session affinity: reuse chromiumoxide Pages for same-domain
+    /// requests so cookies + fingerprint + solved challenges persist.
+    /// Default: true. When false, each request gets a fresh Page.
+    session_affinity: bool,
 };
 
 /// Configuration for crawl, scrape, and map operations.
@@ -226,11 +230,6 @@ pub const CrawlConfig = struct {
     browser: BrowserConfig,
     /// Proxy configuration for HTTP requests.
     proxy: ?ProxyConfig,
-    /// Caller-supplied bypass provider. When `Some`, the engine routes every
-    /// URL through the provider, skipping native HTTP and chromiumoxide. Used
-    /// for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the
-    /// kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters.
-    bypass: ?[]const u8,
     /// List of user-agent strings for rotation. If non-empty, overrides `user_agent`.
     user_agents: []const []const u8,
     /// Whether to capture a screenshot when using the browser.
