@@ -641,11 +641,39 @@ jobs:
           package-dir: packages/ruby
           dry-run: ${{ needs.prepare.outputs.dry_run }}
 
-      - name: Package gem
-        # Inline: rake build emits the .gem under pkg/; no shared action wraps it.
+      - name: Build platform gem
+        # Inline: rb-sys's rake tasks are platform-dependent. All platforms use
+        # native[PLATFORM] gem to produce platform-specific gems. The native task
+        # is smart: on matching architectures it builds in-place, on mismatched
+        # architectures it cross-compiles via rake-compiler-dock.
         working-directory: packages/ruby
         shell: bash
-        run: bundle exec rake build
+        run: |
+          case "${{ matrix.label }}" in
+            linux-x86_64) target="x86_64-linux" ;;
+            linux-aarch64) target="aarch64-linux" ;;
+            macos-arm64) target="arm64-darwin" ;;
+            macos-x86_64) target="x86_64-darwin" ;;
+            windows-x64) target="x64-mingw-ucrt" ;;
+            *) echo "Unknown platform: ${{ matrix.label }}"; exit 1 ;;
+          esac
+          bundle exec rake "native[$target]" gem
+
+      - name: Drop source gem on non-canonical builders
+        if: ${{ matrix.label != 'linux-x86_64' }}
+        # Inline: only the canonical `linux-x86_64` builder ships the source gem; others
+        # would emit byte-different source gems that overwrite each other under
+        # merge-multiple and produce an invalid .gem at publish time.
+        shell: bash
+        run: |
+          shopt -s nullglob
+          for f in packages/ruby/pkg/*.gem; do
+            base="$(basename "$f")"
+            case "$base" in
+              *-x86_64-linux.gem|*-aarch64-linux.gem|*-arm64-darwin.gem|*-x86_64-darwin.gem|*-x64-mingw-ucrt.gem) ;;
+              *) echo "Removing non-canonical source gem $base"; rm -f "$f" ;;
+            esac
+          done
 
       - uses: actions/upload-artifact@v7.0.1
         with:
