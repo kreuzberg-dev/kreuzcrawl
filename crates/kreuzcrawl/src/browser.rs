@@ -6,6 +6,7 @@ use std::time::Duration;
 
 use chromiumoxide::Handler;
 use chromiumoxide::browser::{Browser, BrowserConfig as ChromeBrowserConfig};
+use chromiumoxide::cdp::browser_protocol::emulation::SetDeviceMetricsOverrideParams;
 use chromiumoxide::cdp::browser_protocol::network::{Headers, SetCookieParams, SetExtraHttpHeadersParams};
 use tokio_stream::StreamExt;
 
@@ -113,11 +114,29 @@ async fn page_fetch(
     page: &chromiumoxide::Page,
     prior_cookies: Option<&[CookieInfo]>,
 ) -> Result<HttpResponse, CrawlError> {
-    // Set user agent if configured.
-    if let Some(ref ua) = config.user_agent {
-        page.set_user_agent(ua)
+    // Resolve user agent: caller-supplied > stealth-enabled default > implicit browser default.
+    let resolved_ua = if let Some(ref ua) = config.user_agent {
+        ua.clone()
+    } else if config.browser.stealth {
+        // Use a modern Chrome UA when stealth is enabled and no explicit UA is provided.
+        resolve_default_user_agent().to_string()
+    } else {
+        // Fall through to chromiumoxide's default behavior
+        "".to_string()
+    };
+
+    // Set user agent if resolved to non-empty.
+    if !resolved_ua.is_empty() {
+        page.set_user_agent(&resolved_ua)
             .await
             .map_err(|e| CrawlError::BrowserError(format!("failed to set user agent: {e}")))?;
+    }
+
+    // Set viewport if stealth mode is enabled (default 1920x1080).
+    if config.browser.stealth {
+        if let Err(e) = set_viewport(page, 1920, 1080).await {
+            return Err(CrawlError::BrowserError(format!("failed to set viewport: {e}")));
+        }
     }
 
     // Set cookies from prior HTTP response.
@@ -285,4 +304,25 @@ async fn launch_or_connect(config: &CrawlConfig) -> Result<(Browser, Handler, Op
             }
         }
     }
+}
+
+/// Returns a modern Chrome user-agent string suitable for the runtime environment.
+/// Used as the default UA when stealth mode is enabled.
+fn resolve_default_user_agent() -> &'static str {
+    // Chrome 145 user agents per platform. The chromiumoxide path does not
+    // receive runtime platform info, so we default to Linux (worker standard).
+    // B2 may add per-page UA rotation; for now return the Linux Chrome string.
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+}
+
+/// Set the viewport (device metrics) via CDP Emulation.setDeviceMetricsOverride.
+async fn set_viewport(page: &chromiumoxide::Page, width: u32, height: u32) -> Result<(), Box<dyn std::error::Error>> {
+    let params = SetDeviceMetricsOverrideParams::builder()
+        .width(width)
+        .height(height)
+        .device_scale_factor(1.0)
+        .build()?;
+
+    page.execute(params).await?;
+    Ok(())
 }

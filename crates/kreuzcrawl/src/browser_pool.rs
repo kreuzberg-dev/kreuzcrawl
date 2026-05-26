@@ -51,9 +51,7 @@ pub(crate) fn safe_default_args() -> Vec<&'static str> {
         "--force-color-profile=srgb",
         "--metrics-recording-only",
         "--no-first-run",
-        "--enable-automation",
         "--password-store=basic",
-        "--use-mock-keychain",
         "--lang=en_US",
     ];
 
