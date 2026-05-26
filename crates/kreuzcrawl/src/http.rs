@@ -397,8 +397,9 @@ fn is_challenge_interstitial(body: &str) -> bool {
         || lower.contains("/cdn-cgi/challenge-platform/")
         // DataDome interstitial signatures
         || lower.contains("https://js.datadome.co/")
-        || lower.contains("geo.captcha-delivery.com")
+        || lower.contains("captcha-delivery.com")
         || lower.contains("dd.js")
+        || lower.contains("ddjskey")
         // PerimeterX interstitial signatures
         || lower.contains("/_px/captcha")
         || lower.contains("px-captcha")
@@ -424,6 +425,8 @@ fn waf_pattern_match(server_lower: &str, body_lower: &str) -> bool {
         || body_lower.contains("_incap_ses_")
         || body_lower.contains("datadome")
         || body_lower.contains("dd.js")
+        || body_lower.contains("captcha-delivery.com")
+        || body_lower.contains("ddjskey")
         || body_lower.contains("perimeterx")
         || body_lower.contains("px-captcha")
         || body_lower.contains("sucuri")
@@ -484,7 +487,7 @@ pub(crate) fn detect_waf_vendor(server: &str, body: &str) -> &'static str {
     if body.contains("incapsula") || body.contains("_incap_ses_") {
         return "imperva";
     }
-    if body.contains("datadome") {
+    if body.contains("datadome") || body.contains("captcha-delivery.com") || body.contains("ddjskey") {
         return "datadome";
     }
     if body.contains("perimeterx") || body.contains("px-captcha") {

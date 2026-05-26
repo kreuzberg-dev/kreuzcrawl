@@ -187,8 +187,9 @@ async fn do_fetch(
             .map(|s| s.to_lowercase())
             .unwrap_or_default();
         if status == 200 && body.len() < 5000 && crate::http::is_waf_blocked(&server, &body, &headers) {
+            let vendor = crate::http::detect_waf_vendor(&server, &body.to_lowercase());
             return Err(CrawlError::WafBlocked(format!(
-                "waf/blocked: {status} with challenge content"
+                "waf/blocked detected on 2xx (body): {vendor}"
             )));
         }
     }

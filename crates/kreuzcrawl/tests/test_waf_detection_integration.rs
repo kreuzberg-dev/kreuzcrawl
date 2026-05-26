@@ -187,6 +187,77 @@ async fn test_2xx_legitimate_long_page_not_flagged() {
     );
 }
 
+/// DataDome 2xx interstitial as actually served by leboncoin.fr: a ~774-byte HTML
+/// page with no `x-datadome` header, just an inline `var dd={...}` config object
+/// referencing `geo.captcha-delivery.com` plus a `ct.captcha-delivery.com` script
+/// src. Captured 2026-05-26 from staging API. Must be detected as DataDome.
+#[tokio::test]
+async fn test_datadome_2xx_body_leboncoin_detected() {
+    let body = "<html lang=\"en\"><head><title>leboncoin.fr</title></head>\
+                <body style=\"margin:0\"><p id=\"cmsg\">Please enable JS and disable any ad blocker</p>\
+                <script data-cfasync=\"false\">var dd={'rt':'i','cid':'AHrlqAAAAAMAuqpSG8sDb8IAV7yaGA==',\
+                'hsh':'05B30BD9055986BD2EE8F5A199D973','host':'geo.captcha-delivery.com'}</script>\
+                <script data-cfasync=\"false\" src=\"https://ct.captcha-delivery.com/i.js\"></script>\
+                </body></html>";
+
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(body)
+                .append_header("content-type", "text/html"),
+        )
+        .mount(&mock)
+        .await;
+
+    let handle = create_engine(Some(no_browser_config())).unwrap();
+    let result = scrape(&handle, &mock.uri()).await;
+    match result {
+        Err(CrawlError::WafBlocked(msg)) => {
+            assert!(
+                msg.contains("datadome"),
+                "expected vendor=datadome in WafBlocked msg, got: {msg}"
+            );
+        }
+        other => panic!("expected WafBlocked(datadome), got: {other:?}"),
+    }
+}
+
+/// A small (~1.5 KB) benign HTML page with no WAF tokens must not be classified
+/// as a challenge. Guards against the broader captcha-delivery.com / ddjskey
+/// fingerprints producing false positives on harmless pages.
+#[tokio::test]
+async fn test_small_benign_body_not_false_positive() {
+    let mut body = String::from("<html><head><title>Hello</title></head><body><h1>Welcome</h1>");
+    body.push_str(&"<p>This page is intentionally short and ordinary.</p>".repeat(20));
+    body.push_str("</body></html>");
+    assert!(
+        body.len() < 4096,
+        "test fixture must be small enough to exercise the small-body path: {} bytes",
+        body.len()
+    );
+
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(&body)
+                .append_header("content-type", "text/html"),
+        )
+        .mount(&mock)
+        .await;
+
+    let handle = create_engine(Some(no_browser_config())).unwrap();
+    let result = scrape(&handle, &mock.uri()).await;
+    assert!(
+        result.is_ok(),
+        "small benign body must NOT be classified as WafBlocked, got: {:?}",
+        result
+    );
+}
+
 #[tokio::test]
 async fn test_plain_403_is_not_waf() {
     let mock = MockServer::start().await;
