@@ -108,6 +108,11 @@ async fn run_with_browser(
 }
 
 async fn prepare_page(page: &chromiumoxide::Page, config: &CrawlConfig) -> Result<(), CrawlError> {
+    // Inject stealth patches if enabled, before any other page setup or navigation.
+    if config.browser.stealth {
+        crate::stealth::apply_stealth_patches(page).await;
+    }
+
     if let Some(ref ua) = config.user_agent {
         page.set_user_agent(ua)
             .await

@@ -114,6 +114,11 @@ async fn page_fetch(
     page: &chromiumoxide::Page,
     prior_cookies: Option<&[CookieInfo]>,
 ) -> Result<HttpResponse, CrawlError> {
+    // Inject stealth patches if enabled, before any page setup or navigation.
+    if config.browser.stealth {
+        crate::stealth::apply_stealth_patches(page).await;
+    }
+
     // Resolve user agent: caller-supplied > stealth-enabled default > implicit browser default.
     let resolved_ua = if let Some(ref ua) = config.user_agent {
         ua.clone()
@@ -133,11 +138,10 @@ async fn page_fetch(
     }
 
     // Set viewport if stealth mode is enabled (default 1920x1080).
-    if config.browser.stealth {
-        if let Err(e) = set_viewport(page, 1920, 1080).await {
+    if config.browser.stealth
+        && let Err(e) = set_viewport(page, 1920, 1080).await {
             return Err(CrawlError::BrowserError(format!("failed to set viewport: {e}")));
         }
-    }
 
     // Set cookies from prior HTTP response.
     if let Some(cookies) = prior_cookies {
