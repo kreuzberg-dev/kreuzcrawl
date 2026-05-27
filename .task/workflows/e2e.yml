@@ -92,7 +92,7 @@ tasks:
                 sh: cat .mock-server.env 2>/dev/null | grep MOCK_SERVER_URL | cut -d= -f2
         cmds:
             - task: :rust:build
-            - task: rust:e2e:test
+            - task: :rust:e2e:test
             - defer: { task: mock-server:stop }
 
     verify:all:

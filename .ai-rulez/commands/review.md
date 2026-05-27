@@ -1,6 +1,5 @@
 ---
 priority: high
-aliases: [rev]
 usage: "/review"
 description: "Review current changes for correctness, style, and potential issues"
 ---

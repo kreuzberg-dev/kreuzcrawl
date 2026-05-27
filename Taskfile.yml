@@ -103,6 +103,16 @@ tasks:
         cmds:
             - task: rust:test
 
+    test:bindings:
+        desc: Run binding test suites only
+        cmds:
+            - alef test
+
+    test:ci:
+        desc: Run test suites in CI mode
+        cmds:
+            - task: test:all
+
     update:
         desc: Update all dependencies within current major versions (no breaking changes)
         cmds:
@@ -201,7 +211,7 @@ tasks:
     alef:build:
         desc: "Build all language bindings"
         cmds:
-            - task: build:bindings
+            - alef build
 
     alef:format:
         desc: "Format Alef-managed generated outputs"
@@ -216,10 +226,30 @@ tasks:
     alef:docs:
         desc: "Generate API reference documentation"
         cmds:
+            - task: docs:generate
+
+    docs:generate:
+        desc: "Generate API reference documentation"
+        cmds:
             - alef docs
 
+    docs:generate:check:
+        desc: "Validate API reference docs are up-to-date"
+        cmds:
+            - alef verify --exit-code
+
+    readme:generate:
+        desc: "Generate package READMEs"
+        cmds:
+            - alef readme
+
+    readme:generate:check:
+        desc: "Validate package READMEs are up-to-date"
+        cmds:
+            - alef verify --exit-code
+
     alef:bump:
-        desc: "Bump alef pin in alef.toml + reinstall + regen (usage: VERSION=0.15.30 task alef:bump)"
+        desc: "Bump alef pin in alef.toml + reinstall + generate (usage: VERSION=0.15.30 task alef:bump)"
         cmds:
             - task: _dev_wf:alef:bump
 
@@ -234,17 +264,17 @@ tasks:
             - task: _dev_wf:rebuild:fast
 
     e2e:reset:
-        desc: "Full e2e reset: clean + alef regen + rebuild all bindings + run all e2e"
+        desc: "Full e2e reset: clean + alef generate + rebuild all bindings + run all e2e"
         cmds:
             - task: _dev_wf:e2e:reset
 
     e2e:refresh:
-        desc: "Quick e2e refresh: alef regen + rebuild + run all e2e (no clean)"
+        desc: "Quick e2e refresh: alef generate + rebuild + run all e2e (no clean)"
         cmds:
             - task: _dev_wf:e2e:refresh
 
     e2e:refresh:fast:
-        desc: "Fast e2e feedback: alef regen + rebuild Rust/Python/Node + run their e2e"
+        desc: "Fast e2e feedback: alef generate + rebuild Rust/Python/Node + run their e2e"
         cmds:
             - task: _dev_wf:e2e:refresh:fast
 
@@ -272,17 +302,7 @@ tasks:
     build:bindings:
         desc: Build all language bindings
         cmds:
-            - task: rust:ffi:build
-            - task: python:build
-            - task: node:build
-            - task: go:build
-            - task: java:build
-            - task: csharp:build
-            - task: wasm:build
-            - task: ruby:build
-            - task: php:build
-            - task: elixir:build
-            - task: c:build
+            - task: alef:build
 
     build:release:
         desc: Build core Rust library in release mode
@@ -329,6 +349,25 @@ tasks:
         cmds:
             - prek run --all-files
 
+    lint:check:
+        desc: Run check-only linting
+        cmds:
+            - task: rust:lint:check
+            - task: python:lint:check
+            - task: node:lint:check
+            - task: go:lint:check
+            - task: java:lint:check
+            - task: csharp:lint:check
+            - task: wasm:lint:check
+            - task: ruby:lint:check
+            - task: php:lint:check
+            - task: elixir:lint:check
+            - task: c:lint:check
+            - task: dart:lint:check
+            - task: kotlin-android:lint:check
+            - task: swift:lint:check
+            - task: zig:lint:check
+
     format:
         desc: Format all code
         cmds:
@@ -348,10 +387,30 @@ tasks:
             - task: swift:format
             - task: zig:format
 
-    check:
-        desc: Run all linting and formatting checks via prek
+    format:check:
+        desc: Check code formatting without modifications
         cmds:
-            - task: lint
+            - task: rust:format:check
+            - task: python:format:check
+            - task: node:format:check
+            - task: go:format:check
+            - task: java:format:check
+            - task: csharp:format:check
+            - task: wasm:format:check
+            - task: ruby:format:check
+            - task: php:format:check
+            - task: elixir:format:check
+            - task: c:format:check
+            - task: dart:format:check
+            - task: kotlin-android:format:check
+            - task: swift:format:check
+            - task: zig:format:check
+
+    check:
+        desc: Run check-only validation
+        cmds:
+            - task: format:check
+            - task: lint:check
 
     e2e:generate:
         desc: Generate E2E tests for all languages from fixtures

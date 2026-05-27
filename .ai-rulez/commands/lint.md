@@ -1,6 +1,5 @@
 ---
 priority: high
-aliases: [l]
 usage: "/lint"
 description: "Run linting and formatting checks via prek"
 ---

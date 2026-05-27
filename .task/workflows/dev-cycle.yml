@@ -1,6 +1,6 @@
 version: "3"
 
-# Development cycle workflows: cleanup, alef regen, binding rebuild, e2e cycles.
+# Development cycle workflows: cleanup, alef generate, binding rebuild, e2e cycles.
 #
 # These tasks codify the iteration loops we run when changing the kreuzcrawl
 # core or alef codegen. They handle the awkward bits that bite repeatedly:
@@ -38,7 +38,7 @@ tasks:
             - task: :build:bindings
 
     alef:bump:
-        desc: "Bump alef version pin in alef.toml + reinstall + regen (usage: VERSION=0.15.30 task alef:bump)"
+        desc: "Bump alef version pin in alef.toml + reinstall + generate (usage: VERSION=0.15.30 task alef:bump)"
         requires:
             vars: [VERSION]
         cmds:
@@ -138,7 +138,7 @@ tasks:
     # ============================================================
 
     e2e:reset:
-        desc: "Full reset: clean + alef regen + rebuild all bindings + run all e2e"
+        desc: "Full reset: clean + alef generate + rebuild all bindings + run all e2e"
         cmds:
             - task: clean:full
             - task: alef:generate
@@ -146,14 +146,14 @@ tasks:
             - task: :e2e:test
 
     e2e:refresh:
-        desc: "Quick refresh: alef regen + rebuild all bindings + run all e2e (no clean)"
+        desc: "Quick refresh: alef generate + rebuild all bindings + run all e2e (no clean)"
         cmds:
             - task: alef:generate
             - task: rebuild:bindings
             - task: :e2e:test
 
     e2e:refresh:fast:
-        desc: "Fast feedback: alef regen + rebuild Rust/Python/Node + run their e2e suites"
+        desc: "Fast feedback: alef generate + rebuild Rust/Python/Node + run their e2e suites"
         cmds:
             - task: alef:generate
             - task: rebuild:fast

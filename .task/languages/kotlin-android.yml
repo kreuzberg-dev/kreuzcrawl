@@ -74,7 +74,7 @@ tasks:
             - cmd: rm -rf build .gradle
               platforms: [linux, darwin]
 
-    test:e2e:
+    e2e:test:
         desc: >
             Run kotlin-android instrumented e2e tests on a running emulator.
             Requires ANDROID_HOME (and an emulator already started, e.g. via
@@ -96,14 +96,14 @@ tasks:
             - adb wait-for-device
             - gradle connectedDebugAndroidTest --no-daemon -Pmock_server_url={{.MOCK_SERVER_URL | default "http://10.0.2.2:8765"}}
 
-    test:e2e:skip-if-no-sdk:
+    e2e:test:skip-if-no-sdk:
         desc: >
-            Umbrella-safe variant of test:e2e — skips silently when ANDROID_HOME
-            is unset so `task test:e2e:all` works on machines without the SDK.
+            Umbrella-safe variant of e2e:test — skips silently when ANDROID_HOME
+            is unset so umbrella e2e tasks work on machines without the SDK.
         cmds:
             - cmd: |
                   if [ -z "$ANDROID_HOME" ]; then
-                    echo "kotlin-android:test:e2e — ANDROID_HOME unset, skipping."
+                    echo "kotlin-android:e2e:test — ANDROID_HOME unset, skipping."
                     exit 0
                   fi
-                  task kotlin-android:test:e2e
+                  task kotlin-android:e2e:test

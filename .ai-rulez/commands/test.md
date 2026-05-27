@@ -1,6 +1,5 @@
 ---
 priority: high
-aliases: [t]
 usage: "/test"
 description: "Run the project test suite and report results"
 ---
