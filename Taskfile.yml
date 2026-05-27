@@ -89,32 +89,19 @@ tasks:
             - prek install --hook-type commit-msg
 
     build:
-        desc: Build core libraries and language bindings
+        desc: Build core Rust library
         cmds:
             - task: rust:build
-            - task: python:build
-            - task: ruby:build
-            - task: node:build
-            - task: java:build
-            - task: csharp:build
-            - task: php:build
-            - task: elixir:build
-            - task: c:build
+
+    build:core:
+        desc: Build core Rust library
+        cmds:
+            - task: rust:build
 
     test:
-        desc: Run test suites for all languages (in parallel)
-        deps:
+        desc: Run Rust tests
+        cmds:
             - task: rust:test
-            - task: python:test
-            - task: ruby:test
-            - task: node:test
-            - task: java:test
-            - task: go:test
-            - task: csharp:test
-            - task: php:test
-            - task: elixir:test
-            - task: wasm:test
-            - task: c:test
 
     update:
         desc: Update all dependencies within current major versions (no breaking changes)
@@ -204,12 +191,7 @@ tasks:
     alef:generate:
         desc: "Regenerate all Alef-managed outputs without formatting or building"
         cmds:
-            - task: _dev_wf:alef:generate
-
-    alef:regen:
-        desc: "Alias for alef:generate"
-        cmds:
-            - task: alef:generate
+            - alef all --clean --format=false
 
     alef:verify:
         desc: "Check Alef-generated files are up to date"
@@ -219,7 +201,12 @@ tasks:
     alef:build:
         desc: "Build all language bindings"
         cmds:
-            - task: _dev_wf:alef:build
+            - task: build:bindings
+
+    alef:format:
+        desc: "Format Alef-managed generated outputs"
+        cmds:
+            - alef fmt
 
     alef:sync:
         desc: "Sync version from Cargo.toml to all manifests"
@@ -285,7 +272,27 @@ tasks:
     build:bindings:
         desc: Build all language bindings
         cmds:
-            - task: alef:build
+            - task: rust:ffi:build
+            - task: python:build
+            - task: node:build
+            - task: go:build
+            - task: java:build
+            - task: csharp:build
+            - task: wasm:build
+            - task: ruby:build
+            - task: php:build
+            - task: elixir:build
+            - task: c:build
+
+    build:release:
+        desc: Build core Rust library in release mode
+        cmds:
+            - task: rust:build:release
+
+    build:ci:
+        desc: Build core Rust library in CI mode
+        cmds:
+            - task: rust:build:ci
 
     build:all:dev:
         desc: Build all bindings in debug mode
@@ -325,36 +332,60 @@ tasks:
     format:
         desc: Format all code
         cmds:
-            - alef fmt
+            - task: rust:format
+            - task: python:format
+            - task: node:format
+            - task: go:format
+            - task: java:format
+            - task: csharp:format
+            - task: wasm:format
+            - task: ruby:format
+            - task: php:format
+            - task: elixir:format
+            - task: c:format
+            - task: dart:format
+            - task: kotlin-android:format
+            - task: swift:format
+            - task: zig:format
 
     check:
         desc: Run all linting and formatting checks via prek
         cmds:
             - task: lint
 
-    e2e:generate:all:
+    e2e:generate:
         desc: Generate E2E tests for all languages from fixtures
         cmds:
             - alef e2e generate
 
-    e2e:test:all:
+    e2e:build:
+        desc: Build the standalone e2e mock HTTP server binary
+        cmds:
+            - task: _dev_wf:mock-server:rebuild
+
+    e2e:test:
         desc: Run e2e tests across all bindings (mock server auto-managed)
         cmds:
             - task: _dev_wf:mock-server:rebuild
             - task: _e2e_wf:test:all
 
-    e2e:test:quick:
+    e2e:all:
+        desc: Generate, lint, and run e2e tests across all bindings
+        cmds:
+            - task: e2e:verify
+
+    e2e:quick:
         desc: Quick e2e (Rust only — fastest feedback)
         cmds:
             - task: _dev_wf:mock-server:rebuild
             - task: _e2e_wf:test:quick
 
-    e2e:verify:all:
+    e2e:verify:
         desc: Full e2e pipeline — generate, lint, test all suites
         cmds:
             - task: _e2e_wf:verify:all
 
-    e2e:lint:all:
+    e2e:lint:
         desc: Lint all generated E2E test code
         cmds:
             - task: rust:e2e:lint
@@ -378,19 +409,3 @@ tasks:
         desc: Stop the e2e mock HTTP server
         cmds:
             - task: _e2e_wf:mock-server:stop
-
-    # Backward-compat aliases (legacy task names).
-    test:e2e:
-        desc: "Alias for e2e:test:all"
-        cmds:
-            - task: e2e:test:all
-
-    e2e:generate:
-        desc: "Alias for e2e:generate:all"
-        cmds:
-            - task: e2e:generate:all
-
-    e2e:test:
-        desc: "Alias for e2e:test:all"
-        cmds:
-            - task: e2e:test:all

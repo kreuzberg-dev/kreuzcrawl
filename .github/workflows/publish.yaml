@@ -1560,6 +1560,7 @@ jobs:
             - uses: kreuzberg-dev/actions/setup-node-workspace@v1
               with:
                   node-version: "22"
+                  registry-url: "https://registry.npmjs.org/"
 
             - name: Stage platform packages with napi
               # Inline: napi artifacts → per-platform npm/ subpackages, then drop the
@@ -1625,6 +1626,7 @@ jobs:
             - uses: kreuzberg-dev/actions/setup-node-workspace@v1
               with:
                   node-version: "22"
+                  registry-url: "https://registry.npmjs.org/"
 
             - uses: kreuzberg-dev/actions/publish-npm@v1
               with:

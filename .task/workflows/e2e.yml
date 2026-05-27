@@ -98,9 +98,9 @@ tasks:
     verify:all:
         desc: Full E2E pipeline - generate, lint, and test all suites
         cmds:
-            - task: e2e:generate:all
-            - task: e2e:lint:all
-            - task: e2e:test:all
+            - task: :e2e:generate
+            - task: :e2e:lint
+            - task: :e2e:test
 
     lint:all:
         desc: Lint all generated E2E test code

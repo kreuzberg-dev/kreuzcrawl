@@ -27,11 +27,6 @@ tasks:
         cmds:
             - alef all --clean --format=false
 
-    alef:regen:
-        desc: Alias for alef:generate
-        cmds:
-            - task: alef:generate
-
     alef:verify:
         desc: Check Alef-generated files are up to date
         cmds:
@@ -40,7 +35,7 @@ tasks:
     alef:build:
         desc: Build all language bindings
         cmds:
-            - alef build
+            - task: :build:bindings
 
     alef:bump:
         desc: "Bump alef version pin in alef.toml + reinstall + regen (usage: VERSION=0.15.30 task alef:bump)"
@@ -50,7 +45,7 @@ tasks:
             - sed -i.bak 's/^alef_version = .*/alef_version = "{{.VERSION}}"/' alef.toml
             - rm -f alef.toml.bak
             - task: alef:install
-            - task: alef:regen
+            - task: alef:generate
 
     # ============================================================
     # MOCK-SERVER (alef-generated; the binary bindings actually spawn)
@@ -146,21 +141,21 @@ tasks:
         desc: "Full reset: clean + alef regen + rebuild all bindings + run all e2e"
         cmds:
             - task: clean:full
-            - task: alef:regen
+            - task: alef:generate
             - task: rebuild:bindings
-            - task: :e2e:test:all
+            - task: :e2e:test
 
     e2e:refresh:
         desc: "Quick refresh: alef regen + rebuild all bindings + run all e2e (no clean)"
         cmds:
-            - task: alef:regen
+            - task: alef:generate
             - task: rebuild:bindings
-            - task: :e2e:test:all
+            - task: :e2e:test
 
     e2e:refresh:fast:
         desc: "Fast feedback: alef regen + rebuild Rust/Python/Node + run their e2e suites"
         cmds:
-            - task: alef:regen
+            - task: alef:generate
             - task: rebuild:fast
             - task: :rust:e2e:test
             - task: python:cycle
