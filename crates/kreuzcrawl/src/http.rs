@@ -10,7 +10,7 @@ use crate::error::{CrawlError, classify_reqwest_error, error_chain_string};
 use crate::types::CookieInfo;
 use crate::types::WafClassifier;
 use crate::types::{AuthConfig, CrawlConfig, ResponseMeta};
-use crate::waf::{TomlClassifier, matcher::headers_only_waf_match};
+use crate::waf::TomlClassifier;
 
 /// Browser-specific extras attached to an `HttpResponse` produced by the native
 /// browser backend. Populated when `browser_used` is true.
