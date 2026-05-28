@@ -82,7 +82,9 @@ impl RetryPolicy for SimpleRetryPolicy {
             | CrawlError::ServerError(_)
             | CrawlError::BadGateway(_)
             | CrawlError::Timeout(_) => {
-                if outcome.attempt + 1 >= self.max_retries {
+                // `attempt` is zero-based: 0 = first try failed. With max_retries=3,
+                // attempts 0, 1, 2 should retry; attempt 3 should stop (3 retries consumed).
+                if outcome.attempt >= self.max_retries {
                     RetryDirective::Stop
                 } else {
                     let backoff = compute_backoff_ms(outcome.attempt, self.max_backoff_ms);
@@ -259,10 +261,32 @@ mod tests {
 
     #[tokio::test]
     async fn rate_limited_stops_after_max_retries() {
+        // max_retries=2: attempts 0 and 1 retry; attempt 2 stops.
         let policy = SimpleRetryPolicy::new().with_max_retries(2);
         let err = CrawlError::RateLimited("429".into());
-        let directive = policy.decide(&outcome_with_error(err, 1)).await;
+        let directive = policy.decide(&outcome_with_error(err, 2)).await;
         assert_eq!(directive, RetryDirective::Stop);
+    }
+
+    #[tokio::test]
+    async fn max_retries_3_allows_three_retries_then_stops() {
+        let policy = SimpleRetryPolicy::new().with_max_retries(3);
+        let err = CrawlError::RateLimited("429".into());
+
+        for attempt in 0..3 {
+            let directive = policy.decide(&outcome_with_error(err.clone(), attempt)).await;
+            assert!(
+                matches!(directive, RetryDirective::Retry { .. }),
+                "attempt={attempt}: expected Retry, got {directive:?}"
+            );
+        }
+
+        let directive = policy.decide(&outcome_with_error(err.clone(), 3)).await;
+        assert_eq!(
+            directive,
+            RetryDirective::Stop,
+            "attempt=3 with max_retries=3: expected Stop"
+        );
     }
 
     #[tokio::test]
