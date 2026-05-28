@@ -68,6 +68,7 @@ memchr = "2"
 minijinja = "2"
 napi = { version = "3", default-features = false, features = ["napi8", "tokio_rt"] }
 napi-derive = "3"
+opentelemetry = { version = "0.32", features = ["metrics"] }
 png = "0.18"
 precomputed-hash = "0.1"
 pyo3 = { version = "0.28", features = ["abi3-py310"] }

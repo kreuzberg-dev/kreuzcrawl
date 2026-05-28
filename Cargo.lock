@@ -2911,6 +2911,7 @@ dependencies = [
  "liter-llm",
  "memchr",
  "minijinja",
+ "opentelemetry",
  "quick-xml 0.40.1",
  "regex",
  "reqwest",
@@ -3634,6 +3635,20 @@ dependencies = [
  "libc",
  "pkg-config",
  "vcpkg",
+]
+
+[[package]]
+name = "opentelemetry"
+version = "0.32.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0142c63252a9e054e68a4c61a5778f7b14f576274d593f8ce883d191a099682"
+dependencies = [
+ "futures-core",
+ "futures-sink",
+ "js-sys",
+ "pin-project-lite",
+ "thiserror",
+ "tracing",
 ]
 
 [[package]]

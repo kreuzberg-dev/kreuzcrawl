@@ -1,9 +1,18 @@
 //! TOML loader, validation, and the compiled `Rules` struct.
+//!
+//! # Observability
+//!
+//! OTel counters (`opentelemetry::global`) emit unconditionally — consumers
+//! (kreuzberg-cloud) expect these always. Tracing spans/events are gated behind
+//! `feature = "tracing"` for crates that do not want the tracing dep.
 
 use std::collections::HashMap;
 use std::path::Path;
+use std::sync::OnceLock;
 
 use aho_corasick::{AhoCorasick, AhoCorasickBuilder, MatchKind};
+use opentelemetry::metrics::Counter;
+use opentelemetry::{KeyValue, global};
 use serde::Deserialize;
 use thiserror::Error;
 
@@ -13,6 +22,28 @@ use crate::types::{WafClassifyError, WafSignal};
 /// Maximum body size (bytes) at which body fingerprints are checked on 2xx.
 /// Real content pages overwhelmingly exceed this; challenge pages are tiny.
 pub(crate) const CHALLENGE_BODY_LIMIT: usize = 100 * 1024;
+
+/// Maximum number of fingerprints allowed in a rules file.
+pub(crate) const MAX_FINGERPRINTS: usize = 1_000;
+/// Maximum byte length for any individual pattern string.
+pub(crate) const MAX_PATTERN_LEN: usize = 4_096;
+/// Maximum number of signals per fingerprint.
+pub(crate) const MAX_SIGNALS_PER_FINGERPRINT: usize = 16;
+
+// ---------------------------------------------------------------------------
+// OTel counter
+// ---------------------------------------------------------------------------
+
+static WAF_MATCH_COUNTER: OnceLock<Counter<u64>> = OnceLock::new();
+
+fn waf_match_counter() -> &'static Counter<u64> {
+    WAF_MATCH_COUNTER.get_or_init(|| {
+        global::meter("kreuzcrawl")
+            .u64_counter("kreuzcrawl_waf_fingerprint_matches_total")
+            .with_description("Per-fingerprint WAF match count for rot detection")
+            .build()
+    })
+}
 
 // ---------------------------------------------------------------------------
 // TOML schema types
@@ -130,6 +161,12 @@ impl Rules {
         let src = include_str!("../../rules/waf_fingerprints.toml");
         load_from_str(src).expect("builtin waf_fingerprints.toml must be valid")
     }
+
+    /// Number of fingerprints in this compiled rule set.
+    #[cfg(test)]
+    pub(crate) fn fingerprint_count(&self) -> usize {
+        self.fingerprints.len()
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -137,6 +174,17 @@ impl Rules {
 // ---------------------------------------------------------------------------
 
 fn compile(raw: TomlRules) -> Result<Rules, RulesError> {
+    // --- Input validation: enforce corpus size limits before any allocation ---
+    if raw.fingerprint.len() > MAX_FINGERPRINTS {
+        return Err(RulesError::Validation {
+            fingerprint_id: String::new(),
+            reason: format!(
+                "too many fingerprints: {} > MAX_FINGERPRINTS={MAX_FINGERPRINTS}",
+                raw.fingerprint.len()
+            ),
+        });
+    }
+
     let mut fingerprints: Vec<Fingerprint> = Vec::with_capacity(raw.fingerprint.len());
     let mut ac_patterns: Vec<String> = Vec::new();
     let mut pattern_to_fp: Vec<usize> = Vec::new();
@@ -161,6 +209,17 @@ fn compile(raw: TomlRules) -> Result<Rules, RulesError> {
         }
         seen_ids.insert(raw_fp.id.clone(), ());
 
+        // Validate per-fingerprint signal count.
+        if raw_fp.signals.len() > MAX_SIGNALS_PER_FINGERPRINT {
+            return Err(RulesError::Validation {
+                fingerprint_id: raw_fp.id.clone(),
+                reason: format!(
+                    "too many signals: {} > MAX_SIGNALS_PER_FINGERPRINT={MAX_SIGNALS_PER_FINGERPRINT}",
+                    raw_fp.signals.len()
+                ),
+            });
+        }
+
         let mut signals: Vec<Signal> = Vec::with_capacity(raw_fp.signals.len());
 
         for raw_sig in &raw_fp.signals {
@@ -174,6 +233,20 @@ fn compile(raw: TomlRules) -> Result<Rules, RulesError> {
                             reason: "response_header signal requires 'name'".into(),
                         })?
                         .to_lowercase();
+                    // Validate optional value_contains pattern length.
+                    if raw_sig
+                        .value_contains
+                        .as_deref()
+                        .is_some_and(|vc| vc.len() > MAX_PATTERN_LEN)
+                    {
+                        return Err(RulesError::Validation {
+                            fingerprint_id: raw_fp.id.clone(),
+                            reason: format!(
+                                "pattern too long: {} > MAX_PATTERN_LEN={MAX_PATTERN_LEN}",
+                                raw_sig.value_contains.as_ref().map_or(0, |s| s.len())
+                            ),
+                        });
+                    }
                     signals.push(Signal::ResponseHeader {
                         name,
                         value_contains: raw_sig.value_contains.as_ref().map(|s| s.to_lowercase()),
@@ -188,6 +261,16 @@ fn compile(raw: TomlRules) -> Result<Rules, RulesError> {
                             reason: "body_substring signal requires 'pattern'".into(),
                         })?
                         .to_lowercase();
+                    // Validate pattern length before adding to AC builder.
+                    if pattern.len() > MAX_PATTERN_LEN {
+                        return Err(RulesError::Validation {
+                            fingerprint_id: raw_fp.id.clone(),
+                            reason: format!(
+                                "pattern too long: {} > MAX_PATTERN_LEN={MAX_PATTERN_LEN}",
+                                pattern.len()
+                            ),
+                        });
+                    }
                     ac_patterns.push(pattern);
                     pattern_to_fp.push(fp_idx);
                     signals.push(Signal::BodySubstring);
@@ -274,14 +357,13 @@ impl Rules {
                     fingerprint_id: fingerprint.id.clone(),
                     weight: fingerprint.weight,
                 };
-                #[cfg(feature = "tracing")]
-                {
-                    tracing::info!(
-                        kreuzcrawl.waf.fingerprint_id = %signal.fingerprint_id,
-                        kreuzcrawl.waf.vendor = %signal.vendor,
-                        "kreuzcrawl_waf_fingerprint_matches_total"
-                    );
-                }
+                waf_match_counter().add(
+                    1,
+                    &[
+                        KeyValue::new("fingerprint_id", signal.fingerprint_id.clone()),
+                        KeyValue::new("vendor", signal.vendor.clone()),
+                    ],
+                );
                 return Ok(Some(signal));
             }
         }
@@ -310,19 +392,13 @@ impl Rules {
                     fingerprint_id: fingerprint.id.clone(),
                     weight: fingerprint.weight,
                 };
-
-                // Emit per-fingerprint match counter via tracing structured event.
-                // The OTel collector turns this into
-                // kreuzcrawl_waf_fingerprint_matches_total{fingerprint_id, vendor}.
-                #[cfg(feature = "tracing")]
-                {
-                    tracing::info!(
-                        kreuzcrawl.waf.fingerprint_id = %signal.fingerprint_id,
-                        kreuzcrawl.waf.vendor = %signal.vendor,
-                        "kreuzcrawl_waf_fingerprint_matches_total"
-                    );
-                }
-
+                waf_match_counter().add(
+                    1,
+                    &[
+                        KeyValue::new("fingerprint_id", signal.fingerprint_id.clone()),
+                        KeyValue::new("vendor", signal.vendor.clone()),
+                    ],
+                );
                 return Ok(Some(signal));
             }
         }

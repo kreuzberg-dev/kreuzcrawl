@@ -7,6 +7,7 @@ use std::collections::HashMap;
 
 use crate::http::HttpResponse;
 use crate::types::WafClassifier;
+use crate::waf::rules::{MAX_FINGERPRINTS, MAX_PATTERN_LEN, MAX_SIGNALS_PER_FINGERPRINT, Rules};
 use crate::waf::{TomlClassifier, load_from_str};
 
 fn make_response(status: u16, headers: Vec<(&str, &str)>, body: &str) -> HttpResponse {
@@ -186,6 +187,105 @@ pattern = "tv-challenge-token"
     assert!(
         c.classify(&resp2).expect("classify must not fail").is_some(),
         "must match when all signals present"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Input validation (B8, B9)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn load_from_str_rejects_too_many_fingerprints() {
+    let mut toml = String::new();
+    for i in 0..(MAX_FINGERPRINTS + 1) {
+        use std::fmt::Write as _;
+        let _ = write!(
+            toml,
+            r#"
+[[fingerprint]]
+id = "fp_{i}"
+vendor = "test"
+weight = 1.0
+[[fingerprint.signals]]
+kind = "body_substring"
+pattern = "pattern_{i}"
+"#
+        );
+    }
+    let result = load_from_str(&toml);
+    let err = result.expect_err("should reject too many fingerprints");
+    match err {
+        crate::waf::rules::RulesError::Validation { reason, .. } => {
+            assert!(reason.contains("too many fingerprints"), "got: {reason}");
+        }
+        other => panic!("expected Validation, got {other:?}"),
+    }
+}
+
+#[test]
+fn load_from_str_rejects_oversized_pattern() {
+    let big_pattern = "a".repeat(MAX_PATTERN_LEN + 1);
+    let toml = format!(
+        r#"
+[[fingerprint]]
+id = "fp_big"
+vendor = "test"
+weight = 1.0
+[[fingerprint.signals]]
+kind = "body_substring"
+pattern = "{big_pattern}"
+"#
+    );
+    let result = load_from_str(&toml);
+    let err = result.expect_err("should reject oversized pattern");
+    assert!(
+        matches!(err, crate::waf::rules::RulesError::Validation { .. }),
+        "expected Validation error, got {err:?}"
+    );
+}
+
+#[test]
+fn load_from_str_rejects_too_many_signals() {
+    let mut signals_block = String::new();
+    for i in 0..(MAX_SIGNALS_PER_FINGERPRINT + 1) {
+        use std::fmt::Write as _;
+        let _ = write!(
+            signals_block,
+            r#"
+[[fingerprint.signals]]
+kind = "body_substring"
+pattern = "s_{i}"
+"#
+        );
+    }
+    let toml = format!(
+        r#"
+[[fingerprint]]
+id = "fp_many"
+vendor = "test"
+weight = 1.0
+{signals_block}
+"#
+    );
+    let result = load_from_str(&toml);
+    let err = result.expect_err("should reject too many signals");
+    assert!(
+        matches!(err, crate::waf::rules::RulesError::Validation { .. }),
+        "expected Validation error, got {err:?}"
+    );
+}
+
+#[test]
+fn load_from_str_accepts_corpus_at_limit() {
+    // The builtin corpus must remain BELOW MAX_FINGERPRINTS. If this test
+    // breaks because the canonical corpus has grown past 1000 fingerprints,
+    // raise the limit deliberately rather than masking the warning.
+    let builtin = Rules::builtin();
+    assert!(
+        builtin.fingerprint_count() < MAX_FINGERPRINTS,
+        "builtin corpus ({}) is approaching the MAX_FINGERPRINTS limit ({})",
+        builtin.fingerprint_count(),
+        MAX_FINGERPRINTS,
     );
 }
 

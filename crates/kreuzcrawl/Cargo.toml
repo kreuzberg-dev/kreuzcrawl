@@ -76,6 +76,7 @@ kreuzcrawl-browser = { workspace = true, optional = true }
 liter-llm = { workspace = true, optional = true }
 memchr = { workspace = true }
 minijinja = { workspace = true, optional = true }
+opentelemetry = { workspace = true }
 quick-xml = { workspace = true }
 regex = { workspace = true }
 reqwest = { workspace = true }
