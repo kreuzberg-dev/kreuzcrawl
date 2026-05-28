@@ -59,7 +59,7 @@ impl From<CrawlError> for ApiError {
             CrawlError::NotFound(_) => (StatusCode::NOT_FOUND, "NOT_FOUND"),
             CrawlError::Unauthorized(_) => (StatusCode::UNAUTHORIZED, "UNAUTHORIZED"),
             CrawlError::Forbidden(_) => (StatusCode::FORBIDDEN, "FORBIDDEN"),
-            CrawlError::WafBlocked(_) => (StatusCode::FORBIDDEN, "WAF_BLOCKED"),
+            CrawlError::WafBlocked { .. } => (StatusCode::FORBIDDEN, "WAF_BLOCKED"),
             CrawlError::Timeout(_) | CrawlError::BrowserTimeout(_) => (StatusCode::GATEWAY_TIMEOUT, "TIMEOUT"),
             CrawlError::RateLimited(_) => (StatusCode::TOO_MANY_REQUESTS, "RATE_LIMITED"),
             CrawlError::ServerError(_) => (StatusCode::BAD_GATEWAY, "SERVER_ERROR"),

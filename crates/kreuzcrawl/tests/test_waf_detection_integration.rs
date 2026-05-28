@@ -29,7 +29,7 @@ async fn assert_waf_blocked(body: &str, headers: Vec<(&str, &str)>) {
     let handle = create_engine(Some(no_browser_config())).unwrap();
     let result = scrape(&handle, &mock.uri()).await;
     assert!(
-        matches!(result, Err(CrawlError::WafBlocked(_))),
+        matches!(result, Err(CrawlError::WafBlocked { .. })),
         "expected WafBlocked, got: {:?}",
         result
     );
@@ -102,7 +102,7 @@ async fn test_cloudflare_2xx_interstitial_detected() {
     let handle = create_engine(Some(no_browser_config())).unwrap();
     let result = scrape(&handle, &mock.uri()).await;
     assert!(
-        matches!(result, Err(CrawlError::WafBlocked(_))),
+        matches!(result, Err(CrawlError::WafBlocked { .. })),
         "2xx Cloudflare interstitial must be WafBlocked, got: {:?}",
         result
     );
@@ -127,7 +127,7 @@ async fn test_datadome_2xx_header_detected() {
     let handle = create_engine(Some(no_browser_config())).unwrap();
     let result = scrape(&handle, &mock.uri()).await;
     assert!(
-        matches!(result, Err(CrawlError::WafBlocked(_))),
+        matches!(result, Err(CrawlError::WafBlocked { .. })),
         "2xx with x-datadome header must be WafBlocked, got: {:?}",
         result
     );
@@ -151,7 +151,7 @@ async fn test_perimeterx_2xx_header_detected() {
     let handle = create_engine(Some(no_browser_config())).unwrap();
     let result = scrape(&handle, &mock.uri()).await;
     assert!(
-        matches!(result, Err(CrawlError::WafBlocked(_))),
+        matches!(result, Err(CrawlError::WafBlocked { .. })),
         "2xx with x-px-* header must be WafBlocked, got: {:?}",
         result
     );
@@ -214,13 +214,13 @@ async fn test_datadome_2xx_body_leboncoin_detected() {
     let handle = create_engine(Some(no_browser_config())).unwrap();
     let result = scrape(&handle, &mock.uri()).await;
     match result {
-        Err(CrawlError::WafBlocked(msg)) => {
+        Err(CrawlError::WafBlocked { vendor, .. }) => {
             assert!(
-                msg.contains("datadome"),
-                "expected vendor=datadome in WafBlocked msg, got: {msg}"
+                vendor.contains("datadome"),
+                "expected vendor=datadome in WafBlocked vendor, got: {vendor}"
             );
         }
-        other => panic!("expected WafBlocked(datadome), got: {other:?}"),
+        other => panic!("expected WafBlocked {{ datadome }}, got: {other:?}"),
     }
 }
 

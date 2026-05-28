@@ -6511,7 +6511,7 @@ fn crawl_error_error_code(e: &kreuzcrawl::CrawlError) -> &'static str {
         kreuzcrawl::CrawlError::NotFound(..) => "not_found",
         kreuzcrawl::CrawlError::Unauthorized(..) => "unauthorized",
         kreuzcrawl::CrawlError::Forbidden(..) => "forbidden",
-        kreuzcrawl::CrawlError::WafBlocked(..) => "waf_blocked",
+        kreuzcrawl::CrawlError::WafBlocked { .. } => "waf_blocked",
         kreuzcrawl::CrawlError::Timeout(..) => "timeout",
         kreuzcrawl::CrawlError::RateLimited(..) => "rate_limited",
         kreuzcrawl::CrawlError::ServerError(..) => "server_error",

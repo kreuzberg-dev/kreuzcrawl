@@ -120,7 +120,10 @@ async fn do_fetch(
             let body = resp.text().await.unwrap_or_default();
             if crate::http::is_waf_blocked(&server, &body, &headers) {
                 let vendor = crate::http::detect_waf_vendor(&server, &body.to_lowercase());
-                return Err(CrawlError::WafBlocked(format!("waf/blocked detected: {vendor}")));
+                return Err(CrawlError::WafBlocked {
+                    message: format!("waf/blocked detected: {vendor}"),
+                    vendor,
+                });
             }
             return Err(CrawlError::Forbidden("forbidden".into()));
         }
@@ -188,9 +191,10 @@ async fn do_fetch(
             .unwrap_or_default();
         if status == 200 && body.len() < 5000 && crate::http::is_waf_blocked(&server, &body, &headers) {
             let vendor = crate::http::detect_waf_vendor(&server, &body.to_lowercase());
-            return Err(CrawlError::WafBlocked(format!(
-                "waf/blocked detected on 2xx (body): {vendor}"
-            )));
+            return Err(CrawlError::WafBlocked {
+                message: format!("waf/blocked detected on 2xx (body): {vendor}"),
+                vendor,
+            });
         }
     }
 

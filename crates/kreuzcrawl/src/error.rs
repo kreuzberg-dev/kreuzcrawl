@@ -43,7 +43,7 @@ impl NetworkErrorKind {
 }
 
 /// Errors that can occur during crawling, scraping, or mapping operations.
-#[derive(Debug, Error)]
+#[derive(Debug, Clone, Error)]
 pub enum CrawlError {
     /// The requested page was not found (HTTP 404).
     #[error("not_found: {0}")]
@@ -55,8 +55,21 @@ pub enum CrawlError {
     #[error("forbidden: {0}")]
     Forbidden(String),
     /// The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators).
-    #[error("forbidden: waf/blocked: {0}")]
-    WafBlocked(String),
+    ///
+    /// `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare",
+    /// "datadome"). When the engine cannot identify the vendor, it uses "unknown".
+    /// `message` is the freeform description for logs and human readers.
+    ///
+    /// The stable error tag remains `forbidden: waf/blocked: <message>` so existing
+    /// log-grep patterns and cross-language bindings continue to work; vendor is
+    /// surfaced separately for structured consumers.
+    #[error("forbidden: waf/blocked: {message}")]
+    WafBlocked {
+        /// Lowercase WAF vendor identifier (e.g. "cloudflare").
+        vendor: String,
+        /// Freeform description / context for logs.
+        message: String,
+    },
     /// The request timed out.
     #[error("timeout: {0}")]
     Timeout(String),

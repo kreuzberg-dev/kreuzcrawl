@@ -135,10 +135,10 @@ pub(crate) async fn http_fetch(
             let partial_response = build_partial_response(status, &body, &headers);
             let classifier = TomlClassifier::builtin();
             if let Some(signal) = classifier.classify(&partial_response) {
-                return Err(CrawlError::WafBlocked(format!(
-                    "waf/blocked detected: {}",
-                    signal.vendor
-                )));
+                return Err(CrawlError::WafBlocked {
+                    vendor: signal.vendor.clone(),
+                    message: format!("waf/blocked detected: {}", signal.vendor),
+                });
             }
             return Err(CrawlError::Forbidden("forbidden".into()));
         }
@@ -176,9 +176,10 @@ pub(crate) async fn http_fetch(
                 .classify(&partial_response)
                 .map(|s| s.vendor)
                 .unwrap_or(signal.vendor);
-            return Err(CrawlError::WafBlocked(format!(
-                "waf/blocked detected on 2xx (header): {vendor}"
-            )));
+            return Err(CrawlError::WafBlocked {
+                message: format!("waf/blocked detected on 2xx (header): {vendor}"),
+                vendor,
+            });
         }
     }
 
@@ -231,10 +232,10 @@ pub(crate) async fn http_fetch(
         let partial_response = build_partial_response_with_bytes(status, &body_bytes_vec, &body, &headers);
         let classifier = TomlClassifier::builtin();
         if let Some(signal) = classifier.classify(&partial_response) {
-            return Err(CrawlError::WafBlocked(format!(
-                "waf/blocked detected on 2xx (body): {}",
-                signal.vendor
-            )));
+            return Err(CrawlError::WafBlocked {
+                vendor: signal.vendor.clone(),
+                message: format!("waf/blocked detected on 2xx (body): {}", signal.vendor),
+            });
         }
     }
 
@@ -418,6 +419,10 @@ fn build_partial_response_with_bytes(status: u16, body_bytes: &[u8], body: &str,
 ///
 /// Delegates to [`TomlClassifier::builtin`]. Kept for backward compatibility
 /// with callers in `tower/service.rs`.
+///
+/// Callers are all gated behind `#[cfg(not(target_arch = "wasm32"))]`; the
+/// function is gated here to keep the wasm build warning-free under `-D warnings`.
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn detect_waf_vendor(server: &str, body: &str) -> String {
     let body_bytes = body.as_bytes().to_vec();
     let mut headers_map: HashMap<String, Vec<String>> = HashMap::new();

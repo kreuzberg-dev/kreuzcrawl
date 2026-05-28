@@ -151,7 +151,7 @@ impl RetryPolicy for LearningRetryPolicy {
         {
             let blocked = matches!(
                 outcome.error,
-                Some(crate::error::CrawlError::WafBlocked(_) | crate::error::CrawlError::Forbidden(_))
+                Some(crate::error::CrawlError::WafBlocked { .. } | crate::error::CrawlError::Forbidden(_))
             ) || outcome.waf_signal.is_some();
             self.state
                 .record_outcome(
@@ -274,7 +274,10 @@ mod tests {
     async fn learning_policy_records_outcome_on_waf_blocked() {
         let state = Arc::new(InMemoryDomainState::new());
         let policy = LearningRetryPolicy::new(state.clone() as Arc<dyn DomainStatePort>);
-        let err = crate::error::CrawlError::WafBlocked("cloudflare".into());
+        let err = crate::error::CrawlError::WafBlocked {
+            vendor: "cloudflare".into(),
+            message: "cloudflare".into(),
+        };
         let outcome = AttemptOutcome {
             attempt: 0,
             url: "https://example.com/path",

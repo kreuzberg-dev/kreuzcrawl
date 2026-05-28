@@ -24,7 +24,9 @@ pub fn map_crawl_error(error: CrawlError) -> McpError {
 
         CrawlError::Forbidden(msg) => McpError::internal_error(format!("Forbidden: {msg}"), None),
 
-        CrawlError::WafBlocked(msg) => McpError::internal_error(format!("Blocked by WAF/bot protection: {msg}"), None),
+        CrawlError::WafBlocked { message, .. } => {
+            McpError::internal_error(format!("Blocked by WAF/bot protection: {message}"), None)
+        }
 
         CrawlError::Timeout(msg) => McpError::internal_error(format!("Request timed out: {msg}"), None),
 
@@ -133,7 +135,10 @@ mod tests {
             CrawlError::NotFound("test".to_string()),
             CrawlError::Unauthorized("test".to_string()),
             CrawlError::Forbidden("test".to_string()),
-            CrawlError::WafBlocked("test".to_string()),
+            CrawlError::WafBlocked {
+                vendor: "unknown".to_string(),
+                message: "test".to_string(),
+            },
             CrawlError::Timeout("test".to_string()),
             CrawlError::RateLimited("test".to_string()),
             CrawlError::ServerError("test".to_string()),

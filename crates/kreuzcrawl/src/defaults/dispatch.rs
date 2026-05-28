@@ -70,10 +70,8 @@ impl RetryPolicy for SimpleRetryPolicy {
             return RetryDirective::Stop;
         };
         match error {
-            CrawlError::WafBlocked(msg) => RetryDirective::Escalate {
-                reason: EscalationReason::WafBlocked {
-                    vendor: extract_vendor(msg).unwrap_or_else(|| "unknown".to_string()),
-                },
+            CrawlError::WafBlocked { vendor, .. } => RetryDirective::Escalate {
+                reason: EscalationReason::WafBlocked { vendor: vendor.clone() },
             },
             CrawlError::Forbidden(_) => RetryDirective::Escalate {
                 reason: EscalationReason::WafBlocked {
@@ -118,19 +116,6 @@ fn compute_backoff_ms(attempt: u32, max_backoff_ms: u64) -> u64 {
     // 2^attempt * 100ms, capped.
     let exp = 1u64.checked_shl(attempt).unwrap_or(u64::MAX);
     exp.saturating_mul(100).min(max_backoff_ms)
-}
-
-/// Best-effort vendor extraction from the `WafBlocked` message body.
-/// `CrawlError::WafBlocked` is a tuple variant with a freeform string —
-/// today the message format includes the vendor name. Refine this when
-/// `WafBlocked` is migrated to a struct variant in a later commit.
-fn extract_vendor(msg: &str) -> Option<String> {
-    // Heuristic: look for "vendor=<name>" or first colon-prefixed lowercase word.
-    // For now, return None — the WAF refactor in Commit 1.4 will give us
-    // proper vendor metadata via `WafSignal`, and a learning policy will
-    // get the vendor from `AttemptOutcome.waf_signal` directly.
-    let _ = msg;
-    None
 }
 
 /// [`EscalationBudget`] that always permits escalation. Used by default
@@ -225,9 +210,30 @@ mod tests {
     #[tokio::test]
     async fn waf_blocked_escalates() {
         let policy = SimpleRetryPolicy::new();
-        let err = CrawlError::WafBlocked("cloudflare detected".into());
+        let err = CrawlError::WafBlocked {
+            vendor: "cloudflare".into(),
+            message: "cloudflare detected".into(),
+        };
         let directive = policy.decide(&outcome_with_error(&err, 0)).await;
         assert!(matches!(directive, RetryDirective::Escalate { .. }));
+    }
+
+    #[tokio::test]
+    async fn waf_blocked_escalation_carries_vendor() {
+        let policy = SimpleRetryPolicy::new();
+        let err = CrawlError::WafBlocked {
+            vendor: "cloudflare".into(),
+            message: "challenge".into(),
+        };
+        let outcome = outcome_with_error(&err, 0);
+        match policy.decide(&outcome).await {
+            RetryDirective::Escalate {
+                reason: EscalationReason::WafBlocked { vendor },
+            } => {
+                assert_eq!(vendor, "cloudflare");
+            }
+            other => panic!("expected Escalate {{ WafBlocked }}, got {other:?}"),
+        }
     }
 
     #[tokio::test]

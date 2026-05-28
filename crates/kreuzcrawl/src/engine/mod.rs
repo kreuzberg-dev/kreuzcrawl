@@ -91,15 +91,31 @@ impl CrawlEngine {
             return Ok((crawl_resp, true));
         }
 
-        // Derive the effective strategy. When `escalation_strategy` is left at its
-        // default (`BrowserOnly`) and a bypass provider is configured, promote to
-        // `BypassFirst` to preserve the pre-tier-dispatch bypass-first semantic.
-        let effective_strategy = if self.config.escalation_strategy == crate::types::EscalationStrategy::BrowserOnly
-            && self.config.bypass.is_some()
-        {
-            crate::types::EscalationStrategy::BypassFirst
-        } else {
-            self.config.escalation_strategy
+        // Derive the effective strategy. Two adjustments are applied in order:
+        //
+        // 1. When `escalation_strategy` is left at its default (`BrowserOnly`) and a
+        //    bypass provider is configured, promote to `BypassFirst` to preserve the
+        //    pre-tier-dispatch bypass-first semantic.
+        //
+        // 2. When the effective strategy would route to the Browser tier (`BrowserOnly`)
+        //    but `BrowserMode::Never` is set, demote to `None` so no escalation target
+        //    exists. Without this, the dispatch loop escalates to the Browser tier and
+        //    returns `Err(Unsupported)` instead of the original 403 / WAF error.
+        let effective_strategy = {
+            let s = if self.config.escalation_strategy == crate::types::EscalationStrategy::BrowserOnly
+                && self.config.bypass.is_some()
+            {
+                crate::types::EscalationStrategy::BypassFirst
+            } else {
+                self.config.escalation_strategy
+            };
+            if s == crate::types::EscalationStrategy::BrowserOnly
+                && self.config.browser.mode == crate::types::BrowserMode::Never
+            {
+                crate::types::EscalationStrategy::None
+            } else {
+                s
+            }
         };
 
         // BypassFirst — legacy preserved: always route through bypass, skip HTTP.
@@ -182,19 +198,22 @@ impl CrawlEngine {
                             attempt += 1;
                             continue;
                         }
-                        crate::types::RetryDirective::Escalate { reason: _reason } => {
+                        crate::types::RetryDirective::Escalate { reason } => {
                             if let Some(next) = Self::next_tier(current_tier, effective_strategy)
                                 && budget.try_consume(Self::tier_cost_cents(next)).await.is_ok()
                             {
                                 #[cfg(feature = "tracing")]
                                 {
-                                    last_escalation_reason = Some(Self::escalation_reason_str(&_reason));
+                                    last_escalation_reason = Some(Self::escalation_reason_str(&reason));
                                 }
                                 current_tier = next;
                                 attempt = 0;
                                 continue;
                             }
-                            // No next tier or budget exhausted — return the successful response.
+                            // No next tier or budget exhausted on a success-path Escalate.
+                            // The policy signalled a soft-block or WAF interstitial even though
+                            // the HTTP layer returned 2xx. Synthesise an error from the reason
+                            // rather than returning the challenge body as Ok.
                             #[cfg(feature = "tracing")]
                             Self::emit_dispatch_span(
                                 url,
@@ -203,7 +222,7 @@ impl CrawlEngine {
                                 attempt,
                                 policy_name,
                             );
-                            return Ok((resp, browser_used));
+                            return Err(Self::escalation_reason_to_error(&reason, url));
                         }
                     }
                 }
@@ -213,7 +232,7 @@ impl CrawlEngine {
                         if matches!(err, CrawlError::NotFound(_)) {
                             return Ok((Self::synthesise_status(404), false));
                         }
-                        if matches!(err, CrawlError::Forbidden(_) | CrawlError::WafBlocked(_)) {
+                        if matches!(err, CrawlError::Forbidden(_) | CrawlError::WafBlocked { .. }) {
                             return Ok((Self::synthesise_status(403), false));
                         }
                     }
@@ -365,6 +384,30 @@ impl CrawlEngine {
             body: String::new(),
             body_bytes: Vec::new(),
             headers: std::collections::HashMap::new(),
+        }
+    }
+
+    /// Convert an [`crate::types::EscalationReason`] from a terminal success-path
+    /// `Escalate` directive into the most specific available [`CrawlError`].
+    ///
+    /// Called when the policy signals `Escalate` on a 2xx response (soft-block /
+    /// WAF interstitial) but no higher tier is available or the budget is exhausted.
+    /// Returning an error prevents the challenge-page body from reaching callers.
+    #[cfg(not(target_arch = "wasm32"))]
+    fn escalation_reason_to_error(reason: &crate::types::EscalationReason, url: &str) -> CrawlError {
+        use crate::types::EscalationReason;
+        match reason {
+            EscalationReason::WafBlocked { vendor } => CrawlError::WafBlocked {
+                vendor: vendor.clone(),
+                message: format!("waf/blocked: {vendor} detected at {url}"),
+            },
+            EscalationReason::SoftBlock => CrawlError::Forbidden(format!("soft_block: {url}")),
+            EscalationReason::RenderNeeded => {
+                CrawlError::Unsupported(format!("js_render_needed but no browser tier available: {url}"))
+            }
+            EscalationReason::OriginUnreliable => {
+                CrawlError::ServerError(format!("origin_unreliable and no escalation target: {url}"))
+            }
         }
     }
 
