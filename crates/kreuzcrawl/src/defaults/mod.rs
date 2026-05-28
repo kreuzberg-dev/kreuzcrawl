@@ -1,6 +1,7 @@
 //! Default trait implementations for kreuzcrawl.
 
 mod cache;
+pub mod dispatch;
 mod emitter;
 mod filter;
 mod frontier;
