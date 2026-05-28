@@ -13,14 +13,14 @@ use crate::types::{AuthConfig, CrawlConfig, ResponseMeta};
 /// browser backend. Populated when `browser_used` is true.
 #[derive(Debug, Clone, Default)]
 #[allow(dead_code)]
-pub struct BrowserExtras {
+pub(crate) struct BrowserExtras {
     pub eval_result: Option<serde_json::Value>,
     pub network_events: Vec<crate::types::ResponseMeta>,
     pub cookies: Vec<crate::types::CookieInfo>,
 }
 
 /// An HTTP response with status, headers, and body content.
-pub struct HttpResponse {
+pub(crate) struct HttpResponse {
     pub status: u16,
     pub content_type: String,
     pub body: String,

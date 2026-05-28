@@ -99,14 +99,14 @@ impl CrawlEngine {
 
         // Caller-supplied bypass provider short-circuits native/browser dispatch entirely.
         if let Some(provider) = &self.config.bypass {
-            let http_resp = provider.fetch(url).await?;
+            let bypass_resp = provider.fetch(url).await?;
             return Ok((
                 CrawlResponse {
-                    status: http_resp.status,
-                    content_type: http_resp.content_type,
-                    body: http_resp.body,
-                    body_bytes: http_resp.body_bytes,
-                    headers: std::collections::HashMap::new(),
+                    status: bypass_resp.status,
+                    content_type: bypass_resp.content_type,
+                    body: bypass_resp.body,
+                    body_bytes: bypass_resp.body_bytes,
+                    headers: bypass_resp.headers,
                 },
                 false,
             ));

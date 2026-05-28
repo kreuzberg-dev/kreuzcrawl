@@ -1,0 +1,39 @@
+vendor_name: scrapingbee
+endpoint: "https://app.scrapingbee.com/api/v1/"
+method: GET
+
+auth:
+  kind: header
+  name: "Spb-Api-Key"
+  value: "${BYPASS_SCRAPINGBEE_API_KEY}"
+
+request:
+  query:
+    - name: render_js
+      value: "true"
+    - name: premium_proxy
+      value: "true"
+  url_param:
+    kind: query_param
+    name: url
+
+# cost_extraction is static because ScrapingBee does not surface per-request
+# cost in a response header/field by default. The fallback matches current
+# production billing behaviour.
+response:
+  kind:
+    kind: raw_body
+  cost_extraction:
+    kind: static
+  fallback_cost_usd: 0.002
+
+status_mapping:
+  - http: 401
+    error: unauthorized
+    message: "scrapingbee auth failure: 401"
+  - http: 403
+    error: unauthorized
+    message: "scrapingbee auth failure: 403"
+  - http: 429
+    error: rate_limited
+    message: "scrapingbee rate limited"

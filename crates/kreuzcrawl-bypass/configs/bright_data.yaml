@@ -1,0 +1,35 @@
+vendor_name: bright_data
+endpoint: "https://api.brightdata.com/request"
+method: POST
+
+auth:
+  kind: bearer
+  token: "${BYPASS_BRIGHT_DATA_TOKEN}"
+
+request:
+  body:
+    kind: json
+    template: '{"url": "{{url}}", "format": "raw", "country": "us"}'
+  url_param:
+    kind: body_field
+
+# cost_extraction is static because Bright Data does not surface per-request
+# cost in the response body or headers. The fallback matches current
+# production billing behaviour.
+response:
+  kind:
+    kind: raw_body
+  cost_extraction:
+    kind: static
+  fallback_cost_usd: 0.003
+
+status_mapping:
+  - http: 401
+    error: unauthorized
+    message: "bright_data auth failure: 401"
+  - http: 402
+    error: unauthorized
+    message: "bright_data quota exceeded: 402"
+  - http: 429
+    error: rate_limited
+    message: "bright_data rate limited"

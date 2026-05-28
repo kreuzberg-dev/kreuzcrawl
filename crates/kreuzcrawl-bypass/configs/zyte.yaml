@@ -1,0 +1,32 @@
+vendor_name: zyte
+endpoint: "https://api.zyte.com/v1/extract"
+method: POST
+
+auth:
+  kind: basic_username
+  username: "${BYPASS_ZYTE_API_KEY}"
+
+request:
+  body:
+    kind: json
+    template: '{"url": "{{url}}", "browserHtml": true}'
+  url_param:
+    kind: body_field
+
+# cost_extraction is static because the Zyte API does not surface per-request
+# cost in the response. The fallback matches current production billing behaviour.
+response:
+  kind:
+    kind: json_field
+    html_field: browserHtml
+  cost_extraction:
+    kind: static
+  fallback_cost_usd: 0.003
+
+status_mapping:
+  - http: 401
+    error: unauthorized
+    message: "zyte auth failure"
+  - http: 429
+    error: rate_limited
+    message: "zyte rate limited"

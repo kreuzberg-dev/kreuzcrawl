@@ -1,27 +1,32 @@
 //! Verifies that BypassProvider trait can be implemented and attached to CrawlConfig.
 //!
-//! Full integration tests with real HTTP responses are deferred until
-//! kreuzberg-cloud implements the vendor adapters and can test the end-to-end
-//! fetch + extraction flow.
+//! Full integration tests with real HTTP responses live in the
+//! kreuzcrawl-bypass crate's wiremock suite.
 
 #![allow(clippy::unwrap_used)]
 
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use kreuzcrawl::{BypassProvider, CrawlConfig, CrawlError, DynBypassProvider, HttpResponse};
+use kreuzcrawl::{BypassProvider, BypassResponse, CrawlConfig, CrawlError, DynBypassProvider};
 
-/// Test provider that can be instantiated (actual HTTP response construction
-/// is out of scope — HttpResponse has pub(crate) fields).
+/// Test provider that returns a canned response.
 #[derive(Debug)]
 struct TestProvider;
 
 #[async_trait]
 impl BypassProvider for TestProvider {
-    async fn fetch(&self, _url: &str) -> Result<HttpResponse, CrawlError> {
-        Err(CrawlError::InvalidConfig(
-            "test provider does not implement fetch".into(),
-        ))
+    async fn fetch(&self, _url: &str) -> Result<BypassResponse, CrawlError> {
+        Ok(BypassResponse {
+            status: 200,
+            content_type: "text/html".to_string(),
+            body: "<html>test</html>".to_string(),
+            body_bytes: b"<html>test</html>".to_vec(),
+            headers: std::collections::HashMap::new(),
+            final_url: String::new(),
+            cost_usd: Some(0.001),
+            vendor_request_id: None,
+        })
     }
 
     fn vendor_name(&self) -> &'static str {
@@ -46,4 +51,14 @@ fn bypass_provider_can_be_attached_to_crawl_config() {
         "test",
         "vendor_name should be accessible"
     );
+}
+
+#[tokio::test]
+async fn bypass_provider_returns_response_with_cost() {
+    let provider = TestProvider;
+    let resp = provider.fetch("https://example.com").await.unwrap();
+    assert_eq!(resp.status, 200);
+    assert_eq!(resp.body, "<html>test</html>");
+    assert_eq!(resp.cost_usd, Some(0.001));
+    assert!(resp.vendor_request_id.is_none());
 }

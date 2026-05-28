@@ -254,6 +254,7 @@ jobs:
             bindings_common_exists: ${{ steps.check.outputs.exists }}
             kreuzcrawl_exists: ${{ steps.check.outputs.kreuzcrawl_exists }}
             cli_exists: ${{ steps.check.outputs.cli_exists }}
+            bypass_exists: ${{ steps.check.outputs.bypass_exists }}
             all_exist: ${{ steps.derive.outputs.all_exist }}
         steps:
             - id: check
@@ -265,14 +266,16 @@ jobs:
                   extra-packages: |
                       kreuzcrawl_exists=kreuzcrawl
                       cli_exists=kreuzcrawl-cli
+                      bypass_exists=kreuzcrawl-bypass
 
             - id: derive
-              # Inline: aggregate three check-registry outputs into a single boolean
+              # Inline: aggregate four check-registry outputs into a single boolean
               # the publish-crates job can guard on. No shared action equivalent.
               run: |
                   if [[ "${{ steps.check.outputs.exists }}" == "true" \
                     && "${{ steps.check.outputs.kreuzcrawl_exists }}" == "true" \
-                    && "${{ steps.check.outputs.cli_exists }}" == "true" ]]; then
+                    && "${{ steps.check.outputs.cli_exists }}" == "true" \
+                    && "${{ steps.check.outputs.bypass_exists }}" == "true" ]]; then
                     echo "all_exist=true" >> "$GITHUB_OUTPUT"
                   else
                     echo "all_exist=false" >> "$GITHUB_OUTPUT"
@@ -1477,11 +1480,11 @@ jobs:
             - uses: kreuzberg-dev/actions/publish-crates@v1
               with:
                   # Order matters: kreuzcrawl-browser is a hard dep of kreuzcrawl
-                  # (path-only deps are rejected by cargo publish), and kreuzcrawl
-                  # is depended on by both kreuzcrawl-bindings-common and
-                  # kreuzcrawl-cli, so each must land on the index before its
+                  # (path-only deps are rejected by cargo publish), kreuzcrawl is
+                  # depended on by kreuzcrawl-bypass, kreuzcrawl-bindings-common,
+                  # and kreuzcrawl-cli, so each must land on the index before its
                   # dependents try to resolve.
-                  crates: kreuzcrawl-browser kreuzcrawl kreuzcrawl-bindings-common kreuzcrawl-cli
+                  crates: kreuzcrawl-browser kreuzcrawl kreuzcrawl-bypass kreuzcrawl-bindings-common kreuzcrawl-cli
                   version: ${{ needs.prepare.outputs.version }}
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
 

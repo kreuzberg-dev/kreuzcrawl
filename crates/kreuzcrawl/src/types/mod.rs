@@ -8,7 +8,7 @@ mod results;
 #[cfg(not(target_arch = "wasm32"))]
 mod streaming;
 
-pub use bypass::{BypassProvider, DynBypassProvider};
+pub use bypass::{BypassProvider, BypassResponse, DynBypassProvider};
 pub use config::{
     AuthConfig, BrowserBackend, BrowserConfig, BrowserMode, BrowserWait, ContentConfig, CrawlConfig, ExtractionMeta,
     ProxyConfig,

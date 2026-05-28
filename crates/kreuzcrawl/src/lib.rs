@@ -64,7 +64,6 @@ pub use defaults::{
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
-pub use http::HttpResponse;
 pub use interact::{
     MAX_ACTIONS, MAX_SCRIPT_LEN, MAX_SCROLL_AMOUNT, MAX_SELECTOR_LEN, MAX_SINGLE_WAIT_MS, MAX_TEXT_LEN,
     MAX_TOTAL_WAIT_SECS, PageAction, ScrollDirection, validate_actions,
@@ -75,10 +74,10 @@ pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecut
 pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use types::{
     ActionResult, ArticleMetadata, AssetCategory, AuthConfig, BrowserBackend, BrowserConfig, BrowserExtras,
-    BrowserMode, BrowserWait, BypassProvider, CachedPage, ContentConfig, CookieInfo, CrawlConfig, CrawlPageResult,
-    CrawlResult, DownloadedAsset, DownloadedDocument, DynBypassProvider, ExtractionMeta, FaviconInfo, FeedInfo,
-    FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource, InteractionResult, JsonLdEntry, LinkInfo, LinkType,
-    MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta, ScrapeResult, SitemapUrl,
+    BrowserMode, BrowserWait, BypassProvider, BypassResponse, CachedPage, ContentConfig, CookieInfo, CrawlConfig,
+    CrawlPageResult, CrawlResult, DownloadedAsset, DownloadedDocument, DynBypassProvider, ExtractionMeta, FaviconInfo,
+    FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource, InteractionResult, JsonLdEntry, LinkInfo,
+    LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta, ScrapeResult, SitemapUrl,
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use types::{BatchCrawlStreamRequest, CrawlEvent, CrawlStreamRequest};
