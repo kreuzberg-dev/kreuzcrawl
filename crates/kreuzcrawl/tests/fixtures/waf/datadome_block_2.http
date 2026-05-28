@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+<html lang="en">
+<head><title>example.fr</title></head>
+<body style="margin:0">
+<p id="cmsg">Please enable JS and disable any ad blocker</p>
+<script data-cfasync="false">var dd={'rt':'i','cid':'AHrlqAAAAAMAuqpSG8sDb8IAV7yaGA==','hsh':'05B30BD9055986BD2EE8F5A199D973','host':'geo.captcha-delivery.com'}</script>
+<script data-cfasync="false" src="https://ct.captcha-delivery.com/i.js"></script>
+</body>
+</html>

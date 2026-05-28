@@ -1,0 +1,14 @@
+HTTP/1.1 403 Forbidden
+Content-Type: text/html; charset=UTF-8
+x-amzn-waf-action: captcha
+
+<!DOCTYPE html>
+<html>
+<head><title>AWS WAF CAPTCHA</title></head>
+<body>
+<h1>Please verify you are a human</h1>
+<p>Please complete the CAPTCHA to continue.</p>
+<div id="captcha-container"></div>
+<script src="https://abc123.awswaf.com/abc123/captcha.js"></script>
+</body>
+</html>

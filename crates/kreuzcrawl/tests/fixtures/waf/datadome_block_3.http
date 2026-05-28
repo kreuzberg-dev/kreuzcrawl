@@ -1,0 +1,16 @@
+HTTP/1.1 403 Forbidden
+Content-Type: text/html
+x-datadome: blocked
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bot Protection</title>
+</head>
+<body>
+<script type="text/javascript">
+var ddjskey = "AABBCCDD11223344556677889900AABB";
+var ddCaptchaKey = "test-captcha-key-12345";
+</script>
+</body>
+</html>

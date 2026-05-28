@@ -1,0 +1,16 @@
+HTTP/1.1 403 Forbidden
+Server: cloudflare
+Content-Type: text/html; charset=UTF-8
+cf-ray: 8abc123456789012-LAX
+
+<!DOCTYPE html>
+<html>
+<head><title>Just a moment...</title></head>
+<body>
+<form id="challenge-form" action="/cdn-cgi/challenge-platform/h/g/flow/ov1/1234567890/abc" method="POST">
+  <input type="hidden" name="md" value="abc123">
+  <input type="hidden" name="r" value="def456">
+</form>
+<script src="/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=8abc123456789012-LAX"></script>
+</body>
+</html>

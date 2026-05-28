@@ -2,6 +2,7 @@
 
 mod cache;
 pub mod dispatch;
+pub mod domain_state;
 mod emitter;
 mod filter;
 mod frontier;

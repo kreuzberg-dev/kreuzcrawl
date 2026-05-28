@@ -1,0 +1,13 @@
+HTTP/1.1 403 Forbidden
+Content-Type: text/html; charset=utf-8
+x-datadome: protected
+x-datadome-cid: AHrlqAAAAAMAuqpSG8sDb8IAV7yaGA==
+
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Access Denied</title></head>
+<body>
+<p>You are unable to access this site. Your request has been detected as malicious activity.</p>
+<script src="https://js.datadome.co/tags.js" type="text/javascript"></script>
+</body>
+</html>

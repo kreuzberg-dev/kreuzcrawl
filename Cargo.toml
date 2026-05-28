@@ -33,7 +33,9 @@ all = { level = "warn", priority = -1 }
 
 [workspace.dependencies]
 ahash = "0.8"
+aho-corasick = "1"
 anyhow = "1"
+arc-swap = "1"
 async-trait = "0.1"
 axum = "0.8"
 base64 = "0.22"

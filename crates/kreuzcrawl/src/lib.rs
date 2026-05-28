@@ -24,7 +24,7 @@ mod error;
 #[cfg(not(target_arch = "wasm32"))]
 mod helpers;
 mod html;
-mod http;
+pub mod http;
 pub mod interact;
 mod map;
 mod markdown;
@@ -42,6 +42,7 @@ mod sitemap;
 pub(crate) mod tower;
 pub mod traits;
 mod types;
+pub(crate) mod waf;
 #[cfg(feature = "warc")]
 pub(crate) mod warc;
 
@@ -84,3 +85,4 @@ pub use types::{
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use types::{BatchCrawlStreamRequest, CrawlEvent, CrawlStreamRequest};
+pub use waf::{Rules as WafRules, RulesError as WafRulesError, TomlClassifier, load_from_str as waf_rules_from_str};

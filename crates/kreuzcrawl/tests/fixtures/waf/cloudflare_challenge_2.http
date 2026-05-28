@@ -1,0 +1,15 @@
+HTTP/1.1 200 OK
+Server: cloudflare
+Content-Type: text/html; charset=UTF-8
+cf-ray: 9def456789012345-SJC
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Just a moment...</title>
+<script>window._cf_chl_opt = {"cvId":"2","cZone":"example.com","cType":"managed","cRay":"9def456789012345-SJC","cH":"abc123","cUPMDTk":"example.com/path?__cf_chl_tk=xyz"}</script>
+</head>
+<body>
+<p>Checking your browser before accessing example.com.</p>
+</body>
+</html>

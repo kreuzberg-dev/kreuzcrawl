@@ -1,0 +1,13 @@
+HTTP/1.1 403 Forbidden
+Content-Type: text/html; charset=UTF-8
+Server: incapsula
+
+<!DOCTYPE html>
+<html>
+<head><title>Request Blocked</title></head>
+<body>
+<p>This request has been blocked by the website administrator.</p>
+<p>Access to this URL has been restricted. Please contact support if you believe this is in error.</p>
+<a href="/_Incapsula_Resource?SWABR=1&amp;ID=abc123&amp;lcid=1&amp;E=9L+/4VgSb8XQBc">Click here to continue</a>
+</body>
+</html>

@@ -1,0 +1,15 @@
+HTTP/1.1 403 Forbidden
+Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE html>
+<html>
+<head><title>Access Denied</title></head>
+<body>
+<h1>Access to this resource is denied</h1>
+<p>This page requires JavaScript and cookies to be enabled.</p>
+<script>
+window._pxAppId = "PXtest0001";
+window.PerimeterX = window.PerimeterX || {};
+</script>
+</body>
+</html>

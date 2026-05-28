@@ -1,5 +1,6 @@
 //! HTTP fetching with redirect handling, retry logic, and cookie extraction.
 
+use std::collections::HashMap;
 use std::time::Duration;
 
 use reqwest::header::{CONTENT_TYPE, HeaderMap, USER_AGENT};
@@ -7,7 +8,9 @@ use reqwest::header::{CONTENT_TYPE, HeaderMap, USER_AGENT};
 use crate::error::{CrawlError, classify_reqwest_error, error_chain_string};
 #[cfg(not(target_arch = "wasm32"))]
 use crate::types::CookieInfo;
+use crate::types::WafClassifier;
 use crate::types::{AuthConfig, CrawlConfig, ResponseMeta};
+use crate::waf::{TomlClassifier, matcher::headers_only_waf_match};
 
 /// Browser-specific extras attached to an `HttpResponse` produced by the native
 /// browser backend. Populated when `browser_used` is true.
@@ -16,8 +19,11 @@ use crate::types::{AuthConfig, CrawlConfig, ResponseMeta};
 #[derive(Debug, Clone, Default)]
 #[allow(dead_code)]
 pub struct BrowserExtras {
+    /// Result of an in-page JavaScript evaluation, if any.
     pub eval_result: Option<serde_json::Value>,
+    /// Network-level metadata for sub-resource requests recorded by the browser.
     pub network_events: Vec<crate::types::ResponseMeta>,
+    /// Cookies present in the browser session after page load.
     pub cookies: Vec<crate::types::CookieInfo>,
 }
 
@@ -27,12 +33,18 @@ pub struct BrowserExtras {
 /// which are defined outside `crate::http` — can inspect responses. All
 /// fields that are only used by internal paths carry `#[allow(dead_code)]`.
 pub struct HttpResponse {
+    /// HTTP status code (e.g. 200, 403).
     pub status: u16,
+    /// Value of the `Content-Type` response header, or empty string if absent.
     pub content_type: String,
+    /// Decoded response body as UTF-8 text.
     pub body: String,
+    /// Raw response body bytes (before UTF-8 decoding).
     pub body_bytes: Vec<u8>,
+    /// All response headers, keyed by lowercase header name.
     #[allow(dead_code)]
     pub headers: std::collections::HashMap<String, Vec<String>>,
+    /// Optional browser-specific extras (eval result, network events, cookies).
     #[allow(dead_code)]
     pub browser_extras: Option<BrowserExtras>,
     /// The URL of the final response after any transparent redirect following.
@@ -119,17 +131,13 @@ pub(crate) async fn http_fetch(
     match status {
         401 => return Err(CrawlError::Unauthorized("unauthorized".into())),
         403 => {
-            let server_lower = headers
-                .get("server")
-                .and_then(|v| v.to_str().ok())
-                .unwrap_or("")
-                .to_lowercase();
             let body = resp.text().await.unwrap_or_default();
-            if is_waf_blocked_headermap(&server_lower, &body, &headers) {
-                let body_lower = body.to_lowercase();
+            let partial_response = build_partial_response(status, &body, &headers);
+            let classifier = TomlClassifier::builtin();
+            if let Some(signal) = classifier.classify(&partial_response) {
                 return Err(CrawlError::WafBlocked(format!(
                     "waf/blocked detected: {}",
-                    detect_waf_vendor(&server_lower, &body_lower)
+                    signal.vendor
                 )));
             }
             return Err(CrawlError::Forbidden("forbidden".into()));
@@ -156,18 +164,17 @@ pub(crate) async fn http_fetch(
     // happens later (after the body is read) with a body-size guard to
     // avoid matching legitimate pages that mention vendor names.
     if (200..300).contains(&status) && headers_only_waf_match(&headers) {
-        let server_lower = headers
-            .get("server")
-            .and_then(|v| v.to_str().ok())
-            .unwrap_or("")
-            .to_lowercase();
         // We need the body to identify the vendor precisely; read it now
         // (the body-fingerprint check below would re-read anyway).
         let body = resp.text().await.unwrap_or_default();
-        let body_lower = body.to_lowercase();
+        let partial_response = build_partial_response(status, &body, &headers);
+        let classifier = TomlClassifier::builtin();
+        let vendor = classifier
+            .classify(&partial_response)
+            .map(|s| s.vendor)
+            .unwrap_or_else(|| "unknown".to_string());
         return Err(CrawlError::WafBlocked(format!(
-            "waf/blocked detected on 2xx (header): {}",
-            detect_waf_vendor(&server_lower, &body_lower)
+            "waf/blocked detected on 2xx (header): {vendor}"
         )));
     }
 
@@ -216,18 +223,15 @@ pub(crate) async fn http_fetch(
     // it's almost certainly a challenge page rather than real content.
     // Real content pages are overwhelmingly larger than CHALLENGE_BODY_LIMIT
     // and don't contain these specific markers in a script src or inline.
-    if (200..300).contains(&status) && body_bytes_vec.len() <= CHALLENGE_BODY_LIMIT && is_challenge_interstitial(&body)
-    {
-        let server_lower = headers
-            .get("server")
-            .and_then(|v| v.to_str().ok())
-            .unwrap_or("")
-            .to_lowercase();
-        let body_lower = body.to_lowercase();
-        return Err(CrawlError::WafBlocked(format!(
-            "waf/blocked detected on 2xx (body): {}",
-            detect_waf_vendor(&server_lower, &body_lower)
-        )));
+    if (200..300).contains(&status) {
+        let partial_response = build_partial_response_with_bytes(status, &body_bytes_vec, &body, &headers);
+        let classifier = TomlClassifier::builtin();
+        if let Some(signal) = classifier.classify(&partial_response) {
+            return Err(CrawlError::WafBlocked(format!(
+                "waf/blocked detected on 2xx (body): {}",
+                signal.vendor
+            )));
+        }
     }
 
     // Extract headers into HashMap<String, Vec<String>>
@@ -374,141 +378,94 @@ pub(crate) fn extract_response_meta_from_hashmap(
     }
 }
 
-/// Maximum body size (bytes) that a 2xx response can have and still be
-/// classified as a WAF interstitial. Real content pages overwhelmingly
-/// exceed this; challenge interstitials are tiny by design.
-const CHALLENGE_BODY_LIMIT: usize = 100 * 1024;
-
-/// Header-only WAF signature. When any WAF stamps its own header on the
-/// response, the verdict is unambiguous regardless of status code.
-fn headers_only_waf_match(headers: &HeaderMap) -> bool {
-    headers.contains_key("x-sucuri-id")
-        || headers.contains_key("x-datadome")
-        || headers.contains_key("x-amzn-waf-action")
-        || headers.keys().any(|k| k.as_str().starts_with("x-px-"))
+/// Build a partial [`HttpResponse`] from reqwest header map + body string.
+///
+/// Used in the early-exit detection paths where we need to pass a response
+/// to [`crate::types::WafClassifier::classify`] before the full
+/// [`HttpResponse`] struct is assembled.
+fn build_partial_response(status: u16, body: &str, headers: &HeaderMap) -> HttpResponse {
+    let body_bytes = body.as_bytes().to_vec();
+    build_partial_response_with_bytes(status, &body_bytes, body, headers)
 }
 
-/// High-confidence interstitial body fingerprints. These markers are
-/// vendor-specific JS hooks / script sources that legitimate content
-/// pages do not embed. Generic phrases like "verifying your connection"
-/// are deliberately excluded — they appear in legitimate support docs.
-fn is_challenge_interstitial(body: &str) -> bool {
-    let lower = body.to_lowercase();
-    // Cloudflare interstitial signatures
-    lower.contains("cf-chl-")
-        || lower.contains("__cf_chl_")
-        || lower.contains("_cf_chl_opt")
-        || lower.contains("cf-browser-verification")
-        || lower.contains("challenge-platform")
-        || lower.contains("/cdn-cgi/challenge-platform/")
-        // DataDome interstitial signatures
-        || lower.contains("https://js.datadome.co/")
-        || lower.contains("captcha-delivery.com")
-        || lower.contains("dd.js")
-        || lower.contains("ddjskey")
-        // PerimeterX interstitial signatures
-        || lower.contains("/_px/captcha")
-        || lower.contains("px-captcha")
-        // Imperva / Incapsula
-        || lower.contains("_incap_ses_")
-        // AWS WAF
-        || lower.contains("awswaf.com/token")
-        // Generic Cloudflare turnstile widget
-        || lower.contains("challenges.cloudflare.com/turnstile/")
-}
-
-fn waf_pattern_match(server_lower: &str, body_lower: &str) -> bool {
-    server_lower.contains("cloudflare")
-        || body_lower.contains("cf-browser-verification")
-        || body_lower.contains("challenge-form")
-        || body_lower.contains("cf-chl-")
-        || server_lower.contains("akamaighost")
-        || body_lower.contains("awselb")
-        || body_lower.contains("x-amzn-waf")
-        || body_lower.contains("request blocked")
-        || server_lower.contains("incapsula")
-        || body_lower.contains("incapsula")
-        || body_lower.contains("_incap_ses_")
-        || body_lower.contains("datadome")
-        || body_lower.contains("dd.js")
-        || body_lower.contains("captcha-delivery.com")
-        || body_lower.contains("ddjskey")
-        || body_lower.contains("perimeterx")
-        || body_lower.contains("px-captcha")
-        || body_lower.contains("sucuri")
-        || body_lower.contains("x-sucuri-id")
-        || server_lower.contains("big-ip")
-        || body_lower.contains("bigipserver")
-        // AWS CloudFront + WAF
-        || server_lower.contains("cloudfront")
-        || body_lower.contains("awswaf.com")
-        || body_lower.contains("verifying your connection")
-        || body_lower.contains("challenge.js")
-        // Additional common patterns
-        || body_lower.contains("please verify you are human")
-        || body_lower.contains("checking your browser")
-        || body_lower.contains("just a moment") // Cloudflare "Just a moment..."
-}
-
-fn is_waf_blocked_headermap(server_lower: &str, body: &str, headers: &HeaderMap) -> bool {
-    let body_lower = body.to_lowercase();
-    if waf_pattern_match(server_lower, &body_lower) {
-        return true;
+/// Build a partial [`HttpResponse`] with a pre-computed byte vec.
+fn build_partial_response_with_bytes(status: u16, body_bytes: &[u8], body: &str, headers: &HeaderMap) -> HttpResponse {
+    let mut headers_map: HashMap<String, Vec<String>> = HashMap::new();
+    for (name, value) in headers.iter() {
+        if let Ok(v) = value.to_str() {
+            headers_map
+                .entry(name.as_str().to_lowercase())
+                .or_default()
+                .push(v.to_string());
+        }
     }
-    headers.contains_key("x-sucuri-id")
-        || headers.contains_key("x-datadome")
-        || headers.contains_key("x-amzn-waf-action")
-        || headers.keys().any(|k| k.as_str().starts_with("x-px-"))
+    HttpResponse {
+        status,
+        content_type: String::new(),
+        body: body.to_string(),
+        body_bytes: body_bytes.to_vec(),
+        headers: headers_map,
+        browser_extras: None,
+        final_url: String::new(),
+    }
 }
 
+/// Identify the WAF vendor from server header value and body content.
+///
+/// Delegates to [`TomlClassifier::builtin`]. Kept for backward compatibility
+/// with callers in `tower/service.rs`.
+pub(crate) fn detect_waf_vendor(server: &str, body: &str) -> String {
+    let body_bytes = body.as_bytes().to_vec();
+    let mut headers_map: HashMap<String, Vec<String>> = HashMap::new();
+    if !server.is_empty() {
+        headers_map
+            .entry("server".to_string())
+            .or_default()
+            .push(server.to_string());
+    }
+    let response = HttpResponse {
+        status: 403,
+        content_type: String::new(),
+        body: body.to_string(),
+        body_bytes,
+        headers: headers_map,
+        browser_extras: None,
+        final_url: String::new(),
+    };
+    TomlClassifier::builtin()
+        .classify(&response)
+        .map(|s| s.vendor)
+        .unwrap_or_else(|| "unknown".to_string())
+}
+
+/// Returns true if `response` is a WAF block.
+///
+/// Delegates to [`TomlClassifier::builtin`]. Kept for backward compatibility
+/// with callers outside `http_fetch` (e.g. the browser backend).
 #[cfg(not(target_arch = "wasm32"))]
-pub(crate) fn is_waf_blocked(
-    server: &str,
-    body: &str,
-    headers: &std::collections::HashMap<String, Vec<String>>,
-) -> bool {
-    let body_lower = body.to_lowercase();
-    let server_lower = server.to_lowercase();
-    if waf_pattern_match(&server_lower, &body_lower) {
-        return true;
+pub(crate) fn is_waf_blocked(server: &str, body: &str, headers: &HashMap<String, Vec<String>>) -> bool {
+    let body_bytes = body.as_bytes().to_vec();
+    let mut headers_map: HashMap<String, Vec<String>> = HashMap::new();
+    for (k, values) in headers {
+        headers_map.insert(k.to_lowercase(), values.clone());
     }
-    headers.contains_key("x-sucuri-id")
-        || headers.contains_key("x-datadome")
-        || headers.contains_key("x-amzn-waf-action")
-        || headers.keys().any(|k| k.starts_with("x-px-"))
-}
-
-/// Identify the WAF vendor from server and body content.
-pub(crate) fn detect_waf_vendor(server: &str, body: &str) -> &'static str {
-    if server.contains("cloudflare")
-        || body.contains("cf-browser-verification")
-        || body.contains("challenge-form")
-        || body.contains("cf-chl-")
-    {
-        return "cloudflare";
+    // Inject the server header so the classifier can match server-based fingerprints.
+    if !server.is_empty() {
+        headers_map
+            .entry("server".to_string())
+            .or_default()
+            .push(server.to_string());
     }
-    if server.contains("akamaighost") {
-        return "akamai";
-    }
-    if body.contains("incapsula") || body.contains("_incap_ses_") {
-        return "imperva";
-    }
-    if body.contains("datadome") || body.contains("captcha-delivery.com") || body.contains("ddjskey") {
-        return "datadome";
-    }
-    if body.contains("perimeterx") || body.contains("px-captcha") {
-        return "perimeterx";
-    }
-    if body.contains("sucuri") {
-        return "sucuri";
-    }
-    if server.contains("big-ip") {
-        return "f5";
-    }
-    if body.contains("awselb") || body.contains("x-amzn-waf") {
-        return "aws-waf";
-    }
-    "unknown"
+    let response = HttpResponse {
+        status: 403,
+        content_type: String::new(),
+        body: body.to_string(),
+        body_bytes,
+        headers: headers_map,
+        browser_extras: None,
+        final_url: String::new(),
+    };
+    TomlClassifier::builtin().classify(&response).is_some()
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]

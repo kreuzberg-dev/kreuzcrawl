@@ -1,0 +1,76 @@
+//! TOML-driven WAF fingerprint classifier.
+//!
+//! [`TomlClassifier`] implements [`crate::types::WafClassifier`] by loading
+//! `rules/waf_fingerprints.toml` at compile time, building a single
+//! Aho-Corasick automaton over all body patterns, and checking response
+//! headers for WAF-stamp signals.
+//!
+//! Hot-reload (Commit 1.6): the classifier wraps [`Rules`] in
+//! [`arc_swap::ArcSwap`]. Callers can call [`TomlClassifier::swap`] to
+//! atomically replace the rule set without restarting the process.
+
+use std::fmt;
+use std::sync::Arc;
+
+use arc_swap::ArcSwap;
+
+use crate::http::HttpResponse;
+use crate::types::{WafClassifier, WafSignal};
+
+pub(crate) mod matcher;
+pub(crate) mod rules;
+
+#[cfg(test)]
+mod tests;
+
+pub use rules::{Rules, RulesError, load_from_str};
+
+/// Default [`WafClassifier`] backed by a TOML fingerprint corpus.
+///
+/// Use [`Self::builtin`] for the kreuzcrawl-canonical corpus embedded at
+/// compile time. Use [`Self::from_rules`] to supply a custom corpus (useful
+/// in tests or when the caller manages the rules file).
+pub struct TomlClassifier {
+    rules: ArcSwap<Rules>,
+}
+
+impl fmt::Debug for TomlClassifier {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let loaded = self.rules.load();
+        formatter
+            .debug_struct("TomlClassifier")
+            .field("fingerprint_count", &loaded.fingerprints.len())
+            .finish()
+    }
+}
+
+impl TomlClassifier {
+    /// Create a classifier from the built-in corpus.
+    pub fn builtin() -> Self {
+        Self {
+            rules: ArcSwap::from_pointee(Rules::builtin()),
+        }
+    }
+
+    /// Create a classifier from a caller-supplied [`Rules`] set.
+    pub fn from_rules(rules: Rules) -> Self {
+        Self {
+            rules: ArcSwap::from_pointee(rules),
+        }
+    }
+
+    /// Atomically swap the active rule set.
+    ///
+    /// Concurrent classifiers that have already called `load()` on the
+    /// previous generation finish with the old rules; new calls see the
+    /// new rules immediately. No locks, no readers blocked.
+    pub fn swap(&self, rules: Rules) {
+        self.rules.store(Arc::new(rules));
+    }
+}
+
+impl WafClassifier for TomlClassifier {
+    fn classify(&self, response: &HttpResponse) -> Option<WafSignal> {
+        self.rules.load().classify(response)
+    }
+}

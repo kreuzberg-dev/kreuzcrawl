@@ -1,0 +1,15 @@
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+x-px-vid: abc123-uuid-here
+
+<!DOCTYPE html>
+<html>
+<head><title>Please verify you are human</title></head>
+<body>
+<div id="px-captcha"></div>
+<script>
+window._pxAppId = 'PXabc123XY';
+window._pxJsClientSrc = '//client.perimeterx.net/PXabc123XY/main.min.js';
+</script>
+</body>
+</html>

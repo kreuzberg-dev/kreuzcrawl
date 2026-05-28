@@ -1,0 +1,16 @@
+HTTP/1.1 403 Forbidden
+Content-Type: text/html; charset=utf-8
+x-px-block: 1
+x-px-uuid: abc12345-6789-0123-4567-890123456789
+
+<!DOCTYPE html>
+<html>
+<head><title>Access to this page has been denied.</title></head>
+<body>
+<div id="px-captcha">
+  <h2>Please verify you are a human</h2>
+  <div id="px-captcha-container"></div>
+</div>
+<script src="/_px/captcha/captcha.js?a=c&u=abc&v=3&m=0"></script>
+</body>
+</html>
