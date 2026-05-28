@@ -149,6 +149,14 @@ impl CrawlEngine {
 
         let mut current_tier = crate::types::Tier::Http;
         let mut attempt: u32 = 0;
+        // Global attempt cap — guards against buggy RetryPolicy impls that
+        // never return Stop (B6). Tracks every loop iteration regardless of
+        // tier or directive.
+        let mut total_attempts: u32 = 0;
+        let max_total = self.config.max_total_attempts.max(1);
+        // Last known good result and last error, used for cap-exceeded fallback.
+        let mut last_ok: Option<(crate::tower::CrawlResponse, bool)> = None;
+        let mut last_err: Option<CrawlError> = None;
         // Telemetry accumulators — only consumed by emit_dispatch_span (tracing feature).
         // Gated behind cfg so the compiler doesn't warn about unused variables / assignments
         // when the tracing feature is not enabled.
@@ -160,6 +168,22 @@ impl CrawlEngine {
         let policy_name = retry_policy.name();
 
         loop {
+            total_attempts += 1;
+            if total_attempts > max_total {
+                #[cfg(feature = "tracing")]
+                tracing::warn!(
+                    target: "kreuzcrawl::dispatch",
+                    url,
+                    total_attempts,
+                    max_total,
+                    "max_total_attempts exceeded, force-returning current result"
+                );
+                return match last_ok {
+                    Some((resp, browser_used)) => Ok((resp, browser_used)),
+                    None => Err(last_err
+                        .unwrap_or_else(|| CrawlError::Other("max_total_attempts exceeded with no result".into()))),
+                };
+            }
             #[cfg(feature = "tracing")]
             tiers_attempted.push(Self::tier_name(current_tier));
 
@@ -170,12 +194,50 @@ impl CrawlEngine {
                     // Success path: build outcome and consult the policy.
                     // The policy may still signal Escalate (e.g. soft-block detection
                     // via content density). If no next tier is available, return now.
+
+                    // B1: classify the response body to detect 200-with-block-page
+                    // (Cloudflare Turnstile, DataDome interstitials, etc.).
+                    // We construct HttpResponse inline from CrawlResponse fields — both
+                    // types share the same essential fields (status, content_type, body,
+                    // body_bytes, headers); HttpResponse adds final_url and
+                    // browser_extras which are not available at this dispatch layer.
+                    // Inline construction avoids a trait-surface change on WafClassifier
+                    // and is cheap since the body was already cloned into CrawlResponse.
+                    let waf_signal = self.config.waf_classifier.as_ref().and_then(|c| {
+                        let http_resp = crate::http::HttpResponse {
+                            status: resp.status,
+                            content_type: resp.content_type.clone(),
+                            body: resp.body.clone(),
+                            body_bytes: resp.body_bytes.clone(),
+                            headers: resp.headers.clone(),
+                            final_url: String::new(),
+                            browser_extras: None,
+                        };
+                        match c.classify(&http_resp) {
+                            Ok(sig) => sig,
+                            Err(e) => {
+                                #[cfg(feature = "tracing")]
+                                tracing::warn!(
+                                    target: "kreuzcrawl::waf",
+                                    error = %e,
+                                    "classify failed"
+                                );
+                                // Suppress unused-variable warning when tracing feature is off.
+                                let _ = e;
+                                None
+                            }
+                        }
+                    });
+
+                    // Track last successful response for the cap-exceeded fallback path.
+                    last_ok = Some((resp.clone(), browser_used));
+
                     let outcome = crate::types::AttemptOutcome {
                         attempt,
                         url: std::sync::Arc::from(url),
                         status: Some(resp.status),
                         error: None,
-                        waf_signal: None,
+                        waf_signal,
                         body_size: resp.body.len(),
                         content_density: 0.0, // placeholder — computed in a later commit
                         bytes_transferred: Some(resp.body_bytes.len() as u64),
@@ -237,12 +299,30 @@ impl CrawlEngine {
                         }
                     }
 
+                    // Track last error for the cap-exceeded fallback path.
+                    last_err = Some(err.clone());
+
+                    // B1 (error arm): the WAF detection in http.rs already consumed the
+                    // response body and encoded the vendor into CrawlError::WafBlocked.
+                    // Thread that vendor through into WafSignal so the policy can see it.
+                    // The fingerprint_id sentinel "from_error" indicates this came from the
+                    // error path rather than a direct classifier match — the per-fingerprint
+                    // metric won't double-count if named distinctly.
+                    let waf_signal = match &err {
+                        CrawlError::WafBlocked { vendor, .. } => Some(crate::types::WafSignal {
+                            vendor: vendor.clone(),
+                            fingerprint_id: "from_error".to_string(),
+                            weight: 1.0,
+                        }),
+                        _ => None,
+                    };
+
                     let outcome = crate::types::AttemptOutcome {
                         attempt,
                         url: std::sync::Arc::from(url),
                         status: None,
                         error: Some(err.clone()),
-                        waf_signal: None,
+                        waf_signal,
                         body_size: 0,
                         content_density: 0.0,
                         bytes_transferred: None,
@@ -414,6 +494,12 @@ impl CrawlEngine {
     /// Determine the next tier given the current tier and active escalation strategy.
     ///
     /// Returns `None` when the current tier is terminal for the given strategy.
+    ///
+    /// Every `(Tier, EscalationStrategy)` combination is listed explicitly — no
+    /// catch-all `_ => None`. This forces a compile error when new enum variants
+    /// are added, matching the enforcement that `#[non_exhaustive]` provides for
+    /// external consumers. Silently swallowing unknown combinations (the old
+    /// catch-all) was the root cause of B2: `BypassFirst` was never handled.
     #[cfg(not(target_arch = "wasm32"))]
     fn next_tier(
         current: crate::types::Tier,
@@ -428,8 +514,20 @@ impl CrawlEngine {
             (Tier::Http, EscalationStrategy::BypassThenBrowser) => Some(Tier::Bypass),
             // Bypass → Browser (only for BypassThenBrowser)
             (Tier::Bypass, EscalationStrategy::BypassThenBrowser) => Some(Tier::Browser),
-            // Browser and None are always terminal; all other combos have no next tier.
-            _ => None,
+            // BypassFirst is terminal here — the legacy short-circuit in fetch_response
+            // handles it before the dispatch loop even runs. Reaching these arms means
+            // bypass failed under legacy semantic and there is no fallback by design.
+            // Explicit arms rather than catch-all so future strategies produce a
+            // compile error rather than silent truncation. Fixes B2.
+            (Tier::Bypass, EscalationStrategy::BypassFirst) => None,
+            (Tier::Http, EscalationStrategy::BypassFirst) => None, // unreachable in practice
+            // Browser is always terminal across all strategies.
+            (Tier::Browser, _) => None,
+            // None strategy: never escalate.
+            (_, EscalationStrategy::None) => None,
+            // Remaining combinations have no escalation target.
+            (Tier::Bypass, EscalationStrategy::BrowserOnly) => None,
+            (Tier::Bypass, EscalationStrategy::BypassOnly) => None,
         }
     }
 

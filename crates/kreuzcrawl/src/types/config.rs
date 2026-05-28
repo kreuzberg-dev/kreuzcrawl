@@ -430,6 +430,16 @@ pub struct CrawlConfig {
     #[serde(skip)]
     #[cfg_attr(alef, alef(skip))]
     pub browser_session_pool: Option<std::sync::Arc<crate::browser_session_pool::BrowserSessionPool>>,
+    /// Maximum total fetch attempts across all tiers before the dispatcher
+    /// gives up. Guards against buggy custom `RetryPolicy` impls that never
+    /// return `Stop`. Default 10 — the escalation chain HTTP → Bypass → Browser
+    /// at 3 attempts per tier is the soft expectation; 10 leaves headroom.
+    #[serde(default = "default_max_total_attempts")]
+    pub max_total_attempts: u32,
+}
+
+fn default_max_total_attempts() -> u32 {
+    10
 }
 
 impl Default for CrawlConfig {
@@ -481,6 +491,7 @@ impl Default for CrawlConfig {
             browser_pool: None,
             #[cfg(feature = "browser")]
             browser_session_pool: None,
+            max_total_attempts: default_max_total_attempts(),
         }
     }
 }

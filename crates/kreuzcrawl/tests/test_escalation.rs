@@ -14,8 +14,8 @@ use std::sync::atomic::{AtomicU32, Ordering};
 
 use async_trait::async_trait;
 use kreuzcrawl::{
-    BudgetExhausted, BypassProvider, BypassResponse, CrawlConfig, CrawlEngine, CrawlError, EscalationBudget,
-    EscalationStrategy,
+    AttemptOutcome, BudgetExhausted, BypassProvider, BypassResponse, CrawlConfig, CrawlEngine, CrawlError,
+    EscalationBudget, EscalationStrategy, RetryDirective, RetryPolicy,
 };
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
@@ -333,4 +333,102 @@ async fn unlimited_budget_allows_escalation() {
         "expected bypass content with unlimited budget, got: {markdown:?}"
     );
     assert_eq!(provider.calls(), 1);
+}
+
+// ─── B6 regression — max_total_attempts cap ──────────────────────────────────
+
+/// Custom `RetryPolicy` that always returns `Retry { backoff_ms: 0 }`.
+/// Used to prove the engine's global cap (`max_total_attempts`) terminates
+/// the dispatch loop rather than spinning forever.
+#[derive(Debug)]
+struct AlwaysRetryPolicy;
+
+#[async_trait]
+impl RetryPolicy for AlwaysRetryPolicy {
+    async fn decide(&self, _outcome: &AttemptOutcome) -> RetryDirective {
+        RetryDirective::Retry { backoff_ms: 0 }
+    }
+
+    fn name(&self) -> &'static str {
+        "always_retry"
+    }
+}
+
+/// A buggy `RetryPolicy` returning `Retry` forever must be stopped by the
+/// engine's `max_total_attempts` cap within a bounded wall-clock time.
+#[tokio::test]
+async fn buggy_policy_returning_retry_forever_does_not_spin() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/timeout"))
+        .respond_with(ResponseTemplate::new(500))
+        .mount(&mock)
+        .await;
+
+    let config = CrawlConfig {
+        escalation_strategy: EscalationStrategy::BrowserOnly,
+        retry_policy: Some(Arc::new(AlwaysRetryPolicy)),
+        // Small cap so the test completes quickly.
+        max_total_attempts: 5,
+        ..CrawlConfig::default()
+    };
+
+    let engine = build_engine(config);
+
+    // Use a wall-clock timeout to fail loudly if the engine spins past the cap.
+    let start = std::time::Instant::now();
+    let result = tokio::time::timeout(
+        std::time::Duration::from_secs(5),
+        engine.scrape(&format!("{}/timeout", mock.uri())),
+    )
+    .await;
+    let elapsed = start.elapsed();
+
+    // Must complete (either Ok or Err — both are acceptable), NOT timeout.
+    assert!(
+        result.is_ok(),
+        "engine spun past 5s — max_total_attempts cap did not fire; elapsed = {elapsed:?}"
+    );
+}
+
+// ─── B1 regression — WafClassifier wired into dispatch ───────────────────────
+
+/// Wiremock returns HTTP 200 with a Cloudflare Turnstile challenge HTML body.
+/// With `waf_classifier` wired, the dispatcher must detect the block-page and
+/// escalate to the bypass tier. Without the wiring (Session 1 pre-fix state),
+/// the dispatcher would silently return the challenge HTML as extracted content.
+#[tokio::test]
+async fn turnstile_challenge_html_triggers_escalation() {
+    let mock = MockServer::start().await;
+    let challenge_html = concat!(
+        "<!DOCTYPE html><html><head><title>Just a moment...</title></head>",
+        "<body><script src=\"/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1\"></script>",
+        "Please verify you are human.</body></html>"
+    );
+    Mock::given(method("GET"))
+        .and(path("/cf-turnstile"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .insert_header("server", "cloudflare")
+                .set_body_string(challenge_html),
+        )
+        .mount(&mock)
+        .await;
+
+    let provider = CountingMockProvider::new("vendor-fetched content");
+    let config = CrawlConfig {
+        escalation_strategy: EscalationStrategy::BypassOnly,
+        bypass: Some(provider.clone() as _),
+        waf_classifier: Some(Arc::new(kreuzcrawl::TomlClassifier::builtin())),
+        ..CrawlConfig::default()
+    };
+
+    let engine = build_engine(config);
+    let result = engine.scrape(&format!("{}/cf-turnstile", mock.uri())).await.unwrap();
+    let markdown = markdown_content(&result);
+    assert!(
+        markdown.contains("vendor-fetched"),
+        "engine must escalate to bypass when 200 returns a CF challenge; got: {markdown:?}"
+    );
+    assert_eq!(provider.calls(), 1, "bypass must be called exactly once");
 }
