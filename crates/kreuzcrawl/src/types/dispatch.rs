@@ -1,0 +1,207 @@
+//! Tier-dispatch types: escalation strategy, retry policy, WAF classifier,
+//! per-domain state, and budget interfaces.
+//!
+//! Pure type declarations. The engine wires these in [`crate::engine`]
+//! starting in Commit 1.3.
+
+use std::fmt;
+use std::sync::Arc;
+
+use async_trait::async_trait;
+use thiserror::Error;
+
+use crate::error::CrawlError;
+use crate::http::HttpResponse;
+
+/// Defines the escalation chain when a tier produces a block signal.
+///
+/// `BrowserOnly` is the default — preserves pre-tier-dispatch behavior of
+/// the engine: HTTP → Browser fallback on `WafBlocked` / `Forbidden` when
+/// `BrowserMode::Auto` is set, no vendor escalation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum EscalationStrategy {
+    /// HTTP only; surface failures as-is. No escalation.
+    None,
+    /// HTTP → Browser on WafBlocked / Forbidden. The pre-dispatch behavior.
+    #[default]
+    BrowserOnly,
+    /// HTTP → Bypass on WafBlocked / Forbidden. Browser never invoked.
+    BypassOnly,
+    /// HTTP → Bypass → Browser. Bypass first (cheaper than browser+proxy);
+    /// browser as the ultimate fallback.
+    BypassThenBrowser,
+}
+
+/// Which tier produced the current attempt's outcome.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Tier {
+    /// Plain HTTP fetch tier.
+    Http,
+    /// Bypass-vendor tier (caller-supplied [`crate::types::BypassProvider`]).
+    Bypass,
+    /// Headless-browser tier.
+    Browser,
+}
+
+/// Why the dispatcher should escalate to the next tier.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum EscalationReason {
+    /// WAF or bot protection detected the request.
+    WafBlocked {
+        /// Lowercase vendor identifier, e.g. `"cloudflare"`.
+        vendor: String,
+    },
+    /// 200 with low content density — likely a soft block.
+    SoftBlock,
+    /// 200 but body is a SPA shell that needs JS render.
+    RenderNeeded,
+    /// Sustained 5xx; origin probably unreachable, escalate anyway.
+    OriginUnreliable,
+}
+
+/// Rich context passed to [`RetryPolicy::decide`] on each attempt.
+///
+/// Inspired by spider-rs `AttemptOutcome`
+/// (<https://github.com/spider-rs/spider> — `spider/src/retry_strategy.rs`).
+/// Field set is intentionally a subset — we omit UA / fingerprint /
+/// chrome_connection because those are caller (kreuzberg-cloud) concerns.
+#[derive(Debug)]
+pub struct AttemptOutcome<'a> {
+    /// Zero-based attempt index.
+    pub attempt: u32,
+    /// The URL being fetched.
+    pub url: &'a str,
+    /// HTTP status code, if a response was received.
+    pub status: Option<u16>,
+    /// Error from this attempt, if one occurred.
+    pub error: Option<&'a CrawlError>,
+    /// WAF fingerprint match from this attempt, if detected.
+    pub waf_signal: Option<&'a WafSignal>,
+    /// Response body size in bytes.
+    pub body_size: usize,
+    /// `text_bytes / html_bytes`. Used to detect SPA shells (typical 0.0–0.05).
+    pub content_density: f32,
+    /// Total bytes transferred over the wire for this attempt.
+    pub bytes_transferred: Option<u64>,
+    /// The tier that produced this attempt.
+    pub previous_tier: Tier,
+}
+
+/// What the dispatcher does next, returned by [`RetryPolicy::decide`].
+#[derive(Debug, Clone, PartialEq)]
+pub enum RetryDirective {
+    /// Stop. Surface the current result to the caller.
+    Stop,
+    /// Retry the same tier after `backoff_ms`. Use for rate-limit / 5xx.
+    Retry {
+        /// Milliseconds to wait before retrying.
+        backoff_ms: u64,
+    },
+    /// Escalate to the next tier per [`EscalationStrategy`].
+    Escalate {
+        /// Reason for escalation, used for metrics and logging.
+        reason: EscalationReason,
+    },
+}
+
+/// Pluggable per-attempt decision policy.
+///
+/// Default impl in `crate::defaults::dispatch::SimpleRetryPolicy` (Commit 1.2)
+/// uses a per-error mapping with no learning. Callers can wire
+/// state-backed policies (e.g. EWMA, per-domain priors) via this trait.
+#[async_trait]
+pub trait RetryPolicy: Send + Sync + fmt::Debug {
+    /// Decide what the dispatcher does after the given attempt.
+    async fn decide(&self, outcome: &AttemptOutcome<'_>) -> RetryDirective;
+    /// Stable, lowercase policy identifier for span attributes and metrics.
+    fn name(&self) -> &'static str;
+}
+
+/// Convenience alias for an owned, type-erased retry policy on
+/// [`crate::types::CrawlConfig`].
+pub type DynRetryPolicy = Arc<dyn RetryPolicy>;
+
+/// Output of a WAF classifier — a single fingerprint match.
+#[derive(Debug, Clone, PartialEq)]
+pub struct WafSignal {
+    /// Lowercase vendor identifier: `"cloudflare"`, `"datadome"`, …
+    pub vendor: String,
+    /// Stable, dot-free fingerprint identifier. Used as a metric label.
+    pub fingerprint_id: String,
+    /// 0.0–1.0 confidence weight. Multi-signal fingerprints get higher weight.
+    pub weight: f32,
+}
+
+/// Pluggable WAF detection.
+///
+/// Default impl in `crate::waf::TomlClassifier` (Commit 1.4) loads
+/// `rules/waf_fingerprints.toml`, runs Aho-Corasick over the body and
+/// checks response headers.
+pub trait WafClassifier: Send + Sync + fmt::Debug {
+    /// Inspect the response; return a [`WafSignal`] if any fingerprint matches.
+    fn classify(&self, response: &HttpResponse) -> Option<WafSignal>;
+}
+
+/// Convenience alias for an owned, type-erased WAF classifier.
+pub type DynWafClassifier = Arc<dyn WafClassifier>;
+
+/// Persistent per-domain dispatch state.
+///
+/// Default impl in `crate::defaults::domain_state::InMemoryDomainState`
+/// (Commit 1.5) is a process-local `DashMap`. kreuzberg-cloud provides a
+/// Postgres-backed impl in its `dispatch-postgres` crate.
+#[async_trait]
+pub trait DomainStatePort: Send + Sync + fmt::Debug {
+    /// Read the current state for `domain`, or `None` if no observations yet.
+    async fn get(&self, domain: &str) -> Option<DomainState>;
+    /// Record a fetch outcome. Implementations update EWMA, sample count,
+    /// classifier as appropriate.
+    async fn record_outcome(&self, domain: &str, outcome: &DomainOutcome);
+}
+
+/// Convenience alias for an owned, type-erased domain-state backend.
+pub type DynDomainStatePort = Arc<dyn DomainStatePort>;
+
+/// Snapshot of a domain's dispatch state.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DomainState {
+    /// Exponentially-weighted moving average of the block rate (0.0–1.0).
+    pub block_ewma: f32,
+    /// Number of observations folded into [`Self::block_ewma`].
+    pub sample_count: u64,
+    /// Pre-classification result if known, e.g. `"cloudflare"`, `"akamai"`.
+    pub classifier: Option<String>,
+    /// Recommended starting tier for the next request to this domain.
+    pub starting_tier: Tier,
+}
+
+/// One observation fed to [`DomainStatePort::record_outcome`].
+#[derive(Debug, Clone)]
+pub struct DomainOutcome {
+    /// The tier this observation came from.
+    pub tier: Tier,
+    /// Whether the request was blocked.
+    pub blocked: bool,
+    /// WAF signal detected during this attempt, if any.
+    pub waf_signal: Option<WafSignal>,
+}
+
+/// Pluggable per-job escalation budget.
+///
+/// Returned `BudgetExhausted` causes the dispatcher to refuse further
+/// escalation. Implementations decide whether the job degrades to the
+/// cheapest tier or fails outright.
+#[async_trait]
+pub trait EscalationBudget: Send + Sync + fmt::Debug {
+    /// Attempt to debit `cost_cents` from the remaining budget. `Ok(())`
+    /// means the dispatcher may escalate; `Err` means it must not.
+    async fn try_consume(&self, cost_cents: u32) -> Result<(), BudgetExhausted>;
+}
+
+/// Convenience alias for an owned, type-erased budget.
+pub type DynEscalationBudget = Arc<dyn EscalationBudget>;
+
+/// Returned by [`EscalationBudget::try_consume`] when no budget remains.
+#[derive(Debug, Clone, Copy, Error, PartialEq, Eq)]
+#[error("escalation_budget_exhausted")]
+pub struct BudgetExhausted;

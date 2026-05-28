@@ -73,11 +73,14 @@ pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecut
 #[cfg(feature = "mcp")]
 pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use types::{
-    ActionResult, ArticleMetadata, AssetCategory, AuthConfig, BrowserBackend, BrowserConfig, BrowserExtras,
-    BrowserMode, BrowserWait, BypassProvider, BypassResponse, CachedPage, ContentConfig, CookieInfo, CrawlConfig,
-    CrawlPageResult, CrawlResult, DownloadedAsset, DownloadedDocument, DynBypassProvider, ExtractionMeta, FaviconInfo,
-    FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource, InteractionResult, JsonLdEntry, LinkInfo,
-    LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta, ScrapeResult, SitemapUrl,
+    ActionResult, ArticleMetadata, AssetCategory, AttemptOutcome, AuthConfig, BrowserBackend, BrowserConfig,
+    BrowserExtras, BrowserMode, BrowserWait, BudgetExhausted, BypassProvider, BypassResponse, CachedPage,
+    ContentConfig, CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, DomainOutcome, DomainState, DomainStatePort,
+    DownloadedAsset, DownloadedDocument, DynBypassProvider, DynDomainStatePort, DynEscalationBudget, DynRetryPolicy,
+    DynWafClassifier, EscalationBudget, EscalationReason, EscalationStrategy, ExtractionMeta, FaviconInfo, FeedInfo,
+    FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource, InteractionResult, JsonLdEntry, LinkInfo, LinkType,
+    MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta, RetryDirective, RetryPolicy, ScrapeResult,
+    SitemapUrl, Tier, WafClassifier, WafSignal,
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use types::{BatchCrawlStreamRequest, CrawlEvent, CrawlStreamRequest};

@@ -11,16 +11,22 @@ use crate::types::{AuthConfig, CrawlConfig, ResponseMeta};
 
 /// Browser-specific extras attached to an `HttpResponse` produced by the native
 /// browser backend. Populated when `browser_used` is true.
+///
+/// Exposed as `pub` because it is a field of the public [`HttpResponse`] struct.
 #[derive(Debug, Clone, Default)]
 #[allow(dead_code)]
-pub(crate) struct BrowserExtras {
+pub struct BrowserExtras {
     pub eval_result: Option<serde_json::Value>,
     pub network_events: Vec<crate::types::ResponseMeta>,
     pub cookies: Vec<crate::types::CookieInfo>,
 }
 
 /// An HTTP response with status, headers, and body content.
-pub(crate) struct HttpResponse {
+///
+/// Exposed as `pub` so that [`crate::types::WafClassifier`] implementations —
+/// which are defined outside `crate::http` — can inspect responses. All
+/// fields that are only used by internal paths carry `#[allow(dead_code)]`.
+pub struct HttpResponse {
     pub status: u16,
     pub content_type: String,
     pub body: String,

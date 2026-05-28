@@ -3,6 +3,7 @@
 mod bypass;
 mod config;
 mod discovery;
+mod dispatch;
 mod metadata;
 mod results;
 #[cfg(not(target_arch = "wasm32"))]
@@ -18,6 +19,11 @@ pub use discovery::CrawlEvent;
 pub use discovery::{
     AssetCategory, CookieInfo, DownloadedAsset, FeedInfo, FeedType, ImageInfo, ImageSource, JsonLdEntry, LinkInfo,
     LinkType,
+};
+pub use dispatch::{
+    AttemptOutcome, BudgetExhausted, DomainOutcome, DomainState, DomainStatePort, DynDomainStatePort,
+    DynEscalationBudget, DynRetryPolicy, DynWafClassifier, EscalationBudget, EscalationReason, EscalationStrategy,
+    RetryDirective, RetryPolicy, Tier, WafClassifier, WafSignal,
 };
 pub use metadata::{ArticleMetadata, FaviconInfo, HeadingInfo, HreflangEntry, PageMetadata, ResponseMeta};
 pub use results::{
