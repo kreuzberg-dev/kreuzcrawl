@@ -31,6 +31,7 @@ use kreuzcrawl::http::HttpResponse;
 /// Filename: `imperva_*` → vendor `imperva`
 /// Filename: `incapsula_*` → vendor `imperva`  (same vendor as Imperva)
 /// Filename: `aws_waf_*` → vendor `aws-waf`
+/// Filename: `generic_*` → vendor `generic`
 fn expected_vendor(filename_stem: &str) -> &'static str {
     // Try two-word prefixes first.
     if filename_stem.starts_with("aws_waf_") {
@@ -43,6 +44,7 @@ fn expected_vendor(filename_stem: &str) -> &'static str {
         "datadome" => "datadome",
         "perimeterx" => "perimeterx",
         "imperva" | "incapsula" => "imperva",
+        "generic" => "generic",
         other => panic!("unknown vendor prefix '{other}' in fixture file name '{filename_stem}'"),
     }
 }

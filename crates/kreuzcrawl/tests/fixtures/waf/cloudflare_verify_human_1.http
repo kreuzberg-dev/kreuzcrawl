@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE html>
+<html>
+<head><title>Attention Required!</title></head>
+<body>
+<div id="wrapper">
+  <h2>Please verify you are human</h2>
+  <p>One more step — complete the security check to access this site.</p>
+</div>
+</body>
+</html>

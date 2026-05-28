@@ -157,25 +157,29 @@ pub(crate) async fn http_fetch(
     // 2xx interstitial detection (header-only): modern Cloudflare /
     // DataDome / PerimeterX serve their JS challenge with 200 OK, not 403.
     // Without this check the challenge page body is fed downstream as if
-    // it were real content. Header signals (`x-datadome`,
-    // `x-amzn-waf-action`, `x-px-*`, `x-sucuri-id`) are unambiguous WAF
-    // markers regardless of status code — when a WAF stamps its own header
-    // there is no false-positive risk. Body-fingerprint detection on 2xx
-    // happens later (after the body is read) with a body-size guard to
-    // avoid matching legitimate pages that mention vendor names.
-    if (200..300).contains(&status) && headers_only_waf_match(&headers) {
-        // We need the body to identify the vendor precisely; read it now
-        // (the body-fingerprint check below would re-read anyway).
-        let body = resp.text().await.unwrap_or_default();
-        let partial_response = build_partial_response(status, &body, &headers);
+    // it were real content.
+    //
+    // `Rules::classify` runs a header-first short-circuit (Pass 1) over all
+    // header-only TOML fingerprints before the AC body scan, so passing a
+    // zero-length body here is sufficient to trigger any header-stamp match
+    // (`x-datadome`, `x-amzn-waf-action`, `x-px-*`, `x-sucuri-id`).  The
+    // TOML corpus is the single source of truth — no hardcoded header list.
+    if (200..300).contains(&status) {
+        let headers_only_response = build_partial_response(status, "", &headers);
         let classifier = TomlClassifier::builtin();
-        let vendor = classifier
-            .classify(&partial_response)
-            .map(|s| s.vendor)
-            .unwrap_or_else(|| "unknown".to_string());
-        return Err(CrawlError::WafBlocked(format!(
-            "waf/blocked detected on 2xx (header): {vendor}"
-        )));
+        if let Some(signal) = classifier.classify(&headers_only_response) {
+            // We need the body to identify the vendor precisely; read it now
+            // (the body-fingerprint check below would re-read anyway).
+            let body = resp.text().await.unwrap_or_default();
+            let partial_response = build_partial_response(status, &body, &headers);
+            let vendor = classifier
+                .classify(&partial_response)
+                .map(|s| s.vendor)
+                .unwrap_or(signal.vendor);
+            return Err(CrawlError::WafBlocked(format!(
+                "waf/blocked detected on 2xx (header): {vendor}"
+            )));
+        }
     }
 
     // Check content-length mismatch (data_loss)

@@ -231,12 +231,59 @@ fn compile(raw: TomlRules) -> Result<Rules, RulesError> {
 impl Rules {
     /// Inspect `response` and return the first matching [`WafSignal`], if any.
     ///
+    /// The algorithm runs in two passes:
+    ///
+    /// 1. **Header-first short-circuit**: fingerprints whose signals are ALL
+    ///    `response_header` are evaluated before the body is scanned. If any
+    ///    header-only fingerprint matches, its signal is returned immediately
+    ///    without running the AC body scan. This makes the TOML corpus the
+    ///    single source of truth for the 2xx header-stamp early-exit path in
+    ///    `http.rs` (replacing the old `headers_only_waf_match` function).
+    ///
+    /// 2. **Full scan**: Aho-Corasick runs over the body and all fingerprints
+    ///    (including mixed header+body ones) are evaluated.
+    ///
     /// On a 2xx response the body fingerprint check is only applied when the
     /// body is ≤ `CHALLENGE_BODY_LIMIT` — real content pages are much larger.
     /// Header signals are always checked regardless of status code.
     pub fn classify(&self, response: &HttpResponse) -> Option<WafSignal> {
         let is_2xx = (200..300).contains(&response.status);
         let body_too_large = response.body_bytes.len() > CHALLENGE_BODY_LIMIT;
+
+        // --- Pass 1: header-only fingerprints (short-circuit before body scan) ---
+        // Any fingerprint whose every signal is a response_header is eligible.
+        // This replicates the old headers_only_waf_match behaviour using the
+        // TOML corpus as the single source of truth.
+        for fingerprint in &self.fingerprints {
+            if fingerprint
+                .signals
+                .iter()
+                .all(|s| matches!(s, Signal::ResponseHeader { .. }))
+                && fingerprint.signals.iter().all(|s| match s {
+                    Signal::ResponseHeader { name, value_contains } => {
+                        header_matches(&response.headers, name, value_contains.as_deref())
+                    }
+                    Signal::BodySubstring => false,
+                })
+            {
+                let signal = WafSignal {
+                    vendor: fingerprint.vendor.clone(),
+                    fingerprint_id: fingerprint.id.clone(),
+                    weight: fingerprint.weight,
+                };
+                #[cfg(feature = "tracing")]
+                {
+                    tracing::info!(
+                        kreuzcrawl.waf.fingerprint_id = %signal.fingerprint_id,
+                        kreuzcrawl.waf.vendor = %signal.vendor,
+                        "kreuzcrawl_waf_fingerprint_matches_total"
+                    );
+                }
+                return Some(signal);
+            }
+        }
+
+        // --- Pass 2: full body scan (skip on large 2xx bodies) ---
 
         // Skip body matching on large 2xx responses (would be legitimate content).
         let check_body = !is_2xx || !body_too_large;
@@ -251,6 +298,8 @@ impl Rules {
         }
 
         // Evaluate each fingerprint; return the first whose signals all satisfy.
+        // Pure header-only fingerprints were already evaluated in Pass 1 and did
+        // not match, so they will simply not match here again (no double-fire).
         for (fp_idx, fingerprint) in self.fingerprints.iter().enumerate() {
             if self.fingerprint_matches(fingerprint, fp_idx, &matched_fp_indices, response, is_2xx) {
                 let signal = WafSignal {

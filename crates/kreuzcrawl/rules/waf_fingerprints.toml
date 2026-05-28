@@ -281,15 +281,6 @@ weight = 0.8
 kind = "body_substring"
 pattern = "awselb"
 
-[[fingerprint]]
-id = "aws_cloudfront_server"
-vendor = "aws-waf"
-weight = 0.8
-[[fingerprint.signals]]
-kind = "response_header"
-name = "server"
-value_contains = "cloudfront"
-
 # ---------------------------------------------------------------------------
 # Akamai
 # ---------------------------------------------------------------------------
@@ -323,3 +314,31 @@ weight = 0.9
 [[fingerprint.signals]]
 kind = "body_substring"
 pattern = "bigipserver"
+
+# ---------------------------------------------------------------------------
+# Generic / multi-vendor corroborating patterns
+# ---------------------------------------------------------------------------
+
+[[fingerprint]]
+id = "generic_request_blocked"
+vendor = "generic"
+weight = 0.7
+[[fingerprint.signals]]
+kind = "body_substring"
+pattern = "request blocked"
+
+[[fingerprint]]
+id = "perimeterx_challenge_js"
+vendor = "perimeterx"
+weight = 0.7
+[[fingerprint.signals]]
+kind = "body_substring"
+pattern = "challenge.js"
+
+[[fingerprint]]
+id = "cloudflare_verify_human"
+vendor = "cloudflare"
+weight = 0.7
+[[fingerprint.signals]]
+kind = "body_substring"
+pattern = "please verify you are human"

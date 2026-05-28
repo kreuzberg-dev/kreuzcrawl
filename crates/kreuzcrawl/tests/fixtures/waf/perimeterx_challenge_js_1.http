@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE html>
+<html>
+<head><title>Verifying your browser...</title></head>
+<body>
+<div id="wrapper">
+  <p>Please wait while we verify your browser.</p>
+</div>
+<script src="/_px/challenge.js?appId=PX000000000"></script>
+</body>
+</html>
