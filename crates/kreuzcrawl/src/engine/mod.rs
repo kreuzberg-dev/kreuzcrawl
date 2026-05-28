@@ -147,36 +147,40 @@ impl CrawlEngine {
             return Ok((crawl_resp, true));
         }
 
-        // Derive the effective strategy. Two adjustments are applied in order:
+        // Bind dispatch components from `config.dispatch` once for the entire request.
+        // When `dispatch` is `None`, all fields fall back to built-in defaults.
         //
-        // 1. When `escalation_strategy` is left at its default (`BrowserOnly`) and a
-        //    bypass provider is configured, promote to `BypassFirst` to preserve the
-        //    pre-tier-dispatch bypass-first semantic.
-        //
-        // 2. When the effective strategy would route to the Browser tier (`BrowserOnly`)
-        //    but `BrowserMode::Never` is set, demote to `None` so no escalation target
-        //    exists. Without this, the dispatch loop escalates to the Browser tier and
-        //    returns `Err(Unsupported)` instead of the original 403 / WAF error.
-        let effective_strategy = {
-            let s = if self.config.escalation_strategy == crate::types::EscalationStrategy::BrowserOnly
-                && self.config.bypass.is_some()
-            {
-                crate::types::EscalationStrategy::BypassFirst
-            } else {
-                self.config.escalation_strategy
-            };
-            if s == crate::types::EscalationStrategy::BrowserOnly
-                && self.config.browser.mode == crate::types::BrowserMode::Never
-            {
-                crate::types::EscalationStrategy::None
-            } else {
-                s
-            }
+        // Migration note (Commit 1.5.12): the pre-1.5.12 auto-promotion of
+        // (BrowserOnly + bypass.is_some()) to BypassFirst has been REMOVED.
+        // Callers that relied on it must now set
+        //   `DispatchProfile { strategy: EscalationStrategy::BypassFirst, bypass: Some(...), .. }`.
+        let dispatch = self.config.dispatch.as_ref();
+        let bypass = dispatch.and_then(|d| d.bypass.as_ref());
+        let strategy = dispatch.map(|d| d.strategy).unwrap_or_default();
+        let retry_policy: crate::types::DynRetryPolicy = dispatch
+            .and_then(|d| d.retry_policy.clone())
+            .unwrap_or_else(|| std::sync::Arc::new(crate::defaults::dispatch::SimpleRetryPolicy::new()));
+        let budget: crate::types::DynEscalationBudget = dispatch
+            .and_then(|d| d.escalation_budget.clone())
+            .unwrap_or_else(|| std::sync::Arc::new(crate::defaults::dispatch::UnlimitedBudget));
+        let max_total = dispatch.map(|d| d.max_total_attempts).unwrap_or(10).max(1);
+
+        // Derive the effective strategy.
+        // When the effective strategy routes to the Browser tier (`BrowserOnly`)
+        // but `BrowserMode::Never` is set, demote to `None` so no escalation
+        // target exists. Without this, the dispatch loop escalates to the Browser
+        // tier and returns `Err(Unsupported)` instead of the original 403 / WAF error.
+        let effective_strategy = if strategy == crate::types::EscalationStrategy::BrowserOnly
+            && self.config.browser.mode == crate::types::BrowserMode::Never
+        {
+            crate::types::EscalationStrategy::None
+        } else {
+            strategy
         };
 
-        // BypassFirst — legacy preserved: always route through bypass, skip HTTP.
+        // BypassFirst — route through bypass, skip HTTP entirely.
         if matches!(effective_strategy, crate::types::EscalationStrategy::BypassFirst)
-            && let Some(provider) = &self.config.bypass
+            && let Some(provider) = bypass
         {
             let bypass_resp = provider.fetch(url).await?;
             return Ok((
@@ -191,25 +195,12 @@ impl CrawlEngine {
             ));
         }
 
-        // Build retry policy and budget once for the entire dispatch loop.
-        let retry_policy: crate::types::DynRetryPolicy = self
-            .config
-            .retry_policy
-            .clone()
-            .unwrap_or_else(|| std::sync::Arc::new(crate::defaults::dispatch::SimpleRetryPolicy::new()));
-        let budget: crate::types::DynEscalationBudget = self
-            .config
-            .escalation_budget
-            .clone()
-            .unwrap_or_else(|| std::sync::Arc::new(crate::defaults::dispatch::UnlimitedBudget));
-
         let mut current_tier = crate::types::Tier::Http;
         let mut attempt: u32 = 0;
         // Global attempt cap — guards against buggy RetryPolicy impls that
         // never return Stop (B6). Tracks every loop iteration regardless of
         // tier or directive.
         let mut total_attempts: u32 = 0;
-        let max_total = self.config.max_total_attempts.max(1);
         // Last known good result and last error, used for cap-exceeded fallback.
         let mut last_ok: Option<(crate::tower::CrawlResponse, bool)> = None;
         let mut last_err: Option<CrawlError> = None;
@@ -261,7 +252,8 @@ impl CrawlEngine {
                     // browser_extras which are not available at this dispatch layer.
                     // Inline construction avoids a trait-surface change on WafClassifier
                     // and is cheap since the body was already cloned into CrawlResponse.
-                    let waf_signal = self.config.waf_classifier.as_ref().and_then(|c| {
+                    let waf_classifier = dispatch.and_then(|d| d.waf_classifier.as_ref());
+                    let waf_signal = waf_classifier.and_then(|c| {
                         let http_resp = crate::http::HttpResponse {
                             status: resp.status,
                             content_type: resp.content_type.clone(),
@@ -476,9 +468,14 @@ impl CrawlEngine {
                 Ok((resp, false))
             }
             crate::types::Tier::Bypass => {
-                let provider = self.config.bypass.as_ref().ok_or_else(|| {
-                    CrawlError::InvalidConfig("escalation to Bypass tier but no bypass provider configured".into())
-                })?;
+                let provider = self
+                    .config
+                    .dispatch
+                    .as_ref()
+                    .and_then(|d| d.bypass.as_ref())
+                    .ok_or_else(|| {
+                        CrawlError::InvalidConfig("escalation to Bypass tier but no bypass provider configured".into())
+                    })?;
                 let bypass_resp = provider.fetch(url).await?;
                 Ok((
                     crate::tower::CrawlResponse {

@@ -3709,7 +3709,7 @@ fn crawl_error_to_napi_err(e: kreuzcrawl::CrawlError) -> napi::Error {
         kreuzcrawl::CrawlError::Forbidden(..) => {
             napi::Error::new(napi::Status::GenericFailure, format!("[Forbidden] {}", msg))
         }
-        kreuzcrawl::CrawlError::WafBlocked(..) => {
+        kreuzcrawl::CrawlError::WafBlocked { .. } => {
             napi::Error::new(napi::Status::GenericFailure, format!("[WafBlocked] {}", msg))
         }
         kreuzcrawl::CrawlError::Timeout(..) => {

@@ -15,7 +15,7 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use async_trait::async_trait;
 use kreuzcrawl::{
     AttemptOutcome, BudgetExhausted, BypassProvider, BypassResponse, CrawlConfig, CrawlEngine, CrawlError,
-    EscalationBudget, EscalationStrategy, RetryDirective, RetryPolicy,
+    DispatchProfile, EscalationBudget, EscalationStrategy, RetryDirective, RetryPolicy,
 };
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
@@ -77,8 +77,11 @@ fn markdown_content(result: &kreuzcrawl::ScrapeResult) -> &str {
 
 fn config_with(strategy: EscalationStrategy, provider: Option<Arc<CountingMockProvider>>) -> CrawlConfig {
     CrawlConfig {
-        escalation_strategy: strategy,
-        bypass: provider.map(|p| p as _),
+        dispatch: Some(DispatchProfile {
+            strategy,
+            bypass: provider.map(|p| p as _),
+            ..DispatchProfile::default()
+        }),
         ..CrawlConfig::default()
     }
 }
@@ -150,13 +153,13 @@ async fn waf_block_escalates_http_to_bypass() {
     assert_eq!(provider.calls(), 1, "bypass must be called exactly once");
 }
 
-/// Default config with `bypass` configured uses `BypassFirst` (legacy behavior preserved).
+/// Explicit `BypassFirst` strategy routes all fetches through the bypass provider.
 ///
-/// Pre-tier-dispatch callers set `bypass` and expect ALL fetches to route through it,
-/// without setting `escalation_strategy`. The engine must auto-promote
-/// `BrowserOnly + bypass configured` → `BypassFirst`.
+/// Callers must now set `DispatchProfile.strategy = BypassFirst` explicitly —
+/// the pre-1.5.12 auto-promotion of `(BrowserOnly + bypass.is_some())` to
+/// `BypassFirst` has been removed.
 #[tokio::test]
-async fn bypass_first_legacy_default_for_configured_bypass() {
+async fn bypass_first_explicit_strategy_routes_through_bypass() {
     let mock = MockServer::start().await;
     Mock::given(method("GET"))
         .and(path("/x"))
@@ -166,10 +169,13 @@ async fn bypass_first_legacy_default_for_configured_bypass() {
 
     let provider = CountingMockProvider::new("bypass response");
 
-    // NOT setting escalation_strategy — leave at default BrowserOnly.
-    // Use struct update syntax to avoid the field_reassign_with_default lint.
+    // Explicitly set BypassFirst strategy — no auto-promotion from the engine.
     let config = CrawlConfig {
-        bypass: Some(provider.clone() as _),
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::BypassFirst,
+            bypass: Some(provider.clone() as _),
+            ..DispatchProfile::default()
+        }),
         ..CrawlConfig::default()
     };
 
@@ -178,7 +184,7 @@ async fn bypass_first_legacy_default_for_configured_bypass() {
     let markdown = markdown_content(&result);
     assert!(
         markdown.contains("bypass response"),
-        "default behavior with bypass configured must call bypass first; got: {markdown:?}"
+        "BypassFirst strategy must route through bypass; got: {markdown:?}"
     );
     assert_eq!(provider.calls(), 1, "bypass must be called exactly once");
 }
@@ -284,8 +290,15 @@ async fn zero_budget_prevents_escalation() {
         .await;
 
     let provider = CountingMockProvider::new("bypass would succeed");
-    let mut cfg = config_with(EscalationStrategy::BypassThenBrowser, Some(provider.clone()));
-    cfg.escalation_budget = Some(Arc::new(ZeroBudget));
+    let cfg = CrawlConfig {
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::BypassThenBrowser,
+            bypass: Some(provider.clone() as _),
+            escalation_budget: Some(Arc::new(ZeroBudget)),
+            ..DispatchProfile::default()
+        }),
+        ..CrawlConfig::default()
+    };
 
     let engine = build_engine(cfg);
     let err = engine.scrape(&format!("{}/cf", mock.uri())).await.unwrap_err();
@@ -322,8 +335,15 @@ async fn unlimited_budget_allows_escalation() {
         .await;
 
     let provider = CountingMockProvider::new("bypass ok");
-    let mut cfg = config_with(EscalationStrategy::BypassOnly, Some(provider.clone()));
-    cfg.escalation_budget = Some(Arc::new(AlwaysOkBudget));
+    let cfg = CrawlConfig {
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::BypassOnly,
+            bypass: Some(provider.clone() as _),
+            escalation_budget: Some(Arc::new(AlwaysOkBudget)),
+            ..DispatchProfile::default()
+        }),
+        ..CrawlConfig::default()
+    };
 
     let engine = build_engine(cfg);
     let result = engine.scrape(&format!("{}/cf", mock.uri())).await.unwrap();
@@ -366,10 +386,13 @@ async fn buggy_policy_returning_retry_forever_does_not_spin() {
         .await;
 
     let config = CrawlConfig {
-        escalation_strategy: EscalationStrategy::BrowserOnly,
-        retry_policy: Some(Arc::new(AlwaysRetryPolicy)),
-        // Small cap so the test completes quickly.
-        max_total_attempts: 5,
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::BrowserOnly,
+            retry_policy: Some(Arc::new(AlwaysRetryPolicy)),
+            // Small cap so the test completes quickly.
+            max_total_attempts: 5,
+            ..DispatchProfile::default()
+        }),
         ..CrawlConfig::default()
     };
 
@@ -417,9 +440,12 @@ async fn turnstile_challenge_html_triggers_escalation() {
 
     let provider = CountingMockProvider::new("vendor-fetched content");
     let config = CrawlConfig {
-        escalation_strategy: EscalationStrategy::BypassOnly,
-        bypass: Some(provider.clone() as _),
-        waf_classifier: Some(Arc::new(kreuzcrawl::TomlClassifier::builtin())),
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::BypassOnly,
+            bypass: Some(provider.clone() as _),
+            waf_classifier: Some(Arc::new(kreuzcrawl::TomlClassifier::builtin())),
+            ..DispatchProfile::default()
+        }),
         ..CrawlConfig::default()
     };
 
@@ -469,7 +495,10 @@ async fn content_density_populated_for_html_response() {
 
     let recorded = Arc::new(Mutex::new(-1.0_f32));
     let config = CrawlConfig {
-        retry_policy: Some(Arc::new(RecordingPolicy(recorded.clone()))),
+        dispatch: Some(DispatchProfile {
+            retry_policy: Some(Arc::new(RecordingPolicy(recorded.clone()))),
+            ..DispatchProfile::default()
+        }),
         ..CrawlConfig::default()
     };
     let engine = build_engine(config);

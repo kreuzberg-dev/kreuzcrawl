@@ -766,7 +766,6 @@ impl CrawlConfig {
 
             save_browser_profile: self.save_browser_profile,
 
-            bypass: Default::default(),
             ..Default::default()
         };
         let result = core_self
@@ -3315,7 +3314,7 @@ fn crawl_error_to_py_err(e: kreuzcrawl::CrawlError) -> pyo3::PyErr {
         kreuzcrawl::CrawlError::NotFound(..) => NotFoundError::new_err(msg),
         kreuzcrawl::CrawlError::Unauthorized(..) => UnauthorizedError::new_err(msg),
         kreuzcrawl::CrawlError::Forbidden(..) => ForbiddenError::new_err(msg),
-        kreuzcrawl::CrawlError::WafBlocked(..) => WafBlockedError::new_err(msg),
+        kreuzcrawl::CrawlError::WafBlocked { .. } => WafBlockedError::new_err(msg),
         kreuzcrawl::CrawlError::Timeout(..) => CrawlTimeoutError::new_err(msg),
         kreuzcrawl::CrawlError::RateLimited(..) => RateLimitedError::new_err(msg),
         kreuzcrawl::CrawlError::ServerError(..) => ServerError::new_err(msg),

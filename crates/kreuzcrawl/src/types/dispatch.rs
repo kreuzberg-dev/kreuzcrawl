@@ -13,6 +13,7 @@ use thiserror::Error;
 
 use crate::error::CrawlError;
 use crate::http::HttpResponse;
+use crate::types::bypass::DynBypassProvider;
 
 /// Defines the escalation chain when a tier produces a block signal.
 ///
@@ -255,3 +256,54 @@ pub type DynEscalationBudget = Arc<dyn EscalationBudget>;
 #[derive(Debug, Clone, Copy, Error, PartialEq, Eq)]
 #[error("escalation_budget_exhausted")]
 pub struct BudgetExhausted;
+
+/// Bundle of pluggable dispatch components attached to [`crate::types::CrawlConfig`].
+///
+/// Move the seven Session 1 / 1.5 trait-object and config fields off
+/// `CrawlConfig` into a single `Option<DispatchProfile>` field. Callers that
+/// relied on `CrawlConfig.bypass.is_some()` auto-promoting the strategy to
+/// `BypassFirst` must now set `strategy: EscalationStrategy::BypassFirst`
+/// explicitly in this struct (Commit 1.5.12 breaking change).
+#[derive(Debug, Clone)]
+pub struct DispatchProfile {
+    /// Caller-supplied bypass provider.
+    pub bypass: Option<DynBypassProvider>,
+    /// Escalation strategy for the HTTP → Bypass → Browser dispatch chain.
+    pub strategy: EscalationStrategy,
+    /// Pluggable per-attempt retry/escalation decision policy.
+    pub retry_policy: Option<DynRetryPolicy>,
+    /// Pluggable WAF classifier.
+    pub waf_classifier: Option<DynWafClassifier>,
+    /// Pluggable per-domain state backend.
+    pub domain_state: Option<DynDomainStatePort>,
+    /// Pluggable per-job escalation budget.
+    pub escalation_budget: Option<DynEscalationBudget>,
+    /// Maximum total fetch attempts across all tiers before the dispatcher
+    /// gives up. Guards against buggy custom `RetryPolicy` impls that never
+    /// return `Stop`. Default 10.
+    pub max_total_attempts: u32,
+}
+
+impl Default for DispatchProfile {
+    fn default() -> Self {
+        Self {
+            bypass: None,
+            strategy: EscalationStrategy::default(),
+            retry_policy: None,
+            waf_classifier: None,
+            domain_state: None,
+            escalation_budget: None,
+            max_total_attempts: 10,
+        }
+    }
+}
+
+// `DispatchProfile` contains `Arc<dyn Trait>` fields which are `Send + Sync`.
+// The `Option<DynXxx>` fields are all `Arc`-wrapped, so the struct is `Send + Sync`.
+// Manual assertion to catch future regressions if a non-Send field is added.
+const _: () = {
+    fn _assert_send_sync<T: Send + Sync>() {}
+    fn _check() {
+        _assert_send_sync::<DispatchProfile>();
+    }
+};

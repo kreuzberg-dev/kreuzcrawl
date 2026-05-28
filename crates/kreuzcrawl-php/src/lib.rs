@@ -923,7 +923,6 @@ impl CrawlConfig {
             warc_output: self.warc_output.clone().map(Into::into),
             browser_profile: self.browser_profile.clone(),
             save_browser_profile: self.save_browser_profile,
-            bypass: Default::default(),
             ..Default::default()
         };
         let result = core_self
@@ -3932,7 +3931,6 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             warc_output: val.warc_output.map(Into::into),
             browser_profile: val.browser_profile,
             save_browser_profile: val.save_browser_profile,
-            bypass: Default::default(),
             ..Default::default()
         }
     }
@@ -5093,7 +5091,7 @@ fn crawl_error_to_php_err(e: kreuzcrawl::CrawlError) -> ext_php_rs::exception::P
         kreuzcrawl::CrawlError::Forbidden(..) => {
             ext_php_rs::exception::PhpException::default(format!("[Forbidden] {}", msg))
         }
-        kreuzcrawl::CrawlError::WafBlocked(..) => {
+        kreuzcrawl::CrawlError::WafBlocked { .. } => {
             ext_php_rs::exception::PhpException::default(format!("[WafBlocked] {}", msg))
         }
         kreuzcrawl::CrawlError::Timeout(..) => {

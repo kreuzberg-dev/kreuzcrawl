@@ -8,7 +8,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use kreuzcrawl::{BypassProvider, BypassResponse, CrawlConfig, CrawlError, DynBypassProvider};
+use kreuzcrawl::{BypassProvider, BypassResponse, CrawlConfig, CrawlError, DispatchProfile, DynBypassProvider};
 
 /// Test provider that returns a canned response.
 #[derive(Debug)]
@@ -37,17 +37,24 @@ impl BypassProvider for TestProvider {
 #[test]
 fn bypass_provider_can_be_attached_to_crawl_config() {
     // Verify that the BypassProvider trait can be implemented, wrapped in
-    // Arc<dyn ...>, and attached to CrawlConfig without compilation errors.
+    // Arc<dyn ...>, and attached to CrawlConfig via DispatchProfile.
     let provider: DynBypassProvider = Arc::new(TestProvider);
 
     let config = CrawlConfig {
-        bypass: Some(provider),
+        dispatch: Some(DispatchProfile {
+            bypass: Some(provider),
+            ..DispatchProfile::default()
+        }),
         ..Default::default()
     };
 
-    assert!(config.bypass.is_some(), "bypass provider should be attached");
+    let bypass = config.dispatch.as_ref().and_then(|d| d.bypass.as_ref());
+    assert!(
+        bypass.is_some(),
+        "bypass provider should be attached via DispatchProfile"
+    );
     assert_eq!(
-        config.bypass.as_ref().unwrap().vendor_name(),
+        bypass.unwrap().vendor_name(),
         "test",
         "vendor_name should be accessible"
     );

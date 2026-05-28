@@ -5,7 +5,7 @@ use std::time::Duration;
 use serde::{Deserialize, Serialize};
 
 use super::AssetCategory;
-use super::dispatch::{DynDomainStatePort, DynEscalationBudget, DynRetryPolicy, DynWafClassifier, EscalationStrategy};
+use super::dispatch::DispatchProfile;
 
 /// Metadata about an LLM extraction pass.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -376,47 +376,18 @@ pub struct CrawlConfig {
     pub browser_profile: Option<String>,
     /// Whether to save changes back to the browser profile on exit.
     pub save_browser_profile: bool,
-    /// Caller-supplied bypass provider. When `Some`, the engine routes every
-    /// URL through the provider, skipping native HTTP and chromiumoxide. Used
-    /// for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the
-    /// kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters.
+    /// Pluggable dispatch components: bypass provider, escalation strategy,
+    /// retry policy, WAF classifier, domain state, escalation budget, and
+    /// max_total_attempts.
+    ///
+    /// When `None`, the engine uses its built-in defaults (no bypass, `BrowserOnly`
+    /// strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state,
+    /// unlimited budget, 10 total attempt cap).
+    ///
+    /// Not serializable — callers construct this at runtime and skip in TOML/JSON configs.
     #[serde(skip)]
     #[cfg_attr(alef, alef(skip))]
-    pub bypass: Option<crate::types::bypass::DynBypassProvider>,
-    /// Configured behavior of the HTTP → Bypass → Browser dispatch chain.
-    ///
-    /// Default `BrowserOnly` preserves pre-tier-dispatch behavior. When
-    /// `bypass` is configured and this field is left at the default, the
-    /// engine treats it as `BypassFirst` for backward compatibility.
-    #[serde(default)]
-    pub escalation_strategy: EscalationStrategy,
-    /// Pluggable per-attempt retry/escalation decision policy.
-    ///
-    /// Default is [`crate::defaults::dispatch::SimpleRetryPolicy::new`].
-    /// Not serializable — skip in TOML/JSON configs.
-    #[serde(skip)]
-    #[cfg_attr(alef, alef(skip))]
-    pub retry_policy: Option<DynRetryPolicy>,
-    /// Pluggable WAF classifier. Default is [`crate::waf::TomlClassifier::builtin`].
-    ///
-    /// Not serializable — skip in TOML/JSON configs.
-    #[serde(skip)]
-    #[cfg_attr(alef, alef(skip))]
-    pub waf_classifier: Option<DynWafClassifier>,
-    /// Pluggable per-domain state backend. `None` disables learning;
-    /// the engine uses [`crate::defaults::dispatch::SimpleRetryPolicy`]
-    /// semantics without state.
-    ///
-    /// Not serializable — skip in TOML/JSON configs.
-    #[serde(skip)]
-    #[cfg_attr(alef, alef(skip))]
-    pub domain_state: Option<DynDomainStatePort>,
-    /// Pluggable per-job escalation budget. `None` means unlimited.
-    ///
-    /// Not serializable — skip in TOML/JSON configs.
-    #[serde(skip)]
-    #[cfg_attr(alef, alef(skip))]
-    pub escalation_budget: Option<DynEscalationBudget>,
+    pub dispatch: Option<DispatchProfile>,
     /// Shared browser pool for reusing Chrome across requests (not serializable).
     #[cfg(feature = "browser")]
     #[serde(skip)]
@@ -430,16 +401,6 @@ pub struct CrawlConfig {
     #[serde(skip)]
     #[cfg_attr(alef, alef(skip))]
     pub browser_session_pool: Option<std::sync::Arc<crate::browser_session_pool::BrowserSessionPool>>,
-    /// Maximum total fetch attempts across all tiers before the dispatcher
-    /// gives up. Guards against buggy custom `RetryPolicy` impls that never
-    /// return `Stop`. Default 10 — the escalation chain HTTP → Bypass → Browser
-    /// at 3 attempts per tier is the soft expectation; 10 leaves headroom.
-    #[serde(default = "default_max_total_attempts")]
-    pub max_total_attempts: u32,
-}
-
-fn default_max_total_attempts() -> u32 {
-    10
 }
 
 impl Default for CrawlConfig {
@@ -481,17 +442,11 @@ impl Default for CrawlConfig {
             warc_output: None,
             browser_profile: None,
             save_browser_profile: false,
-            bypass: None,
-            escalation_strategy: EscalationStrategy::default(),
-            retry_policy: None,
-            waf_classifier: None,
-            domain_state: None,
-            escalation_budget: None,
+            dispatch: None,
             #[cfg(feature = "browser")]
             browser_pool: None,
             #[cfg(feature = "browser")]
             browser_session_pool: None,
-            max_total_attempts: default_max_total_attempts(),
         }
     }
 }

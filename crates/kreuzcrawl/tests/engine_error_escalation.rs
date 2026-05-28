@@ -8,7 +8,7 @@
 
 #![allow(clippy::unwrap_used, clippy::panic)]
 
-use kreuzcrawl::{BrowserMode, CrawlConfig, CrawlError, EscalationStrategy, create_engine, scrape};
+use kreuzcrawl::{BrowserMode, CrawlConfig, CrawlError, DispatchProfile, EscalationStrategy, create_engine, scrape};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -33,7 +33,10 @@ async fn browser_only_strategy_browser_never_returns_forbidden_error() {
         .await;
 
     let handle = engine_with(CrawlConfig {
-        escalation_strategy: EscalationStrategy::BrowserOnly,
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::BrowserOnly,
+            ..DispatchProfile::default()
+        }),
         browser: kreuzcrawl::BrowserConfig {
             mode: BrowserMode::Never,
             ..Default::default()
@@ -72,7 +75,10 @@ async fn browser_only_strategy_browser_never_returns_waf_blocked_error() {
         .await;
 
     let handle = engine_with(CrawlConfig {
-        escalation_strategy: EscalationStrategy::BrowserOnly,
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::BrowserOnly,
+            ..DispatchProfile::default()
+        }),
         browser: kreuzcrawl::BrowserConfig {
             mode: BrowserMode::Never,
             ..Default::default()
@@ -106,7 +112,10 @@ async fn none_strategy_browser_auto_returns_forbidden_error() {
         .await;
 
     let handle = engine_with(CrawlConfig {
-        escalation_strategy: EscalationStrategy::None,
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::None,
+            ..DispatchProfile::default()
+        }),
         browser: kreuzcrawl::BrowserConfig {
             mode: BrowserMode::Never,
             ..Default::default()
@@ -146,7 +155,10 @@ async fn none_strategy_returns_waf_blocked_not_ok() {
         .await;
 
     let handle = engine_with(CrawlConfig {
-        escalation_strategy: EscalationStrategy::None,
+        dispatch: Some(DispatchProfile {
+            strategy: EscalationStrategy::None,
+            ..DispatchProfile::default()
+        }),
         browser: kreuzcrawl::BrowserConfig {
             mode: BrowserMode::Never,
             ..Default::default()

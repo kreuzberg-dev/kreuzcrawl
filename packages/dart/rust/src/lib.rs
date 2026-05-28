@@ -1896,7 +1896,6 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             warc_output: v.warc_output.map(std::path::PathBuf::from),
             browser_profile: v.browser_profile.map(Into::into),
             save_browser_profile: v.save_browser_profile as _,
-            bypass: Default::default(),
             ..Default::default()
         }
     }

@@ -76,12 +76,12 @@ pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use types::{
     ActionResult, ArticleMetadata, AssetCategory, AttemptOutcome, AuthConfig, BrowserBackend, BrowserConfig,
     BrowserExtras, BrowserMode, BrowserWait, BudgetExhausted, BypassProvider, BypassResponse, CachedPage,
-    ContentConfig, CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, DomainOutcome, DomainState, DomainStatePort,
-    DownloadedAsset, DownloadedDocument, DynBypassProvider, DynDomainStatePort, DynEscalationBudget, DynRetryPolicy,
-    DynWafClassifier, EscalationBudget, EscalationReason, EscalationStrategy, ExtractionMeta, FaviconInfo, FeedInfo,
-    FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource, InteractionResult, JsonLdEntry, LinkInfo, LinkType,
-    MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta, RetryDirective, RetryPolicy, ScrapeResult,
-    SitemapUrl, Tier, WafClassifier, WafClassifyError, WafSignal,
+    ContentConfig, CookieInfo, CrawlConfig, CrawlPageResult, CrawlResult, DispatchProfile, DomainOutcome, DomainState,
+    DomainStatePort, DownloadedAsset, DownloadedDocument, DynBypassProvider, DynDomainStatePort, DynEscalationBudget,
+    DynRetryPolicy, DynWafClassifier, EscalationBudget, EscalationReason, EscalationStrategy, ExtractionMeta,
+    FaviconInfo, FeedInfo, FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource, InteractionResult,
+    JsonLdEntry, LinkInfo, LinkType, MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta,
+    RetryDirective, RetryPolicy, ScrapeResult, SitemapUrl, Tier, WafClassifier, WafClassifyError, WafSignal,
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use types::{BatchCrawlStreamRequest, CrawlEvent, CrawlStreamRequest};
