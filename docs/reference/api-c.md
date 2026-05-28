@@ -449,6 +449,11 @@ Configuration for crawl, scrape, and map operations.
 | `browser_profile` | `const char**` | `NULL` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
 | `bypass` | `const char**` | `NULL` | Caller-supplied bypass provider. When `Some`, the engine routes every URL through the provider, skipping native HTTP and chromiumoxide. Used for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters. |
+| `escalation_strategy` | `const char*` | — | Configured behavior of the HTTP → Bypass → Browser dispatch chain. Default `BrowserOnly` preserves pre-tier-dispatch behavior. When `bypass` is configured and this field is left at the default, the engine treats it as `BypassFirst` for backward compatibility. |
+| `retry_policy` | `const char**` | `NULL` | Pluggable per-attempt retry/escalation decision policy. Default is `new`. Not serializable — skip in TOML/JSON configs. |
+| `waf_classifier` | `const char**` | `NULL` | Pluggable WAF classifier. Default is `builtin`. Not serializable — skip in TOML/JSON configs. |
+| `domain_state` | `const char**` | `NULL` | Pluggable per-domain state backend. `NULL` disables learning; the engine uses `SimpleRetryPolicy` semantics without state. Not serializable — skip in TOML/JSON configs. |
+| `escalation_budget` | `const char**` | `NULL` | Pluggable per-job escalation budget. `NULL` means unlimited. Not serializable — skip in TOML/JSON configs. |
 
 ### Methods
 
@@ -1060,7 +1065,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `KCRAWL_NOT_FOUND` | The requested page was not found (HTTP 404). |
 | `KCRAWL_UNAUTHORIZED` | The request was unauthorized (HTTP 401). |
 | `KCRAWL_FORBIDDEN` | The request was forbidden (HTTP 403). |
-| `KCRAWL_WAF_BLOCKED` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). |
+| `KCRAWL_WAF_BLOCKED` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare", "datadome"). When the engine cannot identify the vendor, it uses "unknown". `message` is the freeform description for logs and human readers. The stable error tag remains `forbidden: waf/blocked: <message>` so existing log-grep patterns and cross-language bindings continue to work; vendor is surfaced separately for structured consumers. |
 | `KCRAWL_TIMEOUT` | The request timed out. |
 | `KCRAWL_RATE_LIMITED` | The request was rate-limited (HTTP 429). |
 | `KCRAWL_SERVER_ERROR` | A server error occurred (HTTP 5xx). |

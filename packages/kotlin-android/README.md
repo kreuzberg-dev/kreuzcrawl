@@ -93,6 +93,7 @@ JVM consumers should use the canonical `dev.kreuzberg.kreuzcrawl:kreuzcrawl-java
 implementation("dev.kreuzberg.kreuzcrawl:kreuzcrawl-android:0.3.0-rc.37")
 
 ```
+
 ## Quick Start
 
 ```kotlin title="Kotlin (Android)"
@@ -127,6 +128,7 @@ fun main() = runBlocking {
     println("Pages crawled: ${crawlResult.pages.size}")
 }
 ```
+
 ## API Reference
 
 Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).

@@ -38,7 +38,7 @@ fn classifier_cloudflare_challenge_detected() {
         vec![("server", "cloudflare")],
         "<html><script src='/cdn-cgi/challenge-platform/h/g/orchestrate/v1'></script></html>",
     );
-    let signal = c.classify(&resp);
+    let signal = c.classify(&resp).expect("classify must not fail");
     assert!(signal.is_some(), "cloudflare challenge must be detected");
     assert_eq!(signal.unwrap().vendor, "cloudflare");
 }
@@ -47,7 +47,7 @@ fn classifier_cloudflare_challenge_detected() {
 fn classifier_datadome_header_detected() {
     let c = TomlClassifier::builtin();
     let resp = make_response(200, vec![("x-datadome", "blocked")], "<html>ok</html>");
-    let signal = c.classify(&resp);
+    let signal = c.classify(&resp).expect("classify must not fail");
     assert!(signal.is_some(), "datadome x-datadome header must be detected");
     assert_eq!(signal.unwrap().vendor, "datadome");
 }
@@ -56,7 +56,7 @@ fn classifier_datadome_header_detected() {
 fn classifier_perimeterx_header_detected() {
     let c = TomlClassifier::builtin();
     let resp = make_response(200, vec![("x-px-block", "1")], "<html>ok</html>");
-    let signal = c.classify(&resp);
+    let signal = c.classify(&resp).expect("classify must not fail");
     // x-px-block header → perimeterx_header fingerprint via headers_only check
     // The TOML fingerprint checks for name="x-px-block" specifically;
     // the prefix-match for x-px-* is handled in header_matches via the "x-px-" sentinel.
@@ -68,7 +68,7 @@ fn classifier_perimeterx_header_detected() {
 fn classifier_imperva_incap_ses_detected() {
     let c = TomlClassifier::builtin();
     let resp = make_response(403, vec![], "<html>_incap_ses_xyz_123</html>");
-    let signal = c.classify(&resp);
+    let signal = c.classify(&resp).expect("classify must not fail");
     assert!(signal.is_some(), "imperva _incap_ses_ must be detected");
     assert_eq!(signal.unwrap().vendor, "imperva");
 }
@@ -77,7 +77,7 @@ fn classifier_imperva_incap_ses_detected() {
 fn classifier_aws_waf_action_header() {
     let c = TomlClassifier::builtin();
     let resp = make_response(403, vec![("x-amzn-waf-action", "block")], "<html>blocked</html>");
-    let signal = c.classify(&resp);
+    let signal = c.classify(&resp).expect("classify must not fail");
     assert!(signal.is_some(), "aws waf action header must be detected");
     assert_eq!(signal.unwrap().vendor, "aws-waf");
 }
@@ -86,7 +86,7 @@ fn classifier_aws_waf_action_header() {
 fn classifier_akamai_server_header() {
     let c = TomlClassifier::builtin();
     let resp = make_response(403, vec![("server", "AkamaiGHost")], "<html>Access Denied</html>");
-    let signal = c.classify(&resp);
+    let signal = c.classify(&resp).expect("classify must not fail");
     assert!(signal.is_some(), "akamai server header must be detected");
     assert_eq!(signal.unwrap().vendor, "akamai");
 }
@@ -102,7 +102,7 @@ fn classifier_large_2xx_not_flagged() {
 
     let resp = make_response(200, vec![("server", "nginx")], &body);
     assert!(
-        c.classify(&resp).is_none(),
+        c.classify(&resp).expect("classify must not fail").is_none(),
         "large 2xx body mentioning vendor names must not be classified as WAF block"
     );
 }
@@ -113,7 +113,7 @@ fn classifier_benign_small_page_not_flagged() {
     let body = "<html><head><title>Welcome</title></head><body><p>Hello world</p></body></html>";
     let resp = make_response(200, vec![], body);
     assert!(
-        c.classify(&resp).is_none(),
+        c.classify(&resp).expect("classify must not fail").is_none(),
         "small benign page must not be classified as WAF block"
     );
 }
@@ -124,7 +124,7 @@ fn classifier_datadome_captcha_delivery() {
     let body = "<html><script>var dd={'host':'geo.captcha-delivery.com'}</script>\
                 <script src='https://ct.captcha-delivery.com/i.js'></script></html>";
     let resp = make_response(200, vec![], body);
-    let signal = c.classify(&resp);
+    let signal = c.classify(&resp).expect("classify must not fail");
     assert!(signal.is_some(), "captcha-delivery.com must be detected as datadome");
     assert_eq!(signal.unwrap().vendor, "datadome");
 }
@@ -148,7 +148,7 @@ pattern = "custom-challenge-token"
     use crate::waf::TomlClassifier;
     let c = TomlClassifier::from_rules(rules);
     let resp = make_response(403, vec![], "<html>custom-challenge-token</html>");
-    let signal = c.classify(&resp);
+    let signal = c.classify(&resp).expect("classify must not fail");
     assert!(signal.is_some());
     assert_eq!(signal.as_ref().unwrap().vendor, "custom");
     assert_eq!(signal.unwrap().fingerprint_id, "custom_vendor_v1");
@@ -176,11 +176,17 @@ pattern = "tv-challenge-token"
 
     // Missing body pattern — must not match.
     let resp = make_response(403, vec![("server", "testvendor")], "<html>no token here</html>");
-    assert!(c.classify(&resp).is_none(), "must not match without body pattern");
+    assert!(
+        c.classify(&resp).expect("classify must not fail").is_none(),
+        "must not match without body pattern"
+    );
 
     // Both signals present — must match.
     let resp2 = make_response(403, vec![("server", "testvendor")], "<html>tv-challenge-token</html>");
-    assert!(c.classify(&resp2).is_some(), "must match when all signals present");
+    assert!(
+        c.classify(&resp2).expect("classify must not fail").is_some(),
+        "must match when all signals present"
+    );
 }
 
 /// This test is INTENTIONALLY BROKEN to prove the fixture corpus is load-bearing.
@@ -208,7 +214,7 @@ pattern = "THIS_PATTERN_WILL_NEVER_MATCH_ANYTHING_xyzzy_12345"
     let resp = make_response(403, vec![], "<html>cf-chl-widget-abc</html>");
     // This must fail to detect — proving that if we break the pattern the test breaks.
     assert!(
-        c.classify(&resp).is_none(),
+        c.classify(&resp).expect("classify must not fail").is_none(),
         "broken fingerprint correctly produces no match"
     );
 }

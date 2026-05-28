@@ -29,6 +29,7 @@ use crate::http::HttpResponse;
 /// | `BypassFirst` | Legacy: engine auto-selects this when `bypass` is set and strategy is unset |
 /// | `BypassOnly` | WAF-heavy targets without a browser backend configured |
 /// | `BypassThenBrowser` | Maximum resilience: vendor bypass then headless Chrome |
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum EscalationStrategy {
@@ -51,7 +52,9 @@ pub enum EscalationStrategy {
 }
 
 /// Which tier produced the current attempt's outcome.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Tier {
     /// Plain HTTP fetch tier.
     Http,
@@ -62,7 +65,9 @@ pub enum Tier {
 }
 
 /// Why the dispatcher should escalate to the next tier.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum EscalationReason {
     /// WAF or bot protection detected the request.
     WafBlocked {
@@ -83,18 +88,22 @@ pub enum EscalationReason {
 /// (<https://github.com/spider-rs/spider> — `spider/src/retry_strategy.rs`).
 /// Field set is intentionally a subset — we omit UA / fingerprint /
 /// chrome_connection because those are caller (kreuzberg-cloud) concerns.
-#[derive(Debug)]
-pub struct AttemptOutcome<'a> {
+///
+/// All fields are owned so async impls can clone or move into spawned tasks
+/// without borrow-checker issues. The previous `<'a>` lifetime was incompatible
+/// with policies that record outcomes to background tasks.
+#[derive(Debug, Clone)]
+pub struct AttemptOutcome {
     /// Zero-based attempt index.
     pub attempt: u32,
     /// The URL being fetched.
-    pub url: &'a str,
+    pub url: Arc<str>,
     /// HTTP status code, if a response was received.
     pub status: Option<u16>,
     /// Error from this attempt, if one occurred.
-    pub error: Option<&'a CrawlError>,
+    pub error: Option<CrawlError>,
     /// WAF fingerprint match from this attempt, if detected.
-    pub waf_signal: Option<&'a WafSignal>,
+    pub waf_signal: Option<WafSignal>,
     /// Response body size in bytes.
     pub body_size: usize,
     /// `text_bytes / html_bytes`. Used to detect SPA shells (typical 0.0–0.05).
@@ -103,6 +112,24 @@ pub struct AttemptOutcome<'a> {
     pub bytes_transferred: Option<u64>,
     /// The tier that produced this attempt.
     pub previous_tier: Tier,
+}
+
+/// Errors returned by [`WafClassifier::classify`].
+///
+/// `BuildError` is for classifier-internal construction problems (TOML parse
+/// failures, AC matcher build failures). `ClassifyError` is for per-call
+/// problems (e.g. response body decoding failures).
+///
+/// The engine treats both variants as `None` for dispatch purposes and logs
+/// them at WARN — a misconfigured classifier does NOT crash the dispatcher.
+#[derive(Debug, Clone, thiserror::Error)]
+pub enum WafClassifyError {
+    /// Classifier construction failed (e.g. TOML parse or AC build error).
+    #[error("waf classifier build: {0}")]
+    BuildError(String),
+    /// Per-call classification failure (e.g. response body decoding error).
+    #[error("waf classify: {0}")]
+    ClassifyError(String),
 }
 
 /// What the dispatcher does next, returned by [`RetryPolicy::decide`].
@@ -130,7 +157,7 @@ pub enum RetryDirective {
 #[async_trait]
 pub trait RetryPolicy: Send + Sync + fmt::Debug {
     /// Decide what the dispatcher does after the given attempt.
-    async fn decide(&self, outcome: &AttemptOutcome<'_>) -> RetryDirective;
+    async fn decide(&self, outcome: &AttemptOutcome) -> RetryDirective;
     /// Stable, lowercase policy identifier for span attributes and metrics.
     fn name(&self) -> &'static str;
 }
@@ -157,7 +184,12 @@ pub struct WafSignal {
 /// checks response headers.
 pub trait WafClassifier: Send + Sync + fmt::Debug {
     /// Inspect the response; return a [`WafSignal`] if any fingerprint matches.
-    fn classify(&self, response: &HttpResponse) -> Option<WafSignal>;
+    ///
+    /// Returns `Ok(None)` for clean responses, `Ok(Some(sig))` for matches,
+    /// and `Err(WafClassifyError)` only for classifier-internal failures
+    /// (TOML parse errors at construction time, malformed responses, etc).
+    /// A misconfigured classifier MUST surface via `Err`, not silently as `Ok(None)`.
+    fn classify(&self, response: &HttpResponse) -> Result<Option<WafSignal>, WafClassifyError>;
 }
 
 /// Convenience alias for an owned, type-erased WAF classifier.

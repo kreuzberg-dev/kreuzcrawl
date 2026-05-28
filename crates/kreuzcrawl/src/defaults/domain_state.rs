@@ -142,11 +142,11 @@ impl LearningRetryPolicy {
 
 #[async_trait]
 impl RetryPolicy for LearningRetryPolicy {
-    async fn decide(&self, outcome: &AttemptOutcome<'_>) -> RetryDirective {
+    async fn decide(&self, outcome: &AttemptOutcome) -> RetryDirective {
         let directive = self.fallback.decide(outcome).await;
 
         // Record outcome for future learning, then return decision.
-        if let Ok(parsed) = url::Url::parse(outcome.url)
+        if let Ok(parsed) = url::Url::parse(&outcome.url)
             && let Some(domain) = parsed.host_str()
         {
             let blocked = matches!(
@@ -159,7 +159,7 @@ impl RetryPolicy for LearningRetryPolicy {
                     &DomainOutcome {
                         tier: outcome.previous_tier,
                         blocked,
-                        waf_signal: outcome.waf_signal.cloned(),
+                        waf_signal: outcome.waf_signal.clone(),
                     },
                 )
                 .await;
@@ -274,15 +274,14 @@ mod tests {
     async fn learning_policy_records_outcome_on_waf_blocked() {
         let state = Arc::new(InMemoryDomainState::new());
         let policy = LearningRetryPolicy::new(state.clone() as Arc<dyn DomainStatePort>);
-        let err = crate::error::CrawlError::WafBlocked {
-            vendor: "cloudflare".into(),
-            message: "cloudflare".into(),
-        };
         let outcome = AttemptOutcome {
             attempt: 0,
-            url: "https://example.com/path",
+            url: Arc::from("https://example.com/path"),
             status: None,
-            error: Some(&err),
+            error: Some(crate::error::CrawlError::WafBlocked {
+                vendor: "cloudflare".into(),
+                message: "cloudflare".into(),
+            }),
             waf_signal: None,
             body_size: 0,
             content_density: 0.0,

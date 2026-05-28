@@ -134,7 +134,7 @@ pub(crate) async fn http_fetch(
             let body = resp.text().await.unwrap_or_default();
             let partial_response = build_partial_response(status, &body, &headers);
             let classifier = TomlClassifier::builtin();
-            if let Some(signal) = classifier.classify(&partial_response) {
+            if let Ok(Some(signal)) = classifier.classify(&partial_response) {
                 return Err(CrawlError::WafBlocked {
                     vendor: signal.vendor.clone(),
                     message: format!("waf/blocked detected: {}", signal.vendor),
@@ -167,13 +167,15 @@ pub(crate) async fn http_fetch(
     if (200..300).contains(&status) {
         let headers_only_response = build_partial_response(status, "", &headers);
         let classifier = TomlClassifier::builtin();
-        if let Some(signal) = classifier.classify(&headers_only_response) {
+        if let Ok(Some(signal)) = classifier.classify(&headers_only_response) {
             // We need the body to identify the vendor precisely; read it now
             // (the body-fingerprint check below would re-read anyway).
             let body = resp.text().await.unwrap_or_default();
             let partial_response = build_partial_response(status, &body, &headers);
             let vendor = classifier
                 .classify(&partial_response)
+                .ok()
+                .flatten()
                 .map(|s| s.vendor)
                 .unwrap_or(signal.vendor);
             return Err(CrawlError::WafBlocked {
@@ -231,7 +233,7 @@ pub(crate) async fn http_fetch(
     if (200..300).contains(&status) {
         let partial_response = build_partial_response_with_bytes(status, &body_bytes_vec, &body, &headers);
         let classifier = TomlClassifier::builtin();
-        if let Some(signal) = classifier.classify(&partial_response) {
+        if let Ok(Some(signal)) = classifier.classify(&partial_response) {
             return Err(CrawlError::WafBlocked {
                 vendor: signal.vendor.clone(),
                 message: format!("waf/blocked detected on 2xx (body): {}", signal.vendor),
@@ -443,6 +445,8 @@ pub(crate) fn detect_waf_vendor(server: &str, body: &str) -> String {
     };
     TomlClassifier::builtin()
         .classify(&response)
+        .ok()
+        .flatten()
         .map(|s| s.vendor)
         .unwrap_or_else(|| "unknown".to_string())
 }
@@ -474,7 +478,7 @@ pub(crate) fn is_waf_blocked(server: &str, body: &str, headers: &HashMap<String,
         browser_extras: None,
         final_url: String::new(),
     };
-    TomlClassifier::builtin().classify(&response).is_some()
+    TomlClassifier::builtin().classify(&response).ok().flatten().is_some()
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]

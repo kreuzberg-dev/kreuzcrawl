@@ -123,7 +123,9 @@ fn waf_fixtures_all_match() {
         let content = std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("cannot read {}: {e}", path.display()));
 
         let response = parse_http_fixture(&content);
-        let signal = classifier.classify(&response);
+        let signal = classifier.classify(&response).unwrap_or_else(|e| {
+            panic!("classifier returned error for {stem}: {e}");
+        });
 
         fixture_count += 1;
         let vendor = expected_vendor(&stem);

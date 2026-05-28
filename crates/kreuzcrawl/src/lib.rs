@@ -81,7 +81,7 @@ pub use types::{
     DynWafClassifier, EscalationBudget, EscalationReason, EscalationStrategy, ExtractionMeta, FaviconInfo, FeedInfo,
     FeedType, HeadingInfo, HreflangEntry, ImageInfo, ImageSource, InteractionResult, JsonLdEntry, LinkInfo, LinkType,
     MapResult, MarkdownResult, PageMetadata, ProxyConfig, ResponseMeta, RetryDirective, RetryPolicy, ScrapeResult,
-    SitemapUrl, Tier, WafClassifier, WafSignal,
+    SitemapUrl, Tier, WafClassifier, WafClassifyError, WafSignal,
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use types::{BatchCrawlStreamRequest, CrawlEvent, CrawlStreamRequest};

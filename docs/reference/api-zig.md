@@ -449,6 +449,11 @@ Configuration for crawl, scrape, and map operations.
 | `browserProfile` | `[:0]const u8?` | `null` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `saveBrowserProfile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
 | `bypass` | `[:0]const u8?` | `null` | Caller-supplied bypass provider. When `Some`, the engine routes every URL through the provider, skipping native HTTP and chromiumoxide. Used for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters. |
+| `escalationStrategy` | `[:0]const u8` | — | Configured behavior of the HTTP → Bypass → Browser dispatch chain. Default `BrowserOnly` preserves pre-tier-dispatch behavior. When `bypass` is configured and this field is left at the default, the engine treats it as `BypassFirst` for backward compatibility. |
+| `retryPolicy` | `[:0]const u8?` | `null` | Pluggable per-attempt retry/escalation decision policy. Default is `new`. Not serializable — skip in TOML/JSON configs. |
+| `wafClassifier` | `[:0]const u8?` | `null` | Pluggable WAF classifier. Default is `builtin`. Not serializable — skip in TOML/JSON configs. |
+| `domainState` | `[:0]const u8?` | `null` | Pluggable per-domain state backend. `null` disables learning; the engine uses `SimpleRetryPolicy` semantics without state. Not serializable — skip in TOML/JSON configs. |
+| `escalationBudget` | `[:0]const u8?` | `null` | Pluggable per-job escalation budget. `null` means unlimited. Not serializable — skip in TOML/JSON configs. |
 
 ### Methods
 
@@ -1060,7 +1065,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `NotFound` | The requested page was not found (HTTP 404). |
 | `Unauthorized` | The request was unauthorized (HTTP 401). |
 | `Forbidden` | The request was forbidden (HTTP 403). |
-| `WafBlocked` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). |
+| `WafBlocked` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare", "datadome"). When the engine cannot identify the vendor, it uses "unknown". `message` is the freeform description for logs and human readers. The stable error tag remains `forbidden: waf/blocked: <message>` so existing log-grep patterns and cross-language bindings continue to work; vendor is surfaced separately for structured consumers. |
 | `Timeout` | The request timed out. |
 | `RateLimited` | The request was rate-limited (HTTP 429). |
 | `ServerError` | A server error occurred (HTTP 5xx). |

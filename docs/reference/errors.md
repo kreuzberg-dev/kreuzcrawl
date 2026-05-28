@@ -15,7 +15,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `NotFound` | not_found: {0} | The requested page was not found (HTTP 404). |
 | `Unauthorized` | unauthorized: {0} | The request was unauthorized (HTTP 401). |
 | `Forbidden` | forbidden: {0} | The request was forbidden (HTTP 403). |
-| `WafBlocked` | forbidden: waf/blocked: {0} | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). |
+| `WafBlocked` | forbidden: waf/blocked: {message} | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare", "datadome"). When the engine cannot identify the vendor, it uses "unknown". `message` is the freeform description for logs and human readers. The stable error tag remains `forbidden: waf/blocked: <message>` so existing log-grep patterns and cross-language bindings continue to work; vendor is surfaced separately for structured consumers. |
 | `Timeout` | timeout: {0} | The request timed out. |
 | `RateLimited` | rate_limited: {0} | The request was rate-limited (HTTP 429). |
 | `ServerError` | server_error: {0} | A server error occurred (HTTP 5xx). |

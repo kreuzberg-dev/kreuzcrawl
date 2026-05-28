@@ -15,7 +15,7 @@ use std::sync::Arc;
 use arc_swap::ArcSwap;
 
 use crate::http::HttpResponse;
-use crate::types::{WafClassifier, WafSignal};
+use crate::types::{WafClassifier, WafClassifyError, WafSignal};
 
 pub(crate) mod matcher;
 pub(crate) mod rules;
@@ -70,7 +70,7 @@ impl TomlClassifier {
 }
 
 impl WafClassifier for TomlClassifier {
-    fn classify(&self, response: &HttpResponse) -> Option<WafSignal> {
+    fn classify(&self, response: &HttpResponse) -> Result<Option<WafSignal>, WafClassifyError> {
         self.rules.load().classify(response)
     }
 }

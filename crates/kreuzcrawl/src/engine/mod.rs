@@ -172,7 +172,7 @@ impl CrawlEngine {
                     // via content density). If no next tier is available, return now.
                     let outcome = crate::types::AttemptOutcome {
                         attempt,
-                        url,
+                        url: std::sync::Arc::from(url),
                         status: Some(resp.status),
                         error: None,
                         waf_signal: None,
@@ -239,9 +239,9 @@ impl CrawlEngine {
 
                     let outcome = crate::types::AttemptOutcome {
                         attempt,
-                        url,
+                        url: std::sync::Arc::from(url),
                         status: None,
-                        error: Some(&err),
+                        error: Some(err.clone()),
                         waf_signal: None,
                         body_size: 0,
                         content_density: 0.0,

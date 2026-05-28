@@ -8,7 +8,7 @@ use serde::Deserialize;
 use thiserror::Error;
 
 use crate::http::HttpResponse;
-use crate::types::WafSignal;
+use crate::types::{WafClassifyError, WafSignal};
 
 /// Maximum body size (bytes) at which body fingerprints are checked on 2xx.
 /// Real content pages overwhelmingly exceed this; challenge pages are tiny.
@@ -246,7 +246,10 @@ impl Rules {
     /// On a 2xx response the body fingerprint check is only applied when the
     /// body is ≤ `CHALLENGE_BODY_LIMIT` — real content pages are much larger.
     /// Header signals are always checked regardless of status code.
-    pub fn classify(&self, response: &HttpResponse) -> Option<WafSignal> {
+    ///
+    /// Returns `Ok(None)` for clean responses, `Ok(Some(sig))` for a match,
+    /// and `Err(WafClassifyError)` for classifier-internal failures.
+    pub fn classify(&self, response: &HttpResponse) -> Result<Option<WafSignal>, WafClassifyError> {
         let is_2xx = (200..300).contains(&response.status);
         let body_too_large = response.body_bytes.len() > CHALLENGE_BODY_LIMIT;
 
@@ -279,7 +282,7 @@ impl Rules {
                         "kreuzcrawl_waf_fingerprint_matches_total"
                     );
                 }
-                return Some(signal);
+                return Ok(Some(signal));
             }
         }
 
@@ -320,10 +323,10 @@ impl Rules {
                     );
                 }
 
-                return Some(signal);
+                return Ok(Some(signal));
             }
         }
-        None
+        Ok(None)
     }
 
     fn fingerprint_matches(
@@ -387,6 +390,24 @@ fn header_matches(headers: &HashMap<String, Vec<String>>, name: &str, value_cont
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::HashMap;
+
+    fn make_response(status: u16, headers: Vec<(&str, &str)>, body: &str) -> crate::http::HttpResponse {
+        let mut header_map: HashMap<String, Vec<String>> = HashMap::new();
+        for (k, v) in headers {
+            header_map.entry(k.to_lowercase()).or_default().push(v.to_string());
+        }
+        let body_bytes = body.as_bytes().to_vec();
+        crate::http::HttpResponse {
+            status,
+            content_type: "text/html".into(),
+            body: body.to_string(),
+            body_bytes,
+            headers: header_map,
+            browser_extras: None,
+            final_url: "https://example.com/".into(),
+        }
+    }
 
     #[test]
     fn builtin_rules_parse_without_error() {
@@ -430,5 +451,26 @@ weight = 1.0
 kind = "magic_beam"
 "#;
         assert!(matches!(load_from_str(src), Err(RulesError::Validation { .. })));
+    }
+
+    #[test]
+    fn classify_returns_ok_none_for_clean_response() {
+        let rules = Rules::builtin();
+        let resp = make_response(200, vec![], "<html><body><p>Hello world</p></body></html>");
+        assert!(
+            matches!(rules.classify(&resp), Ok(None)),
+            "clean response must return Ok(None)"
+        );
+    }
+
+    #[test]
+    fn classify_returns_ok_some_for_matching_response() {
+        let rules = Rules::builtin();
+        // x-datadome is a header-only fingerprint — fires without needing a body token.
+        let resp = make_response(200, vec![("x-datadome", "blocked")], "<html>ok</html>");
+        assert!(
+            matches!(rules.classify(&resp), Ok(Some(_))),
+            "x-datadome header must return Ok(Some(_))"
+        );
     }
 }

@@ -65,8 +65,8 @@ impl Default for SimpleRetryPolicy {
 
 #[async_trait]
 impl RetryPolicy for SimpleRetryPolicy {
-    async fn decide(&self, outcome: &AttemptOutcome<'_>) -> RetryDirective {
-        let Some(error) = outcome.error else {
+    async fn decide(&self, outcome: &AttemptOutcome) -> RetryDirective {
+        let Some(ref error) = outcome.error else {
             return RetryDirective::Stop;
         };
         match error {
@@ -190,13 +190,15 @@ pub fn unlimited_budget() -> Arc<dyn EscalationBudget> {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
+
     use super::*;
     use crate::types::Tier;
 
-    fn outcome_with_error<'a>(error: &'a CrawlError, attempt: u32) -> AttemptOutcome<'a> {
+    fn outcome_with_error(error: CrawlError, attempt: u32) -> AttemptOutcome {
         AttemptOutcome {
             attempt,
-            url: "https://example.com/",
+            url: Arc::from("https://example.com/"),
             status: None,
             error: Some(error),
             waf_signal: None,
@@ -214,7 +216,7 @@ mod tests {
             vendor: "cloudflare".into(),
             message: "cloudflare detected".into(),
         };
-        let directive = policy.decide(&outcome_with_error(&err, 0)).await;
+        let directive = policy.decide(&outcome_with_error(err, 0)).await;
         assert!(matches!(directive, RetryDirective::Escalate { .. }));
     }
 
@@ -225,7 +227,7 @@ mod tests {
             vendor: "cloudflare".into(),
             message: "challenge".into(),
         };
-        let outcome = outcome_with_error(&err, 0);
+        let outcome = outcome_with_error(err, 0);
         match policy.decide(&outcome).await {
             RetryDirective::Escalate {
                 reason: EscalationReason::WafBlocked { vendor },
@@ -240,7 +242,7 @@ mod tests {
     async fn forbidden_escalates() {
         let policy = SimpleRetryPolicy::new();
         let err = CrawlError::Forbidden("403".into());
-        let directive = policy.decide(&outcome_with_error(&err, 0)).await;
+        let directive = policy.decide(&outcome_with_error(err, 0)).await;
         assert!(matches!(directive, RetryDirective::Escalate { .. }));
     }
 
@@ -248,7 +250,7 @@ mod tests {
     async fn rate_limited_retries_with_backoff() {
         let policy = SimpleRetryPolicy::new();
         let err = CrawlError::RateLimited("429".into());
-        let directive = policy.decide(&outcome_with_error(&err, 0)).await;
+        let directive = policy.decide(&outcome_with_error(err, 0)).await;
         match directive {
             RetryDirective::Retry { backoff_ms } => assert!(backoff_ms >= 100),
             other => panic!("expected Retry, got {other:?}"),
@@ -259,7 +261,7 @@ mod tests {
     async fn rate_limited_stops_after_max_retries() {
         let policy = SimpleRetryPolicy::new().with_max_retries(2);
         let err = CrawlError::RateLimited("429".into());
-        let directive = policy.decide(&outcome_with_error(&err, 1)).await;
+        let directive = policy.decide(&outcome_with_error(err, 1)).await;
         assert_eq!(directive, RetryDirective::Stop);
     }
 
@@ -267,7 +269,7 @@ mod tests {
     async fn dns_short_circuits() {
         let policy = SimpleRetryPolicy::new();
         let err = CrawlError::Dns("nxdomain".into());
-        let directive = policy.decide(&outcome_with_error(&err, 0)).await;
+        let directive = policy.decide(&outcome_with_error(err, 0)).await;
         assert_eq!(directive, RetryDirective::Stop);
     }
 
@@ -275,7 +277,7 @@ mod tests {
     async fn ssl_short_circuits() {
         let policy = SimpleRetryPolicy::new();
         let err = CrawlError::Ssl("handshake".into());
-        let directive = policy.decide(&outcome_with_error(&err, 0)).await;
+        let directive = policy.decide(&outcome_with_error(err, 0)).await;
         assert_eq!(directive, RetryDirective::Stop);
     }
 
@@ -284,7 +286,7 @@ mod tests {
         let policy = SimpleRetryPolicy::new();
         let outcome = AttemptOutcome {
             attempt: 0,
-            url: "https://example.com/",
+            url: Arc::from("https://example.com/"),
             status: Some(200),
             error: None,
             waf_signal: None,
@@ -302,7 +304,8 @@ mod tests {
         let policy = SimpleRetryPolicy::new().with_max_backoff_ms(1000);
         let err = CrawlError::Timeout("slow".into());
         for attempt in 0..2 {
-            if let RetryDirective::Retry { backoff_ms } = policy.decide(&outcome_with_error(&err, attempt)).await {
+            if let RetryDirective::Retry { backoff_ms } = policy.decide(&outcome_with_error(err.clone(), attempt)).await
+            {
                 assert!(backoff_ms <= 1000);
             }
         }

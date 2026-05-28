@@ -23,7 +23,7 @@ pub use discovery::{
 pub use dispatch::{
     AttemptOutcome, BudgetExhausted, DomainOutcome, DomainState, DomainStatePort, DynDomainStatePort,
     DynEscalationBudget, DynRetryPolicy, DynWafClassifier, EscalationBudget, EscalationReason, EscalationStrategy,
-    RetryDirective, RetryPolicy, Tier, WafClassifier, WafSignal,
+    RetryDirective, RetryPolicy, Tier, WafClassifier, WafClassifyError, WafSignal,
 };
 pub use metadata::{ArticleMetadata, FaviconInfo, HeadingInfo, HreflangEntry, PageMetadata, ResponseMeta};
 pub use results::{

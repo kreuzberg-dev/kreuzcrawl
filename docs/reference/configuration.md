@@ -123,6 +123,11 @@ Configuration for crawl, scrape, and map operations.
 | `browser_profile` | `str \| None` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `False` | Whether to save changes back to the browser profile on exit. |
 | `bypass` | `str \| None` | `None` | Caller-supplied bypass provider. When `Some`, the engine routes every URL through the provider, skipping native HTTP and chromiumoxide. Used for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters. |
+| `escalation_strategy` | `str` | — | Configured behavior of the HTTP → Bypass → Browser dispatch chain. Default `BrowserOnly` preserves pre-tier-dispatch behavior. When `bypass` is configured and this field is left at the default, the engine treats it as `BypassFirst` for backward compatibility. |
+| `retry_policy` | `str \| None` | `None` | Pluggable per-attempt retry/escalation decision policy. Default is `new`. Not serializable — skip in TOML/JSON configs. |
+| `waf_classifier` | `str \| None` | `None` | Pluggable WAF classifier. Default is `builtin`. Not serializable — skip in TOML/JSON configs. |
+| `domain_state` | `str \| None` | `None` | Pluggable per-domain state backend. `None` disables learning; the engine uses `SimpleRetryPolicy` semantics without state. Not serializable — skip in TOML/JSON configs. |
+| `escalation_budget` | `str \| None` | `None` | Pluggable per-job escalation budget. `None` means unlimited. Not serializable — skip in TOML/JSON configs. |
 
 ---
 
