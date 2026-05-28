@@ -8,6 +8,7 @@ use std::fmt;
 use std::sync::Arc;
 
 use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::error::CrawlError;
@@ -15,16 +16,33 @@ use crate::http::HttpResponse;
 
 /// Defines the escalation chain when a tier produces a block signal.
 ///
-/// `BrowserOnly` is the default — preserves pre-tier-dispatch behavior of
-/// the engine: HTTP → Browser fallback on `WafBlocked` / `Forbidden` when
+/// `BrowserOnly` is the `#[default]` — preserves the pre-tier-dispatch behavior
+/// of the engine: HTTP → Browser on `WafBlocked` / `Forbidden` when
 /// `BrowserMode::Auto` is set, no vendor escalation.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+///
+/// ## Choosing a strategy
+///
+/// | Strategy | Best for |
+/// |---|---|
+/// | `None` | Diagnostic / audit crawls where you want raw HTTP errors |
+/// | `BrowserOnly` | Default; JS-heavy sites where browser is already configured |
+/// | `BypassFirst` | Legacy: engine auto-selects this when `bypass` is set and strategy is unset |
+/// | `BypassOnly` | WAF-heavy targets without a browser backend configured |
+/// | `BypassThenBrowser` | Maximum resilience: vendor bypass then headless Chrome |
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum EscalationStrategy {
     /// HTTP only; surface failures as-is. No escalation.
     None,
     /// HTTP → Browser on WafBlocked / Forbidden. The pre-dispatch behavior.
     #[default]
     BrowserOnly,
+    /// Legacy semantic: skip HTTP entirely, always route through the configured
+    /// `bypass` provider. The engine auto-selects this when `escalation_strategy`
+    /// is left at its default (`BrowserOnly`) AND `config.bypass` is configured —
+    /// this preserves the pre-tier-dispatch `bypass` field behavior for existing
+    /// callers of `CrawlConfig::default() + .bypass = Some(...)`.
+    BypassFirst,
     /// HTTP → Bypass on WafBlocked / Forbidden. Browser never invoked.
     BypassOnly,
     /// HTTP → Bypass → Browser. Bypass first (cheaper than browser+proxy);

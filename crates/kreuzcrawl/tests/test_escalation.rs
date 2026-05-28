@@ -1,0 +1,333 @@
+//! Integration tests for the HTTP → Bypass → Browser dispatch chain.
+//!
+//! Each test instantiates a wiremock server, configures a `CrawlEngine` with a
+//! specific `EscalationStrategy` (and optionally a `CountingMockProvider`), and
+//! asserts chain behaviour against stubbed responses.
+//!
+//! The browser tier is not exercised here — browser tests require the `browser`
+//! feature and a live Chrome instance.
+
+#![allow(clippy::unwrap_used, clippy::panic)]
+
+use std::sync::Arc;
+use std::sync::atomic::{AtomicU32, Ordering};
+
+use async_trait::async_trait;
+use kreuzcrawl::{
+    BudgetExhausted, BypassProvider, BypassResponse, CrawlConfig, CrawlEngine, CrawlError, EscalationBudget,
+    EscalationStrategy,
+};
+use wiremock::matchers::{method, path};
+use wiremock::{Mock, MockServer, ResponseTemplate};
+
+// ─── Mock bypass provider ────────────────────────────────────────────────────
+
+/// Bypass provider that returns a canned response and counts calls.
+#[derive(Debug)]
+struct CountingMockProvider {
+    response: BypassResponse,
+    calls: AtomicU32,
+}
+
+impl CountingMockProvider {
+    fn new(body: &str) -> Arc<Self> {
+        Arc::new(Self {
+            response: BypassResponse {
+                status: 200,
+                content_type: "text/html".into(),
+                body: format!("<html><body>{body}</body></html>"),
+                body_bytes: format!("<html><body>{body}</body></html>").into_bytes(),
+                headers: Default::default(),
+                final_url: String::new(),
+                cost_usd: Some(0.0015),
+                vendor_request_id: None,
+            },
+            calls: AtomicU32::new(0),
+        })
+    }
+
+    fn calls(&self) -> u32 {
+        self.calls.load(Ordering::SeqCst)
+    }
+}
+
+#[async_trait]
+impl BypassProvider for CountingMockProvider {
+    async fn fetch(&self, _url: &str) -> Result<BypassResponse, CrawlError> {
+        self.calls.fetch_add(1, Ordering::SeqCst);
+        Ok(self.response.clone())
+    }
+
+    fn vendor_name(&self) -> &'static str {
+        "mock"
+    }
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+fn build_engine(config: CrawlConfig) -> CrawlEngine {
+    CrawlEngine::builder().config(config).build().unwrap()
+}
+
+/// Extract the markdown text content from a `ScrapeResult`, returning an empty
+/// string when no markdown was produced.
+fn markdown_content(result: &kreuzcrawl::ScrapeResult) -> &str {
+    result.markdown.as_ref().map(|m| m.content.as_str()).unwrap_or("")
+}
+
+fn config_with(strategy: EscalationStrategy, provider: Option<Arc<CountingMockProvider>>) -> CrawlConfig {
+    CrawlConfig {
+        escalation_strategy: strategy,
+        bypass: provider.map(|p| p as _),
+        ..CrawlConfig::default()
+    }
+}
+
+// ─── Tests ───────────────────────────────────────────────────────────────────
+
+/// HTTP success with `BypassThenBrowser` does not call bypass.
+#[tokio::test]
+async fn http_success_does_not_escalate() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/ok"))
+        .respond_with(ResponseTemplate::new(200).set_body_string("<html>ok</html>"))
+        .mount(&mock)
+        .await;
+
+    let provider = CountingMockProvider::new("from bypass");
+    let engine = build_engine(config_with(
+        EscalationStrategy::BypassThenBrowser,
+        Some(provider.clone()),
+    ));
+
+    let result = engine.scrape(&format!("{}/ok", mock.uri())).await.unwrap();
+    assert!(markdown_content(&result).contains("ok"), "expected 'ok' in markdown");
+    assert_eq!(provider.calls(), 0, "bypass must not be called on HTTP success");
+}
+
+/// HTTP success on the default path (no bypass configured, strategy BrowserOnly).
+#[tokio::test]
+async fn http_success_browser_only_strategy() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/page"))
+        .respond_with(ResponseTemplate::new(200).set_body_string("<html>browser-only ok</html>"))
+        .mount(&mock)
+        .await;
+
+    let engine = build_engine(config_with(EscalationStrategy::BrowserOnly, None));
+    let result = engine.scrape(&format!("{}/page", mock.uri())).await.unwrap();
+    assert!(
+        markdown_content(&result).contains("browser-only ok"),
+        "expected page content in markdown"
+    );
+}
+
+/// WAF-blocked HTTP escalates to bypass under `BypassOnly`.
+#[tokio::test]
+async fn waf_block_escalates_http_to_bypass() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/blocked"))
+        .respond_with(
+            ResponseTemplate::new(403)
+                .insert_header("server", "cloudflare")
+                .set_body_string("<html><head><title>Just a moment...</title></head></html>"),
+        )
+        .mount(&mock)
+        .await;
+
+    let provider = CountingMockProvider::new("vendor-fetched content");
+    let engine = build_engine(config_with(EscalationStrategy::BypassOnly, Some(provider.clone())));
+
+    let result = engine.scrape(&format!("{}/blocked", mock.uri())).await.unwrap();
+    let markdown = markdown_content(&result);
+    assert!(
+        markdown.contains("vendor-fetched content"),
+        "expected bypass content in markdown, got: {markdown:?}"
+    );
+    assert_eq!(provider.calls(), 1, "bypass must be called exactly once");
+}
+
+/// Default config with `bypass` configured uses `BypassFirst` (legacy behavior preserved).
+///
+/// Pre-tier-dispatch callers set `bypass` and expect ALL fetches to route through it,
+/// without setting `escalation_strategy`. The engine must auto-promote
+/// `BrowserOnly + bypass configured` → `BypassFirst`.
+#[tokio::test]
+async fn bypass_first_legacy_default_for_configured_bypass() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/x"))
+        .respond_with(ResponseTemplate::new(200).set_body_string("<html>http response</html>"))
+        .mount(&mock)
+        .await;
+
+    let provider = CountingMockProvider::new("bypass response");
+
+    // NOT setting escalation_strategy — leave at default BrowserOnly.
+    // Use struct update syntax to avoid the field_reassign_with_default lint.
+    let config = CrawlConfig {
+        bypass: Some(provider.clone() as _),
+        ..CrawlConfig::default()
+    };
+
+    let engine = build_engine(config);
+    let result = engine.scrape(&format!("{}/x", mock.uri())).await.unwrap();
+    let markdown = markdown_content(&result);
+    assert!(
+        markdown.contains("bypass response"),
+        "default behavior with bypass configured must call bypass first; got: {markdown:?}"
+    );
+    assert_eq!(provider.calls(), 1, "bypass must be called exactly once");
+}
+
+/// `EscalationStrategy::None` propagates HTTP errors without escalation.
+#[tokio::test]
+async fn none_strategy_propagates_http_errors() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/forbidden"))
+        .respond_with(ResponseTemplate::new(403).set_body_string("nope"))
+        .mount(&mock)
+        .await;
+
+    let engine = build_engine(config_with(EscalationStrategy::None, None));
+    let err = engine.scrape(&format!("{}/forbidden", mock.uri())).await.unwrap_err();
+    assert!(
+        matches!(err, CrawlError::Forbidden(_) | CrawlError::WafBlocked(_)),
+        "expected Forbidden or WafBlocked, got: {err:?}"
+    );
+}
+
+/// `BypassThenBrowser` skips browser when bypass succeeds after HTTP WAF block.
+#[tokio::test]
+async fn bypass_then_browser_skips_browser_when_bypass_succeeds() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/cf"))
+        .respond_with(
+            ResponseTemplate::new(403)
+                .insert_header("server", "cloudflare")
+                .set_body_string("<html>Just a moment...</html>"),
+        )
+        .mount(&mock)
+        .await;
+
+    let provider = CountingMockProvider::new("vendor content");
+    let engine = build_engine(config_with(
+        EscalationStrategy::BypassThenBrowser,
+        Some(provider.clone()),
+    ));
+
+    let result = engine.scrape(&format!("{}/cf", mock.uri())).await.unwrap();
+    let markdown = markdown_content(&result);
+    assert!(
+        markdown.contains("vendor content"),
+        "expected bypass content, got: {markdown:?}"
+    );
+    assert_eq!(provider.calls(), 1, "bypass success must terminate chain");
+}
+
+/// `BypassOnly` with no bypass provider configured returns an error rather than panicking.
+#[tokio::test]
+async fn bypass_only_without_provider_returns_error() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/any"))
+        .respond_with(
+            ResponseTemplate::new(403)
+                .insert_header("server", "cloudflare")
+                .set_body_string("<html>blocked</html>"),
+        )
+        .mount(&mock)
+        .await;
+
+    // No bypass provider — HTTP tier fails, escalation to Bypass tier returns InvalidConfig.
+    let engine = build_engine(config_with(EscalationStrategy::BypassOnly, None));
+    let err = engine.scrape(&format!("{}/any", mock.uri())).await.unwrap_err();
+    assert!(
+        matches!(
+            err,
+            CrawlError::Forbidden(_) | CrawlError::WafBlocked(_) | CrawlError::InvalidConfig(_) | CrawlError::Other(_)
+        ),
+        "expected escalation-related error, got: {err:?}"
+    );
+}
+
+/// Budget exhaustion prevents escalation even on WAF block.
+#[tokio::test]
+async fn zero_budget_prevents_escalation() {
+    #[derive(Debug)]
+    struct ZeroBudget;
+
+    #[async_trait]
+    impl EscalationBudget for ZeroBudget {
+        async fn try_consume(&self, _cost_cents: u32) -> Result<(), BudgetExhausted> {
+            Err(BudgetExhausted)
+        }
+    }
+
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/cf"))
+        .respond_with(
+            ResponseTemplate::new(403)
+                .insert_header("server", "cloudflare")
+                .set_body_string("<html>blocked</html>"),
+        )
+        .mount(&mock)
+        .await;
+
+    let provider = CountingMockProvider::new("bypass would succeed");
+    let mut cfg = config_with(EscalationStrategy::BypassThenBrowser, Some(provider.clone()));
+    cfg.escalation_budget = Some(Arc::new(ZeroBudget));
+
+    let engine = build_engine(cfg);
+    let err = engine.scrape(&format!("{}/cf", mock.uri())).await.unwrap_err();
+
+    assert!(
+        matches!(err, CrawlError::Forbidden(_) | CrawlError::WafBlocked(_)),
+        "budget exhaustion must surface HTTP error; got: {err:?}"
+    );
+    assert_eq!(provider.calls(), 0, "bypass must not be called when budget exhausted");
+}
+
+/// Unlimited budget always allows escalation.
+#[tokio::test]
+async fn unlimited_budget_allows_escalation() {
+    #[derive(Debug)]
+    struct AlwaysOkBudget;
+
+    #[async_trait]
+    impl EscalationBudget for AlwaysOkBudget {
+        async fn try_consume(&self, _cost_cents: u32) -> Result<(), BudgetExhausted> {
+            Ok(())
+        }
+    }
+
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/cf"))
+        .respond_with(
+            ResponseTemplate::new(403)
+                .insert_header("server", "cloudflare")
+                .set_body_string("<html>Just a moment...</html>"),
+        )
+        .mount(&mock)
+        .await;
+
+    let provider = CountingMockProvider::new("bypass ok");
+    let mut cfg = config_with(EscalationStrategy::BypassOnly, Some(provider.clone()));
+    cfg.escalation_budget = Some(Arc::new(AlwaysOkBudget));
+
+    let engine = build_engine(cfg);
+    let result = engine.scrape(&format!("{}/cf", mock.uri())).await.unwrap();
+    let markdown = markdown_content(&result);
+    assert!(
+        markdown.contains("bypass ok"),
+        "expected bypass content with unlimited budget, got: {markdown:?}"
+    );
+    assert_eq!(provider.calls(), 1);
+}

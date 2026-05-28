@@ -77,31 +77,38 @@ impl CrawlEngine {
     /// has its own simpler inline path inside `scrape`.
     #[cfg(not(target_arch = "wasm32"))]
     async fn fetch_response(&self, url: &str) -> Result<(crate::tower::CrawlResponse, bool), CrawlError> {
-        use crate::tower::CrawlResponse;
-
-        /// Convert an `HttpResponse` (from the browser path) into the `CrawlResponse`
-        /// shape expected by the extraction pipeline. Browser fetches do not carry
-        /// HTTP response headers, so we supply an empty map.
+        // BrowserMode::Always — preserved short-circuit, skip dispatch entirely.
         #[cfg(feature = "browser")]
-        fn browser_http_to_crawl(r: crate::http::HttpResponse) -> (CrawlResponse, Option<crate::http::BrowserExtras>) {
-            let extras = r.browser_extras;
-            (
-                CrawlResponse {
-                    status: r.status,
-                    content_type: r.content_type,
-                    body: r.body,
-                    body_bytes: r.body_bytes,
-                    headers: std::collections::HashMap::new(),
-                },
-                extras,
-            )
+        if self.config.browser.mode == crate::types::BrowserMode::Always {
+            let pool = self.config.browser_pool.as_deref();
+            #[cfg(feature = "browser-native")]
+            let http_resp =
+                crate::browser::browser_fetch(url, &self.config, None, pool, self.native_browser_executor.as_deref())
+                    .await?;
+            #[cfg(not(feature = "browser-native"))]
+            let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
+            let (crawl_resp, _extras) = Self::browser_http_to_crawl(http_resp);
+            return Ok((crawl_resp, true));
         }
 
-        // Caller-supplied bypass provider short-circuits native/browser dispatch entirely.
-        if let Some(provider) = &self.config.bypass {
+        // Derive the effective strategy. When `escalation_strategy` is left at its
+        // default (`BrowserOnly`) and a bypass provider is configured, promote to
+        // `BypassFirst` to preserve the pre-tier-dispatch bypass-first semantic.
+        let effective_strategy = if self.config.escalation_strategy == crate::types::EscalationStrategy::BrowserOnly
+            && self.config.bypass.is_some()
+        {
+            crate::types::EscalationStrategy::BypassFirst
+        } else {
+            self.config.escalation_strategy
+        };
+
+        // BypassFirst — legacy preserved: always route through bypass, skip HTTP.
+        if matches!(effective_strategy, crate::types::EscalationStrategy::BypassFirst)
+            && let Some(provider) = &self.config.bypass
+        {
             let bypass_resp = provider.fetch(url).await?;
             return Ok((
-                CrawlResponse {
+                crate::tower::CrawlResponse {
                     status: bypass_resp.status,
                     content_type: bypass_resp.content_type,
                     body: bypass_resp.body,
@@ -112,75 +119,333 @@ impl CrawlEngine {
             ));
         }
 
-        // BrowserMode::Always — skip HTTP entirely.
-        #[cfg(feature = "browser")]
-        if self.config.browser.mode == crate::types::BrowserMode::Always {
-            let pool = self.config.browser_pool.as_deref();
-            #[cfg(feature = "browser-native")]
-            let http_resp =
-                crate::browser::browser_fetch(url, &self.config, None, pool, self.native_browser_executor.as_deref())
-                    .await?;
-            #[cfg(not(feature = "browser-native"))]
-            let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
-            let (crawl_resp, _extras) = browser_http_to_crawl(http_resp);
-            return Ok((crawl_resp, true));
-        }
+        // Build retry policy and budget once for the entire dispatch loop.
+        let retry_policy: crate::types::DynRetryPolicy = self
+            .config
+            .retry_policy
+            .clone()
+            .unwrap_or_else(|| std::sync::Arc::new(crate::defaults::dispatch::SimpleRetryPolicy::new()));
+        let budget: crate::types::DynEscalationBudget = self
+            .config
+            .escalation_budget
+            .clone()
+            .unwrap_or_else(|| std::sync::Arc::new(crate::defaults::dispatch::UnlimitedBudget));
 
-        // Tower HTTP stack (with optional WAF fallback).
-        let client = crate::http::build_client(&self.config)?;
-        let mut service = self.build_service(&client);
-        use tower::Service;
-        match service.call(CrawlRequest::new(url)).await {
-            Ok(resp) => Ok((resp, false)),
-            // When soft_http_errors is enabled, synthesise a response for HTTP-level
-            // error variants instead of propagating them as Err. The caller (scrape)
-            // inspects the status code and may short-circuit with a minimal result.
-            Err(CrawlError::NotFound(_)) if self.config.soft_http_errors => Ok((
-                CrawlResponse {
-                    status: 404,
-                    content_type: String::new(),
-                    body: String::new(),
-                    body_bytes: Vec::new(),
-                    headers: std::collections::HashMap::new(),
-                },
-                false,
-            )),
-            Err(CrawlError::Forbidden(_) | CrawlError::WafBlocked(_)) if self.config.soft_http_errors => Ok((
-                CrawlResponse {
-                    status: 403,
-                    content_type: String::new(),
-                    body: String::new(),
-                    body_bytes: Vec::new(),
-                    headers: std::collections::HashMap::new(),
-                },
-                false,
-            )),
-            // WAF/access fallback: delegate to browser when mode is Auto.
-            // Browser has a legitimate Chrome TLS fingerprint and bypasses most WAFs.
-            // Only WAF-blocked and 403 Forbidden responses are retried via browser;
-            // network-level errors (Connection, Dns, Ssl, Timeout, Proxy, Other) propagate
-            // directly so callers can observe the [network:<kind>] tag in the error message.
-            #[cfg(feature = "browser")]
-            Err(CrawlError::WafBlocked(_) | CrawlError::Forbidden(_))
-                if self.config.browser.mode == crate::types::BrowserMode::Auto =>
-            {
-                let pool = self.config.browser_pool.as_deref();
-                #[cfg(feature = "browser-native")]
-                let http_resp = crate::browser::browser_fetch(
-                    url,
-                    &self.config,
-                    None,
-                    pool,
-                    self.native_browser_executor.as_deref(),
-                )
-                .await?;
-                #[cfg(not(feature = "browser-native"))]
-                let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
-                let (crawl_resp, _extras) = browser_http_to_crawl(http_resp);
-                Ok((crawl_resp, true))
+        let mut current_tier = crate::types::Tier::Http;
+        let mut attempt: u32 = 0;
+        // Telemetry accumulators — only consumed by emit_dispatch_span (tracing feature).
+        // Gated behind cfg so the compiler doesn't warn about unused variables / assignments
+        // when the tracing feature is not enabled.
+        #[cfg(feature = "tracing")]
+        let mut tiers_attempted: Vec<&'static str> = Vec::new();
+        #[cfg(feature = "tracing")]
+        let mut last_escalation_reason: Option<&'static str> = None;
+        #[cfg(feature = "tracing")]
+        let policy_name = retry_policy.name();
+
+        loop {
+            #[cfg(feature = "tracing")]
+            tiers_attempted.push(Self::tier_name(current_tier));
+
+            let tier_result = self.run_tier(current_tier, url).await;
+
+            match tier_result {
+                Ok((resp, browser_used)) => {
+                    // Success path: build outcome and consult the policy.
+                    // The policy may still signal Escalate (e.g. soft-block detection
+                    // via content density). If no next tier is available, return now.
+                    let outcome = crate::types::AttemptOutcome {
+                        attempt,
+                        url,
+                        status: Some(resp.status),
+                        error: None,
+                        waf_signal: None,
+                        body_size: resp.body.len(),
+                        content_density: 0.0, // placeholder — computed in a later commit
+                        bytes_transferred: Some(resp.body_bytes.len() as u64),
+                        previous_tier: current_tier,
+                    };
+                    match retry_policy.decide(&outcome).await {
+                        crate::types::RetryDirective::Stop => {
+                            #[cfg(feature = "tracing")]
+                            Self::emit_dispatch_span(
+                                url,
+                                &tiers_attempted,
+                                last_escalation_reason,
+                                attempt,
+                                policy_name,
+                            );
+                            return Ok((resp, browser_used));
+                        }
+                        crate::types::RetryDirective::Retry { backoff_ms } => {
+                            tokio::time::sleep(std::time::Duration::from_millis(backoff_ms)).await;
+                            attempt += 1;
+                            continue;
+                        }
+                        crate::types::RetryDirective::Escalate { reason: _reason } => {
+                            if let Some(next) = Self::next_tier(current_tier, effective_strategy)
+                                && budget.try_consume(Self::tier_cost_cents(next)).await.is_ok()
+                            {
+                                #[cfg(feature = "tracing")]
+                                {
+                                    last_escalation_reason = Some(Self::escalation_reason_str(&_reason));
+                                }
+                                current_tier = next;
+                                attempt = 0;
+                                continue;
+                            }
+                            // No next tier or budget exhausted — return the successful response.
+                            #[cfg(feature = "tracing")]
+                            Self::emit_dispatch_span(
+                                url,
+                                &tiers_attempted,
+                                last_escalation_reason,
+                                attempt,
+                                policy_name,
+                            );
+                            return Ok((resp, browser_used));
+                        }
+                    }
+                }
+                Err(err) => {
+                    // soft_http_errors: synthesise a response for HTTP-level variants.
+                    if self.config.soft_http_errors {
+                        if matches!(err, CrawlError::NotFound(_)) {
+                            return Ok((Self::synthesise_status(404), false));
+                        }
+                        if matches!(err, CrawlError::Forbidden(_) | CrawlError::WafBlocked(_)) {
+                            return Ok((Self::synthesise_status(403), false));
+                        }
+                    }
+
+                    let outcome = crate::types::AttemptOutcome {
+                        attempt,
+                        url,
+                        status: None,
+                        error: Some(&err),
+                        waf_signal: None,
+                        body_size: 0,
+                        content_density: 0.0,
+                        bytes_transferred: None,
+                        previous_tier: current_tier,
+                    };
+                    match retry_policy.decide(&outcome).await {
+                        crate::types::RetryDirective::Stop => {
+                            #[cfg(feature = "tracing")]
+                            Self::emit_dispatch_span(
+                                url,
+                                &tiers_attempted,
+                                last_escalation_reason,
+                                attempt,
+                                policy_name,
+                            );
+                            return Err(err);
+                        }
+                        crate::types::RetryDirective::Retry { backoff_ms } => {
+                            tokio::time::sleep(std::time::Duration::from_millis(backoff_ms)).await;
+                            attempt += 1;
+                            continue;
+                        }
+                        crate::types::RetryDirective::Escalate { reason: _reason } => {
+                            if let Some(next) = Self::next_tier(current_tier, effective_strategy)
+                                && budget.try_consume(Self::tier_cost_cents(next)).await.is_ok()
+                            {
+                                #[cfg(feature = "tracing")]
+                                {
+                                    last_escalation_reason = Some(Self::escalation_reason_str(&_reason));
+                                }
+                                current_tier = next;
+                                attempt = 0;
+                                continue;
+                            }
+                            // No next tier or budget exhausted — surface the error.
+                            #[cfg(feature = "tracing")]
+                            Self::emit_dispatch_span(
+                                url,
+                                &tiers_attempted,
+                                last_escalation_reason,
+                                attempt,
+                                policy_name,
+                            );
+                            return Err(err);
+                        }
+                    }
+                }
             }
-            Err(e) => Err(e),
         }
+    }
+
+    /// Dispatch a single fetch attempt to the given tier.
+    ///
+    /// Returns `(CrawlResponse, browser_used)` or a `CrawlError`.
+    #[cfg(not(target_arch = "wasm32"))]
+    async fn run_tier(
+        &self,
+        tier: crate::types::Tier,
+        url: &str,
+    ) -> Result<(crate::tower::CrawlResponse, bool), CrawlError> {
+        match tier {
+            crate::types::Tier::Http => {
+                let client = crate::http::build_client(&self.config)?;
+                let mut service = self.build_service(&client);
+                use tower::Service;
+                let resp = service.call(CrawlRequest::new(url)).await?;
+                Ok((resp, false))
+            }
+            crate::types::Tier::Bypass => {
+                let provider = self.config.bypass.as_ref().ok_or_else(|| {
+                    CrawlError::InvalidConfig("escalation to Bypass tier but no bypass provider configured".into())
+                })?;
+                let bypass_resp = provider.fetch(url).await?;
+                Ok((
+                    crate::tower::CrawlResponse {
+                        status: bypass_resp.status,
+                        content_type: bypass_resp.content_type,
+                        body: bypass_resp.body,
+                        body_bytes: bypass_resp.body_bytes,
+                        headers: bypass_resp.headers,
+                    },
+                    false,
+                ))
+            }
+            crate::types::Tier::Browser => {
+                #[cfg(feature = "browser")]
+                {
+                    let pool = self.config.browser_pool.as_deref();
+                    #[cfg(feature = "browser-native")]
+                    let http_resp = crate::browser::browser_fetch(
+                        url,
+                        &self.config,
+                        None,
+                        pool,
+                        self.native_browser_executor.as_deref(),
+                    )
+                    .await?;
+                    #[cfg(not(feature = "browser-native"))]
+                    let http_resp = crate::browser::browser_fetch(url, &self.config, None, pool).await?;
+                    let (crawl_resp, _extras) = Self::browser_http_to_crawl(http_resp);
+                    Ok((crawl_resp, true))
+                }
+                #[cfg(not(feature = "browser"))]
+                Err(CrawlError::Unsupported(
+                    "Browser tier requires the 'browser' feature".into(),
+                ))
+            }
+        }
+    }
+
+    /// Convert an `HttpResponse` (from the browser path) into the `CrawlResponse`
+    /// shape expected by the extraction pipeline.
+    #[cfg(all(not(target_arch = "wasm32"), feature = "browser"))]
+    fn browser_http_to_crawl(
+        r: crate::http::HttpResponse,
+    ) -> (crate::tower::CrawlResponse, Option<crate::http::BrowserExtras>) {
+        let extras = r.browser_extras;
+        (
+            crate::tower::CrawlResponse {
+                status: r.status,
+                content_type: r.content_type,
+                body: r.body,
+                body_bytes: r.body_bytes,
+                headers: std::collections::HashMap::new(),
+            },
+            extras,
+        )
+    }
+
+    /// Synthesise a minimal response with the given HTTP status (empty body).
+    ///
+    /// Used by `soft_http_errors` to surface 4xx responses as `ScrapeResult`
+    /// records rather than `CrawlError`.
+    #[cfg(not(target_arch = "wasm32"))]
+    fn synthesise_status(status: u16) -> crate::tower::CrawlResponse {
+        crate::tower::CrawlResponse {
+            status,
+            content_type: String::new(),
+            body: String::new(),
+            body_bytes: Vec::new(),
+            headers: std::collections::HashMap::new(),
+        }
+    }
+
+    /// Determine the next tier given the current tier and active escalation strategy.
+    ///
+    /// Returns `None` when the current tier is terminal for the given strategy.
+    #[cfg(not(target_arch = "wasm32"))]
+    fn next_tier(
+        current: crate::types::Tier,
+        strategy: crate::types::EscalationStrategy,
+    ) -> Option<crate::types::Tier> {
+        use crate::types::{EscalationStrategy, Tier};
+        match (current, strategy) {
+            // Http → Browser
+            (Tier::Http, EscalationStrategy::BrowserOnly) => Some(Tier::Browser),
+            // Http → Bypass
+            (Tier::Http, EscalationStrategy::BypassOnly) => Some(Tier::Bypass),
+            (Tier::Http, EscalationStrategy::BypassThenBrowser) => Some(Tier::Bypass),
+            // Bypass → Browser (only for BypassThenBrowser)
+            (Tier::Bypass, EscalationStrategy::BypassThenBrowser) => Some(Tier::Browser),
+            // Browser and None are always terminal; all other combos have no next tier.
+            _ => None,
+        }
+    }
+
+    /// Heuristic cost in internal "cents" for escalating to a tier.
+    ///
+    /// `Http` costs nothing (it's the baseline). `Bypass` and `Browser` cost 1 each
+    /// so that `FixedBudget(n)` limits the total number of non-HTTP escalations per job.
+    /// kreuzberg-cloud overrides this via a proper cost model at the cloud layer.
+    #[cfg(not(target_arch = "wasm32"))]
+    const fn tier_cost_cents(tier: crate::types::Tier) -> u32 {
+        match tier {
+            crate::types::Tier::Http => 0,
+            crate::types::Tier::Bypass | crate::types::Tier::Browser => 1,
+        }
+    }
+
+    /// Stable lowercase name for a tier, used in span attributes.
+    #[cfg(all(not(target_arch = "wasm32"), feature = "tracing"))]
+    const fn tier_name(tier: crate::types::Tier) -> &'static str {
+        match tier {
+            crate::types::Tier::Http => "http",
+            crate::types::Tier::Bypass => "bypass",
+            crate::types::Tier::Browser => "browser",
+        }
+    }
+
+    /// Stable lowercase string for an escalation reason.
+    #[cfg(all(not(target_arch = "wasm32"), feature = "tracing"))]
+    fn escalation_reason_str(reason: &crate::types::EscalationReason) -> &'static str {
+        use crate::types::EscalationReason;
+        match reason {
+            EscalationReason::WafBlocked { .. } => "waf_blocked",
+            EscalationReason::SoftBlock => "soft_block",
+            EscalationReason::RenderNeeded => "render_needed",
+            EscalationReason::OriginUnreliable => "origin_unreliable",
+        }
+    }
+
+    /// Emit structured dispatch telemetry via tracing.
+    ///
+    /// Fields: `dispatch.tier_chain`, `dispatch.escalation_reason`,
+    /// `dispatch.attempt_count`, `dispatch.policy`.
+    #[cfg(all(not(target_arch = "wasm32"), feature = "tracing"))]
+    fn emit_dispatch_span(
+        url: &str,
+        tiers_attempted: &[&str],
+        escalation_reason: Option<&str>,
+        attempt_count: u32,
+        policy: &str,
+    ) {
+        let tier_chain = tiers_attempted.join(",");
+        tracing::info!(
+            target: "kreuzcrawl::dispatch",
+            url,
+            "dispatch.tier_chain" = %tier_chain,
+            "dispatch.escalation_reason" = escalation_reason.unwrap_or("none"),
+            "dispatch.attempt_count" = attempt_count,
+            "dispatch.policy" = policy,
+        );
     }
 
     /// Scrape a single URL, returning the extracted data.

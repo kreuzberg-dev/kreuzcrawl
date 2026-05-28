@@ -5,6 +5,7 @@ use std::time::Duration;
 use serde::{Deserialize, Serialize};
 
 use super::AssetCategory;
+use super::dispatch::{DynDomainStatePort, DynEscalationBudget, DynRetryPolicy, DynWafClassifier, EscalationStrategy};
 
 /// Metadata about an LLM extraction pass.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -382,6 +383,40 @@ pub struct CrawlConfig {
     #[serde(skip)]
     #[cfg_attr(alef, alef(skip))]
     pub bypass: Option<crate::types::bypass::DynBypassProvider>,
+    /// Configured behavior of the HTTP → Bypass → Browser dispatch chain.
+    ///
+    /// Default `BrowserOnly` preserves pre-tier-dispatch behavior. When
+    /// `bypass` is configured and this field is left at the default, the
+    /// engine treats it as `BypassFirst` for backward compatibility.
+    #[serde(default)]
+    pub escalation_strategy: EscalationStrategy,
+    /// Pluggable per-attempt retry/escalation decision policy.
+    ///
+    /// Default is [`crate::defaults::dispatch::SimpleRetryPolicy::new`].
+    /// Not serializable — skip in TOML/JSON configs.
+    #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
+    pub retry_policy: Option<DynRetryPolicy>,
+    /// Pluggable WAF classifier. Default is [`crate::waf::TomlClassifier::builtin`].
+    ///
+    /// Not serializable — skip in TOML/JSON configs.
+    #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
+    pub waf_classifier: Option<DynWafClassifier>,
+    /// Pluggable per-domain state backend. `None` disables learning;
+    /// the engine uses [`crate::defaults::dispatch::SimpleRetryPolicy`]
+    /// semantics without state.
+    ///
+    /// Not serializable — skip in TOML/JSON configs.
+    #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
+    pub domain_state: Option<DynDomainStatePort>,
+    /// Pluggable per-job escalation budget. `None` means unlimited.
+    ///
+    /// Not serializable — skip in TOML/JSON configs.
+    #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
+    pub escalation_budget: Option<DynEscalationBudget>,
     /// Shared browser pool for reusing Chrome across requests (not serializable).
     #[cfg(feature = "browser")]
     #[serde(skip)]
@@ -437,6 +472,11 @@ impl Default for CrawlConfig {
             browser_profile: None,
             save_browser_profile: false,
             bypass: None,
+            escalation_strategy: EscalationStrategy::default(),
+            retry_policy: None,
+            waf_classifier: None,
+            domain_state: None,
+            escalation_budget: None,
             #[cfg(feature = "browser")]
             browser_pool: None,
             #[cfg(feature = "browser")]
