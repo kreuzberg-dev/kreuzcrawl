@@ -73,6 +73,8 @@ nav = [
     { "Contributing" = "contributing.md" },
     { "Changelog" = "CHANGELOG.md" },
   ] },
+
+  { "Ecosystem" = "ecosystem.md" },
 ]
 
 [project.theme]
