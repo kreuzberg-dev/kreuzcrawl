@@ -1,7 +1,6 @@
 //! In-process domain-state backend, EWMA utility, and the learning
 //! retry policy that consults a [`DomainStatePort`] for prior block
 //! rates.
-#![allow(dead_code)]
 
 use std::sync::Arc;
 
@@ -127,10 +126,11 @@ impl DomainStatePort for EwmaDomainState {
         };
 
         // Confidence: scales with sample count (capped at 50), weighted by
-        // how decisive the EWMA is (distance from 0.5 doubled).
+        // how decisive the EWMA is (distance from 0.5 doubled). Zero samples
+        // already returned Default above, so sample_count >= 1 here.
         let sample_weight = (snapshot.sample_count as f32 / 50.0).min(1.0);
         let decisiveness = snapshot.block_ewma.max(1.0 - snapshot.block_ewma);
-        let confidence = sample_weight * decisiveness;
+        let confidence = Some(sample_weight * decisiveness);
 
         DomainRecommendation {
             starting_tier,
@@ -351,7 +351,10 @@ mod tests {
         state.observe("example.com", &observation).await;
         let rec = state.recommend("example.com").await;
         // After one blocked observation the EWMA is above zero.
-        assert!(rec.confidence > 0.0, "confidence should be non-zero after a block");
+        assert!(
+            rec.confidence.unwrap_or(0.0) > 0.0,
+            "confidence should be non-zero after a block"
+        );
     }
 
     #[tokio::test]
@@ -567,6 +570,8 @@ mod tests {
 
         let rec = state.recommend("not a url").await;
         assert_eq!(rec.starting_tier, Tier::Http);
-        assert_eq!(rec.confidence, 0.0);
+        // No observations recorded for this domain (the URL failed to parse),
+        // so the backend has no opinion to express.
+        assert_eq!(rec.confidence, None);
     }
 }

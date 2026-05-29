@@ -73,6 +73,8 @@ pub enum EscalationStrategy {
 ///     Tier::Http => println!("HTTP tier"),
 ///     Tier::Bypass => println!("Bypass tier"),
 ///     Tier::Browser => println!("Browser tier"),
+///     // `#[non_exhaustive]`: callers outside the crate must include a wildcard
+///     // so future variants do not break their match.
 ///     _ => println!("unknown tier"),
 /// }
 /// ```
@@ -106,6 +108,8 @@ pub enum Tier {
 ///     EscalationReason::SoftBlock => println!("Soft block detected"),
 ///     EscalationReason::RenderNeeded => println!("JS render needed"),
 ///     EscalationReason::OriginUnreliable => println!("Origin unreachable"),
+///     // `#[non_exhaustive]`: callers outside the crate must include a wildcard
+///     // so future variants do not break their match.
 ///     _ => println!("unknown reason"),
 /// }
 /// ```
@@ -201,9 +205,13 @@ pub struct AttemptOutcome {
 /// match build_err {
 ///     WafClassifyError::BuildError(msg) => println!("Build failed: {}", msg),
 ///     WafClassifyError::ClassifyError(msg) => println!("Classify failed: {}", msg),
+///     // `#[non_exhaustive]`: callers outside the crate must include a wildcard
+///     // so future variants do not break their match.
+///     _ => println!("other classify error"),
 /// }
 /// ```
 #[derive(Debug, Clone, thiserror::Error)]
+#[non_exhaustive]
 pub enum WafClassifyError {
     /// Classifier construction failed (e.g. TOML parse or AC build error).
     #[error("waf classifier build: {0}")]
@@ -229,9 +237,13 @@ pub enum WafClassifyError {
 ///     RetryDirective::Stop => println!("Stop"),
 ///     RetryDirective::Retry { backoff_ms } => println!("Wait {}ms", backoff_ms),
 ///     RetryDirective::Escalate { reason } => println!("Escalate: {:?}", reason),
+///     // `#[non_exhaustive]`: callers outside the crate must include a wildcard
+///     // so future variants do not break their match.
+///     _ => println!("other directive"),
 /// }
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[non_exhaustive]
 pub enum RetryDirective {
     /// Stop. Surface the current result to the caller.
     Stop,
@@ -353,27 +365,28 @@ pub type DynWafClassifier = Arc<dyn WafClassifier>;
 /// # use kreuzcrawl::{DomainRecommendation, Tier};
 /// let rec = DomainRecommendation {
 ///     starting_tier: Tier::Browser,
-///     confidence: 0.85,
+///     confidence: Some(0.85),
 /// };
-/// println!("Start at {:?} with confidence {}", rec.starting_tier, rec.confidence);
+/// println!("Start at {:?} with confidence {:?}", rec.starting_tier, rec.confidence);
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct DomainRecommendation {
     /// Recommended starting tier for the next request to this domain.
     pub starting_tier: Tier,
-    /// Confidence in the recommendation. `0.0` means "no information,
-    /// defaulting to Http"; `1.0` means "strong signal — use the tier".
-    /// Used by policies that want to weigh state-driven priors against
-    /// per-request signals.
-    pub confidence: f32,
+    /// Confidence in the recommendation, in `0.0..=1.0` where `1.0` is "strong
+    /// signal". `None` means "no opinion" — typically because the backend has
+    /// no observations yet, or implements a rule-based model that does not
+    /// produce a probability. Policies should treat `None` as "fall through to
+    /// default behaviour" rather than substituting a numeric value.
+    pub confidence: Option<f32>,
 }
 
-/// Default `DomainRecommendation` is "no information": HTTP tier, confidence 0.
+/// Default `DomainRecommendation` is "no information": HTTP tier, no confidence.
 impl Default for DomainRecommendation {
     fn default() -> Self {
         Self {
             starting_tier: Tier::Http,
-            confidence: 0.0,
+            confidence: None,
         }
     }
 }
@@ -430,6 +443,8 @@ impl DomainObservation {
 ///     ObservedOutcome::WafBlocked { vendor } => println!("Blocked by {}", vendor),
 ///     ObservedOutcome::Transient => println!("Transient failure"),
 ///     ObservedOutcome::Permanent => println!("Permanent failure"),
+///     // `#[non_exhaustive]`: callers outside the crate must include a wildcard
+///     // so future variants do not break their match.
 ///     _ => println!("unknown outcome"),
 /// }
 /// ```

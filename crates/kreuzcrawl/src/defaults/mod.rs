@@ -12,6 +12,8 @@ mod store;
 mod strategy;
 
 pub use cache::NoopCache;
+pub use dispatch::{FixedBudget, SimpleRetryPolicy, UnlimitedBudget, compute_backoff_ms};
+pub use domain_state::{EwmaDomainState, EwmaTracker, LearningRetryPolicy, in_memory_domain_state};
 pub use emitter::NoopEmitter;
 pub use filter::NoopFilter;
 pub use frontier::InMemoryFrontier;

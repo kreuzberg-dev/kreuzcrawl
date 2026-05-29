@@ -60,8 +60,9 @@ pub use browser_pool::{BrowserPool, BrowserPoolConfig};
 pub use browser_session_pool::{BrowserSessionPool, SessionKey};
 pub use citations::{CitationReference, CitationResult, generate_citations};
 pub use defaults::{
-    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, DfsStrategy, InMemoryFrontier, NoopCache, NoopEmitter,
-    NoopFilter, NoopStore, PerDomainThrottle,
+    AdaptiveStrategy, BestFirstStrategy, BfsStrategy, DfsStrategy, EwmaDomainState, EwmaTracker, FixedBudget,
+    InMemoryFrontier, LearningRetryPolicy, NoopCache, NoopEmitter, NoopFilter, NoopStore, PerDomainThrottle,
+    SimpleRetryPolicy, UnlimitedBudget, compute_backoff_ms, in_memory_domain_state,
 };
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
