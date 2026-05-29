@@ -86,4 +86,8 @@ pub use types::{
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use types::{BatchCrawlStreamRequest, CrawlEvent, CrawlStreamRequest};
-pub use waf::{Rules as WafRules, RulesError as WafRulesError, TomlClassifier, load_from_str as waf_rules_from_str};
+pub use waf::rules::load_from_path as waf_rules_from_path;
+pub use waf::{
+    Rules as WafRules, RulesError as WafRulesError, TomlClassifier, WatchError as WafWatchError,
+    WatchHandle as WafWatchHandle, load_from_str as waf_rules_from_str,
+};

@@ -138,8 +138,8 @@ pub enum RulesError {
 
 /// Load and compile rules from a TOML file on disk.
 ///
-/// Useful for hot-reload (Commit 1.6) when the caller manages the rules file.
-#[allow(dead_code)]
+/// Used by [`crate::waf::TomlClassifier::watch`] to reload rules on file
+/// change. Also useful in tests or when the caller manages the rules file.
 pub fn load_from_path(path: &Path) -> Result<Rules, RulesError> {
     let content = std::fs::read_to_string(path)
         .map_err(|e| RulesError::MatcherBuild(format!("cannot read {}: {e}", path.display())))?;

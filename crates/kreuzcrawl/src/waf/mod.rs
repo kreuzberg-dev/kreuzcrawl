@@ -5,9 +5,11 @@
 //! Aho-Corasick automaton over all body patterns, and checking response
 //! headers for WAF-stamp signals.
 //!
-//! Hot-reload (Commit 1.6): the classifier wraps [`Rules`] in
-//! [`arc_swap::ArcSwap`]. Callers can call [`TomlClassifier::swap`] to
-//! atomically replace the rule set without restarting the process.
+//! Hot-reload: the classifier wraps [`Rules`] in [`arc_swap::ArcSwap`].
+//! Callers can call [`TomlClassifier::swap`] to atomically replace the rule
+//! set without restarting the process, or use [`TomlClassifier::watch`] to
+//! watch a TOML rules file on disk and reload automatically on change.
+//! [`WatchHandle`] stops the watcher and debounce task on drop.
 
 use std::fmt;
 use std::sync::Arc;
@@ -19,11 +21,13 @@ use crate::types::{WafClassifier, WafClassifyError, WafSignal};
 
 pub(crate) mod matcher;
 pub(crate) mod rules;
+pub(crate) mod watch;
 
 #[cfg(test)]
 mod tests;
 
 pub use rules::{Rules, RulesError, load_from_str};
+pub use watch::{WatchError, WatchHandle};
 
 /// Default [`WafClassifier`] backed by a TOML fingerprint corpus.
 ///
@@ -66,6 +70,23 @@ impl TomlClassifier {
     /// new rules immediately. No locks, no readers blocked.
     pub fn swap(&self, rules: Rules) {
         self.rules.store(Arc::new(rules));
+    }
+
+    /// Watch a TOML rules file on disk and atomically swap the classifier's
+    /// active rule set when the file changes. Returns a [`WatchHandle`] that
+    /// stops the watcher on drop.
+    ///
+    /// Events are debounced 500 ms so editors that write via tmpfile + rename
+    /// (and Kubernetes ConfigMap atomic projection) deliver one reload, not
+    /// several. Reload errors are logged at warn level; the previous rules
+    /// stay in place until a subsequent reload succeeds.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`WatchError::Setup`] if the OS file-system watcher cannot be
+    /// created, or [`WatchError::NoParent`] if `path` has no parent directory.
+    pub fn watch(self: &Arc<Self>, path: impl AsRef<std::path::Path>) -> Result<WatchHandle, WatchError> {
+        watch::start_watch(Arc::clone(self), path.as_ref())
     }
 }
 

@@ -68,6 +68,7 @@ memchr = "2"
 minijinja = "2"
 napi = { version = "3", default-features = false, features = ["napi8", "tokio_rt"] }
 napi-derive = "3"
+notify = "6"
 opentelemetry = { version = "0.32", features = ["metrics"] }
 png = "0.18"
 precomputed-hash = "0.1"
