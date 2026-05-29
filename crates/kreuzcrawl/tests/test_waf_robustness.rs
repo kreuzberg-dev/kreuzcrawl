@@ -56,9 +56,7 @@ fn build_fingerprints_toml(n: usize) -> String {
 /// Build a TOML string with one fingerprint that has `n` signals.
 /// Uses `response_header` (no pattern field) to keep the TOML compact.
 fn build_many_signals_toml(n: usize) -> String {
-    let mut out = String::from(
-        "\n[[fingerprint]]\nid = \"fp_0\"\nvendor = \"test\"\nweight = 1.0\n",
-    );
+    let mut out = String::from("\n[[fingerprint]]\nid = \"fp_0\"\nvendor = \"test\"\nweight = 1.0\n");
     for i in 0..n {
         out.push_str(&format!(
             "\n[[fingerprint.signals]]\nkind = \"response_header\"\nname = \"x-hdr-{i}\"\n"
@@ -99,9 +97,7 @@ fn load_from_str_rejects_pattern_longer_than_max() {
     match result {
         Err(WafRulesError::Validation { reason, .. }) => {
             assert!(
-                reason.contains("MAX_PATTERN_LEN")
-                    || reason.contains("too long")
-                    || reason.contains("pattern"),
+                reason.contains("MAX_PATTERN_LEN") || reason.contains("too long") || reason.contains("pattern"),
                 "reason should describe the pattern length violation, got: {reason}"
             );
         }
@@ -149,5 +145,8 @@ fn classify_does_not_panic_on_non_utf8_body_bytes() {
     let response = make_response(200, &body, body_bytes);
     // Must not panic; result may be Ok(Some(_)) or Ok(None).
     let result = classifier.classify(&response);
-    assert!(result.is_ok(), "classify must return Ok(_) for non-UTF8 bytes, got: {result:?}");
+    assert!(
+        result.is_ok(),
+        "classify must return Ok(_) for non-UTF8 bytes, got: {result:?}"
+    );
 }

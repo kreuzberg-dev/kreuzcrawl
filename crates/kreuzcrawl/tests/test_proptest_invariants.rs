@@ -4,104 +4,53 @@
 //!   B. FixedBudget — sum of approved demands ≤ initial; concurrent never-overdraw.
 //!   C. compute_backoff_ms — capped at max; monotonic until cap.
 //!
-//! `EwmaTracker` lives in `pub(crate) defaults`, so the EWMA properties are
-//! written against a local closure that mirrors the published formula exactly:
-//!   next = prev * (1 - alpha) + blocked_f32 * alpha,  alpha = 0.1
-//!
-//! `FixedBudget` and `compute_backoff_ms` are in the same private module, so
-//! they are also mirrored locally.  The mirrors are deliberately minimal and
-//! match the source verbatim — any divergence is a documentation bug, not a
-//! test bug.
+//! These tests exercise the real public types (re-exported from `kreuzcrawl`
+//! via `#[doc(hidden)]`-equivalent root re-exports). The previous mirrors were
+//! removed because they could silently drift from the implementations.
 
 #![allow(clippy::unwrap_used)]
 
-use std::sync::Arc;
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::{Arc, OnceLock};
 
+use kreuzcrawl::{EwmaTracker, FixedBudget, EscalationBudget, compute_backoff_ms};
 use proptest::prelude::*;
+use tokio::runtime::Runtime;
 
-// ---------------------------------------------------------------------------
-// Mirror of EwmaTracker::update  (alpha = 0.1, identical to source)
-// ---------------------------------------------------------------------------
-
-const EWMA_ALPHA: f32 = 0.1;
-
-fn ewma_update(prev: f32, blocked: bool) -> f32 {
-    let observation: f32 = if blocked { 1.0 } else { 0.0 };
-    EWMA_ALPHA.mul_add(observation, (1.0 - EWMA_ALPHA) * prev)
-}
-
-// ---------------------------------------------------------------------------
-// Mirror of FixedBudget  (CAS loop, identical to source)
-// ---------------------------------------------------------------------------
-
-struct FixedBudgetMirror {
-    remaining: AtomicU32,
-}
-
-impl FixedBudgetMirror {
-    fn new(initial: u32) -> Self {
-        Self {
-            remaining: AtomicU32::new(initial),
-        }
-    }
-
-    fn try_consume(&self, cost: u32) -> bool {
-        let mut current = self.remaining.load(Ordering::Acquire);
-        loop {
-            if current < cost {
-                return false;
-            }
-            let next = current - cost;
-            match self
-                .remaining
-                .compare_exchange_weak(current, next, Ordering::AcqRel, Ordering::Acquire)
-            {
-                Ok(_) => return true,
-                Err(actual) => current = actual,
-            }
-        }
-    }
-
-    fn remaining(&self) -> u32 {
-        self.remaining.load(Ordering::Acquire)
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Mirror of compute_backoff_ms  (identical to source)
-// ---------------------------------------------------------------------------
-
-fn compute_backoff_ms_mirror(attempt: u32, max_backoff_ms: u64) -> u64 {
-    let exp = 1u64.checked_shl(attempt).unwrap_or(u64::MAX);
-    exp.saturating_mul(100).min(max_backoff_ms)
+/// Shared single-threaded runtime for the synchronous proptest bodies.
+/// `FixedBudget::try_consume` is async; calling it from a sync proptest body
+/// requires a runtime. One process-wide runtime avoids 256-runtime churn.
+fn rt() -> &'static Runtime {
+    static RT: OnceLock<Runtime> = OnceLock::new();
+    RT.get_or_init(|| Runtime::new().unwrap())
 }
 
 // ===========================================================================
-// A. EWMA invariants
+// A. EWMA invariants — exercises kreuzcrawl::EwmaTracker::update directly.
 // ===========================================================================
 
 proptest! {
     /// A1: update output is always in [0.0, 1.0] for any valid prev and blocked flag.
     #[test]
     fn ewma_update_is_bounded(prev in 0.0f32..=1.0, blocked: bool) {
-        let next = ewma_update(prev, blocked);
+        let tracker = EwmaTracker::default();
+        let next = tracker.update(prev, blocked);
         prop_assert!(
             next >= 0.0,
-            "ewma_update({prev}, {blocked}) = {next} — violated lower bound 0.0"
+            "EwmaTracker::update({prev}, {blocked}) = {next} — violated lower bound 0.0"
         );
         prop_assert!(
             next <= 1.0,
-            "ewma_update({prev}, {blocked}) = {next} — violated upper bound 1.0"
+            "EwmaTracker::update({prev}, {blocked}) = {next} — violated upper bound 1.0"
         );
     }
 
     /// A2: 200 consecutive blocked observations converge to within 0.01 of 1.0.
     #[test]
     fn ewma_all_block_converges_to_one(prev in 0.0f32..=1.0) {
+        let tracker = EwmaTracker::default();
         let mut ewma = prev;
         for _ in 0..200 {
-            ewma = ewma_update(ewma, true);
+            ewma = tracker.update(ewma, true);
         }
         prop_assert!(
             ewma >= 0.99,
@@ -112,9 +61,10 @@ proptest! {
     /// A3: 200 consecutive success observations converge to within 0.01 of 0.0.
     #[test]
     fn ewma_all_success_converges_to_zero(prev in 0.0f32..=1.0) {
+        let tracker = EwmaTracker::default();
         let mut ewma = prev;
         for _ in 0..200 {
-            ewma = ewma_update(ewma, false);
+            ewma = tracker.update(ewma, false);
         }
         prop_assert!(
             ewma <= 0.01,
@@ -124,7 +74,7 @@ proptest! {
 }
 
 // ===========================================================================
-// B. FixedBudget invariants
+// B. FixedBudget invariants — exercises kreuzcrawl::FixedBudget::try_consume.
 // ===========================================================================
 
 proptest! {
@@ -134,10 +84,10 @@ proptest! {
         initial in 1u32..=1000,
         demands in proptest::collection::vec(0u32..=1000, 0..=50),
     ) {
-        let budget = FixedBudgetMirror::new(initial);
+        let budget = FixedBudget::new(initial);
         let mut approved_sum: u64 = 0;
         for demand in &demands {
-            if budget.try_consume(*demand) {
+            if rt().block_on(budget.try_consume(*demand)).is_ok() {
                 approved_sum += u64::from(*demand);
             }
         }
@@ -150,7 +100,8 @@ proptest! {
 
 /// B2: 100 concurrent try_consume(1) tasks on a budget of 100 — exactly 100 succeed.
 ///
-/// proptest! macro is sync; use tokio runtime inline.
+/// proptest! macro is sync; use tokio runtime inline. Standalone (not in
+/// proptest!) because property-style randomization adds nothing here.
 #[test]
 fn fixed_budget_concurrent_never_overdraws() {
     let rt = tokio::runtime::Builder::new_multi_thread()
@@ -160,15 +111,15 @@ fn fixed_budget_concurrent_never_overdraws() {
         .unwrap();
 
     rt.block_on(async {
-        let budget = Arc::new(FixedBudgetMirror::new(100));
+        let budget = Arc::new(FixedBudget::new(100));
         let mut handles = Vec::with_capacity(100);
         for _ in 0..100 {
             let b = budget.clone();
-            handles.push(tokio::spawn(async move { b.try_consume(1) }));
+            handles.push(tokio::spawn(async move { b.try_consume(1).await }));
         }
         let mut approvals: u32 = 0;
         for h in handles {
-            if h.await.unwrap() {
+            if h.await.unwrap().is_ok() {
                 approvals += 1;
             }
         }
@@ -186,7 +137,7 @@ fn fixed_budget_concurrent_never_overdraws() {
 }
 
 // ===========================================================================
-// C. Backoff invariants
+// C. Backoff invariants — exercises kreuzcrawl::compute_backoff_ms directly.
 // ===========================================================================
 
 proptest! {
@@ -196,7 +147,7 @@ proptest! {
         attempt in 0u32..32,
         max_backoff_ms in 1000u64..=60_000,
     ) {
-        let backoff = compute_backoff_ms_mirror(attempt, max_backoff_ms);
+        let backoff = compute_backoff_ms(attempt, max_backoff_ms);
         prop_assert!(
             backoff <= max_backoff_ms,
             "compute_backoff_ms({attempt}, {max_backoff_ms}) = {backoff} exceeds cap"
@@ -212,8 +163,8 @@ proptest! {
         attempt in 0u32..30,
         max_backoff_ms in 1000u64..=60_000,
     ) {
-        let this_backoff = compute_backoff_ms_mirror(attempt, max_backoff_ms);
-        let next_backoff = compute_backoff_ms_mirror(attempt + 1, max_backoff_ms);
+        let this_backoff = compute_backoff_ms(attempt, max_backoff_ms);
+        let next_backoff = compute_backoff_ms(attempt + 1, max_backoff_ms);
 
         // Once we hit the cap, both values equal max_backoff_ms — that is fine.
         // Before the cap, next must be strictly greater (doubles each step).
