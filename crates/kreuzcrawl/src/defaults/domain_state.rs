@@ -8,7 +8,10 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use dashmap::DashMap;
 
-use crate::types::{AttemptOutcome, DomainOutcome, DomainState, DomainStatePort, RetryDirective, RetryPolicy, Tier};
+use crate::types::{
+    AttemptOutcome, DomainObservation, DomainRecommendation, DomainStatePort, ObservedOutcome, RetryDirective,
+    RetryPolicy, Tier,
+};
 
 use super::dispatch::SimpleRetryPolicy;
 
@@ -77,17 +80,28 @@ impl Default for EwmaTracker {
     }
 }
 
-/// Process-local domain state. `DashMap`-backed, ephemeral — no
-/// persistence across restarts. For multi-process / multi-tenant
-/// learning, use kreuzberg-cloud's PostgresDomainState.
+/// Internal snapshot stored per domain in the DashMap.
+#[derive(Debug, Clone)]
+struct DomainSnapshot {
+    block_ewma: f32,
+    sample_count: u64,
+    /// Lowercase WAF vendor identifier, if one has been observed.
+    classifier: Option<String>,
+    starting_tier: Tier,
+}
+
+/// Process-local domain state backed by an EWMA block-rate model.
+/// `DashMap`-backed, ephemeral — no persistence across restarts.
+/// For multi-process / multi-tenant learning, use kreuzberg-cloud's
+/// PostgresDomainState.
 #[derive(Debug, Default)]
-pub struct InMemoryDomainState {
-    inner: DashMap<String, DomainState>,
+pub struct EwmaDomainState {
+    inner: DashMap<String, DomainSnapshot>,
     ewma: EwmaTracker,
 }
 
-impl InMemoryDomainState {
-    /// Create a new in-memory domain state with default EWMA settings.
+impl EwmaDomainState {
+    /// Create a new EWMA domain state with default EWMA settings.
     pub fn new() -> Self {
         Self::default()
     }
@@ -100,14 +114,50 @@ impl InMemoryDomainState {
 }
 
 #[async_trait]
-impl DomainStatePort for InMemoryDomainState {
-    async fn get(&self, domain: &str) -> Option<DomainState> {
-        self.inner.get(domain).map(|s| s.clone())
+impl DomainStatePort for EwmaDomainState {
+    async fn recommend(&self, domain: &str) -> DomainRecommendation {
+        let Some(snapshot) = self.inner.get(domain).map(|s| s.clone()) else {
+            return DomainRecommendation::default();
+        };
+
+        let starting_tier = if self.ewma.should_promote(snapshot.block_ewma, snapshot.sample_count) {
+            Tier::Bypass
+        } else {
+            Tier::Http
+        };
+
+        // Confidence: scales with sample count (capped at 50), weighted by
+        // how decisive the EWMA is (distance from 0.5 doubled).
+        let sample_weight = (snapshot.sample_count as f32 / 50.0).min(1.0);
+        let decisiveness = snapshot.block_ewma.max(1.0 - snapshot.block_ewma);
+        let confidence = sample_weight * decisiveness;
+
+        DomainRecommendation {
+            starting_tier,
+            confidence,
+        }
     }
 
-    async fn record_outcome(&self, domain: &str, outcome: &DomainOutcome) {
+    async fn observe(&self, domain: &str, observation: &DomainObservation) {
+        // Permanent errors carry no bot-protection signal — skip them entirely
+        // to avoid deflating the EWMA on dead/unreachable hosts.
+        if matches!(observation.outcome, ObservedOutcome::Permanent) {
+            return;
+        }
+
+        let blocked = matches!(
+            observation.outcome,
+            ObservedOutcome::WafBlocked { .. } | ObservedOutcome::Transient
+        );
+
+        // Extract vendor from WAF signal, if present.
+        let vendor = match &observation.outcome {
+            ObservedOutcome::WafBlocked { vendor } => Some(vendor.clone()),
+            _ => None,
+        };
+
         // Snapshot current state under a short read — releases the shard lock immediately.
-        let prev = self.inner.get(domain).map(|s| s.clone()).unwrap_or(DomainState {
+        let prev = self.inner.get(domain).map(|s| s.clone()).unwrap_or(DomainSnapshot {
             block_ewma: 0.0,
             sample_count: 0,
             classifier: None,
@@ -115,13 +165,10 @@ impl DomainStatePort for InMemoryDomainState {
         });
 
         // Compute next state off-lock. All operations are pure math.
-        let next_ewma = self.ewma.update(prev.block_ewma, outcome.blocked);
+        let next_ewma = self.ewma.update(prev.block_ewma, blocked);
         let next_sample_count = prev.sample_count + 1;
-        let next_classifier = outcome
-            .waf_signal
-            .as_ref()
-            .map(|sig| sig.vendor.clone())
-            .or(prev.classifier);
+        // Propagate the vendor into the classifier field if currently None.
+        let next_classifier = vendor.or(prev.classifier);
         let next_starting_tier = if self.ewma.should_promote(next_ewma, next_sample_count) {
             Tier::Bypass
         } else if self.ewma.should_demote(next_ewma, next_sample_count) {
@@ -136,7 +183,7 @@ impl DomainStatePort for InMemoryDomainState {
         // avoiding a shard-level lock across the math is worth the occasional lost sample.
         self.inner.insert(
             domain.to_string(),
-            DomainState {
+            DomainSnapshot {
                 block_ewma: next_ewma,
                 sample_count: next_sample_count,
                 classifier: next_classifier,
@@ -176,57 +223,12 @@ impl RetryPolicy for LearningRetryPolicy {
     async fn decide(&self, outcome: &AttemptOutcome) -> RetryDirective {
         let directive = self.fallback.decide(outcome).await;
 
-        // Only record outcomes meaningful for learning:
-        // - WAF-related signals (block or detected via classifier)
-        // - Forbidden (treated as WAF-equivalent)
-        // - Clean successes when we have a waf_signal or status (so the EWMA can decay)
-        //
-        // SKIP: permanent host-level errors (Dns, Ssl, Connection, etc). These say
-        // nothing about whether the domain is bot-protected; recording them as
-        // blocked=false would deflate the EWMA toward zero on dead/unreachable hosts.
-        // Also skip transient server errors — they carry no domain-protection signal.
-        let should_record = match &outcome.error {
-            Some(crate::error::CrawlError::WafBlocked { .. } | crate::error::CrawlError::Forbidden(_)) => true,
-            Some(
-                crate::error::CrawlError::Dns(_)
-                | crate::error::CrawlError::Ssl(_)
-                | crate::error::CrawlError::Connection(_)
-                | crate::error::CrawlError::InvalidConfig(_)
-                | crate::error::CrawlError::Unsupported(_)
-                | crate::error::CrawlError::NotFound(_)
-                | crate::error::CrawlError::Unauthorized(_)
-                | crate::error::CrawlError::Gone(_)
-                | crate::error::CrawlError::DataLoss(_)
-                | crate::error::CrawlError::BrowserError(_)
-                | crate::error::CrawlError::BrowserTimeout(_)
-                | crate::error::CrawlError::RateLimited(_)
-                | crate::error::CrawlError::ServerError(_)
-                | crate::error::CrawlError::BadGateway(_)
-                | crate::error::CrawlError::Timeout(_)
-                | crate::error::CrawlError::Other(_),
-            ) => false,
-            // On success: record if we have a classifier signal or a status code.
-            None => outcome.waf_signal.is_some() || outcome.status.is_some(),
-        };
-
-        if should_record
-            && let Ok(parsed) = url::Url::parse(&outcome.url)
+        if let Ok(parsed) = url::Url::parse(&outcome.url)
             && let Some(domain) = parsed.host_str()
         {
-            let blocked = matches!(
-                outcome.error,
-                Some(crate::error::CrawlError::WafBlocked { .. } | crate::error::CrawlError::Forbidden(_))
-            ) || outcome.waf_signal.is_some();
-            self.state
-                .record_outcome(
-                    domain,
-                    &DomainOutcome {
-                        tier: outcome.previous_tier,
-                        blocked,
-                        waf_signal: outcome.waf_signal.clone(),
-                    },
-                )
-                .await;
+            let observed_outcome = classify_outcome(outcome);
+            let observation = DomainObservation::now(outcome.previous_tier, observed_outcome);
+            self.state.observe(domain, &observation).await;
         }
 
         directive
@@ -237,10 +239,57 @@ impl RetryPolicy for LearningRetryPolicy {
     }
 }
 
-/// Convenience constructor: `Arc<dyn DomainStatePort>` backed by an in-memory map.
+/// Translate an [`AttemptOutcome`] into an [`ObservedOutcome`] for state recording.
+///
+/// Mapping:
+/// - WAF signal present → `WafBlocked { vendor }`
+/// - Permanent host-level errors → `Permanent` (observe will skip these)
+/// - Other errors (5xx, timeout, rate-limited, transient) → `Transient`
+/// - Success (no error) → `Success`
+fn classify_outcome(outcome: &AttemptOutcome) -> ObservedOutcome {
+    // WAF signal takes priority — it is the most specific classification.
+    if let Some(ref signal) = outcome.waf_signal {
+        return ObservedOutcome::WafBlocked {
+            vendor: signal.vendor.clone(),
+        };
+    }
+
+    match &outcome.error {
+        Some(crate::error::CrawlError::WafBlocked { vendor, .. }) => {
+            ObservedOutcome::WafBlocked { vendor: vendor.clone() }
+        }
+        // Permanent host-level errors: say nothing about bot protection.
+        // observe() will skip Permanent outcomes — preserves M3 selective-recording semantic.
+        Some(
+            crate::error::CrawlError::Dns(_)
+            | crate::error::CrawlError::Ssl(_)
+            | crate::error::CrawlError::Connection(_)
+            | crate::error::CrawlError::InvalidConfig(_)
+            | crate::error::CrawlError::Unsupported(_)
+            | crate::error::CrawlError::NotFound(_)
+            | crate::error::CrawlError::Unauthorized(_)
+            | crate::error::CrawlError::Gone(_)
+            | crate::error::CrawlError::DataLoss(_)
+            | crate::error::CrawlError::BrowserError(_)
+            | crate::error::CrawlError::BrowserTimeout(_),
+        ) => ObservedOutcome::Permanent,
+        // Transient: 5xx, timeouts, rate-limiting, generic.
+        Some(
+            crate::error::CrawlError::Forbidden(_)
+            | crate::error::CrawlError::RateLimited(_)
+            | crate::error::CrawlError::ServerError(_)
+            | crate::error::CrawlError::BadGateway(_)
+            | crate::error::CrawlError::Timeout(_)
+            | crate::error::CrawlError::Other(_),
+        ) => ObservedOutcome::Transient,
+        None => ObservedOutcome::Success,
+    }
+}
+
+/// Convenience constructor: `Arc<dyn DomainStatePort>` backed by an in-memory EWMA map.
 #[must_use]
 pub fn in_memory_domain_state() -> Arc<dyn DomainStatePort> {
-    Arc::new(InMemoryDomainState::new())
+    Arc::new(EwmaDomainState::new())
 }
 
 #[cfg(test)]
@@ -291,52 +340,55 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn in_memory_state_records_and_returns() {
-        let state = InMemoryDomainState::new();
-        let outcome = DomainOutcome {
-            tier: Tier::Http,
-            blocked: true,
-            waf_signal: Some(WafSignal {
+    async fn ewma_state_records_and_recommends() {
+        let state = EwmaDomainState::new();
+        let observation = DomainObservation::now(
+            Tier::Http,
+            ObservedOutcome::WafBlocked {
                 vendor: "cloudflare".into(),
-                fingerprint_id: "cloudflare_challenge_v1".into(),
-                weight: 1.0,
-            }),
-        };
-        state.record_outcome("example.com", &outcome).await;
-        let snapshot = state.get("example.com").await.expect("recorded");
-        assert!(snapshot.block_ewma > 0.0);
-        assert_eq!(snapshot.sample_count, 1);
+            },
+        );
+        state.observe("example.com", &observation).await;
+        let rec = state.recommend("example.com").await;
+        // After one blocked observation the EWMA is above zero.
+        assert!(rec.confidence > 0.0, "confidence should be non-zero after a block");
+    }
+
+    #[tokio::test]
+    async fn ewma_state_promotes_starting_tier_after_streak() {
+        let state = EwmaDomainState::new();
+        let observation = DomainObservation::now(Tier::Http, ObservedOutcome::Transient);
+        for _ in 0..30 {
+            state.observe("blocked.example", &observation).await;
+        }
+        let rec = state.recommend("blocked.example").await;
+        assert_eq!(rec.starting_tier, Tier::Bypass, "should promote after sustained blocks");
+    }
+
+    #[tokio::test]
+    async fn ewma_state_returns_default_for_unseen_domain() {
+        let state = EwmaDomainState::new();
+        let rec = state.recommend("never-seen.example").await;
+        assert_eq!(rec, DomainRecommendation::default());
+    }
+
+    #[tokio::test]
+    async fn waf_blocked_outcome_sets_classifier() {
+        let state = EwmaDomainState::new();
+        let observation = DomainObservation::now(
+            Tier::Http,
+            ObservedOutcome::WafBlocked {
+                vendor: "cloudflare".into(),
+            },
+        );
+        state.observe("example.com", &observation).await;
+        let snapshot = state.inner.get("example.com").map(|s| s.clone()).expect("recorded");
         assert_eq!(snapshot.classifier.as_deref(), Some("cloudflare"));
     }
 
     #[tokio::test]
-    async fn in_memory_state_promotes_starting_tier_after_streak() {
-        let state = InMemoryDomainState::new();
-        let outcome = DomainOutcome {
-            tier: Tier::Http,
-            blocked: true,
-            waf_signal: None,
-        };
-        for _ in 0..30 {
-            state.record_outcome("blocked.example", &outcome).await;
-        }
-        let snapshot = state.get("blocked.example").await.expect("recorded");
-        assert_eq!(
-            snapshot.starting_tier,
-            Tier::Bypass,
-            "should promote after sustained blocks"
-        );
-    }
-
-    #[tokio::test]
-    async fn in_memory_state_returns_none_for_unseen_domain() {
-        let state = InMemoryDomainState::new();
-        assert!(state.get("never-seen.example").await.is_none());
-    }
-
-    #[tokio::test]
     async fn learning_policy_records_outcome_on_waf_blocked() {
-        let state = Arc::new(InMemoryDomainState::new());
+        let state = Arc::new(EwmaDomainState::new());
         let policy = LearningRetryPolicy::new(state.clone() as Arc<dyn DomainStatePort>);
         let outcome = AttemptOutcome {
             attempt: 0,
@@ -354,21 +406,25 @@ mod tests {
         };
         let directive = policy.decide(&outcome).await;
         assert!(matches!(directive, RetryDirective::Escalate { .. }));
-        let snapshot = state.get("example.com").await.expect("state should record domain");
+        let snapshot = state
+            .inner
+            .get("example.com")
+            .map(|s| s.clone())
+            .expect("state should record domain");
         assert!(snapshot.block_ewma > 0.0, "blocked outcome should increase ewma");
         assert_eq!(snapshot.sample_count, 1);
     }
 
     #[tokio::test]
     async fn learning_policy_name_is_learning() {
-        let state = Arc::new(InMemoryDomainState::new()) as Arc<dyn DomainStatePort>;
+        let state = Arc::new(EwmaDomainState::new()) as Arc<dyn DomainStatePort>;
         let policy = LearningRetryPolicy::new(state);
         assert_eq!(policy.name(), "learning");
     }
 
     #[tokio::test]
     async fn learning_policy_does_not_record_permanent_errors() {
-        let state = Arc::new(InMemoryDomainState::new());
+        let state = Arc::new(EwmaDomainState::new());
         let policy = LearningRetryPolicy::new(state.clone() as Arc<dyn DomainStatePort>);
 
         let outcome = AttemptOutcome {
@@ -384,7 +440,7 @@ mod tests {
         };
         policy.decide(&outcome).await;
 
-        let snapshot = state.get("dead.example").await;
+        let snapshot = state.inner.get("dead.example").map(|s| s.clone());
         assert!(
             snapshot.is_none(),
             "DNS error must not pollute domain state; got {snapshot:?}"
@@ -392,19 +448,52 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn record_outcome_under_concurrent_writers_does_not_panic() {
-        let state = Arc::new(InMemoryDomainState::new());
-        let outcome = DomainOutcome {
-            tier: Tier::Http,
-            blocked: true,
-            waf_signal: None,
+    async fn observe_skips_permanent_outcome() {
+        let state = EwmaDomainState::new();
+        let observation = DomainObservation::now(Tier::Http, ObservedOutcome::Permanent);
+        state.observe("permanent.example", &observation).await;
+        let snapshot = state.inner.get("permanent.example").map(|s| s.clone());
+        assert!(snapshot.is_none(), "Permanent outcome must not be recorded");
+    }
+
+    #[tokio::test]
+    async fn learning_policy_records_waf_signal_vendor() {
+        let state = Arc::new(EwmaDomainState::new());
+        let policy = LearningRetryPolicy::new(state.clone() as Arc<dyn DomainStatePort>);
+        let outcome = AttemptOutcome {
+            attempt: 0,
+            url: Arc::from("https://example.com/"),
+            status: Some(200),
+            error: None,
+            waf_signal: Some(WafSignal {
+                vendor: "datadome".into(),
+                fingerprint_id: "datadome_js_v1".into(),
+                weight: 0.9,
+            }),
+            body_size: 100,
+            content_density: 0.1,
+            bytes_transferred: Some(100),
+            previous_tier: Tier::Http,
         };
+        policy.decide(&outcome).await;
+        let snapshot = state
+            .inner
+            .get("example.com")
+            .map(|s| s.clone())
+            .expect("waf_signal should trigger recording");
+        assert_eq!(snapshot.classifier.as_deref(), Some("datadome"));
+    }
+
+    #[tokio::test]
+    async fn observe_under_concurrent_writers_does_not_panic() {
+        let state = Arc::new(EwmaDomainState::new());
+        let observation = DomainObservation::now(Tier::Http, ObservedOutcome::Transient);
         let mut handles = Vec::new();
         for _ in 0..50 {
             let s = state.clone();
-            let o = outcome.clone();
+            let o = observation.clone();
             handles.push(tokio::spawn(async move {
-                s.record_outcome("contended.example", &o).await;
+                s.observe("contended.example", &o).await;
             }));
         }
         for h in handles {
@@ -413,7 +502,11 @@ mod tests {
 
         // Under last-writer-wins some observations may be lost — that is acceptable.
         // The invariant: state is consistent, sample_count is in [1, 50].
-        let snapshot = state.get("contended.example").await.expect("recorded");
+        let snapshot = state
+            .inner
+            .get("contended.example")
+            .map(|s| s.clone())
+            .expect("recorded");
         assert!(snapshot.sample_count >= 1);
         assert!(snapshot.sample_count <= 50);
         assert!(snapshot.block_ewma > 0.0);
