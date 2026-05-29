@@ -115,10 +115,14 @@ data class CrawlConfig(
     /** Whether to save changes back to the browser profile on exit. */
     val saveBrowserProfile: Boolean = false,
     /**
-     * Caller-supplied bypass provider. When `Some`, the engine routes every URL through the
-     * provider, skipping native HTTP and chromiumoxide. Used for integrating commercial bypass APIs
-     * (Bright Data, Zyte, etc.) at the kreuzberg-cloud layer; kreuzcrawl itself ships no vendor
-     * adapters.
+     * Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF
+     * classifier, domain state, escalation budget, and max_total_attempts.
+     *
+     * When `null`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy,
+     * `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total
+     * attempt cap).
+     *
+     * Not serializable — callers construct this at runtime and skip in TOML/JSON configs.
      */
-    val bypass: String? = null,
+    val dispatch: String? = null,
 )

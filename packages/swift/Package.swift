@@ -43,7 +43,11 @@ let package = Package(
         .linkedFramework("SystemConfiguration", .when(platforms: [.macOS])),
       ]
     ),
-    .target(name: "Kreuzcrawl", dependencies: ["RustBridge"], path: "Sources/Kreuzcrawl"),
-    .testTarget(name: "KreuzcrawlTests", dependencies: ["Kreuzcrawl"], path: "Tests/KreuzcrawlTests"),
+    .target(
+      name: "Kreuzcrawl", dependencies: ["RustBridge"],
+      path: "Sources/Kreuzcrawl"),
+    .testTarget(
+      name: "KreuzcrawlTests", dependencies: ["Kreuzcrawl"],
+      path: "Tests/KreuzcrawlTests"),
   ]
 )

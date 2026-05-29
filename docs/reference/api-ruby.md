@@ -448,12 +448,7 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `String?` | `nil` | Path to write WARC output. If `nil`, WARC output is disabled. |
 | `browser_profile` | `String?` | `nil` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `Boolean` | `false` | Whether to save changes back to the browser profile on exit. |
-| `bypass` | `String?` | `nil` | Caller-supplied bypass provider. When `Some`, the engine routes every URL through the provider, skipping native HTTP and chromiumoxide. Used for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters. |
-| `escalation_strategy` | `String` | — | Configured behavior of the HTTP → Bypass → Browser dispatch chain. Default `BrowserOnly` preserves pre-tier-dispatch behavior. When `bypass` is configured and this field is left at the default, the engine treats it as `BypassFirst` for backward compatibility. |
-| `retry_policy` | `String?` | `nil` | Pluggable per-attempt retry/escalation decision policy. Default is `new`. Not serializable — skip in TOML/JSON configs. |
-| `waf_classifier` | `String?` | `nil` | Pluggable WAF classifier. Default is `builtin`. Not serializable — skip in TOML/JSON configs. |
-| `domain_state` | `String?` | `nil` | Pluggable per-domain state backend. `nil` disables learning; the engine uses `SimpleRetryPolicy` semantics without state. Not serializable — skip in TOML/JSON configs. |
-| `escalation_budget` | `String?` | `nil` | Pluggable per-job escalation budget. `nil` means unlimited. Not serializable — skip in TOML/JSON configs. |
+| `dispatch` | `String?` | `nil` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `nil`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
 ### Methods
 
@@ -463,6 +458,16 @@ Configuration for crawl, scrape, and map operations.
 
 ```ruby
 def self.default()
+```
+
+#### builder()
+
+Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
+
+**Signature:**
+
+```ruby
+def self.builder()
 ```
 
 #### validate()
@@ -1065,7 +1070,7 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `not_found` | The requested page was not found (HTTP 404). |
 | `unauthorized` | The request was unauthorized (HTTP 401). |
 | `forbidden` | The request was forbidden (HTTP 403). |
-| `waf_blocked` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare", "datadome"). When the engine cannot identify the vendor, it uses "unknown". `message` is the freeform description for logs and human readers. The stable error tag remains `forbidden: waf/blocked: <message>` so existing log-grep patterns and cross-language bindings continue to work; vendor is surfaced separately for structured consumers. |
+| `waf_blocked` | The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators). `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare", "datadome"). When the engine cannot identify the vendor, it uses "unknown". `message` is the freeform description for logs and human readers. The stable error tag remains `forbidden: waf/blocked: MESSAGE` so existing log-grep patterns and cross-language bindings continue to work; vendor is surfaced separately for structured consumers. |
 | `timeout` | The request timed out. |
 | `rate_limited` | The request was rate-limited (HTTP 429). |
 | `server_error` | A server error occurred (HTTP 5xx). |

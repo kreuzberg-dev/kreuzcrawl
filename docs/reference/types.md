@@ -319,12 +319,7 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `Option<PathBuf>` | `None` | Path to write WARC output. If `None`, WARC output is disabled. |
 | `browser_profile` | `Option<String>` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
-| `bypass` | `Option<String>` | `None` | Caller-supplied bypass provider. When `Some`, the engine routes every URL through the provider, skipping native HTTP and chromiumoxide. Used for integrating commercial bypass APIs (Bright Data, Zyte, etc.) at the kreuzberg-cloud layer; kreuzcrawl itself ships no vendor adapters. |
-| `escalation_strategy` | `String` | — | Configured behavior of the HTTP → Bypass → Browser dispatch chain. Default `BrowserOnly` preserves pre-tier-dispatch behavior. When `bypass` is configured and this field is left at the default, the engine treats it as `BypassFirst` for backward compatibility. |
-| `retry_policy` | `Option<String>` | `None` | Pluggable per-attempt retry/escalation decision policy. Default is `new`. Not serializable — skip in TOML/JSON configs. |
-| `waf_classifier` | `Option<String>` | `None` | Pluggable WAF classifier. Default is `builtin`. Not serializable — skip in TOML/JSON configs. |
-| `domain_state` | `Option<String>` | `None` | Pluggable per-domain state backend. `None` disables learning; the engine uses `SimpleRetryPolicy` semantics without state. Not serializable — skip in TOML/JSON configs. |
-| `escalation_budget` | `Option<String>` | `None` | Pluggable per-job escalation budget. `None` means unlimited. Not serializable — skip in TOML/JSON configs. |
+| `dispatch` | `Option<String>` | `None` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `None`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
 ---
 

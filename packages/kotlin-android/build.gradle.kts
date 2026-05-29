@@ -71,7 +71,7 @@ mavenPublishing {
     coordinates(
         groupId = "dev.kreuzberg.kreuzcrawl.android",
         artifactId = "kreuzcrawl-android",
-        version = "0.3.0-rc.36",
+        version = "0.3.0-rc.37",
     )
 
     pom {

@@ -30,7 +30,8 @@ sealed class CrawlError(message: String) : Exception(message) {
 
     data class Forbidden(val field0: String) : CrawlError("forbidden: $field0")
 
-    data class WafBlocked(val field0: String) : CrawlError("forbidden: waf/blocked: $field0")
+    data class WafBlocked(val vendor: String, override val message: String) :
+        CrawlError("forbidden: waf/blocked: {message}")
 
     data class Timeout(val field0: String) : CrawlError("timeout: $field0")
 

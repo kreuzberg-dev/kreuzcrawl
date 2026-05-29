@@ -60,7 +60,7 @@ pub enum CrawlError {
     /// "datadome"). When the engine cannot identify the vendor, it uses "unknown".
     /// `message` is the freeform description for logs and human readers.
     ///
-    /// The stable error tag remains `forbidden: waf/blocked: <message>` so existing
+    /// The stable error tag remains `forbidden: waf/blocked: MESSAGE` so existing
     /// log-grep patterns and cross-language bindings continue to work; vendor is
     /// surfaced separately for structured consumers.
     #[error("forbidden: waf/blocked: {message}")]

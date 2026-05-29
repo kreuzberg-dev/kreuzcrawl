@@ -135,5 +135,9 @@ wiremock = "0.6"
 name = "citations"
 harness = false
 
+[[bench]]
+name = "waf"
+harness = false
+
 [lints]
 workspace = true

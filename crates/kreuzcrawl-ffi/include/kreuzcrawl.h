@@ -1013,6 +1013,13 @@ int32_t kcrawl_crawl_config_save_browser_profile(const KCRAWLCrawlConfig *ptr);
 KCRAWLCrawlConfig *kcrawl_crawl_config_default(void);
 
 /**
+ * Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
+ */
+char *kcrawl_crawl_config_builder(void);
+
+/**
  * Validate the configuration, returning an error if any values are invalid.
  * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
  * freed with the appropriate free function.

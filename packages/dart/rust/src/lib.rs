@@ -1104,7 +1104,15 @@ pub enum CrawlError {
     /// The request was forbidden (HTTP 403).
     Forbidden { field0: String },
     /// The request was blocked by a WAF or bot protection (HTTP 403 with WAF indicators).
-    WafBlocked { field0: String },
+    ///
+    /// `vendor` is the lowercase identifier of the detected WAF (e.g. "cloudflare",
+    /// "datadome"). When the engine cannot identify the vendor, it uses "unknown".
+    /// `message` is the freeform description for logs and human readers.
+    ///
+    /// The stable error tag remains `forbidden: waf/blocked: MESSAGE` so existing
+    /// log-grep patterns and cross-language bindings continue to work; vendor is
+    /// surfaced separately for structured consumers.
+    WafBlocked { vendor: String, message: String },
     /// The request timed out.
     Timeout { field0: String },
     /// The request was rate-limited (HTTP 429).
@@ -1896,6 +1904,7 @@ impl From<CrawlConfig> for kreuzcrawl::CrawlConfig {
             warc_output: v.warc_output.map(std::path::PathBuf::from),
             browser_profile: v.browser_profile.map(Into::into),
             save_browser_profile: v.save_browser_profile as _,
+            dispatch: Default::default(),
             ..Default::default()
         }
     }
