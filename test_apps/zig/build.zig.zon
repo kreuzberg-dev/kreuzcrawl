@@ -5,23 +5,23 @@
     .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .kreuzcrawl_linux_x86_64 = .{
-            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.37/kreuzcrawl-zig-v0.3.0-rc.37-linux-x86_64.tar.gz",
+            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.38/kreuzcrawl-zig-v0.3.0-rc.38-linux-x86_64.tar.gz",
             .hash = "TODO",
         },
         .kreuzcrawl_linux_aarch64 = .{
-            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.37/kreuzcrawl-zig-v0.3.0-rc.37-linux-aarch64.tar.gz",
+            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.38/kreuzcrawl-zig-v0.3.0-rc.38-linux-aarch64.tar.gz",
             .hash = "TODO",
         },
         .kreuzcrawl_macos_x86_64 = .{
-            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.37/kreuzcrawl-zig-v0.3.0-rc.37-macos-x86_64.tar.gz",
+            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.38/kreuzcrawl-zig-v0.3.0-rc.38-macos-x86_64.tar.gz",
             .hash = "TODO",
         },
         .kreuzcrawl_macos_arm64 = .{
-            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.37/kreuzcrawl-zig-v0.3.0-rc.37-macos-arm64.tar.gz",
+            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.38/kreuzcrawl-zig-v0.3.0-rc.38-macos-arm64.tar.gz",
             .hash = "TODO",
         },
         .kreuzcrawl_windows_x86_64 = .{
-            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.37/kreuzcrawl-zig-v0.3.0-rc.37-windows-x86_64.tar.gz",
+            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.38/kreuzcrawl-zig-v0.3.0-rc.38-windows-x86_64.tar.gz",
             .hash = "TODO",
         },
 

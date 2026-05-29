@@ -4,6 +4,105 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.38] - 2026-05-29
+
+### Added
+
+- **Tier-dispatch engine** (`feat/tier-dispatch`). The crawl engine now
+  chains HTTP → Bypass → Browser tiers driven by per-attempt signals
+  rather than a single bypass short-circuit. New public types in
+  `kreuzcrawl::types::dispatch`: `Tier`, `EscalationStrategy`,
+  `EscalationReason`, `AttemptOutcome`, `RetryDirective`, `RetryPolicy`,
+  `WafSignal`, `WafClassifier`, `WafClassifyError`, `DomainStatePort`,
+  `DomainRecommendation`, `DomainObservation`, `ObservedOutcome`,
+  `EscalationBudget`, `BudgetExhausted`, and `DispatchProfile`. All
+  enums marked `#[non_exhaustive]` so future variants are non-breaking.
+- **`DispatchProfile`** bundles the dispatch trait-objects (bypass,
+  retry policy, WAF classifier, domain state, escalation budget) into a
+  single field on `CrawlConfig`, replacing the previous six scattered
+  `Option<Arc<dyn …>>` fields.
+- **Fluent builders** — `CrawlConfig::builder()` and
+  `DispatchProfile::builder()` for ergonomic construction.
+- **TOML WAF fingerprint corpus** — `rules/waf_fingerprints.toml`
+  carrying 34 fingerprints across the major vendors. Single source of
+  truth for vendor, severity, and header/body signals. Aho-Corasick
+  matcher with ASCII case-insensitive lookup. Defends against malformed
+  input via `MAX_FINGERPRINTS`, `MAX_PATTERN_LEN`, and
+  `MAX_SIGNALS_PER_FINGERPRINT` gates in `Rules::load_from_str`.
+- **`TomlClassifier::watch(path)`** — hot-reload of the WAF rules file
+  via `notify`, debounced 500 ms, atomic swap via `ArcSwap`. Designed
+  for Kubernetes ConfigMap projected volumes and the tmpfile-rename
+  safe-write pattern.
+- **`EwmaDomainState`** — process-local default `DomainStatePort` impl
+  with exponentially-weighted block-rate tracking (α=0.1, ~72h half-life)
+  driving promote/demote of starting tier per domain.
+- **OpenTelemetry counters** — `kreuzcrawl_waf_fingerprint_matches_total`
+  (per-fingerprint match count) and `kreuzcrawl_escalations_total`
+  (per tier transition with `from`, `to`, `reason` labels). Always-on;
+  not behind the `tracing` feature gate.
+- **`AttemptOutcome.content_density`** — `text_bytes / html_bytes` for
+  SPA-shell detection. Populated by the engine on every HTTP fetch.
+- **Property tests** (`tests/test_proptest_invariants.rs`) — EWMA
+  bounded + convergence, `FixedBudget` never-overdraw under concurrent
+  use, `compute_backoff_ms` monotonic until cap.
+- **Fuzz targets** (`fuzz/fuzz_targets/{toml_loader,waf_classify}.rs`) —
+  cargo-fuzz panic-free invariants on the WAF subsystem's external
+  attack surfaces, run for 30 s per PR by `ci-fuzz.yaml` on nightly.
+- **Criterion benchmarks** (`benches/waf.rs`) — Aho-Corasick build
+  cost and classify latency baselines on a 100 KB body.
+- **Coverage CI** (`ci-coverage.yaml`) — cargo-llvm-cov soft-warn at
+  90 % threshold.
+- **Integration test suite expansion** — `test_escalation.rs` (13
+  scenarios), `test_waf_detection_integration.rs` (10 WAF + 2xx
+  interstitial cases), `test_waf_robustness.rs` (TOML gates + classify
+  edge cases), `test_dispatch_robustness.rs` (soft_http × escalation
+  interaction), `test_waf_hot_reload.rs`, `test_dispatch_types.rs`
+  (serde round-trip), `test_async_borrow.rs` (Send/Clone proofs).
+
+### Changed
+
+- **`CrawlError::WafBlocked`** is now a struct variant —
+  `WafBlocked { vendor: String, message: String }` (was tuple).
+  `CrawlError` gains `#[derive(Clone)]` to allow owned `AttemptOutcome`.
+- **`WafClassifier::classify`** now returns
+  `Result<Option<WafSignal>, WafClassifyError>` (was `Option<WafSignal>`)
+  so misconfigured classifiers surface as distinct errors.
+- **`DomainStatePort`** refactored to an observation-based model:
+  `recommend(domain) -> DomainRecommendation` and
+  `observe(domain, observation)` replace the previous
+  `get` / `record_outcome`. Backends that prefer non-EWMA semantics
+  (Redis, rule-based, ML) can implement the port without forced EWMA.
+  Default impl renamed `InMemoryDomainState` → `EwmaDomainState`.
+- **`SimpleRetryPolicy` off-by-one fix** — `max_retries=3` now yields
+  3 retries as documented (was 2).
+- **`LearningRetryPolicy`** suppresses recording on permanent
+  non-WAF errors (DNS, SSL, Connection, InvalidConfig, Unsupported,
+  NotFound, Unauthorized, Gone, DataLoss, BrowserError, BrowserTimeout)
+  to keep domain EWMA from being polluted by unreachable hosts.
+- **`EwmaDomainState::observe`** uses a snapshot-compute-write pattern
+  that holds the DashMap shard lock only across the write, not across
+  the EWMA math.
+
+### Fixed
+
+- **Engine wires `WafClassifier`** at both the success and error arms.
+  Previously the classifier was configured on `CrawlConfig` but never
+  called by the dispatch loop, so WAF-driven escalation never fired.
+- **Engine respects `max_total_attempts`** — a buggy `RetryPolicy`
+  that returns `Retry` forever can no longer spin; the dispatcher
+  force-returns after the global cap (default 10).
+- **`Tier::Bypass + EscalationStrategy::BypassFirst`** now has an
+  explicit `None` arm in `next_tier` instead of the previous
+  catch-all that silently swallowed the strategy.
+- **WAF body fingerprints** restored — `"request blocked"`,
+  `"challenge.js"`, `"please verify you are human"` were dropped during
+  the original TOML extraction; refit alongside ≥3 new fixtures.
+- **`aws_cloudfront_server`** fingerprint dropped — CloudFront is a
+  CDN, not a WAF; firing on every CDN-fronted site produced false
+  positives.
+
+## [Earlier]
+
 ### Changed
 
 - **Split pub.dev publish into a dedicated `publish-pubdev.yaml` workflow
