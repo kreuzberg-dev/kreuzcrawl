@@ -1,0 +1,28 @@
+[package]
+name = "kreuzcrawl-fuzz"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+kreuzcrawl = { path = "../crates/kreuzcrawl" }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "toml_loader"
+path = "fuzz_targets/toml_loader.rs"
+bench = false
+doc = false
+test = false
+
+[[bin]]
+name = "waf_classify"
+path = "fuzz_targets/waf_classify.rs"
+bench = false
+doc = false
+test = false
+
+[workspace]

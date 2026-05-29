@@ -1,0 +1,29 @@
+name: ci-fuzz
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+
+permissions:
+    contents: read
+
+jobs:
+    fuzz:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        strategy:
+            fail-fast: false
+            matrix:
+                target: [toml_loader, waf_classify]
+        steps:
+            - uses: actions/checkout@v6
+            - uses: dtolnay/rust-toolchain@nightly
+            - uses: Swatinem/rust-cache@v2
+              with:
+                  workspaces: fuzz
+            - name: Install cargo-fuzz
+              run: cargo install cargo-fuzz --locked
+            - name: Run fuzz target ${{ matrix.target }} for 30s
+              working-directory: fuzz
+              run: cargo fuzz run ${{ matrix.target }} -- -max_total_time=30
