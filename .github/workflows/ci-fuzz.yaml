@@ -19,6 +19,8 @@ jobs:
         steps:
             - uses: actions/checkout@v6
             - uses: dtolnay/rust-toolchain@nightly
+            - name: Set nightly as default toolchain
+              run: rustup default nightly
             - uses: Swatinem/rust-cache@v2
               with:
                   workspaces: fuzz
@@ -26,4 +28,4 @@ jobs:
               run: cargo install cargo-fuzz --locked
             - name: Run fuzz target ${{ matrix.target }} for 30s
               working-directory: fuzz
-              run: cargo fuzz run ${{ matrix.target }} -- -max_total_time=30
+              run: cargo +nightly fuzz run ${{ matrix.target }} -- -max_total_time=30

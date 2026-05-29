@@ -139,5 +139,10 @@ harness = false
 name = "waf"
 harness = false
 
+[[test]]
+name = "test_pool_reuse"
+path = "tests/test_pool_reuse.rs"
+required-features = ["browser"]
+
 [lints]
 workspace = true

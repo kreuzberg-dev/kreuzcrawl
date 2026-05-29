@@ -57,6 +57,24 @@ weight = 1.0
 kind = "body_substring"
 pattern = "_cf_chl_opt"
 
+# Generic Cloudflare 403 block page: server header identifies the WAF and the
+# body contains a generic block phrase. Only fires when both signals are
+# present so a normal Cloudflare-fronted response with `server: cloudflare`
+# does not trip the classifier — the body must explicitly mention being
+# blocked. Captures custom WAF rule blocks that don't render the standard
+# `/cdn-cgi/challenge-platform/` shell.
+[[fingerprint]]
+id = "cloudflare_server_blocked_body"
+vendor = "cloudflare"
+weight = 0.8
+[[fingerprint.signals]]
+kind = "response_header"
+name = "server"
+value_contains = "cloudflare"
+[[fingerprint.signals]]
+kind = "body_substring"
+pattern = "blocked"
+
 [[fingerprint]]
 id = "cloudflare_browser_verification"
 vendor = "cloudflare"
