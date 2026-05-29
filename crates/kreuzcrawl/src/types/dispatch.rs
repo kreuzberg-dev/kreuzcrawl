@@ -196,46 +196,98 @@ pub trait WafClassifier: Send + Sync + fmt::Debug {
 /// Convenience alias for an owned, type-erased WAF classifier.
 pub type DynWafClassifier = Arc<dyn WafClassifier>;
 
+/// Recommendation returned by [`DomainStatePort::recommend`] for the next
+/// fetch attempt against a domain. Generic over the backend's internal
+/// model — the only data the engine needs to act on is which tier to
+/// start at and how confident the backend is in that choice.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DomainRecommendation {
+    /// Recommended starting tier for the next request to this domain.
+    pub starting_tier: Tier,
+    /// Confidence in the recommendation. `0.0` means "no information,
+    /// defaulting to Http"; `1.0` means "strong signal — use the tier".
+    /// Used by policies that want to weigh state-driven priors against
+    /// per-request signals.
+    pub confidence: f32,
+}
+
+/// Default `DomainRecommendation` is "no information": HTTP tier, confidence 0.
+impl Default for DomainRecommendation {
+    fn default() -> Self {
+        Self {
+            starting_tier: Tier::Http,
+            confidence: 0.0,
+        }
+    }
+}
+
+/// Single fetch outcome reported to [`DomainStatePort::observe`]. The
+/// backend turns these into its own state model (EWMA, rule-based,
+/// histogram, etc).
+#[derive(Debug, Clone)]
+pub struct DomainObservation {
+    /// The tier this observation came from.
+    pub tier: Tier,
+    /// What happened. The outcome enum is the load-bearing classification.
+    pub outcome: ObservedOutcome,
+    /// When the observation was made. Backends may use this for decay /
+    /// time-windowing.
+    pub timestamp: std::time::SystemTime,
+}
+
+impl DomainObservation {
+    /// Construct an observation with `timestamp = SystemTime::now()`.
+    pub fn now(tier: Tier, outcome: ObservedOutcome) -> Self {
+        Self {
+            tier,
+            outcome,
+            timestamp: std::time::SystemTime::now(),
+        }
+    }
+}
+
+/// Classification of a single fetch outcome.
+#[non_exhaustive]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ObservedOutcome {
+    /// Fetch returned content cleanly (HTTP 2xx, no WAF signals).
+    Success,
+    /// WAF detected the request. `vendor` matches `EscalationReason::WafBlocked.vendor`.
+    WafBlocked {
+        /// Lowercase vendor identifier, e.g. `"cloudflare"`.
+        vendor: String,
+    },
+    /// Fetch failed for a transient reason (5xx, timeout, rate-limited).
+    Transient,
+    /// Fetch failed for a permanent reason (DNS, SSL, NotFound).
+    /// Backends should usually ignore these — they say nothing about
+    /// domain-level bot protection.
+    Permanent,
+}
+
 /// Persistent per-domain dispatch state.
 ///
-/// Default impl in `crate::defaults::domain_state::InMemoryDomainState`
+/// Default impl in `crate::defaults::domain_state::EwmaDomainState`
 /// (Commit 1.5) is a process-local `DashMap`. kreuzberg-cloud provides a
 /// Postgres-backed impl in its `dispatch-postgres` crate.
+///
+/// The trait is generic over the observation model — self-hosters with
+/// non-EWMA backends (Redis, rule-based, ML-driven) implement against
+/// `DomainRecommendation` / `DomainObservation` without forced EWMA semantics.
 #[async_trait]
 pub trait DomainStatePort: Send + Sync + fmt::Debug {
-    /// Read the current state for `domain`, or `None` if no observations yet.
-    async fn get(&self, domain: &str) -> Option<DomainState>;
-    /// Record a fetch outcome. Implementations update EWMA, sample count,
-    /// classifier as appropriate.
-    async fn record_outcome(&self, domain: &str, outcome: &DomainOutcome);
+    /// Lookup the backend's recommendation for the next request to `domain`.
+    /// Implementations that have no observations for the domain return
+    /// `DomainRecommendation::default()`.
+    async fn recommend(&self, domain: &str) -> DomainRecommendation;
+
+    /// Record an outcome observation. Backends update their internal
+    /// model however they choose.
+    async fn observe(&self, domain: &str, observation: &DomainObservation);
 }
 
 /// Convenience alias for an owned, type-erased domain-state backend.
 pub type DynDomainStatePort = Arc<dyn DomainStatePort>;
-
-/// Snapshot of a domain's dispatch state.
-#[derive(Debug, Clone, PartialEq)]
-pub struct DomainState {
-    /// Exponentially-weighted moving average of the block rate (0.0–1.0).
-    pub block_ewma: f32,
-    /// Number of observations folded into [`Self::block_ewma`].
-    pub sample_count: u64,
-    /// Pre-classification result if known, e.g. `"cloudflare"`, `"akamai"`.
-    pub classifier: Option<String>,
-    /// Recommended starting tier for the next request to this domain.
-    pub starting_tier: Tier,
-}
-
-/// One observation fed to [`DomainStatePort::record_outcome`].
-#[derive(Debug, Clone)]
-pub struct DomainOutcome {
-    /// The tier this observation came from.
-    pub tier: Tier,
-    /// Whether the request was blocked.
-    pub blocked: bool,
-    /// WAF signal detected during this attempt, if any.
-    pub waf_signal: Option<WafSignal>,
-}
 
 /// Pluggable per-job escalation budget.
 ///

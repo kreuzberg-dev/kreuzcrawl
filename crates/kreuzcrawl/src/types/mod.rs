@@ -21,9 +21,9 @@ pub use discovery::{
     LinkType,
 };
 pub use dispatch::{
-    AttemptOutcome, BudgetExhausted, DispatchProfile, DomainOutcome, DomainState, DomainStatePort, DynDomainStatePort,
-    DynEscalationBudget, DynRetryPolicy, DynWafClassifier, EscalationBudget, EscalationReason, EscalationStrategy,
-    RetryDirective, RetryPolicy, Tier, WafClassifier, WafClassifyError, WafSignal,
+    AttemptOutcome, BudgetExhausted, DispatchProfile, DomainObservation, DomainRecommendation, DomainStatePort,
+    DynDomainStatePort, DynEscalationBudget, DynRetryPolicy, DynWafClassifier, EscalationBudget, EscalationReason,
+    EscalationStrategy, ObservedOutcome, RetryDirective, RetryPolicy, Tier, WafClassifier, WafClassifyError, WafSignal,
 };
 pub use metadata::{ArticleMetadata, FaviconInfo, HeadingInfo, HreflangEntry, PageMetadata, ResponseMeta};
 pub use results::{
