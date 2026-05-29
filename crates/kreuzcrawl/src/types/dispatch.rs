@@ -30,6 +30,16 @@ use crate::types::bypass::DynBypassProvider;
 /// | `BypassFirst` | Legacy: engine auto-selects this when `bypass` is set and strategy is unset |
 /// | `BypassOnly` | WAF-heavy targets without a browser backend configured |
 /// | `BypassThenBrowser` | Maximum resilience: vendor bypass then headless Chrome |
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::EscalationStrategy;
+/// let audit_strategy = EscalationStrategy::None;
+/// let browser_strategy = EscalationStrategy::BrowserOnly;
+/// let resilient_strategy = EscalationStrategy::BypassThenBrowser;
+/// // Use BrowserOnly for JS-heavy sites, BypassThenBrowser for maximum resilience.
+/// ```
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -53,6 +63,19 @@ pub enum EscalationStrategy {
 }
 
 /// Which tier produced the current attempt's outcome.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::Tier;
+/// let tier = Tier::Http;
+/// match tier {
+///     Tier::Http => println!("HTTP tier"),
+///     Tier::Bypass => println!("Bypass tier"),
+///     Tier::Browser => println!("Browser tier"),
+///     _ => println!("unknown tier"),
+/// }
+/// ```
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -66,6 +89,26 @@ pub enum Tier {
 }
 
 /// Why the dispatcher should escalate to the next tier.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::EscalationReason;
+/// let waf_block = EscalationReason::WafBlocked {
+///     vendor: "cloudflare".to_string(),
+/// };
+/// let soft_block = EscalationReason::SoftBlock;
+/// let render = EscalationReason::RenderNeeded;
+/// let unreliable = EscalationReason::OriginUnreliable;
+///
+/// match waf_block {
+///     EscalationReason::WafBlocked { vendor } => println!("Blocked by {}", vendor),
+///     EscalationReason::SoftBlock => println!("Soft block detected"),
+///     EscalationReason::RenderNeeded => println!("JS render needed"),
+///     EscalationReason::OriginUnreliable => println!("Origin unreachable"),
+///     _ => println!("unknown reason"),
+/// }
+/// ```
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -93,6 +136,30 @@ pub enum EscalationReason {
 /// All fields are owned so async impls can clone or move into spawned tasks
 /// without borrow-checker issues. The previous `<'a>` lifetime was incompatible
 /// with policies that record outcomes to background tasks.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{AttemptOutcome, Tier, WafSignal};
+/// # use std::sync::Arc;
+/// let outcome = AttemptOutcome {
+///     attempt: 0,
+///     url: Arc::from("https://example.com"),
+///     status: Some(403),
+///     error: None,
+///     waf_signal: Some(WafSignal {
+///         vendor: "cloudflare".to_string(),
+///         fingerprint_id: "challenge_slug".to_string(),
+///         weight: 0.95,
+///     }),
+///     body_size: 1024,
+///     content_density: 0.05,
+///     bytes_transferred: Some(2048),
+///     previous_tier: Tier::Http,
+/// };
+/// assert_eq!(outcome.status, Some(403));
+/// assert_eq!(outcome.attempt, 0);
+/// ```
 #[derive(Debug, Clone)]
 pub struct AttemptOutcome {
     /// Zero-based attempt index.
@@ -123,6 +190,19 @@ pub struct AttemptOutcome {
 ///
 /// The engine treats both variants as `None` for dispatch purposes and logs
 /// them at WARN — a misconfigured classifier does NOT crash the dispatcher.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::WafClassifyError;
+/// let build_err = WafClassifyError::BuildError("invalid toml".to_string());
+/// let classify_err = WafClassifyError::ClassifyError("bad encoding".to_string());
+///
+/// match build_err {
+///     WafClassifyError::BuildError(msg) => println!("Build failed: {}", msg),
+///     WafClassifyError::ClassifyError(msg) => println!("Classify failed: {}", msg),
+/// }
+/// ```
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum WafClassifyError {
     /// Classifier construction failed (e.g. TOML parse or AC build error).
@@ -134,6 +214,23 @@ pub enum WafClassifyError {
 }
 
 /// What the dispatcher does next, returned by [`RetryPolicy::decide`].
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{RetryDirective, EscalationReason};
+/// let stop = RetryDirective::Stop;
+/// let retry = RetryDirective::Retry { backoff_ms: 1000 };
+/// let escalate = RetryDirective::Escalate {
+///     reason: EscalationReason::SoftBlock,
+/// };
+///
+/// match escalate {
+///     RetryDirective::Stop => println!("Stop"),
+///     RetryDirective::Retry { backoff_ms } => println!("Wait {}ms", backoff_ms),
+///     RetryDirective::Escalate { reason } => println!("Escalate: {:?}", reason),
+/// }
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 pub enum RetryDirective {
     /// Stop. Surface the current result to the caller.
@@ -155,6 +252,26 @@ pub enum RetryDirective {
 /// Default impl in `crate::defaults::dispatch::SimpleRetryPolicy` (Commit 1.2)
 /// uses a per-error mapping with no learning. Callers can wire
 /// state-backed policies (e.g. EWMA, per-domain priors) via this trait.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{RetryPolicy, RetryDirective, AttemptOutcome};
+/// # use async_trait::async_trait;
+/// # use std::fmt;
+/// #[derive(Debug)]
+/// struct AlwaysStop;
+///
+/// #[async_trait]
+/// impl RetryPolicy for AlwaysStop {
+///     async fn decide(&self, _outcome: &AttemptOutcome) -> RetryDirective {
+///         RetryDirective::Stop
+///     }
+///     fn name(&self) -> &'static str {
+///         "always_stop"
+///     }
+/// }
+/// ```
 #[async_trait]
 pub trait RetryPolicy: Send + Sync + fmt::Debug {
     /// Decide what the dispatcher does after the given attempt.
@@ -168,6 +285,19 @@ pub trait RetryPolicy: Send + Sync + fmt::Debug {
 pub type DynRetryPolicy = Arc<dyn RetryPolicy>;
 
 /// Output of a WAF classifier — a single fingerprint match.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::WafSignal;
+/// let signal = WafSignal {
+///     vendor: "cloudflare".to_string(),
+///     fingerprint_id: "challenge_slug".to_string(),
+///     weight: 0.95,
+/// };
+/// assert_eq!(signal.vendor, "cloudflare");
+/// assert!(signal.weight > 0.9);
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct WafSignal {
     /// Lowercase vendor identifier: `"cloudflare"`, `"datadome"`, …
@@ -183,6 +313,22 @@ pub struct WafSignal {
 /// Default impl in `crate::waf::TomlClassifier` (Commit 1.4) loads
 /// `rules/waf_fingerprints.toml`, runs Aho-Corasick over the body and
 /// checks response headers.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{WafClassifier, WafSignal, WafClassifyError};
+/// # use kreuzcrawl::http::HttpResponse;
+/// # use std::fmt;
+/// #[derive(Debug)]
+/// struct AlwaysClean;
+///
+/// impl WafClassifier for AlwaysClean {
+///     fn classify(&self, _response: &HttpResponse) -> Result<Option<WafSignal>, WafClassifyError> {
+///         Ok(None)
+///     }
+/// }
+/// ```
 pub trait WafClassifier: Send + Sync + fmt::Debug {
     /// Inspect the response; return a [`WafSignal`] if any fingerprint matches.
     ///
@@ -200,6 +346,17 @@ pub type DynWafClassifier = Arc<dyn WafClassifier>;
 /// fetch attempt against a domain. Generic over the backend's internal
 /// model — the only data the engine needs to act on is which tier to
 /// start at and how confident the backend is in that choice.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{DomainRecommendation, Tier};
+/// let rec = DomainRecommendation {
+///     starting_tier: Tier::Browser,
+///     confidence: 0.85,
+/// };
+/// println!("Start at {:?} with confidence {}", rec.starting_tier, rec.confidence);
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct DomainRecommendation {
     /// Recommended starting tier for the next request to this domain.
@@ -224,6 +381,15 @@ impl Default for DomainRecommendation {
 /// Single fetch outcome reported to [`DomainStatePort::observe`]. The
 /// backend turns these into its own state model (EWMA, rule-based,
 /// histogram, etc).
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{DomainObservation, Tier, ObservedOutcome};
+/// let obs = DomainObservation::now(Tier::Http, ObservedOutcome::Success);
+/// assert_eq!(obs.tier, Tier::Http);
+/// assert_eq!(obs.outcome, ObservedOutcome::Success);
+/// ```
 #[derive(Debug, Clone)]
 pub struct DomainObservation {
     /// The tier this observation came from.
@@ -247,6 +413,26 @@ impl DomainObservation {
 }
 
 /// Classification of a single fetch outcome.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::ObservedOutcome;
+/// let success = ObservedOutcome::Success;
+/// let blocked = ObservedOutcome::WafBlocked {
+///     vendor: "datadome".to_string(),
+/// };
+/// let transient = ObservedOutcome::Transient;
+/// let permanent = ObservedOutcome::Permanent;
+///
+/// match success {
+///     ObservedOutcome::Success => println!("Clean response"),
+///     ObservedOutcome::WafBlocked { vendor } => println!("Blocked by {}", vendor),
+///     ObservedOutcome::Transient => println!("Transient failure"),
+///     ObservedOutcome::Permanent => println!("Permanent failure"),
+///     _ => println!("unknown outcome"),
+/// }
+/// ```
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObservedOutcome {
@@ -274,6 +460,27 @@ pub enum ObservedOutcome {
 /// The trait is generic over the observation model — self-hosters with
 /// non-EWMA backends (Redis, rule-based, ML-driven) implement against
 /// `DomainRecommendation` / `DomainObservation` without forced EWMA semantics.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{DomainStatePort, DomainRecommendation, DomainObservation, Tier};
+/// # use async_trait::async_trait;
+/// # use std::fmt;
+/// #[derive(Debug)]
+/// struct AlwaysDefault;
+///
+/// #[async_trait]
+/// impl DomainStatePort for AlwaysDefault {
+///     async fn recommend(&self, _domain: &str) -> DomainRecommendation {
+///         DomainRecommendation::default()
+///     }
+///
+///     async fn observe(&self, _domain: &str, _observation: &DomainObservation) {
+///         // No-op for this example
+///     }
+/// }
+/// ```
 #[async_trait]
 pub trait DomainStatePort: Send + Sync + fmt::Debug {
     /// Lookup the backend's recommendation for the next request to `domain`.
@@ -294,6 +501,23 @@ pub type DynDomainStatePort = Arc<dyn DomainStatePort>;
 /// Returned `BudgetExhausted` causes the dispatcher to refuse further
 /// escalation. Implementations decide whether the job degrades to the
 /// cheapest tier or fails outright.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{EscalationBudget, BudgetExhausted};
+/// # use async_trait::async_trait;
+/// # use std::fmt;
+/// #[derive(Debug)]
+/// struct UnlimitedBudget;
+///
+/// #[async_trait]
+/// impl EscalationBudget for UnlimitedBudget {
+///     async fn try_consume(&self, _cost_cents: u32) -> Result<(), BudgetExhausted> {
+///         Ok(())
+///     }
+/// }
+/// ```
 #[async_trait]
 pub trait EscalationBudget: Send + Sync + fmt::Debug {
     /// Attempt to debit `cost_cents` from the remaining budget. `Ok(())`
@@ -305,6 +529,17 @@ pub trait EscalationBudget: Send + Sync + fmt::Debug {
 pub type DynEscalationBudget = Arc<dyn EscalationBudget>;
 
 /// Returned by [`EscalationBudget::try_consume`] when no budget remains.
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::BudgetExhausted;
+/// let err = BudgetExhausted;
+/// match Err::<(), _>(err) {
+///     Err(BudgetExhausted) => println!("No budget"),
+///     Ok(()) => println!("Budget available"),
+/// }
+/// ```
 #[derive(Debug, Clone, Copy, Error, PartialEq, Eq)]
 #[error("escalation_budget_exhausted")]
 pub struct BudgetExhausted;
@@ -316,6 +551,18 @@ pub struct BudgetExhausted;
 /// relied on `CrawlConfig.bypass.is_some()` auto-promoting the strategy to
 /// `BypassFirst` must now set `strategy: EscalationStrategy::BypassFirst`
 /// explicitly in this struct (Commit 1.5.12 breaking change).
+///
+/// # Examples
+///
+/// ```
+/// # use kreuzcrawl::{DispatchProfile, EscalationStrategy};
+/// let profile = DispatchProfile::builder()
+///     .strategy(EscalationStrategy::BypassThenBrowser)
+///     .max_total_attempts(15)
+///     .build();
+/// assert_eq!(profile.strategy, EscalationStrategy::BypassThenBrowser);
+/// assert_eq!(profile.max_total_attempts, 15);
+/// ```
 #[derive(Debug, Clone)]
 pub struct DispatchProfile {
     /// Caller-supplied bypass provider.
