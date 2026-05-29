@@ -101,10 +101,14 @@ pub(super) fn start_watch(classifier: Arc<TomlClassifier>, watch_path: &Path) ->
 
         // Only react to events that touch the exact watch target. Match on:
         //   1. exact path equality against the original watch_path
-        //   2. canonical equality (resolves symlinks — k8s ConfigMap case)
-        //   3. file-name equality inside the watched parent directory
-        //      (covers inotify-delivered Create events for files that did not
-        //       exist at watcher-setup time)
+        //   2. canonical equality against the canonical target captured at
+        //      setup. Handles static symlinks pointing at a stable inode.
+        //   3. file-name equality inside the watched parent directory.
+        //      Carries the load for inotify-delivered Create events for files
+        //      that did not exist at setup, AND for the Kubernetes ConfigMap
+        //      atomic-projection symlink swap (each swap rotates the inode
+        //      that canonical_target captured, so arm 2 stops matching after
+        //      the first swap — only arm 3 remains).
         let is_relevant = matches!(
             event.kind,
             EventKind::Modify(_) | EventKind::Create(_) | EventKind::Remove(_)

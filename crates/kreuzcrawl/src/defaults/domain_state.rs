@@ -17,6 +17,7 @@ use super::dispatch::SimpleRetryPolicy;
 /// Pure-math EWMA with promote/demote thresholds. Stateless — caller
 /// supplies the prior and the observation.
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(alef, alef(skip))]
 pub struct EwmaTracker {
     /// Smoothing factor 0.0 < alpha < 1.0. Higher = react faster.
     alpha: f32,
@@ -94,6 +95,7 @@ struct DomainSnapshot {
 /// For multi-process / multi-tenant learning, use kreuzberg-cloud's
 /// PostgresDomainState.
 #[derive(Debug, Default)]
+#[cfg_attr(alef, alef(skip))]
 pub struct EwmaDomainState {
     inner: DashMap<String, DomainSnapshot>,
     ewma: EwmaTracker,
@@ -197,6 +199,7 @@ impl DomainStatePort for EwmaDomainState {
 /// prior on each decision. Falls back to [`SimpleRetryPolicy`] semantics
 /// when no state is available for the domain.
 #[derive(Debug)]
+#[cfg_attr(alef, alef(skip))]
 pub struct LearningRetryPolicy {
     state: Arc<dyn DomainStatePort>,
     fallback: SimpleRetryPolicy,

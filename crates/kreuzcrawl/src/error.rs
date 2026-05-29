@@ -8,6 +8,7 @@ use thiserror::Error;
 /// that is stable across all language bindings. Cross-language e2e fixtures
 /// assert that the error message contains the corresponding tag.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum NetworkErrorKind {
     /// TCP connection attempt refused or unreachable.
     Connection,
@@ -44,6 +45,7 @@ impl NetworkErrorKind {
 
 /// Errors that can occur during crawling, scraping, or mapping operations.
 #[derive(Debug, Clone, Error)]
+#[non_exhaustive]
 pub enum CrawlError {
     /// The requested page was not found (HTTP 404).
     #[error("not_found: {0}")]

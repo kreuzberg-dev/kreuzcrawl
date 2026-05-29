@@ -2,7 +2,6 @@
 //! [`crate::types::EscalationBudget`]. These work standalone — no state
 //! backend, no persistence. kreuzberg-cloud's `dispatch-postgres` crate
 //! provides learning impls on top of these traits.
-#![allow(dead_code)]
 
 use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
@@ -27,6 +26,7 @@ use crate::types::{AttemptOutcome, BudgetExhausted, EscalationBudget, Escalation
 /// | `Dns`, `Ssl`, `Connection`, `InvalidConfig`, `Unsupported` | `Stop` (permanent) |
 /// | other | `Stop` |
 #[derive(Debug, Clone)]
+#[cfg_attr(alef, alef(skip))]
 pub struct SimpleRetryPolicy {
     max_retries: u32,
     max_backoff_ms: u64,
@@ -123,6 +123,7 @@ pub fn compute_backoff_ms(attempt: u32, max_backoff_ms: u64) -> u64 {
 /// [`EscalationBudget`] that always permits escalation. Used by default
 /// when no budget is configured on `CrawlConfig`.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(alef, alef(skip))]
 pub struct UnlimitedBudget;
 
 #[async_trait]
@@ -137,6 +138,7 @@ impl EscalationBudget for UnlimitedBudget {
 /// budget can't cover the request. Useful for self-hosters that want
 /// per-process spend caps without a database.
 #[derive(Debug)]
+#[cfg_attr(alef, alef(skip))]
 pub struct FixedBudget {
     remaining_cents: AtomicU32,
 }
