@@ -17,7 +17,7 @@ FFI_LIB_DIR := $(if $(wildcard $(FFI_DIR)/lib),$(FFI_DIR)/lib,$(if $(wildcard ..
 
 ifneq ($(FFI_INCLUDE),)
     CFLAGS = -Wall -Wextra -I. -I$(FFI_INCLUDE)
-    LDFLAGS = -L$(FFI_LIB_DIR) -lkreuzcrawl_ffi -Wl,-rpath,$(FFI_LIB_DIR)
+    LDFLAGS = -L$(FFI_LIB_DIR) -lkreuzcrawl_ffi
 else
     CFLAGS = -Wall -Wextra -I. $(shell pkg-config --cflags kreuzcrawl_ffi 2>/dev/null)
     LDFLAGS = $(shell pkg-config --libs kreuzcrawl_ffi 2>/dev/null)

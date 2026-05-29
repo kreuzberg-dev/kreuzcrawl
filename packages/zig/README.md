@@ -17,7 +17,7 @@ zig build test
 
 Add to your `build.zig.zon`:
 
-```
+```text
 .dependencies = .{
     .kreuzcrawl = .{
         .path = "path/to/kreuzcrawl",

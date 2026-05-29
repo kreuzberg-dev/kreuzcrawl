@@ -7,9 +7,7 @@ publish = false
 [package.metadata]
 cargo-fuzz = true
 
-[dependencies]
-kreuzcrawl = { path = "../crates/kreuzcrawl" }
-libfuzzer-sys = "0.4"
+[workspace]
 
 [[bin]]
 name = "toml_loader"
@@ -25,4 +23,6 @@ bench = false
 doc = false
 test = false
 
-[workspace]
+[dependencies]
+kreuzcrawl = { path = "../crates/kreuzcrawl" }
+libfuzzer-sys = "0.4"
