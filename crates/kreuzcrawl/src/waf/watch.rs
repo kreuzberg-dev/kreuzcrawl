@@ -21,8 +21,22 @@ use crate::waf::rules::load_from_path;
 pub struct WatchHandle {
     // Keep the watcher alive. Dropping it de-registers the OS watch.
     pub(super) _watcher: RecommendedWatcher,
-    // Signals the debounce task to exit cleanly.
-    pub(super) _shutdown: oneshot::Sender<()>,
+    // Signals the debounce task to exit cleanly. Held in Option so Drop can
+    // send the shutdown signal before aborting the task as a backstop.
+    pub(super) shutdown: Option<oneshot::Sender<()>>,
+    // Debounce task handle; aborted by Drop after the shutdown signal fires,
+    // so a panicked task cannot silently leak.
+    pub(super) task: tokio::task::JoinHandle<()>,
+}
+
+impl Drop for WatchHandle {
+    fn drop(&mut self) {
+        // Best-effort cooperative shutdown first, then abort as backstop.
+        if let Some(tx) = self.shutdown.take() {
+            let _ = tx.send(());
+        }
+        self.task.abort();
+    }
 }
 
 /// Error returned when setting up a [`WatchHandle`].
@@ -42,12 +56,21 @@ pub enum WatchError {
 /// The caller receives a [`WatchHandle`]; dropping it stops the watcher and
 /// the debounce task.
 pub(super) fn start_watch(classifier: Arc<TomlClassifier>, watch_path: &Path) -> Result<WatchHandle, WatchError> {
-    let watch_path = watch_path.canonicalize().unwrap_or_else(|_| watch_path.to_owned());
-
+    // Resolve the parent directory eagerly because the OS watcher needs it to
+    // exist NOW. Do NOT canonicalize watch_path itself: on Linux/inotify the
+    // file may not exist yet (Kubernetes ConfigMap atomic projection, freshly
+    // created temp file in tests), and an eager canonicalize would silently
+    // fall back to the un-resolved path. The event closure then compares the
+    // un-resolved path against inotify's resolved path and never matches.
+    // Canonicalize lazily inside the closure when both sides exist, and fall
+    // back to file-name match inside the watched parent directory.
+    let watch_path = watch_path.to_owned();
     let parent = watch_path
         .parent()
         .ok_or_else(|| WatchError::NoParent(watch_path.clone()))?
         .to_owned();
+    let parent = parent.canonicalize().unwrap_or(parent);
+    let file_name = watch_path.file_name().map(|n| n.to_owned());
 
     // Bounded channel: if the debounce task is busy the sender simply fills
     // up, which is fine — we only care that at least one tick gets through.
@@ -56,10 +79,11 @@ pub(super) fn start_watch(classifier: Arc<TomlClassifier>, watch_path: &Path) ->
 
     // Spawn the async debounce loop before creating the watcher so the
     // receiver is live before any events can arrive.
-    spawn_debounce_task(classifier, watch_path.clone(), event_rx, shutdown_rx);
+    let task = spawn_debounce_task(classifier, watch_path.clone(), event_rx, shutdown_rx);
 
     // Build and arm the watcher. Errors here are propagated to the caller.
     let path_for_closure = watch_path.clone();
+    let canonical_target = path_for_closure.canonicalize().ok();
     let mut watcher = notify::recommended_watcher(move |result: notify::Result<Event>| {
         let event = match result {
             Ok(e) => e,
@@ -75,14 +99,26 @@ pub(super) fn start_watch(classifier: Arc<TomlClassifier>, watch_path: &Path) ->
             }
         };
 
-        // Only react to events that touch the exact watch target.
+        // Only react to events that touch the exact watch target. Match on:
+        //   1. exact path equality against the original watch_path
+        //   2. canonical equality (resolves symlinks — k8s ConfigMap case)
+        //   3. file-name equality inside the watched parent directory
+        //      (covers inotify-delivered Create events for files that did not
+        //       exist at watcher-setup time)
         let is_relevant = matches!(
             event.kind,
             EventKind::Modify(_) | EventKind::Create(_) | EventKind::Remove(_)
-        ) && event
-            .paths
-            .iter()
-            .any(|p| p == &path_for_closure || p.canonicalize().map(|c| c == path_for_closure).unwrap_or(false));
+        ) && event.paths.iter().any(|p| {
+            if p == &path_for_closure {
+                return true;
+            }
+            if let (Ok(p_canon), Some(target)) = (p.canonicalize(), canonical_target.as_ref())
+                && &p_canon == target
+            {
+                return true;
+            }
+            file_name.as_deref().is_some_and(|name| p.file_name() == Some(name))
+        });
 
         if is_relevant {
             // Ignore a full channel — a tick is already pending.
@@ -94,7 +130,8 @@ pub(super) fn start_watch(classifier: Arc<TomlClassifier>, watch_path: &Path) ->
 
     Ok(WatchHandle {
         _watcher: watcher,
-        _shutdown: shutdown_tx,
+        shutdown: Some(shutdown_tx),
+        task,
     })
 }
 
@@ -105,7 +142,7 @@ fn spawn_debounce_task(
     path: PathBuf,
     mut event_rx: mpsc::Receiver<()>,
     mut shutdown_rx: oneshot::Receiver<()>,
-) {
+) -> tokio::task::JoinHandle<()> {
     tokio::spawn(async move {
         loop {
             // Wait for the first tick or shutdown.
@@ -151,5 +188,5 @@ fn spawn_debounce_task(
                 }
             }
         }
-    });
+    })
 }
