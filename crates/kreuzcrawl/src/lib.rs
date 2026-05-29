@@ -62,9 +62,10 @@ pub use citations::{CitationReference, CitationResult, generate_citations};
 pub use defaults::{
     AdaptiveStrategy, BestFirstStrategy, BfsStrategy, DfsStrategy, EwmaDomainState, EwmaTracker, FixedBudget,
     InMemoryFrontier, LearningRetryPolicy, NoopCache, NoopEmitter, NoopFilter, NoopStore, PerDomainThrottle,
-    SimpleRetryPolicy, UnlimitedBudget, compute_backoff_ms, default_retry_policy, in_memory_domain_state,
-    unlimited_budget,
+    SimpleRetryPolicy, UnlimitedBudget, default_retry_policy, in_memory_domain_state, unlimited_budget,
 };
+#[doc(hidden)]
+pub use defaults::compute_backoff_ms;
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
 pub use interact::{

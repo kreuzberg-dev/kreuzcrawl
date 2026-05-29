@@ -82,6 +82,23 @@ All notable changes to kreuzcrawl are documented here.
 - **`EwmaDomainState::observe`** uses a snapshot-compute-write pattern
   that holds the DashMap shard lock only across the write, not across
   the EWMA math.
+- **`DomainRecommendation::confidence`** changed from `f32` to
+  `Option<f32>`. `None` means "no opinion" — backends that do not
+  produce a probability (rule-based Redis allowlists, etc.) no longer
+  have to invent a numeric value. `EwmaDomainState` returns
+  `Some(value)` once it has samples, `None` until then.
+- **`#[non_exhaustive]`** added to `Tier`, `EscalationStrategy`,
+  `EscalationReason`, `ObservedOutcome`, `RetryDirective`,
+  `WafClassifyError`, `NetworkErrorKind`, and `CrawlError`. Future
+  variants can be added without a breaking change for downstream
+  match arms.
+- **Default impl re-exports** — `EwmaDomainState`, `EwmaTracker`,
+  `FixedBudget`, `LearningRetryPolicy`, `SimpleRetryPolicy`,
+  `UnlimitedBudget`, and convenience constructors
+  `default_retry_policy`, `unlimited_budget`,
+  `in_memory_domain_state` are now reachable from the crate root.
+  All carry `#[cfg_attr(alef, alef(skip))]` because their internals
+  (`AtomicU32`, `DashMap`, `Arc<dyn Trait>`) are not FFI-safe.
 
 ### Fixed
 
@@ -100,6 +117,25 @@ All notable changes to kreuzcrawl are documented here.
 - **`aws_cloudfront_server`** fingerprint dropped — CloudFront is a
   CDN, not a WAF; firing on every CDN-fronted site produced false
   positives.
+- **`TomlClassifier::watch` hot-reload on Linux/Kubernetes** —
+  canonicalize is now performed lazily inside the event closure.
+  An eager canonicalize at setup silently fell back to the
+  un-resolved path when the target did not yet exist, and the
+  closure compared against the un-resolved path while inotify
+  delivered the resolved path, so reload events were dropped.
+  Kubernetes ConfigMap atomic symlink projection also went silent
+  because each rotation broke the captured canonical inode.
+  The closure now matches three ways (exact, canonical, file name
+  inside the watched parent directory) so both cases work.
+- **`WatchHandle` drop** — the debounce task `JoinHandle` is held
+  on the handle and aborted from `Drop` as a backstop after the
+  cooperative shutdown signal fires; a panicked task can no longer
+  silently stop reloads while leaving the handle alive.
+- **Engine error-path `WafSignal`** — the synthesized
+  `fingerprint_id` is now empty (was `"from_error"`). The vendor
+  field carries attribution; the empty string avoids a phantom
+  Prometheus label cardinality if a downstream consumer reads
+  `outcome.waf_signal.fingerprint_id`.
 
 ## [Earlier]
 
