@@ -5,7 +5,7 @@
     .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .kreuzcrawl = .{
-            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.38/kreuzcrawl-zig-v0.3.0-rc.38.tar.gz",
+            .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.39/kreuzcrawl-zig-v0.3.0-rc.39.tar.gz",
             .hash = "TODO",
         },
     },

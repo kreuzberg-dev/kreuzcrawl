@@ -1192,7 +1192,8 @@ char *kcrawl_interaction_result_final_url(const KCRAWLInteractionResult *ptr);
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
-uint8_t *kcrawl_interaction_result_screenshot(const KCRAWLInteractionResult *ptr);
+uint8_t *kcrawl_interaction_result_screenshot(const KCRAWLInteractionResult *ptr,
+                                              uintptr_t *out_len);
 
 /**
  * Create a `ActionResult` from a JSON string. Returns null on failure.
@@ -1462,7 +1463,8 @@ KCRAWLExtractionMeta *kcrawl_scrape_result_extraction_meta(const KCRAWLScrapeRes
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
-uint8_t *kcrawl_scrape_result_screenshot(const KCRAWLScrapeResult *ptr);
+uint8_t *kcrawl_scrape_result_screenshot(const KCRAWLScrapeResult *ptr,
+                                         uintptr_t *out_len);
 
 /**
  * Get the `downloaded_document` field from a `ScrapeResult`.

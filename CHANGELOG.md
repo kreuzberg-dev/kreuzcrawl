@@ -4,6 +4,17 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.39] - 2026-05-29
+
+### Changed
+
+- Bump alef pin to `0.20.14` to consume the ruby Rakefile fixes (gemspec extensions path, file-only glob, relative lib_dir) and post-0.20.12 codegen fixes (project-name special-casing, dart Uri qualification, swift async overrides, dart build config-aware post-processors, csharp delegates GCHandle pin, rustler base_url wrap).
+
+### Fixed
+
+- **ruby binding compile**: orphaned files from older alef layouts under `packages/ruby/ext/kreuzcrawl_rb/` removed; alef-generated tree now matches the v0.20.14 layout (extconf.rb at `ext/<name>/native/`, gemspec extensions resolved correctly, rake-compiler copy task no longer trips on directories).
+- **brew test_app wired into CI**: `verify-published-packages` matrix in `.github/workflows/publish.yaml` already includes `brew` as a language target; previously verified absent in CHANGELOG but confirmed live this iteration.
+
 ## [0.3.0-rc.38] - 2026-05-29
 
 ### Added

@@ -12,7 +12,7 @@
 
 use std::sync::{Arc, OnceLock};
 
-use kreuzcrawl::{EwmaTracker, FixedBudget, EscalationBudget, compute_backoff_ms};
+use kreuzcrawl::{EscalationBudget, EwmaTracker, FixedBudget, compute_backoff_ms};
 use proptest::prelude::*;
 use tokio::runtime::Runtime;
 

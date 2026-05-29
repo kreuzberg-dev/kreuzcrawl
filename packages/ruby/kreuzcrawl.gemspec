@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = "kreuzcrawl"
-  spec.version = "0.3.0.pre.rc.38"
+  spec.version = "0.3.0.pre.rc.39"
   spec.authors       = ["Kreuzberg Team"]
   spec.summary       = "High-performance web crawling engine"
   spec.description   = "High-performance web crawling engine"
@@ -12,9 +12,9 @@ Gem::Specification.new do |spec|
   spec.metadata["keywords"] = %w[crawl scrape spider web].join(",")
   spec.metadata["rubygems_mfa_required"] = "true"
 
-  spec.files         = Dir.glob(%w[README* LICENSE* lib/**/* ext/**/* sig/**/* Steepfile]).reject { |f| f.include?("/native/target/") || f.include?("/native/tmp/") }
+  spec.files         = Dir.glob(%w[README* LICENSE* lib/**/* ext/**/* sig/**/* Steepfile]).select { |f| File.file?(f) }.reject { |f| f.include?("/native/target/") || f.include?("/native/tmp/") }
   spec.require_paths = ["lib"]
-  spec.extensions    = ["ext/kreuzcrawl_rb/extconf.rb"]
+  spec.extensions    = ["ext/kreuzcrawl_rb/native/extconf.rb"]
 
   spec.add_dependency "rb_sys", "~> 0.9"
   spec.add_dependency "sorbet-runtime", "~> 0.5"

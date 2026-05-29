@@ -3,7 +3,7 @@
 
 package kreuzcrawl
 
-import _ "embed"
+import "embed"
 
 // This file ensures that FFI header files and library artifacts are included
 // when this module is vendored. The //go:embed directive tells Go to include

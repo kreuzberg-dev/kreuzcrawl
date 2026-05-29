@@ -59,13 +59,13 @@ pub use browser_pool::{BrowserPool, BrowserPoolConfig};
 #[cfg(feature = "browser")]
 pub use browser_session_pool::{BrowserSessionPool, SessionKey};
 pub use citations::{CitationReference, CitationResult, generate_citations};
+#[doc(hidden)]
+pub use defaults::compute_backoff_ms;
 pub use defaults::{
     AdaptiveStrategy, BestFirstStrategy, BfsStrategy, DfsStrategy, EwmaDomainState, EwmaTracker, FixedBudget,
     InMemoryFrontier, LearningRetryPolicy, NoopCache, NoopEmitter, NoopFilter, NoopStore, PerDomainThrottle,
     SimpleRetryPolicy, UnlimitedBudget, default_retry_policy, in_memory_domain_state, unlimited_budget,
 };
-#[doc(hidden)]
-pub use defaults::compute_backoff_ms;
 pub use engine::{CrawlEngine, CrawlEngineBuilder};
 pub use error::CrawlError;
 pub use interact::{

@@ -4,7 +4,7 @@ set -euo pipefail
 # Download the Swift artifact bundle and compute its checksum.
 # SwiftPM requires a stable SHA256 checksum for binary targets.
 
-ARTIFACT_URL="https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.38/Kreuzcrawl-rs.artifactbundle.zip"
+ARTIFACT_URL="https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.39/Kreuzcrawl-rs.artifactbundle.zip"
 ARTIFACT_FILE="Kreuzcrawl-rs.artifactbundle.zip"
 PACKAGE_SWIFT="Package.swift"
 
