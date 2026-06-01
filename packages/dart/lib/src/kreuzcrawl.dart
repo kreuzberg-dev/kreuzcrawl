@@ -4,6 +4,7 @@ import 'dart:async' show Stream;
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 
 export 'kreuzcrawl_bridge_generated/lib.dart';
+export 'traits.dart';
 import 'kreuzcrawl_bridge_generated/lib.dart' as rust_bridge;
 // ignore: duplicate_import
 import 'kreuzcrawl_bridge_generated/lib.dart';

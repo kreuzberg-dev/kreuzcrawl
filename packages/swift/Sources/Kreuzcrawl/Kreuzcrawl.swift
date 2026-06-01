@@ -1625,6 +1625,42 @@ public enum CrawlError: Swift.Error {
     case other(message: String, field0: String)
 }
 
+// MARK: - JSON-String Convenience Overloads
+// These overloads accept JSON-encoded config parameters and decode them automatically.
+// Enables e2e tests to pass JSON strings directly without typed config construction.
+
+/// Resolves a string argument as either a file path or literal UTF-8 content.
+/// Searches: current working directory, ALEF_TEST_DOCUMENTS_DIR env var,
+/// and ancestor `test_documents/` or `fixtures/` directories (up to 16 levels).
+/// If no file is found, treats the string as UTF-8 content and returns its bytes.
+private func _loadBytesFromPathOrUtf8(_ pathOrContent: String) throws -> [UInt8] {
+    let fm = FileManager.default
+    var roots: [String] = [fm.currentDirectoryPath]
+    if let envRoot = ProcessInfo.processInfo.environment["ALEF_TEST_DOCUMENTS_DIR"] {
+        roots.append(envRoot)
+    }
+    var walker = URL(fileURLWithPath: fm.currentDirectoryPath)
+    for _ in 0..<16 {
+        roots.append(walker.appendingPathComponent("test_documents").path)
+        roots.append(walker.appendingPathComponent("fixtures").path)
+        let parent = walker.deletingLastPathComponent()
+        if parent.path == walker.path { break }
+        walker = parent
+    }
+    let candidates = [pathOrContent] + roots.map { ($0 as NSString).appendingPathComponent(pathOrContent) }
+    for path in candidates {
+        if fm.fileExists(atPath: path), let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
+            return [UInt8](data)
+        }
+    }
+    return [UInt8](pathOrContent.utf8)
+}
+
+public func createEngine(_ configJson: String) throws -> CrawlEngineHandle {
+    let config = try crawlConfigFromJson(configJson)
+    return try createEngine(config: config)
+}
+
 // MARK: - From-JSON Helpers
 // Public helpers that decode JSON into first-class Swift types.
 // First-class struct types (Codable) use JSONDecoder directly.
@@ -1895,8 +1931,8 @@ public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapR
 
 /// Execute browser actions on a single page.
 public func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) async throws -> InteractionResult {
-    let _rb_actions: RustVec<RustString> = try ({ () throws -> RustVec<RustString> in let v = RustVec<RustString>(); for item in actions { let data = try JSONEncoder().encode(item); let json = String(data: data, encoding: .utf8) ?? "null"; v.push(value: RustString(json)) }; return v }())
     return try await Task.detached(priority: .userInitiated) {
+        let _rb_actions: RustVec<RustString> = try ({ () throws -> RustVec<RustString> in let v = RustVec<RustString>(); for item in actions { let data = try JSONEncoder().encode(item); let json = String(data: data, encoding: .utf8) ?? "null"; v.push(value: RustString(json)) }; return v }())
         let result = try RustBridge.interact(engine, RustString(url), _rb_actions)
         return result
     }.value
@@ -1904,8 +1940,8 @@ public func interact(engine: CrawlEngineHandle, url: String, actions: [PageActio
 
 /// Scrape multiple URLs concurrently.
 public func batchScrape(engine: CrawlEngineHandle, urls: [String]) async throws -> BatchScrapeResults {
-    let _rb_urls: RustVec<RustString> = { let v = RustVec<RustString>(); for s in urls { v.push(value: RustString(s)) }; return v }()
     return try await Task.detached(priority: .userInitiated) {
+        let _rb_urls: RustVec<RustString> = { let v = RustVec<RustString>(); for s in urls { v.push(value: RustString(s)) }; return v }()
         let result = try RustBridge.batchScrape(engine, _rb_urls)
         return result
     }.value
@@ -1913,8 +1949,8 @@ public func batchScrape(engine: CrawlEngineHandle, urls: [String]) async throws 
 
 /// Crawl multiple seed URLs concurrently, each following links to configured depth.
 public func batchCrawl(engine: CrawlEngineHandle, urls: [String]) async throws -> BatchCrawlResults {
-    let _rb_urls: RustVec<RustString> = { let v = RustVec<RustString>(); for s in urls { v.push(value: RustString(s)) }; return v }()
     return try await Task.detached(priority: .userInitiated) {
+        let _rb_urls: RustVec<RustString> = { let v = RustVec<RustString>(); for s in urls { v.push(value: RustString(s)) }; return v }()
         let result = try RustBridge.batchCrawl(engine, _rb_urls)
         return result
     }.value
@@ -1990,23 +2026,73 @@ public func batchCrawlStream(_ crawlEngineHandle: CrawlEngineHandle, _ req: Batc
 }
 
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.ExtractionMeta: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.ProxyConfig: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.ContentConfig: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.BrowserConfig: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.CrawlConfig: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.BrowserExtras: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.DownloadedDocument: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.InteractionResult: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.ActionResult: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.ScrapeResult: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.CrawlPageResult: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.CrawlResult: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.SitemapUrl: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.MapResult: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.MarkdownResult: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.LinkInfo: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.ImageInfo: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.FeedInfo: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.JsonLdEntry: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.CookieInfo: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.DownloadedAsset: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.ArticleMetadata: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.HreflangEntry: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.FaviconInfo: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.HeadingInfo: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.ResponseMeta: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.PageMetadata: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.CrawlStreamRequest: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.BatchCrawlStreamRequest: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.CitationResult: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.CitationReference: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.CrawlEngineHandle: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.BatchScrapeResult: @unchecked Sendable {}
+// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
+extension RustBridge.BatchCrawlResult: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.BatchScrapeResults: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.

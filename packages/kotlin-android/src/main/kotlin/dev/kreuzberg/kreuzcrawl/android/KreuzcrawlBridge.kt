@@ -39,6 +39,13 @@ object KreuzcrawlBridge {
     @Throws(KreuzcrawlBridgeException::class)
     external fun nativeBatchCrawl(engine: Long, urls: String): String
 
+    // JNI external funs for client instance methods.
+    @Throws(KreuzcrawlBridgeException::class)
+    external fun nativeCrawlEngineHandleCrawlStream(handle: Long, requestJson: String): String
+    @Throws(KreuzcrawlBridgeException::class)
+    external fun nativeCrawlEngineHandleBatchCrawlStream(handle: Long, requestJson: String): String
+    external fun nativeFreeCrawlEngineHandle(handle: Long)
+
     // JNI streaming external funs — implementations are Rust JNI shims.
 
     // Streaming JNI externs for CrawlEngineHandle.crawlStream
@@ -55,6 +62,6 @@ object KreuzcrawlBridge {
     external fun nativeCrawlEngineHandleBatchCrawlStreamNext(streamHandle: Long): String?
     external fun nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle: Long)
 
-    // Destructor external funs for opaque handle types.
+    // Destructor external funs for handle-only opaque types.
     external fun nativeFreeCrawlEngineHandle(handle: Long)
 }

@@ -998,7 +998,6 @@ mod ffi {
     }
 
     extern "Rust" {
-
         #[swift_bridge(swift_name = "crawlConfigFromJson")]
         fn crawl_config_from_json(json: String) -> Result<CrawlConfig, String>;
         #[swift_bridge(swift_name = "crawlStreamRequestFromJson")]
@@ -1007,7 +1006,6 @@ mod ffi {
         fn batch_crawl_stream_request_from_json(json: String) -> Result<BatchCrawlStreamRequest, String>;
     }
     extern "Rust" {
-
         #[swift_bridge(swift_name = "extractionMetaFromJson")]
         fn extraction_meta_from_json(json: String) -> Result<ExtractionMeta, String>;
         #[swift_bridge(swift_name = "proxyConfigFromJson")]
@@ -1074,7 +1072,6 @@ mod ffi {
         fn batch_crawl_results_from_json(json: String) -> Result<BatchCrawlResults, String>;
     }
     extern "Rust" {
-
         #[swift_bridge(swift_name = "browserModeFromJson")]
         fn browser_mode_from_json(json: String) -> Result<BrowserMode, String>;
         #[swift_bridge(swift_name = "browserWaitFromJson")]
