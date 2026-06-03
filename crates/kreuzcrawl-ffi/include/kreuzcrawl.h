@@ -266,15 +266,15 @@ typedef void (*KCRAWLKcrawlStreamCallback)(const char *chunk_json,
  * Return the last error code (0 means no error).
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * This function does not allocate and returns no owned pointer.
  */
 int32_t kcrawl_last_error_code(void);
 
 /**
- * Return the last error message. The pointer is valid until the next FFI call on this thread.
+ * Return the last error message. The pointer is borrowed and valid until the next FFI call on this thread.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
+ * The returned pointer is borrowed from thread-local storage and must NOT be freed.
  */
 const char *kcrawl_last_error_context(void);
 
@@ -1011,13 +1011,6 @@ int32_t kcrawl_crawl_config_save_browser_profile(const KCRAWLCrawlConfig *ptr);
  * freed with the appropriate free function.
  */
 KCRAWLCrawlConfig *kcrawl_crawl_config_default(void);
-
-/**
- * Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
- * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
- * freed with the appropriate free function.
- */
-char *kcrawl_crawl_config_builder(void);
 
 /**
  * Validate the configuration, returning an error if any values are invalid.

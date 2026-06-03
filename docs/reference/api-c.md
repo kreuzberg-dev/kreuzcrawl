@@ -460,16 +460,6 @@ Configuration for crawl, scrape, and map operations.
 KcrawlCrawlConfig kcrawl_default();
 ```
 
-#### kcrawl_builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```c
-const char* kcrawl_builder();
-```
-
 #### kcrawl_validate()
 
 Validate the configuration, returning an error if any values are invalid.

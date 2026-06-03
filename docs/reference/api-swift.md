@@ -460,16 +460,6 @@ Configuration for crawl, scrape, and map operations.
 public static func default() -> CrawlConfig
 ```
 
-#### builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```swift
-public static func builder() -> String
-```
-
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.

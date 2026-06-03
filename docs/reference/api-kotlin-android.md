@@ -470,17 +470,6 @@ Configuration for crawl, scrape, and map operations.
 fun default(): CrawlConfig
 ```
 
-#### builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```kotlin
-@JvmStatic
-fun builder(): String
-```
-
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.

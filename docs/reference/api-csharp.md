@@ -460,16 +460,6 @@ Configuration for crawl, scrape, and map operations.
 public CrawlConfig CreateDefault()
 ```
 
-#### Builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```csharp
-public string Builder()
-```
-
 #### Validate()
 
 Validate the configuration, returning an error if any values are invalid.

@@ -453,6 +453,7 @@ impl Default for CrawlConfig {
 
 impl CrawlConfig {
     /// Start a fluent builder for `CrawlConfig`. See [`crate::CrawlConfigBuilder`].
+    #[cfg_attr(alef, alef(skip))]
     pub fn builder() -> crate::types::builder::CrawlConfigBuilder {
         crate::types::builder::CrawlConfigBuilder::default()
     }

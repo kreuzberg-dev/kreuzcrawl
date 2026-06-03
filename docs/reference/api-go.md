@@ -460,16 +460,6 @@ Configuration for crawl, scrape, and map operations.
 func (o *CrawlConfig) Default() CrawlConfig
 ```
 
-#### Builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```go
-func (o *CrawlConfig) Builder() string
-```
-
 #### Validate()
 
 Validate the configuration, returning an error if any values are invalid.

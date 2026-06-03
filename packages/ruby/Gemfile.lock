@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     kreuzcrawl (0.3.0.pre.rc.39)
-      rb_sys (~> 0.9)
+      rb_sys (>= 0.9)
       sorbet-runtime (~> 0.5)
 
 GEM
@@ -156,7 +156,7 @@ PLATFORMS
 DEPENDENCIES
   kreuzcrawl!
   rake-compiler (~> 1.2)
-  rb_sys (~> 0.9)
+  rb_sys (>= 0.9)
   rspec (~> 3.0)
   rubocop (~> 1.0)
   rubocop-performance (~> 1.0)

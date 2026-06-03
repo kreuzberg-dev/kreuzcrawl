@@ -460,16 +460,6 @@ Configuration for crawl, scrape, and map operations.
 pub fn default() -> CrawlConfig
 ```
 
-#### builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```rust
-pub fn builder() -> String
-```
-
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.

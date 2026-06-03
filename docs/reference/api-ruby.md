@@ -460,16 +460,6 @@ Configuration for crawl, scrape, and map operations.
 def self.default()
 ```
 
-#### builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```ruby
-def self.builder()
-```
-
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.

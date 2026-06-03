@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.20.14"
+alef_version = "0.22.18"
 languages = [
   "python",
   "node",
@@ -1488,6 +1488,7 @@ path = "../../packages/zig"
 path = "../../packages/swift"
 
 [crates.e2e.registry]
+github_repo = "https://github.com/kreuzberg-dev/kreuzcrawl"
 output = "test_apps"
 categories = ["scrape", "markdown", "metadata"]
 
@@ -1538,6 +1539,15 @@ version = "0.3.0-rc.39"
 [crates.e2e.registry.packages.c]
 name = "kreuzcrawl-ffi"
 version = "0.3.0-rc.39"
+
+[crates.e2e.registry.packages.zig]
+name = "kreuzcrawl"
+version = "0.3.0-rc.39"
+# Placeholder hash with embedded version triggers alef's STALE detection (added
+# in v0.22.1) — the generator emits a STALE comment in build.zig.zon and the
+# zig fetch flow auto-recomputes the real multihash at consume time. Update
+# after publishing the first zig tarball: `zig fetch --save <release-url>`.
+hash = "kreuzcrawl-0.3.0-rc.39-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH"
 
 [crates.scaffold]
 description = "High-performance web crawling engine"

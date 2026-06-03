@@ -10,7 +10,15 @@ defmodule Kreuzcrawl.MixProject do
       rustler_crates: [
         kreuzcrawl_nif: [
           mode: :release,
-          targets: ~w(x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu x86_64-unknown-linux-musl aarch64-unknown-linux-musl aarch64-apple-darwin x86_64-apple-darwin x86_64-pc-windows-msvc)
+          targets: [
+            "x86_64-unknown-linux-gnu",
+            "aarch64-unknown-linux-gnu",
+            "x86_64-unknown-linux-musl",
+            "aarch64-unknown-linux-musl",
+            "aarch64-apple-darwin",
+            "x86_64-apple-darwin",
+            "x86_64-pc-windows-msvc"
+          ]
         ]
       ],
       description: "High-performance web crawling engine",
@@ -31,7 +39,7 @@ defmodule Kreuzcrawl.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4"},
-      {:rustler, "~> 0.37.0", runtime: false},
+      {:rustler, "~> 0.37", runtime: false},
       {:rustler_precompiled, "~> 0.9"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.40", only: :dev, runtime: false}

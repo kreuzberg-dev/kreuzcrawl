@@ -463,17 +463,6 @@ Configuration for crawl, scrape, and map operations.
 def default() -> CrawlConfig
 ```
 
-#### builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```python
-@staticmethod
-def builder() -> str
-```
-
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.

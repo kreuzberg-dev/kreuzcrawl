@@ -6,7 +6,7 @@
     .dependencies = .{
         .kreuzcrawl = .{
             .url = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.39/kreuzcrawl-zig-v0.3.0-rc.39.tar.gz",
-            .hash = "TODO",
+            .hash = "kreuzcrawl-0.3.0-rc.39-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH",
         },
     },
     .paths = .{

@@ -385,6 +385,1452 @@ as String,
 }
 
 /// @nodoc
+mixin _$CrawlError {
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CrawlError()';
+}
+
+
+}
+
+/// @nodoc
+class $CrawlErrorCopyWith<$Res>  {
+$CrawlErrorCopyWith(CrawlError _, $Res Function(CrawlError) __);
+}
+
+
+/// Adds pattern-matching-related methods to [CrawlError].
+extension CrawlErrorPatterns on CrawlError {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CrawlError_NotFound value)?  notFound,TResult Function( CrawlError_Unauthorized value)?  unauthorized,TResult Function( CrawlError_Forbidden value)?  forbidden,TResult Function( CrawlError_WafBlocked value)?  wafBlocked,TResult Function( CrawlError_Timeout value)?  timeout,TResult Function( CrawlError_RateLimited value)?  rateLimited,TResult Function( CrawlError_ServerError value)?  serverError,TResult Function( CrawlError_BadGateway value)?  badGateway,TResult Function( CrawlError_Gone value)?  gone,TResult Function( CrawlError_Connection value)?  connection,TResult Function( CrawlError_Dns value)?  dns,TResult Function( CrawlError_Ssl value)?  ssl,TResult Function( CrawlError_DataLoss value)?  dataLoss,TResult Function( CrawlError_BrowserError value)?  browserError,TResult Function( CrawlError_BrowserTimeout value)?  browserTimeout,TResult Function( CrawlError_InvalidConfig value)?  invalidConfig,TResult Function( CrawlError_Unsupported value)?  unsupported,TResult Function( CrawlError_Other value)?  other,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case CrawlError_NotFound() when notFound != null:
+return notFound(_that);case CrawlError_Unauthorized() when unauthorized != null:
+return unauthorized(_that);case CrawlError_Forbidden() when forbidden != null:
+return forbidden(_that);case CrawlError_WafBlocked() when wafBlocked != null:
+return wafBlocked(_that);case CrawlError_Timeout() when timeout != null:
+return timeout(_that);case CrawlError_RateLimited() when rateLimited != null:
+return rateLimited(_that);case CrawlError_ServerError() when serverError != null:
+return serverError(_that);case CrawlError_BadGateway() when badGateway != null:
+return badGateway(_that);case CrawlError_Gone() when gone != null:
+return gone(_that);case CrawlError_Connection() when connection != null:
+return connection(_that);case CrawlError_Dns() when dns != null:
+return dns(_that);case CrawlError_Ssl() when ssl != null:
+return ssl(_that);case CrawlError_DataLoss() when dataLoss != null:
+return dataLoss(_that);case CrawlError_BrowserError() when browserError != null:
+return browserError(_that);case CrawlError_BrowserTimeout() when browserTimeout != null:
+return browserTimeout(_that);case CrawlError_InvalidConfig() when invalidConfig != null:
+return invalidConfig(_that);case CrawlError_Unsupported() when unsupported != null:
+return unsupported(_that);case CrawlError_Other() when other != null:
+return other(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CrawlError_NotFound value)  notFound,required TResult Function( CrawlError_Unauthorized value)  unauthorized,required TResult Function( CrawlError_Forbidden value)  forbidden,required TResult Function( CrawlError_WafBlocked value)  wafBlocked,required TResult Function( CrawlError_Timeout value)  timeout,required TResult Function( CrawlError_RateLimited value)  rateLimited,required TResult Function( CrawlError_ServerError value)  serverError,required TResult Function( CrawlError_BadGateway value)  badGateway,required TResult Function( CrawlError_Gone value)  gone,required TResult Function( CrawlError_Connection value)  connection,required TResult Function( CrawlError_Dns value)  dns,required TResult Function( CrawlError_Ssl value)  ssl,required TResult Function( CrawlError_DataLoss value)  dataLoss,required TResult Function( CrawlError_BrowserError value)  browserError,required TResult Function( CrawlError_BrowserTimeout value)  browserTimeout,required TResult Function( CrawlError_InvalidConfig value)  invalidConfig,required TResult Function( CrawlError_Unsupported value)  unsupported,required TResult Function( CrawlError_Other value)  other,}){
+final _that = this;
+switch (_that) {
+case CrawlError_NotFound():
+return notFound(_that);case CrawlError_Unauthorized():
+return unauthorized(_that);case CrawlError_Forbidden():
+return forbidden(_that);case CrawlError_WafBlocked():
+return wafBlocked(_that);case CrawlError_Timeout():
+return timeout(_that);case CrawlError_RateLimited():
+return rateLimited(_that);case CrawlError_ServerError():
+return serverError(_that);case CrawlError_BadGateway():
+return badGateway(_that);case CrawlError_Gone():
+return gone(_that);case CrawlError_Connection():
+return connection(_that);case CrawlError_Dns():
+return dns(_that);case CrawlError_Ssl():
+return ssl(_that);case CrawlError_DataLoss():
+return dataLoss(_that);case CrawlError_BrowserError():
+return browserError(_that);case CrawlError_BrowserTimeout():
+return browserTimeout(_that);case CrawlError_InvalidConfig():
+return invalidConfig(_that);case CrawlError_Unsupported():
+return unsupported(_that);case CrawlError_Other():
+return other(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CrawlError_NotFound value)?  notFound,TResult? Function( CrawlError_Unauthorized value)?  unauthorized,TResult? Function( CrawlError_Forbidden value)?  forbidden,TResult? Function( CrawlError_WafBlocked value)?  wafBlocked,TResult? Function( CrawlError_Timeout value)?  timeout,TResult? Function( CrawlError_RateLimited value)?  rateLimited,TResult? Function( CrawlError_ServerError value)?  serverError,TResult? Function( CrawlError_BadGateway value)?  badGateway,TResult? Function( CrawlError_Gone value)?  gone,TResult? Function( CrawlError_Connection value)?  connection,TResult? Function( CrawlError_Dns value)?  dns,TResult? Function( CrawlError_Ssl value)?  ssl,TResult? Function( CrawlError_DataLoss value)?  dataLoss,TResult? Function( CrawlError_BrowserError value)?  browserError,TResult? Function( CrawlError_BrowserTimeout value)?  browserTimeout,TResult? Function( CrawlError_InvalidConfig value)?  invalidConfig,TResult? Function( CrawlError_Unsupported value)?  unsupported,TResult? Function( CrawlError_Other value)?  other,}){
+final _that = this;
+switch (_that) {
+case CrawlError_NotFound() when notFound != null:
+return notFound(_that);case CrawlError_Unauthorized() when unauthorized != null:
+return unauthorized(_that);case CrawlError_Forbidden() when forbidden != null:
+return forbidden(_that);case CrawlError_WafBlocked() when wafBlocked != null:
+return wafBlocked(_that);case CrawlError_Timeout() when timeout != null:
+return timeout(_that);case CrawlError_RateLimited() when rateLimited != null:
+return rateLimited(_that);case CrawlError_ServerError() when serverError != null:
+return serverError(_that);case CrawlError_BadGateway() when badGateway != null:
+return badGateway(_that);case CrawlError_Gone() when gone != null:
+return gone(_that);case CrawlError_Connection() when connection != null:
+return connection(_that);case CrawlError_Dns() when dns != null:
+return dns(_that);case CrawlError_Ssl() when ssl != null:
+return ssl(_that);case CrawlError_DataLoss() when dataLoss != null:
+return dataLoss(_that);case CrawlError_BrowserError() when browserError != null:
+return browserError(_that);case CrawlError_BrowserTimeout() when browserTimeout != null:
+return browserTimeout(_that);case CrawlError_InvalidConfig() when invalidConfig != null:
+return invalidConfig(_that);case CrawlError_Unsupported() when unsupported != null:
+return unsupported(_that);case CrawlError_Other() when other != null:
+return other(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String field0)?  notFound,TResult Function( String field0)?  unauthorized,TResult Function( String field0)?  forbidden,TResult Function( String vendor,  String message)?  wafBlocked,TResult Function( String field0)?  timeout,TResult Function( String field0)?  rateLimited,TResult Function( String field0)?  serverError,TResult Function( String field0)?  badGateway,TResult Function( String field0)?  gone,TResult Function( String field0)?  connection,TResult Function( String field0)?  dns,TResult Function( String field0)?  ssl,TResult Function( String field0)?  dataLoss,TResult Function( String field0)?  browserError,TResult Function( String field0)?  browserTimeout,TResult Function( String field0)?  invalidConfig,TResult Function( String field0)?  unsupported,TResult Function( String field0)?  other,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case CrawlError_NotFound() when notFound != null:
+return notFound(_that.field0);case CrawlError_Unauthorized() when unauthorized != null:
+return unauthorized(_that.field0);case CrawlError_Forbidden() when forbidden != null:
+return forbidden(_that.field0);case CrawlError_WafBlocked() when wafBlocked != null:
+return wafBlocked(_that.vendor,_that.message);case CrawlError_Timeout() when timeout != null:
+return timeout(_that.field0);case CrawlError_RateLimited() when rateLimited != null:
+return rateLimited(_that.field0);case CrawlError_ServerError() when serverError != null:
+return serverError(_that.field0);case CrawlError_BadGateway() when badGateway != null:
+return badGateway(_that.field0);case CrawlError_Gone() when gone != null:
+return gone(_that.field0);case CrawlError_Connection() when connection != null:
+return connection(_that.field0);case CrawlError_Dns() when dns != null:
+return dns(_that.field0);case CrawlError_Ssl() when ssl != null:
+return ssl(_that.field0);case CrawlError_DataLoss() when dataLoss != null:
+return dataLoss(_that.field0);case CrawlError_BrowserError() when browserError != null:
+return browserError(_that.field0);case CrawlError_BrowserTimeout() when browserTimeout != null:
+return browserTimeout(_that.field0);case CrawlError_InvalidConfig() when invalidConfig != null:
+return invalidConfig(_that.field0);case CrawlError_Unsupported() when unsupported != null:
+return unsupported(_that.field0);case CrawlError_Other() when other != null:
+return other(_that.field0);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String field0)  notFound,required TResult Function( String field0)  unauthorized,required TResult Function( String field0)  forbidden,required TResult Function( String vendor,  String message)  wafBlocked,required TResult Function( String field0)  timeout,required TResult Function( String field0)  rateLimited,required TResult Function( String field0)  serverError,required TResult Function( String field0)  badGateway,required TResult Function( String field0)  gone,required TResult Function( String field0)  connection,required TResult Function( String field0)  dns,required TResult Function( String field0)  ssl,required TResult Function( String field0)  dataLoss,required TResult Function( String field0)  browserError,required TResult Function( String field0)  browserTimeout,required TResult Function( String field0)  invalidConfig,required TResult Function( String field0)  unsupported,required TResult Function( String field0)  other,}) {final _that = this;
+switch (_that) {
+case CrawlError_NotFound():
+return notFound(_that.field0);case CrawlError_Unauthorized():
+return unauthorized(_that.field0);case CrawlError_Forbidden():
+return forbidden(_that.field0);case CrawlError_WafBlocked():
+return wafBlocked(_that.vendor,_that.message);case CrawlError_Timeout():
+return timeout(_that.field0);case CrawlError_RateLimited():
+return rateLimited(_that.field0);case CrawlError_ServerError():
+return serverError(_that.field0);case CrawlError_BadGateway():
+return badGateway(_that.field0);case CrawlError_Gone():
+return gone(_that.field0);case CrawlError_Connection():
+return connection(_that.field0);case CrawlError_Dns():
+return dns(_that.field0);case CrawlError_Ssl():
+return ssl(_that.field0);case CrawlError_DataLoss():
+return dataLoss(_that.field0);case CrawlError_BrowserError():
+return browserError(_that.field0);case CrawlError_BrowserTimeout():
+return browserTimeout(_that.field0);case CrawlError_InvalidConfig():
+return invalidConfig(_that.field0);case CrawlError_Unsupported():
+return unsupported(_that.field0);case CrawlError_Other():
+return other(_that.field0);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String field0)?  notFound,TResult? Function( String field0)?  unauthorized,TResult? Function( String field0)?  forbidden,TResult? Function( String vendor,  String message)?  wafBlocked,TResult? Function( String field0)?  timeout,TResult? Function( String field0)?  rateLimited,TResult? Function( String field0)?  serverError,TResult? Function( String field0)?  badGateway,TResult? Function( String field0)?  gone,TResult? Function( String field0)?  connection,TResult? Function( String field0)?  dns,TResult? Function( String field0)?  ssl,TResult? Function( String field0)?  dataLoss,TResult? Function( String field0)?  browserError,TResult? Function( String field0)?  browserTimeout,TResult? Function( String field0)?  invalidConfig,TResult? Function( String field0)?  unsupported,TResult? Function( String field0)?  other,}) {final _that = this;
+switch (_that) {
+case CrawlError_NotFound() when notFound != null:
+return notFound(_that.field0);case CrawlError_Unauthorized() when unauthorized != null:
+return unauthorized(_that.field0);case CrawlError_Forbidden() when forbidden != null:
+return forbidden(_that.field0);case CrawlError_WafBlocked() when wafBlocked != null:
+return wafBlocked(_that.vendor,_that.message);case CrawlError_Timeout() when timeout != null:
+return timeout(_that.field0);case CrawlError_RateLimited() when rateLimited != null:
+return rateLimited(_that.field0);case CrawlError_ServerError() when serverError != null:
+return serverError(_that.field0);case CrawlError_BadGateway() when badGateway != null:
+return badGateway(_that.field0);case CrawlError_Gone() when gone != null:
+return gone(_that.field0);case CrawlError_Connection() when connection != null:
+return connection(_that.field0);case CrawlError_Dns() when dns != null:
+return dns(_that.field0);case CrawlError_Ssl() when ssl != null:
+return ssl(_that.field0);case CrawlError_DataLoss() when dataLoss != null:
+return dataLoss(_that.field0);case CrawlError_BrowserError() when browserError != null:
+return browserError(_that.field0);case CrawlError_BrowserTimeout() when browserTimeout != null:
+return browserTimeout(_that.field0);case CrawlError_InvalidConfig() when invalidConfig != null:
+return invalidConfig(_that.field0);case CrawlError_Unsupported() when unsupported != null:
+return unsupported(_that.field0);case CrawlError_Other() when other != null:
+return other(_that.field0);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class CrawlError_NotFound extends CrawlError {
+  const CrawlError_NotFound({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_NotFoundCopyWith<CrawlError_NotFound> get copyWith => _$CrawlError_NotFoundCopyWithImpl<CrawlError_NotFound>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_NotFound&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.notFound(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_NotFoundCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_NotFoundCopyWith(CrawlError_NotFound value, $Res Function(CrawlError_NotFound) _then) = _$CrawlError_NotFoundCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_NotFoundCopyWithImpl<$Res>
+    implements $CrawlError_NotFoundCopyWith<$Res> {
+  _$CrawlError_NotFoundCopyWithImpl(this._self, this._then);
+
+  final CrawlError_NotFound _self;
+  final $Res Function(CrawlError_NotFound) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_NotFound(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Unauthorized extends CrawlError {
+  const CrawlError_Unauthorized({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_UnauthorizedCopyWith<CrawlError_Unauthorized> get copyWith => _$CrawlError_UnauthorizedCopyWithImpl<CrawlError_Unauthorized>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Unauthorized&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.unauthorized(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_UnauthorizedCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_UnauthorizedCopyWith(CrawlError_Unauthorized value, $Res Function(CrawlError_Unauthorized) _then) = _$CrawlError_UnauthorizedCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_UnauthorizedCopyWithImpl<$Res>
+    implements $CrawlError_UnauthorizedCopyWith<$Res> {
+  _$CrawlError_UnauthorizedCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Unauthorized _self;
+  final $Res Function(CrawlError_Unauthorized) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Unauthorized(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Forbidden extends CrawlError {
+  const CrawlError_Forbidden({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_ForbiddenCopyWith<CrawlError_Forbidden> get copyWith => _$CrawlError_ForbiddenCopyWithImpl<CrawlError_Forbidden>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Forbidden&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.forbidden(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_ForbiddenCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_ForbiddenCopyWith(CrawlError_Forbidden value, $Res Function(CrawlError_Forbidden) _then) = _$CrawlError_ForbiddenCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_ForbiddenCopyWithImpl<$Res>
+    implements $CrawlError_ForbiddenCopyWith<$Res> {
+  _$CrawlError_ForbiddenCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Forbidden _self;
+  final $Res Function(CrawlError_Forbidden) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Forbidden(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_WafBlocked extends CrawlError {
+  const CrawlError_WafBlocked({required this.vendor, required this.message}): super._();
+
+
+ final  String vendor;
+ final  String message;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_WafBlockedCopyWith<CrawlError_WafBlocked> get copyWith => _$CrawlError_WafBlockedCopyWithImpl<CrawlError_WafBlocked>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_WafBlocked&&(identical(other.vendor, vendor) || other.vendor == vendor)&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,vendor,message);
+
+@override
+String toString() {
+  return 'CrawlError.wafBlocked(vendor: $vendor, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_WafBlockedCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_WafBlockedCopyWith(CrawlError_WafBlocked value, $Res Function(CrawlError_WafBlocked) _then) = _$CrawlError_WafBlockedCopyWithImpl;
+@useResult
+$Res call({
+ String vendor, String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_WafBlockedCopyWithImpl<$Res>
+    implements $CrawlError_WafBlockedCopyWith<$Res> {
+  _$CrawlError_WafBlockedCopyWithImpl(this._self, this._then);
+
+  final CrawlError_WafBlocked _self;
+  final $Res Function(CrawlError_WafBlocked) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? vendor = null,Object? message = null,}) {
+  return _then(CrawlError_WafBlocked(
+vendor: null == vendor ? _self.vendor : vendor // ignore: cast_nullable_to_non_nullable
+as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Timeout extends CrawlError {
+  const CrawlError_Timeout({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_TimeoutCopyWith<CrawlError_Timeout> get copyWith => _$CrawlError_TimeoutCopyWithImpl<CrawlError_Timeout>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Timeout&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.timeout(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_TimeoutCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_TimeoutCopyWith(CrawlError_Timeout value, $Res Function(CrawlError_Timeout) _then) = _$CrawlError_TimeoutCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_TimeoutCopyWithImpl<$Res>
+    implements $CrawlError_TimeoutCopyWith<$Res> {
+  _$CrawlError_TimeoutCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Timeout _self;
+  final $Res Function(CrawlError_Timeout) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Timeout(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_RateLimited extends CrawlError {
+  const CrawlError_RateLimited({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_RateLimitedCopyWith<CrawlError_RateLimited> get copyWith => _$CrawlError_RateLimitedCopyWithImpl<CrawlError_RateLimited>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_RateLimited&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.rateLimited(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_RateLimitedCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_RateLimitedCopyWith(CrawlError_RateLimited value, $Res Function(CrawlError_RateLimited) _then) = _$CrawlError_RateLimitedCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_RateLimitedCopyWithImpl<$Res>
+    implements $CrawlError_RateLimitedCopyWith<$Res> {
+  _$CrawlError_RateLimitedCopyWithImpl(this._self, this._then);
+
+  final CrawlError_RateLimited _self;
+  final $Res Function(CrawlError_RateLimited) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_RateLimited(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_ServerError extends CrawlError {
+  const CrawlError_ServerError({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_ServerErrorCopyWith<CrawlError_ServerError> get copyWith => _$CrawlError_ServerErrorCopyWithImpl<CrawlError_ServerError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_ServerError&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.serverError(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_ServerErrorCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_ServerErrorCopyWith(CrawlError_ServerError value, $Res Function(CrawlError_ServerError) _then) = _$CrawlError_ServerErrorCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_ServerErrorCopyWithImpl<$Res>
+    implements $CrawlError_ServerErrorCopyWith<$Res> {
+  _$CrawlError_ServerErrorCopyWithImpl(this._self, this._then);
+
+  final CrawlError_ServerError _self;
+  final $Res Function(CrawlError_ServerError) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_ServerError(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_BadGateway extends CrawlError {
+  const CrawlError_BadGateway({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_BadGatewayCopyWith<CrawlError_BadGateway> get copyWith => _$CrawlError_BadGatewayCopyWithImpl<CrawlError_BadGateway>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_BadGateway&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.badGateway(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_BadGatewayCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_BadGatewayCopyWith(CrawlError_BadGateway value, $Res Function(CrawlError_BadGateway) _then) = _$CrawlError_BadGatewayCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_BadGatewayCopyWithImpl<$Res>
+    implements $CrawlError_BadGatewayCopyWith<$Res> {
+  _$CrawlError_BadGatewayCopyWithImpl(this._self, this._then);
+
+  final CrawlError_BadGateway _self;
+  final $Res Function(CrawlError_BadGateway) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_BadGateway(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Gone extends CrawlError {
+  const CrawlError_Gone({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_GoneCopyWith<CrawlError_Gone> get copyWith => _$CrawlError_GoneCopyWithImpl<CrawlError_Gone>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Gone&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.gone(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_GoneCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_GoneCopyWith(CrawlError_Gone value, $Res Function(CrawlError_Gone) _then) = _$CrawlError_GoneCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_GoneCopyWithImpl<$Res>
+    implements $CrawlError_GoneCopyWith<$Res> {
+  _$CrawlError_GoneCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Gone _self;
+  final $Res Function(CrawlError_Gone) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Gone(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Connection extends CrawlError {
+  const CrawlError_Connection({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_ConnectionCopyWith<CrawlError_Connection> get copyWith => _$CrawlError_ConnectionCopyWithImpl<CrawlError_Connection>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Connection&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.connection(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_ConnectionCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_ConnectionCopyWith(CrawlError_Connection value, $Res Function(CrawlError_Connection) _then) = _$CrawlError_ConnectionCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_ConnectionCopyWithImpl<$Res>
+    implements $CrawlError_ConnectionCopyWith<$Res> {
+  _$CrawlError_ConnectionCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Connection _self;
+  final $Res Function(CrawlError_Connection) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Connection(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Dns extends CrawlError {
+  const CrawlError_Dns({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_DnsCopyWith<CrawlError_Dns> get copyWith => _$CrawlError_DnsCopyWithImpl<CrawlError_Dns>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Dns&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.dns(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_DnsCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_DnsCopyWith(CrawlError_Dns value, $Res Function(CrawlError_Dns) _then) = _$CrawlError_DnsCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_DnsCopyWithImpl<$Res>
+    implements $CrawlError_DnsCopyWith<$Res> {
+  _$CrawlError_DnsCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Dns _self;
+  final $Res Function(CrawlError_Dns) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Dns(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Ssl extends CrawlError {
+  const CrawlError_Ssl({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_SslCopyWith<CrawlError_Ssl> get copyWith => _$CrawlError_SslCopyWithImpl<CrawlError_Ssl>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Ssl&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.ssl(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_SslCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_SslCopyWith(CrawlError_Ssl value, $Res Function(CrawlError_Ssl) _then) = _$CrawlError_SslCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_SslCopyWithImpl<$Res>
+    implements $CrawlError_SslCopyWith<$Res> {
+  _$CrawlError_SslCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Ssl _self;
+  final $Res Function(CrawlError_Ssl) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Ssl(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_DataLoss extends CrawlError {
+  const CrawlError_DataLoss({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_DataLossCopyWith<CrawlError_DataLoss> get copyWith => _$CrawlError_DataLossCopyWithImpl<CrawlError_DataLoss>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_DataLoss&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.dataLoss(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_DataLossCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_DataLossCopyWith(CrawlError_DataLoss value, $Res Function(CrawlError_DataLoss) _then) = _$CrawlError_DataLossCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_DataLossCopyWithImpl<$Res>
+    implements $CrawlError_DataLossCopyWith<$Res> {
+  _$CrawlError_DataLossCopyWithImpl(this._self, this._then);
+
+  final CrawlError_DataLoss _self;
+  final $Res Function(CrawlError_DataLoss) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_DataLoss(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_BrowserError extends CrawlError {
+  const CrawlError_BrowserError({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_BrowserErrorCopyWith<CrawlError_BrowserError> get copyWith => _$CrawlError_BrowserErrorCopyWithImpl<CrawlError_BrowserError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_BrowserError&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.browserError(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_BrowserErrorCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_BrowserErrorCopyWith(CrawlError_BrowserError value, $Res Function(CrawlError_BrowserError) _then) = _$CrawlError_BrowserErrorCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_BrowserErrorCopyWithImpl<$Res>
+    implements $CrawlError_BrowserErrorCopyWith<$Res> {
+  _$CrawlError_BrowserErrorCopyWithImpl(this._self, this._then);
+
+  final CrawlError_BrowserError _self;
+  final $Res Function(CrawlError_BrowserError) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_BrowserError(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_BrowserTimeout extends CrawlError {
+  const CrawlError_BrowserTimeout({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_BrowserTimeoutCopyWith<CrawlError_BrowserTimeout> get copyWith => _$CrawlError_BrowserTimeoutCopyWithImpl<CrawlError_BrowserTimeout>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_BrowserTimeout&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.browserTimeout(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_BrowserTimeoutCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_BrowserTimeoutCopyWith(CrawlError_BrowserTimeout value, $Res Function(CrawlError_BrowserTimeout) _then) = _$CrawlError_BrowserTimeoutCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_BrowserTimeoutCopyWithImpl<$Res>
+    implements $CrawlError_BrowserTimeoutCopyWith<$Res> {
+  _$CrawlError_BrowserTimeoutCopyWithImpl(this._self, this._then);
+
+  final CrawlError_BrowserTimeout _self;
+  final $Res Function(CrawlError_BrowserTimeout) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_BrowserTimeout(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_InvalidConfig extends CrawlError {
+  const CrawlError_InvalidConfig({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_InvalidConfigCopyWith<CrawlError_InvalidConfig> get copyWith => _$CrawlError_InvalidConfigCopyWithImpl<CrawlError_InvalidConfig>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_InvalidConfig&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.invalidConfig(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_InvalidConfigCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_InvalidConfigCopyWith(CrawlError_InvalidConfig value, $Res Function(CrawlError_InvalidConfig) _then) = _$CrawlError_InvalidConfigCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_InvalidConfigCopyWithImpl<$Res>
+    implements $CrawlError_InvalidConfigCopyWith<$Res> {
+  _$CrawlError_InvalidConfigCopyWithImpl(this._self, this._then);
+
+  final CrawlError_InvalidConfig _self;
+  final $Res Function(CrawlError_InvalidConfig) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_InvalidConfig(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Unsupported extends CrawlError {
+  const CrawlError_Unsupported({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_UnsupportedCopyWith<CrawlError_Unsupported> get copyWith => _$CrawlError_UnsupportedCopyWithImpl<CrawlError_Unsupported>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Unsupported&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.unsupported(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_UnsupportedCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_UnsupportedCopyWith(CrawlError_Unsupported value, $Res Function(CrawlError_Unsupported) _then) = _$CrawlError_UnsupportedCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_UnsupportedCopyWithImpl<$Res>
+    implements $CrawlError_UnsupportedCopyWith<$Res> {
+  _$CrawlError_UnsupportedCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Unsupported _self;
+  final $Res Function(CrawlError_Unsupported) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Unsupported(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CrawlError_Other extends CrawlError {
+  const CrawlError_Other({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CrawlError_OtherCopyWith<CrawlError_Other> get copyWith => _$CrawlError_OtherCopyWithImpl<CrawlError_Other>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CrawlError_Other&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'CrawlError.other(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CrawlError_OtherCopyWith<$Res> implements $CrawlErrorCopyWith<$Res> {
+  factory $CrawlError_OtherCopyWith(CrawlError_Other value, $Res Function(CrawlError_Other) _then) = _$CrawlError_OtherCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$CrawlError_OtherCopyWithImpl<$Res>
+    implements $CrawlError_OtherCopyWith<$Res> {
+  _$CrawlError_OtherCopyWithImpl(this._self, this._then);
+
+  final CrawlError_Other _self;
+  final $Res Function(CrawlError_Other) _then;
+
+/// Create a copy of CrawlError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(CrawlError_Other(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$CrawlEvent {
 
 

@@ -460,16 +460,6 @@ Configuration for crawl, scrape, and map operations.
 public static CrawlConfig defaultOptions()
 ```
 
-#### builder()
-
-Start a fluent builder for `CrawlConfig`. See `CrawlConfigBuilder`.
-
-**Signature:**
-
-```java
-public static String builder()
-```
-
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.

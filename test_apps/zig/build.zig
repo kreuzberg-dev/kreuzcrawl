@@ -7,10 +7,16 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run tests");
 
     // Fetch the published Zig package from the registry.
-    const kreuzcrawl_module = b.dependency("kreuzcrawl", .{
+    const kreuzcrawl_dep = b.dependency("kreuzcrawl", .{
         .target = target,
         .optimize = optimize,
-    }).module("kreuzcrawl");
+    });
+    const kreuzcrawl_module = kreuzcrawl_dep.module("kreuzcrawl");
+    const kreuzcrawl_lib_path = kreuzcrawl_dep.path("lib");
+    const kreuzcrawl_include_path = kreuzcrawl_dep.path("include");
+    kreuzcrawl_module.addLibraryPath(kreuzcrawl_lib_path);
+    kreuzcrawl_module.addIncludePath(kreuzcrawl_include_path);
+    kreuzcrawl_module.linkSystemLibrary("kreuzcrawl_ffi", .{});
 
     const _alloc = b.allocator;
     var mock_server_url: ?[]const u8 = b.graph.environ_map.get("MOCK_SERVER_URL");
