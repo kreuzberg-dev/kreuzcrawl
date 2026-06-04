@@ -3354,7 +3354,7 @@ impl From<kreuzcrawl::ExtractionMeta> for ExtractionMeta {
             cost: val.cost,
             prompt_tokens: val.prompt_tokens,
             completion_tokens: val.completion_tokens,
-            model: val.model,
+            model: val.model.map(|v| v.to_string()),
             chunks_processed: val.chunks_processed,
         }
     }
@@ -3375,9 +3375,9 @@ impl From<ProxyConfig> for kreuzcrawl::ProxyConfig {
 impl From<kreuzcrawl::ProxyConfig> for ProxyConfig {
     fn from(val: kreuzcrawl::ProxyConfig) -> Self {
         Self {
-            url: val.url,
-            username: val.username,
-            password: val.password,
+            url: val.url.to_string(),
+            username: val.username.map(|v| v.to_string()),
+            password: val.password.map(|v| v.to_string()),
         }
     }
 }
@@ -3406,8 +3406,8 @@ impl From<ContentConfig> for kreuzcrawl::ContentConfig {
 impl From<kreuzcrawl::ContentConfig> for ContentConfig {
     fn from(val: kreuzcrawl::ContentConfig) -> Self {
         Self {
-            output_format: val.output_format,
-            preprocessing_preset: val.preprocessing_preset,
+            output_format: val.output_format.to_string(),
+            preprocessing_preset: val.preprocessing_preset.to_string(),
             remove_navigation: val.remove_navigation,
             remove_forms: val.remove_forms,
             strip_tags: val.strip_tags.into_iter().collect(),
@@ -3453,16 +3453,16 @@ impl From<kreuzcrawl::BrowserConfig> for BrowserConfig {
         Self {
             mode: val.mode.into(),
             backend: val.backend.into(),
-            endpoint: val.endpoint,
+            endpoint: val.endpoint.map(|v| v.to_string()),
             timeout: Some(val.timeout.as_millis() as u64),
             wait: val.wait.into(),
-            wait_selector: val.wait_selector,
+            wait_selector: val.wait_selector.map(|v| v.to_string()),
             extra_wait: val.extra_wait.map(|d| d.as_millis() as u64),
             stealth: val.stealth,
             proxy: val.proxy.map(Into::into),
             block_url_patterns: val.block_url_patterns.into_iter().collect(),
-            eval_script: val.eval_script,
-            robots_user_agent: val.robots_user_agent,
+            eval_script: val.eval_script.map(|v| v.to_string()),
+            robots_user_agent: val.robots_user_agent.map(|v| v.to_string()),
             capture_network_events: val.capture_network_events,
             session_affinity: val.session_affinity,
         }
@@ -3530,7 +3530,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             max_concurrent: val.max_concurrent,
             respect_robots_txt: val.respect_robots_txt,
             soft_http_errors: val.soft_http_errors,
-            user_agent: val.user_agent,
+            user_agent: val.user_agent.map(|v| v.to_string()),
             stay_on_domain: val.stay_on_domain,
             allow_subdomains: val.allow_subdomains,
             include_paths: val.include_paths.into_iter().collect(),
@@ -3551,7 +3551,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             remove_tags: val.remove_tags.into_iter().collect(),
             content: val.content.into(),
             map_limit: val.map_limit,
-            map_search: val.map_search,
+            map_search: val.map_search.map(|v| v.to_string()),
             download_assets: val.download_assets,
             asset_types: val.asset_types.into_iter().map(Into::into).collect(),
             max_asset_size: val.max_asset_size,
@@ -3563,7 +3563,7 @@ impl From<kreuzcrawl::CrawlConfig> for CrawlConfig {
             document_max_size: val.document_max_size,
             document_mime_types: val.document_mime_types.into_iter().collect(),
             warc_output: val.warc_output.map(|p| p.to_string_lossy().to_string()),
-            browser_profile: val.browser_profile,
+            browser_profile: val.browser_profile.map(|v| v.to_string()),
             save_browser_profile: val.save_browser_profile,
         }
     }
@@ -3610,7 +3610,7 @@ impl From<DownloadedDocument> for kreuzcrawl::DownloadedDocument {
 impl From<kreuzcrawl::DownloadedDocument> for DownloadedDocument {
     fn from(val: kreuzcrawl::DownloadedDocument) -> Self {
         Self {
-            url: val.url,
+            url: val.url.to_string(),
             mime_type: val.mime_type.to_string(),
             size: val.size,
             filename: val.filename.as_ref().map(|v| v.to_string()),
@@ -3637,8 +3637,8 @@ impl From<kreuzcrawl::InteractionResult> for InteractionResult {
     fn from(val: kreuzcrawl::InteractionResult) -> Self {
         Self {
             action_results: val.action_results.into_iter().map(Into::into).collect(),
-            final_html: val.final_html,
-            final_url: val.final_url,
+            final_html: val.final_html.to_string(),
+            final_url: val.final_url.to_string(),
         }
     }
 }
@@ -3664,7 +3664,7 @@ impl From<kreuzcrawl::ActionResult> for ActionResult {
             action_type: val.action_type.to_string(),
             success: val.success,
             data: val.data.as_ref().map(ToString::to_string),
-            error: val.error,
+            error: val.error.map(|v| v.to_string()),
         }
     }
 }
@@ -3711,9 +3711,9 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
     fn from(val: kreuzcrawl::ScrapeResult) -> Self {
         Self {
             status_code: val.status_code,
-            final_url: val.final_url,
-            content_type: val.content_type,
-            html: val.html,
+            final_url: val.final_url.to_string(),
+            content_type: val.content_type.to_string(),
+            html: val.html.to_string(),
             body_size: val.body_size,
             metadata: val.metadata.into(),
             links: val.links.into_iter().map(Into::into).collect(),
@@ -3724,10 +3724,10 @@ impl From<kreuzcrawl::ScrapeResult> for ScrapeResult {
             crawl_delay: val.crawl_delay,
             noindex_detected: val.noindex_detected,
             nofollow_detected: val.nofollow_detected,
-            x_robots_tag: val.x_robots_tag,
+            x_robots_tag: val.x_robots_tag.map(|v| v.to_string()),
             is_pdf: val.is_pdf,
             was_skipped: val.was_skipped,
-            detected_charset: val.detected_charset,
+            detected_charset: val.detected_charset.map(|v| v.to_string()),
             auth_header_sent: val.auth_header_sent,
             response_meta: val.response_meta.map(Into::into),
             assets: val.assets.into_iter().map(Into::into).collect(),
@@ -3775,11 +3775,11 @@ impl From<CrawlPageResult> for kreuzcrawl::CrawlPageResult {
 impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
     fn from(val: kreuzcrawl::CrawlPageResult) -> Self {
         Self {
-            url: val.url,
-            normalized_url: val.normalized_url,
+            url: val.url.to_string(),
+            normalized_url: val.normalized_url.to_string(),
             status_code: val.status_code,
-            content_type: val.content_type,
-            html: val.html,
+            content_type: val.content_type.to_string(),
+            html: val.html.to_string(),
             body_size: val.body_size,
             metadata: val.metadata.into(),
             links: val.links.into_iter().map(Into::into).collect(),
@@ -3790,7 +3790,7 @@ impl From<kreuzcrawl::CrawlPageResult> for CrawlPageResult {
             stayed_on_domain: val.stayed_on_domain,
             was_skipped: val.was_skipped,
             is_pdf: val.is_pdf,
-            detected_charset: val.detected_charset,
+            detected_charset: val.detected_charset.map(|v| v.to_string()),
             markdown: val.markdown.map(Into::into),
             extracted_data: val.extracted_data.as_ref().map(ToString::to_string),
             extraction_meta: val.extraction_meta.map(Into::into),
@@ -3822,10 +3822,10 @@ impl From<kreuzcrawl::CrawlResult> for CrawlResult {
     fn from(val: kreuzcrawl::CrawlResult) -> Self {
         Self {
             pages: val.pages.into_iter().map(Into::into).collect(),
-            final_url: val.final_url,
+            final_url: val.final_url.to_string(),
             redirect_count: val.redirect_count,
             was_skipped: val.was_skipped,
-            error: val.error,
+            error: val.error.map(|v| v.to_string()),
             cookies: val.cookies.into_iter().map(Into::into).collect(),
             stayed_on_domain: val.stayed_on_domain,
             browser_used: val.browser_used,
@@ -3849,10 +3849,10 @@ impl From<SitemapUrl> for kreuzcrawl::SitemapUrl {
 impl From<kreuzcrawl::SitemapUrl> for SitemapUrl {
     fn from(val: kreuzcrawl::SitemapUrl) -> Self {
         Self {
-            url: val.url,
-            lastmod: val.lastmod,
-            changefreq: val.changefreq,
-            priority: val.priority,
+            url: val.url.to_string(),
+            lastmod: val.lastmod.map(|v| v.to_string()),
+            changefreq: val.changefreq.map(|v| v.to_string()),
+            priority: val.priority.map(|v| v.to_string()),
         }
     }
 }
@@ -3900,12 +3900,12 @@ impl From<MarkdownResult> for kreuzcrawl::MarkdownResult {
 impl From<kreuzcrawl::MarkdownResult> for MarkdownResult {
     fn from(val: kreuzcrawl::MarkdownResult) -> Self {
         Self {
-            content: val.content,
+            content: val.content.to_string(),
             document_structure: val.document_structure.as_ref().map(ToString::to_string),
             tables: val.tables.iter().map(ToString::to_string).collect(),
             warnings: val.warnings.into_iter().collect(),
             citations: val.citations,
-            fit_content: val.fit_content,
+            fit_content: val.fit_content.map(|v| v.to_string()),
         }
     }
 }
@@ -3927,10 +3927,10 @@ impl From<LinkInfo> for kreuzcrawl::LinkInfo {
 impl From<kreuzcrawl::LinkInfo> for LinkInfo {
     fn from(val: kreuzcrawl::LinkInfo) -> Self {
         Self {
-            url: val.url,
-            text: val.text,
+            url: val.url.to_string(),
+            text: val.text.to_string(),
             link_type: val.link_type.into(),
-            rel: val.rel,
+            rel: val.rel.map(|v| v.to_string()),
             nofollow: val.nofollow,
         }
     }
@@ -3953,8 +3953,8 @@ impl From<ImageInfo> for kreuzcrawl::ImageInfo {
 impl From<kreuzcrawl::ImageInfo> for ImageInfo {
     fn from(val: kreuzcrawl::ImageInfo) -> Self {
         Self {
-            url: val.url,
-            alt: val.alt,
+            url: val.url.to_string(),
+            alt: val.alt.map(|v| v.to_string()),
             width: val.width,
             height: val.height,
             source: val.source.into(),
@@ -3977,8 +3977,8 @@ impl From<FeedInfo> for kreuzcrawl::FeedInfo {
 impl From<kreuzcrawl::FeedInfo> for FeedInfo {
     fn from(val: kreuzcrawl::FeedInfo) -> Self {
         Self {
-            url: val.url,
-            title: val.title,
+            url: val.url.to_string(),
+            title: val.title.map(|v| v.to_string()),
             feed_type: val.feed_type.into(),
         }
     }
@@ -3999,9 +3999,9 @@ impl From<JsonLdEntry> for kreuzcrawl::JsonLdEntry {
 impl From<kreuzcrawl::JsonLdEntry> for JsonLdEntry {
     fn from(val: kreuzcrawl::JsonLdEntry) -> Self {
         Self {
-            schema_type: val.schema_type,
-            name: val.name,
-            raw: val.raw,
+            schema_type: val.schema_type.to_string(),
+            name: val.name.map(|v| v.to_string()),
+            raw: val.raw.to_string(),
         }
     }
 }
@@ -4022,10 +4022,10 @@ impl From<CookieInfo> for kreuzcrawl::CookieInfo {
 impl From<kreuzcrawl::CookieInfo> for CookieInfo {
     fn from(val: kreuzcrawl::CookieInfo) -> Self {
         Self {
-            name: val.name,
-            value: val.value,
-            domain: val.domain,
-            path: val.path,
+            name: val.name.to_string(),
+            value: val.value.to_string(),
+            domain: val.domain.map(|v| v.to_string()),
+            path: val.path.map(|v| v.to_string()),
         }
     }
 }
@@ -4048,12 +4048,12 @@ impl From<DownloadedAsset> for kreuzcrawl::DownloadedAsset {
 impl From<kreuzcrawl::DownloadedAsset> for DownloadedAsset {
     fn from(val: kreuzcrawl::DownloadedAsset) -> Self {
         Self {
-            url: val.url,
-            content_hash: val.content_hash,
-            mime_type: val.mime_type,
+            url: val.url.to_string(),
+            content_hash: val.content_hash.to_string(),
+            mime_type: val.mime_type.map(|v| v.to_string()),
             size: val.size,
             asset_category: val.asset_category.into(),
-            html_tag: val.html_tag,
+            html_tag: val.html_tag.map(|v| v.to_string()),
         }
     }
 }
@@ -4075,10 +4075,10 @@ impl From<ArticleMetadata> for kreuzcrawl::ArticleMetadata {
 impl From<kreuzcrawl::ArticleMetadata> for ArticleMetadata {
     fn from(val: kreuzcrawl::ArticleMetadata) -> Self {
         Self {
-            published_time: val.published_time,
-            modified_time: val.modified_time,
-            author: val.author,
-            section: val.section,
+            published_time: val.published_time.map(|v| v.to_string()),
+            modified_time: val.modified_time.map(|v| v.to_string()),
+            author: val.author.map(|v| v.to_string()),
+            section: val.section.map(|v| v.to_string()),
             tags: val.tags.into_iter().collect(),
         }
     }
@@ -4098,8 +4098,8 @@ impl From<HreflangEntry> for kreuzcrawl::HreflangEntry {
 impl From<kreuzcrawl::HreflangEntry> for HreflangEntry {
     fn from(val: kreuzcrawl::HreflangEntry) -> Self {
         Self {
-            lang: val.lang,
-            url: val.url,
+            lang: val.lang.to_string(),
+            url: val.url.to_string(),
         }
     }
 }
@@ -4120,10 +4120,10 @@ impl From<FaviconInfo> for kreuzcrawl::FaviconInfo {
 impl From<kreuzcrawl::FaviconInfo> for FaviconInfo {
     fn from(val: kreuzcrawl::FaviconInfo) -> Self {
         Self {
-            url: val.url,
-            rel: val.rel,
-            sizes: val.sizes,
-            mime_type: val.mime_type,
+            url: val.url.to_string(),
+            rel: val.rel.to_string(),
+            sizes: val.sizes.map(|v| v.to_string()),
+            mime_type: val.mime_type.map(|v| v.to_string()),
         }
     }
 }
@@ -4143,7 +4143,7 @@ impl From<kreuzcrawl::HeadingInfo> for HeadingInfo {
     fn from(val: kreuzcrawl::HeadingInfo) -> Self {
         Self {
             level: val.level,
-            text: val.text,
+            text: val.text.to_string(),
         }
     }
 }
@@ -4167,13 +4167,13 @@ impl From<ResponseMeta> for kreuzcrawl::ResponseMeta {
 impl From<kreuzcrawl::ResponseMeta> for ResponseMeta {
     fn from(val: kreuzcrawl::ResponseMeta) -> Self {
         Self {
-            etag: val.etag,
-            last_modified: val.last_modified,
-            cache_control: val.cache_control,
-            server: val.server,
-            x_powered_by: val.x_powered_by,
-            content_language: val.content_language,
-            content_encoding: val.content_encoding,
+            etag: val.etag.map(|v| v.to_string()),
+            last_modified: val.last_modified.map(|v| v.to_string()),
+            cache_control: val.cache_control.map(|v| v.to_string()),
+            server: val.server.map(|v| v.to_string()),
+            x_powered_by: val.x_powered_by.map(|v| v.to_string()),
+            content_language: val.content_language.map(|v| v.to_string()),
+            content_encoding: val.content_encoding.map(|v| v.to_string()),
         }
     }
 }
@@ -4233,44 +4233,44 @@ impl From<PageMetadata> for kreuzcrawl::PageMetadata {
 impl From<kreuzcrawl::PageMetadata> for PageMetadata {
     fn from(val: kreuzcrawl::PageMetadata) -> Self {
         Self {
-            title: val.title,
-            description: val.description,
-            canonical_url: val.canonical_url,
-            keywords: val.keywords,
-            author: val.author,
-            viewport: val.viewport,
-            theme_color: val.theme_color,
-            generator: val.generator,
-            robots: val.robots,
-            html_lang: val.html_lang,
-            html_dir: val.html_dir,
-            og_title: val.og_title,
-            og_type: val.og_type,
-            og_image: val.og_image,
-            og_description: val.og_description,
-            og_url: val.og_url,
-            og_site_name: val.og_site_name,
-            og_locale: val.og_locale,
-            og_video: val.og_video,
-            og_audio: val.og_audio,
+            title: val.title.map(|v| v.to_string()),
+            description: val.description.map(|v| v.to_string()),
+            canonical_url: val.canonical_url.map(|v| v.to_string()),
+            keywords: val.keywords.map(|v| v.to_string()),
+            author: val.author.map(|v| v.to_string()),
+            viewport: val.viewport.map(|v| v.to_string()),
+            theme_color: val.theme_color.map(|v| v.to_string()),
+            generator: val.generator.map(|v| v.to_string()),
+            robots: val.robots.map(|v| v.to_string()),
+            html_lang: val.html_lang.map(|v| v.to_string()),
+            html_dir: val.html_dir.map(|v| v.to_string()),
+            og_title: val.og_title.map(|v| v.to_string()),
+            og_type: val.og_type.map(|v| v.to_string()),
+            og_image: val.og_image.map(|v| v.to_string()),
+            og_description: val.og_description.map(|v| v.to_string()),
+            og_url: val.og_url.map(|v| v.to_string()),
+            og_site_name: val.og_site_name.map(|v| v.to_string()),
+            og_locale: val.og_locale.map(|v| v.to_string()),
+            og_video: val.og_video.map(|v| v.to_string()),
+            og_audio: val.og_audio.map(|v| v.to_string()),
             og_locale_alternates: val.og_locale_alternates.map(|v| v.into_iter().collect()),
-            twitter_card: val.twitter_card,
-            twitter_title: val.twitter_title,
-            twitter_description: val.twitter_description,
-            twitter_image: val.twitter_image,
-            twitter_site: val.twitter_site,
-            twitter_creator: val.twitter_creator,
-            dc_title: val.dc_title,
-            dc_creator: val.dc_creator,
-            dc_subject: val.dc_subject,
-            dc_description: val.dc_description,
-            dc_publisher: val.dc_publisher,
-            dc_date: val.dc_date,
-            dc_type: val.dc_type,
-            dc_format: val.dc_format,
-            dc_identifier: val.dc_identifier,
-            dc_language: val.dc_language,
-            dc_rights: val.dc_rights,
+            twitter_card: val.twitter_card.map(|v| v.to_string()),
+            twitter_title: val.twitter_title.map(|v| v.to_string()),
+            twitter_description: val.twitter_description.map(|v| v.to_string()),
+            twitter_image: val.twitter_image.map(|v| v.to_string()),
+            twitter_site: val.twitter_site.map(|v| v.to_string()),
+            twitter_creator: val.twitter_creator.map(|v| v.to_string()),
+            dc_title: val.dc_title.map(|v| v.to_string()),
+            dc_creator: val.dc_creator.map(|v| v.to_string()),
+            dc_subject: val.dc_subject.map(|v| v.to_string()),
+            dc_description: val.dc_description.map(|v| v.to_string()),
+            dc_publisher: val.dc_publisher.map(|v| v.to_string()),
+            dc_date: val.dc_date.map(|v| v.to_string()),
+            dc_type: val.dc_type.map(|v| v.to_string()),
+            dc_format: val.dc_format.map(|v| v.to_string()),
+            dc_identifier: val.dc_identifier.map(|v| v.to_string()),
+            dc_language: val.dc_language.map(|v| v.to_string()),
+            dc_rights: val.dc_rights.map(|v| v.to_string()),
             article: val.article.map(Into::into),
             hreflangs: val.hreflangs.map(|v| v.into_iter().map(Into::into).collect()),
             favicons: val.favicons.map(|v| v.into_iter().map(Into::into).collect()),
@@ -4290,7 +4290,9 @@ impl From<CrawlStreamRequest> for kreuzcrawl::CrawlStreamRequest {
 #[allow(clippy::redundant_closure, clippy::useless_conversion)]
 impl From<kreuzcrawl::CrawlStreamRequest> for CrawlStreamRequest {
     fn from(val: kreuzcrawl::CrawlStreamRequest) -> Self {
-        Self { url: val.url }
+        Self {
+            url: val.url.to_string(),
+        }
     }
 }
 
@@ -4326,7 +4328,7 @@ impl From<CitationResult> for kreuzcrawl::CitationResult {
 impl From<kreuzcrawl::CitationResult> for CitationResult {
     fn from(val: kreuzcrawl::CitationResult) -> Self {
         Self {
-            content: val.content,
+            content: val.content.to_string(),
             references: val.references.into_iter().map(Into::into).collect(),
         }
     }
@@ -4348,8 +4350,8 @@ impl From<kreuzcrawl::CitationReference> for CitationReference {
     fn from(val: kreuzcrawl::CitationReference) -> Self {
         Self {
             index: val.index,
-            url: val.url,
-            text: val.text,
+            url: val.url.to_string(),
+            text: val.text.to_string(),
         }
     }
 }
@@ -4369,9 +4371,9 @@ impl From<BatchScrapeResult> for kreuzcrawl::BatchScrapeResult {
 impl From<kreuzcrawl::BatchScrapeResult> for BatchScrapeResult {
     fn from(val: kreuzcrawl::BatchScrapeResult) -> Self {
         Self {
-            url: val.url,
+            url: val.url.to_string(),
             result: val.result.map(Into::into),
-            error: val.error,
+            error: val.error.map(|v| v.to_string()),
         }
     }
 }
@@ -4391,9 +4393,9 @@ impl From<BatchCrawlResult> for kreuzcrawl::BatchCrawlResult {
 impl From<kreuzcrawl::BatchCrawlResult> for BatchCrawlResult {
     fn from(val: kreuzcrawl::BatchCrawlResult) -> Self {
         Self {
-            url: val.url,
+            url: val.url.to_string(),
             result: val.result.map(Into::into),
-            error: val.error,
+            error: val.error.map(|v| v.to_string()),
         }
     }
 }
