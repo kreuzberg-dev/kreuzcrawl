@@ -9,7 +9,7 @@ keywords = ["crawl", "scrape", "spider", "web"]
 categories = ["text-processing"]
 
 [package.metadata.cargo-machete]
-ignored = ["tokio", "futures"]
+ignored = ["tokio", "futures", "rb-sys"]
 
 [lib]
 name = "kreuzcrawl_rb"
@@ -20,6 +20,7 @@ crate-type = ["cdylib"]
 futures = "0.3"
 kreuzcrawl = { version = "0.3.0-rc.39", path = "../../../../../crates/kreuzcrawl", features = ["interact", "browser-chromiumoxide"] }
 magnus = "0.8"
+rb-sys = ">=0.9, <0.9.128"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread"] }
