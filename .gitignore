@@ -219,6 +219,8 @@ chrome-memwatch.log
 .github/workflows/swift.yml
 .github/workflows/zig.yml
 
+e2e/ruby/.bundle/
+
 # BEGIN ai-rulez (DO NOT EDIT - managed by ai-rulez)
 .agents/
 .cursor/
@@ -227,4 +229,3 @@ chrome-memwatch.log
 .github/copilot-instructions.md
 .github/skills/
 # END ai-rulez
-e2e/ruby/.bundle/

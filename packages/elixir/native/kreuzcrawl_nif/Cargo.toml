@@ -6,7 +6,7 @@ license = "Elastic-2.0"
 description = "High-performance web crawling engine"
 readme = false
 keywords = ["crawl", "scrape", "spider", "web"]
-categories = ["text-processing"]
+categories = []
 
 [package.metadata.cargo-machete]
 ignored = ["tokio", "futures-util"]
