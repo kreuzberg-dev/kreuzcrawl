@@ -93,7 +93,7 @@ jobs:
             release_kotlin_android: ${{ steps.meta.outputs.release_kotlin_android }}
         steps:
             - name: Checkout
-              uses: actions/checkout@v6.0.2
+              uses: actions/checkout@v6
               with:
                   ref: ${{ (inputs.republish == true && (inputs.ref || github.event.repository.default_branch)) || inputs.ref || inputs.tag || github.ref }}
                   fetch-depth: 0
@@ -127,7 +127,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v6.0.2
+              uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -437,7 +437,7 @@ jobs:
             matrix:
                 os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -456,7 +456,7 @@ jobs:
                   cibw-build: "cp310-*"
                   upload-artifact: "false"
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: python-wheels-${{ matrix.os }}
                   path: wheelhouse/*.whl
@@ -468,14 +468,14 @@ jobs:
         if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_python == 'true' && (needs.check-pypi.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
                   submodules: recursive
 
             - uses: kreuzberg-dev/actions/setup-rust@v1
-            - uses: actions/setup-python@v6.2.0
+            - uses: actions/setup-python@v6
               with:
                   python-version: "3.13"
 
@@ -485,7 +485,7 @@ jobs:
                   output-dir: dist
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: python-sdist
                   path: dist/*.tar.gz
@@ -508,7 +508,7 @@ jobs:
                     - { os: windows-latest, target: x86_64-pc-windows-msvc }
                     - { os: windows-latest, target: aarch64-pc-windows-msvc }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -533,7 +533,7 @@ jobs:
                   crate-dir: crates/kreuzcrawl-node
                   build-command: pnpm exec napi build --release --target ${{ matrix.target }} --platform
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: node-bindings-${{ matrix.target }}
                   path: |
@@ -549,7 +549,7 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 60
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -577,7 +577,7 @@ jobs:
                   crate-dir: crates/kreuzcrawl-wasm
                   pack-tarball: "true"
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: wasm-bundle
                   path: |
@@ -606,7 +606,7 @@ jobs:
                     - { os: macos-15-intel, label: macos-x86_64 }
                     - { os: windows-latest, label: windows-x64 }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -620,7 +620,7 @@ jobs:
               with:
                   cache-key-prefix: publish-ruby-${{ matrix.label }}
 
-            - uses: ruby/setup-ruby@v1.308.0
+            - uses: ruby/setup-ruby@v1
               with:
                   ruby-version: "3.3"
                   bundler-cache: false
@@ -664,7 +664,7 @@ jobs:
                     esac
                   done
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: rubygems-${{ matrix.label }}
                   path: packages/ruby/pkg/*.gem
@@ -687,7 +687,7 @@ jobs:
                     - { os: macos-15-intel, label: macos-x86_64, target: x86_64-apple-darwin }
                     - { os: windows-latest, label: windows-x86_64, target: x86_64-pc-windows-msvc }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -731,7 +731,7 @@ jobs:
                   version: ${{ needs.prepare.outputs.version }}
                   output-dir: dist/php-package
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: php-package-${{ matrix.platform.label }}-php${{ matrix.php }}
                   path: |
@@ -757,7 +757,7 @@ jobs:
                     - { os: macos-15-intel, target: x86_64-apple-darwin }
                     - { os: windows-latest, target: x86_64-pc-windows-msvc }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -800,7 +800,7 @@ jobs:
                     tar -czf "${STAGE}.tar.gz" "$STAGE"
                   fi
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: cli-${{ matrix.target }}
                   path: |
@@ -822,7 +822,7 @@ jobs:
                     - { arch: x86_64, runner: ubuntu-latest, target: x86_64-unknown-linux-musl }
                     - { arch: aarch64, runner: ubuntu-24.04-arm, target: aarch64-unknown-linux-musl }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -854,7 +854,7 @@ jobs:
                   cp README.md "$STAGE/" 2>/dev/null || true
                   tar -czf "kreuzcrawl-cli-${TARGET}.tar.gz" "$STAGE"
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: cli-${{ matrix.target }}
                   path: kreuzcrawl-cli-${{ matrix.target }}.tar.gz
@@ -876,7 +876,7 @@ jobs:
                     - { os: macos-15-intel, platform: macos-x86_64, target: x86_64-apple-darwin }
                     - { os: windows-latest, platform: windows-x86_64, target: x86_64-pc-windows-msvc }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -900,7 +900,7 @@ jobs:
                   archive-name: kreuzcrawl-go-${{ matrix.platform }}.tar.gz
                   output-dir: dist/go-ffi
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: go-ffi-${{ matrix.platform }}
                   path: dist/go-ffi/*.tar.gz
@@ -923,7 +923,7 @@ jobs:
                     - { os: macos-15-intel, platform: macos-x86_64, target: x86_64-apple-darwin }
                     - { os: windows-latest, platform: windows-x86_64, target: x86_64-pc-windows-msvc }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -961,7 +961,7 @@ jobs:
                   mkdir -p dist/c-ffi
                   tar -czf "dist/c-ffi/${STAGE}.tar.gz" "$STAGE"
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: c-ffi-${{ matrix.platform }}
                   path: dist/c-ffi/*.tar.gz
@@ -984,7 +984,7 @@ jobs:
                     - { os: macos-15-intel, classifier: macos-x86_64, target: x86_64-apple-darwin }
                     - { os: windows-latest, classifier: windows-x86_64, target: x86_64-pc-windows-msvc }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1006,7 +1006,7 @@ jobs:
                   lib-name: kreuzcrawl_ffi
                   classifier: ${{ matrix.classifier }}
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: java-natives-${{ matrix.classifier }}
                   path: dist/java-natives
@@ -1036,7 +1036,7 @@ jobs:
                           classifier: linux-musl-aarch64,
                       }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1063,7 +1063,7 @@ jobs:
                   cp dist/libkreuzcrawl_ffi.so "$STAGE/libkreuzcrawl_ffi.so"
                   ls -la "$STAGE"
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: java-natives-${{ matrix.classifier }}
                   path: dist/java-natives
@@ -1086,7 +1086,7 @@ jobs:
                     - { os: macos-15-intel, rid: osx-x64, target: x86_64-apple-darwin }
                     - { os: windows-latest, rid: win-x64, target: x86_64-pc-windows-msvc }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1108,7 +1108,7 @@ jobs:
                   lib-name: kreuzcrawl_ffi
                   rid: ${{ matrix.rid }}
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: csharp-natives-${{ matrix.rid }}
                   path: dist/csharp-natives
@@ -1128,7 +1128,7 @@ jobs:
                     - { os: ubuntu-latest, arch: x64, target: x86_64-unknown-linux-musl, rid: linux-musl-x64 }
                     - { os: ubuntu-24.04-arm, arch: arm64, target: aarch64-unknown-linux-musl, rid: linux-musl-arm64 }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1148,7 +1148,7 @@ jobs:
                   lib-name: kreuzcrawl_ffi
                   rid: ${{ matrix.rid }}
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: csharp-natives-${{ matrix.rid }}
                   path: dist/csharp-natives
@@ -1176,7 +1176,7 @@ jobs:
                     - { os: windows-latest, label: windows-x86_64, target: x86_64-pc-windows-msvc, nif: "2.16" }
                     - { os: windows-latest, label: windows-x86_64, target: x86_64-pc-windows-msvc, nif: "2.17" }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1186,7 +1186,7 @@ jobs:
               if: runner.os == 'Linux'
               uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
-            - uses: erlef/setup-beam@v1.24
+            - uses: erlef/setup-beam@v1
               with:
                   elixir-version: "1.17"
                   otp-version: "27"
@@ -1205,7 +1205,7 @@ jobs:
                   nif-version: ${{ needs.prepare.outputs.version }}
                   nif-api-version: ${{ matrix.nif }}
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: elixir-${{ matrix.label }}-nif-${{ matrix.nif }}
                   path: dist/elixir-natives/*.tar.gz
@@ -1227,7 +1227,7 @@ jobs:
                     - { os: ubuntu-24.04-arm, arch: aarch64, target: aarch64-unknown-linux-musl, nif: "2.16" }
                     - { os: ubuntu-24.04-arm, arch: aarch64, target: aarch64-unknown-linux-musl, nif: "2.17" }
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1235,7 +1235,7 @@ jobs:
 
             - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
-            - uses: erlef/setup-beam@v1.24
+            - uses: erlef/setup-beam@v1
               with:
                   elixir-version: "1.17"
                   otp-version: "27"
@@ -1254,7 +1254,7 @@ jobs:
                   nif-version: ${{ needs.prepare.outputs.version }}
                   nif-api-version: ${{ matrix.nif }}
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: elixir-musl-${{ matrix.arch }}-nif-${{ matrix.nif }}
                   path: dist/elixir-natives/*.tar.gz
@@ -1267,7 +1267,7 @@ jobs:
         if: ${{ needs.prepare.outputs.release_swift == 'true' }}
         runs-on: macos-latest
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1277,7 +1277,7 @@ jobs:
               with:
                   crate-name: kreuzcrawl-swift
                   artifact-name: KreuzcrawlSwift
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: swift-artifactbundle
                   path: ${{ steps.bundle.outputs.bundle-zip }}
@@ -1290,7 +1290,7 @@ jobs:
         if: ${{ needs.prepare.outputs.release_swift == 'true' }}
         runs-on: macos-latest
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1302,7 +1302,7 @@ jobs:
                   package-dir: packages/swift
                   crate-name: kreuzcrawl-swift
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: swift-package
                   path: packages/swift
@@ -1314,7 +1314,7 @@ jobs:
         if: ${{ needs.prepare.outputs.release_zig == 'true' }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
@@ -1334,7 +1334,7 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && (needs.cli-binaries.result == 'success' || needs.cli-musl-binaries.result == 'success') }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: cli-*
                   path: dist/cli
@@ -1355,7 +1355,7 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.go-ffi-libraries.result == 'success' }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: go-ffi-*
                   path: dist/go-ffi
@@ -1374,7 +1374,7 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.c-ffi-libraries.result == 'success' }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: c-ffi-*
                   path: dist/c-ffi
@@ -1393,7 +1393,7 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && (needs.elixir-natives.result == 'success' || needs.elixir-natives-musl.result == 'success') }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: elixir-*
                   path: dist/elixir
@@ -1412,7 +1412,7 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.php-extension.result == 'success' }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: php-package-*
                   path: dist/php-package
@@ -1468,7 +1468,7 @@ jobs:
             contents: read
             id-token: write
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
@@ -1498,12 +1498,12 @@ jobs:
             contents: read
             id-token: write
         steps:
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: python-wheels-*
                   path: dist
                   merge-multiple: true
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   name: python-sdist
                   path: dist
@@ -1522,18 +1522,18 @@ jobs:
             contents: read
             id-token: write
         steps:
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: rubygems-*
                   path: dist
                   merge-multiple: true
 
-            - uses: ruby/setup-ruby@v1.308.0
+            - uses: ruby/setup-ruby@v1
               with:
                   ruby-version: "3.3"
                   bundler-cache: false
 
-            - uses: rubygems/configure-rubygems-credentials@v2.0.0
+            - uses: rubygems/configure-rubygems-credentials@v2
 
             - uses: kreuzberg-dev/actions/publish-rubygems@v1
               with:
@@ -1549,12 +1549,12 @@ jobs:
             contents: read
             id-token: write
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
 
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: node-bindings-*
                   path: crates/kreuzcrawl-node/artifacts
@@ -1616,12 +1616,12 @@ jobs:
             contents: read
             id-token: write
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
 
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   name: wasm-bundle
                   path: crates/kreuzcrawl-wasm
@@ -1660,12 +1660,12 @@ jobs:
         if: ${{ needs.prepare.outputs.release_java == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-maven.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
 
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: java-natives-*
                   path: java-natives
@@ -1684,7 +1684,7 @@ jobs:
                     cp -v "${dir}"/* "packages/java/src/main/resources/natives/${classifier}/"
                   done
 
-            - uses: actions/setup-java@v5.2.0
+            - uses: actions/setup-java@v5
               with:
                   distribution: temurin
                   java-version: "21"
@@ -1721,12 +1721,12 @@ jobs:
             contents: read
             id-token: write
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
 
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: csharp-natives-*
                   path: csharp-natives
@@ -1744,7 +1744,7 @@ jobs:
                     cp -v "${dir}native/"* "packages/csharp/runtimes/${rid}/native/"
                   done
 
-            - uses: actions/setup-dotnet@v5.2.0
+            - uses: actions/setup-dotnet@v5
               with:
                   dotnet-version: "8.0.x"
 
@@ -1770,13 +1770,13 @@ jobs:
         if: ${{ needs.prepare.outputs.release_elixir == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-hex.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
                   fetch-depth: 0
                   submodules: recursive
 
-            - uses: erlef/setup-beam@v1.24
+            - uses: erlef/setup-beam@v1
               with:
                   elixir-version: "1.17"
                   otp-version: "27"
@@ -1825,7 +1825,7 @@ jobs:
                     - abi: x86
                       target: i686-linux-android
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
@@ -1844,7 +1844,7 @@ jobs:
                   abi: ${{ matrix.abi }}
                   target: ${{ matrix.target }}
 
-            - uses: actions/upload-artifact@v7.0.1
+            - uses: actions/upload-artifact@v7
               with:
                   name: kotlin-android-${{ matrix.abi }}
                   path: dist/android-natives/${{ matrix.abi }}/
@@ -1856,11 +1856,11 @@ jobs:
         if: ${{ needs.prepare.outputs.release_kotlin_android == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-maven-kotlin-android.outputs.kotlin_android_exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
 
-            - uses: actions/download-artifact@v8.0.1
+            - uses: actions/download-artifact@v8
               with:
                   pattern: kotlin-android-*
                   path: kotlin-android-natives
@@ -1894,7 +1894,7 @@ jobs:
         if: ${{ needs.prepare.outputs.release_zig == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-zig.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.2
+            - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
@@ -1939,12 +1939,12 @@ jobs:
             contents: write
         steps:
             - name: Checkout source repo
-              uses: actions/checkout@v6.0.2
+              uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
 
             - name: Checkout homebrew-tap
-              uses: actions/checkout@v6.0.2
+              uses: actions/checkout@v6
               with:
                   repository: kreuzberg-dev/homebrew-tap
                   token: ${{ secrets.HOMEBREW_TOKEN }}
@@ -2022,7 +2022,7 @@ jobs:
                   token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Upload bottle JSON manifests
-              uses: actions/upload-artifact@v7.0.1
+              uses: actions/upload-artifact@v7
               with:
                   name: homebrew-bottle-json-${{ matrix.bottle_tag }}
                   path: ${{ github.workspace }}/bottle-json/*.json
@@ -2043,19 +2043,19 @@ jobs:
             contents: write
         steps:
             - name: Checkout source repo
-              uses: actions/checkout@v6.0.2
+              uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
 
             - name: Checkout homebrew-tap
-              uses: actions/checkout@v6.0.2
+              uses: actions/checkout@v6
               with:
                   repository: kreuzberg-dev/homebrew-tap
                   token: ${{ secrets.HOMEBREW_TOKEN }}
                   path: homebrew-tap
 
             - name: Download all bottle JSON manifests
-              uses: actions/download-artifact@v8.0.1
+              uses: actions/download-artifact@v8
               with:
                   path: ${{ github.workspace }}/bottle-json
                   pattern: homebrew-bottle-json-*

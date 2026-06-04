@@ -4286,6 +4286,7 @@ impl From<kreuzcrawl::BrowserMode> for BrowserMode {
             kreuzcrawl::BrowserMode::Auto => Self::Auto,
             kreuzcrawl::BrowserMode::Always => Self::Always,
             kreuzcrawl::BrowserMode::Never => Self::Never,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4312,6 +4313,7 @@ impl From<kreuzcrawl::BrowserWait> for BrowserWait {
             kreuzcrawl::BrowserWait::NetworkIdle => Self::NetworkIdle,
             kreuzcrawl::BrowserWait::Selector => Self::Selector,
             kreuzcrawl::BrowserWait::Fixed => Self::Fixed,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4336,6 +4338,7 @@ impl From<kreuzcrawl::BrowserBackend> for BrowserBackend {
         match val {
             kreuzcrawl::BrowserBackend::Chromiumoxide => Self::Chromiumoxide,
             kreuzcrawl::BrowserBackend::Native => Self::Native,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4361,6 +4364,7 @@ impl From<kreuzcrawl::AuthConfig> for AuthConfig {
             kreuzcrawl::AuthConfig::Basic { .. } => Self::Basic,
             kreuzcrawl::AuthConfig::Bearer { .. } => Self::Bearer,
             kreuzcrawl::AuthConfig::Header { .. } => Self::Header,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4389,6 +4393,7 @@ impl From<kreuzcrawl::LinkType> for LinkType {
             kreuzcrawl::LinkType::External => Self::External,
             kreuzcrawl::LinkType::Anchor => Self::Anchor,
             kreuzcrawl::LinkType::Document => Self::Document,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4418,6 +4423,7 @@ impl From<kreuzcrawl::ImageSource> for ImageSource {
             kreuzcrawl::ImageSource::PictureSource => Self::PictureSource,
             kreuzcrawl::ImageSource::OgImage => Self::OgImage,
             kreuzcrawl::ImageSource::TwitterImage => Self::TwitterImage,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4445,6 +4451,7 @@ impl From<kreuzcrawl::FeedType> for FeedType {
             kreuzcrawl::FeedType::Rss => Self::Rss,
             kreuzcrawl::FeedType::Atom => Self::Atom,
             kreuzcrawl::FeedType::JsonFeed => Self::JsonFeed,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4485,6 +4492,7 @@ impl From<kreuzcrawl::AssetCategory> for AssetCategory {
             kreuzcrawl::AssetCategory::Archive => Self::Archive,
             kreuzcrawl::AssetCategory::Data => Self::Data,
             kreuzcrawl::AssetCategory::Other => Self::Other,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4518,6 +4526,7 @@ impl From<kreuzcrawl::CrawlEvent> for CrawlEvent {
             kreuzcrawl::CrawlEvent::Page { .. } => Self::Page,
             kreuzcrawl::CrawlEvent::Error { .. } => Self::Error,
             kreuzcrawl::CrawlEvent::Complete { .. } => Self::Complete,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4554,6 +4563,7 @@ impl From<kreuzcrawl::PageAction> for PageAction {
             kreuzcrawl::PageAction::Screenshot { .. } => Self::Screenshot,
             kreuzcrawl::PageAction::ExecuteJs { .. } => Self::ExecuteJs,
             kreuzcrawl::PageAction::Scrape => Self::Scrape,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }
@@ -4583,6 +4593,7 @@ impl From<kreuzcrawl::ScrollDirection> for ScrollDirection {
         match val {
             kreuzcrawl::ScrollDirection::Up => Self::Up,
             kreuzcrawl::ScrollDirection::Down => Self::Down,
+            _ => unreachable!("bridge enum variant not exposed in binding"),
         }
     }
 }

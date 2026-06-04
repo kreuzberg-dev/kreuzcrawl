@@ -140,10 +140,14 @@ tasks:
     upgrade:
         desc: Upgrade all dependencies to latest versions including cross-major bumps
         cmds:
-            - alef update --latest
-            - prek autoupdate
-            - cargo upgrade --incompatible
-            - gau --update .
+            - cmd: alef update --latest
+              ignore_error: true
+            - cmd: prek autoupdate
+              ignore_error: true
+            - cmd: cargo upgrade --incompatible
+              ignore_error: true
+            - cmd: gau --update .
+              ignore_error: true
             - cmd: cd packages/python && uv sync --all-extras --upgrade --no-install-workspace --no-install-project
               ignore_error: true
             - cmd: pnpm up -r --latest
@@ -159,6 +163,8 @@ tasks:
             - cmd: cd packages/dart && dart pub upgrade --major-versions
               ignore_error: true
             - cmd: cd packages/swift && swift package update
+              ignore_error: true
+            - cmd: task zig:update
               ignore_error: true
             - task: java:update
             - task: csharp:update

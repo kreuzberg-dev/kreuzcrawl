@@ -6,9 +6,4 @@ packages:
 allowBuilds:
   esbuild: true
 minimumReleaseAgeExclude:
-  - '@kreuzberg/kreuzcrawl-darwin-arm64@0.3.0-rc.37'
-  - '@kreuzberg/kreuzcrawl-darwin-x64@0.3.0-rc.37'
-  - '@kreuzberg/kreuzcrawl-linux-arm64-gnu@0.3.0-rc.37'
-  - '@kreuzberg/kreuzcrawl-linux-x64-gnu@0.3.0-rc.37'
-  - '@kreuzberg/kreuzcrawl-win32-arm64-msvc@0.3.0-rc.37'
-  - '@kreuzberg/kreuzcrawl-win32-x64-msvc@0.3.0-rc.37'
+  - '@kreuzberg/*'

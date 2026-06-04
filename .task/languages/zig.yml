@@ -95,10 +95,18 @@ tasks:
             - rm -rf zig-out
 
     update:
-        desc: Update Zig dependencies
+        desc: Update Zig dependencies to latest versions (re-fetches each .url in build.zig.zon)
         dir: packages/zig
+        precondition: "command -v zig >/dev/null 2>&1"
         cmds:
-            - echo "Zig uses system libraries - manage via build.zig.zon"
+            - |
+                set -e
+                URLs="$(grep "\.url" build.zig.zon | cut -d '=' -f 2 | cut -d '#' -f 1 | tr -d '"')"
+                for URL in $URLs; do
+                    echo "Updating module $URL"
+                    zig fetch --save "$URL"
+                    echo
+                done
 
     e2e:generate:
         desc: Generate and format Zig E2E tests from fixtures
