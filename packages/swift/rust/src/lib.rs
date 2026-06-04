@@ -4639,7 +4639,7 @@ pub fn interact(engine: CrawlEngineHandle, url: String, actions: Vec<String>) ->
             let values = actions;
             values
                 .into_iter()
-                .map(|json| ::serde_json::from_str::<kreuzcrawl::PageAction>(&json).expect("valid JSON for actions"))
+                .map(|s| ::serde_json::from_str::<kreuzcrawl::PageAction>(&s).expect("valid JSON for actions element"))
                 .collect::<Vec<_>>()
         })
         .await
