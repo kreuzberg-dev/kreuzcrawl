@@ -4,7 +4,7 @@
 {{ install_command }}
 ```
 
-{%- elif install_command is iterable -%}
+{% elif install_command is iterable -%}
 {%- for cmd in install_command %}
 
 ```bash
@@ -12,4 +12,4 @@
 ```
 
 {%- endfor %}
-{%- endif %}
+{% endif %}
