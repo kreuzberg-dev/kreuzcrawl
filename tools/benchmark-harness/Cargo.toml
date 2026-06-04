@@ -40,8 +40,8 @@ sha2 = { workspace = true }
 sysinfo = "0.38"
 tempfile = { workspace = true }
 thiserror = { workspace = true }
-tikv-jemalloc-ctl = { version = "0.6", features = ["stats"], optional = true }
-tikv-jemallocator = { version = "0.6", optional = true }
+tikv-jemalloc-ctl = { version = "0.7", features = ["stats"], optional = true }
+tikv-jemallocator = { version = "0.7", optional = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

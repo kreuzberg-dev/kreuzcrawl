@@ -16,16 +16,20 @@
       "default": "./index.js"
     }
   },
-  "files": ["index.js", "index.d.ts", "*.node"],
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "*.node"
+  ],
   "optionalDependencies": {
-    "@kreuzberg/kreuzcrawl-linux-x64-gnu": "0.3.0-rc.39",
-    "@kreuzberg/kreuzcrawl-linux-arm64-gnu": "0.3.0-rc.39",
-    "@kreuzberg/kreuzcrawl-linux-x64-musl": "0.3.0-rc.39",
-    "@kreuzberg/kreuzcrawl-linux-arm64-musl": "0.3.0-rc.39",
-    "@kreuzberg/kreuzcrawl-darwin-x64": "0.3.0-rc.39",
     "@kreuzberg/kreuzcrawl-darwin-arm64": "0.3.0-rc.39",
-    "@kreuzberg/kreuzcrawl-win32-x64-msvc": "0.3.0-rc.39",
-    "@kreuzberg/kreuzcrawl-win32-arm64-msvc": "0.3.0-rc.39"
+    "@kreuzberg/kreuzcrawl-darwin-x64": "0.3.0-rc.39",
+    "@kreuzberg/kreuzcrawl-linux-arm64-gnu": "0.3.0-rc.39",
+    "@kreuzberg/kreuzcrawl-linux-arm64-musl": "0.0.0-bootstrap",
+    "@kreuzberg/kreuzcrawl-linux-x64-gnu": "0.3.0-rc.39",
+    "@kreuzberg/kreuzcrawl-linux-x64-musl": "0.0.0-bootstrap",
+    "@kreuzberg/kreuzcrawl-win32-arm64-msvc": "0.3.0-rc.39",
+    "@kreuzberg/kreuzcrawl-win32-x64-msvc": "0.3.0-rc.39"
   },
   "napi": {
     "packageName": "@kreuzberg/kreuzcrawl",
@@ -46,7 +50,13 @@
     "artifacts": "napi artifacts",
     "prepublishOnly": "napi prepublish -t npm --skip-optional-publish"
   },
-  "engines": { "node": ">= 18" },
-  "publishConfig": { "access": "public" },
-  "devDependencies": { "@napi-rs/cli": "^3.6.2" }
+  "engines": {
+    "node": ">= 18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.7.0"
+  }
 }

@@ -47,7 +47,7 @@ clap = { version = "4", features = ["derive"] }
 criterion = { version = "0.8", features = ["html_reports"] }
 cssparser = "0.37"
 dashmap = "6"
-deno_core = "0.401"
+deno_core = "0.403"
 deno_error = "0.7"
 dirs = "6"
 encoding_rs = "0.8"
@@ -56,7 +56,7 @@ encoding_rs = "0.8"
 ext-php-rs = "0.15"
 flate2 = "1"
 futures = "0.3"
-html-to-markdown-rs = { version = "3.4", features = ["full"] }
+html-to-markdown-rs = { version = "3.5", features = ["full"] }
 html5ever = "0.39"
 itertools = "0.14"
 kreuzcrawl-browser = { path = "crates/kreuzcrawl-browser", version = "0.3.0-rc.39" }
@@ -68,7 +68,7 @@ memchr = "2"
 minijinja = "2"
 napi = { version = "3", default-features = false, features = ["napi8", "tokio_rt"] }
 napi-derive = "3"
-notify = "6"
+notify = "8"
 opentelemetry = { version = "0.32", features = ["metrics"] }
 png = "0.18"
 precomputed-hash = "0.1"
