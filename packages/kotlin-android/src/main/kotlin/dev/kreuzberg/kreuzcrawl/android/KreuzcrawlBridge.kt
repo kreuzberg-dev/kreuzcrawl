@@ -76,5 +76,4 @@ object KreuzcrawlBridge {
     external fun nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle: Long)
 
     // Destructor external funs for handle-only opaque types.
-    external fun nativeFreeCrawlEngineHandle(handle: Long)
 }

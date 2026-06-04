@@ -9,7 +9,7 @@ keywords = ["crawl", "scrape", "spider", "web"]
 categories = ["text-processing"]
 
 [package.metadata.cargo-machete]
-ignored = ["tokio", "futures", "rb-sys"]
+ignored = ["rb-sys"]
 
 [lib]
 name = "kreuzcrawl_rb"
