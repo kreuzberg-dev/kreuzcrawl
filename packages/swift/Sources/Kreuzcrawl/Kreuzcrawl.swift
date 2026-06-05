@@ -1901,7 +1901,7 @@ public func generateCitations(markdown: String) throws -> CitationResult {
 ///
 /// If `config` is `None`, uses [`CrawlConfig::default()`].
 /// Returns an error if the configuration is invalid.
-public func createEngine(config: CrawlConfig?) throws -> CrawlEngineHandle {
+public func createEngine(config: CrawlConfig? = nil) throws -> CrawlEngineHandle {
     return try RustBridge.createEngine(config)
 }
 
