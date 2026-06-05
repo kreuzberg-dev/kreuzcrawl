@@ -1531,7 +1531,7 @@ jobs:
                   ruby-version: "3.3"
                   bundler-cache: false
 
-            - uses: rubygems/configure-rubygems-credentials@v2
+            - uses: rubygems/configure-rubygems-credentials@v2.0.0
 
             - uses: kreuzberg-dev/actions/publish-rubygems@v1
               with:
