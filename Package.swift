@@ -23,7 +23,7 @@ let package = Package(
     // The binary includes C headers for swift-bridge interop.
     .binaryTarget(
       name: "RustBridge",
-      url: "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.39/Kreuzcrawl-rs.artifactbundle.zip",
+      url: "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.40/Kreuzcrawl-rs.artifactbundle.zip",
       checksum: "__ALEF_SWIFT_CHECKSUM__"
     ),
     .target(
