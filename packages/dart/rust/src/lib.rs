@@ -2037,7 +2037,7 @@ impl From<CrawlStreamRequest> for kreuzcrawl::CrawlStreamRequest {
 /// with `[1]: https://example.com` in the reference list.
 /// Images `![alt](url)` are preserved unchanged.
 pub fn generate_citations(markdown: String) -> CitationResult {
-    (CitationResult::from)(kreuzcrawl::generate_citations(&markdown))
+    CitationResult::from(kreuzcrawl::generate_citations(&markdown))
 }
 
 /// Create a new crawl engine with the given configuration.
