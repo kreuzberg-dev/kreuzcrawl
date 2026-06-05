@@ -630,38 +630,22 @@ jobs:
                   package-dir: packages/ruby
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
 
-            - name: Build platform gem
-              # Inline: rb-sys's rake tasks are platform-dependent. All platforms use
-              # native[PLATFORM] gem to produce platform-specific gems. The native task
-              # is smart: on matching architectures it builds in-place, on mismatched
-              # architectures it cross-compiles via rake-compiler-dock.
-              working-directory: packages/ruby
-              shell: bash
-              run: |
-                  case "${{ matrix.label }}" in
-                    linux-x86_64) target="x86_64-linux" ;;
-                    linux-aarch64) target="aarch64-linux" ;;
-                    macos-arm64) target="arm64-darwin" ;;
-                    macos-x86_64) target="x86_64-darwin" ;;
-                    windows-x64) target="x64-mingw-ucrt" ;;
-                    *) echo "Unknown platform: ${{ matrix.label }}"; exit 1 ;;
-                  esac
-                  bundle exec rake "native[$target]" gem
-
-            - name: Drop source gem on non-canonical builders
+            - name: Drop non-canonical gems
+              # Only the canonical `linux-x86_64` builder ships the gem; the action's
+              # `rake compile && rake build` produces a source ("ruby" platform) gem
+              # on every runner — keeping all of them would overwrite under
+              # merge-multiple. The platform-tagged `native[$target] gem` step that
+              # used to live here was removed in RC.41 because rake-compiler does not
+              # register `native` (no args) without RUBY_CC_VERSION + rake-compiler-dock,
+              # so it failed on every platform. Restore once the gem-build path is
+              # refactored onto rb-sys-dock.
               if: ${{ matrix.label != 'linux-x86_64' }}
-              # Inline: only the canonical `linux-x86_64` builder ships the source gem; others
-              # would emit byte-different source gems that overwrite each other under
-              # merge-multiple and produce an invalid .gem at publish time.
               shell: bash
               run: |
                   shopt -s nullglob
                   for f in packages/ruby/pkg/*.gem; do
-                    base="$(basename "$f")"
-                    case "$base" in
-                      *-x86_64-linux.gem|*-aarch64-linux.gem|*-arm64-darwin.gem|*-x86_64-darwin.gem|*-x64-mingw-ucrt.gem) ;;
-                      *) echo "Removing non-canonical source gem $base"; rm -f "$f" ;;
-                    esac
+                    echo "Removing duplicate source gem $(basename "$f")"
+                    rm -f "$f"
                   done
 
             - uses: actions/upload-artifact@v7
@@ -1186,6 +1170,15 @@ jobs:
               if: runner.os == 'Linux'
               uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
+            - name: Override ImageOS on ARM Linux runners
+              # erlef/setup-beam@v1 maps ImageOS env to its package index. On
+              # `ubuntu-24.04-arm` the runner reports `ImageOS=ubuntu24-arm64`,
+              # which setup-beam does not recognize. Force it to `ubuntu24` —
+              # the OTP packages are arch-aware via setup-beam's separate logic.
+              if: matrix.os == 'ubuntu-24.04-arm'
+              shell: bash
+              run: echo "ImageOS=ubuntu24" >> "$GITHUB_ENV"
+
             - uses: erlef/setup-beam@v1
               with:
                   elixir-version: "1.17"
@@ -1234,6 +1227,11 @@ jobs:
                   submodules: recursive
 
             - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+
+            - name: Override ImageOS on ARM Linux runners
+              if: matrix.os == 'ubuntu-24.04-arm'
+              shell: bash
+              run: echo "ImageOS=ubuntu24" >> "$GITHUB_ENV"
 
             - uses: erlef/setup-beam@v1
               with:
