@@ -27,7 +27,6 @@ use core_crate::*;
 use kreuzcrawl as core_crate; // bring trait methods into scope
 
 const ERROR_CLASS: &str = "dev/kreuzberg/kreuzcrawl/android/KreuzcrawlBridgeException";
-
 fn runtime() -> &'static Runtime {
     static RT: OnceLock<Runtime> = OnceLock::new();
     RT.get_or_init(|| Runtime::new().expect("create tokio runtime"))
@@ -92,7 +91,6 @@ where
         }
     }
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeGenerateCitations(
     mut env: EnvUnowned,
@@ -119,7 +117,6 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
     };
     string_to_jstring(env, &s)
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeCreateEngine(
     mut env: EnvUnowned,
@@ -156,7 +153,6 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
         Ok(v) => Box::into_raw(Box::new(v)) as jlong,
     }
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeScrape(
     mut env: EnvUnowned,
@@ -200,7 +196,6 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
         }
     }
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeCrawl(
     mut env: EnvUnowned,
@@ -244,7 +239,6 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
         }
     }
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeMapUrls(
     mut env: EnvUnowned,
@@ -288,7 +282,6 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
         }
     }
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeInteract(
     mut env: EnvUnowned,
@@ -347,7 +340,6 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
         }
     }
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeBatchScrape(
     mut env: EnvUnowned,
@@ -398,7 +390,6 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
         }
     }
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeBatchCrawl(
     mut env: EnvUnowned,
@@ -449,7 +440,6 @@ pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBr
         }
     }
 }
-
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn Java_dev_kreuzberg_kreuzcrawl_android_KreuzcrawlBridge_nativeFreeCrawlEngineHandle(
     _env: EnvUnowned,

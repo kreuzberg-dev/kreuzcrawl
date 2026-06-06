@@ -52,7 +52,10 @@ sealed class CrawlEvent {
     @com.fasterxml.jackson.databind.annotation.JsonSerialize(
         using = com.fasterxml.jackson.databind.JsonSerializer.None::class
     )
-    data class Error(val url: String, val error: String) : CrawlEvent()
+    data class Error(
+        val url: String,
+        val error: String,
+    ) : CrawlEvent()
 
     /** The crawl has completed. */
     @com.fasterxml.jackson.databind.annotation.JsonDeserialize(

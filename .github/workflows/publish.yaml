@@ -719,7 +719,6 @@ jobs:
               # mirrors the html-to-markdown sibling's proven Ruby publish path. For
               # Windows we cross-compile inside rb-sys-dock so the GNU toolchain
               # produces a x64-mingw-ucrt gem.
-              working-directory: packages/ruby
               shell: bash
               run: |
                   if [ -n "${{ matrix.dock_platform }}" ]; then
@@ -738,16 +737,16 @@ jobs:
                     # the whole repo — the gem's Cargo.toml has a path-dep
                     # `kreuzcrawl = { path = "../../../../../crates/kreuzcrawl" }` which
                     # resolves outside `packages/ruby/` and would not exist in a
-                    # container mounted at the gem dir. `--directory packages/ruby` keeps
-                    # the container's working dir at the gem root.
+                    # container mounted at the gem dir. We `cd packages/ruby` first
+                    # inside the container's shell, preserving the workspace mount.
                     gem install rb_sys -v '< 0.9.128'
-                    cd ..
                     # Use `env VAR=val` to plant RUBY_CC_VERSION into the *command's* process
                     # environment, surviving the container's /etc/profile.d default that
                     # otherwise re-introduces Ruby 4.0.2 after `export`.
-                    rb-sys-dock --directory packages/ruby --platform "${{ matrix.dock_platform }}" -- env RUBY_CC_VERSION=3.4.9:3.3.11:3.2.11:3.1.7 bash -c "bundle install --jobs=4 --retry=3 && bundle exec rake compile && bundle exec rake build"
+                    rb-sys-dock --platform "${{ matrix.dock_platform }}" -- env RUBY_CC_VERSION=3.4.9:3.3.11:3.2.11:3.1.7 bash -c "cd packages/ruby && bundle install --jobs=4 --retry=3 && bundle exec rake compile && bundle exec rake build"
                   else
                     # Native build on matching architecture
+                    cd packages/ruby
                     bundle exec rake compile
                     bundle exec rake build
                   fi
@@ -1486,6 +1485,28 @@ jobs:
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
                   assets: kreuzcrawl-go-*.tar.gz
 
+    push-go-subdir-tag:
+        name: Push Go module subdir tag
+        needs: [prepare, upload-go-release]
+        if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.upload-go-release.result == 'success' }}
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                  ref: ${{ needs.prepare.outputs.target_sha }}
+                  fetch-depth: 0
+
+            - name: Push Go subdir tag
+              shell: bash
+              run: |
+                  git config user.name "GitHub Actions"
+                  git config user.email "noreply@github.com"
+                  TAG_NAME="packages/go/v${{ needs.prepare.outputs.version }}"
+                  git tag -a "$TAG_NAME" -m "Go module release ${{ needs.prepare.outputs.version }}"
+                  git push origin "$TAG_NAME"
+
     upload-c-ffi-release:
         name: Upload C FFI archives to GitHub Release
         needs: [prepare, c-ffi-libraries]
@@ -1504,6 +1525,24 @@ jobs:
                   working-directory: dist/c-ffi
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
                   assets: kreuzcrawl-ffi-*.tar.gz
+
+    upload-swift-release:
+        name: Upload Swift artifact bundle to GitHub Release
+        needs: [prepare, swift-artifactbundle]
+        if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.swift-artifactbundle.result == 'success' }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/download-artifact@v8
+              with:
+                  name: swift-artifactbundle
+                  path: dist/swift
+
+            - uses: kreuzberg-dev/actions/upload-release-assets@v1
+              with:
+                  tag: ${{ needs.prepare.outputs.tag }}
+                  working-directory: dist/swift
+                  dry-run: ${{ needs.prepare.outputs.dry_run }}
+                  assets: "*.zip"
 
     upload-elixir-release:
         name: Upload Elixir NIF archives to GitHub Release

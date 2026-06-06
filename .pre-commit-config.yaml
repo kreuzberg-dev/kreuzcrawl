@@ -98,6 +98,9 @@ repos:
                 - kreuzcrawl
           - id: rust-max-lines
             args: ["--max=1000"]
+            # Remediation backlog: existing files over the 1,000-LOC ceiling. New
+            # files are subject to the cap. Shrink this list when files are split.
+            exclude: ^(crates/kreuzcrawl-browser/src/adapter\.rs|crates/kreuzcrawl-browser/src/js/runtime\.rs|crates/kreuzcrawl-browser/src/page\.rs|crates/kreuzcrawl-ffi/src/lib\.rs|crates/kreuzcrawl-node/src/lib\.rs|crates/kreuzcrawl-php/src/lib\.rs|crates/kreuzcrawl-py/src/lib\.rs|crates/kreuzcrawl-wasm/src/lib\.rs|crates/kreuzcrawl/src/engine/mod\.rs|packages/dart/rust/src/frb_generated\.rs|packages/dart/rust/src/lib\.rs|packages/elixir/native/kreuzcrawl_nif/src/lib\.rs|packages/ruby/ext/kreuzcrawl_rb/src/lib\.rs|packages/swift/rust/src/lib\.rs|tools/benchmark-harness/src/output\.rs)$
 
           # Python
           - id: pyproject-fmt

@@ -2,7 +2,7 @@
 title: "Zig API Reference"
 ---
 
-## Zig API Reference <span class="version-badge">v0.3.0-rc.45</span>
+## Zig API Reference <span class="version-badge">v0.3.0-rc.46</span>
 
 ### Functions
 

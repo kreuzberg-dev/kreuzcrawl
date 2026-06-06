@@ -34,7 +34,10 @@ sealed class AuthConfig {
     @com.fasterxml.jackson.databind.annotation.JsonSerialize(
         using = com.fasterxml.jackson.databind.JsonSerializer.None::class
     )
-    data class Basic(val username: String, val password: String) : AuthConfig()
+    data class Basic(
+        val username: String,
+        val password: String,
+    ) : AuthConfig()
 
     /** Bearer token authentication. */
     @com.fasterxml.jackson.databind.annotation.JsonDeserialize(
@@ -52,7 +55,10 @@ sealed class AuthConfig {
     @com.fasterxml.jackson.databind.annotation.JsonSerialize(
         using = com.fasterxml.jackson.databind.JsonSerializer.None::class
     )
-    data class Header(val name: String, val value: String) : AuthConfig()
+    data class Header(
+        val name: String,
+        val value: String,
+    ) : AuthConfig()
 }
 
 private class AuthConfigDeserializer :

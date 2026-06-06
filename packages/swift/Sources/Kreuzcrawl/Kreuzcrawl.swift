@@ -3,7 +3,6 @@
 
 import Foundation
 import RustBridge
-
 /// Metadata about an LLM extraction pass.
 public struct ExtractionMeta: Codable, Sendable, Hashable {
     /// Estimated cost of the LLM call in USD.
@@ -1691,7 +1690,6 @@ public func createEngine(_ configJson: String) throws -> CrawlEngineHandle {
     let config = try crawlConfigFromJson(configJson)
     return try createEngine(config: config)
 }
-
 // MARK: - From-JSON Helpers
 // Public helpers that decode JSON into first-class Swift types.
 // First-class struct types (Codable) use JSONDecoder directly.
@@ -1701,217 +1699,171 @@ public func extractionMetaFromJson(_ json: String) throws -> ExtractionMeta {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(ExtractionMeta.self, from: data)
 }
-
 public func proxyConfigFromJson(_ json: String) throws -> ProxyConfig {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(ProxyConfig.self, from: data)
 }
-
 public func contentConfigFromJson(_ json: String) throws -> ContentConfig {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(ContentConfig.self, from: data)
 }
-
 public func browserConfigFromJson(_ json: String) throws -> BrowserConfig {
     return try RustBridge.browserConfigFromJson(json)
 }
-
 public func crawlConfigFromJson(_ json: String) throws -> CrawlConfig {
     return try RustBridge.crawlConfigFromJson(json)
 }
-
 public func browserExtrasFromJson(_ json: String) throws -> BrowserExtras {
     return try RustBridge.browserExtrasFromJson(json)
 }
-
 public func downloadedDocumentFromJson(_ json: String) throws -> DownloadedDocument {
     return try RustBridge.downloadedDocumentFromJson(json)
 }
-
 public func interactionResultFromJson(_ json: String) throws -> InteractionResult {
     return try RustBridge.interactionResultFromJson(json)
 }
-
 public func actionResultFromJson(_ json: String) throws -> ActionResult {
     return try RustBridge.actionResultFromJson(json)
 }
-
 public func scrapeResultFromJson(_ json: String) throws -> ScrapeResult {
     return try RustBridge.scrapeResultFromJson(json)
 }
-
 public func crawlPageResultFromJson(_ json: String) throws -> CrawlPageResult {
     return try RustBridge.crawlPageResultFromJson(json)
 }
-
 public func crawlResultFromJson(_ json: String) throws -> CrawlResult {
     return try RustBridge.crawlResultFromJson(json)
 }
-
 public func sitemapUrlFromJson(_ json: String) throws -> SitemapUrl {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(SitemapUrl.self, from: data)
 }
-
 public func mapResultFromJson(_ json: String) throws -> MapResult {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(MapResult.self, from: data)
 }
-
 public func markdownResultFromJson(_ json: String) throws -> MarkdownResult {
     return try RustBridge.markdownResultFromJson(json)
 }
-
 public func linkInfoFromJson(_ json: String) throws -> LinkInfo {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(LinkInfo.self, from: data)
 }
-
 public func imageInfoFromJson(_ json: String) throws -> ImageInfo {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(ImageInfo.self, from: data)
 }
-
 public func feedInfoFromJson(_ json: String) throws -> FeedInfo {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(FeedInfo.self, from: data)
 }
-
 public func jsonLdEntryFromJson(_ json: String) throws -> JsonLdEntry {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(JsonLdEntry.self, from: data)
 }
-
 public func cookieInfoFromJson(_ json: String) throws -> CookieInfo {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(CookieInfo.self, from: data)
 }
-
 public func downloadedAssetFromJson(_ json: String) throws -> DownloadedAsset {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(DownloadedAsset.self, from: data)
 }
-
 public func articleMetadataFromJson(_ json: String) throws -> ArticleMetadata {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(ArticleMetadata.self, from: data)
 }
-
 public func hreflangEntryFromJson(_ json: String) throws -> HreflangEntry {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(HreflangEntry.self, from: data)
 }
-
 public func faviconInfoFromJson(_ json: String) throws -> FaviconInfo {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(FaviconInfo.self, from: data)
 }
-
 public func headingInfoFromJson(_ json: String) throws -> HeadingInfo {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(HeadingInfo.self, from: data)
 }
-
 public func responseMetaFromJson(_ json: String) throws -> ResponseMeta {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(ResponseMeta.self, from: data)
 }
-
 public func pageMetadataFromJson(_ json: String) throws -> PageMetadata {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(PageMetadata.self, from: data)
 }
-
 public func crawlStreamRequestFromJson(_ json: String) throws -> CrawlStreamRequest {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(CrawlStreamRequest.self, from: data)
 }
-
 public func batchCrawlStreamRequestFromJson(_ json: String) throws -> BatchCrawlStreamRequest {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(BatchCrawlStreamRequest.self, from: data)
 }
-
 public func citationResultFromJson(_ json: String) throws -> CitationResult {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(CitationResult.self, from: data)
 }
-
 public func citationReferenceFromJson(_ json: String) throws -> CitationReference {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(CitationReference.self, from: data)
 }
-
 public func batchScrapeResultFromJson(_ json: String) throws -> BatchScrapeResult {
     return try RustBridge.batchScrapeResultFromJson(json)
 }
-
 public func batchCrawlResultFromJson(_ json: String) throws -> BatchCrawlResult {
     return try RustBridge.batchCrawlResultFromJson(json)
 }
-
 public func batchScrapeResultsFromJson(_ json: String) throws -> BatchScrapeResults {
     return try RustBridge.batchScrapeResultsFromJson(json)
 }
-
 public func batchCrawlResultsFromJson(_ json: String) throws -> BatchCrawlResults {
     return try RustBridge.batchCrawlResultsFromJson(json)
 }
-
 public func browserModeFromJson(_ json: String) throws -> BrowserMode {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(BrowserMode.self, from: data)
 }
-
 public func browserWaitFromJson(_ json: String) throws -> BrowserWait {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(BrowserWait.self, from: data)
 }
-
 public func browserBackendFromJson(_ json: String) throws -> BrowserBackend {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(BrowserBackend.self, from: data)
 }
-
 public func authConfigFromJson(_ json: String) throws -> AuthConfig {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(AuthConfig.self, from: data)
 }
-
 public func linkTypeFromJson(_ json: String) throws -> LinkType {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(LinkType.self, from: data)
 }
-
 public func imageSourceFromJson(_ json: String) throws -> ImageSource {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(ImageSource.self, from: data)
 }
-
 public func feedTypeFromJson(_ json: String) throws -> FeedType {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(FeedType.self, from: data)
 }
-
 public func assetCategoryFromJson(_ json: String) throws -> AssetCategory {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(AssetCategory.self, from: data)
 }
-
 public func crawlEventFromJson(_ json: String) throws -> CrawlEvent {
     return try RustBridge.crawlEventFromJson(json)
 }
-
 public func pageActionFromJson(_ json: String) throws -> PageAction {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(PageAction.self, from: data)
 }
-
 public func scrollDirectionFromJson(_ json: String) throws -> ScrollDirection {
     let data = json.data(using: .utf8) ?? Data()
     return try JSONDecoder().decode(ScrollDirection.self, from: data)
 }
-
 // MARK: - Free-function Forwarders
 // Re-export every public free function on the source Rust crate as a
 // top-level `public func` on the host module so consumers do not need to
@@ -1937,7 +1889,7 @@ public func createEngine(config: CrawlConfig? = nil) throws -> CrawlEngineHandle
 /// Scrape a single URL, returning extracted page data.
 public func scrape(engine: CrawlEngineHandle, url: String) async throws -> ScrapeResult {
     return try await Task.detached(priority: .userInitiated) {
-        let result = try RustBridge.scrape(engine, RustString(url))
+        let result = try RustBridge.scrape(engine, url)
         return result
     }.value
 }
@@ -1945,7 +1897,7 @@ public func scrape(engine: CrawlEngineHandle, url: String) async throws -> Scrap
 /// Crawl a website starting from `url`, following links up to the configured depth.
 public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlResult {
     return try await Task.detached(priority: .userInitiated) {
-        let result = try RustBridge.crawl(engine, RustString(url))
+        let result = try RustBridge.crawl(engine, url)
         return result
     }.value
 }
@@ -1953,7 +1905,7 @@ public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlR
 /// Discover all pages on a website by following links and sitemaps.
 public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapResult {
     return try await Task.detached(priority: .userInitiated) {
-        let _rb_obj = try RustBridge.mapUrls(engine, RustString(url))
+        let _rb_obj = try RustBridge.mapUrls(engine, url)
         return try MapResult(_rb_obj)
     }.value
 }
@@ -1962,7 +1914,7 @@ public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapR
 public func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) async throws -> InteractionResult {
     return try await Task.detached(priority: .userInitiated) {
         let _rb_actions: RustVec<RustString> = try ({ () throws -> RustVec<RustString> in let v = RustVec<RustString>(); for item in actions { let data = try JSONEncoder().encode(item); let json = String(data: data, encoding: .utf8) ?? "null"; v.push(value: RustString(json)) }; return v }())
-        let result = try RustBridge.interact(engine, RustString(url), _rb_actions)
+        let result = try RustBridge.interact(engine, url, _rb_actions)
         return result
     }.value
 }

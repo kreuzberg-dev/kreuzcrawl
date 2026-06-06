@@ -15,7 +15,7 @@ version: "3"
 
 tasks:
     run:
-        desc: Run alef test-apps for every registry-mode language + brew + homebrew
+        desc: Run alef test-apps for every registry-mode language + brew
         cmds:
             - alef test-apps run {{.CLI_ARGS}}
 
@@ -42,7 +42,7 @@ tasks:
             - task: smoke:zig
             - task: smoke:kotlin_android
             - task: smoke:swift_e2e
-            - task: smoke:homebrew
+            - task: smoke:brew
 
     smoke:rust:
         desc: Run Rust test_app smoke test
@@ -55,28 +55,28 @@ tasks:
         dir: test_apps/python
         cmds:
             - uv sync
-            - uv run pytest tests/test_smoke.py -v
+            - uv run pytest tests/test_scrape.py -v
 
     smoke:node:
         desc: Run Node.js test_app smoke test
         dir: test_apps/node
         cmds:
             - pnpm install
-            - pnpm exec vitest run tests/smoke.test.ts
+            - pnpm exec vitest run tests/scrape.test.ts
 
     smoke:wasm:
         desc: Run WASM test_app smoke test
         dir: test_apps/wasm
         cmds:
             - pnpm install
-            - pnpm exec vitest run tests/smoke.test.ts
+            - pnpm exec vitest run tests/scrape.test.ts
 
     smoke:ruby:
         desc: Run Ruby test_app smoke test
         dir: test_apps/ruby
         cmds:
             - bundle install
-            - bundle exec rspec spec/smoke_spec.rb
+            - bundle exec rspec spec/scrape_spec.rb
 
     smoke:go:
         desc: Run Go test_app smoke test
@@ -88,20 +88,20 @@ tasks:
             GOWORK: "off"
         cmds:
             - go mod download
-            - go test -v -run "Test_Smoke"
+            - go test -v -run "Test_Scrape"
 
     smoke:java:
         desc: Run Java test_app smoke test
         dir: test_apps/java
         cmds:
-            - mvn test -Dtest=SmokeTest
+            - mvn test -Dtest=ScrapeTest
 
     smoke:elixir:
         desc: Run Elixir test_app smoke test
         dir: test_apps/elixir
         cmds:
             - mix deps.get
-            - mix test test/smoke_test.exs
+            - mix test test/scrape_test.exs
 
     smoke:php:
         desc: Run PHP test_app smoke test
@@ -109,14 +109,14 @@ tasks:
         cmds:
             - bash install.sh
             - composer install
-            - php -dextension=kreuzcrawl vendor/bin/phpunit tests/SmokeTest.php
+            - php -dextension=kreuzcrawl vendor/bin/phpunit tests/ScrapeTest.php
 
     smoke:csharp:
         desc: Run C# test_app smoke test
         dir: test_apps/csharp
         cmds:
             - dotnet restore
-            - dotnet test --filter FullyQualifiedName~SmokeTests
+            - dotnet test --filter FullyQualifiedName~ScrapeTests
 
     smoke:c:
         desc: Run C test_app smoke test
@@ -130,12 +130,15 @@ tasks:
         dir: test_apps/dart
         cmds:
             - dart pub get
-            - dart test test/smoke_test.dart
+            - dart test test/scrape_test.dart
 
     smoke:zig:
         desc: Run Zig test_app smoke test
         dir: test_apps/zig
         cmds:
+            # The build.zig.zon manifest ships with a placeholder hash; resolve it
+            # against the URL it already pins so `zig build test` can proceed.
+            - zig fetch --save "$(awk -F'"' '/\.url =/ {print $2; exit}' build.zig.zon)"
             - zig build test
 
     smoke:kotlin_android:
@@ -195,15 +198,14 @@ tasks:
                 ./gradlew test
 
     smoke:swift_e2e:
-        desc: Run Swift test_app smoke test (binaryTarget artifact bundle)
+        desc: Run Swift test_app smoke test
         dir: test_apps/swift_e2e
         cmds:
-            - bash download_swift_artifact.sh
             - swift test
 
-    smoke:homebrew:
+    smoke:brew:
         desc: Run Homebrew CLI formula smoke test
-        dir: test_apps/homebrew
+        dir: test_apps/brew
         cmds:
             - ./run_tests.sh
 
@@ -308,6 +310,9 @@ tasks:
         desc: Run Zig test_app comprehensive tests
         dir: test_apps/zig
         cmds:
+            # The build.zig.zon manifest ships with a placeholder hash; resolve it
+            # against the URL it already pins so `zig build test` can proceed.
+            - zig fetch --save "$(awk -F'"' '/\.url =/ {print $2; exit}' build.zig.zon)"
             - zig build test
 
     comprehensive:kotlin_android:
@@ -367,10 +372,9 @@ tasks:
                 ./gradlew test
 
     comprehensive:swift_e2e:
-        desc: Run Swift test_app comprehensive tests (binaryTarget artifact bundle)
+        desc: Run Swift test_app comprehensive tests
         dir: test_apps/swift_e2e
         cmds:
-            - bash download_swift_artifact.sh
             - swift test
 
     regenerate:

@@ -48,7 +48,10 @@ sealed class PageAction {
     @com.fasterxml.jackson.databind.annotation.JsonSerialize(
         using = com.fasterxml.jackson.databind.JsonSerializer.None::class
     )
-    data class TypeText(val selector: String, val text: String) : PageAction()
+    data class TypeText(
+        val selector: String,
+        val text: String,
+    ) : PageAction()
 
     /** Press a keyboard key (e.g. "Enter", "Tab", "Escape"). */
     @com.fasterxml.jackson.databind.annotation.JsonDeserialize(
@@ -66,8 +69,11 @@ sealed class PageAction {
     @com.fasterxml.jackson.databind.annotation.JsonSerialize(
         using = com.fasterxml.jackson.databind.JsonSerializer.None::class
     )
-    data class Scroll(val direction: ScrollDirection, val selector: String?, val amount: Long?) :
-        PageAction()
+    data class Scroll(
+        val direction: ScrollDirection,
+        val selector: String?,
+        val amount: Long?,
+    ) : PageAction()
 
     /** Wait for a duration or for an element to appear. */
     @com.fasterxml.jackson.databind.annotation.JsonDeserialize(
@@ -76,7 +82,10 @@ sealed class PageAction {
     @com.fasterxml.jackson.databind.annotation.JsonSerialize(
         using = com.fasterxml.jackson.databind.JsonSerializer.None::class
     )
-    data class Wait(val milliseconds: Long?, val selector: String?) : PageAction()
+    data class Wait(
+        val milliseconds: Long?,
+        val selector: String?,
+    ) : PageAction()
 
     /** Take a screenshot of the current page. */
     @com.fasterxml.jackson.databind.annotation.JsonDeserialize(

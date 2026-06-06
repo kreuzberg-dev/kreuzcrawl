@@ -1159,232 +1159,186 @@ mod ffi {
 pub fn __alef_phantom_vec_extraction_meta() -> Vec<ExtractionMeta> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_proxy_config() -> Vec<ProxyConfig> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_content_config() -> Vec<ContentConfig> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_browser_config() -> Vec<BrowserConfig> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_crawl_config() -> Vec<CrawlConfig> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_browser_extras() -> Vec<BrowserExtras> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_downloaded_document() -> Vec<DownloadedDocument> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_interaction_result() -> Vec<InteractionResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_action_result() -> Vec<ActionResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_scrape_result() -> Vec<ScrapeResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_crawl_page_result() -> Vec<CrawlPageResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_crawl_result() -> Vec<CrawlResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_sitemap_url() -> Vec<SitemapUrl> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_map_result() -> Vec<MapResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_markdown_result() -> Vec<MarkdownResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_link_info() -> Vec<LinkInfo> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_image_info() -> Vec<ImageInfo> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_feed_info() -> Vec<FeedInfo> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_json_ld_entry() -> Vec<JsonLdEntry> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_cookie_info() -> Vec<CookieInfo> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_downloaded_asset() -> Vec<DownloadedAsset> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_article_metadata() -> Vec<ArticleMetadata> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_hreflang_entry() -> Vec<HreflangEntry> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_favicon_info() -> Vec<FaviconInfo> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_heading_info() -> Vec<HeadingInfo> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_response_meta() -> Vec<ResponseMeta> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_page_metadata() -> Vec<PageMetadata> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_crawl_stream_request() -> Vec<CrawlStreamRequest> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_batch_crawl_stream_request() -> Vec<BatchCrawlStreamRequest> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_citation_result() -> Vec<CitationResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_citation_reference() -> Vec<CitationReference> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_crawl_engine_handle() -> Vec<CrawlEngineHandle> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_batch_scrape_result() -> Vec<BatchScrapeResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_batch_crawl_result() -> Vec<BatchCrawlResult> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_batch_scrape_results() -> Vec<BatchScrapeResults> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_batch_crawl_results() -> Vec<BatchCrawlResults> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_browser_mode() -> Vec<BrowserMode> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_browser_wait() -> Vec<BrowserWait> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_browser_backend() -> Vec<BrowserBackend> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_auth_config() -> Vec<AuthConfig> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_link_type() -> Vec<LinkType> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_image_source() -> Vec<ImageSource> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_feed_type() -> Vec<FeedType> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_asset_category() -> Vec<AssetCategory> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_crawl_event() -> Vec<CrawlEvent> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_page_action() -> Vec<PageAction> {
     Vec::new()
 }
-
 #[doc(hidden)]
 pub fn __alef_phantom_vec_scroll_direction() -> Vec<ScrollDirection> {
     Vec::new()
@@ -4982,7 +4936,6 @@ pub struct CrawlEngineHandleCrawlStreamStreamHandle {
         >,
     >,
 }
-
 /// Start a streaming `CrawlEngineHandle::crawl_stream` request.
 ///
 /// Returns a fresh `CrawlEngineHandleCrawlStreamStreamHandle` whose ownership transfers to the
@@ -5003,7 +4956,6 @@ pub fn crawl_engine_handle_crawl_stream_start(
         stream: ::std::sync::Mutex::new(Some(erased)),
     })
 }
-
 #[allow(clippy::should_implement_trait)]
 impl CrawlEngineHandleCrawlStreamStreamHandle {
     /// Advance the stream and return the next chunk JSON, or `""` on clean
@@ -5031,7 +4983,6 @@ impl CrawlEngineHandleCrawlStreamStreamHandle {
         }
     }
 }
-
 /// Opaque handle holding a reference to the process-wide tokio runtime
 /// and a boxed `CrawlEvent` stream.
 ///
@@ -5055,7 +5006,6 @@ pub struct CrawlEngineHandleBatchCrawlStreamStreamHandle {
         >,
     >,
 }
-
 /// Start a streaming `CrawlEngineHandle::batch_crawl_stream` request.
 ///
 /// Returns a fresh `CrawlEngineHandleBatchCrawlStreamStreamHandle` whose ownership transfers to the
@@ -5082,7 +5032,6 @@ pub fn crawl_engine_handle_batch_crawl_stream_start(
         stream: ::std::sync::Mutex::new(Some(erased)),
     })
 }
-
 #[allow(clippy::should_implement_trait)]
 impl CrawlEngineHandleBatchCrawlStreamStreamHandle {
     /// Advance the stream and return the next chunk JSON, or `""` on clean
@@ -5110,7 +5059,6 @@ impl CrawlEngineHandleBatchCrawlStreamStreamHandle {
         }
     }
 }
-
 pub fn crawl_config_from_json(json: String) -> Result<CrawlConfig, String> {
     serde_json::from_str::<kreuzcrawl::CrawlConfig>(&json)
         .map(CrawlConfig)

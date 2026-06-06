@@ -72,7 +72,9 @@ class CrawlEngineHandle internal constructor(internal val handle: Long) : AutoCl
         } catch (e: Throwable) {
             close(e)
         }
-        awaitClose { KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamFree(streamHandle) }
+        awaitClose {
+            KreuzcrawlBridge.nativeCrawlEngineHandleCrawlStreamFree(streamHandle)
+        }
     }
 
     @Suppress("TooGenericExceptionCaught")
@@ -98,6 +100,8 @@ class CrawlEngineHandle internal constructor(internal val handle: Long) : AutoCl
         } catch (e: Throwable) {
             close(e)
         }
-        awaitClose { KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle) }
+        awaitClose {
+            KreuzcrawlBridge.nativeCrawlEngineHandleBatchCrawlStreamFree(streamHandle)
+        }
     }
 }
