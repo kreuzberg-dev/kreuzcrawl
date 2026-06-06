@@ -14,9 +14,12 @@ repos:
             stages:
                 - commit-msg
     - repo: https://github.com/kreuzberg-dev/pre-commit-hooks
-      rev: v1.2.3
+      rev: v2.1.0
       hooks:
+          # AI governance
           - id: ai-rulez-generate
+
+          # File safety
           - id: trailing-whitespace
             exclude: \.github/copilot-instructions\.md
           - id: end-of-file-fixer
@@ -25,6 +28,12 @@ repos:
           - id: check-added-large-files
             exclude: uv.lock|docs/benchmarks/app/
           - id: detect-private-key
+          - id: check-case-conflict
+          - id: check-executables-have-shebangs
+          - id: check-shebang-scripts-are-executable
+          - id: mixed-line-ending
+          - id: typos
+            args: ["--force-exclude"]
           - id: check-json
             exclude: tsconfig\.base\.json
           - id: check-yaml
@@ -32,27 +41,30 @@ repos:
                 - --allow-multiple-documents
                 - --unsafe
           - id: check-toml
-          - id: check-case-conflict
-          - id: pyproject-fmt
-            exclude: ^test_apps/python/pyproject\.toml$
-          - id: ruff
-          - id: ruff-format
-          - id: cargo-sort
+
+          # GitHub Actions
+          - id: actionlint
+          - id: gh-actions-updater
+
+          # Shell
+          - id: shfmt
+            args: ["-w", "-i", "2"]
+          - id: shellcheck
+
+          # Markdown
+          - id: rumdl-fmt
+          - id: markdownlint-rumdl-strict
+          - id: textlint
+            files: ^docs/.*\.md$
+            exclude: ^docs/(reference/|api-|snippets/|migration/)
             args:
-                - -w
-            exclude: ^(e2e/rust/|test_apps/rust/|packages/dart/rust/)Cargo\.toml$
+                - --fix
+                - --config
+                - .textlintrc.json
+
+          # Rust — cargo-check dropped in v2.0.0; cargo-clippy with -D warnings supersedes it
           - id: cargo-fmt
-            args:
-                - --all
-          - id: cargo-check
-            args:
-                - --workspace
-                - --exclude=kreuzcrawl-php
-                - --exclude=kreuzcrawl-py
-                - --exclude=kreuzcrawl-node
-                - --exclude=kreuzcrawl-e2e-rust
-                - --all-features
-                - --all-targets
+            args: ["--all"]
           - id: cargo-clippy
             args:
                 - --fix
@@ -68,53 +80,43 @@ repos:
                 - --
                 - -D
                 - warnings
+          - id: cargo-sort
+            args:
+                - -w
+            exclude: ^(e2e/rust/|test_apps/rust/|packages/dart/rust/)Cargo\.toml$
           - id: cargo-machete
             args:
                 - crates/
             exclude: ^(e2e/|test_apps/)
           - id: cargo-deny
-            args:
-                - check
+            args: ["check"]
           - id: rustdoc-lint
             files: ^crates/kreuzcrawl/src/.*\.rs$
             exclude: /tests/
             args:
                 - -p
                 - kreuzcrawl
+          - id: rust-max-lines
+            args: ["--max=1000"]
+
+          # Python
+          - id: pyproject-fmt
+            exclude: ^test_apps/python/pyproject\.toml$
+          - id: ruff
+          - id: ruff-format
+          - id: mypy
+            exclude: e2e/|tests/|scripts/
           - id: pydocstyle
             files: ^packages/python/.*\.py$
             exclude: ^packages/python/(tests/|.*_native\.py$)
-          - id: alef-docs-fresh
-          - id: javadoc-lint
-            files: ^packages/java/src/main/.*\.java$
-          - id: cs-xmldoc-lint
-            files: ^packages/csharp/Kreuzcrawl/.*\.cs$
-          - id: phpdoc-lint
-            files: ^packages/php/src/.*\.php$
-          - id: dart-doc-lint
-            files: ^packages/dart/lib/.*\.dart$
-            exclude: ^packages/dart/lib/src/rust/
-          - id: shfmt
-            args:
-                - -w
-                - -i
-                - "2"
-          - id: shellcheck
-          - id: clang-format
-            args:
-                - --style=file
-            files: ^crates/kreuzcrawl-ffi/tests/c/
-          - id: clang-tidy
-            files: ^crates/kreuzcrawl-ffi/tests/c/
-          - id: checkstyle
-            args:
-                - -c
-                - packages/java/checkstyle.xml
-                - -p
-                - packages/java/checkstyle.properties
-            exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|packages/java/src/)
-          - id: mypy
-            exclude: e2e/|tests/|scripts/
+
+          # JS/TS
+          - id: oxlint
+          - id: oxfmt
+          - id: tsc-typecheck
+          - id: tsdoc-lint
+
+          # Go
           - id: go-fmt
             exclude: ^(e2e/|test_apps/)
           - id: golangci-lint
@@ -125,35 +127,28 @@ repos:
             exclude: ^(e2e/|test_apps/)
             env:
                 KREUZBERG_GO_MOD_DIRS: packages/go
-          - id: rubocop
-            files: ^packages/ruby/.*\.rb$
-            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
-          - id: rubocop-lint
-            files: ^packages/ruby/.*\.(rb|rbs)$
-            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
-          - id: steep
-            files: ^packages/ruby/.*\.(rb|rbs)$
-            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
-          - id: dotnet-format
-            files: ^packages/csharp/.*\.cs$
-          - id: dotnet-format-check
-            files: ^packages/csharp/.*\.cs$
-          - id: php-cs-fixer
-            files: ^packages/php/.*\.php$
-            exclude: ^packages/php/stubs/
-          - id: phpstan
-            files: ^packages/php/(src|tests)/.*\.php$
+          - id: godoc-lint
+
+          # Java
+          - id: palantir-java-format
+          - id: checkstyle
             args:
-                - analyse
-                - --no-progress
-                - --configuration
-                - packages/php/phpstan.neon
-          - id: mix-format
-            files: ^packages/elixir/
-          - id: mix-credo
-            files: ^packages/elixir/
+                - -c
+                - packages/java/checkstyle.xml
+                - -p
+                - packages/java/checkstyle.properties
+            exclude: ^(\.mvn/wrapper/|e2e/|test_apps/|packages/java/src/)
+          - id: pmd
+          - id: cpd
+            args:
+                - --minimum-tokens=120
+            exclude: ^(test_apps/|e2e/)
           - id: java-verify
             files: ^packages/java/
+          - id: javadoc-lint
+            files: ^packages/java/src/main/.*\.java$
+
+          # Kotlin
           - id: ktfmt
             files: ^packages/kotlin-android/.*\.kts?$
             args:
@@ -164,41 +159,84 @@ repos:
                 - --build-upon-default-config
           - id: ktlint
             files: ^packages/kotlin-android/.*\.kts?$
-          - id: swift-format
-            files: ^packages/swift/.*\.swift$
-          - id: swiftlint
-            files: ^packages/swift/.*\.swift$
+          - id: kotlin-dokka
+
+          # Ruby
+          - id: rubocop
+            files: ^packages/ruby/.*\.rb$
+            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
+          - id: rubocop-lint
+            files: ^packages/ruby/.*\.(rb|rbs)$
+            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
+          - id: steep
+            files: ^packages/ruby/.*\.(rb|rbs)$
+            exclude: ^packages/ruby/(ext/|lib/kreuzcrawl/native\.rb$)
+          - id: yard-coverage
+
+          # C#
+          - id: dotnet-format
+            files: ^packages/csharp/.*\.cs$
+          - id: dotnet-format-check
+            files: ^packages/csharp/.*\.cs$
+          - id: cs-xmldoc-lint
+            files: ^packages/csharp/Kreuzcrawl/.*\.cs$
+
+          # PHP
+          - id: php-cs-fixer
+            files: ^packages/php/.*\.php$
+            exclude: ^packages/php/stubs/
+          - id: phpstan
+            files: ^packages/php/(src|tests)/.*\.php$
+            args:
+                - analyse
+                - --no-progress
+                - --configuration
+                - packages/php/phpstan.neon
+          - id: phpdoc-lint
+            files: ^packages/php/src/.*\.php$
+
+          # Elixir
+          - id: mix-format
+            files: ^packages/elixir/
+          - id: mix-credo
+            files: ^packages/elixir/
+          - id: ex-doc-coverage
+
+          # Dart
           - id: dart-format
             files: ^packages/dart/.*\.dart$
           - id: dart-analyze
             files: ^packages/dart/.*\.dart$
             exclude: ^(test_apps/|e2e/dart/)
+          - id: dart-doc-lint
+            files: ^packages/dart/lib/.*\.dart$
+            exclude: ^packages/dart/lib/src/rust/
+
+          # Zig
           - id: zig-fmt
             files: ^packages/zig/.*\.zig$
           - id: zig-build-check
             files: ^packages/zig/.*\.zig$
-          - id: textlint
-            files: ^docs/.*\.md$
-            exclude: ^docs/(reference/|api-|snippets/|migration/)
+          - id: zig-doc-lint
+
+          # Alef bindings (this repo consumes alef-generated bindings)
+          - id: alef-verify
+          - id: alef-sync-versions
+          - id: alef-docs-fresh
+          - id: alef-snippets-validate
+
+          # Preserved from prior config — not in canonical block
+          - id: clang-format
             args:
-                - --fix
-                - --config
-                - .textlintrc.json
-          - id: oxlint
-          - id: oxfmt
+                - --style=file
+            files: ^crates/kreuzcrawl-ffi/tests/c/
+          - id: clang-tidy
+            files: ^crates/kreuzcrawl-ffi/tests/c/
           - id: cppcheck
             args:
                 - --suppress=unusedStructMember
-          - id: rumdl-fmt
-          - id: cpd
-            args:
-                - --minimum-tokens=120
-            exclude: ^(test_apps/|e2e/)
+          - id: swift-format
+            files: ^packages/swift/.*\.swift$
+          - id: swiftlint
+            files: ^packages/swift/.*\.swift$
           - id: hadolint
-          - id: alef-verify
-          - id: alef-sync-versions
-          - id: actionlint
-          - id: gh-actions-updater
-          - id: typos
-            args:
-                - --force-exclude
