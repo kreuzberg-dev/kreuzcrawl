@@ -1326,12 +1326,12 @@ public enum AuthConfig: Codable, Sendable, Hashable {
 
     private enum CodingKeys: String, CodingKey {
         case type
+
         case name
         case password
         case token
         case username
-        case value
-    }
+        case value    }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -1506,6 +1506,7 @@ public enum PageAction: Codable, Sendable, Hashable {
 
     private enum CodingKeys: String, CodingKey {
         case type
+
         case amount
         case direction
         case fullPage
@@ -1513,8 +1514,7 @@ public enum PageAction: Codable, Sendable, Hashable {
         case milliseconds
         case script
         case selector
-        case text
-    }
+        case text    }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -1937,7 +1937,7 @@ public func createEngine(config: CrawlConfig? = nil) throws -> CrawlEngineHandle
 /// Scrape a single URL, returning extracted page data.
 public func scrape(engine: CrawlEngineHandle, url: String) async throws -> ScrapeResult {
     return try await Task.detached(priority: .userInitiated) {
-        let result = try RustBridge.scrape(engine, url)
+        let result = try RustBridge.scrape(engine, RustString(url))
         return result
     }.value
 }
@@ -1945,7 +1945,7 @@ public func scrape(engine: CrawlEngineHandle, url: String) async throws -> Scrap
 /// Crawl a website starting from `url`, following links up to the configured depth.
 public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlResult {
     return try await Task.detached(priority: .userInitiated) {
-        let result = try RustBridge.crawl(engine, url)
+        let result = try RustBridge.crawl(engine, RustString(url))
         return result
     }.value
 }
@@ -1953,7 +1953,7 @@ public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlR
 /// Discover all pages on a website by following links and sitemaps.
 public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapResult {
     return try await Task.detached(priority: .userInitiated) {
-        let _rb_obj = try RustBridge.mapUrls(engine, url)
+        let _rb_obj = try RustBridge.mapUrls(engine, RustString(url))
         return try MapResult(_rb_obj)
     }.value
 }
@@ -1962,7 +1962,7 @@ public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapR
 public func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) async throws -> InteractionResult {
     return try await Task.detached(priority: .userInitiated) {
         let _rb_actions: RustVec<RustString> = try ({ () throws -> RustVec<RustString> in let v = RustVec<RustString>(); for item in actions { let data = try JSONEncoder().encode(item); let json = String(data: data, encoding: .utf8) ?? "null"; v.push(value: RustString(json)) }; return v }())
-        let result = try RustBridge.interact(engine, url, _rb_actions)
+        let result = try RustBridge.interact(engine, RustString(url), _rb_actions)
         return result
     }.value
 }
