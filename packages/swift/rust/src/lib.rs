@@ -4968,7 +4968,7 @@ pub fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<Batch
 ///
 /// Items are JSON-encoded at the bridge boundary because swift-bridge's
 /// `Option<OpaqueRust>` support varies across versions, while `Result<String,
-/// String>` is well-tested. An empty string `""` is the EOF sentinel —
+/// String>` is well-tested. An empty string `""` is the EOF sentinel -
 /// no valid JSON value is the empty string.
 #[allow(clippy::type_complexity)]
 pub struct CrawlEngineHandleCrawlStreamStreamHandle {
@@ -5041,7 +5041,7 @@ impl CrawlEngineHandleCrawlStreamStreamHandle {
 ///
 /// Items are JSON-encoded at the bridge boundary because swift-bridge's
 /// `Option<OpaqueRust>` support varies across versions, while `Result<String,
-/// String>` is well-tested. An empty string `""` is the EOF sentinel —
+/// String>` is well-tested. An empty string `""` is the EOF sentinel -
 /// no valid JSON value is the empty string.
 #[allow(clippy::type_complexity)]
 pub struct CrawlEngineHandleBatchCrawlStreamStreamHandle {

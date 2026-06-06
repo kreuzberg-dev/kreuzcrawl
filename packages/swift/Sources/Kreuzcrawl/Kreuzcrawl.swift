@@ -49,6 +49,7 @@ internal extension ExtractionMeta {
         self.model = rb.model()?.toString()
         self.chunksProcessed = rb.chunksProcessed()
     }
+
     func intoRust() throws -> RustBridge.ExtractionMeta {
         return RustBridge.ExtractionMeta(self.cost, self.promptTokens, self.completionTokens, self.model.map(RustString.init), self.chunksProcessed)
     }
@@ -87,6 +88,7 @@ internal extension ProxyConfig {
         self.username = rb.username()?.toString()
         self.password = rb.password()?.toString()
     }
+
     func intoRust() throws -> RustBridge.ProxyConfig {
         return RustBridge.ProxyConfig(RustString(self.url), self.username.map(RustString.init), self.password.map(RustString.init))
     }
@@ -194,6 +196,7 @@ internal extension ContentConfig {
         self.wrapWidth = rb.wrapWidth()
         self.includeDocumentStructure = rb.includeDocumentStructure()
     }
+
     func intoRust() throws -> RustBridge.ContentConfig {
         let __stripTags = RustVec<RustString>()
         for __elem in self.stripTags { __stripTags.push(value: RustString(__elem)) }
@@ -277,6 +280,7 @@ internal extension SitemapUrl {
         self.changefreq = rb.changefreq()?.toString()
         self.priority = rb.priority()?.toString()
     }
+
     func intoRust() throws -> RustBridge.SitemapUrl {
         return RustBridge.SitemapUrl(RustString(self.url), self.lastmod.map(RustString.init), self.changefreq.map(RustString.init), self.priority.map(RustString.init))
     }
@@ -303,6 +307,7 @@ internal extension MapResult {
     init(_ rb: RustBridge.MapResultRef) throws {
         self.urls = try rb.urls().map { try SitemapUrl($0) }
     }
+
     func intoRust() throws -> RustBridge.MapResult {
         let __urls = RustVec<RustBridge.SitemapUrl>()
         for __elem in self.urls { __urls.push(value: try __elem.intoRust()) }
@@ -358,6 +363,7 @@ internal extension LinkInfo {
         self.rel = rb.rel()?.toString()
         self.nofollow = rb.nofollow()
     }
+
     func intoRust() throws -> RustBridge.LinkInfo {
         return RustBridge.LinkInfo(RustString(self.url), RustString(self.text), try self.linkType.intoRust(), self.rel.map(RustString.init), self.nofollow)
     }
@@ -408,6 +414,7 @@ internal extension ImageInfo {
         self.height = rb.height()
         self.source = ImageSource(rawValue: rb.source().toString()) ?? { fatalError("Unknown ImageSource: \(rb.source().toString())") }()
     }
+
     func intoRust() throws -> RustBridge.ImageInfo {
         return RustBridge.ImageInfo(RustString(self.url), self.alt.map(RustString.init), self.width, self.height, try self.source.intoRust())
     }
@@ -446,6 +453,7 @@ internal extension FeedInfo {
         self.title = rb.title()?.toString()
         self.feedType = FeedType(rawValue: rb.feedType().toString()) ?? { fatalError("Unknown FeedType: \(rb.feedType().toString())") }()
     }
+
     func intoRust() throws -> RustBridge.FeedInfo {
         return RustBridge.FeedInfo(RustString(self.url), self.title.map(RustString.init), try self.feedType.intoRust())
     }
@@ -484,6 +492,7 @@ internal extension JsonLdEntry {
         self.name = rb.name()?.toString()
         self.raw = rb.raw().toString()
     }
+
     func intoRust() throws -> RustBridge.JsonLdEntry {
         return RustBridge.JsonLdEntry(RustString(self.schemaType), self.name.map(RustString.init), RustString(self.raw))
     }
@@ -528,6 +537,7 @@ internal extension CookieInfo {
         self.domain = rb.domain()?.toString()
         self.path = rb.path()?.toString()
     }
+
     func intoRust() throws -> RustBridge.CookieInfo {
         return RustBridge.CookieInfo(RustString(self.name), RustString(self.value), self.domain.map(RustString.init), self.path.map(RustString.init))
     }
@@ -584,6 +594,7 @@ internal extension DownloadedAsset {
         self.assetCategory = AssetCategory(rawValue: rb.assetCategory().toString()) ?? { fatalError("Unknown AssetCategory: \(rb.assetCategory().toString())") }()
         self.htmlTag = rb.htmlTag()?.toString()
     }
+
     func intoRust() throws -> RustBridge.DownloadedAsset {
         return RustBridge.DownloadedAsset(RustString(self.url), RustString(self.contentHash), self.mimeType.map(RustString.init), self.size, try self.assetCategory.intoRust(), self.htmlTag.map(RustString.init))
     }
@@ -634,6 +645,7 @@ internal extension ArticleMetadata {
         self.section = rb.section()?.toString()
         self.tags = rb.tags().map { $0.as_str().toString() }
     }
+
     func intoRust() throws -> RustBridge.ArticleMetadata {
         let __tags = RustVec<RustString>()
         for __elem in self.tags { __tags.push(value: RustString(__elem)) }
@@ -668,6 +680,7 @@ internal extension HreflangEntry {
         self.lang = rb.lang().toString()
         self.url = rb.url().toString()
     }
+
     func intoRust() throws -> RustBridge.HreflangEntry {
         return RustBridge.HreflangEntry(RustString(self.lang), RustString(self.url))
     }
@@ -712,6 +725,7 @@ internal extension FaviconInfo {
         self.sizes = rb.sizes()?.toString()
         self.mimeType = rb.mimeType()?.toString()
     }
+
     func intoRust() throws -> RustBridge.FaviconInfo {
         return RustBridge.FaviconInfo(RustString(self.url), RustString(self.rel), self.sizes.map(RustString.init), self.mimeType.map(RustString.init))
     }
@@ -744,6 +758,7 @@ internal extension HeadingInfo {
         self.level = rb.level()
         self.text = rb.text().toString()
     }
+
     func intoRust() throws -> RustBridge.HeadingInfo {
         return RustBridge.HeadingInfo(self.level, RustString(self.text))
     }
@@ -806,6 +821,7 @@ internal extension ResponseMeta {
         self.contentLanguage = rb.contentLanguage()?.toString()
         self.contentEncoding = rb.contentEncoding()?.toString()
     }
+
     func intoRust() throws -> RustBridge.ResponseMeta {
         return RustBridge.ResponseMeta(self.etag.map(RustString.init), self.lastModified.map(RustString.init), self.cacheControl.map(RustString.init), self.server.map(RustString.init), self.xPoweredBy.map(RustString.init), self.contentLanguage.map(RustString.init), self.contentEncoding.map(RustString.init))
     }
@@ -1084,6 +1100,7 @@ internal extension PageMetadata {
         self.headings = try rb.headings()?.map { try HeadingInfo($0) }
         self.wordCount = rb.wordCount()
     }
+
     func intoRust() throws -> RustBridge.PageMetadata {
         let data = try JSONEncoder().encode(self)
         let json = String(data: data, encoding: .utf8) ?? "{}"
@@ -1116,6 +1133,7 @@ internal extension CrawlStreamRequest {
     init(_ rb: RustBridge.CrawlStreamRequestRef) throws {
         self.url = rb.url().toString()
     }
+
     func intoRust() throws -> RustBridge.CrawlStreamRequest {
         return RustBridge.CrawlStreamRequest(RustString(self.url))
     }
@@ -1147,6 +1165,7 @@ internal extension BatchCrawlStreamRequest {
     init(_ rb: RustBridge.BatchCrawlStreamRequestRef) throws {
         self.urls = rb.urls().map { $0.as_str().toString() }
     }
+
     func intoRust() throws -> RustBridge.BatchCrawlStreamRequest {
         let __urls = RustVec<RustString>()
         for __elem in self.urls { __urls.push(value: RustString(__elem)) }
@@ -1181,6 +1200,7 @@ internal extension CitationResult {
         self.content = rb.content().toString()
         self.references = try rb.references().map { try CitationReference($0) }
     }
+
     func intoRust() throws -> RustBridge.CitationResult {
         let __references = RustVec<RustBridge.CitationReference>()
         for __elem in self.references { __references.push(value: try __elem.intoRust()) }
@@ -1222,6 +1242,7 @@ internal extension CitationReference {
         self.url = rb.url().toString()
         self.text = rb.text().toString()
     }
+
     func intoRust() throws -> RustBridge.CitationReference {
         return RustBridge.CitationReference(self.index, RustString(self.url), RustString(self.text))
     }
@@ -1967,13 +1988,11 @@ public func batchCrawl(engine: CrawlEngineHandle, urls: [String]) async throws -
 // Captured by Task.detached in streaming free functions — Rust type is Send + Sync.
 extension RustBridge.CrawlEngineHandle: @unchecked Sendable {}
 
-// MARK: - Sendable conformance for CrawlEngineHandleCrawlStreamStreamHandle
 // swift-bridge opaque types are not automatically Sendable.  The Rust
 // side uses Mutex<stream> + tokio Runtime — both Send + Sync — so
 // @unchecked is correct: thread-safety is enforced by Rust.
 extension RustBridge.CrawlEngineHandleCrawlStreamStreamHandle: @unchecked Sendable {}
 
-// MARK: - Sendable conformance for CrawlEngineHandleBatchCrawlStreamStreamHandle
 // swift-bridge opaque types are not automatically Sendable.  The Rust
 // side uses Mutex<stream> + tokio Runtime — both Send + Sync — so
 // @unchecked is correct: thread-safety is enforced by Rust.
