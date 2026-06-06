@@ -194,6 +194,10 @@ obj/
 # pkg/ removed — needed for WASM npm publish (wasm-pack outputs to pkg/)
 erl_crash.dump
 test_apps/elixir/_build/
+test_apps/elixir/deps/
+test_apps/elixir/mix.lock
+test_apps/node/pnpm-lock.yaml
+test_apps/zig/zig-pkg/
 pkg/
 
 .lycheecache
