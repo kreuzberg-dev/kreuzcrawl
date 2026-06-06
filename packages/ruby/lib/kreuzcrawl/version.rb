@@ -5,5 +5,5 @@
 # frozen_string_literal: true
 
 module Kreuzcrawl
-  VERSION = "0.3.0.pre.rc.43"
+  VERSION = "0.3.0.pre.rc.44"
 end

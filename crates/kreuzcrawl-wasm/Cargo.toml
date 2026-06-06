@@ -5,7 +5,7 @@
 
 [package]
 name = "kreuzcrawl-wasm"
-version = "0.3.0-rc.43"
+version = "0.3.0-rc.44"
 edition = "2024"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"

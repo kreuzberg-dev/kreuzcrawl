@@ -29,6 +29,14 @@ tasks:
             - alef sync-versions --bump patch
             - task: sync
 
+    set:
+        desc: 'Set version explicitly and sync all packages (usage: task version:set VERSION=0.3.0-rc.44)'
+        requires:
+            vars: [VERSION]
+        cmds:
+            - alef sync-versions --set {{.VERSION}}
+            - task: sync
+
     check:
         desc: "Check if versions are synchronized (dry-run)"
         cmds:
