@@ -316,8 +316,8 @@ const char *kcrawl_version(void);
  * `req` must be a non-null valid pointer to a live `kreuzcrawl::CrawlStreamRequest` produced by this library.
  * Both pointers must remain valid until this function returns.
  */
-struct KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *kcrawl_crawl_engine_handle_crawl_stream_start(const KCRAWLCrawlEngineHandle *client,
-                                                                                                           const KCRAWLCrawlStreamRequest *req);
+KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *kcrawl_crawl_engine_handle_crawl_stream_start(const KCRAWLCrawlEngineHandle *client,
+                                                                                                    const KCRAWLCrawlStreamRequest *req);
 
 /**
  * Advance the stream and return a heap-allocated chunk, or null.
@@ -334,7 +334,7 @@ struct KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *kcrawl_crawl_engine
  * freed. Calling `_next` after `_free` is undefined behaviour. The handle must not be shared
  * across threads without external synchronisation.
  */
-KCRAWLCrawlEvent *kcrawl_crawl_engine_handle_crawl_stream_next(struct KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *handle);
+KCRAWLCrawlEvent *kcrawl_crawl_engine_handle_crawl_stream_next(KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *handle);
 
 /**
  * Free a stream handle created by `kcrawl_crawl_engine_handle_crawl_stream_start`.
@@ -345,7 +345,7 @@ KCRAWLCrawlEvent *kcrawl_crawl_engine_handle_crawl_stream_next(struct KCRAWLKcra
  * `handle` must either be null or a valid pointer previously returned by `kcrawl_crawl_engine_handle_crawl_stream_start` and
  * not yet freed. Double-free is undefined behaviour.
  */
-void kcrawl_crawl_engine_handle_crawl_stream_free(struct KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *handle);
+void kcrawl_crawl_engine_handle_crawl_stream_free(KCRAWLKcrawlCrawlEngineHandleCrawlStreamStreamHandle *handle);
 
 /**
  * Start a streaming chat completion and return an opaque iterator handle.
@@ -358,8 +358,8 @@ void kcrawl_crawl_engine_handle_crawl_stream_free(struct KCRAWLKcrawlCrawlEngine
  * `req` must be a non-null valid pointer to a live `kreuzcrawl::BatchCrawlStreamRequest` produced by this library.
  * Both pointers must remain valid until this function returns.
  */
-struct KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *kcrawl_crawl_engine_handle_batch_crawl_stream_start(const KCRAWLCrawlEngineHandle *client,
-                                                                                                                      const KCRAWLBatchCrawlStreamRequest *req);
+KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *kcrawl_crawl_engine_handle_batch_crawl_stream_start(const KCRAWLCrawlEngineHandle *client,
+                                                                                                               const KCRAWLBatchCrawlStreamRequest *req);
 
 /**
  * Advance the stream and return a heap-allocated chunk, or null.
@@ -376,7 +376,7 @@ struct KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *kcrawl_crawl_e
  * freed. Calling `_next` after `_free` is undefined behaviour. The handle must not be shared
  * across threads without external synchronisation.
  */
-KCRAWLCrawlEvent *kcrawl_crawl_engine_handle_batch_crawl_stream_next(struct KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *handle);
+KCRAWLCrawlEvent *kcrawl_crawl_engine_handle_batch_crawl_stream_next(KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *handle);
 
 /**
  * Free a stream handle created by `kcrawl_crawl_engine_handle_batch_crawl_stream_start`.
@@ -387,7 +387,7 @@ KCRAWLCrawlEvent *kcrawl_crawl_engine_handle_batch_crawl_stream_next(struct KCRA
  * `handle` must either be null or a valid pointer previously returned by `kcrawl_crawl_engine_handle_batch_crawl_stream_start` and
  * not yet freed. Double-free is undefined behaviour.
  */
-void kcrawl_crawl_engine_handle_batch_crawl_stream_free(struct KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *handle);
+void kcrawl_crawl_engine_handle_batch_crawl_stream_free(KCRAWLKcrawlCrawlEngineHandleBatchCrawlStreamStreamHandle *handle);
 
 /**
  * Create a `ExtractionMeta` from a JSON string. Returns null on failure.

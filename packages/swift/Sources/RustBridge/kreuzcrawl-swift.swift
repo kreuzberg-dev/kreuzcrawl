@@ -169,6 +169,147 @@ public func pageActionFromJson<GenericIntoRustString: IntoRustString>(_ json: Ge
 public func scrollDirectionFromJson<GenericIntoRustString: IntoRustString>(_ json: GenericIntoRustString) throws -> ScrollDirection {
     try { let val = __swift_bridge__$scroll_direction_from_json({ let rustString = json.intoRustString(); rustString.isOwned = false; return rustString.ptr }()); if val.is_ok { return ScrollDirection(ptr: val.ok_or_err!) } else { throw RustString(ptr: val.ok_or_err!) } }()
 }
+public func __alef_phantom_vec_extraction_meta() -> RustVec<ExtractionMeta> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_extraction_meta())
+}
+public func __alef_phantom_vec_proxy_config() -> RustVec<ProxyConfig> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_proxy_config())
+}
+public func __alef_phantom_vec_content_config() -> RustVec<ContentConfig> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_content_config())
+}
+public func __alef_phantom_vec_browser_config() -> RustVec<BrowserConfig> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_browser_config())
+}
+public func __alef_phantom_vec_crawl_config() -> RustVec<CrawlConfig> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_crawl_config())
+}
+public func __alef_phantom_vec_browser_extras() -> RustVec<BrowserExtras> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_browser_extras())
+}
+public func __alef_phantom_vec_downloaded_document() -> RustVec<DownloadedDocument> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_downloaded_document())
+}
+public func __alef_phantom_vec_interaction_result() -> RustVec<InteractionResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_interaction_result())
+}
+public func __alef_phantom_vec_action_result() -> RustVec<ActionResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_action_result())
+}
+public func __alef_phantom_vec_scrape_result() -> RustVec<ScrapeResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_scrape_result())
+}
+public func __alef_phantom_vec_crawl_page_result() -> RustVec<CrawlPageResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_crawl_page_result())
+}
+public func __alef_phantom_vec_crawl_result() -> RustVec<CrawlResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_crawl_result())
+}
+public func __alef_phantom_vec_sitemap_url() -> RustVec<SitemapUrl> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_sitemap_url())
+}
+public func __alef_phantom_vec_map_result() -> RustVec<MapResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_map_result())
+}
+public func __alef_phantom_vec_markdown_result() -> RustVec<MarkdownResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_markdown_result())
+}
+public func __alef_phantom_vec_link_info() -> RustVec<LinkInfo> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_link_info())
+}
+public func __alef_phantom_vec_image_info() -> RustVec<ImageInfo> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_image_info())
+}
+public func __alef_phantom_vec_feed_info() -> RustVec<FeedInfo> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_feed_info())
+}
+public func __alef_phantom_vec_json_ld_entry() -> RustVec<JsonLdEntry> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_json_ld_entry())
+}
+public func __alef_phantom_vec_cookie_info() -> RustVec<CookieInfo> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_cookie_info())
+}
+public func __alef_phantom_vec_downloaded_asset() -> RustVec<DownloadedAsset> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_downloaded_asset())
+}
+public func __alef_phantom_vec_article_metadata() -> RustVec<ArticleMetadata> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_article_metadata())
+}
+public func __alef_phantom_vec_hreflang_entry() -> RustVec<HreflangEntry> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_hreflang_entry())
+}
+public func __alef_phantom_vec_favicon_info() -> RustVec<FaviconInfo> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_favicon_info())
+}
+public func __alef_phantom_vec_heading_info() -> RustVec<HeadingInfo> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_heading_info())
+}
+public func __alef_phantom_vec_response_meta() -> RustVec<ResponseMeta> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_response_meta())
+}
+public func __alef_phantom_vec_page_metadata() -> RustVec<PageMetadata> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_page_metadata())
+}
+public func __alef_phantom_vec_crawl_stream_request() -> RustVec<CrawlStreamRequest> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_crawl_stream_request())
+}
+public func __alef_phantom_vec_batch_crawl_stream_request() -> RustVec<BatchCrawlStreamRequest> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_batch_crawl_stream_request())
+}
+public func __alef_phantom_vec_citation_result() -> RustVec<CitationResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_citation_result())
+}
+public func __alef_phantom_vec_citation_reference() -> RustVec<CitationReference> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_citation_reference())
+}
+public func __alef_phantom_vec_crawl_engine_handle() -> RustVec<CrawlEngineHandle> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_crawl_engine_handle())
+}
+public func __alef_phantom_vec_batch_scrape_result() -> RustVec<BatchScrapeResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_batch_scrape_result())
+}
+public func __alef_phantom_vec_batch_crawl_result() -> RustVec<BatchCrawlResult> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_batch_crawl_result())
+}
+public func __alef_phantom_vec_batch_scrape_results() -> RustVec<BatchScrapeResults> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_batch_scrape_results())
+}
+public func __alef_phantom_vec_batch_crawl_results() -> RustVec<BatchCrawlResults> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_batch_crawl_results())
+}
+public func __alef_phantom_vec_browser_mode() -> RustVec<BrowserMode> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_browser_mode())
+}
+public func __alef_phantom_vec_browser_wait() -> RustVec<BrowserWait> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_browser_wait())
+}
+public func __alef_phantom_vec_browser_backend() -> RustVec<BrowserBackend> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_browser_backend())
+}
+public func __alef_phantom_vec_auth_config() -> RustVec<AuthConfig> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_auth_config())
+}
+public func __alef_phantom_vec_link_type() -> RustVec<LinkType> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_link_type())
+}
+public func __alef_phantom_vec_image_source() -> RustVec<ImageSource> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_image_source())
+}
+public func __alef_phantom_vec_feed_type() -> RustVec<FeedType> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_feed_type())
+}
+public func __alef_phantom_vec_asset_category() -> RustVec<AssetCategory> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_asset_category())
+}
+public func __alef_phantom_vec_crawl_event() -> RustVec<CrawlEvent> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_crawl_event())
+}
+public func __alef_phantom_vec_page_action() -> RustVec<PageAction> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_page_action())
+}
+public func __alef_phantom_vec_scroll_direction() -> RustVec<ScrollDirection> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_scroll_direction())
+}
 
 public class ExtractionMeta: ExtractionMetaRefMut {
     public var isOwned: Bool = true

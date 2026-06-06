@@ -1359,13 +1359,16 @@ public enum AuthConfig: Codable, Sendable, Hashable {
             try container.encode("basic", forKey: .type)
             try container.encode(username, forKey: .username)
             try container.encode(password, forKey: .password)
+
         case .bearer(let token):
             try container.encode("bearer", forKey: .type)
             try container.encode(token, forKey: .token)
+
         case .header(let name, let value):
             try container.encode("header", forKey: .type)
             try container.encode(name, forKey: .name)
             try container.encode(value, forKey: .value)
+
         }
     }
 }
@@ -1548,28 +1551,35 @@ public enum PageAction: Codable, Sendable, Hashable {
         case .click(let selector):
             try container.encode("click", forKey: .type)
             try container.encode(selector, forKey: .selector)
+
         case .typeText(let selector, let text):
             try container.encode("type", forKey: .type)
             try container.encode(selector, forKey: .selector)
             try container.encode(text, forKey: .text)
+
         case .press(let key):
             try container.encode("press", forKey: .type)
             try container.encode(key, forKey: .key)
+
         case .scroll(let direction, let selector, let amount):
             try container.encode("scroll", forKey: .type)
             try container.encode(direction, forKey: .direction)
             try container.encodeIfPresent(selector, forKey: .selector)
             try container.encodeIfPresent(amount, forKey: .amount)
+
         case .wait(let milliseconds, let selector):
             try container.encode("wait", forKey: .type)
             try container.encodeIfPresent(milliseconds, forKey: .milliseconds)
             try container.encodeIfPresent(selector, forKey: .selector)
+
         case .screenshot(let fullPage):
             try container.encode("screenshot", forKey: .type)
             try container.encodeIfPresent(fullPage, forKey: .fullPage)
+
         case .executeJs(let script):
             try container.encode("executeJs", forKey: .type)
             try container.encode(script, forKey: .script)
+
         case .scrape:
             try container.encode("scrape", forKey: .type)
         }
@@ -1677,9 +1687,9 @@ private func _loadBytesFromPathOrUtf8(_ pathOrContent: String) throws -> [UInt8]
     return [UInt8](pathOrContent.utf8)
 }
 
-public func createEngine(_ configcrawlConfigJson: String) throws -> CrawlEngineHandle {
-    let configcrawlConfig = try crawlConfigFromJson(configcrawlConfigJson)
-    return try createEngine(config: configcrawlConfig)
+public func createEngine(_ configJson: String) throws -> CrawlEngineHandle {
+    let config = try crawlConfigFromJson(configJson)
+    return try createEngine(config: config)
 }
 
 // MARK: - From-JSON Helpers
@@ -1917,7 +1927,6 @@ public func generateCitations(markdown: String) throws -> CitationResult {
     let _rb = RustBridge.generateCitations(markdown)
     return try CitationResult(_rb)
 }
-
 /// Create a new crawl engine with the given configuration.
 ///
 /// If `config` is `None`, uses [`CrawlConfig::default()`].
@@ -1925,11 +1934,10 @@ public func generateCitations(markdown: String) throws -> CitationResult {
 public func createEngine(config: CrawlConfig? = nil) throws -> CrawlEngineHandle {
     return try RustBridge.createEngine(config)
 }
-
 /// Scrape a single URL, returning extracted page data.
 public func scrape(engine: CrawlEngineHandle, url: String) async throws -> ScrapeResult {
     return try await Task.detached(priority: .userInitiated) {
-        let result = try RustBridge.scrape(engine, RustString(url))
+        let result = try RustBridge.scrape(engine, url)
         return result
     }.value
 }
@@ -1937,7 +1945,7 @@ public func scrape(engine: CrawlEngineHandle, url: String) async throws -> Scrap
 /// Crawl a website starting from `url`, following links up to the configured depth.
 public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlResult {
     return try await Task.detached(priority: .userInitiated) {
-        let result = try RustBridge.crawl(engine, RustString(url))
+        let result = try RustBridge.crawl(engine, url)
         return result
     }.value
 }
@@ -1945,7 +1953,7 @@ public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlR
 /// Discover all pages on a website by following links and sitemaps.
 public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapResult {
     return try await Task.detached(priority: .userInitiated) {
-        let _rb_obj = try RustBridge.mapUrls(engine, RustString(url))
+        let _rb_obj = try RustBridge.mapUrls(engine, url)
         return try MapResult(_rb_obj)
     }.value
 }
@@ -1954,7 +1962,7 @@ public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapR
 public func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) async throws -> InteractionResult {
     return try await Task.detached(priority: .userInitiated) {
         let _rb_actions: RustVec<RustString> = try ({ () throws -> RustVec<RustString> in let v = RustVec<RustString>(); for item in actions { let data = try JSONEncoder().encode(item); let json = String(data: data, encoding: .utf8) ?? "null"; v.push(value: RustString(json)) }; return v }())
-        let result = try RustBridge.interact(engine, RustString(url), _rb_actions)
+        let result = try RustBridge.interact(engine, url, _rb_actions)
         return result
     }.value
 }
