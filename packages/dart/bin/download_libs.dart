@@ -6,7 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
-const String _moduleVersion = '0.3.0-rc.48';
+const String _moduleVersion = '0.3.0-rc.49';
 const String _repoUrl = 'https://github.com/kreuzberg-dev/kreuzcrawl';
 const String _assetPrefix = 'kreuzcrawl';
 const String _libStem = 'kreuzcrawl';
