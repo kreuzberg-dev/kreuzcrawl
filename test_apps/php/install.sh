@@ -43,7 +43,7 @@ EXT_DIR="$(php -r 'echo ini_get("extension_dir");')"
 test -f "$EXT_DIR/kreuzcrawl.so" || test -f "$EXT_DIR/kreuzcrawl.dylib" || test -f "$EXT_DIR/kreuzcrawl.dll"
 
 # Load it explicitly for the smoke test (the verify-install action runs
-# phpunit with this same `-dextension=` flag in CI).
+# phpunit with this same `-d extension=` flag in CI).
 if ! php -dextension=kreuzcrawl -m | grep -qi kreuzcrawl; then
   echo "::error::kreuzcrawl extension failed to load after PIE install" >&2
   exit 1

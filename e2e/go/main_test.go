@@ -65,14 +65,14 @@ func TestMain(m *testing.M) {
 	// read until we have seen MOCK_SERVER_URL and either MOCK_SERVERS or a non
 	// MOCK_SERVER line, then drain the rest in the background.
 	haveURL := false
+	//nolint:gocritic
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.HasPrefix(line, "MOCK_SERVER_URL=") {
 			_ = os.Setenv("MOCK_SERVER_URL", strings.TrimPrefix(line, "MOCK_SERVER_URL="))
 			haveURL = true
 			continue
-		}
-		if strings.HasPrefix(line, "MOCK_SERVERS=") {
+		} else if strings.HasPrefix(line, "MOCK_SERVERS=") {
 			payload := strings.TrimPrefix(line, "MOCK_SERVERS=")
 			_ = os.Setenv("MOCK_SERVERS", payload)
 			var servers map[string]string
@@ -82,8 +82,7 @@ func TestMain(m *testing.M) {
 				}
 			}
 			break
-		}
-		if haveURL {
+		} else if haveURL {
 			break
 		}
 	}

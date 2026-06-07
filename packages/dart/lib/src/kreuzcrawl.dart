@@ -24,7 +24,7 @@ class KreuzcrawlBridge {
   /// If `config` is `None`, uses [`CrawlConfig::default()`].
   /// Returns an error if the configuration is invalid.
   /// throws CrawlError on failure
-  static Future<CrawlEngineHandle> createEngine([CrawlConfig? config]) async {
+  static Future<CrawlEngineHandle> createEngine({CrawlConfig? config}) async {
     return await rust_bridge.createEngine(
       config:
           config ??

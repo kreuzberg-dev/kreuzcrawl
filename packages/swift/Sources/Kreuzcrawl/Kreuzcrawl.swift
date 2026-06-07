@@ -1876,7 +1876,8 @@ public func scrollDirectionFromJson(_ json: String) throws -> ScrollDirection {
 /// with `[1]: https://example.com` in the reference list.
 /// Images `![alt](url)` are preserved unchanged.
 public func generateCitations(markdown: String) throws -> CitationResult {
-    let _rb = RustBridge.generateCitations(markdown)
+        let _rb_markdown = RustString(markdown)
+    let _rb = RustBridge.generateCitations(_rb_markdown)
     return try CitationResult(_rb)
 }
 /// Create a new crawl engine with the given configuration.
@@ -1889,7 +1890,8 @@ public func createEngine(config: CrawlConfig? = nil) throws -> CrawlEngineHandle
 /// Scrape a single URL, returning extracted page data.
 public func scrape(engine: CrawlEngineHandle, url: String) async throws -> ScrapeResult {
     return try await Task.detached(priority: .userInitiated) {
-        let result = try RustBridge.scrape(engine, url)
+        let _rb_url = RustString(url)
+        let result = try RustBridge.scrape(engine, _rb_url)
         return result
     }.value
 }
@@ -1897,7 +1899,8 @@ public func scrape(engine: CrawlEngineHandle, url: String) async throws -> Scrap
 /// Crawl a website starting from `url`, following links up to the configured depth.
 public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlResult {
     return try await Task.detached(priority: .userInitiated) {
-        let result = try RustBridge.crawl(engine, url)
+        let _rb_url = RustString(url)
+        let result = try RustBridge.crawl(engine, _rb_url)
         return result
     }.value
 }
@@ -1905,7 +1908,8 @@ public func crawl(engine: CrawlEngineHandle, url: String) async throws -> CrawlR
 /// Discover all pages on a website by following links and sitemaps.
 public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapResult {
     return try await Task.detached(priority: .userInitiated) {
-        let _rb_obj = try RustBridge.mapUrls(engine, url)
+        let _rb_url = RustString(url)
+        let _rb_obj = try RustBridge.mapUrls(engine, _rb_url)
         return try MapResult(_rb_obj)
     }.value
 }
@@ -1913,8 +1917,9 @@ public func mapUrls(engine: CrawlEngineHandle, url: String) async throws -> MapR
 /// Execute browser actions on a single page.
 public func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) async throws -> InteractionResult {
     return try await Task.detached(priority: .userInitiated) {
+        let _rb_url = RustString(url)
         let _rb_actions: RustVec<RustString> = try ({ () throws -> RustVec<RustString> in let v = RustVec<RustString>(); for item in actions { let data = try JSONEncoder().encode(item); let json = String(data: data, encoding: .utf8) ?? "null"; v.push(value: RustString(json)) }; return v }())
-        let result = try RustBridge.interact(engine, url, _rb_actions)
+        let result = try RustBridge.interact(engine, _rb_url, _rb_actions)
         return result
     }.value
 }
@@ -2066,8 +2071,6 @@ extension RustBridge.BatchCrawlStreamRequest: @unchecked Sendable {}
 extension RustBridge.CitationResult: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.CitationReference: @unchecked Sendable {}
-// swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
-extension RustBridge.CrawlEngineHandle: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.
 extension RustBridge.BatchScrapeResult: @unchecked Sendable {}
 // swift-bridge opaque type used across Task.detached boundaries — Rust type is Send + Sync.

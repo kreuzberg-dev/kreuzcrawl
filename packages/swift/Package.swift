@@ -46,7 +46,8 @@ let package = Package(
     ),
     .target(
       name: "Kreuzcrawl", dependencies: ["RustBridge"],
-      path: "Sources/Kreuzcrawl"),
+      path: "Sources/Kreuzcrawl",
+      exclude: ["LICENSE"]),
     .testTarget(
       name: "KreuzcrawlTests", dependencies: ["Kreuzcrawl"],
       path: "Tests/KreuzcrawlTests"),
