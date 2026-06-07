@@ -59,6 +59,15 @@ zig-out/
 # Gradle / Kotlin build cache
 .gradle/
 
+# Swift / SwiftPM build cache
+.build/
+.swiftpm/
+Packages/
+Package.resolved
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+
 # PHPStan / PHP runtime cache
 packages/php/var/
 
@@ -156,6 +165,8 @@ test_report.json
 tests/e2e/logs/
 tests/e2e/test_report.json
 temp-test-*
+**/test_output.log
+**/logs/
 
 # AI / MCP / Agent config
 .alef/
