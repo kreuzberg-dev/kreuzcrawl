@@ -629,11 +629,16 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - { os: ubuntu-latest, label: linux }
-                    - { os: ubuntu-24.04-arm, label: linux-aarch64 }
-                    - { os: macos-latest, label: macos-arm64 }
-                    - { os: macos-15-intel, label: macos-x86_64 }
-                    - { os: ubuntu-latest, label: windows-x64, dock_platform: x64-mingw-ucrt }
+                    # `dock_platform: ''` keeps the property declared on every entry so
+                    # actionlint can type-check the `matrix.dock_platform == ''` guards
+                    # below. Set it to a non-empty platform string (e.g. `x64-mingw-ucrt`)
+                    # to opt that entry into the rb-sys-dock cross-compile branch.
+                    - { os: ubuntu-latest, label: linux, dock_platform: '' }
+                    - { os: ubuntu-24.04-arm, label: linux-aarch64, dock_platform: '' }
+                    - { os: macos-latest, label: macos-arm64, dock_platform: '' }
+                    - { os: macos-15-intel, label: macos-x86_64, dock_platform: '' }
+                    # windows-x64: deferred — rb-sys 0.9.127 fails to compile against Ruby 4.0.2
+                    # mingw headers on x86_64-pc-windows-gnu (`sys/select.h` not found). See #27.
                     # windows-11-arm: deferred until rb-sys + Magnus toolchain validated on aarch64-pc-windows-msvc
         steps:
             - uses: actions/checkout@v6
@@ -1689,7 +1694,11 @@ jobs:
         # whatever .gem files land in dist/; missing platforms cleanly degrade
         # to "consumers on that platform can't install yet" rather than
         # blocking every other platform's release.
-        if: ${{ needs.prepare.outputs.release_ruby == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.ruby-gem.result == 'success' || needs.ruby-gem.result == 'failure') && (needs.check-rubygems.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+        # `!cancelled() &&` is required: without any status-check function in the
+        # expression, GitHub Actions enforces an implicit `success()` over `needs:`,
+        # so a single failure in the `ruby-gem` matrix would skip this job even
+        # though the explicit `(success || failure)` clause below allows it.
+        if: ${{ !cancelled() && needs.prepare.outputs.release_ruby == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.ruby-gem.result == 'success' || needs.ruby-gem.result == 'failure') && (needs.check-rubygems.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         permissions:
             contents: read

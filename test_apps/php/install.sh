@@ -7,7 +7,7 @@ set -euo pipefail
 
 # Version override: pass as $1 to test an arbitrary tag; defaults to the
 # alef-pinned version from `[crates.e2e.registry.packages.php].version`.
-VERSION="${1:-0.3.0-rc.49}"
+VERSION="${1:-0.3.0-rc.50}"
 
 # PIE >= 1.3.7 supports the array-form `php-ext.download-url-method`
 # our composer.json emits; 1.4.0+ is preferred. Download PIE if we don't
@@ -41,6 +41,22 @@ fi
 # Verify the .so loads.
 EXT_DIR="$(php -r 'echo ini_get("extension_dir");')"
 test -f "$EXT_DIR/kreuzcrawl.so" || test -f "$EXT_DIR/kreuzcrawl.dylib" || test -f "$EXT_DIR/kreuzcrawl.dll"
+
+# Enable the extension in php.ini (PIE with --skip-enable-extension doesn't do this automatically).
+# Find the loaded php.ini, check if already enabled, and append if missing.
+PHP_INI="$(php --ini 2>&1 | grep -m1 'Loaded Configuration File:' | awk '{print $NF}')"
+if [[ -z "$PHP_INI" ]]; then
+  echo "::warning::Could not locate php.ini; extension may not be auto-loaded by default" >&2
+else
+  if [[ ! -f "$PHP_INI" ]]; then
+    echo "::warning::php.ini at $PHP_INI not found; extension may not be auto-loaded by default" >&2
+  else
+    # Guard against duplicate: check if extension line already exists (uncommented).
+    if ! grep -q "^extension=kreuzcrawl" "$PHP_INI"; then
+      echo "extension=kreuzcrawl" >> "$PHP_INI"
+    fi
+  fi
+fi
 
 # Export the installed extension path for downstream test runners (composer test).
 # The test app's run_tests.php checks for PIE_INSTALLED_EXTENSION_PATH and loads the extension via `-d`.

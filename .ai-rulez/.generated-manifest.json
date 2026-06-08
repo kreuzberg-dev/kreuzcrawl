@@ -125,6 +125,7 @@
     ".codex/commands/parallelize.md",
     ".codex/commands/review.md",
     ".codex/commands/test.md",
+    ".codex/config.toml",
     ".codex/skills/add-language-generator/SKILL.md",
     ".codex/skills/alef/SKILL.md",
     ".codex/skills/alef/references/adapters.md",
