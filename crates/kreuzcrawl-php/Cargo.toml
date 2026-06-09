@@ -19,7 +19,7 @@ crate-type = ["cdylib"]
 extension-module = []
 
 [dependencies]
-ext-php-rs = "0.15.15"
+ext-php-rs = "0.15.12"
 futures-util = "0.3"
 kreuzcrawl = { version = "0.3.0-rc.52", path = "../kreuzcrawl", features = ["interact", "browser-chromiumoxide"] }
 serde = { version = "1", features = ["derive"] }

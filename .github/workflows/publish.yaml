@@ -49,7 +49,7 @@ on:
         types: [publish-release]
 
 permissions:
-    contents: write
+    contents: read
     id-token: write
 
 concurrency:
@@ -92,19 +92,30 @@ jobs:
             release_zig: ${{ steps.meta.outputs.release_zig }}
             release_kotlin_android: ${{ steps.meta.outputs.release_kotlin_android }}
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - name: Checkout
               uses: actions/checkout@v6
               with:
                   ref: ${{ (inputs.republish == true && (inputs.ref || github.event.repository.default_branch)) || inputs.ref || inputs.tag || github.ref }}
                   fetch-depth: 0
                   submodules: recursive
+                  token: ${{ steps.app-token.outputs.token }}
+                  persist-credentials: true
 
             - name: Retag for republish
               if: ${{ inputs.republish == true || github.event.client_payload.republish == true }}
               uses: kreuzberg-dev/actions/retag-for-republish@v1
               with:
                   tag: ${{ inputs.tag || github.event.client_payload.tag }}
-                  token: ${{ secrets.GITHUB_TOKEN }}
+                  token: ${{ steps.app-token.outputs.token }}
+              env:
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
             - name: Resolve release metadata
               id: meta
@@ -119,6 +130,7 @@ jobs:
                   notes: "Release ${{ steps.meta.outputs.tag }}"
                   draft: "true"
                   prerelease: ${{ steps.meta.outputs.is_prerelease }}
+                  token: ${{ steps.app-token.outputs.token }}
 
     validate-versions:
         name: Validate language manifest versions
@@ -1466,6 +1478,13 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && (needs.cli-binaries.result == 'success' || needs.cli-musl-binaries.result == 'success') }}
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/download-artifact@v8
               with:
                   pattern: cli-*
@@ -1480,6 +1499,7 @@ jobs:
                   assets: |
                       kreuzcrawl-cli-*.tar.gz
                       kreuzcrawl-cli-*.zip
+                  token: ${{ steps.app-token.outputs.token }}
 
     upload-go-release:
         name: Upload Go FFI archives to GitHub Release
@@ -1487,6 +1507,13 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.go-ffi-libraries.result == 'success' }}
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/download-artifact@v8
               with:
                   pattern: go-ffi-*
@@ -1499,25 +1526,33 @@ jobs:
                   working-directory: dist/go-ffi
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
                   assets: kreuzcrawl-go-*.tar.gz
+                  token: ${{ steps.app-token.outputs.token }}
 
     push-go-subdir-tag:
         name: Push Go module subdir tag
         needs: [prepare, upload-go-release]
         if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.upload-go-release.result == 'success' }}
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/checkout@v5
               with:
                   ref: ${{ needs.prepare.outputs.target_sha }}
                   fetch-depth: 0
+                  token: ${{ steps.app-token.outputs.token }}
+                  persist-credentials: true
 
             - name: Push Go subdir tag
               shell: bash
               run: |
-                  git config user.name "GitHub Actions"
-                  git config user.email "noreply@github.com"
+                  git config user.name "kreuzberg-dev-publisher[bot]"
+                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
                   TAG_NAME="packages/go/v${{ needs.prepare.outputs.version }}"
                   git tag -a "$TAG_NAME" -m "Go module release ${{ needs.prepare.outputs.version }}"
                   git push origin "$TAG_NAME"
@@ -1528,6 +1563,13 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.c-ffi-libraries.result == 'success' }}
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/download-artifact@v8
               with:
                   pattern: c-ffi-*
@@ -1540,6 +1582,7 @@ jobs:
                   working-directory: dist/c-ffi
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
                   assets: kreuzcrawl-ffi-*.tar.gz
+                  token: ${{ steps.app-token.outputs.token }}
 
     upload-swift-release:
         name: Upload Swift artifact bundle to GitHub Release
@@ -1547,6 +1590,13 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.swift-artifactbundle.result == 'success' }}
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/download-artifact@v8
               with:
                   name: swift-artifactbundle
@@ -1558,6 +1608,7 @@ jobs:
                   working-directory: dist/swift
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
                   assets: "*.zip"
+                  token: ${{ steps.app-token.outputs.token }}
 
     upload-elixir-release:
         name: Upload Elixir NIF archives to GitHub Release
@@ -1565,6 +1616,13 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && (needs.elixir-natives.result == 'success' || needs.elixir-natives-musl.result == 'success') }}
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/download-artifact@v8
               with:
                   pattern: elixir-*
@@ -1577,6 +1635,7 @@ jobs:
                   working-directory: dist/elixir
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
                   assets: libkreuzcrawl_nif-*.tar.gz
+                  token: ${{ steps.app-token.outputs.token }}
 
     upload-php-pie-release:
         name: Upload PHP PIE archives to GitHub Release
@@ -1584,6 +1643,13 @@ jobs:
         if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.php-extension.result == 'success' }}
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/download-artifact@v8
               with:
                   pattern: php-package-*
@@ -1600,6 +1666,7 @@ jobs:
                       php_*.tgz.sha256
                       php_*.zip
                       php_*.zip.sha256
+                  token: ${{ steps.app-token.outputs.token }}
 
     # Verifies every expected release asset is present on the GitHub release
     # before the publish-* fan-out depends on those URLs.
@@ -2030,14 +2097,22 @@ jobs:
         runs-on: ubuntu-latest
         environment: hex
         permissions:
-            contents: write
             id-token: write
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
                   submodules: recursive
+                  token: ${{ steps.app-token.outputs.token }}
+                  persist-credentials: true
 
             - name: Generate checksums from GitHub release
               if: needs.prepare.outputs.dry_run != 'true'
@@ -2054,8 +2129,8 @@ jobs:
             - name: Commit updated checksum file to main
               if: needs.prepare.outputs.dry_run != 'true'
               run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git config user.name "kreuzberg-dev-publisher[bot]"
+                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
                   git add packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs
                   if git diff --cached --quiet; then
                     echo "No checksum changes to commit — skipping"
@@ -2192,6 +2267,13 @@ jobs:
         if: ${{ needs.prepare.outputs.release_zig == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-zig.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             - uses: actions/checkout@v6
               with:
                   ref: ${{ needs.prepare.outputs.ref }}
@@ -2210,8 +2292,9 @@ jobs:
                   package-name: kreuzcrawl-zig
                   update-release-notes: "true"
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
+                  token: ${{ steps.app-token.outputs.token }}
               env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
     # ─── Homebrew (real-brew bottles) ─────────────────────────────────────
     #
@@ -2233,9 +2316,15 @@ jobs:
             (needs.check-homebrew.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true')
         runs-on: ubuntu-latest
         timeout-minutes: 15
-        permissions:
-            contents: write
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: tap-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+                  repositories: homebrew-tap
+
             - name: Checkout source repo
               uses: actions/checkout@v6
               with:
@@ -2245,8 +2334,9 @@ jobs:
               uses: actions/checkout@v6
               with:
                   repository: kreuzberg-dev/homebrew-tap
-                  token: ${{ secrets.HOMEBREW_TOKEN }}
+                  token: ${{ steps.tap-token.outputs.token }}
                   path: homebrew-tap
+                  persist-credentials: true
 
             - name: Update formula source url + sha256
               env:
@@ -2258,11 +2348,11 @@ jobs:
             - name: Commit and push to tap
               working-directory: homebrew-tap
               env:
-                  GH_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
+                  GH_TOKEN: ${{ steps.tap-token.outputs.token }}
               # Inline: tap-side commit/push — bot identity is repo-specific.
               run: |
-                  git config user.name "kreuzberg-bot"
-                  git config user.email "bot@kreuzberg.dev"
+                  git config user.name "kreuzberg-dev-publisher[bot]"
+                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
                   if git diff --quiet Formula/; then
                     echo "No formula changes; skipping commit."
                     exit 0
@@ -2280,8 +2370,6 @@ jobs:
             needs.publish-homebrew-formula.result == 'success'
         runs-on: ${{ matrix.os }}
         timeout-minutes: 180
-        permissions:
-            contents: write
         strategy:
             fail-fast: false
             matrix:
@@ -2291,6 +2379,13 @@ jobs:
                     - { os: ubuntu-latest, bottle_tag: x86_64_linux, install_brew: true }
                     - { os: ubuntu-24.04-arm, bottle_tag: arm64_linux, install_brew: true }
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+
             # actions/checkout@v6 regression on macos-15-intel: the includeIf-gated
             # credential helper isn't honored by git 2.54 on that runner image, so
             # the fetch falls back to interactive auth and fails. v5 writes the
@@ -2317,7 +2412,7 @@ jobs:
                       kreuzcrawl
                   out-dir: ${{ github.workspace }}/bottle-json
                   github-repo: ${{ github.repository }}
-                  token: ${{ secrets.GITHUB_TOKEN }}
+                  token: ${{ steps.app-token.outputs.token }}
 
             - name: Upload bottle JSON manifests
               uses: actions/upload-artifact@v7
@@ -2337,9 +2432,15 @@ jobs:
             needs.homebrew-bottles.result == 'success'
         runs-on: ubuntu-latest
         timeout-minutes: 15
-        permissions:
-            contents: write
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: tap-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
+                  repositories: homebrew-tap
+
             - name: Checkout source repo
               uses: actions/checkout@v6
               with:
@@ -2349,8 +2450,9 @@ jobs:
               uses: actions/checkout@v6
               with:
                   repository: kreuzberg-dev/homebrew-tap
-                  token: ${{ secrets.HOMEBREW_TOKEN }}
+                  token: ${{ steps.tap-token.outputs.token }}
                   path: homebrew-tap
+                  persist-credentials: true
 
             - name: Download all bottle JSON manifests
               uses: actions/download-artifact@v8
@@ -2373,11 +2475,11 @@ jobs:
             - name: Commit and push bottle DSL
               working-directory: homebrew-tap
               env:
-                  GH_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
+                  GH_TOKEN: ${{ steps.tap-token.outputs.token }}
               # Inline: tap-side commit/push — bot identity is repo-specific.
               run: |
-                  git config user.name "kreuzberg-bot"
-                  git config user.email "bot@kreuzberg.dev"
+                  git config user.name "kreuzberg-dev-publisher[bot]"
+                  git config user.email "291994444+kreuzberg-dev-publisher[bot]@users.noreply.github.com"
                   if git diff --quiet Formula/; then
                     echo "No bottle DSL changes; skipping commit."
                     exit 0
@@ -2420,14 +2522,19 @@ jobs:
             needs.prepare.outputs.dry_run != 'true' &&
             !contains(needs.*.result, 'failure')
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
             - uses: kreuzberg-dev/actions/finalize-release@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   is-prerelease: ${{ needs.prepare.outputs.is_prerelease == 'true' && 'true' || 'false' }}
                   go-module-path: packages/go
+                  token: ${{ steps.app-token.outputs.token }}
 
     announce-discord:
         name: Announce release on Discord
@@ -2460,11 +2567,16 @@ jobs:
             needs.prepare.outputs.is_prerelease != 'true' &&
             !contains(needs.*.result, 'failure')
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
         steps:
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
             - uses: kreuzberg-dev/actions/announce-release-discord@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
                   project-name: kreuzcrawl
+                  token: ${{ steps.app-token.outputs.token }}

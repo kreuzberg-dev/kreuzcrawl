@@ -6,6 +6,7 @@ All notable changes to kreuzcrawl are documented here.
 
 ### Changed
 
+- **publish workflow**: migrate every push, release-asset upload, and homebrew-tap commit to the `kreuzberg-dev-publisher[bot]` GitHub App via `actions/create-github-app-token@v2`, replacing `secrets.GITHUB_TOKEN` and `secrets.HOMEBREW_TOKEN` with scoped app installation tokens.
 - Bump alef pin to `0.23.17` to consume the Python conftest MOCK_SERVERS-expansion fix and post-0.23.14 codegen fixes (swift JSON-overload async detection + RustString→String, swift Vec accessors + try wrapping, extendr binding compile fixes, rustler mutable refs, magnus mutable locals, csharp per-language async override, zig @tagName + @panic, binding edge cases).
 
 ### Fixed
