@@ -2214,8 +2214,7 @@ jobs:
               with:
                   crate-name: kreuzcrawl-ffi
                   lib-name: kreuzcrawl_ffi
-                  abi: ${{ matrix.abi }}
-                  target: ${{ matrix.target }}
+                  abis: ${{ matrix.abi }}
 
             - uses: actions/upload-artifact@v7
               with:
