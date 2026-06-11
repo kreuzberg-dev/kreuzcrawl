@@ -7,7 +7,7 @@ set -euo pipefail
 
 # Version override: pass as $1 to test an arbitrary tag; defaults to the
 # alef-pinned version from `[crates.e2e.registry.packages.php].version`.
-VERSION="${1:-0.3.0-rc.53}"
+VERSION="${1:-0.3.0-rc.54}"
 
 # PIE >= 1.3.7 supports the array-form `php-ext.download-url-method`
 # our composer.json emits; 1.4.0+ is preferred. Download PIE if we don't
@@ -70,13 +70,17 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export PIE_INSTALLED_EXTENSION_PATH="$EXT_DIR/kreuzcrawl.dylib"
 fi
 
-# Verify the extension loads. If php.ini already enables it (from this run or a
-# prior one), `php -m` alone reports it loaded and adding `-d extension=` would
-# raise "Module ... is already loaded". Only fall back to the explicit `-d`
-# flag when the extension is not auto-loaded by php.ini.
-if php -m 2>/dev/null | grep -qi "kreuzcrawl"; then
+# Verify the extension loads. Use `extension_loaded()` via `php -r` instead of
+# parsing `php -m` output: `php -m` is fragile when an extension is enabled via
+# both php.ini *and* a conf.d drop-in (e.g. when a prior PIE install left a
+# conf.d entry behind), because PHP prints "Module ... is already loaded" to
+# stderr and the test harness 2>&1 capture treats it as fatal. `extension_loaded`
+# checks runtime state directly and is unaffected by load source or stderr noise.
+if php -r 'exit(extension_loaded("kreuzcrawl") ? 0 : 1);' 2>/dev/null; then
   echo "kreuzcrawl extension loaded via php.ini"
-elif ! php -d extension=kreuzcrawl -m | grep -qi "kreuzcrawl"; then
+elif php -d extension=kreuzcrawl -r 'exit(extension_loaded("kreuzcrawl") ? 0 : 1);' 2>/dev/null; then
+  echo "kreuzcrawl extension loaded via -d flag"
+else
   echo "::error::kreuzcrawl extension failed to load after PIE install" >&2
   exit 1
 fi

@@ -7,6 +7,7 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run tests");
     const ffi_path = b.option([]const u8, "ffi_path", "Path to directory containing libkreuzcrawl_ffi") orelse "../../target/release";
     const ffi_include = b.option([]const u8, "ffi_include_path", "Path to directory containing FFI header") orelse "../../crates/kreuzcrawl-ffi/include";
+    const ffi_path_abs = b.pathFromRoot(ffi_path);
 
     const kreuzcrawl_module = b.addModule("kreuzcrawl", .{
         .root_source_file = b.path("../../packages/zig/src/kreuzcrawl.zig"),
@@ -17,6 +18,7 @@ pub fn build(b: *std.Build) void {
     kreuzcrawl_module.addLibraryPath(.{ .cwd_relative = ffi_path });
     kreuzcrawl_module.addIncludePath(.{ .cwd_relative = ffi_include });
     kreuzcrawl_module.linkSystemLibrary("kreuzcrawl_ffi", .{});
+    kreuzcrawl_module.addRPath(.{ .cwd_relative = ffi_path_abs });
 
     const _alloc = b.allocator;
     var mock_server_url: ?[]const u8 = b.graph.environ_map.get("MOCK_SERVER_URL");
@@ -90,6 +92,7 @@ pub fn build(b: *std.Build) void {
         .root_module = auth_module,
         .use_llvm = true,
     });
+    auth_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const auth_run = b.addRunArtifact(auth_tests);
     if (mock_server_url) |_url| {
         auth_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -117,6 +120,7 @@ pub fn build(b: *std.Build) void {
         .root_module = browser_module,
         .use_llvm = true,
     });
+    browser_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const browser_run = b.addRunArtifact(browser_tests);
     if (mock_server_url) |_url| {
         browser_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -144,6 +148,7 @@ pub fn build(b: *std.Build) void {
         .root_module = cache_module,
         .use_llvm = true,
     });
+    cache_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const cache_run = b.addRunArtifact(cache_tests);
     if (mock_server_url) |_url| {
         cache_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -171,6 +176,7 @@ pub fn build(b: *std.Build) void {
         .root_module = concurrent_module,
         .use_llvm = true,
     });
+    concurrent_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const concurrent_run = b.addRunArtifact(concurrent_tests);
     if (mock_server_url) |_url| {
         concurrent_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -198,6 +204,7 @@ pub fn build(b: *std.Build) void {
         .root_module = content_module,
         .use_llvm = true,
     });
+    content_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const content_run = b.addRunArtifact(content_tests);
     if (mock_server_url) |_url| {
         content_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -225,6 +232,7 @@ pub fn build(b: *std.Build) void {
         .root_module = cookies_module,
         .use_llvm = true,
     });
+    cookies_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const cookies_run = b.addRunArtifact(cookies_tests);
     if (mock_server_url) |_url| {
         cookies_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -252,6 +260,7 @@ pub fn build(b: *std.Build) void {
         .root_module = crawl_module,
         .use_llvm = true,
     });
+    crawl_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const crawl_run = b.addRunArtifact(crawl_tests);
     if (mock_server_url) |_url| {
         crawl_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -279,6 +288,7 @@ pub fn build(b: *std.Build) void {
         .root_module = download_module,
         .use_llvm = true,
     });
+    download_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const download_run = b.addRunArtifact(download_tests);
     if (mock_server_url) |_url| {
         download_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -306,6 +316,7 @@ pub fn build(b: *std.Build) void {
         .root_module = encoding_module,
         .use_llvm = true,
     });
+    encoding_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const encoding_run = b.addRunArtifact(encoding_tests);
     if (mock_server_url) |_url| {
         encoding_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -333,6 +344,7 @@ pub fn build(b: *std.Build) void {
         .root_module = engine_module,
         .use_llvm = true,
     });
+    engine_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const engine_run = b.addRunArtifact(engine_tests);
     if (mock_server_url) |_url| {
         engine_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -360,6 +372,7 @@ pub fn build(b: *std.Build) void {
         .root_module = error_module,
         .use_llvm = true,
     });
+    error_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const error_run = b.addRunArtifact(error_tests);
     if (mock_server_url) |_url| {
         error_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -387,6 +400,7 @@ pub fn build(b: *std.Build) void {
         .root_module = filter_module,
         .use_llvm = true,
     });
+    filter_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const filter_run = b.addRunArtifact(filter_tests);
     if (mock_server_url) |_url| {
         filter_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -414,6 +428,7 @@ pub fn build(b: *std.Build) void {
         .root_module = interaction_module,
         .use_llvm = true,
     });
+    interaction_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const interaction_run = b.addRunArtifact(interaction_tests);
     if (mock_server_url) |_url| {
         interaction_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -441,6 +456,7 @@ pub fn build(b: *std.Build) void {
         .root_module = links_module,
         .use_llvm = true,
     });
+    links_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const links_run = b.addRunArtifact(links_tests);
     if (mock_server_url) |_url| {
         links_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -468,6 +484,7 @@ pub fn build(b: *std.Build) void {
         .root_module = map_module,
         .use_llvm = true,
     });
+    map_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const map_run = b.addRunArtifact(map_tests);
     if (mock_server_url) |_url| {
         map_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -495,6 +512,7 @@ pub fn build(b: *std.Build) void {
         .root_module = markdown_module,
         .use_llvm = true,
     });
+    markdown_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const markdown_run = b.addRunArtifact(markdown_tests);
     if (mock_server_url) |_url| {
         markdown_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -522,6 +540,7 @@ pub fn build(b: *std.Build) void {
         .root_module = metadata_module,
         .use_llvm = true,
     });
+    metadata_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const metadata_run = b.addRunArtifact(metadata_tests);
     if (mock_server_url) |_url| {
         metadata_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -549,6 +568,7 @@ pub fn build(b: *std.Build) void {
         .root_module = proxy_module,
         .use_llvm = true,
     });
+    proxy_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const proxy_run = b.addRunArtifact(proxy_tests);
     if (mock_server_url) |_url| {
         proxy_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -576,6 +596,7 @@ pub fn build(b: *std.Build) void {
         .root_module = rate_limit_module,
         .use_llvm = true,
     });
+    rate_limit_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const rate_limit_run = b.addRunArtifact(rate_limit_tests);
     if (mock_server_url) |_url| {
         rate_limit_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -603,6 +624,7 @@ pub fn build(b: *std.Build) void {
         .root_module = redirect_module,
         .use_llvm = true,
     });
+    redirect_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const redirect_run = b.addRunArtifact(redirect_tests);
     if (mock_server_url) |_url| {
         redirect_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -630,6 +652,7 @@ pub fn build(b: *std.Build) void {
         .root_module = robots_module,
         .use_llvm = true,
     });
+    robots_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const robots_run = b.addRunArtifact(robots_tests);
     if (mock_server_url) |_url| {
         robots_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -657,6 +680,7 @@ pub fn build(b: *std.Build) void {
         .root_module = scrape_module,
         .use_llvm = true,
     });
+    scrape_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const scrape_run = b.addRunArtifact(scrape_tests);
     if (mock_server_url) |_url| {
         scrape_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -684,6 +708,7 @@ pub fn build(b: *std.Build) void {
         .root_module = sitemap_module,
         .use_llvm = true,
     });
+    sitemap_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const sitemap_run = b.addRunArtifact(sitemap_tests);
     if (mock_server_url) |_url| {
         sitemap_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -711,6 +736,7 @@ pub fn build(b: *std.Build) void {
         .root_module = stealth_module,
         .use_llvm = true,
     });
+    stealth_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const stealth_run = b.addRunArtifact(stealth_tests);
     if (mock_server_url) |_url| {
         stealth_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -738,6 +764,7 @@ pub fn build(b: *std.Build) void {
         .root_module = strategy_module,
         .use_llvm = true,
     });
+    strategy_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const strategy_run = b.addRunArtifact(strategy_tests);
     if (mock_server_url) |_url| {
         strategy_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -765,6 +792,7 @@ pub fn build(b: *std.Build) void {
         .root_module = validation_module,
         .use_llvm = true,
     });
+    validation_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const validation_run = b.addRunArtifact(validation_tests);
     if (mock_server_url) |_url| {
         validation_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
@@ -792,6 +820,7 @@ pub fn build(b: *std.Build) void {
         .root_module = warc_module,
         .use_llvm = true,
     });
+    warc_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const warc_run = b.addRunArtifact(warc_tests);
     if (mock_server_url) |_url| {
         warc_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);

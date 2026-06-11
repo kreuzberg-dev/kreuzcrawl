@@ -1682,18 +1682,27 @@ jobs:
             - upload-php-pie-release
         if: ${{ always() && needs.prepare.outputs.is_tag == 'true' && needs.prepare.outputs.dry_run != 'true' && !contains(needs.*.result, 'failure') }}
         runs-on: ubuntu-latest
+        permissions:
+            # The verify step has to see the draft release that prepare creates;
+            # the default GITHUB_TOKEN scope of `contents: read` cannot enumerate
+            # drafts. Granting `contents: write` for this job alone lets the
+            # default token see the draft release without forcing the App-token
+            # plumbing through every caller. Action v1.8.52+ resolves drafts via
+            # `GET /repos/{owner}/{repo}/releases` (which requires this scope).
+            contents: write
         steps:
-            - name: Wait for GitHub API release-replica convergence
-              # `gh release view` can briefly answer 404 right after `gh release
-              # create` returns when the API hits a stale read replica. RC.52
-              # tripped on this. v1.8.49 of `verify-release-assets@v1` will add
-              # an internal retry, but pinning to v1 keeps the action surface
-              # area for fixes elsewhere; this pre-wait covers the gap now.
-              shell: bash
-              run: sleep 60
+            - uses: actions/create-github-app-token@v2
+              id: app-token
+              with:
+                  app-id: ${{ secrets.BOT_APP_ID }}
+                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+                  owner: kreuzberg-dev
             - uses: kreuzberg-dev/actions/verify-release-assets@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
+                  # App token guarantees draft visibility regardless of the
+                  # workflow-level GITHUB_TOKEN permissions configuration.
+                  token: ${{ steps.app-token.outputs.token }}
                   expected-assets: |
                       # CLI
                       kreuzcrawl-cli-*.tar.gz
@@ -2123,17 +2132,12 @@ jobs:
                   token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: true
 
-            - name: Wait for NIF asset CDN propagation
-              # The releases/download/<tag>/<name> CDN can briefly 404 for 60–200s
-              # after `gh release upload` returns. RC.52 tripped on this — the
-              # generate-elixir-checksums action downloaded the NIFs once and
-              # exited on 404 before propagation. v1.8.49 of the action will add
-              # an internal retry; this pre-wait covers the gap on v1.8.48.
-              if: needs.prepare.outputs.dry_run != 'true'
-              shell: bash
-              run: sleep 180
-
             - name: Generate checksums from GitHub release
+              # generate-elixir-checksums v1.8.52+ downloads NIF assets via
+              # authenticated `gh release download` (works against draft
+              # releases), so no pre-wait for public CDN propagation is needed.
+              # Pass the App token so the action can see the draft release that
+              # publish-finalize will promote at the end of the workflow.
               if: needs.prepare.outputs.dry_run != 'true'
               uses: kreuzberg-dev/actions/generate-elixir-checksums@v1
               with:
@@ -2144,6 +2148,7 @@ jobs:
                   nif-versions: "2.16,2.17"
                   targets: x86_64-unknown-linux-gnu,aarch64-unknown-linux-gnu,x86_64-unknown-linux-musl,aarch64-unknown-linux-musl,aarch64-apple-darwin,x86_64-apple-darwin,x86_64-pc-windows-msvc
                   output-path: packages/elixir/checksum-Elixir.Kreuzcrawl.Native.exs
+                  token: ${{ steps.app-token.outputs.token }}
 
             - name: Commit updated checksum file to main
               if: needs.prepare.outputs.dry_run != 'true'

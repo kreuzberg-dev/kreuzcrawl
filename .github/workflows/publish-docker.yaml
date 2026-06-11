@@ -216,3 +216,43 @@ jobs:
             - name: Clean up test images
               if: ${{ always() }}
               run: docker rmi kreuzcrawl-test:latest || true
+
+    publish-mcp-registry:
+        name: Publish MCP registry metadata
+        needs:
+            - prepare
+            - publish-docker
+        if: ${{ needs.prepare.outputs.release_docker == 'true' && needs.prepare.outputs.dry_run != 'true' }}
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            id-token: write
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ needs.prepare.outputs.checkout_ref }}
+                  fetch-depth: 0
+
+            - name: Ensure target commit
+              if: ${{ needs.prepare.outputs.target_sha != '' }}
+              run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
+
+            - name: Install mcp-publisher
+              run: |
+                  curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+            - name: Prepare release server metadata
+              env:
+                  VERSION: ${{ needs.prepare.outputs.version }}
+              run: |
+                  jq \
+                    --arg version "$VERSION" \
+                    --arg image "ghcr.io/kreuzberg-dev/kreuzcrawl:$VERSION" \
+                    '.version = $version | .packages[0].version = $version | .packages[0].identifier = $image' \
+                    server.json > server.release.json
+
+            - name: Authenticate to MCP Registry
+              run: ./mcp-publisher login github-oidc
+
+            - name: Publish server to MCP Registry
+              run: ./mcp-publisher publish server.release.json
