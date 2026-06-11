@@ -32,16 +32,7 @@ function _alefE2eItemTexts(item: unknown): string[] {
 	}
 	const record = item as Record<string, unknown>;
 	const itemsText = Array.isArray(record.items) ? record.items.map(_alefE2eText).join(" ") : "";
-	return [
-		_alefE2eText(item),
-		_alefE2eText(record.kind),
-		_alefE2eText(record.name),
-		_alefE2eText(record.source),
-		_alefE2eText(record.alias),
-		_alefE2eText(record.text),
-		_alefE2eText(record.signature),
-		itemsText,
-	];
+	return [_alefE2eText(item), _alefE2eText(record.kind), _alefE2eText(record.name), _alefE2eText(record.source), _alefE2eText(record.alias), _alefE2eText(record.text), _alefE2eText(record.signature), itemsText];
 }
 
 function _alefE2eFormatMetadataDisplay(fm: unknown): string {
@@ -62,7 +53,9 @@ function _alefE2eFormatMetadataDisplay(fm: unknown): string {
 	return "";
 }
 
+
 describe("validation", () => {
+
 	it("validation_browser_endpoint_invalid: Browser endpoint must be a valid ws:// or wss:// URL, not http://", async () => {
 		await expect(async () => {
 			const engineConfig = { browser: { endpoint: "http://not-websocket:3000", mode: "always" } };

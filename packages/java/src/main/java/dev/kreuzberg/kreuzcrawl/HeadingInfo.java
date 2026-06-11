@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
@@ -15,38 +15,40 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = HeadingInfo.Builder.class)
 @SuppressWarnings("PMD")
-public record HeadingInfo(
-    @JsonProperty("level") byte level, @JsonProperty("text") String text) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private byte level = 0;
-    private String text = "";
-
-    /** Sets the level field. */
-    @JsonProperty("level")
-    public Builder withLevel(final byte value) {
-      this.level = value;
-      return this;
+public record HeadingInfo(@JsonProperty("level") byte level, @JsonProperty("text") String text) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the text field. */
-    @JsonProperty("text")
-    public Builder withText(final String value) {
-      this.text = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Builds the HeadingInfo instance. */
-    public HeadingInfo build() {
-      return new HeadingInfo(level, text);
+private byte level = 0;
+private String text = "";
+
+        /** Sets the level field. */
+        @JsonProperty("level")
+        public Builder withLevel(final byte value) {
+            this.level = value;
+            return this;
+        }
+
+        /** Sets the text field. */
+        @JsonProperty("text")
+        public Builder withText(final String value) {
+            this.text = value;
+            return this;
+        }
+
+        /** Builds the HeadingInfo instance. */
+        public HeadingInfo build() {
+            return new HeadingInfo(
+                level,
+                text
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

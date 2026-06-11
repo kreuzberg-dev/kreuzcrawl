@@ -80,7 +80,7 @@ typedef struct KCRAWLBrowserMode KCRAWLBrowserMode;
 typedef struct KCRAWLBrowserWait KCRAWLBrowserWait;
 /**
  * A single numbered reference in a citation list â produced by the citation
- * extractor when content uses inline `[N]`-style markers.
+ * extractor when content uses inline ``N``-style markers.
  */
 typedef struct KCRAWLCitationReference KCRAWLCitationReference;
 /**
@@ -106,7 +106,7 @@ typedef struct KCRAWLCrawlConfig KCRAWLCrawlConfig;
 /**
  * Opaque handle to a configured crawl engine.
  *
- * Constructed via [`create_engine`] with an optional [`CrawlConfig`].
+ * Constructed via `create_engine` with an optional `CrawlConfig`.
  * Default implementations for all pluggable components are used internally.
  */
 typedef struct KCRAWLCrawlEngineHandle KCRAWLCrawlEngineHandle;
@@ -2930,7 +2930,7 @@ char *kcrawl_citation_reference_text(const KCRAWLCitationReference *ptr);
 void kcrawl_crawl_engine_handle_free(KCRAWLCrawlEngineHandle *ptr);
 
 /**
- * Stream a single-URL crawl, yielding [`CrawlEvent`]s as pages are processed.
+ * Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
  *
  * Returns an async stream that emits one event per crawled page, plus a
  * terminal `Complete` event. On per-URL failure during the crawl, emits an
@@ -2945,7 +2945,7 @@ int32_t kcrawl_crawl_engine_handle_crawl_stream(const KCRAWLCrawlEngineHandle *c
                                                 void *user_data);
 
 /**
- * Stream a multi-URL crawl, yielding [`CrawlEvent`]s across all seeds.
+ * Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
  *
  * Returns an async stream that emits one event per crawled page across all
  * seeds, plus terminal `Complete` and `Error` events as appropriate. The
@@ -3553,7 +3553,7 @@ KCRAWLCitationResult *kcrawl_generate_citations(const char *markdown);
 /**
  * Create a new crawl engine with the given configuration.
  *
- * If `config` is `None`, uses [`CrawlConfig::default()`].
+ * If `config` is `None`, uses `CrawlConfig.default()`.
  * Returns an error if the configuration is invalid.
  * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
  * freed with the appropriate free function.

@@ -7351,7 +7351,7 @@ pub unsafe extern "C" fn kcrawl_crawl_engine_handle_free(ptr: *mut kreuzcrawl::C
     }
 }
 
-/// Stream a single-URL crawl, yielding [`CrawlEvent`]s as pages are processed.
+/// Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 ///
 /// Returns an async stream that emits one event per crawled page, plus a
 /// terminal `Complete` event. On per-URL failure during the crawl, emits an
@@ -7442,7 +7442,7 @@ pub unsafe extern "C" fn kcrawl_crawl_engine_handle_crawl_stream(
     }
 }
 
-/// Stream a multi-URL crawl, yielding [`CrawlEvent`]s across all seeds.
+/// Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 ///
 /// Returns an async stream that emits one event per crawled page across all
 /// seeds, plus terminal `Complete` and `Error` events as appropriate. The
@@ -9189,7 +9189,7 @@ pub unsafe extern "C" fn kcrawl_generate_citations(
 
 /// Create a new crawl engine with the given configuration.
 ///
-/// If `config` is `None`, uses [`CrawlConfig::default()`].
+/// If `config` is `None`, uses `CrawlConfig.default()`.
 /// Returns an error if the configuration is invalid.
 /// \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
 /// freed with the appropriate free function.

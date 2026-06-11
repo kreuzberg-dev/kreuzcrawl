@@ -5,48 +5,40 @@
 
 package dev.kreuzberg.kreuzcrawl.e2e;
 
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
+import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import dev.kreuzberg.kreuzcrawl.CrawlConfig;
-import dev.kreuzberg.kreuzcrawl.Kreuzcrawl;
-import org.junit.jupiter.api.Test;
+import java.util.Optional;
+import dev.kreuzberg.kreuzcrawl.JsonUtil;
 
 /** E2e tests for category: warc. */
 public class WarcTest {
-  private static final ObjectMapper MAPPER = new ObjectMapper()
-      .registerModule(new Jdk8Module())
-      .setPropertyNamingStrategy(
-          com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE);
+    private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new Jdk8Module()).setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE);
 
-  @Test
-  void testWarcBasicOutput() throws Exception {
-    // Scrape single page with WARC output enabled writes to file
-    var engineConfig = MAPPER.readValue(
-        "{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_test.warc\"}",
-        CrawlConfig.class);
-    var engine = Kreuzcrawl.createEngine(engineConfig);
-    String url = System.getProperty("mockServerUrl", System.getenv("MOCK_SERVER_URL"))
-        + "/fixtures/warc_basic_output";
-    var result = Kreuzcrawl.crawl(engine, url);
-    assertEquals(200, result.pages().get(0).statusCode());
-    assertEquals(1, result.pages().size());
-  }
+    @Test
+    void testWarcBasicOutput() throws Exception {
+        // Scrape single page with WARC output enabled writes to file
+        var engineConfig = MAPPER.readValue("{\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_test.warc\"}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
+        String url = System.getProperty("mockServerUrl", System.getenv("MOCK_SERVER_URL")) + "/fixtures/warc_basic_output";
+        var result = Kreuzcrawl.crawl(engine, url);
+assertEquals(200, result.pages().get(0).statusCode());assertEquals(1, result.pages().size());
 
-  @Test
-  void testWarcMultiPageCrawl() throws Exception {
-    // Crawl multiple pages with depth=1 and WARC output enabled
-    var engineConfig = MAPPER.readValue(
-        "{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_crawl.warc\"}",
-        CrawlConfig.class);
-    var engine = Kreuzcrawl.createEngine(engineConfig);
-    String url = System.getProperty(
-        "mockServer.warc_multi_page_crawl",
-        System.getProperty("mockServerUrl", System.getenv("MOCK_SERVER_URL"))
-            + "/fixtures/warc_multi_page_crawl");
-    var result = Kreuzcrawl.crawl(engine, url);
-    assertTrue(result.pages().size() >= 2, "expected >= 2");
-    assertEquals(true, result.stayedOnDomain());
-  }
+    }
+
+
+    @Test
+    void testWarcMultiPageCrawl() throws Exception {
+        // Crawl multiple pages with depth=1 and WARC output enabled
+        var engineConfig = MAPPER.readValue("{\"max_depth\":1,\"respect_robots_txt\":false,\"warc_output\":\"/tmp/kreuzcrawl_crawl.warc\"}", CrawlConfig.class);
+        var engine = Kreuzcrawl.createEngine(engineConfig);
+        String url = System.getProperty("mockServer.warc_multi_page_crawl", System.getProperty("mockServerUrl", System.getenv("MOCK_SERVER_URL")) + "/fixtures/warc_multi_page_crawl");
+        var result = Kreuzcrawl.crawl(engine, url);
+assertTrue(result.pages().size() >= 2, "expected >= 2");assertEquals(true, result.stayedOnDomain());
+
+    }
+
 }

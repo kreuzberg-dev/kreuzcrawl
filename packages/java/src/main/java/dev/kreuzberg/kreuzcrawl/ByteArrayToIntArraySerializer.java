@@ -18,19 +18,18 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  */
 @SuppressWarnings("PMD")
 public class ByteArrayToIntArraySerializer extends StdSerializer<byte[]> {
-  /** Default constructor required by Jackson. */
-  public ByteArrayToIntArraySerializer() {
-    super(byte[].class);
-  }
-
-  @Override
-  public void serialize(
-      final byte[] value, final JsonGenerator gen, final SerializerProvider provider)
-      throws java.io.IOException {
-    gen.writeStartArray();
-    for (byte b : value) {
-      gen.writeNumber(b & 0xFF);
+    /** Default constructor required by Jackson. */
+    public ByteArrayToIntArraySerializer() {
+        super(byte[].class);
     }
-    gen.writeEndArray();
-  }
+
+    @Override
+    public void serialize(final byte[] value, final JsonGenerator gen,
+            final SerializerProvider provider) throws java.io.IOException {
+        gen.writeStartArray();
+        for (byte b : value) {
+            gen.writeNumber(b & 0xFF);
+        }
+        gen.writeEndArray();
+    }
 }

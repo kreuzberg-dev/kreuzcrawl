@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.jspecify.annotations.Nullable;
@@ -21,64 +21,69 @@ public record LinkInfo(
     @JsonProperty("text") String text,
     @JsonProperty("link_type") LinkType linkType,
     @Nullable @JsonProperty("rel") String rel,
-    @JsonProperty("nofollow") boolean nofollow) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private String url = "";
-    private String text = "";
-
-    @JsonProperty("link_type")
-    private LinkType linkType = null;
-
-    private String rel = null;
-    private boolean nofollow = false;
-
-    /** Sets the url field. */
-    @JsonProperty("url")
-    public Builder withUrl(final String value) {
-      this.url = value;
-      return this;
+    @JsonProperty("nofollow") boolean nofollow
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the text field. */
-    @JsonProperty("text")
-    public Builder withText(final String value) {
-      this.text = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the linkType field. */
-    @JsonProperty("link_type")
-    public Builder withLinkType(final LinkType value) {
-      this.linkType = value;
-      return this;
-    }
+private String url = "";
+private String text = "";
+        @JsonProperty("link_type")
+private LinkType linkType = null;
+private String rel = null;
+private boolean nofollow = false;
 
-    /** Sets the rel field. */
-    @JsonProperty("rel")
-    public Builder withRel(final @Nullable String value) {
-      this.rel = value;
-      return this;
-    }
+        /** Sets the url field. */
+        @JsonProperty("url")
+        public Builder withUrl(final String value) {
+            this.url = value;
+            return this;
+        }
 
-    /** Sets the nofollow field. */
-    @JsonProperty("nofollow")
-    public Builder withNofollow(final boolean value) {
-      this.nofollow = value;
-      return this;
-    }
+        /** Sets the text field. */
+        @JsonProperty("text")
+        public Builder withText(final String value) {
+            this.text = value;
+            return this;
+        }
 
-    /** Builds the LinkInfo instance. */
-    public LinkInfo build() {
-      return new LinkInfo(url, text, linkType, rel, nofollow);
+        /** Sets the linkType field. */
+        @JsonProperty("link_type")
+        public Builder withLinkType(final LinkType value) {
+            this.linkType = value;
+            return this;
+        }
+
+        /** Sets the rel field. */
+        @JsonProperty("rel")
+        public Builder withRel(final @Nullable String value) {
+            this.rel = value;
+            return this;
+        }
+
+        /** Sets the nofollow field. */
+        @JsonProperty("nofollow")
+        public Builder withNofollow(final boolean value) {
+            this.nofollow = value;
+            return this;
+        }
+
+        /** Builds the LinkInfo instance. */
+        public LinkInfo build() {
+            return new LinkInfo(
+                url,
+                text,
+                linkType,
+                rel,
+                nofollow
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

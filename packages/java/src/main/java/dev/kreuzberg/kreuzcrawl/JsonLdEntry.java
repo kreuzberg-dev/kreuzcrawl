@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.jspecify.annotations.Nullable;
@@ -19,47 +19,51 @@ import org.jspecify.annotations.Nullable;
 public record JsonLdEntry(
     @JsonProperty("schema_type") String schemaType,
     @Nullable @JsonProperty("name") String name,
-    @JsonProperty("raw") String raw) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    @JsonProperty("schema_type")
-    private String schemaType = "";
-
-    private String name = null;
-    private String raw = "";
-
-    /** Sets the schemaType field. */
-    @JsonProperty("schema_type")
-    public Builder withSchemaType(final String value) {
-      this.schemaType = value;
-      return this;
+    @JsonProperty("raw") String raw
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the name field. */
-    @JsonProperty("name")
-    public Builder withName(final @Nullable String value) {
-      this.name = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the raw field. */
-    @JsonProperty("raw")
-    public Builder withRaw(final String value) {
-      this.raw = value;
-      return this;
-    }
+        @JsonProperty("schema_type")
+private String schemaType = "";
+private String name = null;
+private String raw = "";
 
-    /** Builds the JsonLdEntry instance. */
-    public JsonLdEntry build() {
-      return new JsonLdEntry(schemaType, name, raw);
+        /** Sets the schemaType field. */
+        @JsonProperty("schema_type")
+        public Builder withSchemaType(final String value) {
+            this.schemaType = value;
+            return this;
+        }
+
+        /** Sets the name field. */
+        @JsonProperty("name")
+        public Builder withName(final @Nullable String value) {
+            this.name = value;
+            return this;
+        }
+
+        /** Sets the raw field. */
+        @JsonProperty("raw")
+        public Builder withRaw(final String value) {
+            this.raw = value;
+            return this;
+        }
+
+        /** Builds the JsonLdEntry instance. */
+        public JsonLdEntry build() {
+            return new JsonLdEntry(
+                schemaType,
+                name,
+                raw
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

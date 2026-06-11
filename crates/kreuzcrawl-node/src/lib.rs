@@ -59,9 +59,9 @@ static WORKER_POOL: std::sync::LazyLock<tokio::runtime::Runtime> = std::sync::La
 
 /// Wrapper for byte arrays that implements custom FromNapiValue to accept Buffer.from(...).
 ///
-/// NAPI v3's default FromNapiValue for Vec<u8> expects Array[number], not Buffer.
+/// NAPI v3's default FromNapiValue for `Vec<u8>` expects `Array<number>`, not Buffer.
 /// This wrapper provides custom deserialization that accepts Buffer, Uint8Array, or Array,
-/// converting them to Vec<u8>. Implements Clone and serde traits for use in struct fields.
+/// converting them to `Vec<u8>`. Implements Clone and serde traits for use in struct fields.
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JsBytes(pub Vec<u8>);
 

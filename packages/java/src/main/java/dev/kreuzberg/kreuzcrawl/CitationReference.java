@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
@@ -19,45 +19,50 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 public record CitationReference(
     @JsonProperty("index") long index,
     @JsonProperty("url") String url,
-    @JsonProperty("text") String text) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private long index = 0;
-    private String url = "";
-    private String text = "";
-
-    /** Sets the index field. */
-    @JsonProperty("index")
-    public Builder withIndex(final long value) {
-      this.index = value;
-      return this;
+    @JsonProperty("text") String text
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the url field. */
-    @JsonProperty("url")
-    public Builder withUrl(final String value) {
-      this.url = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the text field. */
-    @JsonProperty("text")
-    public Builder withText(final String value) {
-      this.text = value;
-      return this;
-    }
+private long index = 0;
+private String url = "";
+private String text = "";
 
-    /** Builds the CitationReference instance. */
-    public CitationReference build() {
-      return new CitationReference(index, url, text);
+        /** Sets the index field. */
+        @JsonProperty("index")
+        public Builder withIndex(final long value) {
+            this.index = value;
+            return this;
+        }
+
+        /** Sets the url field. */
+        @JsonProperty("url")
+        public Builder withUrl(final String value) {
+            this.url = value;
+            return this;
+        }
+
+        /** Sets the text field. */
+        @JsonProperty("text")
+        public Builder withText(final String value) {
+            this.text = value;
+            return this;
+        }
+
+        /** Builds the CitationReference instance. */
+        public CitationReference build() {
+            return new CitationReference(
+                index,
+                url,
+                text
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

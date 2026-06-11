@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
@@ -15,38 +15,40 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = HreflangEntry.Builder.class)
 @SuppressWarnings("PMD")
-public record HreflangEntry(
-    @JsonProperty("lang") String lang, @JsonProperty("url") String url) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private String lang = "";
-    private String url = "";
-
-    /** Sets the lang field. */
-    @JsonProperty("lang")
-    public Builder withLang(final String value) {
-      this.lang = value;
-      return this;
+public record HreflangEntry(@JsonProperty("lang") String lang, @JsonProperty("url") String url) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the url field. */
-    @JsonProperty("url")
-    public Builder withUrl(final String value) {
-      this.url = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Builds the HreflangEntry instance. */
-    public HreflangEntry build() {
-      return new HreflangEntry(lang, url);
+private String lang = "";
+private String url = "";
+
+        /** Sets the lang field. */
+        @JsonProperty("lang")
+        public Builder withLang(final String value) {
+            this.lang = value;
+            return this;
+        }
+
+        /** Sets the url field. */
+        @JsonProperty("url")
+        public Builder withUrl(final String value) {
+            this.url = value;
+            return this;
+        }
+
+        /** Builds the HreflangEntry instance. */
+        public HreflangEntry build() {
+            return new HreflangEntry(
+                lang,
+                url
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

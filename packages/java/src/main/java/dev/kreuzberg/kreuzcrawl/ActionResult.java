@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.jspecify.annotations.Nullable;
@@ -21,65 +21,70 @@ public record ActionResult(
     @JsonProperty("action_type") String actionType,
     @JsonProperty("success") boolean success,
     @Nullable @JsonProperty("data") Object data,
-    @Nullable @JsonProperty("error") String error) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    @JsonProperty("action_index")
-    private long actionIndex = 0;
-
-    @JsonProperty("action_type")
-    private String actionType = "";
-
-    private boolean success = false;
-    private Object data = null;
-    private String error = null;
-
-    /** Sets the actionIndex field. */
-    @JsonProperty("action_index")
-    public Builder withActionIndex(final long value) {
-      this.actionIndex = value;
-      return this;
+    @Nullable @JsonProperty("error") String error
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the actionType field. */
-    @JsonProperty("action_type")
-    public Builder withActionType(final String value) {
-      this.actionType = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the success field. */
-    @JsonProperty("success")
-    public Builder withSuccess(final boolean value) {
-      this.success = value;
-      return this;
-    }
+        @JsonProperty("action_index")
+private long actionIndex = 0;
+        @JsonProperty("action_type")
+private String actionType = "";
+private boolean success = false;
+private Object data = null;
+private String error = null;
 
-    /** Sets the data field. */
-    @JsonProperty("data")
-    public Builder withData(final @Nullable Object value) {
-      this.data = value;
-      return this;
-    }
+        /** Sets the actionIndex field. */
+        @JsonProperty("action_index")
+        public Builder withActionIndex(final long value) {
+            this.actionIndex = value;
+            return this;
+        }
 
-    /** Sets the error field. */
-    @JsonProperty("error")
-    public Builder withError(final @Nullable String value) {
-      this.error = value;
-      return this;
-    }
+        /** Sets the actionType field. */
+        @JsonProperty("action_type")
+        public Builder withActionType(final String value) {
+            this.actionType = value;
+            return this;
+        }
 
-    /** Builds the ActionResult instance. */
-    public ActionResult build() {
-      return new ActionResult(actionIndex, actionType, success, data, error);
+        /** Sets the success field. */
+        @JsonProperty("success")
+        public Builder withSuccess(final boolean value) {
+            this.success = value;
+            return this;
+        }
+
+        /** Sets the data field. */
+        @JsonProperty("data")
+        public Builder withData(final @Nullable Object value) {
+            this.data = value;
+            return this;
+        }
+
+        /** Sets the error field. */
+        @JsonProperty("error")
+        public Builder withError(final @Nullable String value) {
+            this.error = value;
+            return this;
+        }
+
+        /** Builds the ActionResult instance. */
+        public ActionResult build() {
+            return new ActionResult(
+                actionIndex,
+                actionType,
+                success,
+                data,
+                error
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

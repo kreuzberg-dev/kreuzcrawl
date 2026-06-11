@@ -4,11 +4,11 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,97 +26,100 @@ public record CrawlResult(
     @Nullable @JsonProperty("error") String error,
     @JsonProperty("cookies") List<CookieInfo> cookies,
     @JsonProperty("stayed_on_domain") boolean stayedOnDomain,
-    @JsonProperty("browser_used") boolean browserUsed) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private List<CrawlPageResult> pages = List.of();
-
-    @JsonProperty("final_url")
-    private String finalUrl = "";
-
-    @JsonProperty("redirect_count")
-    private long redirectCount = 0;
-
-    @JsonProperty("was_skipped")
-    private boolean wasSkipped = false;
-
-    private String error = null;
-    private List<CookieInfo> cookies = List.of();
-
-    @JsonProperty("stayed_on_domain")
-    private boolean stayedOnDomain = false;
-
-    @JsonProperty("browser_used")
-    private boolean browserUsed = false;
-
-    /** Sets the pages field. */
-    @JsonProperty("pages")
-    public Builder withPages(final List<CrawlPageResult> value) {
-      this.pages = value;
-      return this;
+    @JsonProperty("browser_used") boolean browserUsed
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the finalUrl field. */
-    @JsonProperty("final_url")
-    public Builder withFinalUrl(final String value) {
-      this.finalUrl = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the redirectCount field. */
-    @JsonProperty("redirect_count")
-    public Builder withRedirectCount(final long value) {
-      this.redirectCount = value;
-      return this;
-    }
+private List<CrawlPageResult> pages = List.of();
+        @JsonProperty("final_url")
+private String finalUrl = "";
+        @JsonProperty("redirect_count")
+private long redirectCount = 0;
+        @JsonProperty("was_skipped")
+private boolean wasSkipped = false;
+private String error = null;
+private List<CookieInfo> cookies = List.of();
+        @JsonProperty("stayed_on_domain")
+private boolean stayedOnDomain = false;
+        @JsonProperty("browser_used")
+private boolean browserUsed = false;
 
-    /** Sets the wasSkipped field. */
-    @JsonProperty("was_skipped")
-    public Builder withWasSkipped(final boolean value) {
-      this.wasSkipped = value;
-      return this;
-    }
+        /** Sets the pages field. */
+        @JsonProperty("pages")
+        public Builder withPages(final List<CrawlPageResult> value) {
+            this.pages = value;
+            return this;
+        }
 
-    /** Sets the error field. */
-    @JsonProperty("error")
-    public Builder withError(final @Nullable String value) {
-      this.error = value;
-      return this;
-    }
+        /** Sets the finalUrl field. */
+        @JsonProperty("final_url")
+        public Builder withFinalUrl(final String value) {
+            this.finalUrl = value;
+            return this;
+        }
 
-    /** Sets the cookies field. */
-    @JsonProperty("cookies")
-    public Builder withCookies(final List<CookieInfo> value) {
-      this.cookies = value;
-      return this;
-    }
+        /** Sets the redirectCount field. */
+        @JsonProperty("redirect_count")
+        public Builder withRedirectCount(final long value) {
+            this.redirectCount = value;
+            return this;
+        }
 
-    /** Sets the stayedOnDomain field. */
-    @JsonProperty("stayed_on_domain")
-    public Builder withStayedOnDomain(final boolean value) {
-      this.stayedOnDomain = value;
-      return this;
-    }
+        /** Sets the wasSkipped field. */
+        @JsonProperty("was_skipped")
+        public Builder withWasSkipped(final boolean value) {
+            this.wasSkipped = value;
+            return this;
+        }
 
-    /** Sets the browserUsed field. */
-    @JsonProperty("browser_used")
-    public Builder withBrowserUsed(final boolean value) {
-      this.browserUsed = value;
-      return this;
-    }
+        /** Sets the error field. */
+        @JsonProperty("error")
+        public Builder withError(final @Nullable String value) {
+            this.error = value;
+            return this;
+        }
 
-    /** Builds the CrawlResult instance. */
-    public CrawlResult build() {
-      return new CrawlResult(
-          pages, finalUrl, redirectCount, wasSkipped, error, cookies, stayedOnDomain, browserUsed);
+        /** Sets the cookies field. */
+        @JsonProperty("cookies")
+        public Builder withCookies(final List<CookieInfo> value) {
+            this.cookies = value;
+            return this;
+        }
+
+        /** Sets the stayedOnDomain field. */
+        @JsonProperty("stayed_on_domain")
+        public Builder withStayedOnDomain(final boolean value) {
+            this.stayedOnDomain = value;
+            return this;
+        }
+
+        /** Sets the browserUsed field. */
+        @JsonProperty("browser_used")
+        public Builder withBrowserUsed(final boolean value) {
+            this.browserUsed = value;
+            return this;
+        }
+
+        /** Builds the CrawlResult instance. */
+        public CrawlResult build() {
+            return new CrawlResult(
+                pages,
+                finalUrl,
+                redirectCount,
+                wasSkipped,
+                error,
+                cookies,
+                stayedOnDomain,
+                browserUsed
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

@@ -32,16 +32,7 @@ function _alefE2eItemTexts(item: unknown): string[] {
 	}
 	const record = item as Record<string, unknown>;
 	const itemsText = Array.isArray(record.items) ? record.items.map(_alefE2eText).join(" ") : "";
-	return [
-		_alefE2eText(item),
-		_alefE2eText(record.kind),
-		_alefE2eText(record.name),
-		_alefE2eText(record.source),
-		_alefE2eText(record.alias),
-		_alefE2eText(record.text),
-		_alefE2eText(record.signature),
-		itemsText,
-	];
+	return [_alefE2eText(item), _alefE2eText(record.kind), _alefE2eText(record.name), _alefE2eText(record.source), _alefE2eText(record.alias), _alefE2eText(record.text), _alefE2eText(record.signature), itemsText];
 }
 
 function _alefE2eFormatMetadataDisplay(fm: unknown): string {
@@ -62,22 +53,21 @@ function _alefE2eFormatMetadataDisplay(fm: unknown): string {
 	return "";
 }
 
+
 describe("proxy", () => {
+
 	it("proxy_authenticated: Proxy with username and password credentials authenticates successfully", async () => {
-		const engineConfig = {
-			proxy: { password: "proxypass", url: "http://127.0.0.1:8889", username: "proxyuser" },
-			respectRobotsTxt: false,
-		};
+		const engineConfig = { proxy: { password: "proxypass", url: "http://127.0.0.1:8889", username: "proxyuser" }, respectRobotsTxt: false };
 		const engine = createEngine(engineConfig);
 		const url = `${process.env.MOCK_SERVER_URL}/fixtures/proxy_authenticated`;
 		const result = await crawl(engine, url);
-		expect(result.pages.length).toBe(0);
+    expect(result.pages.length).toBe(0);
 	}, 30000);
 	it("proxy_basic_success: Configure proxy URL and successfully crawl through it", async () => {
 		const engineConfig = { proxy: { url: "http://127.0.0.1:8888" }, respectRobotsTxt: false };
 		const engine = createEngine(engineConfig);
 		const url = `${process.env.MOCK_SERVER_URL}/fixtures/proxy_basic_success`;
 		const result = await crawl(engine, url);
-		expect(result.pages.length).toBe(0);
+    expect(result.pages.length).toBe(0);
 	}, 30000);
 });

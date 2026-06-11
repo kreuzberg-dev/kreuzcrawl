@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.jspecify.annotations.Nullable;
@@ -23,89 +23,91 @@ public record ResponseMeta(
     @Nullable @JsonProperty("server") String server,
     @Nullable @JsonProperty("x_powered_by") String xPoweredBy,
     @Nullable @JsonProperty("content_language") String contentLanguage,
-    @Nullable @JsonProperty("content_encoding") String contentEncoding) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private String etag = null;
-
-    @JsonProperty("last_modified")
-    private String lastModified = null;
-
-    @JsonProperty("cache_control")
-    private String cacheControl = null;
-
-    private String server = null;
-
-    @JsonProperty("x_powered_by")
-    private String xPoweredBy = null;
-
-    @JsonProperty("content_language")
-    private String contentLanguage = null;
-
-    @JsonProperty("content_encoding")
-    private String contentEncoding = null;
-
-    /** Sets the etag field. */
-    @JsonProperty("etag")
-    public Builder withEtag(final @Nullable String value) {
-      this.etag = value;
-      return this;
+    @Nullable @JsonProperty("content_encoding") String contentEncoding
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the lastModified field. */
-    @JsonProperty("last_modified")
-    public Builder withLastModified(final @Nullable String value) {
-      this.lastModified = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the cacheControl field. */
-    @JsonProperty("cache_control")
-    public Builder withCacheControl(final @Nullable String value) {
-      this.cacheControl = value;
-      return this;
-    }
+private String etag = null;
+        @JsonProperty("last_modified")
+private String lastModified = null;
+        @JsonProperty("cache_control")
+private String cacheControl = null;
+private String server = null;
+        @JsonProperty("x_powered_by")
+private String xPoweredBy = null;
+        @JsonProperty("content_language")
+private String contentLanguage = null;
+        @JsonProperty("content_encoding")
+private String contentEncoding = null;
 
-    /** Sets the server field. */
-    @JsonProperty("server")
-    public Builder withServer(final @Nullable String value) {
-      this.server = value;
-      return this;
-    }
+        /** Sets the etag field. */
+        @JsonProperty("etag")
+        public Builder withEtag(final @Nullable String value) {
+            this.etag = value;
+            return this;
+        }
 
-    /** Sets the xPoweredBy field. */
-    @JsonProperty("x_powered_by")
-    public Builder withXPoweredBy(final @Nullable String value) {
-      this.xPoweredBy = value;
-      return this;
-    }
+        /** Sets the lastModified field. */
+        @JsonProperty("last_modified")
+        public Builder withLastModified(final @Nullable String value) {
+            this.lastModified = value;
+            return this;
+        }
 
-    /** Sets the contentLanguage field. */
-    @JsonProperty("content_language")
-    public Builder withContentLanguage(final @Nullable String value) {
-      this.contentLanguage = value;
-      return this;
-    }
+        /** Sets the cacheControl field. */
+        @JsonProperty("cache_control")
+        public Builder withCacheControl(final @Nullable String value) {
+            this.cacheControl = value;
+            return this;
+        }
 
-    /** Sets the contentEncoding field. */
-    @JsonProperty("content_encoding")
-    public Builder withContentEncoding(final @Nullable String value) {
-      this.contentEncoding = value;
-      return this;
-    }
+        /** Sets the server field. */
+        @JsonProperty("server")
+        public Builder withServer(final @Nullable String value) {
+            this.server = value;
+            return this;
+        }
 
-    /** Builds the ResponseMeta instance. */
-    public ResponseMeta build() {
-      return new ResponseMeta(
-          etag, lastModified, cacheControl, server, xPoweredBy, contentLanguage, contentEncoding);
+        /** Sets the xPoweredBy field. */
+        @JsonProperty("x_powered_by")
+        public Builder withXPoweredBy(final @Nullable String value) {
+            this.xPoweredBy = value;
+            return this;
+        }
+
+        /** Sets the contentLanguage field. */
+        @JsonProperty("content_language")
+        public Builder withContentLanguage(final @Nullable String value) {
+            this.contentLanguage = value;
+            return this;
+        }
+
+        /** Sets the contentEncoding field. */
+        @JsonProperty("content_encoding")
+        public Builder withContentEncoding(final @Nullable String value) {
+            this.contentEncoding = value;
+            return this;
+        }
+
+        /** Builds the ResponseMeta instance. */
+        public ResponseMeta build() {
+            return new ResponseMeta(
+                etag,
+                lastModified,
+                cacheControl,
+                server,
+                xPoweredBy,
+                contentLanguage,
+                contentEncoding
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

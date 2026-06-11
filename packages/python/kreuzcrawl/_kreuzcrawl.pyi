@@ -3,8 +3,7 @@
 # To regenerate: alef generate
 # To verify freshness: alef verify --exit-code
 
-from collections.abc import AsyncIterator
-from typing import Any, Literal, TypedDict
+from typing import Any, AsyncIterator, Literal, TypedDict
 
 class ExtractionMeta:
     cost: float | None
@@ -851,5 +850,6 @@ async def interact(
     url: str,
     actions: list[PageAction],
 ) -> InteractionResult: ...
+
 async def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> BatchScrapeResults: ...
 async def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> BatchCrawlResults: ...

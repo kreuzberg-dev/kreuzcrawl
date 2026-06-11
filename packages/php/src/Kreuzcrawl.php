@@ -21,8 +21,8 @@ final class Kreuzcrawl
      * @return CitationResult
      */
     public static function generateCitations(
-        string $markdown,
-    ): CitationResult {
+string $markdown): CitationResult
+    {
         return \Kreuzcrawl\KreuzcrawlApi::generateCitations($markdown); // delegate to native extension class
     }
     /**
@@ -36,8 +36,8 @@ final class Kreuzcrawl
      * @throws \Kreuzcrawl\KreuzcrawlException
      */
     public static function createEngine(
-        ?CrawlConfig $config = null,
-    ): CrawlEngineHandle {
+?CrawlConfig $config = null): CrawlEngineHandle
+    {
         return \Kreuzcrawl\KreuzcrawlApi::createEngine($config); // delegate to native extension class
     }
     /**
@@ -49,9 +49,8 @@ final class Kreuzcrawl
      * @throws \Kreuzcrawl\KreuzcrawlException
      */
     public static function scrape(
-        CrawlEngineHandle $engine,
-        string $url,
-    ): ScrapeResult {
+CrawlEngineHandle $engine, string $url): ScrapeResult
+    {
         return \Kreuzcrawl\KreuzcrawlApi::scrape($engine, $url); // delegate to native extension class
     }
     /**
@@ -63,9 +62,8 @@ final class Kreuzcrawl
      * @throws \Kreuzcrawl\KreuzcrawlException
      */
     public static function crawl(
-        CrawlEngineHandle $engine,
-        string $url,
-    ): CrawlResult {
+CrawlEngineHandle $engine, string $url): CrawlResult
+    {
         return \Kreuzcrawl\KreuzcrawlApi::crawl($engine, $url); // delegate to native extension class
     }
     /**
@@ -77,9 +75,8 @@ final class Kreuzcrawl
      * @throws \Kreuzcrawl\KreuzcrawlException
      */
     public static function mapUrls(
-        CrawlEngineHandle $engine,
-        string $url,
-    ): MapResult {
+CrawlEngineHandle $engine, string $url): MapResult
+    {
         return \Kreuzcrawl\KreuzcrawlApi::mapUrls($engine, $url); // delegate to native extension class
     }
     /**
@@ -92,10 +89,8 @@ final class Kreuzcrawl
      * @throws \Kreuzcrawl\KreuzcrawlException
      */
     public static function interact(
-        CrawlEngineHandle $engine,
-        string $url,
-        array $actions,
-    ): InteractionResult {
+CrawlEngineHandle $engine, string $url, array $actions): InteractionResult
+    {
         return \Kreuzcrawl\KreuzcrawlApi::interact($engine, $url, $actions); // delegate to native extension class
     }
     /**
@@ -107,9 +102,8 @@ final class Kreuzcrawl
      * @throws \Kreuzcrawl\KreuzcrawlException
      */
     public static function batchScrape(
-        CrawlEngineHandle $engine,
-        array $urls,
-    ): BatchScrapeResults {
+CrawlEngineHandle $engine, array $urls): BatchScrapeResults
+    {
         return \Kreuzcrawl\KreuzcrawlApi::batchScrape($engine, $urls); // delegate to native extension class
     }
     /**
@@ -121,9 +115,8 @@ final class Kreuzcrawl
      * @throws \Kreuzcrawl\KreuzcrawlException
      */
     public static function batchCrawl(
-        CrawlEngineHandle $engine,
-        array $urls,
-    ): BatchCrawlResults {
+CrawlEngineHandle $engine, array $urls): BatchCrawlResults
+    {
         return \Kreuzcrawl\KreuzcrawlApi::batchCrawl($engine, $urls); // delegate to native extension class
     }
 }

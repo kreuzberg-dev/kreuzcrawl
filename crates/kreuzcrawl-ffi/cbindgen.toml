@@ -77,7 +77,7 @@ typedef struct KCRAWLBrowserMode KCRAWLBrowserMode;
 typedef struct KCRAWLBrowserWait KCRAWLBrowserWait;
 /**
  * A single numbered reference in a citation list â produced by the citation
- * extractor when content uses inline `[N]`-style markers.
+ * extractor when content uses inline ``N``-style markers.
  */
 typedef struct KCRAWLCitationReference KCRAWLCitationReference;
 /**
@@ -103,7 +103,7 @@ typedef struct KCRAWLCrawlConfig KCRAWLCrawlConfig;
 /**
  * Opaque handle to a configured crawl engine.
  *
- * Constructed via [`create_engine`] with an optional [`CrawlConfig`].
+ * Constructed via `create_engine` with an optional `CrawlConfig`.
  * Default implementations for all pluggable components are used internally.
  */
 typedef struct KCRAWLCrawlEngineHandle KCRAWLCrawlEngineHandle;

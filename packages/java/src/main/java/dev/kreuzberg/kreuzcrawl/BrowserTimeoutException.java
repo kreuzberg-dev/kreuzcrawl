@@ -6,13 +6,13 @@ package dev.kreuzberg.kreuzcrawl;
  * The browser page load or rendering timed out.
  */
 public class BrowserTimeoutException extends CrawlErrorException {
-  /** Creates a new BrowserTimeoutException with the given message. */
-  public BrowserTimeoutException(final String message) {
-    super(message);
-  }
+    /** Creates a new BrowserTimeoutException with the given message. */
+    public BrowserTimeoutException(final String message) {
+        super(message);
+    }
 
-  /** Creates a new BrowserTimeoutException with the given message and cause. */
-  public BrowserTimeoutException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
+    /** Creates a new BrowserTimeoutException with the given message and cause. */
+    public BrowserTimeoutException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -6,13 +6,13 @@ package dev.kreuzberg.kreuzcrawl;
  * The requested page was not found (HTTP 404).
  */
 public class NotFoundException extends CrawlErrorException {
-  /** Creates a new NotFoundException with the given message. */
-  public NotFoundException(final String message) {
-    super(message);
-  }
+    /** Creates a new NotFoundException with the given message. */
+    public NotFoundException(final String message) {
+        super(message);
+    }
 
-  /** Creates a new NotFoundException with the given message and cause. */
-  public NotFoundException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
+    /** Creates a new NotFoundException with the given message and cause. */
+    public NotFoundException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

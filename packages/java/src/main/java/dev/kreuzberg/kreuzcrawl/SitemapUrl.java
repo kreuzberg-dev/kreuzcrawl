@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.jspecify.annotations.Nullable;
@@ -20,53 +20,59 @@ public record SitemapUrl(
     @JsonProperty("url") String url,
     @Nullable @JsonProperty("lastmod") String lastmod,
     @Nullable @JsonProperty("changefreq") String changefreq,
-    @Nullable @JsonProperty("priority") String priority) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private String url = "";
-    private String lastmod = null;
-    private String changefreq = null;
-    private String priority = null;
-
-    /** Sets the url field. */
-    @JsonProperty("url")
-    public Builder withUrl(final String value) {
-      this.url = value;
-      return this;
+    @Nullable @JsonProperty("priority") String priority
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the lastmod field. */
-    @JsonProperty("lastmod")
-    public Builder withLastmod(final @Nullable String value) {
-      this.lastmod = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the changefreq field. */
-    @JsonProperty("changefreq")
-    public Builder withChangefreq(final @Nullable String value) {
-      this.changefreq = value;
-      return this;
-    }
+private String url = "";
+private String lastmod = null;
+private String changefreq = null;
+private String priority = null;
 
-    /** Sets the priority field. */
-    @JsonProperty("priority")
-    public Builder withPriority(final @Nullable String value) {
-      this.priority = value;
-      return this;
-    }
+        /** Sets the url field. */
+        @JsonProperty("url")
+        public Builder withUrl(final String value) {
+            this.url = value;
+            return this;
+        }
 
-    /** Builds the SitemapUrl instance. */
-    public SitemapUrl build() {
-      return new SitemapUrl(url, lastmod, changefreq, priority);
+        /** Sets the lastmod field. */
+        @JsonProperty("lastmod")
+        public Builder withLastmod(final @Nullable String value) {
+            this.lastmod = value;
+            return this;
+        }
+
+        /** Sets the changefreq field. */
+        @JsonProperty("changefreq")
+        public Builder withChangefreq(final @Nullable String value) {
+            this.changefreq = value;
+            return this;
+        }
+
+        /** Sets the priority field. */
+        @JsonProperty("priority")
+        public Builder withPriority(final @Nullable String value) {
+            this.priority = value;
+            return this;
+        }
+
+        /** Builds the SitemapUrl instance. */
+        public SitemapUrl build() {
+            return new SitemapUrl(
+                url,
+                lastmod,
+                changefreq,
+                priority
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

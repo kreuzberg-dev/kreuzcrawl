@@ -4,11 +4,11 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import java.util.Map;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -28,75 +28,79 @@ public record DownloadedDocument(
     @JsonProperty("size") long size,
     @Nullable @JsonProperty("filename") String filename,
     @JsonProperty("content_hash") String contentHash,
-    @Nullable @JsonProperty("headers") Map<String, String> headers) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private String url = "";
-
-    @JsonProperty("mime_type")
-    private String mimeType = "";
-
-    private long size = 0;
-    private String filename = null;
-
-    @JsonProperty("content_hash")
-    private String contentHash = "";
-
-    private Map<String, String> headers = null;
-
-    /** Sets the url field. */
-    @JsonProperty("url")
-    public Builder withUrl(final String value) {
-      this.url = value;
-      return this;
+    @Nullable @JsonProperty("headers") Map<String, String> headers
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the mimeType field. */
-    @JsonProperty("mime_type")
-    public Builder withMimeType(final String value) {
-      this.mimeType = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the size field. */
-    @JsonProperty("size")
-    public Builder withSize(final long value) {
-      this.size = value;
-      return this;
-    }
+private String url = "";
+        @JsonProperty("mime_type")
+private String mimeType = "";
+private long size = 0;
+private String filename = null;
+        @JsonProperty("content_hash")
+private String contentHash = "";
+private Map<String, String> headers = null;
 
-    /** Sets the filename field. */
-    @JsonProperty("filename")
-    public Builder withFilename(final @Nullable String value) {
-      this.filename = value;
-      return this;
-    }
+        /** Sets the url field. */
+        @JsonProperty("url")
+        public Builder withUrl(final String value) {
+            this.url = value;
+            return this;
+        }
 
-    /** Sets the contentHash field. */
-    @JsonProperty("content_hash")
-    public Builder withContentHash(final String value) {
-      this.contentHash = value;
-      return this;
-    }
+        /** Sets the mimeType field. */
+        @JsonProperty("mime_type")
+        public Builder withMimeType(final String value) {
+            this.mimeType = value;
+            return this;
+        }
 
-    /** Sets the headers field. */
-    @JsonProperty("headers")
-    public Builder withHeaders(final @Nullable Map<String, String> value) {
-      this.headers = value;
-      return this;
-    }
+        /** Sets the size field. */
+        @JsonProperty("size")
+        public Builder withSize(final long value) {
+            this.size = value;
+            return this;
+        }
 
-    /** Builds the DownloadedDocument instance. */
-    public DownloadedDocument build() {
-      return new DownloadedDocument(url, mimeType, size, filename, contentHash, headers);
+        /** Sets the filename field. */
+        @JsonProperty("filename")
+        public Builder withFilename(final @Nullable String value) {
+            this.filename = value;
+            return this;
+        }
+
+        /** Sets the contentHash field. */
+        @JsonProperty("content_hash")
+        public Builder withContentHash(final String value) {
+            this.contentHash = value;
+            return this;
+        }
+
+        /** Sets the headers field. */
+        @JsonProperty("headers")
+        public Builder withHeaders(final @Nullable Map<String, String> value) {
+            this.headers = value;
+            return this;
+        }
+
+        /** Builds the DownloadedDocument instance. */
+        public DownloadedDocument build() {
+            return new DownloadedDocument(
+                url,
+                mimeType,
+                size,
+                filename,
+                contentHash,
+                headers
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

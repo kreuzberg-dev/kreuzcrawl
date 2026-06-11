@@ -3,7 +3,6 @@
 # To regenerate: alef generate
 # To verify freshness: alef verify --exit-code
 """Pytest configuration for e2e tests."""
-
 from __future__ import annotations
 
 import os

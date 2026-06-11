@@ -4,11 +4,11 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import java.util.List;
 
 /**
  * Aggregate result of a batch crawl, exposing per-URL results plus precomputed counts.
@@ -23,59 +23,62 @@ public record BatchCrawlResults(
     @JsonProperty("results") List<BatchCrawlResult> results,
     @JsonProperty("total_count") long totalCount,
     @JsonProperty("completed_count") long completedCount,
-    @JsonProperty("failed_count") long failedCount) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private List<BatchCrawlResult> results = List.of();
-
-    @JsonProperty("total_count")
-    private long totalCount = 0;
-
-    @JsonProperty("completed_count")
-    private long completedCount = 0;
-
-    @JsonProperty("failed_count")
-    private long failedCount = 0;
-
-    /** Sets the results field. */
-    @JsonProperty("results")
-    public Builder withResults(final List<BatchCrawlResult> value) {
-      this.results = value;
-      return this;
+    @JsonProperty("failed_count") long failedCount
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the totalCount field. */
-    @JsonProperty("total_count")
-    public Builder withTotalCount(final long value) {
-      this.totalCount = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the completedCount field. */
-    @JsonProperty("completed_count")
-    public Builder withCompletedCount(final long value) {
-      this.completedCount = value;
-      return this;
-    }
+private List<BatchCrawlResult> results = List.of();
+        @JsonProperty("total_count")
+private long totalCount = 0;
+        @JsonProperty("completed_count")
+private long completedCount = 0;
+        @JsonProperty("failed_count")
+private long failedCount = 0;
 
-    /** Sets the failedCount field. */
-    @JsonProperty("failed_count")
-    public Builder withFailedCount(final long value) {
-      this.failedCount = value;
-      return this;
-    }
+        /** Sets the results field. */
+        @JsonProperty("results")
+        public Builder withResults(final List<BatchCrawlResult> value) {
+            this.results = value;
+            return this;
+        }
 
-    /** Builds the BatchCrawlResults instance. */
-    public BatchCrawlResults build() {
-      return new BatchCrawlResults(results, totalCount, completedCount, failedCount);
+        /** Sets the totalCount field. */
+        @JsonProperty("total_count")
+        public Builder withTotalCount(final long value) {
+            this.totalCount = value;
+            return this;
+        }
+
+        /** Sets the completedCount field. */
+        @JsonProperty("completed_count")
+        public Builder withCompletedCount(final long value) {
+            this.completedCount = value;
+            return this;
+        }
+
+        /** Sets the failedCount field. */
+        @JsonProperty("failed_count")
+        public Builder withFailedCount(final long value) {
+            this.failedCount = value;
+            return this;
+        }
+
+        /** Builds the BatchCrawlResults instance. */
+        public BatchCrawlResults build() {
+            return new BatchCrawlResults(
+                results,
+                totalCount,
+                completedCount,
+                failedCount
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

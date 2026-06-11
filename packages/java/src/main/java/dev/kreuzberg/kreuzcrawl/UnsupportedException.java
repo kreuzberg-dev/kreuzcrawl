@@ -6,13 +6,13 @@ package dev.kreuzberg.kreuzcrawl;
  * The requested capability is not supported by the active backend or build.
  */
 public class UnsupportedException extends CrawlErrorException {
-  /** Creates a new UnsupportedException with the given message. */
-  public UnsupportedException(final String message) {
-    super(message);
-  }
+    /** Creates a new UnsupportedException with the given message. */
+    public UnsupportedException(final String message) {
+        super(message);
+    }
 
-  /** Creates a new UnsupportedException with the given message and cause. */
-  public UnsupportedException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
+    /** Creates a new UnsupportedException with the given message and cause. */
+    public UnsupportedException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

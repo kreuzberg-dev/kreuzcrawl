@@ -4,8 +4,8 @@
 // To verify freshness: alef verify --exit-code
 package dev.kreuzberg.kreuzcrawl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.jspecify.annotations.Nullable;
@@ -19,45 +19,50 @@ import org.jspecify.annotations.Nullable;
 public record ProxyConfig(
     @JsonProperty("url") String url,
     @Nullable @JsonProperty("username") String username,
-    @Nullable @JsonProperty("password") String password) {
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  // CPD-OFF
-  @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
-  public static final class Builder {
-
-    private String url = "";
-    private String username = null;
-    private String password = null;
-
-    /** Sets the url field. */
-    @JsonProperty("url")
-    public Builder withUrl(final String value) {
-      this.url = value;
-      return this;
+    @Nullable @JsonProperty("password") String password
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Sets the username field. */
-    @JsonProperty("username")
-    public Builder withUsername(final @Nullable String value) {
-      this.username = value;
-      return this;
-    }
+    // CPD-OFF
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
+    public static final class Builder {
 
-    /** Sets the password field. */
-    @JsonProperty("password")
-    public Builder withPassword(final @Nullable String value) {
-      this.password = value;
-      return this;
-    }
+private String url = "";
+private String username = null;
+private String password = null;
 
-    /** Builds the ProxyConfig instance. */
-    public ProxyConfig build() {
-      return new ProxyConfig(url, username, password);
+        /** Sets the url field. */
+        @JsonProperty("url")
+        public Builder withUrl(final String value) {
+            this.url = value;
+            return this;
+        }
+
+        /** Sets the username field. */
+        @JsonProperty("username")
+        public Builder withUsername(final @Nullable String value) {
+            this.username = value;
+            return this;
+        }
+
+        /** Sets the password field. */
+        @JsonProperty("password")
+        public Builder withPassword(final @Nullable String value) {
+            this.password = value;
+            return this;
+        }
+
+        /** Builds the ProxyConfig instance. */
+        public ProxyConfig build() {
+            return new ProxyConfig(
+                url,
+                username,
+                password
+            );
+        }
     }
-  }
-  // CPD-ON
+    // CPD-ON
 }

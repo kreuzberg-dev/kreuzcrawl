@@ -12,46 +12,47 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @SuppressWarnings("PMD")
 public enum BrowserMode {
-  /**
-   * Automatically detect when JS rendering is needed and fall back to browser.
-   */
-  Auto("auto"),
-  /**
-   * Always use the browser for every request.
-   */
-  Always("always"),
-  /**
-   * Never use the browser fallback.
-   */
-  Never("never");
+    /**
+     * Automatically detect when JS rendering is needed and fall back to browser.
+     */
+    Auto("auto"),
+    /**
+     * Always use the browser for every request.
+     */
+    Always("always"),
+    /**
+     * Never use the browser fallback.
+     */
+    Never("never");
 
-  /** The string value. */
-  private final String value;
 
-  BrowserMode(final String value) {
-    this.value = value;
-  }
+    /** The string value. */
+    private final String value;
 
-  /** Returns the string value. */
-  @JsonValue
-  public String getValue() {
-    return value;
-  }
-
-  /** Creates an instance from a string value. */
-  @JsonCreator
-  public static BrowserMode fromValue(final String value) {
-    for (BrowserMode e : values()) {
-      if (e.value.equalsIgnoreCase(value)) {
-        return e;
-      }
+    BrowserMode(final String value) {
+        this.value = value;
     }
-    throw new IllegalArgumentException("Unknown BrowserMode value: " + value);
-  }
 
-  /** Returns the wire-format string value (matches JSON serialization). */
-  @Override
-  public String toString() {
-    return value;
-  }
+    /** Returns the string value. */
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    /** Creates an instance from a string value. */
+    @JsonCreator
+    public static BrowserMode fromValue(final String value) {
+        for (BrowserMode e : values()) {
+            if (e.value.equalsIgnoreCase(value)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Unknown BrowserMode value: " + value);
+    }
+
+    /** Returns the wire-format string value (matches JSON serialization). */
+    @Override
+    public String toString() {
+        return value;
+    }
 }
