@@ -169,7 +169,7 @@ version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -180,7 +180,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
 dependencies = [
  "anstyle",
  "once_cell_polyfill",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -412,7 +412,7 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
 
 [[package]]
 name = "benchmark-harness"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "ahash",
  "async-trait",
@@ -454,7 +454,7 @@ dependencies = [
  "bitflags 2.11.1",
  "cexpr",
  "clang-sys",
- "itertools 0.13.0",
+ "itertools 0.10.5",
  "log",
  "prettyplease",
  "proc-macro2",
@@ -1441,9 +1441,9 @@ dependencies = [
 
 [[package]]
 name = "deno_core"
-version = "0.403.0"
+version = "0.404.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad3c1fcdf9cccb942bfd3f24cb0118c899837434d5b887a374bab7ce45ace6da"
+checksum = "8ed0bfc2096207522de1b7826b0fdd85587e19d0d61368411ad3f193166376b2"
 dependencies = [
  "anyhow",
  "az",
@@ -1509,9 +1509,9 @@ dependencies = [
 
 [[package]]
 name = "deno_ops"
-version = "0.279.0"
+version = "0.280.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59263ebf5578416f8195220aca525c89b29c6616d8171bdfc4df3d3bf4d8da58"
+checksum = "7404a038088a57bb9d73e48975a0359d869e69edc450f4a30fe5416652b4b470"
 dependencies = [
  "indexmap",
  "proc-macro2",
@@ -1661,7 +1661,7 @@ dependencies = [
  "libc",
  "option-ext",
  "redox_users",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -1784,7 +1784,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -2851,7 +2851,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
 dependencies = [
  "hermit-abi",
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -2992,7 +2992,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "ahash",
  "aho-corasick",
@@ -3044,14 +3044,14 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-bindings-common"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "kreuzcrawl",
 ]
 
 [[package]]
 name = "kreuzcrawl-browser"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "async-trait",
  "base64",
@@ -3079,7 +3079,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-bypass"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "async-trait",
  "kreuzcrawl",
@@ -3096,7 +3096,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-cli"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "clap",
  "kreuzcrawl",
@@ -3106,7 +3106,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-dart"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "flutter_rust_bridge",
  "futures-util",
@@ -3117,7 +3117,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-ffi"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "ahash",
  "cbindgen",
@@ -3130,7 +3130,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-jni"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "futures-util",
  "jni",
@@ -3141,7 +3141,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-node"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "futures-util",
  "kreuzcrawl",
@@ -3154,7 +3154,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-php"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "ext-php-rs",
  "futures-util",
@@ -3166,7 +3166,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-py"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "futures",
  "kreuzcrawl",
@@ -3179,7 +3179,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-swift"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "ahash",
  "async-trait",
@@ -3195,7 +3195,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-wasm"
-version = "0.3.0-rc.55"
+version = "0.3.0-rc.56"
 dependencies = [
  "futures",
  "futures-util",
@@ -3629,7 +3629,7 @@ version = "0.50.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -4646,7 +4646,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.12.1",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -4705,7 +4705,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -4996,9 +4996,9 @@ dependencies = [
 
 [[package]]
 name = "serde_v8"
-version = "0.312.0"
+version = "0.313.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51d8ed4ae5203d63dfcc13c8eed95343d18c732940823ad4fb2fbd57a8141688"
+checksum = "3b033e7b24fef6a1c2b47c7a435568504955392440b3562a89dbd4b6a390c27a"
 dependencies = [
  "deno_error",
  "num-bigint",
@@ -5143,7 +5143,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -5461,7 +5461,7 @@ dependencies = [
  "getrandom 0.4.2",
  "once_cell",
  "rustix 1.1.4",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -6150,9 +6150,9 @@ dependencies = [
 
 [[package]]
 name = "v8"
-version = "149.2.0"
+version = "149.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46dccf61a364b61bbaac70a8ba64a1a1006e87123b7d62eaeec999a3ba31ecdb"
+checksum = "ebfd8d6919bfb4b627ca778a67f85ca45e5fb442d352947ba093798bdf9b07e0"
 dependencies = [
  "bindgen",
  "bitflags 2.11.1",
@@ -6443,7 +6443,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 {
   "name": "@kreuzberg/kreuzcrawl",
-  "version": "0.3.0-rc.55",
+  "version": "0.3.0-rc.56",
   "description": "High-performance web crawling engine",
   "license": "Elastic-2.0",
   "repository": {
@@ -16,20 +16,16 @@
       "default": "./index.js"
     }
   },
-  "files": [
-    "index.js",
-    "index.d.ts",
-    "*.node"
-  ],
+  "files": ["index.js", "index.d.ts", "*.node"],
   "optionalDependencies": {
-    "@kreuzberg/kreuzcrawl-darwin-arm64": "0.3.0-rc.55",
-    "@kreuzberg/kreuzcrawl-darwin-x64": "0.3.0-rc.55",
-    "@kreuzberg/kreuzcrawl-linux-arm64-gnu": "0.3.0-rc.55",
-    "@kreuzberg/kreuzcrawl-linux-arm64-musl": "0.0.0-bootstrap",
-    "@kreuzberg/kreuzcrawl-linux-x64-gnu": "0.3.0-rc.55",
-    "@kreuzberg/kreuzcrawl-linux-x64-musl": "0.0.0-bootstrap",
-    "@kreuzberg/kreuzcrawl-win32-arm64-msvc": "0.3.0-rc.55",
-    "@kreuzberg/kreuzcrawl-win32-x64-msvc": "0.3.0-rc.55"
+    "@kreuzberg/kreuzcrawl-linux-x64-gnu": "0.3.0-rc.56",
+    "@kreuzberg/kreuzcrawl-linux-arm64-gnu": "0.3.0-rc.56",
+    "@kreuzberg/kreuzcrawl-linux-x64-musl": "0.3.0-rc.56",
+    "@kreuzberg/kreuzcrawl-linux-arm64-musl": "0.3.0-rc.56",
+    "@kreuzberg/kreuzcrawl-darwin-x64": "0.3.0-rc.56",
+    "@kreuzberg/kreuzcrawl-darwin-arm64": "0.3.0-rc.56",
+    "@kreuzberg/kreuzcrawl-win32-x64-msvc": "0.3.0-rc.56",
+    "@kreuzberg/kreuzcrawl-win32-arm64-msvc": "0.3.0-rc.56"
   },
   "napi": {
     "packageName": "@kreuzberg/kreuzcrawl",
@@ -50,13 +46,7 @@
     "artifacts": "npx --yes -p @napi-rs/cli@^3.6.2 napi artifacts",
     "prepublishOnly": "npx --yes -p @napi-rs/cli@^3.6.2 napi prepublish -t npm --skip-optional-publish"
   },
-  "engines": {
-    "node": ">= 18"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "@napi-rs/cli": "^3.7.1"
-  }
+  "engines": { "node": ">= 18" },
+  "publishConfig": { "access": "public" },
+  "devDependencies": { "@napi-rs/cli": "^3.6.2" }
 }
