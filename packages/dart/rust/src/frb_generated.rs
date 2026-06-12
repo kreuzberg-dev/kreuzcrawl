@@ -1524,6 +1524,8 @@ const _: fn() = || {
         let _: Option<crate::ProxyConfig> = CrawlConfig.proxy;
         let _: Vec<String> = CrawlConfig.user_agents;
         let _: bool = CrawlConfig.capture_screenshot;
+        let _: bool = CrawlConfig.follow_document_urls;
+        let _: Option<i64> = CrawlConfig.document_url_depth;
         let _: bool = CrawlConfig.download_documents;
         let _: Option<i64> = CrawlConfig.document_max_size;
         let _: Vec<String> = CrawlConfig.document_mime_types;
@@ -2280,6 +2282,8 @@ impl SseDecode for crate::CrawlConfig {
         let mut var_proxy = <Option<crate::ProxyConfig>>::sse_decode(deserializer);
         let mut var_userAgents = <Vec<String>>::sse_decode(deserializer);
         let mut var_captureScreenshot = <bool>::sse_decode(deserializer);
+        let mut var_followDocumentUrls = <bool>::sse_decode(deserializer);
+        let mut var_documentUrlDepth = <Option<i64>>::sse_decode(deserializer);
         let mut var_downloadDocuments = <bool>::sse_decode(deserializer);
         let mut var_documentMaxSize = <Option<i64>>::sse_decode(deserializer);
         let mut var_documentMimeTypes = <Vec<String>>::sse_decode(deserializer);
@@ -2317,6 +2321,8 @@ impl SseDecode for crate::CrawlConfig {
             proxy: var_proxy,
             user_agents: var_userAgents,
             capture_screenshot: var_captureScreenshot,
+            follow_document_urls: var_followDocumentUrls,
+            document_url_depth: var_documentUrlDepth,
             download_documents: var_downloadDocuments,
             document_max_size: var_documentMaxSize,
             document_mime_types: var_documentMimeTypes,
@@ -4029,6 +4035,8 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlConfig> {
             self.0.proxy.into_into_dart().into_dart(),
             self.0.user_agents.into_into_dart().into_dart(),
             self.0.capture_screenshot.into_into_dart().into_dart(),
+            self.0.follow_document_urls.into_into_dart().into_dart(),
+            self.0.document_url_depth.into_into_dart().into_dart(),
             self.0.download_documents.into_into_dart().into_dart(),
             self.0.document_max_size.into_into_dart().into_dart(),
             self.0.document_mime_types.into_into_dart().into_dart(),
@@ -5025,6 +5033,8 @@ impl SseEncode for crate::CrawlConfig {
         <Option<crate::ProxyConfig>>::sse_encode(self.proxy, serializer);
         <Vec<String>>::sse_encode(self.user_agents, serializer);
         <bool>::sse_encode(self.capture_screenshot, serializer);
+        <bool>::sse_encode(self.follow_document_urls, serializer);
+        <Option<i64>>::sse_encode(self.document_url_depth, serializer);
         <bool>::sse_encode(self.download_documents, serializer);
         <Option<i64>>::sse_encode(self.document_max_size, serializer);
         <Vec<String>>::sse_encode(self.document_mime_types, serializer);

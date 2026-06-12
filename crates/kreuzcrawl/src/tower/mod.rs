@@ -12,7 +12,7 @@ mod cache;
 mod rate_limit;
 #[cfg(not(target_arch = "wasm32"))]
 mod service;
-#[cfg(all(not(target_arch = "wasm32"), feature = "tracing"))]
+#[cfg(not(target_arch = "wasm32"))]
 mod tracing_layer;
 mod types;
 #[cfg(not(target_arch = "wasm32"))]
@@ -24,7 +24,7 @@ pub use cache::CrawlCacheLayer;
 pub use rate_limit::PerDomainRateLimitLayer;
 #[cfg(not(target_arch = "wasm32"))]
 pub use service::HttpFetchService;
-#[cfg(all(not(target_arch = "wasm32"), feature = "tracing"))]
+#[cfg(not(target_arch = "wasm32"))]
 pub use tracing_layer::CrawlTracingLayer;
 #[cfg(not(target_arch = "wasm32"))]
 pub use types::CrawlRequest;

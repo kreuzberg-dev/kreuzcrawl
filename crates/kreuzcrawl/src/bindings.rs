@@ -4,6 +4,16 @@
 //! which cannot cross FFI boundaries. This module provides a config-only
 //! construction path with default implementations, plus async adapter
 //! functions that alef can generate bindings for.
+//!
+//! # Telemetry propagation
+//!
+//! [`with_traceparent`] and [`current_traceparent`] are re-exported here so
+//! alef picks them up in the binding surface.  Every language binding can
+//! therefore propagate W3C TraceContext across the FFI boundary without
+//! requiring the `telemetry-init` feature.
+
+#[allow(unused_imports)]
+pub use crate::telemetry::{current_traceparent, with_traceparent};
 
 use crate::engine::CrawlEngine;
 use crate::error::CrawlError;

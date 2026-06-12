@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.24.12"
+alef_version = "0.24.13"
 languages = [
   "python",
   "node",
@@ -279,6 +279,8 @@ functions = [
   "batch_scrape",
   "batch_crawl",
   "generate_citations",
+  "with_traceparent",
+  "current_traceparent",
 ]
 
 # Streaming adapters — delivered to bindings via alef's per-language streaming

@@ -36,19 +36,19 @@ impl StealthHttpClient {
     }
 
     pub fn with_proxy(cookie_jar: Arc<CookieJar>, proxy_url: Option<&str>) -> Self {
-        let cert_store = wreq::tls::CertStore::builder()
+        let cert_store = wreq::tls::trust::CertStore::builder()
             .set_default_paths()
             .build()
             .expect("Failed to load system CA certificates");
 
-        let emulation_opts = wreq_util::EmulationOption::builder()
-            .emulation(wreq_util::Emulation::Chrome145)
-            .emulation_os(wreq_util::EmulationOS::Linux)
+        let emulation_opts = wreq_util::Emulation::builder()
+            .profile(wreq_util::Profile::Chrome145)
+            .platform(wreq_util::Platform::Linux)
             .build();
 
         let mut builder = wreq::Client::builder()
             .emulation(emulation_opts)
-            .cert_store(cert_store)
+            .tls_cert_store(cert_store)
             .timeout(Duration::from_secs(30))
             .redirect(wreq::redirect::Policy::none());
 

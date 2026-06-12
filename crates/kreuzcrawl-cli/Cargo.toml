@@ -13,13 +13,12 @@ path = "src/main.rs"
 
 [features]
 default = []
-all = ["api", "mcp", "mcp-http", "warc", "ai", "tracing"]
+all = ["api", "mcp", "mcp-http", "warc", "ai"]
 api = ["kreuzcrawl/api"]
 mcp = ["kreuzcrawl/mcp"]
 mcp-http = ["kreuzcrawl/mcp-http"]
 warc = ["kreuzcrawl/warc"]
 ai = ["kreuzcrawl/ai"]
-tracing = ["kreuzcrawl/tracing"]
 
 [dependencies]
 clap = { workspace = true }

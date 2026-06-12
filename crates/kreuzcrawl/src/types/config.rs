@@ -363,6 +363,17 @@ pub struct CrawlConfig {
     pub user_agents: Vec<String>,
     /// Whether to capture a screenshot when using the browser.
     pub capture_screenshot: bool,
+    /// Re-enqueue discovered `LinkType::Document` URLs into the crawl frontier so
+    /// the crawl follows links *from* document pages (PDFs, etc.) as it would
+    /// from HTML pages. Default: `false` (documents terminate at materialisation).
+    #[serde(default)]
+    pub follow_document_urls: bool,
+    /// Maximum document-depth (from the seed URL through document links only)
+    /// when `follow_document_urls` is true. `None` means inherit `max_depth`.
+    /// Independent of `max_depth`: a document URL is enqueued only if BOTH the
+    /// outer `max_depth` and (if set) `document_url_depth` permit it.
+    #[serde(default)]
+    pub document_url_depth: Option<u32>,
     /// Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them.
     pub download_documents: bool,
     /// Maximum size in bytes for document downloads. Defaults to 50 MB.
@@ -436,6 +447,8 @@ impl Default for CrawlConfig {
             proxy: None,
             user_agents: Vec::new(),
             capture_screenshot: false,
+            follow_document_urls: false,
+            document_url_depth: None,
             download_documents: true,
             document_max_size: Some(50 * 1024 * 1024), // 50 MB
             document_mime_types: Vec::new(),

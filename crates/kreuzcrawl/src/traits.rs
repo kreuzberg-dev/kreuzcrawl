@@ -14,6 +14,10 @@ pub struct FrontierEntry {
     pub url: String,
     /// Crawl depth at which this URL was discovered.
     pub depth: usize,
+    /// Document-only depth: number of consecutive `LinkType::Document` hops from
+    /// the nearest ancestor HTML page. Incremented each time a `Document` link is
+    /// re-enqueued via `follow_document_urls`. Zero for ordinary HTML pages.
+    pub doc_depth: u32,
     /// Priority score for this entry. Higher values mean higher priority.
     pub priority: f64,
 }

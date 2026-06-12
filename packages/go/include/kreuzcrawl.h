@@ -965,6 +965,20 @@ char *kcrawl_crawl_config_user_agents(const KCRAWLCrawlConfig *ptr);
 int32_t kcrawl_crawl_config_capture_screenshot(const KCRAWLCrawlConfig *ptr);
 
 /**
+ * Get the `follow_document_urls` field from a `CrawlConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_crawl_config_follow_document_urls(const KCRAWLCrawlConfig *ptr);
+
+/**
+ * Get the `document_url_depth` field from a `CrawlConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kcrawl_crawl_config_document_url_depth(const KCRAWLCrawlConfig *ptr);
+
+/**
  * Get the `download_documents` field from a `CrawlConfig`.
  * # Safety
  * Pointer must be a valid handle returned by this library.

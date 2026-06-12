@@ -88,13 +88,11 @@ pub(super) fn start_watch(classifier: Arc<TomlClassifier>, watch_path: &Path) ->
         let event = match result {
             Ok(e) => e,
             Err(err) => {
-                #[cfg(feature = "tracing")]
                 tracing::warn!(
                     target = "kreuzcrawl::waf::watch",
                     error = %err,
                     "notify error; skipping event"
                 );
-                let _ = err;
                 return;
             }
         };
@@ -174,7 +172,6 @@ fn spawn_debounce_task(
             match load_from_path(&path) {
                 Ok(new_rules) => {
                     classifier.swap(new_rules);
-                    #[cfg(feature = "tracing")]
                     tracing::info!(
                         target = "kreuzcrawl::waf::watch",
                         path = %path.display(),
@@ -182,13 +179,11 @@ fn spawn_debounce_task(
                     );
                 }
                 Err(err) => {
-                    #[cfg(feature = "tracing")]
                     tracing::warn!(
                         target = "kreuzcrawl::waf::watch",
                         error = %err,
                         "reload failed; keeping previous rules"
                     );
-                    let _ = err;
                 }
             }
         }

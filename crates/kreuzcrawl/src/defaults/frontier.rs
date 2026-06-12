@@ -82,6 +82,7 @@ mod tests {
         f.push(FrontierEntry {
             url: "a".into(),
             depth: 0,
+            doc_depth: 0,
             priority: 1.0,
         })
         .await
@@ -89,6 +90,7 @@ mod tests {
         f.push(FrontierEntry {
             url: "b".into(),
             depth: 0,
+            doc_depth: 0,
             priority: 1.0,
         })
         .await
@@ -96,6 +98,7 @@ mod tests {
         f.push(FrontierEntry {
             url: "c".into(),
             depth: 0,
+            doc_depth: 0,
             priority: 1.0,
         })
         .await
@@ -128,6 +131,7 @@ mod tests {
         f.push(FrontierEntry {
             url: "a".into(),
             depth: 0,
+            doc_depth: 0,
             priority: 1.0,
         })
         .await
@@ -136,6 +140,7 @@ mod tests {
         f.push(FrontierEntry {
             url: "b".into(),
             depth: 0,
+            doc_depth: 0,
             priority: 1.0,
         })
         .await
@@ -152,6 +157,7 @@ mod tests {
             f.push(FrontierEntry {
                 url: format!("url{i}"),
                 depth: 0,
+                doc_depth: 0,
                 priority: 1.0,
             })
             .await
@@ -171,6 +177,7 @@ mod tests {
         f.push(FrontierEntry {
             url: "a".into(),
             depth: 0,
+            doc_depth: 0,
             priority: 1.0,
         })
         .await

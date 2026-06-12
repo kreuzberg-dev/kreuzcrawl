@@ -339,6 +339,7 @@ impl CrawlEngine {
         working_set.push(FrontierEntry {
             url: final_url.clone(),
             depth: 0,
+            doc_depth: 0,
             priority: 1.0,
         });
 
@@ -692,12 +693,26 @@ impl CrawlEngine {
 
         state.normalized_urls.push(norm_url.clone());
 
-        // Link discovery
-        if depth < max_depth && !page_was_skipped {
+        // Link discovery.
+        //
+        // Plain HTML pages (entry.doc_depth == 0, page_was_skipped == false) always run
+        // discovery — pre-existing behaviour.
+        //
+        // Pages reached via a document-link chain (entry.doc_depth > 0) run discovery
+        // only when `follow_document_urls` is enabled.
+        //
+        // Binary/PDF pages that are NOT in a document-URL chain (unlikely, but theoretically
+        // a binary URL could appear as a seed) are not worth discovering.
+        let in_document_context = fetch.entry.doc_depth > 0;
+        let should_discover = (!page_was_skipped || in_document_context)
+            && (self.config.follow_document_urls || !in_document_context)
+            && depth < max_depth;
+        if should_discover {
             self.discover_and_enqueue_links(
                 &fetch.extraction.links,
                 &page_url,
                 depth,
+                fetch.entry.doc_depth,
                 base_host,
                 base_host_suffix,
                 working_set,
@@ -794,20 +809,51 @@ impl CrawlEngine {
     }
 
     /// Discover links from a page and add unseen ones to the working set.
+    ///
+    /// `parent_doc_depth` is taken from `entry.doc_depth` of the page being processed.
+    /// It is 0 for pages reached via ordinary HTML navigation, and > 0 for pages reached
+    /// via consecutive `LinkType::Document` hops.
+    ///
+    /// Called only when the caller has already determined that discovery is appropriate
+    /// (i.e. `follow_document_urls` is satisfied for in-document-context pages).
+    ///
+    /// `LinkType::Internal` links are always enqueued.
+    /// `LinkType::Document` links are enqueued when either:
+    ///   * parent_doc_depth == 0 (HTML page discovering document URLs — original behaviour),
+    ///   * OR `follow_document_urls` is true AND the child doc_depth does not exceed
+    ///     `document_url_depth` (if set).
     #[allow(clippy::too_many_arguments)]
     async fn discover_and_enqueue_links(
         &self,
         links: &[LinkInfo],
         _page_url: &str,
         depth: usize,
+        parent_doc_depth: u32,
         base_host: &str,
         base_host_suffix: &str,
         working_set: &mut Vec<FrontierEntry>,
         urls_discovered: &mut usize,
     ) -> Result<(), CrawlError> {
         for link in links {
-            if link.link_type != LinkType::Internal && link.link_type != LinkType::Document {
+            let is_doc_link = link.link_type == LinkType::Document;
+
+            // Non-internal, non-document links (External, Anchor, …) are skipped.
+            if link.link_type != LinkType::Internal && !is_doc_link {
                 continue;
+            }
+
+            // When the parent page was itself reached via a document link, document links
+            // it discovers must be gated on `follow_document_urls` and `document_url_depth`.
+            if is_doc_link && parent_doc_depth > 0 {
+                if !self.config.follow_document_urls {
+                    continue;
+                }
+                let child_doc_depth = parent_doc_depth + 1;
+                if let Some(max_doc_depth) = self.config.document_url_depth
+                    && child_doc_depth > max_doc_depth
+                {
+                    continue;
+                }
             }
 
             let link_url = strip_fragment(&link.url);
@@ -825,14 +871,18 @@ impl CrawlEngine {
             let dedup_key = normalize_url_for_dedup(&link_url);
             if !self.frontier.is_seen(&dedup_key).await? {
                 self.frontier.mark_seen(&dedup_key).await?;
-                let priority = self.strategy.score_url(&link_url, depth + 1);
+                let child_depth = depth + 1;
+                // Document links increment the doc counter; internal links reset it to 0.
+                let child_doc_depth: u32 = if is_doc_link { parent_doc_depth + 1 } else { 0 };
+                let priority = self.strategy.score_url(&link_url, child_depth);
                 working_set.push(FrontierEntry {
                     url: link_url.clone(),
-                    depth: depth + 1,
+                    depth: child_depth,
+                    doc_depth: child_doc_depth,
                     priority,
                 });
                 *urls_discovered += 1;
-                self.event_emitter.on_discovered(&link_url, depth + 1).await;
+                self.event_emitter.on_discovered(&link_url, child_depth).await;
             }
         }
 

@@ -969,6 +969,17 @@ class CrawlConfig {
   /// Whether to capture a screenshot when using the browser.
   final bool captureScreenshot;
 
+  /// Re-enqueue discovered `LinkType::Document` URLs into the crawl frontier so
+  /// the crawl follows links *from* document pages (PDFs, etc.) as it would
+  /// from HTML pages. Default: `false` (documents terminate at materialisation).
+  final bool followDocumentUrls;
+
+  /// Maximum document-depth (from the seed URL through document links only)
+  /// when `follow_document_urls` is true. `None` means inherit `max_depth`.
+  /// Independent of `max_depth`: a document URL is enqueued only if BOTH the
+  /// outer `max_depth` and (if set) `document_url_depth` permit it.
+  final PlatformInt64? documentUrlDepth;
+
   /// Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them.
   final bool downloadDocuments;
 
@@ -1018,6 +1029,8 @@ class CrawlConfig {
     this.proxy,
     required this.userAgents,
     required this.captureScreenshot,
+    required this.followDocumentUrls,
+    this.documentUrlDepth,
     required this.downloadDocuments,
     this.documentMaxSize,
     required this.documentMimeTypes,
@@ -1058,6 +1071,8 @@ class CrawlConfig {
       proxy.hashCode ^
       userAgents.hashCode ^
       captureScreenshot.hashCode ^
+      followDocumentUrls.hashCode ^
+      documentUrlDepth.hashCode ^
       downloadDocuments.hashCode ^
       documentMaxSize.hashCode ^
       documentMimeTypes.hashCode ^
@@ -1100,6 +1115,8 @@ class CrawlConfig {
           proxy == other.proxy &&
           userAgents == other.userAgents &&
           captureScreenshot == other.captureScreenshot &&
+          followDocumentUrls == other.followDocumentUrls &&
+          documentUrlDepth == other.documentUrlDepth &&
           downloadDocuments == other.downloadDocuments &&
           documentMaxSize == other.documentMaxSize &&
           documentMimeTypes == other.documentMimeTypes &&

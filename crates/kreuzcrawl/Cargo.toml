@@ -31,7 +31,15 @@ browser = ["browser-chromiumoxide"]
 browser-chromiumoxide = ["dep:chromiumoxide", "dep:dirs", "native-runtime"]
 browser-native = ["dep:kreuzcrawl-browser", "native-runtime"]
 ai = ["dep:liter-llm", "dep:minijinja"]
-tracing = ["dep:tracing"]
+# Opt-in one-call OTLP wiring (TracerProvider + MeterProvider + W3C TraceContext
+# propagator + tracing bridge). Cloud consumers wire their own SDK and skip
+# this feature. See `kreuzcrawl::telemetry::init_otlp`.
+telemetry-init = [
+    "dep:opentelemetry-otlp",
+    "dep:opentelemetry_sdk",
+    "dep:tracing-opentelemetry",
+    "dep:tracing-subscriber",
+]
 interact = ["browser"]
 mcp = ["dep:rmcp", "dep:schemars"]
 api = [
@@ -48,7 +56,7 @@ full = [
     "browser",
     "browser-native",
     "ai",
-    "tracing",
+    "telemetry-init",
     "interact",
     "mcp",
     "api",
@@ -78,6 +86,9 @@ memchr = { workspace = true }
 minijinja = { workspace = true, optional = true }
 notify = { workspace = true }
 opentelemetry = { workspace = true }
+opentelemetry-otlp = { workspace = true, optional = true }
+opentelemetry-semantic-conventions = { workspace = true }
+opentelemetry_sdk = { workspace = true, optional = true }
 quick-xml = { workspace = true }
 regex = { workspace = true }
 reqwest = { workspace = true }
@@ -93,7 +104,9 @@ tokio-stream = { workspace = true }
 toml = { workspace = true }
 tower = { workspace = true }
 tower-http = { workspace = true, optional = true }
-tracing = { workspace = true, optional = true }
+tracing = { workspace = true }
+tracing-opentelemetry = { workspace = true, optional = true }
+tracing-subscriber = { workspace = true, optional = true }
 url = { workspace = true }
 utoipa = { workspace = true, optional = true }
 uuid = { workspace = true, optional = true }

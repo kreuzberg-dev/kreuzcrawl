@@ -8,28 +8,13 @@ repository.workspace = true
 homepage.workspace = true
 description = "Internal headless-browser fallback used by the kreuzcrawl crawler. Not intended for direct use."
 
-[package.metadata.cargo-machete]
-# boring2 / boring-sys2 / tokio-boring2 are not consumed directly by this
-# crate; they are pulled in by `wreq` and pinned here at =5.0.0-alpha.12 so
-# cargo resolves a version whose FFI symbol set matches what wreq 6.0.0-rc.28
-# was tested against (alpha.13 callsites reference symbols boring-sys2
-# alpha.13 does not export).
-ignored = ["boring2", "boring-sys2", "tokio-boring2"]
-
 [features]
 default = []
-stealth = ["wreq", "wreq-util", "boring2", "boring-sys2", "tokio-boring2"]
+stealth = ["wreq", "wreq-util"]
 
 [dependencies]
 async-trait = { workspace = true }
 base64 = { workspace = true }
-boring-sys2 = { version = "=5.0.0-alpha.12", optional = true }
-# Pin the boring2 family to the alpha.12 release that wreq 6.0.0-rc.28 was
-# tested against; alpha.13 ships boring2 callsites for FFI symbols
-# (SSL_set_aes_hw_override, SSL_set_alps_use_new_codepoint, ...) that
-# boring-sys2 alpha.13 doesn't export. Marked optional so non-stealth builds
-# don't pull boring at all.
-boring2 = { version = "=5.0.0-alpha.12", optional = true }
 cssparser = { workspace = true }
 deno_core = { workspace = true }
 deno_error = { workspace = true }
@@ -43,16 +28,15 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
-tokio-boring2 = { version = "=5.0.0-alpha.12", optional = true }
 tracing = { workspace = true }
 url = { workspace = true }
-wreq-util = { version = "3.0.0-rc.11", optional = true }
+wreq-util = { version = "3.0.0-rc.12", optional = true }
 
 [target.'cfg(any(target_os = "linux", target_os = "android"))'.dependencies]
-wreq = { version = "6.0.0-rc.28", optional = true, features = ["prefix-symbols"] }
+wreq = { version = "6.0.0-rc.29", optional = true, features = ["prefix-symbols"] }
 
 [target.'cfg(not(any(target_os = "linux", target_os = "android")))'.dependencies]
-wreq = { version = "6.0.0-rc.28", optional = true }
+wreq = { version = "6.0.0-rc.29", optional = true }
 
 [build-dependencies]
 deno_core = { workspace = true }

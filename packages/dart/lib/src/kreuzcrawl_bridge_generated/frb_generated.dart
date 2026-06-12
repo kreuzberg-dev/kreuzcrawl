@@ -2208,8 +2208,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   CrawlConfig dco_decode_crawl_config(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 36)
-      throw Exception('unexpected arr length: expect 36 but see ${arr.length}');
+    if (arr.length != 38)
+      throw Exception('unexpected arr length: expect 38 but see ${arr.length}');
     return CrawlConfig(
       maxDepth: dco_decode_opt_box_autoadd_i_64(arr[0]),
       maxPages: dco_decode_opt_box_autoadd_i_64(arr[1]),
@@ -2241,12 +2241,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       proxy: dco_decode_opt_box_autoadd_proxy_config(arr[27]),
       userAgents: dco_decode_list_String(arr[28]),
       captureScreenshot: dco_decode_bool(arr[29]),
-      downloadDocuments: dco_decode_bool(arr[30]),
-      documentMaxSize: dco_decode_opt_box_autoadd_i_64(arr[31]),
-      documentMimeTypes: dco_decode_list_String(arr[32]),
-      warcOutput: dco_decode_opt_String(arr[33]),
-      browserProfile: dco_decode_opt_String(arr[34]),
-      saveBrowserProfile: dco_decode_bool(arr[35]),
+      followDocumentUrls: dco_decode_bool(arr[30]),
+      documentUrlDepth: dco_decode_opt_box_autoadd_i_64(arr[31]),
+      downloadDocuments: dco_decode_bool(arr[32]),
+      documentMaxSize: dco_decode_opt_box_autoadd_i_64(arr[33]),
+      documentMimeTypes: dco_decode_list_String(arr[34]),
+      warcOutput: dco_decode_opt_String(arr[35]),
+      browserProfile: dco_decode_opt_String(arr[36]),
+      saveBrowserProfile: dco_decode_bool(arr[37]),
     );
   }
 
@@ -3533,6 +3535,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_proxy = sse_decode_opt_box_autoadd_proxy_config(deserializer);
     var var_userAgents = sse_decode_list_String(deserializer);
     var var_captureScreenshot = sse_decode_bool(deserializer);
+    var var_followDocumentUrls = sse_decode_bool(deserializer);
+    var var_documentUrlDepth = sse_decode_opt_box_autoadd_i_64(deserializer);
     var var_downloadDocuments = sse_decode_bool(deserializer);
     var var_documentMaxSize = sse_decode_opt_box_autoadd_i_64(deserializer);
     var var_documentMimeTypes = sse_decode_list_String(deserializer);
@@ -3570,6 +3574,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       proxy: var_proxy,
       userAgents: var_userAgents,
       captureScreenshot: var_captureScreenshot,
+      followDocumentUrls: var_followDocumentUrls,
+      documentUrlDepth: var_documentUrlDepth,
       downloadDocuments: var_downloadDocuments,
       documentMaxSize: var_documentMaxSize,
       documentMimeTypes: var_documentMimeTypes,
@@ -5227,6 +5233,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_proxy_config(self.proxy, serializer);
     sse_encode_list_String(self.userAgents, serializer);
     sse_encode_bool(self.captureScreenshot, serializer);
+    sse_encode_bool(self.followDocumentUrls, serializer);
+    sse_encode_opt_box_autoadd_i_64(self.documentUrlDepth, serializer);
     sse_encode_bool(self.downloadDocuments, serializer);
     sse_encode_opt_box_autoadd_i_64(self.documentMaxSize, serializer);
     sse_encode_list_String(self.documentMimeTypes, serializer);

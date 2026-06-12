@@ -127,7 +127,6 @@ impl CrawlEngine {
             .layer(self.ua_rotation.clone())
             .service(crate::tower::HttpFetchService::new(client.clone(), self.config.clone()));
 
-        #[cfg(feature = "tracing")]
         let service = tower::ServiceBuilder::new()
             .layer(crate::tower::CrawlTracingLayer::new())
             .service(service);
@@ -214,16 +213,10 @@ impl CrawlEngine {
         // Last known good result and last error, used for cap-exceeded fallback.
         let mut last_ok: Option<(crate::tower::CrawlResponse, bool)> = None;
         let mut last_err: Option<CrawlError> = None;
-        // Telemetry accumulators — only consumed by emit_dispatch_span (tracing feature).
-        // Gated behind cfg so the compiler doesn't warn about unused variables / assignments
-        // when the tracing feature is not enabled.
-        #[cfg(feature = "tracing")]
+        // Telemetry accumulators consumed by emit_dispatch_span.
         let mut tiers_attempted: Vec<&'static str> = Vec::new();
-        #[cfg(feature = "tracing")]
         let mut last_escalation_reason: Option<&'static str> = None;
-        #[cfg(feature = "tracing")]
         let policy_name = retry_policy.name();
-        #[cfg(feature = "tracing")]
         let mut last_content_density: f32 = 0.0;
 
         loop {
@@ -232,7 +225,6 @@ impl CrawlEngine {
             // Strict `>` means attempt max_total passes through and attempt max_total+1
             // is rejected here. Guards against a buggy RetryPolicy that never returns Stop.
             if total_attempts > max_total {
-                #[cfg(feature = "tracing")]
                 tracing::warn!(
                     target: "kreuzcrawl::dispatch",
                     url,
@@ -246,7 +238,6 @@ impl CrawlEngine {
                         .unwrap_or_else(|| CrawlError::Other("max_total_attempts exceeded with no result".into()))),
                 };
             }
-            #[cfg(feature = "tracing")]
             tiers_attempted.push(Self::tier_name(current_tier));
 
             let tier_result = self.run_tier(current_tier, url).await;
@@ -279,14 +270,11 @@ impl CrawlEngine {
                         match c.classify(&http_resp) {
                             Ok(sig) => sig,
                             Err(e) => {
-                                #[cfg(feature = "tracing")]
                                 tracing::warn!(
                                     target: "kreuzcrawl::waf",
                                     error = %e,
                                     "classify failed"
                                 );
-                                // Suppress unused-variable warning when tracing feature is off.
-                                let _ = e;
                                 None
                             }
                         }
@@ -296,10 +284,7 @@ impl CrawlEngine {
                     last_ok = Some((resp.clone(), browser_used));
 
                     let density = content_density(&resp.body);
-                    #[cfg(feature = "tracing")]
-                    {
-                        last_content_density = density;
-                    }
+                    last_content_density = density;
 
                     let outcome = crate::types::AttemptOutcome {
                         attempt,
@@ -314,7 +299,6 @@ impl CrawlEngine {
                     };
                     match retry_policy.decide(&outcome).await {
                         crate::types::RetryDirective::Stop => {
-                            #[cfg(feature = "tracing")]
                             Self::emit_dispatch_span(
                                 url,
                                 &tiers_attempted,
@@ -342,10 +326,7 @@ impl CrawlEngine {
                                         KeyValue::new("reason", escalation_reason_label(&reason)),
                                     ],
                                 );
-                                #[cfg(feature = "tracing")]
-                                {
-                                    last_escalation_reason = Some(Self::escalation_reason_str(&reason));
-                                }
+                                last_escalation_reason = Some(Self::escalation_reason_str(&reason));
                                 current_tier = next;
                                 attempt = 0;
                                 continue;
@@ -354,7 +335,6 @@ impl CrawlEngine {
                             // The policy signalled a soft-block or WAF interstitial even though
                             // the HTTP layer returned 2xx. Synthesise an error from the reason
                             // rather than returning the challenge body as Ok.
-                            #[cfg(feature = "tracing")]
                             Self::emit_dispatch_span(
                                 url,
                                 &tiers_attempted,
@@ -410,7 +390,6 @@ impl CrawlEngine {
                     };
                     match retry_policy.decide(&outcome).await {
                         crate::types::RetryDirective::Stop => {
-                            #[cfg(feature = "tracing")]
                             Self::emit_dispatch_span(
                                 url,
                                 &tiers_attempted,
@@ -438,16 +417,12 @@ impl CrawlEngine {
                                         KeyValue::new("reason", escalation_reason_label(&reason)),
                                     ],
                                 );
-                                #[cfg(feature = "tracing")]
-                                {
-                                    last_escalation_reason = Some(Self::escalation_reason_str(&reason));
-                                }
+                                last_escalation_reason = Some(Self::escalation_reason_str(&reason));
                                 current_tier = next;
                                 attempt = 0;
                                 continue;
                             }
                             // No next tier or budget exhausted — surface the error.
-                            #[cfg(feature = "tracing")]
                             Self::emit_dispatch_span(
                                 url,
                                 &tiers_attempted,
@@ -650,7 +625,7 @@ impl CrawlEngine {
     }
 
     /// Stable lowercase string for an escalation reason.
-    #[cfg(all(not(target_arch = "wasm32"), feature = "tracing"))]
+    #[cfg(not(target_arch = "wasm32"))]
     fn escalation_reason_str(reason: &crate::types::EscalationReason) -> &'static str {
         use crate::types::EscalationReason;
         match reason {
@@ -665,7 +640,7 @@ impl CrawlEngine {
     ///
     /// Fields: `dispatch.tier_chain`, `dispatch.escalation_reason`,
     /// `dispatch.attempt_count`, `dispatch.policy`, `dispatch.content_density`.
-    #[cfg(all(not(target_arch = "wasm32"), feature = "tracing"))]
+    #[cfg(not(target_arch = "wasm32"))]
     fn emit_dispatch_span(
         url: &str,
         tiers_attempted: &[&str],
@@ -977,6 +952,7 @@ impl CrawlEngine {
         let mut working_set: Vec<FrontierEntry> = vec![FrontierEntry {
             url: url.to_owned(),
             depth: 0,
+            doc_depth: 0,
             priority: 1.0,
         }];
 
@@ -1068,10 +1044,41 @@ impl CrawlEngine {
 
             // Discover and enqueue links before building the page result so
             // that `links` in the page result is the full extracted set.
-            if entry.depth < max_depth && !scrape.was_skipped && !scrape.is_pdf {
+            //
+            // Pages reached via a document link chain (entry.doc_depth > 0) only run
+            // discovery when `follow_document_urls` is enabled.  Plain HTML pages
+            // (entry.doc_depth == 0) always run discovery — pre-existing behaviour.
+            // Binary/PDF pages (was_skipped || is_pdf) have empty extracted links, but
+            // we block discovery on them explicitly regardless of doc_depth.
+            let in_doc_context = entry.doc_depth > 0;
+            let page_is_skipped_wasm = scrape.was_skipped || scrape.is_pdf;
+            let should_discover_wasm = entry.depth < max_depth
+                && !page_is_skipped_wasm
+                && (!in_doc_context || self.config.follow_document_urls);
+            if should_discover_wasm {
                 for link in &scrape.links {
-                    if link.link_type != LinkType::Internal && link.link_type != LinkType::Document {
+                    let is_doc_link = link.link_type == LinkType::Document;
+
+                    // Non-internal, non-document links (External, Anchor, …) are skipped.
+                    if link.link_type != LinkType::Internal && !is_doc_link {
                         continue;
+                    }
+
+                    // Document links from a page reached via a document link
+                    // (entry.doc_depth > 0) require `follow_document_urls`.
+                    // Document links from ordinary HTML pages (doc_depth == 0) are always
+                    // enqueued for materialisation — pre-existing behaviour preserved.
+                    if is_doc_link && entry.doc_depth > 0 {
+                        if !self.config.follow_document_urls {
+                            continue;
+                        }
+                        // Document-depth gate: child doc_depth = parent + 1.
+                        let child_doc_depth = entry.doc_depth + 1;
+                        if let Some(max_doc_depth) = self.config.document_url_depth {
+                            if child_doc_depth > max_doc_depth {
+                                continue;
+                            }
+                        }
                     }
 
                     let link_url = crate::normalize::strip_fragment(&link.url);
@@ -1092,14 +1099,18 @@ impl CrawlEngine {
                     if !seen.contains(&dedup_key) {
                         seen.insert(dedup_key.clone());
                         let _ = self.frontier.mark_seen(&dedup_key).await;
-                        let priority = self.strategy.score_url(&link_url, entry.depth + 1);
+                        let child_depth = entry.depth + 1;
+                        // Document links increment the doc counter; internal links reset it.
+                        let child_doc_depth: u32 = if is_doc_link { entry.doc_depth + 1 } else { 0 };
+                        let priority = self.strategy.score_url(&link_url, child_depth);
                         working_set.push(FrontierEntry {
                             url: link_url.clone(),
-                            depth: entry.depth + 1,
+                            depth: child_depth,
+                            doc_depth: child_doc_depth,
                             priority,
                         });
                         urls_discovered += 1;
-                        self.event_emitter.on_discovered(&link_url, entry.depth + 1).await;
+                        self.event_emitter.on_discovered(&link_url, child_depth).await;
                     }
                 }
             }

@@ -39,6 +39,7 @@ pub(crate) mod research;
 mod robots;
 mod scrape;
 mod sitemap;
+pub mod telemetry;
 pub(crate) mod tower;
 pub mod traits;
 mod types;
@@ -76,6 +77,9 @@ pub use interact::{
 pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecutorConfig};
 #[cfg(feature = "mcp")]
 pub use mcp::{start_mcp_server, start_mcp_server_with_config};
+#[cfg(feature = "telemetry-init")]
+pub use telemetry::{InitError as TelemetryInitError, TelemetryConfig, TelemetryGuard, init_otlp};
+pub use telemetry::{current_traceparent, with_traceparent};
 pub use types::{
     ActionResult, ArticleMetadata, AssetCategory, AttemptOutcome, AuthConfig, BrowserBackend, BrowserConfig,
     BrowserExtras, BrowserMode, BrowserWait, BudgetExhausted, BypassProvider, BypassResponse, CachedPage,

@@ -1,5 +1,10 @@
 [workspace]
-members = ["crates/*", "packages/dart/rust", "packages/swift/rust", "tools/benchmark-harness"]
+members = [
+    "crates/*",
+    "packages/dart/rust",
+    "packages/swift/rust",
+    "tools/benchmark-harness",
+]
 exclude = [
     ".claude",
     "e2e/rust",
@@ -69,7 +74,15 @@ minijinja = "2"
 napi = { version = "3", default-features = false, features = ["napi8", "tokio_rt"] }
 napi-derive = "3"
 notify = "8"
-opentelemetry = { version = "0.32", features = ["metrics"] }
+# OpenTelemetry stack. Pinned to match kreuzberg-cloud's workspace pins so cloud
+# can consume kreuzcrawl spans/metrics without a duplicate global provider.
+# Held at 0.32: `tracing-opentelemetry` 0.32.1 still depends on `opentelemetry`
+# 0.31 internally, so bumping us further splits the dep graph and breaks
+# cross-service propagator injection (see kreuzberg-cloud Cargo.toml:89-91).
+opentelemetry = { version = "0.32", features = ["trace", "metrics"] }
+opentelemetry-otlp = { version = "0.32", features = ["grpc-tonic", "trace", "metrics"] }
+opentelemetry-semantic-conventions = "0.32"
+opentelemetry_sdk = { version = "0.32", features = ["rt-tokio"] }
 png = "0.18"
 precomputed-hash = "0.1"
 proptest = "1"
@@ -103,6 +116,8 @@ tower-http = { version = "0.6", features = [
     "sensitive-headers",
 ] }
 tracing = "0.1"
+tracing-opentelemetry = "0.33"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "json"] }
 url = "2"
 utoipa = { version = "5", features = ["axum_extras"] }
 uuid = { version = "1.23", features = ["v4"] }

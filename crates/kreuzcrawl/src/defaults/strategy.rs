@@ -178,11 +178,13 @@ mod adaptive_tests {
             FrontierEntry {
                 url: "a".into(),
                 depth: 0,
+                doc_depth: 0,
                 priority: 1.0,
             },
             FrontierEntry {
                 url: "b".into(),
                 depth: 0,
+                doc_depth: 0,
                 priority: 0.5,
             },
         ];
@@ -252,11 +254,13 @@ mod adaptive_tests {
             FrontierEntry {
                 url: "a".into(),
                 depth: 0,
+                doc_depth: 0,
                 priority: 1.0,
             },
             FrontierEntry {
                 url: "b".into(),
                 depth: 1,
+                doc_depth: 0,
                 priority: 0.5,
             },
         ];
@@ -276,16 +280,19 @@ mod adaptive_tests {
             FrontierEntry {
                 url: "a".into(),
                 depth: 0,
+                doc_depth: 0,
                 priority: 1.0,
             },
             FrontierEntry {
                 url: "b".into(),
                 depth: 1,
+                doc_depth: 0,
                 priority: 0.5,
             },
             FrontierEntry {
                 url: "c".into(),
                 depth: 2,
+                doc_depth: 0,
                 priority: 0.3,
             },
         ];
@@ -305,16 +312,19 @@ mod adaptive_tests {
             FrontierEntry {
                 url: "a".into(),
                 depth: 0,
+                doc_depth: 0,
                 priority: 0.3,
             },
             FrontierEntry {
                 url: "b".into(),
                 depth: 1,
+                doc_depth: 0,
                 priority: 0.9,
             },
             FrontierEntry {
                 url: "c".into(),
                 depth: 2,
+                doc_depth: 0,
                 priority: 0.5,
             },
         ];

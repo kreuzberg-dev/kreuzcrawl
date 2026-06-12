@@ -140,15 +140,8 @@ fn stealth_script() -> &'static str {
 /// stealth is best-effort, a per-patch try/catch handles per-feature failures.
 pub(crate) async fn apply_stealth_patches(page: &Page) {
     let params = AddScriptToEvaluateOnNewDocumentParams::new(stealth_script().to_string());
-    #[cfg(feature = "tracing")]
-    {
-        if let Err(e) = page.execute(params).await {
-            tracing::warn!(error = ?e, "stealth: failed to inject pre-document patches");
-        }
-    }
-    #[cfg(not(feature = "tracing"))]
-    {
-        let _ = page.execute(params).await;
+    if let Err(e) = page.execute(params).await {
+        tracing::warn!(error = ?e, "stealth: failed to inject pre-document patches");
     }
 }
 

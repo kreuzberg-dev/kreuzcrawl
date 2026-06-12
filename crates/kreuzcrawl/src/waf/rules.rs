@@ -3,8 +3,8 @@
 //! # Observability
 //!
 //! OTel counters (`opentelemetry::global`) emit unconditionally — consumers
-//! (kreuzberg-cloud) expect these always. Tracing spans/events are gated behind
-//! `feature = "tracing"` for crates that do not want the tracing dep.
+//! (kreuzberg-cloud) expect these always. Tracing spans/events are always compiled
+//! as `tracing` is now an unconditional dependency.
 
 use std::collections::HashMap;
 use std::path::Path;
