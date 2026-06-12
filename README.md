@@ -262,6 +262,11 @@ IO.puts(length(result.links))
 | C (FFI)  |      ✅      |      ✅       |     ✅      |     ✅      |
 | CLI      |      ✅      |      ✅       |     ✅      |     ✅      |
 
+## Guides
+
+- **[Observability](https://docs.kreuzcrawl.kreuzberg.dev/observability/)** — Integrate with Jaeger, Prometheus, or your observability backend. Emit and analyze crawl spans, metrics, and traces with W3C TraceContext propagation.
+- **[Antibot Strategy & Stealth](https://docs.kreuzcrawl.kreuzberg.dev/antibot/)** — Detect and bypass WAF systems. Customize antibot behavior per vendor, enable stealth surfaces, and integrate third-party bypass providers.
+
 ## Architecture
 
 ```text

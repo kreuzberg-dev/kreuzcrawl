@@ -531,7 +531,9 @@ impl CrawlEngine {
                 let client = crate::http::build_client(&self.config)?;
                 let mut service = self.build_service(&client);
                 use tower::Service;
-                let resp = service.call(CrawlRequest::new(url)).await?;
+                let mut req = CrawlRequest::new(url);
+                req.tier = Some(Self::tier_name(tier));
+                let resp = service.call(req).await?;
                 Ok((resp, false))
             }
             crate::types::Tier::Bypass => {

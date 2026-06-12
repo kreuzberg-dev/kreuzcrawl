@@ -15,6 +15,11 @@ use url::Url;
 pub struct CrawlRequest {
     pub url: String,
     pub headers: HashMap<String, String>,
+    /// Dispatch tier that initiated this request — used by `CrawlTracingLayer`
+    /// to record `crawl.tier` on the `crawl.page.fetch` span without having to
+    /// thread the value through a separate channel.  `None` for direct (non-dispatch)
+    /// calls that bypass the tier loop.
+    pub tier: Option<&'static str>,
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -23,6 +28,7 @@ impl CrawlRequest {
         Self {
             url: url.into(),
             headers: HashMap::new(),
+            tier: None,
         }
     }
 

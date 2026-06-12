@@ -26,12 +26,36 @@ use crate::html::{
 use crate::http::{build_client, extract_cookies_from_hashmap};
 use crate::normalize::{normalize_url, normalize_url_for_dedup, resolve_redirect, strip_fragment};
 use crate::robots::{RobotsRules, is_path_allowed};
-use crate::telemetry::attributes::{CRAWL_ALLOWED, CRAWL_HOST, URL_DOMAIN};
+use crate::telemetry::attributes::{
+    CRAWL_ALLOWED, CRAWL_BROWSER_MODE, CRAWL_DEPTH, CRAWL_FRONTIER_SIZE, CRAWL_HOST, CRAWL_LINK_TYPE, CRAWL_MAX_DEPTH,
+    CRAWL_MAX_PAGES, CRAWL_PAGES_COMPLETED, CRAWL_PARENT_URL, CRAWL_SEED_COUNT, CRAWL_STRATEGY, URL_DOMAIN, URL_FULL,
+};
 use crate::telemetry::metrics::registry;
 use crate::traits::*;
 use crate::types::*;
 
 use super::CrawlEngine;
+
+/// Map [`BrowserMode`] to a stable string label for telemetry.
+fn browser_mode_label(mode: &BrowserMode) -> &'static str {
+    match mode {
+        BrowserMode::Auto => "auto",
+        BrowserMode::Always => "always",
+        BrowserMode::Never => "never",
+        BrowserMode::Stealth => "stealth",
+    }
+}
+
+/// Map [`EscalationStrategy`] to a stable string label for telemetry.
+fn escalation_strategy_label(strategy: EscalationStrategy) -> &'static str {
+    match strategy {
+        EscalationStrategy::None => "none",
+        EscalationStrategy::BrowserOnly => "browser_only",
+        EscalationStrategy::BypassFirst => "bypass_first",
+        EscalationStrategy::BypassOnly => "bypass_only",
+        EscalationStrategy::BypassThenBrowser => "bypass_then_browser",
+    }
+}
 
 /// Default concurrency limit when `max_concurrent` is not set.
 const DEFAULT_MAX_CONCURRENT: usize = 10;
@@ -289,6 +313,26 @@ impl CrawlEngine {
         let max_pages = self.config.max_pages.unwrap_or(usize::MAX);
         let max_redirects = self.config.max_redirects;
 
+        // crawl.engine.start — emitted once per crawl invocation with job-level config.
+        // seed_count is always 1 for crawl_with_sender (batch_crawl calls it per-seed).
+        //
+        // EnteredSpan is !Send so it must be dropped before any `.await`.  We emit this
+        // span as a synchronous "job-start" event: enter it immediately, record attributes,
+        // then drop it before the first async call.
+        {
+            let strategy = self.config.dispatch.as_ref().map(|d| d.strategy).unwrap_or_default();
+            let _engine_span = tracing::info_span!(
+                "crawl.engine.start",
+                { CRAWL_SEED_COUNT } = 1_i64,
+                { CRAWL_MAX_DEPTH } = self.config.max_depth.map(|d| d as i64).unwrap_or(-1_i64),
+                { CRAWL_MAX_PAGES } = self.config.max_pages.map(|p| p as i64).unwrap_or(-1_i64),
+                { CRAWL_STRATEGY } = escalation_strategy_label(strategy),
+                { CRAWL_BROWSER_MODE } = browser_mode_label(&self.config.browser.mode),
+            )
+            .entered();
+            // _engine_span is dropped here — before any await point.
+        }
+
         let capacity = max_pages.min(1024);
         let mut state = CrawlState::new(capacity);
         let start_time = Instant::now();
@@ -464,6 +508,26 @@ impl CrawlEngine {
                     break;
                 };
                 let entry = working_set.swap_remove(idx);
+
+                // crawl.loop.iteration — one span per dequeued entry.  Entered synchronously
+                // before spawning the async fetch so the span captures dispatch state at
+                // queue-time.  `pages_completed` is the count of pages already finished,
+                // not including this one.  `frontier_size` is the working_set length AFTER
+                // the swap_remove that produced `entry`.
+                //
+                // EnteredSpan is !Send so it must be dropped before any `.await`.  We emit
+                // it as a synchronous "dequeue" event and close it before acquiring the
+                // semaphore permit.
+                {
+                    let _iter_span = tracing::info_span!(
+                        "crawl.loop.iteration",
+                        { CRAWL_DEPTH } = entry.depth as i64,
+                        { CRAWL_FRONTIER_SIZE } = working_set.len() as i64,
+                        { CRAWL_PAGES_COMPLETED } = state.pages.len() as i64,
+                    )
+                    .entered();
+                    // _iter_span dropped here — before semaphore.acquire_owned().await.
+                }
 
                 if !self.should_fetch_url(
                     &entry,
@@ -894,6 +958,33 @@ impl CrawlEngine {
                 // Document links increment the doc counter; internal links reset it to 0.
                 let child_doc_depth: u32 = if is_doc_link { parent_doc_depth + 1 } else { 0 };
                 let priority = self.strategy.score_url(&link_url, child_depth);
+
+                // crawl.page.discover — one span per successfully enqueued link.
+                //
+                // Volume note: this fires for every distinct URL that passes dedup and
+                // all path/domain/depth filters above.  High-fanout sites may produce
+                // hundreds of spans per page; operators should sample or filter by
+                // crawl.link_type when storage cost matters.
+                //
+                // EnteredSpan is !Send so it must be dropped before any `.await`.  We emit
+                // it as a synchronous "enqueue" event and close it before the emitter call.
+                {
+                    let link_host = Url::parse(&link_url)
+                        .ok()
+                        .and_then(|u| u.host_str().map(str::to_owned))
+                        .unwrap_or_default();
+                    let _discover_span = tracing::info_span!(
+                        "crawl.page.discover",
+                        { URL_FULL } = %link_url,
+                        { URL_DOMAIN } = %link_host,
+                        { CRAWL_PARENT_URL } = %_page_url,
+                        { CRAWL_DEPTH } = child_depth as i64,
+                        { CRAWL_LINK_TYPE } = if is_doc_link { "document" } else { "internal" },
+                    )
+                    .entered();
+                    // _discover_span dropped here — before on_discovered(..).await.
+                }
+
                 working_set.push(FrontierEntry {
                     url: link_url.clone(),
                     depth: child_depth,

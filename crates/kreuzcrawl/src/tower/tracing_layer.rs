@@ -12,7 +12,7 @@ use tracing::Instrument;
 use super::types::{CrawlRequest, CrawlResponse};
 use crate::error::CrawlError;
 use crate::telemetry::attributes::{
-    HTTP_REQUEST_METHOD, HTTP_RESPONSE_BODY_SIZE, HTTP_RESPONSE_STATUS_CODE, SERVER_ADDRESS, URL_FULL,
+    CRAWL_TIER, HTTP_REQUEST_METHOD, HTTP_RESPONSE_BODY_SIZE, HTTP_RESPONSE_STATUS_CODE, SERVER_ADDRESS, URL_FULL,
 };
 use crate::telemetry::metrics::registry;
 
@@ -61,6 +61,7 @@ where
     fn call(&mut self, req: CrawlRequest) -> Self::Future {
         let host = req.domain().unwrap_or_default();
         let url = req.url.clone();
+        let tier = req.tier;
 
         let span = tracing::info_span!(
             "crawl.page.fetch",
@@ -71,9 +72,8 @@ where
             { SERVER_ADDRESS } = %host,
             { HTTP_RESPONSE_STATUS_CODE } = tracing::field::Empty,
             { HTTP_RESPONSE_BODY_SIZE } = tracing::field::Empty,
-            // crawl.tier is not yet wired at the tower layer because the
-            // dispatch tier decision lives in the engine, above this stack.
-            // TODO(otel): record crawl.tier once engine passes it down.
+            // crawl.tier is recorded by the engine in run_tier before the tower call.
+            { CRAWL_TIER } = tracing::field::Empty,
         );
 
         let mut inner = self.inner.clone();
@@ -81,6 +81,10 @@ where
 
         Box::pin(
             async move {
+                // Record crawl.tier early so it appears even if the fetch errors out.
+                if let Some(t) = tier {
+                    tracing::Span::current().record(CRAWL_TIER, t);
+                }
                 let started = Instant::now();
                 let result = inner.call(req).await;
                 let elapsed = started.elapsed();
