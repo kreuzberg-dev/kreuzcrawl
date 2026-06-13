@@ -24,11 +24,11 @@ public class MetadataTest {
         200,
         result
             .statusCode()); // skipped: field 'article.published_time' not available on result type
-                            //       // skipped: field 'article.modified_time' not available on
-                            // result type        // skipped: field 'article.author' not available
-                            // on result type        // skipped: field 'article.section' not
-                            // available on result type        // skipped: field
-                            // 'article.tags.length' not available on result type
+    //       // skipped: field 'article.modified_time' not available on
+    // result type        // skipped: field 'article.author' not available
+    // on result type        // skipped: field 'article.section' not
+    // available on result type        // skipped: field
+    // 'article.tags.length' not available on result type
   }
 
   @Test
@@ -39,11 +39,9 @@ public class MetadataTest {
         + "/fixtures/metadata_favicons";
     var result = Kreuzcrawl.scrape(engine, url);
     assertEquals(
-        200,
-        result
-            .statusCode()); // skipped: field 'favicons.length' not available on result type
-                            // // skipped: field 'favicons[].apple_touch' not available on result
-                            // type
+        200, result.statusCode()); // skipped: field 'favicons.length' not available on result type
+    // // skipped: field 'favicons[].apple_touch' not available on result
+    // type
   }
 
   @Test
@@ -55,11 +53,10 @@ public class MetadataTest {
     var result = Kreuzcrawl.scrape(engine, url);
     assertEquals(
         200,
-        result
-            .statusCode()); // skipped: field 'headings.h1.length' not available on result type
-                            //   // skipped: field 'headings.h1[0].text' not available on result
-                            // type        // skipped: field 'headings.length' not available on
-                            // result type
+        result.statusCode()); // skipped: field 'headings.h1.length' not available on result type
+    //   // skipped: field 'headings.h1[0].text' not available on result
+    // type        // skipped: field 'headings.length' not available on
+    // result type
   }
 
   @Test
@@ -70,10 +67,8 @@ public class MetadataTest {
         + "/fixtures/metadata_hreflang";
     var result = Kreuzcrawl.scrape(engine, url);
     assertEquals(
-        200,
-        result
-            .statusCode()); // skipped: field 'hreflang.length' not available on result type
-                            // // skipped: field 'hreflang[].lang' not available on result type
+        200, result.statusCode()); // skipped: field 'hreflang.length' not available on result type
+    // // skipped: field 'hreflang[].lang' not available on result type
   }
 
   @Test
@@ -174,12 +169,11 @@ public class MetadataTest {
     var result = Kreuzcrawl.scrape(engine, url);
     assertEquals(
         200,
-        result
-            .statusCode()); // skipped: field 'response_headers.etag' not available on result type
-                            //      // skipped: field 'response_headers.last_modified' not available
-                            // on result type        // skipped: field 'response_headers.server' not
-                            // available on result type        // skipped: field
-                            // 'response_headers.content_language' not available on result type
+        result.statusCode()); // skipped: field 'response_headers.etag' not available on result type
+    //      // skipped: field 'response_headers.last_modified' not available
+    // on result type        // skipped: field 'response_headers.server' not
+    // available on result type        // skipped: field
+    // 'response_headers.content_language' not available on result type
   }
 
   @Test

@@ -3142,6 +3142,7 @@ dependencies = [
 name = "kreuzcrawl-jni"
 version = "0.3.0-rc.57"
 dependencies = [
+ "base64",
  "futures-util",
  "jni",
  "kreuzcrawl",

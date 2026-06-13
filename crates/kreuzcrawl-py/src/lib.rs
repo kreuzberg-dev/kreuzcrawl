@@ -2706,7 +2706,7 @@ impl AuthConfig {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -2723,7 +2723,7 @@ impl AuthConfig {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -2740,7 +2740,7 @@ impl AuthConfig {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3126,7 +3126,7 @@ impl CrawlEvent {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3143,7 +3143,7 @@ impl CrawlEvent {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3160,7 +3160,7 @@ impl CrawlEvent {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3276,7 +3276,7 @@ impl PageAction {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3293,7 +3293,7 @@ impl PageAction {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3310,7 +3310,7 @@ impl PageAction {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3327,7 +3327,7 @@ impl PageAction {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3344,7 +3344,7 @@ impl PageAction {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3361,7 +3361,7 @@ impl PageAction {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3378,7 +3378,7 @@ impl PageAction {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 
@@ -3395,7 +3395,7 @@ impl PageAction {
         let json_mod = py.import("json")?;
         let py_dict = json_mod
             .call_method1("loads", (&json_str,))?
-            .downcast_into::<pyo3::types::PyDict>()?;
+            .cast_into::<pyo3::types::PyDict>()?;
         Ok(Some(py_dict.unbind()))
     }
 

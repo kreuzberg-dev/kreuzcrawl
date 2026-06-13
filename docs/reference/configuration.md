@@ -70,7 +70,6 @@ Browser fallback configuration.
 | `wait` | `BrowserWait` | `BrowserWait.NETWORK_IDLE` | Wait strategy after browser navigation. |
 | `wait_selector` | `str \| None` | `None` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `float \| None` | `None` | Extra time to wait after the wait condition is met. |
-| `stealth` | `bool` | `False` | Enable browser-realistic TLS fingerprint via the stealth HTTP client. Only honored by `BrowserBackend.Native` — chromiumoxide is already full-stealth via Chrome's TLS stack. |
 | `proxy` | `ProxyConfig \| None` | `None` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
 | `block_url_patterns` | `list[str]` | `[]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
 | `eval_script` | `str \| None` | `None` | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
@@ -116,6 +115,8 @@ Configuration for crawl, scrape, and map operations.
 | `proxy` | `ProxyConfig \| None` | `None` | Proxy configuration for HTTP requests. |
 | `user_agents` | `list[str]` | `[]` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `capture_screenshot` | `bool` | `False` | Whether to capture a screenshot when using the browser. |
+| `follow_document_urls` | `bool` | `False` | Re-enqueue discovered `LinkType.Document` URLs into the crawl frontier so the crawl follows links *from* document pages (PDFs, etc.) as it would from HTML pages. Default: `False` (documents terminate at materialisation). |
+| `document_url_depth` | `int \| None` | `None` | Maximum document-depth (from the seed URL through document links only) when `follow_document_urls` is true. `None` means inherit `max_depth`. Independent of `max_depth`: a document URL is enqueued only if BOTH the outer `max_depth` and (if set) `document_url_depth` permit it. |
 | `download_documents` | `bool` | `True` | Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them. |
 | `document_max_size` | `int \| None` | `None` | Maximum size in bytes for document downloads. Defaults to 50 MB. |
 | `document_mime_types` | `list[str]` | `[]` | Allowlist of MIME types to download. If empty, uses built-in defaults. |
@@ -669,6 +670,7 @@ When to use the headless browser fallback.
 | `Auto` | `auto` | Automatically detect when JS rendering is needed and fall back to browser. |
 | `Always` | `always` | Always use the browser for every request. |
 | `Never` | `never` | Never use the browser fallback. |
+| `Stealth` | `stealth` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - chromiumoxide JS patches (`crate.stealth.apply_stealth_patches`) - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
 
 ---
 

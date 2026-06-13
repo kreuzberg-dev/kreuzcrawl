@@ -784,7 +784,7 @@ struct __private__OptionUsize __swift_bridge__$ContentConfig$max_depth(void* sel
 bool __swift_bridge__$ContentConfig$wrap(void* self);
 uintptr_t __swift_bridge__$ContentConfig$wrap_width(void* self);
 bool __swift_bridge__$ContentConfig$include_document_structure(void* self);
-void* __swift_bridge__$BrowserConfig$new(void* mode, void* backend, void* endpoint, uint64_t timeout, void* wait, void* wait_selector, struct __private__OptionU64 extra_wait, bool stealth, void* proxy, void* block_url_patterns, void* eval_script, void* robots_user_agent, bool capture_network_events, bool session_affinity);
+void* __swift_bridge__$BrowserConfig$new(void* mode, void* backend, void* endpoint, uint64_t timeout, void* wait, void* wait_selector, struct __private__OptionU64 extra_wait, void* proxy, void* block_url_patterns, void* eval_script, void* robots_user_agent, bool capture_network_events, bool session_affinity);
 void* __swift_bridge__$BrowserConfig$mode(void* self);
 void* __swift_bridge__$BrowserConfig$backend(void* self);
 void* __swift_bridge__$BrowserConfig$endpoint(void* self);
@@ -792,7 +792,6 @@ uint64_t __swift_bridge__$BrowserConfig$timeout(void* self);
 void* __swift_bridge__$BrowserConfig$wait(void* self);
 void* __swift_bridge__$BrowserConfig$wait_selector(void* self);
 struct __private__OptionU64 __swift_bridge__$BrowserConfig$extra_wait(void* self);
-bool __swift_bridge__$BrowserConfig$stealth(void* self);
 void* __swift_bridge__$BrowserConfig$proxy(void* self);
 void* __swift_bridge__$BrowserConfig$block_url_patterns(void* self);
 void* __swift_bridge__$BrowserConfig$eval_script(void* self);

@@ -1431,7 +1431,7 @@ pub enum JsBrowserMode {
     Never,
     /// Always use the browser with all stealth surfaces enabled.
     ///
-    /// Behaves like `Always`(BrowserMode.Always) for escalation purposes
+    /// Behaves like `Always` for escalation purposes
     /// (every request is routed through the browser tier), but additionally
     /// enables:
     ///

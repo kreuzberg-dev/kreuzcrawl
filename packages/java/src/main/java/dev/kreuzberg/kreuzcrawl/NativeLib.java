@@ -223,9 +223,13 @@ final class NativeLib {
   }
 
   private static String resolveNativesRid(String osName, String osArch) {
+    // Classifier names match the conventional Java/Maven Central native-bundling
+    // scheme used by JNA, LWJGL, snappy-java, etc.: `osx-aarch64`, `linux-aarch64`,
+    // `windows-x86_64`, …  The publish workflow stages natives under the same
+    // names; keep this table in sync with the matrix.platform values there.
     String arch;
     if (osArch.contains("aarch64") || osArch.contains("arm64")) {
-      arch = "arm64";
+      arch = "aarch64";
     } else if (osArch.contains("x86_64") || osArch.contains("amd64")) {
       arch = "x86_64";
     } else {
@@ -234,7 +238,7 @@ final class NativeLib {
 
     String os;
     if (osName.contains("mac") || osName.contains("darwin")) {
-      os = "macos";
+      os = "osx";
     } else if (osName.contains("win")) {
       os = "windows";
     } else {

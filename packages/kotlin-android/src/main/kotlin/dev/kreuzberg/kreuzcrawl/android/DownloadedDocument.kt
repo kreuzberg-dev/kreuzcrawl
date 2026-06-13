@@ -37,7 +37,7 @@ data class DownloadedDocument(
     /** The MIME type from the Content-Type header. */
     val mimeType: String = "",
     /** Raw document bytes. Skipped during JSON serialization. */
-    val content: ByteArray,
+    val content: ByteArray? = null,
     /** Size of the document in bytes. */
     val size: Long = 0L,
     /** Filename extracted from Content-Disposition or URL path. */
