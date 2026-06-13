@@ -26,25 +26,6 @@ importers:
       '@napi-rs/cli':
         specifier: ^3.6.2
         version: 3.7.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.3)
-    optionalDependencies:
-      '@kreuzberg/kreuzcrawl-darwin-arm64':
-        specifier: 0.3.0-rc.57
-        version: 0.3.0-rc.57
-      '@kreuzberg/kreuzcrawl-darwin-x64':
-        specifier: 0.3.0-rc.57
-        version: 0.3.0-rc.57
-      '@kreuzberg/kreuzcrawl-linux-arm64-gnu':
-        specifier: 0.3.0-rc.57
-        version: 0.3.0-rc.57
-      '@kreuzberg/kreuzcrawl-linux-x64-gnu':
-        specifier: 0.3.0-rc.57
-        version: 0.3.0-rc.57
-      '@kreuzberg/kreuzcrawl-win32-arm64-msvc':
-        specifier: 0.3.0-rc.57
-        version: 0.3.0-rc.57
-      '@kreuzberg/kreuzcrawl-win32-x64-msvc':
-        specifier: 0.3.0-rc.57
-        version: 0.3.0-rc.57
 
   crates/kreuzcrawl-wasm: {}
 
@@ -207,44 +188,6 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
-
-  '@kreuzberg/kreuzcrawl-darwin-arm64@0.3.0-rc.57':
-    resolution: {integrity: sha512-rB6j0d4v3z+pyOxfNaTzg7LzZMUH9KoJUpFPG05gncNYtMiCh6/zfDnGdZLak17754pSoUMxp90eVK6/i8N24Q==}
-    engines: {node: '>= 18'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@kreuzberg/kreuzcrawl-darwin-x64@0.3.0-rc.57':
-    resolution: {integrity: sha512-reXwFJ3K95qVVwxrbIH3479eituVplwfCm/z41KFOdFo8DFsUz+Y5EANTwaOybTX6pQeB5yh9by9wrpv9mIoaQ==}
-    engines: {node: '>= 18'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@kreuzberg/kreuzcrawl-linux-arm64-gnu@0.3.0-rc.57':
-    resolution: {integrity: sha512-Jhpbi0OKOM/fAsJ3Vrz1COy4O8WqG2+OLD30+k9kPupbmat3uIlVyJMjh6G0upAwKb6WE4zhImkWPWotK+4f3w==}
-    engines: {node: '>= 18'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@kreuzberg/kreuzcrawl-linux-x64-gnu@0.3.0-rc.57':
-    resolution: {integrity: sha512-RMoICjuIcTAsl05zi0gweAgLAGEiOdceYxOFyOCfa/KRdpTMG3xZKfTxNhD/12NRYAatWDfPtZzsVllO4AC9vA==}
-    engines: {node: '>= 18'}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@kreuzberg/kreuzcrawl-win32-arm64-msvc@0.3.0-rc.57':
-    resolution: {integrity: sha512-oGZ479ZF8yUVZa1HR9iJyLDqNn3GAPBQhnMOpEj2YbAT+VwYXmtUQMetqHhipOHF+GKhRHPmQyskXXNbqvvspQ==}
-    engines: {node: '>= 18'}
-    cpu: [arm64]
-    os: [win32]
-
-  '@kreuzberg/kreuzcrawl-win32-x64-msvc@0.3.0-rc.57':
-    resolution: {integrity: sha512-NPka9Ly7d3bVazoZ0lx2vHUJ24uEvXoOr8ho9UMOz9W/vJEuctvxMjh+0jRgLotzb1Q5O3vz2KaIgJbdJRUMsQ==}
-    engines: {node: '>= 18'}
-    cpu: [x64]
-    os: [win32]
 
   '@napi-rs/cli@3.7.1':
     resolution: {integrity: sha512-7FkcxJ70SqpsYnyjaYwLVpkP3Xoyd8YkT5g7DevuEvSY7mzpLSva8oSQNENHiQ1T0GMLnae1X46KmiNIu5OXDw==}
@@ -1305,24 +1248,6 @@ snapshots:
       '@types/node': 25.9.3
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
-
-  '@kreuzberg/kreuzcrawl-darwin-arm64@0.3.0-rc.57':
-    optional: true
-
-  '@kreuzberg/kreuzcrawl-darwin-x64@0.3.0-rc.57':
-    optional: true
-
-  '@kreuzberg/kreuzcrawl-linux-arm64-gnu@0.3.0-rc.57':
-    optional: true
-
-  '@kreuzberg/kreuzcrawl-linux-x64-gnu@0.3.0-rc.57':
-    optional: true
-
-  '@kreuzberg/kreuzcrawl-win32-arm64-msvc@0.3.0-rc.57':
-    optional: true
-
-  '@kreuzberg/kreuzcrawl-win32-x64-msvc@0.3.0-rc.57':
-    optional: true
 
   '@napi-rs/cli@3.7.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.3)':
     dependencies:

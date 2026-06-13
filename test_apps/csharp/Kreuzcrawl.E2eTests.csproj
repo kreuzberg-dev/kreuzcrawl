@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Kreuzcrawl" Version="0.3.0-rc.57" />
+    <PackageReference Include="Kreuzcrawl" Version="0.3.0-rc.58" />
   </ItemGroup>
 
   <ItemGroup>

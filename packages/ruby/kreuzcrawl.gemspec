@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = "kreuzcrawl"
-  spec.version = "0.3.0.pre.rc.57"
+  spec.version = "0.3.0.pre.rc.58"
   spec.authors       = ["Kreuzberg Team"]
   spec.summary       = "High-performance web crawling engine"
   spec.description   = "High-performance web crawling engine"
@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.license       = "Elastic-2.0"
 
-  spec.required_ruby_version = ">= 3.2.0"
+  spec.required_ruby_version = ">= 3.2.0, < 4.0"
   spec.metadata["keywords"] = %w[crawl scrape spider web].join(",")
   spec.metadata["rubygems_mfa_required"] = "true"
 
