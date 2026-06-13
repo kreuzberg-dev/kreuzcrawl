@@ -34,8 +34,10 @@ COPY crates/kreuzcrawl-ffi/ crates/kreuzcrawl-ffi/
 COPY crates/kreuzcrawl-bindings-common/ crates/kreuzcrawl-bindings-common/
 COPY crates/kreuzcrawl-browser/ crates/kreuzcrawl-browser/
 
-# Replace workspace members with only the crates we have
-RUN sed -i 's|members = \[.*\]|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-ffi", "crates/kreuzcrawl-bindings-common", "crates/kreuzcrawl-browser"]|' \
+# Replace workspace members with only the crates we have.
+# Use sed -z (null-terminated mode) so the regex spans newlines: the workspace
+# members list in Cargo.toml is multi-line.
+RUN sed -i -z 's|members = \[[^]]*\]|members = ["crates/kreuzcrawl", "crates/kreuzcrawl-ffi", "crates/kreuzcrawl-bindings-common", "crates/kreuzcrawl-browser"]|' \
     Cargo.toml
 
 # Build the FFI shared library

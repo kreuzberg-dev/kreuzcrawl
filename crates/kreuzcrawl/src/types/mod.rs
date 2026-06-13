@@ -11,6 +11,7 @@ mod results;
 #[cfg(not(target_arch = "wasm32"))]
 mod streaming;
 
+#[cfg(not(target_arch = "wasm32"))]
 pub use antibot::{AntibotStrategy, Decision};
 pub use builder::{CrawlConfigBuilder, DispatchProfileBuilder};
 pub use bypass::{BypassProvider, BypassResponse, DynBypassProvider};
