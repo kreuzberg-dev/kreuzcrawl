@@ -172,10 +172,11 @@ packages:
   kreuzcrawl:
     dependency: "direct main"
     description:
-      path: "../../packages/dart"
-      relative: true
-    source: path
-    version: "0.3.0-rc.59"
+      name: kreuzcrawl
+      sha256: "5b6e5d5081f0c3e944b62570ed69468f60ff8656808b384731c79030f13ef233"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0-rc.60"
   logging:
     dependency: transitive
     description:

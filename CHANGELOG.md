@@ -4,6 +4,16 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.61] - 2026-06-14
+
+### Changed
+
+- Bump alef pin and regenerate against the new publish-prepare lockfile-preservation fix (per-member `cargo update -p NAME` + `cargo metadata --locked` validation, replacing the prior `cargo generate-lockfile` that rebuilt from scratch with latest semver-compatible versions) and the `kreuzberg-dev/actions@v1.8.68` build-time `--locked` sweep across every `cargo build` / `maturin build` / `cargo ndk` / `cargo zigbuild` invocation. Together these stop broken upstream releases (e.g. `brotli-decompressor 5.0.1`/`5.0.2` whose `alloc-no-stdlib` v2/v3 split trips `error[E0277] StandardAlloc: alloc::Allocator<u8> is not satisfied`) from leaking past the committed `Cargo.lock` on the publish path. Unbreaks rc.60's `Build Elixir NIF (macos-arm64 nif-2.17)` and `Build PHP extension (php8.3 macos-arm64)` jobs.
+
+### Fixed
+
+- **Musl FFI Docker builds install GNU `sed`.** Mirrors the rc.60 `musl-build` fix: BusyBox `sed` (default on Alpine) lacks `-z` mode required by the multi-line workspace members rewrite, so `Dockerfile.musl-ffi` now `apk add`s `sed` explicitly. This unbreaks Java natives `linux-musl-{x64,aarch64}` publish.
+
 ## [0.3.0-rc.60] - 2026-06-14
 
 ### Changed
