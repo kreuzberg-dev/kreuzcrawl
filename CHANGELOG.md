@@ -4,6 +4,17 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.62] - 2026-06-14
+
+### Changed
+
+- **Regenerate against alef 0.25.4.** Picks up `strip_workspace_member_entries` (alef 0.25.3) — the seeded `Cargo.lock` now drops path-source workspace-member entries before per-member `cargo update -p NAME` runs, eliminating the `specification 'NAME' is ambiguous` (exit 101) errors that failed all 14 Elixir NIF cells, all 16 PHP extension cells, 4 Ruby gem cells, the Python sdist, and the Ruby/Hex publish jobs in rc.61. Also picks up alef 0.25.4's R/extendr keyword-escape fix (no functional impact on kreuzcrawl, which does not ship an R binding).
+
+### Docs
+
+- **Surface antibot and observability deep-dives in navigation.** `docs/antibot.md` joins Guides → Advanced (alongside Browser Automation and WARC Output); `docs/observability.md` joins Guides → Deployment (alongside Docker, API Server, MCP Server). Both were hand-authored content quietly orphaned from the nav since cluster 6 landed.
+- **llms.txt sitemap.** SSRF Defense added to the Concepts section; Antibot Strategy and Observability added to Guides; alef added to the Ecosystem block (GitHub URL per `kreuzberg-brand-and-docs` policy); `liter-llm` and `tree-sitter-language-pack` descriptions realigned to the authoritative product-list wording.
+
 ### Security
 
 - **SSRF defense in core HTTP layer.** `scrape()`, `crawl()`, `batch_crawl()`,

@@ -17,10 +17,12 @@ Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware sta
 - [Markdown Conversion](https://docs.kreuzcrawl.kreuzberg.dev/guides/markdown/): Always-on HTML→Markdown via [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev), citations, and pruning
 - [Browser Automation](https://docs.kreuzcrawl.kreuzberg.dev/guides/browser/): Headless-Chrome fallback, WAF bypass, persistent profiles
 - [WARC Output](https://docs.kreuzcrawl.kreuzberg.dev/guides/warc/): Standards-compliant WARC archiving
+- [Antibot Strategy](https://docs.kreuzcrawl.kreuzberg.dev/antibot/): WAF detection, escalation tiers, pluggable classifier traits
 - [Configuration](https://docs.kreuzcrawl.kreuzberg.dev/guides/configuration/): CrawlConfig, ContentConfig, BrowserConfig, AuthConfig, ProxyConfig
 - [Docker](https://docs.kreuzcrawl.kreuzberg.dev/guides/docker/): Container image with feature flags
 - [API Server](https://docs.kreuzcrawl.kreuzberg.dev/guides/api-server/): Firecrawl v1-compatible REST API
 - [MCP Server](https://docs.kreuzcrawl.kreuzberg.dev/guides/mcp-server/): MCP tools for AI agent integration
+- [Observability](https://docs.kreuzcrawl.kreuzberg.dev/observability/): OpenTelemetry traces and metrics, W3C trace propagation, span catalogue
 
 ## CLI
 
@@ -30,6 +32,7 @@ Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware sta
 
 - [Architecture](https://docs.kreuzcrawl.kreuzberg.dev/concepts/architecture/): Public surface, data flow, binding matrix, feature gates, crate layout
 - [Content Extraction](https://docs.kreuzcrawl.kreuzberg.dev/concepts/content-extraction/): HTML parsing, metadata, Markdown conversion, citations, content pruning
+- [SSRF Defense](https://docs.kreuzcrawl.kreuzberg.dev/concepts/ssrf-defense/): Host allowlists, private-IP rejection, redirect validation, opt-out policy
 
 ## API Reference
 
@@ -59,8 +62,9 @@ Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware sta
 - [Kreuzberg](https://docs.kreuzberg.dev): Document intelligence — text, tables, and metadata from 91+ file formats with optional OCR
 - [Kreuzberg Cloud](https://docs.kreuzberg.cloud): Managed document-extraction API with SDKs and dashboards
 - [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev): The HTML→Markdown engine powering Kreuzcrawl's always-on conversion
-- [liter-llm](https://docs.liter-llm.kreuzberg.dev): Multi-provider LLM orchestration with cost and token accounting
-- [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev): 306 tree-sitter grammars and code-intelligence primitives
+- [liter-llm](https://docs.liter-llm.kreuzberg.dev): Universal LLM API client with native bindings for 14 languages and 143 providers
+- [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev): Tree-sitter grammars and code-intelligence primitives
+- [alef](https://github.com/kreuzberg-dev/alef): Polyglot binding generator that produces every per-language binding across the kreuzberg.dev polyglot repos
 
 ## Optional
 

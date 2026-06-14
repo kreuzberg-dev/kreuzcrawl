@@ -29,11 +29,13 @@ nav = [
     { "Advanced" = [
       { "Browser Automation" = "guides/browser.md" },
       { "WARC Output" = "guides/warc.md" },
+      { "Antibot Strategy" = "antibot.md" },
     ] },
     { "Deployment" = [
       { "Docker" = "guides/docker.md" },
       { "API Server" = "guides/api-server.md" },
       { "MCP Server" = "guides/mcp-server.md" },
+      { "Observability" = "observability.md" },
     ] },
     { "CLI" = "cli/usage.md" },
   ] },
