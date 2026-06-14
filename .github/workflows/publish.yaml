@@ -1078,9 +1078,14 @@ jobs:
               env:
                   TARGET: ${{ matrix.target }}
                   PLATFORM: ${{ matrix.platform }}
+                  VERSION: ${{ needs.prepare.outputs.version }}
               shell: bash
               run: |
-                  STAGE="kreuzcrawl-ffi-${PLATFORM}"
+                  # Stage name must match alef-generated test_apps download_ffi.sh:
+                  # ASSET_STEM="${FFI_PKG_NAME}-v${VERSION}-${TRIPLE}"
+                  # where TRIPLE is the Rust target triple (e.g. aarch64-apple-darwin),
+                  # NOT the publish-yaml "platform" label (e.g. macos-arm64).
+                  STAGE="kreuzcrawl-ffi-v${VERSION}-${TARGET}"
                   mkdir -p "$STAGE/lib" "$STAGE/include"
                   find "target/${TARGET}/release" -maxdepth 1 -type f \
                     \( -name 'libkreuzcrawl_ffi.*' -o -name 'kreuzcrawl_ffi.dll' \) \
@@ -1324,6 +1329,15 @@ jobs:
               shell: bash
               run: echo "ImageOS=ubuntu24" >> "$GITHUB_ENV"
 
+            - name: Override ImageOS on Windows runners
+              # `windows-latest` now reports `ImageOS=win25-vs2026` which
+              # erlef/setup-beam@v1 does not yet recognise (supported set:
+              # win19, win22, win25). Force it to `win25` so the OTP/Elixir
+              # package index lookup succeeds.
+              if: runner.os == 'Windows'
+              shell: bash
+              run: echo "ImageOS=win25" >> "$GITHUB_ENV"
+
             - uses: erlef/setup-beam@v1
               with:
                   elixir-version: "1.17"
@@ -1505,7 +1519,7 @@ jobs:
     upload-go-release:
         name: Upload Go FFI archives to GitHub Release
         needs: [prepare, go-ffi-libraries]
-        if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.go-ffi-libraries.result == 'success' }}
+        if: ${{ needs.prepare.outputs.release_go == 'true' && needs.prepare.outputs.is_tag == 'true' && needs.go-ffi-libraries.result == 'success' }}
         runs-on: ubuntu-latest
         steps:
             - uses: actions/create-github-app-token@v2
@@ -1532,7 +1546,7 @@ jobs:
     push-go-subdir-tag:
         name: Push Go module subdir tag
         needs: [prepare, upload-go-release]
-        if: ${{ needs.prepare.outputs.is_tag == 'true' && needs.upload-go-release.result == 'success' }}
+        if: ${{ needs.prepare.outputs.release_go == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.upload-go-release.result == 'success' || needs.upload-go-release.result == 'skipped') }}
         runs-on: ubuntu-latest
         steps:
             - uses: actions/create-github-app-token@v2
@@ -2286,7 +2300,9 @@ jobs:
 
     publish-zig:
         name: Publish Zig package metadata
-        needs: [prepare, zig-package, check-zig]
+        # Depend on c-ffi-libraries so the per-target FFI artifacts are
+        # available for `multi-platform-ffi-dir` bundling.
+        needs: [prepare, zig-package, check-zig, c-ffi-libraries]
         if: ${{ needs.prepare.outputs.release_zig == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-zig.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         steps:
@@ -2302,6 +2318,52 @@ jobs:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
 
+            # Download per-target C FFI artifacts produced by c-ffi-libraries
+            # and lay them out as ffi-artifacts/<zig-rid>/<libfile> + a shared
+            # ffi-artifacts/include/ for publish-zig multi-platform bundling.
+            - uses: actions/download-artifact@v8
+              with:
+                  pattern: c-ffi-*
+                  path: dist/c-ffi-downloaded
+                  merge-multiple: false
+
+            - name: Lay out FFI artifacts for multi-platform Zig bundle
+              env:
+                  VERSION: ${{ needs.prepare.outputs.version }}
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  # RID convention is per the publish-zig action contract:
+                  # linux-x64, linux-arm64, osx-arm64, osx-x64, win-x64.
+                  declare -A RID_FOR=(
+                    ["x86_64-unknown-linux-gnu"]="linux-x64"
+                    ["aarch64-unknown-linux-gnu"]="linux-arm64"
+                    ["aarch64-apple-darwin"]="osx-arm64"
+                    ["x86_64-apple-darwin"]="osx-x64"
+                    ["x86_64-pc-windows-msvc"]="win-x64"
+                  )
+                  out="ffi-artifacts"
+                  mkdir -p "$out/include"
+                  for art in dist/c-ffi-downloaded/*/kreuzcrawl-ffi-v"${VERSION}"-*.tar.gz; do
+                    [ -f "$art" ] || continue
+                    target=$(basename "$art" .tar.gz)
+                    target="${target#kreuzcrawl-ffi-v"${VERSION}"-}"
+                    rid="${RID_FOR[$target]:-}"
+                    if [ -z "$rid" ]; then
+                      echo "::warning::Unknown target $target — skipping"
+                      continue
+                    fi
+                    tmp=$(mktemp -d)
+                    tar -xzf "$art" -C "$tmp"
+                    stage_root=$(find "$tmp" -maxdepth 1 -mindepth 1 -type d | head -1)
+                    mkdir -p "$out/$rid"
+                    cp "$stage_root"/lib/* "$out/$rid/"
+                    cp "$stage_root"/include/*.h "$out/include/" 2>/dev/null || true
+                    rm -rf "$tmp"
+                  done
+                  ls -la "$out"
+                  for d in "$out"/*/; do echo "--- $d ---"; ls -la "$d"; done
+
             - uses: kreuzberg-dev/actions/publish-zig@v1
               with:
                   working-directory: packages/zig
@@ -2313,7 +2375,14 @@ jobs:
                   # fetches `kreuzcrawl-zig-v{version}.tar.gz` → 404 + consumer
                   # build.zig.zon TODO hash.
                   package-name: kreuzcrawl-zig
+                  # Bundle per-target FFI libraries + header into the published
+                  # tarball so consumers can `zig fetch --save` and link without
+                  # downloading anything else.
+                  multi-platform-ffi-dir: ffi-artifacts
+                  module-name: kreuzcrawl
+                  ffi-lib-name: kreuzcrawl_ffi
                   update-release-notes: "true"
+                  update-existing: "true"
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
                   token: ${{ steps.app-token.outputs.token }}
               env:

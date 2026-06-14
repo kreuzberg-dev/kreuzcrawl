@@ -44,7 +44,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
       for (final dir in searchDirs) {
         for (final name in libNames) {
           final libPath = dir.resolve(name).toFilePath();
-          if (File(libPath).existsSync()) {
+          if (File(libPath).existsSync() || Directory(libPath).existsSync()) {
             return ExternalLibrary.open(libPath);
           }
         }
@@ -75,10 +75,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
     // may ship the binary as a Framework bundle (preferred modern packaging)
     // — list that first so the loader finds it before the bare dylib.
     if (Platform.isMacOS)
-      return const [
-        'kreuzcrawl_dart.framework/kreuzcrawl_dart',
-        'libkreuzcrawl_dart.dylib',
-      ];
+      return const ['kreuzcrawl_dart.framework', 'libkreuzcrawl_dart.dylib'];
     if (Platform.isWindows) return const ['kreuzcrawl_dart.dll'];
     return const ['libkreuzcrawl_dart.so'];
   }

@@ -4,6 +4,20 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.60] - 2026-06-14
+
+### Changed
+
+- Bump alef pin to `0.25.0` and regenerate all bindings, facades, READMEs, docs, stubs, and e2e suites against the new codegen.
+
+### Fixed
+
+- **CI: Go module publish guards now check `release_go == 'true'`.** Both `upload-go-release` and `push-go-subdir-tag` jobs explicitly gate on `needs.prepare.outputs.release_go == 'true'`. When Go is intentionally skipped (partial publish), both jobs skip; when Go fails, the OR condition `(success || skipped)` in `push-go-subdir-tag` ensures the tag is only created if artifacts exist.
+- **C FFI staging matches test_apps download contract.** Publish-time staging now produces `kreuzcrawl-ffi-v${VERSION}-${TARGET}.tar.gz` (matching `test_apps/c/download_ffi.sh`) instead of the legacy `kreuzcrawl-ffi-${PLATFORM}` shape that was causing 404s.
+- **Zig publish bundles multi-platform FFI artifacts.** `publish-zig` job now depends on `c-ffi-libraries`, downloads per-target tarballs, lays them out under `ffi-artifacts/<rid>/`, and passes the directory via `multi-platform-ffi-dir` so the zig package includes `lib/` and `include/` for every supported RID.
+- **Musl Docker builds install GNU `sed`.** BusyBox `sed` lacks `-z` mode required by the multi-line workspace members rewrite; the `musl-build` image now `apk add`s `sed` explicitly.
+- **Elixir NIF Windows publish.** Windows runners override `ImageOS=win25` before `erlef/setup-beam@v1` because `win25-vs2026` is not a recognised value.
+
 ## [0.3.0-rc.59] - 2026-06-13
 
 ### Changed

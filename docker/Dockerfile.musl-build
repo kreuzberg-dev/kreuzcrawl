@@ -12,10 +12,12 @@ FROM alpine:3.21 AS builder
 WORKDIR /build
 
 # Install build dependencies
+# `sed` installs GNU sed; the default BusyBox sed lacks -z (null-terminated) mode
+# which is needed to rewrite the multi-line workspace members array below.
 RUN apk add --no-cache \
     curl gcc g++ musl-dev cmake make pkgconf \
     openssl-dev openssl-libs-static \
-    perl linux-headers git file
+    perl linux-headers git file sed
 
 # Install Rust via rustup
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
