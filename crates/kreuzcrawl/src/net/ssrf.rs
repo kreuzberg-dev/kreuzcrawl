@@ -203,41 +203,56 @@ pub async fn validate_url(url: &url::Url, policy: &SsrfPolicy) -> Result<(), Ssr
         }
     };
 
-    // Resolve hostname
-    let port = url.port().unwrap_or(match scheme {
-        "https" => 443,
-        _ => 80,
-    });
-
-    let lookup_addr = format!("{}:{}", host_str, port);
-    let addresses: Vec<IpAddr> = tokio::net::lookup_host(&lookup_addr)
-        .await
-        .map_err(|e| SsrfError::DnsResolutionFailed(format!("{host_str}: {e}")))?
-        .map(|addr| addr.ip())
-        .collect();
-
-    if addresses.is_empty() {
-        return Err(SsrfError::DnsResolutionFailed(format!(
-            "no addresses resolved for {host_str}"
-        )));
-    }
-
-    // Check if hostname is on allowlist (short-circuit)
+    // Check if hostname is on allowlist (short-circuit before DNS).
     for matcher in &policy.allowlist {
         if matcher.matches_host(host_str) {
             return Ok(());
         }
     }
 
-    // Validate each resolved IP — DNS rebinding mitigation: ALL IPs must pass
-    for ip in &addresses {
-        if !is_ip_permitted(*ip, policy) {
-            let reason = classify_private_ip(*ip);
-            return Err(SsrfError::DeniedByPolicy { reason });
-        }
+    #[cfg(target_arch = "wasm32")]
+    {
+        // No tokio::net on wasm32. The browser/edge runtime enforces its own
+        // same-origin and CORS policy on outbound requests, so non-allowlisted
+        // domain hosts are validated by the host platform rather than by
+        // pre-resolving and inspecting IPs here.
+        let _ = port_for_url(scheme, url);
+        Ok(())
     }
 
-    Ok(())
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let port = port_for_url(scheme, url);
+        let lookup_addr = format!("{host_str}:{port}");
+        let addresses: Vec<IpAddr> = tokio::net::lookup_host(&lookup_addr)
+            .await
+            .map_err(|e| SsrfError::DnsResolutionFailed(format!("{host_str}: {e}")))?
+            .map(|addr| addr.ip())
+            .collect();
+
+        if addresses.is_empty() {
+            return Err(SsrfError::DnsResolutionFailed(format!(
+                "no addresses resolved for {host_str}"
+            )));
+        }
+
+        // Validate each resolved IP — DNS rebinding mitigation: ALL IPs must pass.
+        for ip in &addresses {
+            if !is_ip_permitted(*ip, policy) {
+                let reason = classify_private_ip(*ip);
+                return Err(SsrfError::DeniedByPolicy { reason });
+            }
+        }
+
+        Ok(())
+    }
+}
+
+fn port_for_url(scheme: &str, url: &url::Url) -> u16 {
+    url.port().unwrap_or(match scheme {
+        "https" => 443,
+        _ => 80,
+    })
 }
 
 /// Test if an IP address is permitted by the SSRF policy.

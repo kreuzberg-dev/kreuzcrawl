@@ -4,6 +4,16 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.63] - 2026-06-14
+
+### Fixed
+
+- **WASM build: cfg-gate `tokio::net::lookup_host` in SSRF defense for `wasm32-unknown-unknown`.** The SSRF policy validator's DNS rebinding mitigation calls `tokio::net::lookup_host` to resolve hostnames before applying the IP allowlist. tokio's `net` feature is not compiled on wasm32 (see `kreuzcrawl/Cargo.toml`'s `[target.'cfg(not(target_arch = "wasm32"))'.dependencies]` block), so the SSRF code path failed to compile under `wasm-pack build` with `error[E0425]: cannot find function 'lookup_host' in module 'tokio::net'`. The fix splits `validate_url` into native and wasm32 arms: on native, DNS resolution + per-IP validation runs as before; on wasm32, the function short-circuits after the scheme + literal-IP checks and after the host-string allowlist short-circuit, deferring DNS-rebinding enforcement to the browser/edge runtime's own same-origin and CORS policy (which is the security boundary for outbound requests in those environments anyway). Tested with `cargo check --target wasm32-unknown-unknown -p kreuzcrawl --no-default-features` (green) and the 35 SSRF unit tests on native (all green). Observed on kreuzcrawl rc.62 `Build WASM package` job (run 27507139419).
+
+### Changed
+
+- **Regenerate against alef 0.25.7.** Picks up `publish prepare`: drop `--locked` from final `cargo metadata` validation + env_remove(`CARGO_BUILD_LOCKED`) safety on `cargo update -p` and `cargo metadata` calls, so non-workspace binding crates (Ruby gem NIF, Elixir NIF) can have their missing root `[[package]]` entry written into the seeded lock. Together with alef 0.25.3's `strip_workspace_member_entries`, this should unblock rc.62's 20+ failed Elixir/PHP/Ruby/Python-sdist publish jobs. Also picks up: dart cfg-gated variant catch-all (E0004 prevention), node test_app pnpm-lock regen against the bumped version, go test_app `go mod tidy` post-generation step, swift Package.swift placeholder persistence regression test, and palantir-java-format alignment for Java downcall fallback chains.
+
 ## [0.3.0-rc.62] - 2026-06-14
 
 ### Changed
