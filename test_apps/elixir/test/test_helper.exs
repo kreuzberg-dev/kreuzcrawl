@@ -1,3 +1,7 @@
+unless System.get_env("KREUZCRAWL_ALLOW_PRIVATE_NETWORK") do
+  System.put_env("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true")
+end
+
 # Start a named Finch pool before ExUnit configured to use HTTP/1 only.
 # Tests pass `finch: AlefE2EFinch` on every Req call; the pool's protocol
 # selection (via `pools.default.protocols: [:http1]`) is the canonical place

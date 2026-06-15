@@ -42,10 +42,6 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 
   Built-in MCP server for AI agents, REST API for service deployments, both gated behind cargo features.
 
-- :material-archive:{ .lg .middle } **WARC Output**
-
-  Standards-compliant WARC archiving for web preservation and audit-grade compliance pipelines.
-
 - :material-translate:{ .lg .middle } **14 Language Bindings**
 
   Native bindings for Rust, Python, TypeScript, Go, Java, Kotlin (Android), C#, Ruby, PHP, Elixir, Dart, Swift, Zig, and WebAssembly — plus a C FFI surface for everything else.
@@ -142,7 +138,7 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 
 ---
 
-### Part of kreuzberg.dev
+### Part of Kreuzberg.dev
 
 <div class="grid cards" markdown>
 

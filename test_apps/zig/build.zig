@@ -91,6 +91,7 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const markdown_run = b.addRunArtifact(markdown_tests);
+    markdown_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         markdown_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -118,6 +119,7 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const metadata_run = b.addRunArtifact(metadata_tests);
+    metadata_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         metadata_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -145,6 +147,7 @@ pub fn build(b: *std.Build) void {
         .use_llvm = true,
     });
     const scrape_run = b.addRunArtifact(scrape_tests);
+    scrape_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         scrape_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }

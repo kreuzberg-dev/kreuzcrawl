@@ -14,6 +14,7 @@ The fastest way to get started. No Rust toolchain needed if you use Homebrew.
 === "Homebrew (macOS / Linux)"
 
     ```bash
+    brew trust kreuzberg-dev/tap
     brew install kreuzberg-dev/tap/kreuzcrawl
     ```
 

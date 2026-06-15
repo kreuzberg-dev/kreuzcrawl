@@ -4,6 +4,12 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.65] - 2026-06-15
+
+### Changed
+
+- **Regenerate against alef 0.25.11.** Picks up two rc.64 unblockers and a publish-pipeline regression guard. (1) Per-language `[e2e.env]` emitters: every generated e2e suite (15 languages — python, go, ruby, php, elixir, java, csharp, swift, dart, zig, typescript/wasm, brew, c, rust, kotlin-android) now exports `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true` at suite-setup time so `SsrfPolicy::from_env()` returns `deny_private: false` against the loopback mock-server. Unblocks rc.64's 15/15 failed CI E2E suites (run 27523705700). The override is declared once in `alef.toml` `[crates.e2e.env]` and translated per-language into the native pre-test env-var idiom (e.g. `os.environ.setdefault` in Python, `os.LookupEnv`/`os.Setenv` in Go's `TestMain`, `System.setProperty` in Java's `@BeforeAll`, `ENV[k] ||= v` in Ruby, `Environment.SetEnvironmentVariable` in a C# `[ModuleInitializer]`, `setenv(..., 0)` in Swift/C, `dart:ffi setenv` in Dart, vitest setup file in WASM, `process.env.X ??=` in TS, `: "${KEY:=val}"` in brew, `.cargo/config.toml [env] force=false` in Rust, `System.put_env` in Elixir). (2) `publish::vendor::scrub_or_regenerate_lock` canonicalizes the manifest path before spawning `cargo` subprocesses with `current_dir(manifest_dir)`. rc.64 publish run 27523709809 failed 38 source-build cells (14 Elixir NIF + Hex publish + 1 Python sdist + 4 Ruby gem + 1 Ruby gems publish + 15 PHP extension + 3 GH release uploads) with `manifest path './path/from/repo/root/Cargo.toml' does not exist` because cargo resolved the original relative `manifest_dir.join("Cargo.toml")` from the new cwd. Canonicalizing first makes the path absolute so cargo resolves it correctly regardless of the spawned process's cwd. (3) `fix(release): generate schema from current sources` (alef 0.25.11) — alef's `task set-version` now regenerates the canonical schema before tagging, so the tagged release's schema matches the source.
+
 ## [0.3.0-rc.64] - 2026-06-15
 
 ### Changed

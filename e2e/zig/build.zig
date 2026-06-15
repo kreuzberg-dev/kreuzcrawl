@@ -94,6 +94,7 @@ pub fn build(b: *std.Build) void {
     });
     auth_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const auth_run = b.addRunArtifact(auth_tests);
+    auth_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         auth_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -122,6 +123,7 @@ pub fn build(b: *std.Build) void {
     });
     browser_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const browser_run = b.addRunArtifact(browser_tests);
+    browser_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         browser_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -150,6 +152,7 @@ pub fn build(b: *std.Build) void {
     });
     cache_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const cache_run = b.addRunArtifact(cache_tests);
+    cache_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         cache_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -178,6 +181,7 @@ pub fn build(b: *std.Build) void {
     });
     concurrent_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const concurrent_run = b.addRunArtifact(concurrent_tests);
+    concurrent_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         concurrent_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -206,6 +210,7 @@ pub fn build(b: *std.Build) void {
     });
     content_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const content_run = b.addRunArtifact(content_tests);
+    content_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         content_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -234,6 +239,7 @@ pub fn build(b: *std.Build) void {
     });
     cookies_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const cookies_run = b.addRunArtifact(cookies_tests);
+    cookies_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         cookies_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -262,6 +268,7 @@ pub fn build(b: *std.Build) void {
     });
     crawl_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const crawl_run = b.addRunArtifact(crawl_tests);
+    crawl_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         crawl_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -290,6 +297,7 @@ pub fn build(b: *std.Build) void {
     });
     download_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const download_run = b.addRunArtifact(download_tests);
+    download_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         download_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -318,6 +326,7 @@ pub fn build(b: *std.Build) void {
     });
     encoding_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const encoding_run = b.addRunArtifact(encoding_tests);
+    encoding_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         encoding_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -346,6 +355,7 @@ pub fn build(b: *std.Build) void {
     });
     engine_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const engine_run = b.addRunArtifact(engine_tests);
+    engine_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         engine_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -374,6 +384,7 @@ pub fn build(b: *std.Build) void {
     });
     error_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const error_run = b.addRunArtifact(error_tests);
+    error_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         error_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -402,6 +413,7 @@ pub fn build(b: *std.Build) void {
     });
     filter_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const filter_run = b.addRunArtifact(filter_tests);
+    filter_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         filter_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -430,6 +442,7 @@ pub fn build(b: *std.Build) void {
     });
     interaction_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const interaction_run = b.addRunArtifact(interaction_tests);
+    interaction_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         interaction_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -458,6 +471,7 @@ pub fn build(b: *std.Build) void {
     });
     links_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const links_run = b.addRunArtifact(links_tests);
+    links_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         links_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -486,6 +500,7 @@ pub fn build(b: *std.Build) void {
     });
     map_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const map_run = b.addRunArtifact(map_tests);
+    map_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         map_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -514,6 +529,7 @@ pub fn build(b: *std.Build) void {
     });
     markdown_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const markdown_run = b.addRunArtifact(markdown_tests);
+    markdown_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         markdown_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -542,6 +558,7 @@ pub fn build(b: *std.Build) void {
     });
     metadata_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const metadata_run = b.addRunArtifact(metadata_tests);
+    metadata_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         metadata_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -570,6 +587,7 @@ pub fn build(b: *std.Build) void {
     });
     proxy_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const proxy_run = b.addRunArtifact(proxy_tests);
+    proxy_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         proxy_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -598,6 +616,7 @@ pub fn build(b: *std.Build) void {
     });
     rate_limit_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const rate_limit_run = b.addRunArtifact(rate_limit_tests);
+    rate_limit_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         rate_limit_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -626,6 +645,7 @@ pub fn build(b: *std.Build) void {
     });
     redirect_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const redirect_run = b.addRunArtifact(redirect_tests);
+    redirect_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         redirect_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -654,6 +674,7 @@ pub fn build(b: *std.Build) void {
     });
     robots_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const robots_run = b.addRunArtifact(robots_tests);
+    robots_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         robots_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -682,6 +703,7 @@ pub fn build(b: *std.Build) void {
     });
     scrape_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const scrape_run = b.addRunArtifact(scrape_tests);
+    scrape_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         scrape_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -710,6 +732,7 @@ pub fn build(b: *std.Build) void {
     });
     sitemap_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const sitemap_run = b.addRunArtifact(sitemap_tests);
+    sitemap_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         sitemap_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -738,6 +761,7 @@ pub fn build(b: *std.Build) void {
     });
     stealth_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const stealth_run = b.addRunArtifact(stealth_tests);
+    stealth_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         stealth_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -766,6 +790,7 @@ pub fn build(b: *std.Build) void {
     });
     strategy_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const strategy_run = b.addRunArtifact(strategy_tests);
+    strategy_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         strategy_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -794,6 +819,7 @@ pub fn build(b: *std.Build) void {
     });
     validation_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const validation_run = b.addRunArtifact(validation_tests);
+    validation_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         validation_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }
@@ -822,6 +848,7 @@ pub fn build(b: *std.Build) void {
     });
     warc_tests.root_module.addRPath(.{ .cwd_relative = ffi_path_abs });
     const warc_run = b.addRunArtifact(warc_tests);
+    warc_run.setEnvironmentVariable("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true");
     if (mock_server_url) |_url| {
         warc_run.setEnvironmentVariable("MOCK_SERVER_URL", _url);
     }

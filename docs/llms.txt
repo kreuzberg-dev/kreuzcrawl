@@ -57,14 +57,13 @@ Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware sta
 - [Types](https://docs.kreuzcrawl.kreuzberg.dev/reference/types/): `CrawlResult`, `ScrapeResult`, `MapResult`, `PageMetadata`, and related types
 - [Errors](https://docs.kreuzcrawl.kreuzberg.dev/reference/errors/): `CrawlError` variants and FFI error codes
 
-## Ecosystem
+## Kreuzberg Ecosystem
 
-- [Kreuzberg](https://docs.kreuzberg.dev): Document intelligence — text, tables, and metadata from 91+ file formats with optional OCR
-- [Kreuzberg Cloud](https://docs.kreuzberg.cloud): Managed document-extraction API with SDKs and dashboards
-- [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev): The HTML→Markdown engine powering Kreuzcrawl's always-on conversion
+- [Kreuzberg](https://docs.kreuzberg.dev): Document intelligence: text, tables, metadata from 91+ formats with optional OCR
+- [Kreuzberg Cloud](https://docs.kreuzberg.cloud): Managed extraction API with SDKs, dashboards, and observability
+- [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev): Fast, lossless HTML to Markdown engine
 - [liter-llm](https://docs.liter-llm.kreuzberg.dev): Universal LLM API client with native bindings for 14 languages and 143 providers
 - [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev): Tree-sitter grammars and code-intelligence primitives
-- [alef](https://github.com/kreuzberg-dev/alef): Polyglot binding generator that produces every per-language binding across the kreuzberg.dev polyglot repos
 
 ## Optional
 

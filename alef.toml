@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.25.9"
+alef_version = "0.25.11"
 languages = [
   "python",
   "node",
@@ -1510,60 +1510,60 @@ categories = ["scrape", "markdown", "metadata"]
 
 [crates.e2e.registry.packages.python]
 name = "kreuzcrawl"
-version = ">=0.3.0rc64"
+version = ">=0.3.0rc65"
 
 [crates.e2e.registry.packages.node]
 name = "@kreuzberg/kreuzcrawl"
-version = "^0.3.0-rc.64"
+version = "^0.3.0-rc.65"
 
 [crates.e2e.registry.packages.rust]
 name = "kreuzcrawl"
-version = "0.3.0-rc.64"
+version = "0.3.0-rc.65"
 
 [crates.e2e.registry.packages.go]
 module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
-version = "v0.3.0-rc.64"
+version = "v0.3.0-rc.65"
 
 [crates.e2e.registry.packages.java]
 name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
-version = "0.3.0-rc.64"
+version = "0.3.0-rc.65"
 
 [crates.e2e.registry.packages.csharp]
 name = "Kreuzcrawl"
-version = "0.3.0-rc.64"
+version = "0.3.0-rc.65"
 
 [crates.e2e.registry.packages.php]
 name = "kreuzberg-dev/kreuzcrawl"
-version = ">=0.3.0-rc.64"
+version = ">=0.3.0-rc.65"
 
 [crates.e2e.registry.packages.ruby]
 name = "kreuzcrawl"
-version = ">= 0.3.0.pre.rc.64"
+version = ">= 0.3.0.pre.rc.65"
 
 [crates.e2e.registry.packages.elixir]
 name = "kreuzcrawl"
-version = "~> 0.3.0-rc.64"
+version = "~> 0.3.0-rc.65"
 
 [crates.e2e.registry.packages.wasm]
 name = "@kreuzberg/kreuzcrawl-wasm"
-version = "^0.3.0-rc.64"
+version = "^0.3.0-rc.65"
 
 [crates.e2e.registry.packages.brew]
 name = "kreuzcrawl"
-version = "0.3.0-rc.64"
+version = "0.3.0-rc.65"
 
 [crates.e2e.registry.packages.c]
 name = "kreuzcrawl-ffi"
-version = "0.3.0-rc.64"
+version = "0.3.0-rc.65"
 
 [crates.e2e.registry.packages.zig]
 name = "kreuzcrawl"
-version = "0.3.0-rc.64"
+version = "0.3.0-rc.65"
 # Placeholder hash with embedded version triggers alef's STALE detection (added
 # in v0.22.1) — the generator emits a STALE comment in build.zig.zon and the
 # zig fetch flow auto-recomputes the real multihash at consume time. Update
 # after publishing the first zig tarball: `zig fetch --save <release-url>`.
-hash = "kreuzcrawl-0.3.0-rc.64-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH"
+hash = "kreuzcrawl-0.3.0-rc.65-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH"
 
 [crates.scaffold]
 description = "High-performance web crawling engine"
@@ -1577,6 +1577,27 @@ keywords = ["crawl", "scrape", "web", "spider"]
 [crates.readme]
 template_dir = "readme_templates"
 snippets_dir = "docs/snippets"
+
+[crates.readme.targets.root]
+name = "Kreuzcrawl"
+template = "root.md"
+output_path = "README.md"
+
+[crates.readme.languages.rust]
+name = "Rust"
+template = "language_package.md"
+output_path = "crates/kreuzcrawl/README.md"
+package_manager = ["cargo"]
+package_name = "kreuzcrawl"
+install_command = "cargo add kreuzcrawl"
+description = """
+Rust crate for **kreuzcrawl** — the core high-performance web crawling engine used by every
+language binding. Provides async crawling, structured scrape output, SSRF-safe networking,
+browser rendering, and Markdown conversion.
+"""
+
+[crates.readme.languages.rust.snippets]
+basic_usage = "getting-started/basic_usage.md"
 
 [crates.readme.languages.python]
 name = "Python"
