@@ -2,7 +2,7 @@
 title: "Dart API Reference"
 ---
 
-## Dart API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Dart API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```dart
 CitationResult generateCitations(String markdown)
+```
+
+**Example:**
+
+```dart
+final result = generateCitations("value");
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 CrawlEngineHandle createEngine([CrawlConfig? config])
 ```
 
+**Example:**
+
+```dart
+final result = createEngine(CrawlConfig());
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```dart
 ScrapeResult scrape(CrawlEngineHandle engine, String url)
+```
+
+**Example:**
+
+```dart
+final result = await scrape(CrawlEngineHandle(), "value");
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 CrawlResult crawl(CrawlEngineHandle engine, String url)
 ```
 
+**Example:**
+
+```dart
+final result = await crawl(CrawlEngineHandle(), "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 MapResult mapUrls(CrawlEngineHandle engine, String url)
 ```
 
+**Example:**
+
+```dart
+final result = await mapUrls(CrawlEngineHandle(), "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```dart
 InteractionResult interact(CrawlEngineHandle engine, String url, List<PageAction> actions)
+```
+
+**Example:**
+
+```dart
+final result = await interact(CrawlEngineHandle(), "value", []);
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 BatchScrapeResults batchScrape(CrawlEngineHandle engine, List<String> urls)
 ```
 
+**Example:**
+
+```dart
+final result = await batchScrape(CrawlEngineHandle(), []);
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```dart
 BatchCrawlResults batchCrawl(CrawlEngineHandle engine, List<String> urls)
+```
+
+**Example:**
+
+```dart
+final result = await batchCrawl(CrawlEngineHandle(), []);
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 static BrowserConfig default()
 ```
 
+**Example:**
+
+```dart
+final result = BrowserConfig.default();
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```dart
 static ContentConfig default()
+```
+
+**Example:**
+
+```dart
+final result = ContentConfig.default();
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 static CrawlConfig default()
 ```
 
+**Example:**
+
+```dart
+final result = CrawlConfig.default();
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```dart
 void validate()
+```
+
+**Example:**
+
+```dart
+instance.validate();
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 String crawlStream(CrawlStreamRequest req)
 ```
 
+**Example:**
+
+```dart
+final result = await instance.crawlStream(CrawlStreamRequest());
+```
+
 #### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```dart
 String batchCrawlStream(BatchCrawlStreamRequest req)
+```
+
+**Example:**
+
+```dart
+final result = await instance.batchCrawlStream(BatchCrawlStreamRequest());
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```dart
 int uniqueNormalizedUrls()
+```
+
+**Example:**
+
+```dart
+final result = instance.uniqueNormalizedUrls();
 ```
 
 ---

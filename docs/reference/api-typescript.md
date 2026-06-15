@@ -2,7 +2,7 @@
 title: "TypeScript API Reference"
 ---
 
-## TypeScript API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## TypeScript API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```typescript
 function generateCitations(markdown: string): CitationResult
+```
+
+**Example:**
+
+```typescript
+const result = generateCitations("value");
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 function createEngine(config?: CrawlConfig): CrawlEngineHandle
 ```
 
+**Example:**
+
+```typescript
+const result = createEngine(new CrawlConfig());
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```typescript
 function scrape(engine: CrawlEngineHandle, url: string): Promise<ScrapeResult>
+```
+
+**Example:**
+
+```typescript
+const result = await scrape(new CrawlEngineHandle(), "value");
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 function crawl(engine: CrawlEngineHandle, url: string): Promise<CrawlResult>
 ```
 
+**Example:**
+
+```typescript
+const result = await crawl(new CrawlEngineHandle(), "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 function mapUrls(engine: CrawlEngineHandle, url: string): Promise<MapResult>
 ```
 
+**Example:**
+
+```typescript
+const result = await mapUrls(new CrawlEngineHandle(), "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```typescript
 function interact(engine: CrawlEngineHandle, url: string, actions: Array<PageAction>): Promise<InteractionResult>
+```
+
+**Example:**
+
+```typescript
+const result = await interact(new CrawlEngineHandle(), "value", []);
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 function batchScrape(engine: CrawlEngineHandle, urls: Array<string>): Promise<BatchScrapeResults>
 ```
 
+**Example:**
+
+```typescript
+const result = await batchScrape(new CrawlEngineHandle(), []);
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```typescript
 function batchCrawl(engine: CrawlEngineHandle, urls: Array<string>): Promise<BatchCrawlResults>
+```
+
+**Example:**
+
+```typescript
+const result = await batchCrawl(new CrawlEngineHandle(), []);
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 static default(): BrowserConfig
 ```
 
+**Example:**
+
+```typescript
+const result = BrowserConfig.default();
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```typescript
 static default(): ContentConfig
+```
+
+**Example:**
+
+```typescript
+const result = ContentConfig.default();
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 static default(): CrawlConfig
 ```
 
+**Example:**
+
+```typescript
+const result = CrawlConfig.default();
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```typescript
 validate(): void
+```
+
+**Example:**
+
+```typescript
+instance.validate();
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 crawlStream(req: CrawlStreamRequest): string
 ```
 
+**Example:**
+
+```typescript
+const result = await instance.crawlStream(new CrawlStreamRequest());
+```
+
 #### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```typescript
 batchCrawlStream(req: BatchCrawlStreamRequest): string
+```
+
+**Example:**
+
+```typescript
+const result = await instance.batchCrawlStream(new BatchCrawlStreamRequest());
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```typescript
 uniqueNormalizedUrls(): number
+```
+
+**Example:**
+
+```typescript
+const result = instance.uniqueNormalizedUrls();
 ```
 
 ---

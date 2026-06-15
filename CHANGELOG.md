@@ -4,6 +4,12 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.68] - 2026-06-15
+
+### Changed
+
+- **Regenerate against published alef 0.25.15.** Picks up the four SSRF env-var emitter fixes (Java Surefire env, Go `cmd.Env` append, Ruby `require 'spec_helper'` reorder, Elixir top-of-file env block with deduplication), the elixir test_helper.exs deduplication, the Dart cfg-strip + Swift `Package.swift` shape fixes, and Rustler clippy lint quieting — all previously consumed via in-flight local alef builds and now anchored to the published 0.25.15 pin. No new behavior beyond rc.67; this RC moves the alef pin from in-flight local to a published version so the CI E2E + Publish Release runs reproduce against a registry-resolvable alef. Known carry-over: the Elixir `interact_async/3` binding fails to `Jason.encode!` action tuples (`{:click, %{...}}`) — needs alef Elixir tagged-enum codegen support; lower priority than the SSRF + redirect rc-blockers and *not* a new regression.
+
 ## [0.3.0-rc.67] - 2026-06-15
 
 ### Fixed

@@ -2,7 +2,7 @@
 title: "Java API Reference"
 ---
 
-## Java API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Java API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```java
 public static CitationResult generateCitations(String markdown)
+```
+
+**Example:**
+
+```java
+var result = generateCitations("value");
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 public static CrawlEngineHandle createEngine(CrawlConfig config) throws CrawlError
 ```
 
+**Example:**
+
+```java
+var result = createEngine(new CrawlConfig());
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```java
 public static ScrapeResult scrape(CrawlEngineHandle engine, String url) throws CrawlError
+```
+
+**Example:**
+
+```java
+var result = scrape(new CrawlEngineHandle(), "value");
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 public static CrawlResult crawl(CrawlEngineHandle engine, String url) throws CrawlError
 ```
 
+**Example:**
+
+```java
+var result = crawl(new CrawlEngineHandle(), "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 public static MapResult mapUrls(CrawlEngineHandle engine, String url) throws CrawlError
 ```
 
+**Example:**
+
+```java
+var result = mapUrls(new CrawlEngineHandle(), "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```java
 public static InteractionResult interact(CrawlEngineHandle engine, String url, List<PageAction> actions) throws CrawlError
+```
+
+**Example:**
+
+```java
+var result = interact(new CrawlEngineHandle(), "value", List.of());
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 public static BatchScrapeResults batchScrape(CrawlEngineHandle engine, List<String> urls) throws CrawlError
 ```
 
+**Example:**
+
+```java
+var result = batchScrape(new CrawlEngineHandle(), List.of());
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```java
 public static BatchCrawlResults batchCrawl(CrawlEngineHandle engine, List<String> urls) throws CrawlError
+```
+
+**Example:**
+
+```java
+var result = batchCrawl(new CrawlEngineHandle(), List.of());
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 public static BrowserConfig defaultOptions()
 ```
 
+**Example:**
+
+```java
+var result = BrowserConfig.defaultOptions();
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```java
 public static ContentConfig defaultOptions()
+```
+
+**Example:**
+
+```java
+var result = ContentConfig.defaultOptions();
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 public static CrawlConfig defaultOptions()
 ```
 
+**Example:**
+
+```java
+var result = CrawlConfig.defaultOptions();
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```java
 public void validate() throws CrawlError
+```
+
+**Example:**
+
+```java
+instance.validate();
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 public String crawlStream(CrawlStreamRequest req) throws CrawlError
 ```
 
+**Example:**
+
+```java
+var result = instance.crawlStream(new CrawlStreamRequest());
+```
+
 #### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```java
 public String batchCrawlStream(BatchCrawlStreamRequest req) throws CrawlError
+```
+
+**Example:**
+
+```java
+var result = instance.batchCrawlStream(new BatchCrawlStreamRequest());
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```java
 public long uniqueNormalizedUrls()
+```
+
+**Example:**
+
+```java
+var result = instance.uniqueNormalizedUrls();
 ```
 
 ---

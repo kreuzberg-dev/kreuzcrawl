@@ -2,7 +2,7 @@
 title: "PHP API Reference"
 ---
 
-## PHP API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## PHP API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```php
 public static function generateCitations(string $markdown): CitationResult
+```
+
+**Example:**
+
+```php
+$result = generateCitations("value");
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 public static function createEngine(?CrawlConfig $config = null): CrawlEngineHandle
 ```
 
+**Example:**
+
+```php
+$result = createEngine(new CrawlConfig());
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```php
 public static function scrape(CrawlEngineHandle $engine, string $url): ScrapeResult
+```
+
+**Example:**
+
+```php
+$result = scrape(new CrawlEngineHandle(), "value");
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 public static function crawl(CrawlEngineHandle $engine, string $url): CrawlResult
 ```
 
+**Example:**
+
+```php
+$result = crawl(new CrawlEngineHandle(), "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 public static function mapUrls(CrawlEngineHandle $engine, string $url): MapResult
 ```
 
+**Example:**
+
+```php
+$result = mapUrls(new CrawlEngineHandle(), "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```php
 public static function interact(CrawlEngineHandle $engine, string $url, array<PageAction> $actions): InteractionResult
+```
+
+**Example:**
+
+```php
+$result = interact(new CrawlEngineHandle(), "value", []);
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 public static function batchScrape(CrawlEngineHandle $engine, array<string> $urls): BatchScrapeResults
 ```
 
+**Example:**
+
+```php
+$result = batchScrape(new CrawlEngineHandle(), []);
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```php
 public static function batchCrawl(CrawlEngineHandle $engine, array<string> $urls): BatchCrawlResults
+```
+
+**Example:**
+
+```php
+$result = batchCrawl(new CrawlEngineHandle(), []);
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 public static function default(): BrowserConfig
 ```
 
+**Example:**
+
+```php
+$result = BrowserConfig::default();
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```php
 public static function default(): ContentConfig
+```
+
+**Example:**
+
+```php
+$result = ContentConfig::default();
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 public static function default(): CrawlConfig
 ```
 
+**Example:**
+
+```php
+$result = CrawlConfig::default();
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```php
 public function validate(): void
+```
+
+**Example:**
+
+```php
+$instance->validate();
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 public function crawlStream(CrawlStreamRequest $req): string
 ```
 
+**Example:**
+
+```php
+$result = $instance->crawlStream(new CrawlStreamRequest());
+```
+
 #### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```php
 public function batchCrawlStream(BatchCrawlStreamRequest $req): string
+```
+
+**Example:**
+
+```php
+$result = $instance->batchCrawlStream(new BatchCrawlStreamRequest());
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```php
 public function uniqueNormalizedUrls(): int
+```
+
+**Example:**
+
+```php
+$result = $instance->uniqueNormalizedUrls();
 ```
 
 ---

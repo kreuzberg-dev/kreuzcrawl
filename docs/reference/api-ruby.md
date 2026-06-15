@@ -2,7 +2,7 @@
 title: "Ruby API Reference"
 ---
 
-## Ruby API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Ruby API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```ruby
 def self.generate_citations(markdown)
+```
+
+**Example:**
+
+```ruby
+result = generate_citations("value")
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 def self.create_engine(config: nil)
 ```
 
+**Example:**
+
+```ruby
+result = create_engine(config: CrawlConfig.new)
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```ruby
 def self.scrape(engine, url)
+```
+
+**Example:**
+
+```ruby
+result = scrape(CrawlEngineHandle.new, "value")
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 def self.crawl(engine, url)
 ```
 
+**Example:**
+
+```ruby
+result = crawl(CrawlEngineHandle.new, "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 def self.map_urls(engine, url)
 ```
 
+**Example:**
+
+```ruby
+result = map_urls(CrawlEngineHandle.new, "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```ruby
 def self.interact(engine, url, actions)
+```
+
+**Example:**
+
+```ruby
+result = interact(CrawlEngineHandle.new, "value", [])
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 def self.batch_scrape(engine, urls)
 ```
 
+**Example:**
+
+```ruby
+result = batch_scrape(CrawlEngineHandle.new, [])
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```ruby
 def self.batch_crawl(engine, urls)
+```
+
+**Example:**
+
+```ruby
+result = batch_crawl(CrawlEngineHandle.new, [])
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 def self.default()
 ```
 
+**Example:**
+
+```ruby
+result = BrowserConfig.default()
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```ruby
 def self.default()
+```
+
+**Example:**
+
+```ruby
+result = ContentConfig.default()
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 def self.default()
 ```
 
+**Example:**
+
+```ruby
+result = CrawlConfig.default()
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```ruby
 def validate()
+```
+
+**Example:**
+
+```ruby
+instance.validate()
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 def crawl_stream(req)
 ```
 
+**Example:**
+
+```ruby
+result = instance.crawl_stream(CrawlStreamRequest.new)
+```
+
 #### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```ruby
 def batch_crawl_stream(req)
+```
+
+**Example:**
+
+```ruby
+result = instance.batch_crawl_stream(BatchCrawlStreamRequest.new)
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```ruby
 def unique_normalized_urls()
+```
+
+**Example:**
+
+```ruby
+result = instance.unique_normalized_urls()
 ```
 
 ---

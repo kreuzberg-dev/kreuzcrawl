@@ -2,7 +2,7 @@
 title: "C API Reference"
 ---
 
-## C API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## C API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```c
 KcrawlCitationResult* kcrawl_generate_citations(const char* markdown);
+```
+
+**Example:**
+
+```c
+void *result = kcrawl_generate_citations("value");
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 KcrawlCrawlEngineHandle* kcrawl_create_engine(KcrawlCrawlConfig config);
 ```
 
+**Example:**
+
+```c
+void *result = kcrawl_create_engine(NULL);
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```c
 KcrawlScrapeResult* kcrawl_scrape(KcrawlCrawlEngineHandle engine, const char* url);
+```
+
+**Example:**
+
+```c
+void *result = kcrawl_scrape(NULL, "value");
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 KcrawlCrawlResult* kcrawl_crawl(KcrawlCrawlEngineHandle engine, const char* url);
 ```
 
+**Example:**
+
+```c
+void *result = kcrawl_crawl(NULL, "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url);
 ```
 
+**Example:**
+
+```c
+void *result = kcrawl_map_urls(NULL, "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```c
 KcrawlInteractionResult* kcrawl_interact(KcrawlCrawlEngineHandle engine, const char* url, KcrawlPageAction* actions);
+```
+
+**Example:**
+
+```c
+void *result = kcrawl_interact(NULL, "value", NULL);
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 KcrawlBatchScrapeResults* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, const char** urls);
 ```
 
+**Example:**
+
+```c
+void *result = kcrawl_batch_scrape(NULL, NULL);
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```c
 KcrawlBatchCrawlResults* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, const char** urls);
+```
+
+**Example:**
+
+```c
+void *result = kcrawl_batch_crawl(NULL, NULL);
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 KcrawlBrowserConfig kcrawl_default();
 ```
 
+**Example:**
+
+```c
+void *result = kcrawl_default();
+```
+
 ---
 
 #### KcrawlBrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```c
 KcrawlContentConfig kcrawl_default();
+```
+
+**Example:**
+
+```c
+void *result = kcrawl_default();
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 KcrawlCrawlConfig kcrawl_default();
 ```
 
+**Example:**
+
+```c
+void *result = kcrawl_default();
+```
+
 #### kcrawl_validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```c
 void kcrawl_validate();
+```
+
+**Example:**
+
+```c
+kcrawl_validate(instance, );
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 const char* kcrawl_crawl_stream(KcrawlCrawlStreamRequest req);
 ```
 
+**Example:**
+
+```c
+void *result = kcrawl_crawl_stream(instance, NULL);
+```
+
 #### kcrawl_batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```c
 const char* kcrawl_batch_crawl_stream(KcrawlBatchCrawlStreamRequest req);
+```
+
+**Example:**
+
+```c
+void *result = kcrawl_batch_crawl_stream(instance, NULL);
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```c
 uintptr_t kcrawl_unique_normalized_urls();
+```
+
+**Example:**
+
+```c
+void *result = kcrawl_unique_normalized_urls(instance, );
 ```
 
 ---

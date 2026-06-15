@@ -2,7 +2,7 @@
 title: "Kotlin (Android) API Reference"
 ---
 
-## Kotlin (Android) API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Kotlin (Android) API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```kotlin
 fun generateCitations(markdown: String): CitationResult
+```
+
+**Example:**
+
+```kotlin
+val result = generateCitations("value")
 ```
 
 **Parameters:**
@@ -44,6 +50,12 @@ Returns an error if the configuration is invalid.
 fun createEngine(config: CrawlConfig? = null): CrawlEngineHandle
 ```
 
+**Example:**
+
+```kotlin
+val result = createEngine(CrawlConfig())
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -64,6 +76,12 @@ Scrape a single URL, returning extracted page data.
 ```kotlin
 @Throws(CrawlError::class)
 fun scrape(engine: CrawlEngineHandle, url: String): ScrapeResult
+```
+
+**Example:**
+
+```kotlin
+val result = scrape(CrawlEngineHandle(), "value")
 ```
 
 **Parameters:**
@@ -89,6 +107,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 fun crawl(engine: CrawlEngineHandle, url: String): CrawlResult
 ```
 
+**Example:**
+
+```kotlin
+val result = crawl(CrawlEngineHandle(), "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -112,6 +136,12 @@ Discover all pages on a website by following links and sitemaps.
 fun mapUrls(engine: CrawlEngineHandle, url: String): MapResult
 ```
 
+**Example:**
+
+```kotlin
+val result = mapUrls(CrawlEngineHandle(), "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -133,6 +163,12 @@ Execute browser actions on a single page.
 ```kotlin
 @Throws(CrawlError::class)
 fun interact(engine: CrawlEngineHandle, url: String, actions: List<PageAction>): InteractionResult
+```
+
+**Example:**
+
+```kotlin
+val result = interact(CrawlEngineHandle(), "value", [])
 ```
 
 **Parameters:**
@@ -159,6 +195,12 @@ Scrape multiple URLs concurrently.
 fun batchScrape(engine: CrawlEngineHandle, urls: List<String>): BatchScrapeResults
 ```
 
+**Example:**
+
+```kotlin
+val result = batchScrape(CrawlEngineHandle(), [])
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -180,6 +222,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```kotlin
 @Throws(CrawlError::class)
 fun batchCrawl(engine: CrawlEngineHandle, urls: List<String>): BatchCrawlResults
+```
+
+**Example:**
+
+```kotlin
+val result = batchCrawl(CrawlEngineHandle(), [])
 ```
 
 **Parameters:**
@@ -325,6 +373,12 @@ Browser fallback configuration.
 fun default(): BrowserConfig
 ```
 
+**Example:**
+
+```kotlin
+val result = BrowserConfig.default()
+```
+
 ---
 
 #### BrowserExtras
@@ -397,6 +451,12 @@ html-to-markdown-rs as the conversion engine for all formats
 ```kotlin
 @JvmStatic
 fun default(): ContentConfig
+```
+
+**Example:**
+
+```kotlin
+val result = ContentConfig.default()
 ```
 
 ---
@@ -472,6 +532,12 @@ Configuration for crawl, scrape, and map operations.
 fun default(): CrawlConfig
 ```
 
+**Example:**
+
+```kotlin
+val result = CrawlConfig.default()
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -481,6 +547,12 @@ Validate the configuration, returning an error if any values are invalid.
 ```kotlin
 @Throws(CrawlError::class)
 fun validate()
+```
+
+**Example:**
+
+```kotlin
+instance.validate()
 ```
 
 ---
@@ -510,6 +582,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 fun crawlStream(req: CrawlStreamRequest): String
 ```
 
+**Example:**
+
+```kotlin
+val result = instance.crawlStream(CrawlStreamRequest())
+```
+
 #### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -524,6 +602,12 @@ errors; today every emit is `Ok`.
 ```kotlin
 @Throws(CrawlError::class)
 fun batchCrawlStream(req: BatchCrawlStreamRequest): String
+```
+
+**Example:**
+
+```kotlin
+val result = instance.batchCrawlStream(BatchCrawlStreamRequest())
 ```
 
 ---
@@ -584,6 +668,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```kotlin
 fun uniqueNormalizedUrls(): Long
+```
+
+**Example:**
+
+```kotlin
+val result = instance.uniqueNormalizedUrls()
 ```
 
 ---

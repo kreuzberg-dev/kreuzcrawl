@@ -2,7 +2,7 @@
 title: "Go API Reference"
 ---
 
-## Go API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Go API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```go
 func GenerateCitations(markdown string) CitationResult
+```
+
+**Example:**
+
+```go
+result := GenerateCitations("value")
 ```
 
 **Parameters:**
@@ -43,6 +49,15 @@ Returns an error if the configuration is invalid.
 func CreateEngine(config CrawlConfig) (CrawlEngineHandle, error)
 ```
 
+**Example:**
+
+```go
+result, err := CreateEngine(CrawlConfig{})
+if err != nil {
+    return err
+}
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +77,15 @@ Scrape a single URL, returning extracted page data.
 
 ```go
 func Scrape(engine CrawlEngineHandle, url string) (ScrapeResult, error)
+```
+
+**Example:**
+
+```go
+result, err := Scrape(CrawlEngineHandle{}, "value")
+if err != nil {
+    return err
+}
 ```
 
 **Parameters:**
@@ -86,6 +110,15 @@ Crawl a website starting from `url`, following links up to the configured depth.
 func Crawl(engine CrawlEngineHandle, url string) (CrawlResult, error)
 ```
 
+**Example:**
+
+```go
+result, err := Crawl(CrawlEngineHandle{}, "value")
+if err != nil {
+    return err
+}
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +141,15 @@ Discover all pages on a website by following links and sitemaps.
 func MapUrls(engine CrawlEngineHandle, url string) (MapResult, error)
 ```
 
+**Example:**
+
+```go
+result, err := MapUrls(CrawlEngineHandle{}, "value")
+if err != nil {
+    return err
+}
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +170,15 @@ Execute browser actions on a single page.
 
 ```go
 func Interact(engine CrawlEngineHandle, url string, actions []PageAction) (InteractionResult, error)
+```
+
+**Example:**
+
+```go
+result, err := Interact(CrawlEngineHandle{}, "value", nil)
+if err != nil {
+    return err
+}
 ```
 
 **Parameters:**
@@ -153,6 +204,15 @@ Scrape multiple URLs concurrently.
 func BatchScrape(engine CrawlEngineHandle, urls []string) (BatchScrapeResults, error)
 ```
 
+**Example:**
+
+```go
+result, err := BatchScrape(CrawlEngineHandle{}, nil)
+if err != nil {
+    return err
+}
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +233,15 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```go
 func BatchCrawl(engine CrawlEngineHandle, urls []string) (BatchCrawlResults, error)
+```
+
+**Example:**
+
+```go
+result, err := BatchCrawl(CrawlEngineHandle{}, nil)
+if err != nil {
+    return err
+}
 ```
 
 **Parameters:**
@@ -317,6 +386,12 @@ Browser fallback configuration.
 func (o *BrowserConfig) Default() BrowserConfig
 ```
 
+**Example:**
+
+```go
+result := BrowserConfig.Default()
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +463,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```go
 func (o *ContentConfig) Default() ContentConfig
+```
+
+**Example:**
+
+```go
+result := ContentConfig.Default()
 ```
 
 ---
@@ -462,6 +543,12 @@ Configuration for crawl, scrape, and map operations.
 func (o *CrawlConfig) Default() CrawlConfig
 ```
 
+**Example:**
+
+```go
+result := CrawlConfig.Default()
+```
+
 #### Validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +557,14 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```go
 func (o *CrawlConfig) Validate() error
+```
+
+**Example:**
+
+```go
+if err := instance.Validate(); err != nil {
+    return err
+}
 ```
 
 ---
@@ -498,6 +593,15 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 func (o *CrawlEngineHandle) CrawlStream(req CrawlStreamRequest) (string, error)
 ```
 
+**Example:**
+
+```go
+result, err := instance.CrawlStream(CrawlStreamRequest{})
+if err != nil {
+    return err
+}
+```
+
 #### BatchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +615,15 @@ errors; today every emit is `Ok`.
 
 ```go
 func (o *CrawlEngineHandle) BatchCrawlStream(req BatchCrawlStreamRequest) (string, error)
+```
+
+**Example:**
+
+```go
+result, err := instance.BatchCrawlStream(BatchCrawlStreamRequest{})
+if err != nil {
+    return err
+}
 ```
 
 ---
@@ -571,6 +684,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```go
 func (o *CrawlResult) UniqueNormalizedUrls() int
+```
+
+**Example:**
+
+```go
+result := instance.UniqueNormalizedUrls()
 ```
 
 ---

@@ -2,7 +2,7 @@
 title: "Python API Reference"
 ---
 
-## Python API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Python API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```python
 def generate_citations(markdown: str) -> CitationResult
+```
+
+**Example:**
+
+```python
+result = generate_citations("value")
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 def create_engine(config: CrawlConfig = None) -> CrawlEngineHandle
 ```
 
+**Example:**
+
+```python
+result = create_engine(config=CrawlConfig())
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```python
 def scrape(engine: CrawlEngineHandle, url: str) -> ScrapeResult
+```
+
+**Example:**
+
+```python
+result = scrape(CrawlEngineHandle(), "value")
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 def crawl(engine: CrawlEngineHandle, url: str) -> CrawlResult
 ```
 
+**Example:**
+
+```python
+result = crawl(CrawlEngineHandle(), "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 def map_urls(engine: CrawlEngineHandle, url: str) -> MapResult
 ```
 
+**Example:**
+
+```python
+result = map_urls(CrawlEngineHandle(), "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```python
 def interact(engine: CrawlEngineHandle, url: str, actions: list[PageAction]) -> InteractionResult
+```
+
+**Example:**
+
+```python
+result = interact(CrawlEngineHandle(), "value", [])
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 def batch_scrape(engine: CrawlEngineHandle, urls: list[str]) -> BatchScrapeResults
 ```
 
+**Example:**
+
+```python
+result = batch_scrape(CrawlEngineHandle(), [])
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```python
 def batch_crawl(engine: CrawlEngineHandle, urls: list[str]) -> BatchCrawlResults
+```
+
+**Example:**
+
+```python
+result = batch_crawl(CrawlEngineHandle(), [])
 ```
 
 **Parameters:**
@@ -318,6 +366,12 @@ Browser fallback configuration.
 def default() -> BrowserConfig
 ```
 
+**Example:**
+
+```python
+result = BrowserConfig.default()
+```
+
 ---
 
 #### BrowserExtras
@@ -390,6 +444,12 @@ html-to-markdown-rs as the conversion engine for all formats
 ```python
 @staticmethod
 def default() -> ContentConfig
+```
+
+**Example:**
+
+```python
+result = ContentConfig.default()
 ```
 
 ---
@@ -465,6 +525,12 @@ Configuration for crawl, scrape, and map operations.
 def default() -> CrawlConfig
 ```
 
+**Example:**
+
+```python
+result = CrawlConfig.default()
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -473,6 +539,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```python
 def validate(self) -> None
+```
+
+**Example:**
+
+```python
+instance.validate()
 ```
 
 ---
@@ -501,6 +573,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 def crawl_stream(self, req: CrawlStreamRequest) -> str
 ```
 
+**Example:**
+
+```python
+result = instance.crawl_stream(CrawlStreamRequest())
+```
+
 #### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -514,6 +592,12 @@ errors; today every emit is `Ok`.
 
 ```python
 def batch_crawl_stream(self, req: BatchCrawlStreamRequest) -> str
+```
+
+**Example:**
+
+```python
+result = instance.batch_crawl_stream(BatchCrawlStreamRequest())
 ```
 
 ---
@@ -574,6 +658,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```python
 def unique_normalized_urls(self) -> int
+```
+
+**Example:**
+
+```python
+result = instance.unique_normalized_urls()
 ```
 
 ---

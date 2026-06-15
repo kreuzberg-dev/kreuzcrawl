@@ -2,7 +2,7 @@
 title: "Swift API Reference"
 ---
 
-## Swift API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Swift API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```swift
 public static func generateCitations(markdown: String) -> CitationResult
+```
+
+**Example:**
+
+```swift
+let result = generateCitations("value")
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 public static func createEngine(config: CrawlConfig? = nil) throws -> CrawlEngineHandle
 ```
 
+**Example:**
+
+```swift
+let result = try createEngine(CrawlConfig())
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```swift
 public static func scrape(engine: CrawlEngineHandle, url: String) throws -> ScrapeResult
+```
+
+**Example:**
+
+```swift
+let result = try scrape(CrawlEngineHandle(), "value")
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 public static func crawl(engine: CrawlEngineHandle, url: String) throws -> CrawlResult
 ```
 
+**Example:**
+
+```swift
+let result = try crawl(CrawlEngineHandle(), "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 public static func mapUrls(engine: CrawlEngineHandle, url: String) throws -> MapResult
 ```
 
+**Example:**
+
+```swift
+let result = try mapUrls(CrawlEngineHandle(), "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```swift
 public static func interact(engine: CrawlEngineHandle, url: String, actions: [PageAction]) throws -> InteractionResult
+```
+
+**Example:**
+
+```swift
+let result = try interact(CrawlEngineHandle(), "value", [])
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 public static func batchScrape(engine: CrawlEngineHandle, urls: [String]) throws -> BatchScrapeResults
 ```
 
+**Example:**
+
+```swift
+let result = try batchScrape(CrawlEngineHandle(), [])
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```swift
 public static func batchCrawl(engine: CrawlEngineHandle, urls: [String]) throws -> BatchCrawlResults
+```
+
+**Example:**
+
+```swift
+let result = try batchCrawl(CrawlEngineHandle(), [])
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 public static func default() -> BrowserConfig
 ```
 
+**Example:**
+
+```swift
+let result = BrowserConfig.default()
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```swift
 public static func default() -> ContentConfig
+```
+
+**Example:**
+
+```swift
+let result = ContentConfig.default()
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 public static func default() -> CrawlConfig
 ```
 
+**Example:**
+
+```swift
+let result = CrawlConfig.default()
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```swift
 public func validate() throws
+```
+
+**Example:**
+
+```swift
+try instance.validate()
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 public func crawlStream(req: CrawlStreamRequest) throws -> String
 ```
 
+**Example:**
+
+```swift
+let result = try instance.crawlStream(CrawlStreamRequest())
+```
+
 #### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```swift
 public func batchCrawlStream(req: BatchCrawlStreamRequest) throws -> String
+```
+
+**Example:**
+
+```swift
+let result = try instance.batchCrawlStream(BatchCrawlStreamRequest())
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```swift
 public func uniqueNormalizedUrls() -> UInt64
+```
+
+**Example:**
+
+```swift
+let result = instance.uniqueNormalizedUrls()
 ```
 
 ---

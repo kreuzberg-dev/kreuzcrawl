@@ -2,7 +2,7 @@
 title: "Zig API Reference"
 ---
 
-## Zig API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Zig API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```zig
 pub fn generate_citations(markdown: [:0]const u8) CitationResult
+```
+
+**Example:**
+
+```zig
+const result = generateCitations("value");
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 pub fn create_engine(config: ?CrawlConfig) CrawlError!CrawlEngineHandle
 ```
 
+**Example:**
+
+```zig
+const result = try createEngine(.{});
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```zig
 pub fn scrape(engine: CrawlEngineHandle, url: [:0]const u8) CrawlError!ScrapeResult
+```
+
+**Example:**
+
+```zig
+const result = try scrape(.{}, "value");
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 pub fn crawl(engine: CrawlEngineHandle, url: [:0]const u8) CrawlError!CrawlResult
 ```
 
+**Example:**
+
+```zig
+const result = try crawl(.{}, "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 pub fn map_urls(engine: CrawlEngineHandle, url: [:0]const u8) CrawlError!MapResult
 ```
 
+**Example:**
+
+```zig
+const result = try mapUrls(.{}, "value");
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```zig
 pub fn interact(engine: CrawlEngineHandle, url: [:0]const u8, actions: []const PageAction) CrawlError!InteractionResult
+```
+
+**Example:**
+
+```zig
+const result = try interact(.{}, "value", &[_]u8{});
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 pub fn batch_scrape(engine: CrawlEngineHandle, urls: []const [:0]const u8) CrawlError!BatchScrapeResults
 ```
 
+**Example:**
+
+```zig
+const result = try batchScrape(.{}, &[_]u8{});
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```zig
 pub fn batch_crawl(engine: CrawlEngineHandle, urls: []const [:0]const u8) CrawlError!BatchCrawlResults
+```
+
+**Example:**
+
+```zig
+const result = try batchCrawl(.{}, &[_]u8{});
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 pub fn default() BrowserConfig
 ```
 
+**Example:**
+
+```zig
+const result = BrowserConfig.default();
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```zig
 pub fn default() ContentConfig
+```
+
+**Example:**
+
+```zig
+const result = ContentConfig.default();
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 pub fn default() CrawlConfig
 ```
 
+**Example:**
+
+```zig
+const result = CrawlConfig.default();
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```zig
 pub fn validate(self: *const CrawlConfig) CrawlError!void
+```
+
+**Example:**
+
+```zig
+try instance.validate();
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 pub fn crawlStream(self: *const CrawlEngineHandle, req: CrawlStreamRequest) CrawlError![:0]const u8
 ```
 
+**Example:**
+
+```zig
+const result = try instance.crawlStream(.{});
+```
+
 #### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```zig
 pub fn batchCrawlStream(self: *const CrawlEngineHandle, req: BatchCrawlStreamRequest) CrawlError![:0]const u8
+```
+
+**Example:**
+
+```zig
+const result = try instance.batchCrawlStream(.{});
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```zig
 pub fn uniqueNormalizedUrls(self: *const CrawlResult) u64
+```
+
+**Example:**
+
+```zig
+const result = instance.uniqueNormalizedUrls();
 ```
 
 ---

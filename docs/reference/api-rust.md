@@ -2,7 +2,7 @@
 title: "Rust API Reference"
 ---
 
-## Rust API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Rust API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -18,6 +18,12 @@ Images `![alt](url)` are preserved unchanged.
 
 ```rust
 pub fn generate_citations(markdown: &str) -> CitationResult
+```
+
+**Example:**
+
+```rust
+let result = generate_citations("value");
 ```
 
 **Parameters:**
@@ -43,6 +49,12 @@ Returns an error if the configuration is invalid.
 pub fn create_engine(config: Option<CrawlConfig>) -> Result<CrawlEngineHandle, CrawlError>
 ```
 
+**Example:**
+
+```rust
+let result = create_engine(CrawlConfig::default())?;
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -62,6 +74,12 @@ Scrape a single URL, returning extracted page data.
 
 ```rust
 pub async fn scrape(engine: CrawlEngineHandle, url: &str) -> Result<ScrapeResult, CrawlError>
+```
+
+**Example:**
+
+```rust
+let result = scrape(CrawlEngineHandle::default(), "value").await?;
 ```
 
 **Parameters:**
@@ -86,6 +104,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 pub async fn crawl(engine: CrawlEngineHandle, url: &str) -> Result<CrawlResult, CrawlError>
 ```
 
+**Example:**
+
+```rust
+let result = crawl(CrawlEngineHandle::default(), "value").await?;
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -108,6 +132,12 @@ Discover all pages on a website by following links and sitemaps.
 pub async fn map_urls(engine: CrawlEngineHandle, url: &str) -> Result<MapResult, CrawlError>
 ```
 
+**Example:**
+
+```rust
+let result = map_urls(CrawlEngineHandle::default(), "value").await?;
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -128,6 +158,12 @@ Execute browser actions on a single page.
 
 ```rust
 pub async fn interact(engine: CrawlEngineHandle, url: &str, actions: Vec<PageAction>) -> Result<InteractionResult, CrawlError>
+```
+
+**Example:**
+
+```rust
+let result = interact(CrawlEngineHandle::default(), "value", vec![]).await?;
 ```
 
 **Parameters:**
@@ -153,6 +189,12 @@ Scrape multiple URLs concurrently.
 pub async fn batch_scrape(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchScrapeResults, CrawlError>
 ```
 
+**Example:**
+
+```rust
+let result = batch_scrape(CrawlEngineHandle::default(), vec![]).await?;
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -173,6 +215,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 
 ```rust
 pub async fn batch_crawl(engine: CrawlEngineHandle, urls: Vec<String>) -> Result<BatchCrawlResults, CrawlError>
+```
+
+**Example:**
+
+```rust
+let result = batch_crawl(CrawlEngineHandle::default(), vec![]).await?;
 ```
 
 **Parameters:**
@@ -317,6 +365,12 @@ Browser fallback configuration.
 pub fn default() -> BrowserConfig
 ```
 
+**Example:**
+
+```rust
+let result = BrowserConfig::default();
+```
+
 ---
 
 #### BrowserExtras
@@ -388,6 +442,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```rust
 pub fn default() -> ContentConfig
+```
+
+**Example:**
+
+```rust
+let result = ContentConfig::default();
 ```
 
 ---
@@ -462,6 +522,12 @@ Configuration for crawl, scrape, and map operations.
 pub fn default() -> CrawlConfig
 ```
 
+**Example:**
+
+```rust
+let result = CrawlConfig::default();
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -470,6 +536,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```rust
 pub fn validate(&self)
+```
+
+**Example:**
+
+```rust
+instance.validate()?;
 ```
 
 ---
@@ -498,6 +570,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 pub fn crawl_stream(&self, req: CrawlStreamRequest) -> String
 ```
 
+**Example:**
+
+```rust
+let result = instance.crawl_stream(CrawlStreamRequest::default()).await?;
+```
+
 #### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -511,6 +589,12 @@ errors; today every emit is `Ok`.
 
 ```rust
 pub fn batch_crawl_stream(&self, req: BatchCrawlStreamRequest) -> String
+```
+
+**Example:**
+
+```rust
+let result = instance.batch_crawl_stream(BatchCrawlStreamRequest::default()).await?;
 ```
 
 ---
@@ -571,6 +655,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```rust
 pub fn unique_normalized_urls(&self) -> usize
+```
+
+**Example:**
+
+```rust
+let result = instance.unique_normalized_urls();
 ```
 
 ---

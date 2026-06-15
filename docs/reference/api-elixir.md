@@ -2,7 +2,7 @@
 title: "Elixir API Reference"
 ---
 
-## Elixir API Reference <span class="version-badge">v0.3.0-rc.67</span>
+## Elixir API Reference <span class="version-badge">v0.3.0-rc.68</span>
 
 ### Functions
 
@@ -19,6 +19,12 @@ Images `![alt](url)` are preserved unchanged.
 ```elixir
 @spec generate_citations(markdown) :: {:ok, term()} | {:error, term()}
 def generate_citations(markdown)
+```
+
+**Example:**
+
+```elixir
+{:ok, result} = generate_citations("value")
 ```
 
 **Parameters:**
@@ -45,6 +51,12 @@ Returns an error if the configuration is invalid.
 def create_engine(config)
 ```
 
+**Example:**
+
+```elixir
+{:ok, result} = create_engine(%{{}})
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -65,6 +77,12 @@ Scrape a single URL, returning extracted page data.
 ```elixir
 @spec scrape(engine, url) :: {:ok, term()} | {:error, term()}
 def scrape(engine, url)
+```
+
+**Example:**
+
+```elixir
+{:ok, result} = scrape(%{{}}, "value")
 ```
 
 **Parameters:**
@@ -90,6 +108,12 @@ Crawl a website starting from `url`, following links up to the configured depth.
 def crawl(engine, url)
 ```
 
+**Example:**
+
+```elixir
+{:ok, result} = crawl(%{{}}, "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -113,6 +137,12 @@ Discover all pages on a website by following links and sitemaps.
 def map_urls(engine, url)
 ```
 
+**Example:**
+
+```elixir
+{:ok, result} = map_urls(%{{}}, "value")
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -134,6 +164,12 @@ Execute browser actions on a single page.
 ```elixir
 @spec interact(engine, url, actions) :: {:ok, term()} | {:error, term()}
 def interact(engine, url, actions)
+```
+
+**Example:**
+
+```elixir
+{:ok, result} = interact(%{{}}, "value", [])
 ```
 
 **Parameters:**
@@ -160,6 +196,12 @@ Scrape multiple URLs concurrently.
 def batch_scrape(engine, urls)
 ```
 
+**Example:**
+
+```elixir
+{:ok, result} = batch_scrape(%{{}}, [])
+```
+
 **Parameters:**
 
 | Name | Type | Required | Description |
@@ -181,6 +223,12 @@ Crawl multiple seed URLs concurrently, each following links to configured depth.
 ```elixir
 @spec batch_crawl(engine, urls) :: {:ok, term()} | {:error, term()}
 def batch_crawl(engine, urls)
+```
+
+**Example:**
+
+```elixir
+{:ok, result} = batch_crawl(%{{}}, [])
 ```
 
 **Parameters:**
@@ -325,6 +373,12 @@ Browser fallback configuration.
 def default()
 ```
 
+**Example:**
+
+```elixir
+{:ok, result} = BrowserConfig.default()
+```
+
 ---
 
 #### BrowserExtras
@@ -396,6 +450,12 @@ html-to-markdown-rs as the conversion engine for all formats
 
 ```elixir
 def default()
+```
+
+**Example:**
+
+```elixir
+{:ok, result} = ContentConfig.default()
 ```
 
 ---
@@ -470,6 +530,12 @@ Configuration for crawl, scrape, and map operations.
 def default()
 ```
 
+**Example:**
+
+```elixir
+{:ok, result} = CrawlConfig.default()
+```
+
 #### validate()
 
 Validate the configuration, returning an error if any values are invalid.
@@ -478,6 +544,12 @@ Validate the configuration, returning an error if any values are invalid.
 
 ```elixir
 def validate()
+```
+
+**Example:**
+
+```elixir
+:ok = instance.validate()
 ```
 
 ---
@@ -506,6 +578,12 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 def crawl_stream(req)
 ```
 
+**Example:**
+
+```elixir
+{:ok, result} = instance.crawl_stream(%{{}})
+```
+
 #### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
@@ -519,6 +597,12 @@ errors; today every emit is `Ok`.
 
 ```elixir
 def batch_crawl_stream(req)
+```
+
+**Example:**
+
+```elixir
+{:ok, result} = instance.batch_crawl_stream(%{{}})
 ```
 
 ---
@@ -579,6 +663,12 @@ Returns the count of unique normalized URLs encountered during crawling.
 
 ```elixir
 def unique_normalized_urls()
+```
+
+**Example:**
+
+```elixir
+{:ok, result} = instance.unique_normalized_urls()
 ```
 
 ---
