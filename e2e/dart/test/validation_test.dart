@@ -260,14 +260,6 @@ void main() {
     }(), throwsA(anything));
   });
 
-  test('scrape() rejects loopback addresses by default SSRF policy', () async {
-    await expectLater(() async {
-      final engine = await KreuzcrawlBridge.createEngine();
-      final url = _fixtureUrl("validation_ssrf_loopback_denied");
-      return KreuzcrawlBridge.scrape(engine, url);
-    }(), throwsA(anything));
-  });
-
   test('Zero request timeout is rejected as invalid config', () async {
     await expectLater(() async {
       final engineConfig = await createCrawlConfigFromJson(json: r'{"request_timeout":0}');

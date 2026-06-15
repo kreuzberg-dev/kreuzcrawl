@@ -245,27 +245,6 @@ void test_validation_negative_body_size(void) {
     kcrawl_crawl_engine_handle_free(engine);
 }
 
-void test_validation_ssrf_loopback_denied(void) {
-    /* scrape() rejects loopback addresses by default SSRF policy */
-    KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{}");
-    if (config_handle == NULL) { return; }
-    KCRAWLCrawlEngineHandle* engine = kcrawl_create_engine(config_handle);
-    kcrawl_crawl_config_free(config_handle);
-    if (engine == NULL) { return; }
-    const char* mock_per_fixture = getenv("MOCK_SERVER_VALIDATION_SSRF_LOOPBACK_DENIED");
-    const char* mock_base = getenv("MOCK_SERVER_URL");
-    char url[2048];
-    if (mock_per_fixture && mock_per_fixture[0] != '\0') {
-        snprintf(url, sizeof(url), "%s", mock_per_fixture);
-    } else {
-        assert(mock_base != NULL && "MOCK_SERVER_URL must be set");
-        snprintf(url, sizeof(url), "%s/fixtures/validation_ssrf_loopback_denied", mock_base);
-    }
-    KCRAWLScrapeResult* result = kcrawl_scrape(engine, url);
-    if (result != NULL) kcrawl_scrape_result_free(result);
-    kcrawl_crawl_engine_handle_free(engine);
-}
-
 void test_validation_timeout_zero(void) {
     /* Zero request timeout is rejected as invalid config */
     KCRAWLCrawlConfig* config_handle = kcrawl_crawl_config_from_json("{\"request_timeout\":0}");

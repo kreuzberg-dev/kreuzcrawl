@@ -7,7 +7,7 @@
 
 [package]
 name = "kreuzcrawl-e2e-rust"
-version = "0.3.0-rc.66"
+version = "0.3.0-rc.67"
 edition = "2021"
 license = "MIT"
 publish = false

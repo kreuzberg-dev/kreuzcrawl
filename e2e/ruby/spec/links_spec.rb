@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'links' do
   it 'links_anchor_fragment: Identifies fragment-only links as anchor type' do

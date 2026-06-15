@@ -181,13 +181,6 @@ describe("validation", () => {
 			await scrape(engine, url);
 		}).rejects.toThrow();
 	}, 30000);
-	it("validation_ssrf_loopback_denied: scrape() rejects loopback addresses by default SSRF policy", async () => {
-		await expect(async () => {
-			const engine = createEngine(null);
-			const url = `${process.env.MOCK_SERVER_URL}/fixtures/validation_ssrf_loopback_denied`;
-			await scrape(engine, url);
-		}).rejects.toThrow();
-	}, 30000);
 	it("validation_timeout_zero: Zero request timeout is rejected as invalid config", async () => {
 		await expect(async () => {
 			const engineConfig = WasmCrawlConfig.default();

@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'encoding' do
   it 'encoding_double_encoded: Handles double-encoded URL characters (%25C3%25B6)' do

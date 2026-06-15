@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'batch' do
   it 'batch_crawl_basic: Batch crawl of 2 seed URLs with links to discover' do

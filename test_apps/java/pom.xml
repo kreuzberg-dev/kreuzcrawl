@@ -31,7 +31,7 @@
         <dependency>
             <groupId>dev.kreuzberg.kreuzcrawl</groupId>
             <artifactId>kreuzcrawl</artifactId>
-            <version>0.3.0-rc.66</version>
+            <version>0.3.0-rc.67</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -184,6 +184,9 @@
                 <configuration>
                     <argLine>--enable-preview --enable-native-access=ALL-UNNAMED -Djava.library.path=${project.basedir}/../../target/release</argLine>
                     <workingDirectory>${project.basedir}/../../test_documents</workingDirectory>
+                    <environmentVariables>
+                        <KREUZCRAWL_ALLOW_PRIVATE_NETWORK>true</KREUZCRAWL_ALLOW_PRIVATE_NETWORK>
+                    </environmentVariables>
                 </configuration>
             </plugin>
         </plugins>

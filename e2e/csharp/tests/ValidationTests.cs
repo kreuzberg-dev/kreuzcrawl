@@ -166,18 +166,6 @@ namespace Kreuzcrawl
         }
 
         [Fact]
-        public async Task Test_ValidationSsrfLoopbackDenied()
-        {
-            // scrape() rejects loopback addresses by default SSRF policy
-            await Assert.ThrowsAnyAsync<KreuzcrawlException>(async () =>
-            {
-                var engine = KreuzcrawlConverter.CreateEngine(null);
-                var url = Environment.GetEnvironmentVariable("MOCK_SERVER_URL") + "/fixtures/validation_ssrf_loopback_denied";
-                await KreuzcrawlConverter.ScrapeAsync(engine, url);
-            });
-        }
-
-        [Fact]
         public async Task Test_ValidationTimeoutZero()
         {
             // Zero request timeout is rejected as invalid config

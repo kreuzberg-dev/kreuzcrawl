@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'map' do
   it 'map_discover_urls: Discovers all URLs on a site without fetching full content' do

@@ -173,4 +173,4 @@ __all__ = [
     "scrape",
 ]
 
-__version__ = "0.3.0-rc.66"
+__version__ = "0.3.0-rc.67"

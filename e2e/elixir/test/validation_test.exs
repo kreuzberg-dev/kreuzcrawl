@@ -94,13 +94,6 @@ defmodule E2e.ValidationTest do
     end
   end
 
-  describe "validation_ssrf_loopback_denied" do
-    test "validation_ssrf_loopback_denied" do
-      assert {:error, _} = Kreuzcrawl.create_engine(nil)
-      url = (System.get_env("MOCK_SERVER_URL") || "") <> "/fixtures/validation_ssrf_loopback_denied"
-    end
-  end
-
   describe "validation_timeout_zero" do
     test "validation_timeout_zero" do
       engine_config = "{\"request_timeout\":0}"

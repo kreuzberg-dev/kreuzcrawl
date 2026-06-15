@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'error' do
   it 'error_401_unauthorized: Handles 401 Unauthorized response correctly' do

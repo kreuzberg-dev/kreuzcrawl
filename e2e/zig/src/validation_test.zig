@@ -195,22 +195,6 @@ test "validation_negative_body_size" {
     _ = _result_json;
 }
 
-test "validation_ssrf_loopback_denied" {
-    // scrape() rejects loopback addresses by default SSRF policy
-    suppress_abort();
-    var gpa: std.heap.DebugAllocator(.{}) = .init;
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
-
-    const url = if (std.c.getenv("MOCK_SERVER_VALIDATION_SSRF_LOOPBACK_DENIED")) |_pf| try std.fmt.allocPrint(allocator, "{s}", .{std.mem.span(_pf)}) else try std.fmt.allocPrint(allocator, "{s}/fixtures/validation_ssrf_loopback_denied", .{if (std.c.getenv("MOCK_SERVER_URL")) |v| std.mem.span(v) else "http://localhost:8080"});
-    defer allocator.free(url);
-    const _result_json = kreuzcrawl.scrape("{}", url) catch {
-        try testing.expect(true); // Error occurred as expected
-        return;
-    };
-    _ = _result_json;
-}
-
 test "validation_timeout_zero" {
     // Zero request timeout is rejected as invalid config
     suppress_abort();

@@ -6,5 +6,5 @@
 
 module Kreuzcrawl
   ## The version string for this package.
-  VERSION = "0.3.0.pre.rc.66"
+  VERSION = "0.3.0.pre.rc.67"
 end

@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'browser' do
   it "browser_config_auto_no_feature: Browser mode 'never' prevents browser use even when JS render hint is set" do

@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'interaction' do
   it 'interact_action_sequence: Execute a sequence of multiple actions (click, type, click) and verify all succeed with correct indices' do

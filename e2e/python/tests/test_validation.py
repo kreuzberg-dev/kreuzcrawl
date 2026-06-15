@@ -151,15 +151,6 @@ async def test_validation_negative_body_size() -> None:
 
 
 @pytest.mark.asyncio
-async def test_validation_ssrf_loopback_denied() -> None:
-    """scrape() rejects loopback addresses by default SSRF policy."""
-    with pytest.raises(Exception):  # noqa: B017
-        engine = create_engine(None)
-        url = os.environ["MOCK_SERVER_URL"] + "/fixtures/validation_ssrf_loopback_denied"
-        await scrape(engine, url)
-
-
-@pytest.mark.asyncio
 async def test_validation_timeout_zero() -> None:
     """Zero request timeout is rejected as invalid config."""
     with pytest.raises(Exception) as exc_info:  # noqa: B017

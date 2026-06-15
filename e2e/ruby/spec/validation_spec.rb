@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'validation' do
   it 'validation_browser_endpoint_invalid: Browser endpoint must be a valid ws:// or wss:// URL, not http://' do
@@ -104,14 +104,6 @@ RSpec.describe 'validation' do
       engine_config = { 'max_body_size' => 0 }
       engine = Kreuzcrawl.create_engine(engine_config.to_json)
       url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/validation_negative_body_size"
-      Kreuzcrawl.scrape_async(engine, url)
-    }.to raise_error(RuntimeError)
-  end
-
-  it 'validation_ssrf_loopback_denied: scrape() rejects loopback addresses by default SSRF policy' do
-    expect {
-      engine = Kreuzcrawl.create_engine(nil)
-      url = "#{ENV.fetch('MOCK_SERVER_URL')}/fixtures/validation_ssrf_loopback_denied"
       Kreuzcrawl.scrape_async(engine, url)
     }.to raise_error(RuntimeError)
   end

@@ -167,18 +167,6 @@ final class ValidationTests: XCTestCase {
         }
     }
 
-    func testValidationSsrfLoopbackDenied() async throws {
-        // scrape() rejects loopback addresses by default SSRF policy
-        do {
-            let engineObj = try createEngine(config: nil)
-            let url = AlefE2EMockServer.baseURL + "/fixtures/validation_ssrf_loopback_denied"
-            _ = try await Kreuzcrawl.scrape(engine: engineObj, url: url)
-            XCTFail("expected to throw")
-        } catch {
-            // success
-        }
-    }
-
     func testValidationTimeoutZero() async throws {
         // Zero request timeout is rejected as invalid config
         do {

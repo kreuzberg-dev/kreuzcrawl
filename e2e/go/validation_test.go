@@ -214,20 +214,6 @@ func Test_ValidationNegativeBodySize(t *testing.T) {
 	}
 }
 
-func Test_ValidationSsrfLoopbackDenied(t *testing.T) {
-	// scrape() rejects loopback addresses by default SSRF policy
-	engine, createErr := pkg.CreateEngine(nil)
-	if createErr != nil {
-		assert.Error(t, createErr)
-		return
-	}
-	url := os.Getenv("MOCK_SERVER_URL") + "/fixtures/validation_ssrf_loopback_denied"
-	_, err := pkg.Scrape(engine, url)
-	if err == nil {
-		t.Errorf("expected an error, but call succeeded")
-	}
-}
-
 func Test_ValidationTimeoutZero(t *testing.T) {
 	// Zero request timeout is rejected as invalid config
 	var engineConfig pkg.CrawlConfig

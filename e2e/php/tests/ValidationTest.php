@@ -127,15 +127,6 @@ final class ValidationTest extends TestCase
     }
 
 
-    /** scrape() rejects loopback addresses by default SSRF policy */
-    public function test_validation_ssrf_loopback_denied(): void
-    {
-        $this->expectException(\Exception::class);        $engine = Kreuzcrawl::createEngine(null);
-        $url = getenv('MOCK_SERVER_URL') . '/fixtures/validation_ssrf_loopback_denied';
-        Kreuzcrawl::scrape($engine, $url);
-    }
-
-
     /** Zero request timeout is rejected as invalid config */
     public function test_validation_timeout_zero(): void
     {

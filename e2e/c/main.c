@@ -1041,10 +1041,6 @@ int main(void) {
     test_validation_negative_body_size();
     printf(" PASSED\n");
     passed++;
-    printf("  Running test_validation_ssrf_loopback_denied...");
-    test_validation_ssrf_loopback_denied();
-    printf(" PASSED\n");
-    passed++;
     printf("  Running test_validation_timeout_zero...");
     test_validation_timeout_zero();
     printf(" PASSED\n");

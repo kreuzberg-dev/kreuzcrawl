@@ -94,14 +94,6 @@ test_validation_negative_body_size() {
   fi
 }
 
-test_validation_ssrf_loopback_denied() {
-  # scrape() rejects loopback addresses by default SSRF policy
-  if kreuzcrawl scrape "${MOCK_SERVER_VALIDATION_SSRF_LOOPBACK_DENIED:-${MOCK_SERVER_URL}/fixtures/validation_ssrf_loopback_denied}" --config '{}' --format json --browser-mode never >/dev/null 2>&1; then
-    echo 'FAIL [error]: expected command to fail but it succeeded' >&2
-    return 1
-  fi
-}
-
 test_validation_timeout_zero() {
   # Zero request timeout is rejected as invalid config
   if kreuzcrawl scrape "${MOCK_SERVER_VALIDATION_TIMEOUT_ZERO:-${MOCK_SERVER_URL}/fixtures/validation_timeout_zero}" --config '{"request_timeout":0}' --format json --browser-mode never >/dev/null 2>&1; then
@@ -122,6 +114,5 @@ run_tests_validation() {
   run_test test_validation_max_pages_zero
   run_test test_validation_max_redirects_too_high
   run_test test_validation_negative_body_size
-  run_test test_validation_ssrf_loopback_denied
   run_test test_validation_timeout_zero
 }

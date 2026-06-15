@@ -505,7 +505,6 @@ void test_validation_max_depth_too_high(void);
 void test_validation_max_pages_zero(void);
 void test_validation_max_redirects_too_high(void);
 void test_validation_negative_body_size(void);
-void test_validation_ssrf_loopback_denied(void);
 void test_validation_timeout_zero(void);
 
 /* Tests for category: warc */

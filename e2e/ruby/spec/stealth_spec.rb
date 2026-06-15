@@ -4,9 +4,9 @@
 # To verify freshness: alef verify --exit-code
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'kreuzcrawl'
 require 'json'
-require 'spec_helper'
 
 RSpec.describe 'stealth' do
   it 'stealth_ua_rotation_config: User-agent rotation config is accepted and crawl succeeds' do

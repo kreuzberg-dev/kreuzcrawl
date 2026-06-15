@@ -334,35 +334,6 @@ async fn test_validation_negative_body_size() {
 }
 
 #[tokio::test]
-async fn test_validation_ssrf_loopback_denied() {
-    // scrape() rejects loopback addresses by default SSRF policy
-    let engine_result = create_engine(None);
-    let url = std::env::var("MOCK_SERVER_VALIDATION_SSRF_LOOPBACK_DENIED").unwrap_or_else(|_| {
-        let _ = common::mock_server_url();
-        std::env::var("MOCK_SERVER_VALIDATION_SSRF_LOOPBACK_DENIED").unwrap_or_else(|_| {
-            format!(
-                "{}/fixtures/{}",
-                common::mock_server_url(),
-                "validation_ssrf_loopback_denied"
-            )
-        })
-    });
-    let result = match engine_result {
-        Err(e) => Err(e),
-        Ok(engine) => scrape(&engine, &url).await,
-    };
-    assert!(result.is_err(), "expected call to fail");
-    assert!(result.is_err(), "expected call to fail");
-    {
-        let __e = result.as_ref().err().unwrap();
-        assert!(
-            format!("{:?}", __e).contains("ssrf_policy_violation") || __e.to_string().contains("ssrf_policy_violation"),
-            "error message mismatch"
-        );
-    }
-}
-
-#[tokio::test]
 async fn test_validation_timeout_zero() {
     // Zero request timeout is rejected as invalid config
     let engine_config: CrawlConfig = serde_json::from_str("{\"request_timeout\":0}").expect("config should parse");

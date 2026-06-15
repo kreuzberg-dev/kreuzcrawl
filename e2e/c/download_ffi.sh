@@ -6,7 +6,7 @@
 set -euo pipefail
 
 REPO_URL="https://github.com/kreuzberg-dev/kreuzcrawl"
-VERSION="0.3.0-rc.66"
+VERSION="0.3.0-rc.67"
 FFI_PKG_NAME="kreuzcrawl-ffi"
 FFI_DIR="ffi"
 
