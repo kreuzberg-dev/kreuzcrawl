@@ -13,8 +13,8 @@ The crate root exports seven free functions over an opaque handle, plus serialis
 | `crawl(&engine, url) -> Result<CrawlResult, _>`                                       | Follow links from a seed up to `max_depth` / `max_pages`.    |
 | `map_urls(&engine, url) -> Result<MapResult, _>`                                      | Discover URLs via sitemaps and link extraction.              |
 | `interact(&engine, url, actions) -> Result<InteractionResult, _>`                     | Navigate once and run ordered page actions.                  |
-| `batch_scrape(&engine, urls) -> Result<Vec<BatchScrapeResult>, _>`                    | Scrape many URLs concurrently.                               |
-| `batch_crawl(&engine, urls) -> Result<Vec<BatchCrawlResult>, _>`                      | Crawl many seeds concurrently.                               |
+| `batch_scrape(&engine, urls) -> Result<BatchScrapeResults, _>`                        | Scrape many URLs concurrently and return aggregate counts.    |
+| `batch_crawl(&engine, urls) -> Result<BatchCrawlResults, _>`                          | Crawl many seeds concurrently and return aggregate counts.    |
 | `serve_api(...)` (feature `api`) / `start_mcp_server(...)` (feature `mcp`)            | Long-running REST and MCP servers backed by the same engine. |
 
 All other items in the source tree are internal — the public crate surface is intentionally narrow.
@@ -34,7 +34,7 @@ graph LR
     D --> O
 ```
 
-The middleware stack between the engine and the network applies per-domain rate limiting, conditional caching, and User-Agent rotation, plus optional `tracing` spans. WAF responses can trigger an automatic browser fallback when `BrowserMode::Auto` is set. `interact()` bypasses the crawl/extraction pipeline and keeps one browser page open while it executes `PageAction` values such as click, type, wait, screenshot, JavaScript evaluation, and scrape. Chromiumoxide screenshots are compositor captures; native screenshots are deterministic PNG snapshots derived from the post-action HTML and are intended for inspection, not pixel-perfect Chrome parity. The extraction pipeline is described in detail in [Content Extraction](content-extraction.md).
+The middleware stack between the engine and the network applies per-domain rate limiting, conditional caching, and User-Agent rotation, plus OpenTelemetry wiring when `telemetry-init` is enabled. WAF responses can trigger an automatic browser fallback when `BrowserMode::Auto` is set. `interact()` bypasses the crawl/extraction pipeline and keeps one browser page open while it executes `PageAction` values such as click, type, wait, screenshot, JavaScript evaluation, and scrape. Chromiumoxide screenshots are compositor captures; native screenshots are deterministic PNG snapshots derived from the post-action HTML and are intended for inspection, not pixel-perfect Chrome parity. The extraction pipeline is described in detail in [Content Extraction](content-extraction.md).
 
 ## Bindings
 
@@ -59,15 +59,19 @@ Every binding consumes the same Rust core via FFI. The per-binding glue is gener
 
 ## Feature gates
 
-Cargo features keep the default build minimal — the default feature set is empty. The user-facing features are:
+Cargo features keep the default build minimal. The default feature set is `native-runtime`; WebAssembly builds disable native-only dependencies by target configuration. The user-facing features are:
 
-| Feature          | Capability                                                                                  |
-| ---------------- | ------------------------------------------------------------------------------------------- |
-| `browser`        | Headless-Chrome fallback for JS-heavy or WAF-protected pages.                               |
-| `browser-native` | In-process native browser backend for rendering and page interaction.                       |
-| `interact`       | Compatibility alias for browser-backed page interaction. The public API is always compiled. |
-| `tracing`        | OpenTelemetry-compatible request spans.                                                     |
-| `api`            | `serve_api(...)` — Firecrawl v1-compatible REST server.                                     |
-| `mcp`            | `start_mcp_server(...)` — Model Context Protocol server for AI-agent integration.           |
-| `mcp-http`       | MCP over HTTP transport (implies `mcp` + `api`).                                            |
-| `warc`           | WARC 1.1 output via `CrawlConfig::warc_output`.                                             |
+| Feature              | Capability                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| `native-runtime`     | Native OS runtime marker; enabled by default outside wasm32.                                |
+| `browser`            | Chromiumoxide CDP backend for JS-heavy or WAF-protected pages.                              |
+| `browser-chromiumoxide` | Direct Chromiumoxide backend feature used by `browser`.                                  |
+| `browser-native`     | In-process native browser backend for rendering, extras, and network-event capture.         |
+| `interact`           | Compatibility alias for browser-backed page interaction. The public API is always compiled. |
+| `ai`                 | LLM extraction via liter-llm.                                                               |
+| `telemetry-init`     | One-call OTLP tracer/meter/provider setup and W3C propagation.                              |
+| `api`                | `serve_api(...)` - Firecrawl v1-compatible REST server.                                     |
+| `mcp`                | `start_mcp_server(...)` - Model Context Protocol server for AI-agent integration.           |
+| `mcp-http`           | MCP over HTTP transport (implies `mcp` + `api`).                                            |
+| `warc`               | WARC 1.1 output via `CrawlConfig::warc_output`.                                             |
+| `full`               | Convenience feature for browser, native browser, AI, telemetry init, API, MCP, and WARC.    |

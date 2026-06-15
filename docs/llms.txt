@@ -1,8 +1,8 @@
 # Kreuzcrawl
 
-> High-performance Rust web crawling engine with native bindings for 14 languages. Crawl, scrape, and map sites with always-on HTML→Markdown conversion, structured metadata extraction, LLM-powered field extraction, and a headless-Chrome fallback for WAF-protected pages. Usable as a library, CLI, REST API, MCP server, or Docker image.
+> High-performance Rust web crawling engine with generated language packages. Crawl, scrape, map, interact with browser-backed pages, stream crawl events, and convert HTML to Markdown. Usable as a Rust crate, generated package, CLI, REST API, MCP server, or Docker image.
 
-Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware stack. It ships BFS / DFS / BestFirst / Adaptive traversal strategies, batch operations, streaming events, sitemap and link-graph discovery, and JSON-LD parsing — and detects WAF responses across Cloudflare, Akamai, Imperva, DataDome, PerimeterX, Sucuri, F5, and AWS-WAF.
+Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware stack. It ships BFS / DFS / BestFirst / Adaptive traversal strategies, aggregate batch wrappers, streaming events, sitemap and link-graph discovery, JSON-LD parsing, SSRF policy checks, and WAF signal classification with hot-reloadable rules.
 
 ## Get Started
 
@@ -15,7 +15,7 @@ Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware sta
 - [Scraping](https://docs.kreuzcrawl.kreuzberg.dev/guides/scraping/): Single-page extraction and batch scrape
 - [URL Discovery](https://docs.kreuzcrawl.kreuzberg.dev/guides/url-discovery/): Sitemap parsing, link extraction, and map_urls
 - [Markdown Conversion](https://docs.kreuzcrawl.kreuzberg.dev/guides/markdown/): Always-on HTML→Markdown via [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev), citations, and pruning
-- [Browser Automation](https://docs.kreuzcrawl.kreuzberg.dev/guides/browser/): Headless-Chrome fallback, WAF bypass, persistent profiles
+- [Browser Automation](https://docs.kreuzcrawl.kreuzberg.dev/guides/browser/): Chromiumoxide and native browser backends, WAF escalation, persistent profiles
 - [WARC Output](https://docs.kreuzcrawl.kreuzberg.dev/guides/warc/): Standards-compliant WARC archiving
 - [Antibot Strategy](https://docs.kreuzcrawl.kreuzberg.dev/antibot/): WAF detection, escalation tiers, pluggable classifier traits
 - [Configuration](https://docs.kreuzcrawl.kreuzberg.dev/guides/configuration/): CrawlConfig, ContentConfig, BrowserConfig, AuthConfig, ProxyConfig
@@ -36,7 +36,7 @@ Kreuzcrawl is built around a trait-based crawl engine and a Tower middleware sta
 
 ## API Reference
 
-- [Rust API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-rust/): Core crate, `create_engine`, `crawl`, `scrape`, `map_urls`, batch operations
+- [Rust API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-rust/): Core crate, `create_engine`, `crawl`, `scrape`, `map_urls`, `interact`, citations, batch operations, streaming APIs
 - [Python API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-python/): PyO3 bindings with asyncio support
 - [TypeScript API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-typescript/): NAPI-RS bindings for Node.js
 - [Go API](https://docs.kreuzcrawl.kreuzberg.dev/reference/api-go/): cgo bindings over the C FFI surface

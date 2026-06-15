@@ -96,7 +96,9 @@ The `ScrapeResult` struct contains everything extracted from a single page:
 | `images`   | `Vec<ImageInfo>`         | All images found, including OG and Twitter images.                               |
 | `feeds`    | `Vec<FeedInfo>`          | RSS, Atom, and JSON Feed links.                                                  |
 | `json_ld`  | `Vec<JsonLdEntry>`       | JSON-LD structured data entries.                                                 |
-| `markdown` | `Option<MarkdownResult>` | Markdown conversion with document structure, tables, citations, and fit content. |
+| `markdown` | `Option<MarkdownResult>` | Markdown conversion with document structure, tables, a citation-applied boolean, and fit content. |
+
+`MarkdownResult.citations` is `true` when link-to-citation conversion ran and produced at least one reference. Call `generate_citations(markdown.content.as_str())` when you need the converted content plus the full reference list as `CitationResult.references`.
 
 ### Engine state
 

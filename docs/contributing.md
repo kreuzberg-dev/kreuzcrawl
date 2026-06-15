@@ -29,18 +29,20 @@ pre-commit run --all-files
 
 ## Feature flags
 
-The default build has no optional dependencies. Add features as needed:
+The default build enables `native-runtime` outside wasm32. Add optional features as needed:
 
-| Feature    | What it adds                                            |
-| ---------- | ------------------------------------------------------- |
-| `browser`  | Browser-backed rendering and interaction                |
-| `ai`       | LLM extraction via liter-llm                            |
-| `api`      | REST API server via Axum                                |
-| `mcp`      | Model Context Protocol server                           |
-| `mcp-http` | MCP over HTTP (implies `mcp` + `api`)                   |
-| `tracing`  | OpenTelemetry spans                                     |
-| `interact` | Compatibility alias for browser-backed page interaction |
-| `warc`     | WARC archive output                                     |
+| Feature              | What it adds                                            |
+| -------------------- | ------------------------------------------------------- |
+| `native-runtime`     | Native OS runtime marker, enabled by default            |
+| `browser`            | Chromiumoxide browser backend                           |
+| `browser-native`     | In-process native browser backend                       |
+| `ai`                 | LLM extraction via liter-llm                            |
+| `api`                | REST API server via Axum                                |
+| `mcp`                | Model Context Protocol server                           |
+| `mcp-http`           | MCP over HTTP (implies `mcp` + `api`)                   |
+| `telemetry-init`     | OpenTelemetry/OTLP initialization helpers               |
+| `interact`           | Compatibility alias for browser-backed page interaction |
+| `warc`               | WARC archive output                                     |
 
 ```bash
 cargo build --features api,mcp

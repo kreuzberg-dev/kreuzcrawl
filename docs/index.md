@@ -1,11 +1,11 @@
 ---
 title: Kreuzcrawl
-description: "Kreuzcrawl – High-performance Rust web crawling engine with always-on HTML→Markdown, headless-Chrome fallback for WAF-protected pages, and native bindings for 14 languages."
+description: "Kreuzcrawl - High-performance Rust web crawling engine with always-on HTML->Markdown, browser fallbacks, REST/MCP servers, and generated language packages."
 ---
 
 ## kreuzcrawl
 
-High-performance web crawling and scraping with a Rust core and native bindings for 14 languages. Always-on HTML→Markdown conversion, structured metadata, and a headless-Chrome fallback for WAF-protected pages — usable as a library, CLI, REST API, MCP server, or Docker image.
+High-performance web crawling and scraping with a Rust core and generated language packages. Always-on HTML→Markdown conversion, structured metadata, Chromiumoxide and native browser backends, REST/MCP servers, a CLI, and a Docker image.
 
 <div class="hero-badges" markdown>
 
@@ -26,25 +26,25 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 
   BFS, DFS, BestFirst, and Adaptive traversal with concurrent fetching, streaming events, and batch crawl/scrape.
 
-- :material-text-box-outline:{ .lg .middle } **Always-On Markdown**
+- :material-text-box-outline:{ .lg .middle } **Always-On Markdown** <span class="version-badge">v0.1</span>
 
-  Every fetched page is converted to clean, LLM-ready Markdown with citation tracking and content pruning.
+  Every fetched page is converted to Markdown. `MarkdownResult.citations` is a boolean; call `generate_citations` when you need the reference list.
 
 - :material-database-search:{ .lg .middle } **Rich Metadata**
 
   `PageMetadata` carries Open Graph, Twitter Card, Dublin Core, article fields, JSON-LD, links, images, feeds, favicons, and hreflang.
 
-- :material-web:{ .lg .middle } **Browser Fallback**
+- :material-web:{ .lg .middle } **Browser Fallback** <span class="version-badge">v0.3</span>
 
-  Headless Chrome via chromiumoxide. Auto-detects WAF blocks across 8 vendors (Cloudflare, Akamai, Imperva, DataDome, PerimeterX, Sucuri, F5, AWS-WAF) and retries through a legitimate Chrome fingerprint.
+  Use the Chromiumoxide CDP backend or the native browser backend. WAF signals can trigger browser escalation; the vendor is surfaced when the classifier can identify it.
 
 - :material-server:{ .lg .middle } **MCP & REST Servers**
 
   Built-in MCP server for AI agents, REST API for service deployments, both gated behind cargo features.
 
-- :material-translate:{ .lg .middle } **14 Language Bindings**
+- :material-translate:{ .lg .middle } **Rust + Generated Packages** <span class="version-badge">v0.3</span>
 
-  Native bindings for Rust, Python, TypeScript, Go, Java, Kotlin (Android), C#, Ruby, PHP, Elixir, Dart, Swift, Zig, and WebAssembly — plus a C FFI surface for everything else.
+  Rust uses the core crate. Generated packages cover Python, TypeScript, WebAssembly, Go, Java, Kotlin Android, C#, Ruby, PHP, Elixir, Dart, Swift, Zig, and C FFI.
 
 </div>
 
@@ -66,7 +66,7 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 | **C#**                | `dotnet add package Kreuzcrawl`                             | [API Reference](reference/api-csharp.md)         |
 | **Ruby**              | `gem install kreuzcrawl`                                    | [API Reference](reference/api-ruby.md)           |
 | **PHP**               | `composer require kreuzberg-dev/kreuzcrawl`                 | [API Reference](reference/api-php.md)            |
-| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0-rc.19"}`                           | [API Reference](reference/api-elixir.md)         |
+| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0-rc.66"}`                           | [API Reference](reference/api-elixir.md)         |
 | **Dart / Flutter**    | `dart pub add kreuzcrawl`                                   | [API Reference](reference/api-dart.md)           |
 | **Swift**             | Swift Package Manager                                       | [API Reference](reference/api-swift.md)          |
 | **Zig**               | `zig fetch --save` from GitHub                              | [API Reference](reference/api-zig.md)            |
@@ -78,7 +78,7 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 
     **`@kreuzberg/kreuzcrawl`** — Native NAPI-RS bindings. Use for Node.js servers and CLI tools. Full feature set including the browser fallback.
 
-    **`@kreuzberg/kreuzcrawl-wasm`** — Pure WebAssembly. Use for browsers, Cloudflare Workers, Deno, Bun, and serverless. No headless-Chrome support.
+    **`@kreuzberg/kreuzcrawl-wasm`** — Pure WebAssembly. Use for browsers, Cloudflare Workers, Deno, Bun, and serverless. No native browser backend, REST server, MCP server, or native streaming crawl wrappers.
 
 ---
 
@@ -206,7 +206,7 @@ High-performance web crawling and scraping with a Rust core and native bindings 
 
 - :material-feature-search-outline:{ .lg .middle } **Features**
 
-  Complete feature breakdown: crawl strategies, metadata extraction, browser fallback, WARC, MCP, REST.
+  Complete feature breakdown: crawl strategies, metadata extraction, browser backends, WARC, MCP, REST.
 
   [:octicons-arrow-right-24: Features](features.md)
 

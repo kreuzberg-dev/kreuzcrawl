@@ -19,7 +19,7 @@ let engine = create_engine(Some(CrawlConfig {
 }))?;
 ```
 
-`create_engine` runs full validation up front: depth / page / size bounds, regex paths, and field-level constraints. Validation errors surface as `CrawlError::InvalidConfig` before any network request is made.
+`create_engine` runs structural validation up front: depth / page / size bounds, regex paths, browser endpoint rules, and field-level constraints. URL-specific checks such as SSRF policy, redirects, robots, and network failures run per request.
 
 ## Convenience constructors
 
@@ -50,19 +50,21 @@ let engine = create_engine(None)?;
 let scrape_results = batch_scrape(&engine, vec![
     "https://example.com".into(),
     "https://example.org".into(),
-]).await;
+]).await?;
 
 let crawl_results = batch_crawl(&engine, vec![
     "https://example.com".into(),
     "https://example.org".into(),
-]).await;
+]).await?;
 
-// Each entry in the Vec has .url, .result (Option<_>), and .error (Option<String>).
-for r in &scrape_results {
+// Each aggregate has .results plus .total_count, .completed_count, and .failed_count.
+for r in &scrape_results.results {
     if let Some(err) = &r.error {
         eprintln!("{}: {}", r.url, err);
     }
 }
+
+println!("batch crawl completed: {}", crawl_results.completed_count);
 ```
 
 ## Config validation
@@ -76,6 +78,8 @@ for r in &scrape_results {
 | `max_redirects` must be <= 100                                     | `"max_redirects must be <= 100"`                                 |
 | `request_timeout` must not be zero                                 | `"request_timeout must be > 0"`                                  |
 | `browser.wait_selector` required when `browser.wait` is `Selector` | `"browser.wait_selector required when browser.wait is Selector"` |
+| `browser.endpoint` must be `ws://` or `wss://`                     | `"browser.endpoint must start with ws:// or wss://"`             |
+| `browser.endpoint` cannot be used with `BrowserBackend::Native`    | `"browser.endpoint is only supported by the chromiumoxide backend"` |
 | All `include_paths` must be valid regex                            | `"invalid include_path regex '...': ..."`                        |
 | All `exclude_paths` must be valid regex                            | `"invalid exclude_path regex '...': ..."`                        |
 | All `retry_codes` must be 100-599                                  | `"invalid retry code: ..."`                                      |
@@ -168,6 +172,12 @@ ProxyConfig {
 | `content.preprocessing_preset` | `String`        | `"standard"` | HTML preprocessing strength: `"minimal"`, `"standard"`, or `"aggressive"` (aggressive strips chrome/boilerplate). |
 | `remove_tags`                  | `Vec<String>`   | `[]`         | CSS selectors for elements to remove before processing (e.g., `"nav"`, `".sidebar"`).                             |
 | `max_body_size`                | `Option<usize>` | `None`       | Truncate HTML bodies beyond this size in bytes. `None` keeps the full body.                                       |
+| `content.output_format`        | `String`        | `"markdown"` | Render converted content as `"markdown"`, `"plain"`, or `"djot"`.                                                |
+| `content.strip_tags`           | `Vec<String>`   | `["noscript"]` | Strip tag wrappers but keep their children during conversion.                                                   |
+| `content.preserve_tags`        | `Vec<String>`   | `[]`         | Preserve matching HTML tags as raw HTML in the converted output.                                                  |
+| `content.exclude_selectors`    | `Vec<String>`   | `[]`         | Drop matching elements and descendants during conversion.                                                         |
+| `content.skip_images`          | `bool`          | `false`      | Skip image elements in converted output.                                                                         |
+| `content.include_document_structure` | `bool`   | `true`       | Include the structured document tree in `MarkdownResult`.                                                        |
 
 ### URL discovery (map)
 
@@ -205,14 +215,21 @@ ProxyConfig {
 
 #### BrowserConfig fields
 
-| Field           | Type               | Default       | Description                                                            |
-| --------------- | ------------------ | ------------- | ---------------------------------------------------------------------- |
-| `mode`          | `BrowserMode`      | `Auto`        | When to use the browser: `Auto`, `Always`, or `Never`.                 |
-| `endpoint`      | `Option<String>`   | `None`        | CDP WebSocket endpoint for an external browser instance.               |
-| `timeout`       | `Duration`         | 30 seconds    | Browser page load timeout.                                             |
-| `wait`          | `BrowserWait`      | `NetworkIdle` | Wait strategy after navigation: `NetworkIdle`, `Selector`, or `Fixed`. |
-| `wait_selector` | `Option<String>`   | `None`        | CSS selector to wait for (required when `wait` is `Selector`).         |
-| `extra_wait`    | `Option<Duration>` | `None`        | Additional wait time after the wait condition is met.                  |
+| Field                    | Type               | Default       | Description                                                            |
+| ------------------------ | ------------------ | ------------- | ---------------------------------------------------------------------- |
+| `mode`                   | `BrowserMode`      | `Auto`        | When to use the browser: `Auto`, `Always`, `Never`, or `Stealth`.      |
+| `backend`                | `BrowserBackend`   | `Chromiumoxide` | Browser backend: `Chromiumoxide` or `Native`.                        |
+| `endpoint`               | `Option<String>`   | `None`        | CDP WebSocket endpoint for an external Chromiumoxide browser instance. |
+| `timeout`                | `Duration`         | 30 seconds    | Browser page load timeout.                                             |
+| `wait`                   | `BrowserWait`      | `NetworkIdle` | Wait strategy after navigation: `NetworkIdle`, `Selector`, or `Fixed`. |
+| `wait_selector`          | `Option<String>`   | `None`        | CSS selector to wait for (required when `wait` is `Selector`).         |
+| `extra_wait`             | `Option<Duration>` | `None`        | Additional wait time after the wait condition is met.                  |
+| `proxy`                  | `Option<ProxyConfig>` | `None`     | Browser-level HTTP/HTTPS proxy; native backend does not support SOCKS5. |
+| `block_url_patterns`     | `Vec<String>`      | `[]`          | Native-backend URL block patterns.                                     |
+| `eval_script`            | `Option<String>`   | `None`        | Script evaluated after navigation; native scrape stores the result.    |
+| `robots_user_agent`      | `Option<String>`   | `None`        | Native backend user-agent for robots.txt fetches.                      |
+| `capture_network_events` | `bool`             | `false`       | Native backend network-event capture into `BrowserExtras`.             |
+| `session_affinity`       | `bool`             | `true`        | Reuse same-domain browser sessions when supported.                     |
 
 ### WARC output
 
@@ -238,7 +255,9 @@ ProxyConfig {
   "include_paths": ["^/docs/"],
   "exclude_paths": ["/admin/"],
   "content": {
-    "preprocessing_preset": "standard"
+    "output_format": "markdown",
+    "preprocessing_preset": "standard",
+    "exclude_selectors": [".cookie-banner"]
   },
   "cookies_enabled": false,
   "download_assets": false,
@@ -248,6 +267,7 @@ ProxyConfig {
   "save_browser_profile": false,
   "browser": {
     "mode": "auto",
+    "backend": "chromiumoxide",
     "timeout": 30000,
     "wait": "network_idle"
   }
@@ -273,11 +293,15 @@ Since `CrawlConfig` implements `Deserialize`, you can load it from JSON, TOML, o
 | `retry_count`                  | `0`                     |
 | `cookies_enabled`              | `false`                 |
 | `content.preprocessing_preset` | `"standard"`            |
+| `content.output_format`        | `"markdown"`            |
+| `content.exclude_selectors`    | `[]`                    |
 | `download_assets`              | `false`                 |
 | `download_documents`           | `true`                  |
 | `document_max_size`            | 50 MB                   |
 | `capture_screenshot`           | `false`                 |
 | `save_browser_profile`         | `false`                 |
 | `browser.mode`                 | `Auto`                  |
+| `browser.backend`              | `Chromiumoxide`         |
 | `browser.timeout`              | 30 seconds              |
 | `browser.wait`                 | `NetworkIdle`           |
+| `browser.capture_network_events` | `false`               |

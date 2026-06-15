@@ -13,7 +13,7 @@ The default Dockerfile builds the full API server with these features enabled:
 - `mcp` -- Model Context Protocol server
 - `warc` -- WARC 1.1 archival output
 - `ai` -- Deep research agent
-- `tracing` -- Structured logging
+- `telemetry-init` -- Optional OpenTelemetry/OTLP initialization helpers
 
 The image exposes port 3000 and starts the API server by default.
 
@@ -87,7 +87,7 @@ The MCP server uses stdio transport, so the container must run with `-i` (intera
 
 | Variable   | Default | Description                                                                               |
 | ---------- | ------- | ----------------------------------------------------------------------------------------- |
-| `RUST_LOG` | `info`  | Log level filter. Supports `tracing` EnvFilter syntax (e.g. `debug`, `kreuzcrawl=trace`). |
+| `RUST_LOG` | `info`  | Log level filter for Rust tracing subscribers (e.g. `debug`, `kreuzcrawl=trace`). |
 
 ## Health checks
 
@@ -101,7 +101,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 The `/health` endpoint returns:
 
 ```json
-{ "status": "ok", "version": "0.3.0-rc.19" }
+{ "status": "ok", "version": "0.3.0-rc.66" }
 ```
 
 Orchestrators (Docker Compose, Kubernetes, Cloud Run) can use this to detect when the

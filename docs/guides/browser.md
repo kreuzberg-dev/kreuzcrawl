@@ -1,8 +1,6 @@
 # Browser Automation
 
-Kreuzcrawl includes a headless Chrome/Chromium integration for rendering JavaScript-heavy pages.
-The browser subsystem is feature-gated behind `browser` and uses the Chrome DevTools Protocol (CDP)
-via the `chromiumoxide` crate.
+Kreuzcrawl includes browser-backed rendering for JavaScript-heavy pages. The `browser` feature enables the Chromiumoxide CDP backend; `browser-native` enables the in-process native backend with `BrowserExtras` and network-event capture.
 
 ## Browser modes
 
@@ -13,6 +11,7 @@ The `BrowserMode` enum controls when the headless browser is used instead of a p
 | `Auto` (default) | Kreuzcrawl first tries an HTTP fetch. If the response looks like it needs JS rendering (e.g. WAF challenge page), it automatically falls back to the browser. |
 | `Always`         | Every request goes through the headless browser. Useful for single-page applications or sites that rely entirely on client-side rendering.                    |
 | `Never`          | The browser is never launched. Only plain HTTP fetches are performed.                                                                                         |
+| `Stealth`        | Every request goes through the browser tier with stealth surfaces enabled.                                                                                    |
 
 Set the mode in `CrawlConfig`:
 
@@ -28,13 +27,38 @@ let config = CrawlConfig {
 };
 ```
 
+## Browser backends <span class="version-badge">v0.3</span>
+
+Choose the backend with `BrowserConfig::backend`:
+
+| Backend | Feature | Behavior |
+| ------- | ------- | -------- |
+| `BrowserBackend::Chromiumoxide` | `browser` | Controls Chrome/Chromium through CDP. Supports external `endpoint` connections and compositor screenshots. |
+| `BrowserBackend::Native` | `browser-native` | Uses the in-process native backend. Supports `block_url_patterns`, `eval_script` scrape results, `robots_user_agent`, `capture_network_events`, and `BrowserExtras`. |
+
+```rust
+use kreuzcrawl::{BrowserBackend, BrowserConfig, BrowserMode, CrawlConfig};
+
+let config = CrawlConfig {
+    browser: BrowserConfig {
+        backend: BrowserBackend::Native,
+        mode: BrowserMode::Always,
+        capture_network_events: true,
+        ..Default::default()
+    },
+    ..Default::default()
+};
+```
+
+`BrowserExtras` is populated on `ScrapeResult.browser` only when the native backend handled the request. It can contain the `eval_script` return value, captured network events, and cookies from the browser session.
+
 ## Browser pooling
 
-A single Chrome instance is kept alive across requests; tabs are handed out lazily, the pool auto-recovers if Chrome crashes, and concurrent tabs are bounded by `CrawlConfig::max_concurrent`. No additional configuration is required.
+The Chromiumoxide backend keeps a Chrome instance alive across requests; tabs are handed out lazily, the pool auto-recovers if Chrome crashes, and concurrent tabs are bounded by `CrawlConfig::max_concurrent`. No additional configuration is required.
 
 ## Connecting to an external browser
 
-Point the engine at an already-running Chrome via its CDP WebSocket endpoint instead of launching one locally:
+Point the Chromiumoxide backend at an already-running Chrome via its CDP WebSocket endpoint instead of launching one locally:
 
 ```rust
 use kreuzcrawl::{BrowserConfig, CrawlConfig};
@@ -48,7 +72,7 @@ let config = CrawlConfig {
 };
 ```
 
-This is the recommended pattern when running Chrome in a sidecar container or a remote debugging session.
+This is the recommended pattern when running Chrome in a sidecar container or a remote debugging session. `endpoint` is rejected when `BrowserBackend::Native` is selected.
 
 ## Browser profiles
 
@@ -68,25 +92,7 @@ Profile names are validated against path-traversal — only ASCII alphanumerics,
 
 ## WAF detection
 
-Kreuzcrawl detects when a response is blocked by a Web Application Firewall and returns a
-`CrawlError::WafBlocked` error with the identified vendor. Detection runs on both HTTP
-responses and browser-rendered pages.
-
-Detected vendors:
-
-| Vendor              | Detection signal                                                        |
-| ------------------- | ----------------------------------------------------------------------- |
-| Cloudflare          | `Server: cloudflare`, `cf-browser-verification`, `cf-chl-` body markers |
-| Akamai              | `Server: AkamaiGHost`                                                   |
-| Imperva (Incapsula) | `incapsula`, `_incap_ses_` body markers                                 |
-| DataDome            | `datadome` body marker, `x-datadome` header                             |
-| PerimeterX          | `perimeterx`, `px-captcha` body markers, `x-px-*` headers               |
-| Sucuri              | `sucuri` body marker, `x-sucuri-id` header                              |
-| F5 BIG-IP           | `Server: big-ip`                                                        |
-| AWS WAF             | `awselb`, `x-amzn-waf` body markers, `x-amzn-waf-action` header         |
-
-In `Auto` browser mode, a WAF challenge triggers an automatic browser fallback so that
-JavaScript challenges can be solved client-side.
+Kreuzcrawl detects WAF and bot-mitigation signals with a built-in TOML fingerprint classifier. When a fingerprint matches, the error path includes `CrawlError::WafBlocked { vendor, .. }`; generic or unrecognized blocks may report `unknown` or `generic`. In `Auto` browser mode, those signals can trigger automatic browser escalation. This is not a guarantee that a challenge can be bypassed.
 
 ## Wait strategies
 

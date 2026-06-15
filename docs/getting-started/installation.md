@@ -56,12 +56,15 @@ kreuzcrawl --version
 
     | Feature | Description |
     |---------|-------------|
-    | `browser` | Browser-backed rendering and interaction |
+    | `native-runtime` | Native OS runtime marker; enabled by default outside wasm32 |
+    | `browser` | Chromiumoxide browser backend |
+    | `browser-native` | In-process native browser backend |
     | `ai` | LLM extraction via liter-llm |
-    | `tracing` | OpenTelemetry span recording |
+    | `telemetry-init` | One-call OpenTelemetry/OTLP setup |
     | `interact` | Compatibility alias for browser-backed page interaction |
     | `mcp` | Model Context Protocol server |
     | `api` | REST API server via Axum |
+    | `mcp-http` | MCP over HTTP transport |
     | `warc` | WARC archive output |
 
     Enable features as needed:
@@ -147,11 +150,23 @@ kreuzcrawl --version
     <dependency>
         <groupId>dev.kreuzberg.kreuzcrawl</groupId>
         <artifactId>kreuzcrawl</artifactId>
-        <version>0.3.0-rc.19</version>
+        <version>0.3.0-rc.66</version>
     </dependency>
     ```
 
     The Java bindings use the Panama Foreign Function & Memory API to call the C FFI layer.
+
+=== "Kotlin (Android)"
+
+    Add the Android AAR dependency:
+
+    ```kotlin title="build.gradle.kts"
+    dependencies {
+        implementation("dev.kreuzberg.kreuzcrawl:kreuzcrawl-android:0.3.0-rc.66")
+    }
+    ```
+
+    The Kotlin package targets Android and bundles JNI shared libraries. Kotlin/JVM server applications should use the Java package.
 
 === "C#"
 
@@ -164,7 +179,7 @@ kreuzcrawl --version
     Or in your `.csproj`:
 
     ```xml title="Kreuzcrawl.csproj"
-    <PackageReference Include="Kreuzcrawl" Version="0.3.0-rc.19" />
+    <PackageReference Include="Kreuzcrawl" Version="0.3.0-rc.66" />
     ```
 
     The C# bindings use P/Invoke to call the C FFI layer.
@@ -219,7 +234,31 @@ kreuzcrawl --version
     ```
 
     !!! note "Limitations"
-        The WASM build runs in a single-threaded environment. Features requiring `std::thread` or synchronous I/O are not available.
+        The WASM build runs without native browser backends, REST/MCP server starters, WARC file output, native streaming crawl wrappers, and other native-only I/O surfaces.
+
+=== "Dart"
+
+    Requires Dart or Flutter with native FFI support:
+
+    ```bash
+    dart pub add kreuzcrawl
+    ```
+
+=== "Swift"
+
+    Add the Swift package from GitHub:
+
+    ```swift
+    .package(url: "https://github.com/kreuzberg-dev/kreuzcrawl", exact: "0.3.0-rc.66")
+    ```
+
+=== "Zig"
+
+    Use the generated Zig package over the C FFI layer:
+
+    ```bash
+    zig fetch --save https://github.com/kreuzberg-dev/kreuzcrawl/archive/refs/tags/v0.3.0-rc.66.tar.gz
+    ```
 
 === "C FFI"
 

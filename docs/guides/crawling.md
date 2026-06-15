@@ -105,7 +105,7 @@ let results = batch_crawl(
     ],
 ).await?;
 
-for entry in &results {
+for entry in &results.results {
     match (&entry.result, &entry.error) {
         (Some(crawl), _) => println!("{}: {} pages", entry.url, crawl.pages.len()),
         (None, Some(e)) => eprintln!("{}: {}", entry.url, e),
@@ -114,7 +114,7 @@ for entry in &results {
 }
 ```
 
-`batch_crawl` respects the same `max_concurrent` limit across all seed URLs. Each seed URL produces an independent `BatchCrawlResult` with either a populated `result` or an `error` message.
+`batch_crawl` respects the same `max_concurrent` limit across all seed URLs. It returns `BatchCrawlResults`, an aggregate object with `results`, `total_count`, `completed_count`, and `failed_count`. Each entry in `results` is a `BatchCrawlResult` with either a populated `result` or an `error` message.
 
 There is also `batch_scrape` for scraping multiple individual URLs without link following:
 
@@ -129,6 +129,8 @@ let results = batch_scrape(
     ],
 ).await?;
 ```
+
+`batch_scrape` returns `BatchScrapeResults` with the same aggregate shape.
 
 ## Redirect handling
 

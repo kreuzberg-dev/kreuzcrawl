@@ -1,16 +1,16 @@
 # Antibot Strategy & Stealth Surfaces
 
-Kreuzcrawl detects WAF/bot-mitigation systems, routes requests through bypass providers, and applies stealth patches to avoid detection. Customize this stack via the pluggable `AntibotStrategy` trait or use the bundled `DefaultAntibotStrategy`.
+Kreuzcrawl detects WAF/bot-mitigation signals, classifies them with hot-reloadable rules, and can escalate through the configured dispatch chain. Customize policy with `AntibotStrategy`, `DispatchProfile`, retry policy, domain state, and optional caller-supplied bypass providers.
 
 ## Architecture
 
 Three layers compose the antibot system:
 
-1. **WAF Classifier** — Fingerprints HTTP responses against 35+ known WAF signatures (Cloudflare, DataDome, PerimeterX, Imperva, Akamai, F5, AWS-WAF).
-2. **Decision Hook** — `AntibotStrategy` trait pair: `pre_request` (modify outgoing headers, warm tokens) and `post_response` (inspect response, decide next action).
-3. **Stealth Surfaces** — JS patches (chromiumoxide), native TLS spoofing, user-agent rotation (enabled via `BrowserMode::Stealth`).
+1. **WAF Classifier** — Matches HTTP responses against `crates/kreuzcrawl/rules/waf_fingerprints.toml` and returns a `WafSignal` with `vendor`, `fingerprint_id`, and `weight`.
+2. **Decision Hook** — `AntibotStrategy` trait pair: `pre_request` (warm external state) and `post_response` (inspect response, decide next action).
+3. **Dispatch Policy** — `DispatchProfile` combines escalation strategy, retry policy, classifier, domain state, budget, and optional bypass provider.
 
-When a WAF signal is detected, the engine consults the strategy to decide: retry with backoff, escalate to browser, rotate proxy, or accept the response.
+When a WAF signal is detected, the engine consults the strategy and retry policy to decide whether to retry, escalate to the browser tier, route through a caller-supplied bypass provider, or stop. `Decision::RotateProxy` is present but not implemented; it logs and falls through to `Accept`.
 
 ## The `AntibotStrategy` trait
 
@@ -64,12 +64,12 @@ pub enum AntibotError {
 
 The `BrowserConfig.mode` field controls when and how the browser is used. `BrowserMode::Stealth` is the new variant:
 
-| Variant | Escalation | Stealth Surfaces | Use Case |
-|---------|-----------|-----------------|----------|
+| Variant | Escalation | Stealth surfaces | Use case |
+| ------- | ---------- | ---------------- | -------- |
 | `Auto` (default) | HTTP first, escalate to browser on WAF/403 | None | Balanced; handles most sites |
 | `Always` | Skip HTTP entirely | None | JS-heavy SPAs |
 | `Never` | No browser fallback | None | Performance-critical; no WAF expected |
-| `Stealth` | Like Always, escalate on demand | JS patches, TLS spoof, UA rotation | Stealth-hardened mode for challenging sites |
+| `Stealth` | Browser tier for every request | JS patches, native TLS spoofing, UA/viewport defaults | Stealth-hardened mode for challenging sites |
 
 `BrowserMode::Stealth` behaves like `Always` for request routing (every page goes through the browser tier) but additionally enables:
 
@@ -147,26 +147,18 @@ Without an attached strategy, the engine uses `DefaultAntibotStrategy` (defined 
 
 This matches the pre-Cluster-5 escalation logic, so existing code continues to work unchanged.
 
-## WAF detection corpus
+## WAF detection corpus <span class="version-badge">v0.3</span>
 
-Kreuzcrawl classifies 35+ WAF fingerprints via `TomlClassifier` at `crates/kreuzcrawl/rules/waf_fingerprints.toml`. Covered vendors:
+Kreuzcrawl classifies WAF fingerprints via `TomlClassifier` at `crates/kreuzcrawl/rules/waf_fingerprints.toml`. The rules currently cover Cloudflare, DataDome, PerimeterX/HUMAN Security, Imperva, AWS WAF, Akamai, F5, and generic block patterns.
 
-- Cloudflare (Worker detection, Bot Management)
-- DataDome
-- PerimeterX (now Human Security)
-- Imperva / Sucuri
-- Akamai
-- F5
-- AWS-WAF
+Fingerprints match response headers, body substrings, or status code/header combinations. The classifier supports hot reload via `TomlClassifier::watch()` so rule updates can land without restarting the process.
 
-Fingerprints are regex patterns that match response headers, body substrings, or status code + header combos. The classifier uses hot-reload via `TomlClassifier::watch()` on the rule file, so updates don't require a restart.
+## Dispatch and EWMA state <span class="version-badge">v0.3</span>
+
+The default retry and dispatch layer can combine WAF signals, transient errors, and `EwmaDomainState` observations. EWMA state lets callers track per-domain outcomes and feed a `LearningRetryPolicy` without requiring a database.
 
 ## Bypass providers
 
-For sites that require third-party bypass (e.g., to solve residential proxy puzzles), kreuzcrawl integrates the `kreuzcrawl-bypass` crate. It provides:
+Kreuzcrawl exposes the `BypassProvider` trait and `BypassResponse` type for caller-owned integrations. Providers are responsible for authentication, request shaping, response decoding, cost metadata, and error mapping.
 
-- `SimpleHttpProvider` — YAML-configured, pluggable HTTP-based bypass (call an API, inject headers/cookies into the crawl).
-- Shipped vendors: Bright Data, Zyte, ScrapingBee — wire them via YAML config.
-- Custom providers: implement the `BypassProvider` trait to add your own.
-
-See `crates/kreuzcrawl-bypass/README.md` for configuration and examples.
+Kreuzcrawl does not ship Bright Data, Zyte, ScrapingBee, or other vendor adapters in the core crate.

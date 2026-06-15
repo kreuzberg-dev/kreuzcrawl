@@ -1,6 +1,6 @@
 # REST API Reference
 
-Kreuzcrawl exposes a Firecrawl v1-compatible REST API for web scraping, crawling, and site mapping. The API server is started via the CLI (`kreuzcrawl serve`) or programmatically with `kreuzcrawl::api::serve()`.
+Kreuzcrawl exposes Firecrawl v1-compatible REST routes for web scraping, crawling, site mapping, batch scrape jobs, and document downloads. The API server is started via the CLI (`kreuzcrawl serve`) or programmatically with `kreuzcrawl::serve_api(config)` when the `api` feature is enabled.
 
 All request and response bodies use JSON. Responses follow a consistent envelope format.
 
@@ -53,11 +53,11 @@ Scrape a single URL and extract content synchronously.
 | Field             | Type       | Required | Default        | Description                                                             |
 | ----------------- | ---------- | -------- | -------------- | ----------------------------------------------------------------------- |
 | `url`             | `string`   | Yes      | --             | URL to scrape (must start with `http://` or `https://`, max 8192 chars) |
-| `formats`         | `string[]` | No       | `["markdown"]` | Output formats to return (e.g. `["markdown", "html"]`)                  |
-| `onlyMainContent` | `boolean`  | No       | `false`        | Extract only the main content of the page                               |
-| `includeTags`     | `string[]` | No       | `[]`           | CSS selectors to include                                                |
-| `excludeTags`     | `string[]` | No       | `[]`           | CSS selectors to exclude                                                |
-| `timeout`         | `integer`  | No       | `30000`        | Request timeout in milliseconds                                         |
+| `formats`         | `string[]` | No       | Engine config  | Accepted for compatibility; the handler does not override `content.output_format` today. |
+| `onlyMainContent` | `boolean`  | No       | Engine config  | Accepted for compatibility; ignored by `POST /v1/scrape` today.         |
+| `includeTags`     | `string[]` | No       | Engine config  | Accepted for compatibility; ignored by `POST /v1/scrape` today.         |
+| `excludeTags`     | `string[]` | No       | Engine config  | Accepted for compatibility; ignored by `POST /v1/scrape` today.         |
+| `timeout`         | `integer`  | No       | Engine config  | Accepted for compatibility; ignored by `POST /v1/scrape` today.         |
 
 **Response:** `200 OK`
 
@@ -97,7 +97,7 @@ Start an asynchronous crawl job. Returns a job ID for polling.
 | `maxPages`        | `integer`  | No       | Engine default | Maximum number of pages to crawl     |
 | `includePaths`    | `string[]` | No       | `[]`           | URL path patterns to include (regex) |
 | `excludePaths`    | `string[]` | No       | `[]`           | URL path patterns to exclude (regex) |
-| `onlyMainContent` | `boolean`  | No       | `false`        | Extract only main content            |
+| `onlyMainContent` | `boolean`  | No       | Engine config  | When `true`, sets `content.preprocessing_preset = "aggressive"` for this crawl job. |
 
 **Response:** `202 Accepted`
 
@@ -225,8 +225,8 @@ Start an asynchronous batch scrape job for multiple URLs.
 | Field             | Type       | Required | Default        | Description                        |
 | ----------------- | ---------- | -------- | -------------- | ---------------------------------- |
 | `urls`            | `string[]` | Yes      | --             | URLs to scrape (must not be empty) |
-| `formats`         | `string[]` | No       | `["markdown"]` | Output formats                     |
-| `onlyMainContent` | `boolean`  | No       | `false`        | Extract only main content          |
+| `formats`         | `string[]` | No       | Engine config  | Accepted for compatibility; ignored by `POST /v1/batch/scrape` today. |
+| `onlyMainContent` | `boolean`  | No       | Engine config  | Accepted for compatibility; ignored by `POST /v1/batch/scrape` today. |
 
 **Response:** `202 Accepted`
 
@@ -266,7 +266,7 @@ Download a document from a URL. Uses the scrape pipeline internally, which handl
 | Field     | Type      | Required | Default | Description                    |
 | --------- | --------- | -------- | ------- | ------------------------------ |
 | `url`     | `string`  | Yes      | --      | URL to download from           |
-| `maxSize` | `integer` | No       | 50 MB   | Maximum download size in bytes |
+| `maxSize` | `integer` | No       | Engine config | Accepted for compatibility; ignored by `POST /v1/download` today. Use `document_max_size` in the server config. |
 
 **Response:** `200 OK` -- Returns the full `ScrapeResult`, which includes a `downloaded_document` field for non-HTML content.
 
@@ -283,7 +283,7 @@ Health check endpoint.
 ```json
 {
   "status": "ok",
-  "version": "0.3.0-rc.19"
+  "version": "0.3.0-rc.66"
 }
 ```
 
@@ -297,7 +297,7 @@ Version information.
 
 ```json
 {
-  "version": "0.3.0-rc.19"
+  "version": "0.3.0-rc.66"
 }
 ```
 
@@ -313,9 +313,11 @@ Returns the OpenAPI 3.0 schema for the API, generated from handler annotations v
 
 The REST API uses Firecrawl v1 endpoint paths and `camelCase` JSON field naming in request bodies. Response bodies use Rust-native `snake_case` field naming. Key compatibility notes:
 
-- Request fields use `camelCase`: `maxDepth`, `maxPages`, `onlyMainContent`, `includePaths`, `excludePaths`, `includeTags`, `excludeTags`
+- Request fields use `camelCase`: `maxDepth`, `maxPages`, `onlyMainContent`, `includePaths`, `excludePaths`, `includeTags`, `excludeTags`, `maxSize`
 - Async jobs (crawl, batch scrape) return a UUID `id` for polling, matching the Firecrawl pattern
-- The `formats` field in scrape requests is accepted but output format is determined by the engine configuration
+- `POST /v1/crawl` applies `maxDepth`, `maxPages`, `onlyMainContent`, `includePaths`, and `excludePaths` by rebuilding an engine for that job.
+- `POST /v1/map` applies `limit` and `search` after URL discovery.
+- `formats`, `includeTags`, `excludeTags`, scrape `onlyMainContent`, scrape `timeout`, batch-scrape `formats`, batch-scrape `onlyMainContent`, and download `maxSize` are accepted for request compatibility but ignored by the current handlers.
 
 ## URL Validation
 
