@@ -662,6 +662,20 @@ result_fields = [
   "pages_crawled",
 ]
 
+# Environment variables every generated e2e suite must export at suite-setup
+# time, before the binding's engine is constructed. Each per-language emitter
+# materialises this map as a native setdefault block (conftest, spec_helper,
+# TestMain, etc.) — see alef E2eConfig.env docs for the exact per-language
+# mechanism.
+#
+# `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true` is required because the e2e mock-server
+# binds to a loopback address (127.0.0.1:<random_port>) and the binding's
+# default SsrfPolicy::default() denies private networks. Without this override,
+# every fixture call would fail with `ssrf_policy_violation: loopback`. The
+# variable is consumed via SsrfPolicy::from_env() in crates/kreuzcrawl/src/net/ssrf.rs.
+[crates.e2e.env]
+KREUZCRAWL_ALLOW_PRIVATE_NETWORK = "true"
+
 [crates.e2e.format]
 rust = "(cd {dir} && cargo fmt --all)"
 python = "ruff check --fix {dir} && ruff format {dir}"
