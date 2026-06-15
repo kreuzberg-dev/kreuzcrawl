@@ -39,6 +39,7 @@ mod pruning;
 pub(crate) mod research;
 mod robots;
 mod scrape;
+pub mod sink;
 mod sitemap;
 pub mod telemetry;
 pub(crate) mod tower;
@@ -79,6 +80,7 @@ pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecut
 #[cfg(feature = "mcp")]
 pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use net::ssrf::{HostMatcher, SsrfError, SsrfPolicy, validate_url};
+pub use sink::{EventSink, MultiEventSink, TracingEventSink};
 #[cfg(feature = "telemetry-init")]
 pub use telemetry::{InitError as TelemetryInitError, TelemetryConfig, TelemetryGuard, init_otlp};
 pub use telemetry::{current_traceparent, with_traceparent};

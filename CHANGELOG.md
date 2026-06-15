@@ -4,6 +4,16 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.66] - 2026-06-15
+
+### Fixed
+
+- **Redirect `final_url` returned base URL after SSRF defense.** rc.62's `feat(security): SSRF defense in core HTTP layer` (commit 277ef16f6) added an internal redirect-following loop inside `do_fetch` (`crates/kreuzcrawl/src/tower/service.rs`) that consumed the entire 3xx chain transparently and returned only the terminal non-3xx body. The crawler's higher-level `follow_redirects` driver (`crates/kreuzcrawl/src/engine/crawl_loop.rs`) — which tracks `current_url` to build the final redirect outcome — never saw a `Location` header again, so `RedirectOutcome::final_url` stayed equal to the original seed URL (just `http://host:port` with no path). This broke all redirect-following observability (`/perm-target` never landed in `final_url`) and broke `normalize_url_for_dedup` keyed on `final_url`, so redirect targets were not recognized when re-encountered during a crawl (rc.65 Python E2E run 27540005540 showed `test_redirect_301_permanent` … `test_redirect_chain` failing with `'/target' in 'http://127.0.0.1:34277'`, plus `test_crawl_url_deduplication`, `test_crawl_concurrent_depth`, `test_crawl_fragment_stripping`, `test_crawl_include_path_pattern`, `test_crawl_query_param_dedup`, `test_crawl_trailing_slash_dedup` all overcounting pages). Fix: strip the redirect loop from `do_fetch`, which now does SSRF validation of the requested URL and returns the raw response (3xx included). Per-hop SSRF validation moves into `follow_redirects` for all three redirect types (HTTP 3xx, Refresh header, meta-refresh); the `VDom` `Send` violation across `await` is fixed by extracting the meta-refresh target string before the async `validate_url` call. Native tests `test_scrape_redirects`, `test_batch_crawl_integration`, `test_frontier_dedup` gain `allow_private_networks(true)` against their loopback MockServers — they predate SSRF enforcement and never opted in.
+
+### Changed
+
+- **Regenerate against alef 0.25.11** (in-flight upstream fixes; pin unchanged). Picks up the redirect regression fix above and resets generated bindings/facades/e2e to the canonical surface for rc.66. Known carry-over from rc.65: e2e SSRF env-var only takes effect for Python's `os.environ.setdefault` (libc setenv); Go's `os.Setenv` in `TestMain`, Java's `System.setProperty` (wrong API — JVM properties ≠ libc env), Ruby's `ENV[k]=v` post-`require`, Elixir's `System.put_env` after Rustler NIF load, and Zig/Dart per-test setup don't reach `SsrfPolicy::from_env()` before the first binding call. Per-language fix work is in flight upstream in alef e2e codegen; CI E2E for those suites is expected to fail this RC.
+
 ## [0.3.0-rc.65] - 2026-06-15
 
 ### Changed

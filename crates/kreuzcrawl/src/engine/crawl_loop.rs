@@ -140,6 +140,17 @@ pub(crate) async fn follow_redirects(
         {
             let target = resolve_redirect(&current_url, location);
             if !seen.contains(&target) {
+                // Validate the redirect target against SSRF policy before following.
+                // `do_fetch` re-validates on each call, but checking here keeps the
+                // error surface consistent with the pre-SSRF redirect implementation.
+                if let Ok(parsed_target) = url::Url::parse(&target)
+                    && let Err(e) = validate_url(&parsed_target, &engine.config.ssrf).await
+                {
+                    return Err(CrawlError::SsrfPolicyViolation {
+                        url: target,
+                        reason: e.to_string(),
+                    });
+                }
                 intermediate_headers.push(resp.headers);
                 seen.insert(target.clone());
                 redirect_count += 1;
@@ -156,6 +167,14 @@ pub(crate) async fn follow_redirects(
             let target_path = refresh[pos + 4..].trim();
             let target = resolve_redirect(&current_url, target_path);
             if !seen.contains(&target) {
+                if let Ok(parsed_target) = url::Url::parse(&target)
+                    && let Err(e) = validate_url(&parsed_target, &engine.config.ssrf).await
+                {
+                    return Err(CrawlError::SsrfPolicyViolation {
+                        url: target,
+                        reason: e.to_string(),
+                    });
+                }
                 intermediate_headers.push(resp.headers);
                 seen.insert(target.clone());
                 redirect_count += 1;
@@ -165,13 +184,27 @@ pub(crate) async fn follow_redirects(
         }
 
         // Meta-refresh redirect
-        if redirect_count < max_redirects
-            && is_html_content(&resp.content_type, &resp.body)
-            && let Ok(doc) = tl::parse(&resp.body, ParserOptions::default())
-            && let Some(refresh_target) = detect_meta_refresh(&doc)
-        {
+        // Parse the meta-refresh target in a separate block so `doc` (VDom, not Send)
+        // is dropped before the async validate_url call below.
+        let meta_refresh_target: Option<String> =
+            if redirect_count < max_redirects && is_html_content(&resp.content_type, &resp.body) {
+                tl::parse(&resp.body, ParserOptions::default())
+                    .ok()
+                    .and_then(|doc| detect_meta_refresh(&doc))
+            } else {
+                None
+            };
+        if let Some(refresh_target) = meta_refresh_target {
             let target = resolve_redirect(&current_url, &refresh_target);
             if !seen.contains(&target) {
+                if let Ok(parsed_target) = url::Url::parse(&target)
+                    && let Err(e) = validate_url(&parsed_target, &engine.config.ssrf).await
+                {
+                    return Err(CrawlError::SsrfPolicyViolation {
+                        url: target,
+                        reason: e.to_string(),
+                    });
+                }
                 intermediate_headers.push(resp.headers);
                 seen.insert(target.clone());
                 redirect_count += 1;
@@ -344,13 +377,15 @@ impl CrawlEngine {
         // If we have an error already (from redirects or seed fetch failure), emit a
         // CrawlEvent::Error so streaming consumers observe the failure, then return early.
         if let Some(ref error_msg) = state.error {
+            let error_event = CrawlEvent::Error {
+                url: final_url.clone(),
+                error: error_msg.clone(),
+            };
             if let Some(sender) = &tx {
-                let _ = sender
-                    .send(CrawlEvent::Error {
-                        url: final_url.clone(),
-                        error: error_msg.clone(),
-                    })
-                    .await;
+                let _ = sender.send(error_event.clone()).await;
+            }
+            if let Some(ref sink) = self.event_sink {
+                sink.emit(error_event).await;
             }
             return Ok(state.into_result(final_url));
         }
@@ -629,13 +664,15 @@ impl CrawlEngine {
                     let _ = self.store.store_error(&entry.url, &error).await;
                     // Forward the error to the streaming channel so consumers of
                     // crawl_stream / batch_crawl_stream observe CrawlEvent::Error.
+                    let error_event = CrawlEvent::Error {
+                        url: entry.url.clone(),
+                        error: error.to_string(),
+                    };
                     if let Some(sender) = tx {
-                        let _ = sender
-                            .send(CrawlEvent::Error {
-                                url: entry.url.clone(),
-                                error: error.to_string(),
-                            })
-                            .await;
+                        let _ = sender.send(error_event.clone()).await;
+                    }
+                    if let Some(ref sink) = self.event_sink {
+                        sink.emit(error_event).await;
                     }
                 }
                 Err(_join_error) => {
@@ -741,13 +778,15 @@ impl CrawlEngine {
                 .store
                 .store_error(&page_url, &CrawlError::ServerError(error_msg.clone()))
                 .await;
+            let error_event = CrawlEvent::Error {
+                url: page_url,
+                error: error_msg,
+            };
             if let Some(sender) = tx {
-                let _ = sender
-                    .send(CrawlEvent::Error {
-                        url: page_url,
-                        error: error_msg,
-                    })
-                    .await;
+                let _ = sender.send(error_event.clone()).await;
+            }
+            if let Some(ref sink) = self.event_sink {
+                sink.emit(error_event).await;
             }
             return Ok(false);
         }
@@ -870,16 +909,17 @@ impl CrawlEngine {
             .await;
 
         // Send page event through the channel if streaming
+        let page_event = CrawlEvent::Page {
+            result: Box::new(page.clone()),
+        };
         if let Some(sender) = tx
-            && sender
-                .send(CrawlEvent::Page {
-                    result: Box::new(page.clone()),
-                })
-                .await
-                .is_err()
+            && sender.send(page_event.clone()).await.is_err()
         {
             // Receiver dropped; signal cancellation
             return Ok(true);
+        }
+        if let Some(ref sink) = self.event_sink {
+            sink.emit(page_event).await;
         }
 
         state.pages.push(page);

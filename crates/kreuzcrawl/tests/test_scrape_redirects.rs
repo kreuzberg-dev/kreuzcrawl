@@ -12,7 +12,8 @@ fn engine_with_config(config: CrawlConfig) -> kreuzcrawl::CrawlEngineHandle {
 }
 
 fn default_engine() -> kreuzcrawl::CrawlEngineHandle {
-    engine_with_config(CrawlConfig::default())
+    // Allow loopback so MockServer (127.0.0.1) is reachable under the default SSRF policy.
+    engine_with_config(CrawlConfig::builder().allow_private_networks(true).build())
 }
 
 // ---------------------------------------------------------------------------
@@ -177,9 +178,10 @@ async fn scrape_stops_at_max_redirects() {
         .mount(&mock)
         .await;
 
+    let config = CrawlConfig::builder().allow_private_networks(true).build();
     let config = CrawlConfig {
         max_redirects: 2,
-        ..CrawlConfig::default()
+        ..config
     };
     let handle = engine_with_config(config);
     let url = format!("{}/r1", mock.uri());
@@ -276,9 +278,12 @@ async fn scrape_propagates_network_error_through_redirect() {
         .mount(&mock)
         .await;
 
+    // allow_private_networks so the SSRF check doesn't fire before we can observe the
+    // connection refusal from port 1 (which is the actual network error under test).
+    let config = CrawlConfig::builder().allow_private_networks(true).build();
     let config = CrawlConfig {
         request_timeout: std::time::Duration::from_millis(500),
-        ..CrawlConfig::default()
+        ..config
     };
     let handle = engine_with_config(config);
     let url = format!("{}/", mock.uri());

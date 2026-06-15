@@ -20,9 +20,10 @@ async fn test_batch_crawl_multiple_seeds() {
             .await;
     }
 
+    let base = CrawlConfig::builder().allow_private_networks(true).build();
     let config = CrawlConfig {
         max_depth: Some(0),
-        ..Default::default()
+        ..base
     };
     let handle = create_engine(Some(config)).unwrap();
 
@@ -66,9 +67,10 @@ async fn test_batch_crawl_partial_failure() {
         .mount(&mock)
         .await;
 
+    let base = CrawlConfig::builder().allow_private_networks(true).build();
     let config = CrawlConfig {
         max_depth: Some(0),
-        ..Default::default()
+        ..base
     };
     let handle = create_engine(Some(config)).unwrap();
 

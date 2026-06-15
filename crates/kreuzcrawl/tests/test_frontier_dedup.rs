@@ -38,10 +38,11 @@ async fn test_duplicate_links_deduplicated() {
         .mount(&mock)
         .await;
 
+    let base = CrawlConfig::builder().allow_private_networks(true).build();
     let config = CrawlConfig {
         max_depth: Some(2),
         max_concurrent: Some(1),
-        ..Default::default()
+        ..base
     };
     let handle = create_engine(Some(config)).unwrap();
 

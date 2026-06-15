@@ -43,20 +43,28 @@ impl CrawlEngine {
         tokio::spawn(async move {
             match engine.crawl_with_sender(&url, Some(tx.clone())).await {
                 Ok(result) => {
-                    let _ = tx
-                        .send(CrawlEvent::Complete {
-                            pages_crawled: result.pages.len(),
-                        })
-                        .await;
+                    let complete_event = CrawlEvent::Complete {
+                        pages_crawled: result.pages.len(),
+                    };
+                    let _ = tx.send(complete_event.clone()).await;
+                    if let Some(ref sink) = engine.event_sink {
+                        sink.emit(complete_event).await;
+                    }
                 }
                 Err(e) => {
-                    let _ = tx
-                        .send(CrawlEvent::Error {
-                            url: url.clone(),
-                            error: e.to_string(),
-                        })
-                        .await;
-                    let _ = tx.send(CrawlEvent::Complete { pages_crawled: 0 }).await;
+                    let error_event = CrawlEvent::Error {
+                        url: url.clone(),
+                        error: e.to_string(),
+                    };
+                    let _ = tx.send(error_event.clone()).await;
+                    if let Some(ref sink) = engine.event_sink {
+                        sink.emit(error_event).await;
+                    }
+                    let complete_event = CrawlEvent::Complete { pages_crawled: 0 };
+                    let _ = tx.send(complete_event.clone()).await;
+                    if let Some(ref sink) = engine.event_sink {
+                        sink.emit(complete_event).await;
+                    }
                 }
             }
         });
@@ -166,19 +174,23 @@ impl CrawlEngine {
                     let _permit = permit;
                     match engine.crawl_with_sender(&url, Some(tx.clone())).await {
                         Ok(result) => {
-                            let _ = tx
-                                .send(CrawlEvent::Complete {
-                                    pages_crawled: result.pages.len(),
-                                })
-                                .await;
+                            let complete_event = CrawlEvent::Complete {
+                                pages_crawled: result.pages.len(),
+                            };
+                            let _ = tx.send(complete_event.clone()).await;
+                            if let Some(ref sink) = engine.event_sink {
+                                sink.emit(complete_event).await;
+                            }
                         }
                         Err(e) => {
-                            let _ = tx
-                                .send(CrawlEvent::Error {
-                                    url: url.clone(),
-                                    error: e.to_string(),
-                                })
-                                .await;
+                            let error_event = CrawlEvent::Error {
+                                url: url.clone(),
+                                error: e.to_string(),
+                            };
+                            let _ = tx.send(error_event.clone()).await;
+                            if let Some(ref sink) = engine.event_sink {
+                                sink.emit(error_event).await;
+                            }
                         }
                     }
                 });

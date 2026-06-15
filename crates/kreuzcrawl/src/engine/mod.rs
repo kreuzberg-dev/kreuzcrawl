@@ -49,6 +49,8 @@ pub(crate) fn content_density(body: &str) -> f32 {
     text as f32 / total as f32
 }
 #[cfg(not(target_arch = "wasm32"))]
+use crate::sink::EventSink;
+#[cfg(not(target_arch = "wasm32"))]
 use crate::tower::CrawlRequest;
 use crate::traits::*;
 use crate::types::*;
@@ -67,6 +69,10 @@ pub struct CrawlEngine {
     pub(crate) strategy: Arc<dyn CrawlStrategy>,
     pub(crate) content_filter: Arc<dyn ContentFilter>,
     pub(crate) cache: Arc<dyn CrawlCache>,
+    /// Optional event sink for streaming crawl events to external consumers
+    /// (e.g., NATS, dashboards, analytics).
+    #[cfg(not(target_arch = "wasm32"))]
+    pub(crate) event_sink: Option<Arc<dyn EventSink>>,
     /// Shared UA rotation layer — preserves rotation counter across service builds.
     #[cfg(not(target_arch = "wasm32"))]
     ua_rotation: crate::tower::UaRotationLayer,

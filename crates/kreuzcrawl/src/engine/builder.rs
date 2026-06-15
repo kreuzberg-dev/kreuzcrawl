@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 use crate::defaults;
 use crate::error::CrawlError;
+use crate::sink::EventSink;
 use crate::traits::*;
 use crate::types::*;
 
@@ -40,6 +41,7 @@ pub struct CrawlEngineBuilder {
     strategy: Option<Arc<dyn CrawlStrategy>>,
     content_filter: Option<Arc<dyn ContentFilter>>,
     cache: Option<Arc<dyn CrawlCache>>,
+    event_sink: Option<Arc<dyn EventSink>>,
     #[cfg(feature = "browser")]
     browser_pool: Option<Arc<crate::browser_pool::BrowserPool>>,
     #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
@@ -58,6 +60,7 @@ impl CrawlEngineBuilder {
             strategy: None,
             content_filter: None,
             cache: None,
+            event_sink: None,
             #[cfg(feature = "browser")]
             browser_pool: None,
             #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
@@ -124,6 +127,20 @@ impl CrawlEngineBuilder {
     #[cfg_attr(alef, alef(skip))]
     pub fn cache(mut self, cache: impl CrawlCache + 'static) -> Self {
         self.cache = Some(Arc::new(cache));
+        self
+    }
+
+    /// Set the event sink for streaming crawl events.
+    ///
+    /// The event sink receives [`CrawlEvent`]s as pages are processed, allowing
+    /// consumers to integrate with external systems (NATS, dashboards, analytics, etc.)
+    /// without kreuzcrawl depending on those backends.
+    ///
+    /// [`CrawlEvent`]: crate::CrawlEvent
+    #[allow(dead_code)]
+    #[cfg_attr(alef, alef(skip))]
+    pub fn event_sink(mut self, event_sink: impl EventSink + 'static) -> Self {
+        self.event_sink = Some(Arc::new(event_sink));
         self
     }
 
@@ -206,6 +223,8 @@ impl CrawlEngineBuilder {
             strategy: self.strategy.unwrap_or_else(|| Arc::new(defaults::BfsStrategy)),
             content_filter: self.content_filter.unwrap_or_else(|| Arc::new(defaults::NoopFilter)),
             cache: self.cache.unwrap_or_else(|| Arc::new(defaults::NoopCache)),
+            #[cfg(not(target_arch = "wasm32"))]
+            event_sink: self.event_sink,
             #[cfg(not(target_arch = "wasm32"))]
             ua_rotation,
             #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
