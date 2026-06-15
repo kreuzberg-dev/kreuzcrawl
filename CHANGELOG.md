@@ -4,6 +4,12 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.64] - 2026-06-15
+
+### Changed
+
+- **Regenerate against alef 0.25.9.** Picks up the Elixir NIF scaffold fix: alef 0.25.7's generated NIF `Cargo.toml` emitted an unconditional `[patch.crates-io]` block with `name = { version = "=X" }` entries (no `path`/`git`/`url`), which cargo rejects as `patch for 'alloc-no-stdlib' points to the same source, but patches must point to different sources`. The brotli 8.0.x allocator pin now lives in `[dependencies]` as direct `=X` constraints with matching `[package.metadata.cargo-machete] ignored` entries — cargo's resolver propagates the pinned versions through the whole NIF dep tree without the no-op-patch error. Unblocks rc.63's 14 failed Elixir NIF build matrix cells + Hex publish (observed on run 27510339610). Also picks up alef 0.25.9's `publish/vendor.rs` cwd guard for `scrub_or_regenerate_lock` (cargo child commands now run from the binding crate dir) and the `[e2e.env]` config scaffolding for per-consumer e2e suite-setup environment-variable injection (per-language emitters land in a follow-up alef release; the SSRF env-var injection for CI E2E does not ship in rc.64).
+
 ## [0.3.0-rc.63] - 2026-06-14
 
 ### Fixed

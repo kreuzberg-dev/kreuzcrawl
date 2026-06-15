@@ -1,6 +1,6 @@
 [package]
 name = "kreuzcrawl-dart"
-version = "0.3.0-rc.63"
+version = "0.3.0-rc.64"
 edition = "2024"
 license = "Elastic-2.0"
 
@@ -21,5 +21,7 @@ tokio = { version = "1", features = ["rt-multi-thread", "sync"] }
 
 [lints.rust]
 # flutter_rust_bridge uses #[cfg(frb_expand)] internally during macro expansion.
-# Declare it as a known cfg so rustc does not emit unexpected_cfgs warnings.
+# Variant arms gated on upstream features (e.g. #[cfg(feature = "office")]) use
+# cfg conditions that are not declared in this binding crate. Declare all of them
+# as known cfgs so rustc does not emit unexpected_cfgs warnings.
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

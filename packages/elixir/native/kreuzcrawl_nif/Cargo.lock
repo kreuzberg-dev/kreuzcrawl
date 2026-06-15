@@ -228,9 +228,9 @@ dependencies = [
 
 [[package]]
 name = "brotli-decompressor"
-version = "5.0.0"
+version = "5.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "874bb8112abecc98cbd6d81ea4fa7e94fb9449648c93cc89aa40c81c24d7de03"
+checksum = "5962523e1b92ce1b5e793d9169b9943eece10d39f62550bc04bb605d75b94924"
 dependencies = [
  "alloc-no-stdlib",
  "alloc-stdlib",
@@ -1416,7 +1416,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0-rc.63"
+version = "0.3.0-rc.64"
 dependencies = [
  "ahash",
  "aho-corasick",
@@ -1456,8 +1456,11 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl_nif"
-version = "0.3.0-rc.63"
+version = "0.3.0-rc.64"
 dependencies = [
+ "alloc-no-stdlib",
+ "alloc-stdlib",
+ "brotli-decompressor",
  "futures-util",
  "kreuzcrawl",
  "rustler",
