@@ -2,7 +2,7 @@
 title: "Python API Reference"
 ---
 
-## Python API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## Python API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -62,6 +62,7 @@ result = create_engine(config=CrawlConfig())
 | `config` | `CrawlConfig \| None` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
+
 **Errors:** Raises `CrawlError`.
 
 ---
@@ -90,6 +91,7 @@ result = scrape(CrawlEngineHandle(), "value")
 | `url` | `str` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
+
 **Errors:** Raises `CrawlError`.
 
 ---
@@ -118,6 +120,7 @@ result = crawl(CrawlEngineHandle(), "value")
 | `url` | `str` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
+
 **Errors:** Raises `CrawlError`.
 
 ---
@@ -146,6 +149,7 @@ result = map_urls(CrawlEngineHandle(), "value")
 | `url` | `str` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
+
 **Errors:** Raises `CrawlError`.
 
 ---
@@ -175,6 +179,7 @@ result = interact(CrawlEngineHandle(), "value", [])
 | `actions` | `list[PageAction]` | Yes | The actions |
 
 **Returns:** `InteractionResult`
+
 **Errors:** Raises `CrawlError`.
 
 ---
@@ -203,6 +208,7 @@ result = batch_scrape(CrawlEngineHandle(), [])
 | `urls` | `list[str]` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
+
 **Errors:** Raises `CrawlError`.
 
 ---
@@ -231,6 +237,7 @@ result = batch_crawl(CrawlEngineHandle(), [])
 | `urls` | `list[str]` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
+
 **Errors:** Raises `CrawlError`.
 
 ---
@@ -355,9 +362,9 @@ Browser fallback configuration.
 | `capture_network_events` | `bool` | `False` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `session_affinity` | `bool` | `True` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -371,6 +378,8 @@ def default() -> BrowserConfig
 ```python
 result = BrowserConfig.default()
 ```
+
+**Returns:** `BrowserConfig`
 
 ---
 
@@ -435,9 +444,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrap_width` | `int` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `include_document_structure` | `bool` | `True` | Include document structure tree in output. Default: `True`. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -451,6 +460,8 @@ def default() -> ContentConfig
 ```python
 result = ContentConfig.default()
 ```
+
+**Returns:** `ContentConfig`
 
 ---
 
@@ -514,9 +525,9 @@ Configuration for crawl, scrape, and map operations.
 | `ssrf` | `str` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `dispatch` | `str \| None` | `None` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `None`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -531,7 +542,9 @@ def default() -> CrawlConfig
 result = CrawlConfig.default()
 ```
 
-#### validate()
+**Returns:** `CrawlConfig`
+
+###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -547,6 +560,10 @@ def validate(self) -> None
 instance.validate()
 ```
 
+**Returns:** No return value.
+
+**Errors:** Raises `CrawlError`.
+
 ---
 
 #### CrawlEngineHandle
@@ -556,9 +573,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Methods
+##### Methods
 
-#### crawl_stream()
+###### crawl_stream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -579,7 +596,17 @@ def crawl_stream(self, req: CrawlStreamRequest) -> str
 result = instance.crawl_stream(CrawlStreamRequest())
 ```
 
-#### batch_crawl_stream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `CrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `str`
+
+**Errors:** Raises `CrawlError`.
+
+###### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -599,6 +626,16 @@ def batch_crawl_stream(self, req: BatchCrawlStreamRequest) -> str
 ```python
 result = instance.batch_crawl_stream(BatchCrawlStreamRequest())
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `str`
+
+**Errors:** Raises `CrawlError`.
 
 ---
 
@@ -648,9 +685,9 @@ The result of a multi-page crawl operation.
 | `browser_used` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
 | `normalized_urls` | `list[str]` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Methods
+##### Methods
 
-#### unique_normalized_urls()
+###### unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -665,6 +702,8 @@ def unique_normalized_urls(self) -> int
 ```python
 result = instance.unique_normalized_urls()
 ```
+
+**Returns:** `int`
 
 ---
 

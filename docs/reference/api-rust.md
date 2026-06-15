@@ -2,7 +2,7 @@
 title: "Rust API Reference"
 ---
 
-## Rust API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## Rust API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -62,6 +62,7 @@ let result = create_engine(CrawlConfig::default())?;
 | `config` | `Option<CrawlConfig>` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
+
 **Errors:** Returns `Err(CrawlError)`.
 
 ---
@@ -90,6 +91,7 @@ let result = scrape(CrawlEngineHandle::default(), "value").await?;
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
+
 **Errors:** Returns `Err(CrawlError)`.
 
 ---
@@ -118,6 +120,7 @@ let result = crawl(CrawlEngineHandle::default(), "value").await?;
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
+
 **Errors:** Returns `Err(CrawlError)`.
 
 ---
@@ -146,6 +149,7 @@ let result = map_urls(CrawlEngineHandle::default(), "value").await?;
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
+
 **Errors:** Returns `Err(CrawlError)`.
 
 ---
@@ -175,6 +179,7 @@ let result = interact(CrawlEngineHandle::default(), "value", vec![]).await?;
 | `actions` | `Vec<PageAction>` | Yes | The actions |
 
 **Returns:** `InteractionResult`
+
 **Errors:** Returns `Err(CrawlError)`.
 
 ---
@@ -203,6 +208,7 @@ let result = batch_scrape(CrawlEngineHandle::default(), vec![]).await?;
 | `urls` | `Vec<String>` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
+
 **Errors:** Returns `Err(CrawlError)`.
 
 ---
@@ -231,6 +237,7 @@ let result = batch_crawl(CrawlEngineHandle::default(), vec![]).await?;
 | `urls` | `Vec<String>` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
+
 **Errors:** Returns `Err(CrawlError)`.
 
 ---
@@ -355,9 +362,9 @@ Browser fallback configuration.
 | `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `session_affinity` | `bool` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -370,6 +377,8 @@ pub fn default() -> BrowserConfig
 ```rust
 let result = BrowserConfig::default();
 ```
+
+**Returns:** `BrowserConfig`
 
 ---
 
@@ -434,9 +443,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrap_width` | `usize` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `include_document_structure` | `bool` | `true` | Include document structure tree in output. Default: `true`. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -449,6 +458,8 @@ pub fn default() -> ContentConfig
 ```rust
 let result = ContentConfig::default();
 ```
+
+**Returns:** `ContentConfig`
 
 ---
 
@@ -512,9 +523,9 @@ Configuration for crawl, scrape, and map operations.
 | `ssrf` | `String` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `dispatch` | `Option<String>` | `None` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `None`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -528,14 +539,16 @@ pub fn default() -> CrawlConfig
 let result = CrawlConfig::default();
 ```
 
-#### validate()
+**Returns:** `CrawlConfig`
+
+###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
 **Signature:**
 
 ```rust
-pub fn validate(&self)
+pub fn validate(&self) -> Result<(), CrawlError>
 ```
 
 **Example:**
@@ -543,6 +556,10 @@ pub fn validate(&self)
 ```rust
 instance.validate()?;
 ```
+
+**Returns:** No return value.
+
+**Errors:** Returns `Err(CrawlError)`.
 
 ---
 
@@ -553,9 +570,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Methods
+##### Methods
 
-#### crawl_stream()
+###### crawl_stream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -567,7 +584,7 @@ a `Result` to surface transport-level errors; today every emit is `Ok`.
 **Signature:**
 
 ```rust
-pub fn crawl_stream(&self, req: CrawlStreamRequest) -> String
+pub async fn crawl_stream(&self, req: CrawlStreamRequest) -> Result<String, CrawlError>
 ```
 
 **Example:**
@@ -576,7 +593,17 @@ pub fn crawl_stream(&self, req: CrawlStreamRequest) -> String
 let result = instance.crawl_stream(CrawlStreamRequest::default()).await?;
 ```
 
-#### batch_crawl_stream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `CrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `String`
+
+**Errors:** Returns `Err(CrawlError)`.
+
+###### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -588,7 +615,7 @@ errors; today every emit is `Ok`.
 **Signature:**
 
 ```rust
-pub fn batch_crawl_stream(&self, req: BatchCrawlStreamRequest) -> String
+pub async fn batch_crawl_stream(&self, req: BatchCrawlStreamRequest) -> Result<String, CrawlError>
 ```
 
 **Example:**
@@ -596,6 +623,16 @@ pub fn batch_crawl_stream(&self, req: BatchCrawlStreamRequest) -> String
 ```rust
 let result = instance.batch_crawl_stream(BatchCrawlStreamRequest::default()).await?;
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `String`
+
+**Errors:** Returns `Err(CrawlError)`.
 
 ---
 
@@ -645,9 +682,9 @@ The result of a multi-page crawl operation.
 | `browser_used` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
 | `normalized_urls` | `Vec<String>` | `vec![]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Methods
+##### Methods
 
-#### unique_normalized_urls()
+###### unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -662,6 +699,8 @@ pub fn unique_normalized_urls(&self) -> usize
 ```rust
 let result = instance.unique_normalized_urls();
 ```
+
+**Returns:** `usize`
 
 ---
 

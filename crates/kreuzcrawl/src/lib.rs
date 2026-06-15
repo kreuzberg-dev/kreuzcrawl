@@ -3,7 +3,6 @@
 #[cfg(feature = "api")]
 pub(crate) mod api;
 mod assets;
-pub mod budget;
 pub(crate) mod bindings;
 #[cfg(feature = "browser")]
 mod browser;
@@ -14,6 +13,7 @@ pub mod browser_pool;
 pub(crate) mod browser_profile;
 #[cfg(feature = "browser")]
 pub mod browser_session_pool;
+pub mod budget;
 pub(crate) mod citations;
 #[cfg(feature = "browser")]
 mod stealth;
@@ -56,13 +56,13 @@ pub use bindings::{
     BatchCrawlResult, BatchCrawlResults, BatchScrapeResult, BatchScrapeResults, CrawlEngineHandle, batch_crawl,
     batch_scrape, crawl, create_engine, interact, map_urls, scrape,
 };
-pub use budget::{BudgetError, DefaultPageBudget, PageBudget};
 #[cfg(not(target_arch = "wasm32"))]
 pub use bindings::{batch_crawl_stream, crawl_stream};
 #[cfg(feature = "browser")]
 pub use browser_pool::{BrowserPool, BrowserPoolConfig};
 #[cfg(feature = "browser")]
 pub use browser_session_pool::{BrowserSessionPool, SessionKey};
+pub use budget::{BudgetError, DefaultPageBudget, PageBudget};
 pub use citations::{CitationReference, CitationResult, generate_citations};
 #[doc(hidden)]
 pub use defaults::compute_backoff_ms;

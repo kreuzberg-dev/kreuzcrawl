@@ -2,7 +2,7 @@
 title: "C# API Reference"
 ---
 
-## C# API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## C# API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -62,6 +62,7 @@ var result = CreateEngine(new CrawlConfig());
 | `Config` | `CrawlConfig?` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -90,6 +91,7 @@ var result = await Scrape(new CrawlEngineHandle(), "value");
 | `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -118,6 +120,7 @@ var result = await Crawl(new CrawlEngineHandle(), "value");
 | `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -146,6 +149,7 @@ var result = await MapUrls(new CrawlEngineHandle(), "value");
 | `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -175,6 +179,7 @@ var result = await Interact(new CrawlEngineHandle(), "value", new List<object>()
 | `Actions` | `List<PageAction>` | Yes | The actions |
 
 **Returns:** `InteractionResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -203,6 +208,7 @@ var result = await BatchScrape(new CrawlEngineHandle(), new List<object>());
 | `Urls` | `List<string>` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -231,6 +237,7 @@ var result = await BatchCrawl(new CrawlEngineHandle(), new List<object>());
 | `Urls` | `List<string>` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -355,9 +362,9 @@ Browser fallback configuration.
 | `CaptureNetworkEvents` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `SessionAffinity` | `bool` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Methods
+##### Methods
 
-#### CreateDefault()
+###### CreateDefault()
 
 **Signature:**
 
@@ -370,6 +377,8 @@ public BrowserConfig CreateDefault()
 ```csharp
 var result = BrowserConfig.CreateDefault();
 ```
+
+**Returns:** `BrowserConfig`
 
 ---
 
@@ -434,9 +443,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `WrapWidth` | `nuint` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `IncludeDocumentStructure` | `bool` | `true` | Include document structure tree in output. Default: `true`. |
 
-### Methods
+##### Methods
 
-#### CreateDefault()
+###### CreateDefault()
 
 **Signature:**
 
@@ -449,6 +458,8 @@ public ContentConfig CreateDefault()
 ```csharp
 var result = ContentConfig.CreateDefault();
 ```
+
+**Returns:** `ContentConfig`
 
 ---
 
@@ -512,9 +523,9 @@ Configuration for crawl, scrape, and map operations.
 | `Ssrf` | `string` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `Dispatch` | `string?` | `null` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `null`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Methods
+##### Methods
 
-#### CreateDefault()
+###### CreateDefault()
 
 **Signature:**
 
@@ -528,7 +539,9 @@ public CrawlConfig CreateDefault()
 var result = CrawlConfig.CreateDefault();
 ```
 
-#### Validate()
+**Returns:** `CrawlConfig`
+
+###### Validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -544,6 +557,10 @@ public void Validate()
 instance.Validate();
 ```
 
+**Returns:** No return value.
+
+**Errors:** Throws `CrawlError`.
+
 ---
 
 #### CrawlEngineHandle
@@ -553,9 +570,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Methods
+##### Methods
 
-#### CrawlStream()
+###### CrawlStream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -576,7 +593,17 @@ public async Task<string> CrawlStreamAsync(CrawlStreamRequest req)
 var result = await instance.CrawlStream(new CrawlStreamRequest());
 ```
 
-#### BatchCrawlStream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Req` | `CrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `string`
+
+**Errors:** Throws `CrawlError`.
+
+###### BatchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -596,6 +623,16 @@ public async Task<string> BatchCrawlStreamAsync(BatchCrawlStreamRequest req)
 ```csharp
 var result = await instance.BatchCrawlStream(new BatchCrawlStreamRequest());
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `string`
+
+**Errors:** Throws `CrawlError`.
 
 ---
 
@@ -645,9 +682,9 @@ The result of a multi-page crawl operation.
 | `BrowserUsed` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
 | `NormalizedUrls` | `List<string>` | `new List<string>()` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Methods
+##### Methods
 
-#### UniqueNormalizedUrls()
+###### UniqueNormalizedUrls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -662,6 +699,8 @@ public nuint UniqueNormalizedUrls()
 ```csharp
 var result = instance.UniqueNormalizedUrls();
 ```
+
+**Returns:** `nuint`
 
 ---
 

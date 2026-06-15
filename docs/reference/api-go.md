@@ -2,7 +2,7 @@
 title: "Go API Reference"
 ---
 
-## Go API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## Go API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -65,6 +65,7 @@ if err != nil {
 | `Config` | `*CrawlConfig` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
+
 **Errors:** Returns `error`.
 
 ---
@@ -96,6 +97,7 @@ if err != nil {
 | `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
+
 **Errors:** Returns `error`.
 
 ---
@@ -127,6 +129,7 @@ if err != nil {
 | `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
+
 **Errors:** Returns `error`.
 
 ---
@@ -158,6 +161,7 @@ if err != nil {
 | `Url` | `string` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
+
 **Errors:** Returns `error`.
 
 ---
@@ -190,6 +194,7 @@ if err != nil {
 | `Actions` | `[]PageAction` | Yes | The actions |
 
 **Returns:** `InteractionResult`
+
 **Errors:** Returns `error`.
 
 ---
@@ -221,6 +226,7 @@ if err != nil {
 | `Urls` | `[]string` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
+
 **Errors:** Returns `error`.
 
 ---
@@ -252,6 +258,7 @@ if err != nil {
 | `Urls` | `[]string` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
+
 **Errors:** Returns `error`.
 
 ---
@@ -376,9 +383,9 @@ Browser fallback configuration.
 | `CaptureNetworkEvents` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `SessionAffinity` | `bool` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Methods
+##### Methods
 
-#### Default()
+###### Default()
 
 **Signature:**
 
@@ -391,6 +398,8 @@ func (o *BrowserConfig) Default() BrowserConfig
 ```go
 result := BrowserConfig.Default()
 ```
+
+**Returns:** `BrowserConfig`
 
 ---
 
@@ -455,9 +464,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `WrapWidth` | `int` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `IncludeDocumentStructure` | `bool` | `true` | Include document structure tree in output. Default: `true`. |
 
-### Methods
+##### Methods
 
-#### Default()
+###### Default()
 
 **Signature:**
 
@@ -470,6 +479,8 @@ func (o *ContentConfig) Default() ContentConfig
 ```go
 result := ContentConfig.Default()
 ```
+
+**Returns:** `ContentConfig`
 
 ---
 
@@ -533,9 +544,9 @@ Configuration for crawl, scrape, and map operations.
 | `Ssrf` | `string` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `Dispatch` | `*string` | `nil` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `nil`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Methods
+##### Methods
 
-#### Default()
+###### Default()
 
 **Signature:**
 
@@ -549,7 +560,9 @@ func (o *CrawlConfig) Default() CrawlConfig
 result := CrawlConfig.Default()
 ```
 
-#### Validate()
+**Returns:** `CrawlConfig`
+
+###### Validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -567,6 +580,10 @@ if err := instance.Validate(); err != nil {
 }
 ```
 
+**Returns:** No return value.
+
+**Errors:** Returns `error`.
+
 ---
 
 #### CrawlEngineHandle
@@ -576,9 +593,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Methods
+##### Methods
 
-#### CrawlStream()
+###### CrawlStream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -602,7 +619,17 @@ if err != nil {
 }
 ```
 
-#### BatchCrawlStream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Req` | `CrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `string`
+
+**Errors:** Returns `error`.
+
+###### BatchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -625,6 +652,16 @@ if err != nil {
     return err
 }
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `string`
+
+**Errors:** Returns `error`.
 
 ---
 
@@ -674,9 +711,9 @@ The result of a multi-page crawl operation.
 | `BrowserUsed` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
 | `NormalizedUrls` | `[]string` | `nil` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Methods
+##### Methods
 
-#### UniqueNormalizedUrls()
+###### UniqueNormalizedUrls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -691,6 +728,8 @@ func (o *CrawlResult) UniqueNormalizedUrls() int
 ```go
 result := instance.UniqueNormalizedUrls()
 ```
+
+**Returns:** `int`
 
 ---
 

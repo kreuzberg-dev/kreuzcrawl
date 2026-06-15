@@ -2,7 +2,7 @@
 title: "Zig API Reference"
 ---
 
-## Zig API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## Zig API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -62,6 +62,7 @@ const result = try createEngine(.{});
 | `config` | `CrawlConfig?` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -90,6 +91,7 @@ const result = try scrape(.{}, "value");
 | `url` | `[:0]const u8` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -118,6 +120,7 @@ const result = try crawl(.{}, "value");
 | `url` | `[:0]const u8` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -146,6 +149,7 @@ const result = try mapUrls(.{}, "value");
 | `url` | `[:0]const u8` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -175,6 +179,7 @@ const result = try interact(.{}, "value", &[_]u8{});
 | `actions` | `[]const PageAction` | Yes | The actions |
 
 **Returns:** `InteractionResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -203,6 +208,7 @@ const result = try batchScrape(.{}, &[_]u8{});
 | `urls` | `[]const [:0]const u8` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -231,6 +237,7 @@ const result = try batchCrawl(.{}, &[_]u8{});
 | `urls` | `[]const [:0]const u8` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -355,9 +362,9 @@ Browser fallback configuration.
 | `captureNetworkEvents` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `sessionAffinity` | `bool` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -370,6 +377,8 @@ pub fn default() BrowserConfig
 ```zig
 const result = BrowserConfig.default();
 ```
+
+**Returns:** `BrowserConfig`
 
 ---
 
@@ -434,9 +443,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrapWidth` | `u64` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `includeDocumentStructure` | `bool` | `true` | Include document structure tree in output. Default: `true`. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -449,6 +458,8 @@ pub fn default() ContentConfig
 ```zig
 const result = ContentConfig.default();
 ```
+
+**Returns:** `ContentConfig`
 
 ---
 
@@ -512,9 +523,9 @@ Configuration for crawl, scrape, and map operations.
 | `ssrf` | `[:0]const u8` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `dispatch` | `[:0]const u8?` | `null` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `null`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -528,7 +539,9 @@ pub fn default() CrawlConfig
 const result = CrawlConfig.default();
 ```
 
-#### validate()
+**Returns:** `CrawlConfig`
+
+###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -544,6 +557,10 @@ pub fn validate(self: *const CrawlConfig) CrawlError!void
 try instance.validate();
 ```
 
+**Returns:** No return value.
+
+**Errors:** Throws `CrawlError`.
+
 ---
 
 #### CrawlEngineHandle
@@ -553,9 +570,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Methods
+##### Methods
 
-#### crawlStream()
+###### crawlStream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -576,7 +593,17 @@ pub fn crawlStream(self: *const CrawlEngineHandle, req: CrawlStreamRequest) Craw
 const result = try instance.crawlStream(.{});
 ```
 
-#### batchCrawlStream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `CrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `[:0]const u8`
+
+**Errors:** Throws `CrawlError`.
+
+###### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -596,6 +623,16 @@ pub fn batchCrawlStream(self: *const CrawlEngineHandle, req: BatchCrawlStreamReq
 ```zig
 const result = try instance.batchCrawlStream(.{});
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `[:0]const u8`
+
+**Errors:** Throws `CrawlError`.
 
 ---
 
@@ -645,9 +682,9 @@ The result of a multi-page crawl operation.
 | `browserUsed` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
 | `normalizedUrls` | `[]const [:0]const u8` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Methods
+##### Methods
 
-#### uniqueNormalizedUrls()
+###### uniqueNormalizedUrls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -662,6 +699,8 @@ pub fn uniqueNormalizedUrls(self: *const CrawlResult) u64
 ```zig
 const result = instance.uniqueNormalizedUrls();
 ```
+
+**Returns:** `u64`
 
 ---
 

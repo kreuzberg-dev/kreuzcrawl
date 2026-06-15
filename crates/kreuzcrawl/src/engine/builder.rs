@@ -242,7 +242,9 @@ impl CrawlEngineBuilder {
             cache: self.cache.unwrap_or_else(|| Arc::new(defaults::NoopCache)),
             #[cfg(not(target_arch = "wasm32"))]
             event_sink: self.event_sink,
-            page_budget: self.page_budget.unwrap_or_else(|| Arc::new(crate::budget::DefaultPageBudget)),
+            page_budget: self
+                .page_budget
+                .unwrap_or_else(|| Arc::new(crate::budget::DefaultPageBudget)),
             #[cfg(not(target_arch = "wasm32"))]
             ua_rotation,
             #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]

@@ -2,7 +2,7 @@
 title: "C API Reference"
 ---
 
-## C API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## C API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -23,7 +23,7 @@ KcrawlCitationResult* kcrawl_generate_citations(const char* markdown);
 **Example:**
 
 ```c
-void *result = kcrawl_generate_citations("value");
+KcrawlCitationResult *result = kcrawl_generate_citations("value");
 ```
 
 **Parameters:**
@@ -52,7 +52,7 @@ KcrawlCrawlEngineHandle* kcrawl_create_engine(KcrawlCrawlConfig config);
 **Example:**
 
 ```c
-void *result = kcrawl_create_engine(NULL);
+KcrawlCrawlEngineHandle *result = kcrawl_create_engine(NULL);
 ```
 
 **Parameters:**
@@ -62,6 +62,7 @@ void *result = kcrawl_create_engine(NULL);
 | `config` | `KcrawlCrawlConfig*` | No | The configuration options |
 
 **Returns:** `KcrawlCrawlEngineHandle`
+
 **Errors:** Returns `NULL` on error.
 
 ---
@@ -79,7 +80,7 @@ KcrawlScrapeResult* kcrawl_scrape(KcrawlCrawlEngineHandle engine, const char* ur
 **Example:**
 
 ```c
-void *result = kcrawl_scrape(NULL, "value");
+KcrawlScrapeResult *result = kcrawl_scrape(NULL, "value");
 ```
 
 **Parameters:**
@@ -90,6 +91,7 @@ void *result = kcrawl_scrape(NULL, "value");
 | `url` | `const char*` | Yes | The URL to fetch |
 
 **Returns:** `KcrawlScrapeResult`
+
 **Errors:** Returns `NULL` on error.
 
 ---
@@ -107,7 +109,7 @@ KcrawlCrawlResult* kcrawl_crawl(KcrawlCrawlEngineHandle engine, const char* url)
 **Example:**
 
 ```c
-void *result = kcrawl_crawl(NULL, "value");
+KcrawlCrawlResult *result = kcrawl_crawl(NULL, "value");
 ```
 
 **Parameters:**
@@ -118,6 +120,7 @@ void *result = kcrawl_crawl(NULL, "value");
 | `url` | `const char*` | Yes | The URL to fetch |
 
 **Returns:** `KcrawlCrawlResult`
+
 **Errors:** Returns `NULL` on error.
 
 ---
@@ -135,7 +138,7 @@ KcrawlMapResult* kcrawl_map_urls(KcrawlCrawlEngineHandle engine, const char* url
 **Example:**
 
 ```c
-void *result = kcrawl_map_urls(NULL, "value");
+KcrawlMapResult *result = kcrawl_map_urls(NULL, "value");
 ```
 
 **Parameters:**
@@ -146,6 +149,7 @@ void *result = kcrawl_map_urls(NULL, "value");
 | `url` | `const char*` | Yes | The URL to fetch |
 
 **Returns:** `KcrawlMapResult`
+
 **Errors:** Returns `NULL` on error.
 
 ---
@@ -163,7 +167,7 @@ KcrawlInteractionResult* kcrawl_interact(KcrawlCrawlEngineHandle engine, const c
 **Example:**
 
 ```c
-void *result = kcrawl_interact(NULL, "value", NULL);
+KcrawlInteractionResult *result = kcrawl_interact(NULL, "value", NULL);
 ```
 
 **Parameters:**
@@ -175,6 +179,7 @@ void *result = kcrawl_interact(NULL, "value", NULL);
 | `actions` | `KcrawlPageAction*` | Yes | The actions |
 
 **Returns:** `KcrawlInteractionResult`
+
 **Errors:** Returns `NULL` on error.
 
 ---
@@ -192,7 +197,7 @@ KcrawlBatchScrapeResults* kcrawl_batch_scrape(KcrawlCrawlEngineHandle engine, co
 **Example:**
 
 ```c
-void *result = kcrawl_batch_scrape(NULL, NULL);
+KcrawlBatchScrapeResults *result = kcrawl_batch_scrape(NULL, NULL);
 ```
 
 **Parameters:**
@@ -203,6 +208,7 @@ void *result = kcrawl_batch_scrape(NULL, NULL);
 | `urls` | `const char**` | Yes | The urls |
 
 **Returns:** `KcrawlBatchScrapeResults`
+
 **Errors:** Returns `NULL` on error.
 
 ---
@@ -220,7 +226,7 @@ KcrawlBatchCrawlResults* kcrawl_batch_crawl(KcrawlCrawlEngineHandle engine, cons
 **Example:**
 
 ```c
-void *result = kcrawl_batch_crawl(NULL, NULL);
+KcrawlBatchCrawlResults *result = kcrawl_batch_crawl(NULL, NULL);
 ```
 
 **Parameters:**
@@ -231,6 +237,7 @@ void *result = kcrawl_batch_crawl(NULL, NULL);
 | `urls` | `const char**` | Yes | The urls |
 
 **Returns:** `KcrawlBatchCrawlResults`
+
 **Errors:** Returns `NULL` on error.
 
 ---
@@ -355,9 +362,9 @@ Browser fallback configuration.
 | `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `session_affinity` | `bool` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Methods
+##### Methods
 
-#### kcrawl_default()
+###### kcrawl_default()
 
 **Signature:**
 
@@ -368,8 +375,10 @@ KcrawlBrowserConfig kcrawl_default();
 **Example:**
 
 ```c
-void *result = kcrawl_default();
+KcrawlBrowserConfig *result = kcrawl_default();
 ```
+
+**Returns:** `KcrawlBrowserConfig`
 
 ---
 
@@ -434,9 +443,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrap_width` | `uintptr_t` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `include_document_structure` | `bool` | `true` | Include document structure tree in output. Default: `true`. |
 
-### Methods
+##### Methods
 
-#### kcrawl_default()
+###### kcrawl_default()
 
 **Signature:**
 
@@ -447,8 +456,10 @@ KcrawlContentConfig kcrawl_default();
 **Example:**
 
 ```c
-void *result = kcrawl_default();
+KcrawlContentConfig *result = kcrawl_default();
 ```
+
+**Returns:** `KcrawlContentConfig`
 
 ---
 
@@ -512,9 +523,9 @@ Configuration for crawl, scrape, and map operations.
 | `ssrf` | `const char*` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `dispatch` | `const char**` | `NULL` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `NULL`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Methods
+##### Methods
 
-#### kcrawl_default()
+###### kcrawl_default()
 
 **Signature:**
 
@@ -525,10 +536,12 @@ KcrawlCrawlConfig kcrawl_default();
 **Example:**
 
 ```c
-void *result = kcrawl_default();
+KcrawlCrawlConfig *result = kcrawl_default();
 ```
 
-#### kcrawl_validate()
+**Returns:** `KcrawlCrawlConfig`
+
+###### kcrawl_validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -541,8 +554,12 @@ void kcrawl_validate();
 **Example:**
 
 ```c
-kcrawl_validate(instance, );
+kcrawl_validate(instance);
 ```
+
+**Returns:** No return value.
+
+**Errors:** Returns `NULL` on error.
 
 ---
 
@@ -553,9 +570,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Methods
+##### Methods
 
-#### kcrawl_crawl_stream()
+###### kcrawl_crawl_stream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -573,10 +590,20 @@ const char* kcrawl_crawl_stream(KcrawlCrawlStreamRequest req);
 **Example:**
 
 ```c
-void *result = kcrawl_crawl_stream(instance, NULL);
+const char *result = kcrawl_crawl_stream(instance, (KcrawlCrawlStreamRequest){0});
 ```
 
-#### kcrawl_batch_crawl_stream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `KcrawlCrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `const char*`
+
+**Errors:** Returns `NULL` on error.
+
+###### kcrawl_batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -594,8 +621,18 @@ const char* kcrawl_batch_crawl_stream(KcrawlBatchCrawlStreamRequest req);
 **Example:**
 
 ```c
-void *result = kcrawl_batch_crawl_stream(instance, NULL);
+const char *result = kcrawl_batch_crawl_stream(instance, (KcrawlBatchCrawlStreamRequest){0});
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `KcrawlBatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `const char*`
+
+**Errors:** Returns `NULL` on error.
 
 ---
 
@@ -645,9 +682,9 @@ The result of a multi-page crawl operation.
 | `browser_used` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
 | `normalized_urls` | `const char**` | `NULL` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Methods
+##### Methods
 
-#### kcrawl_unique_normalized_urls()
+###### kcrawl_unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -660,8 +697,10 @@ uintptr_t kcrawl_unique_normalized_urls();
 **Example:**
 
 ```c
-void *result = kcrawl_unique_normalized_urls(instance, );
+uintptr_t result = kcrawl_unique_normalized_urls(instance);
 ```
+
+**Returns:** `uintptr_t`
 
 ---
 

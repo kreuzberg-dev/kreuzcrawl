@@ -132,6 +132,7 @@ pub fn build(b: *std.Build) void {
             metadata_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
+    metadata_run.step.dependOn(&markdown_run_run.step);
     test_step.dependOn(&metadata_run.step);
 
     const scrape_module = b.createModule(.{
@@ -160,6 +161,7 @@ pub fn build(b: *std.Build) void {
             scrape_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
+    scrape_run.step.dependOn(&metadata_run_run.step);
     test_step.dependOn(&scrape_run.step);
 
 }

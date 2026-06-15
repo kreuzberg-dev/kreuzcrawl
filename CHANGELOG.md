@@ -4,6 +4,17 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.69] - 2026-06-15
+
+### Fixed
+
+- **Within-batch crawl URL dedup race.** rc.62's `feat(security): SSRF defense in core HTTP layer` (commit 277ef16f6) refactored `discover_links` (`crates/kreuzcrawl/src/engine/crawl_loop.rs`) into a two-phase pipeline — phase 1 collects link candidates after `is_seen` check; phase 2 runs concurrent SSRF validation, then `mark_seen`. The race: within a single `discover_links` call, three anchors `/page`, `/page#section`, `/page?ref=home` all normalize via `normalize_url_for_dedup` to the same key `/page`, but each passes `!is_seen(&dedup_key)` in phase 1 because none has reached phase 2's `mark_seen` yet. All three then enqueue. rc.66/67 CHANGELOG entries fixed a related-but-distinct redirect `final_url` regression from the same commit; the dedup race surfaced separately in rc.68 CI E2E run 27564198654 (all 15 language suites failing the six `test_crawl_*` over-counting fixtures — `crawl_url_deduplication` returned 4 pages instead of ≤2, plus `crawl_fragment_stripping`, `crawl_query_param_dedup`, `crawl_trailing_slash_dedup`, `crawl_concurrent_depth`, `crawl_include_path_pattern`). Fix: move `mark_seen` from phase 2 (post-validation) to phase 1 (candidate-push time) — `is_seen` + `mark_seen` now run as an atomic pair under the same await point in the candidate loop, so the second and third anchors in the batch see the dedup key as already-seen. The post-validation `mark_seen` call in phase 2 is removed (redundant), the binding renamed `_dedup_key` to silence unused warning. Verified against `cargo test -p kreuzcrawl --test test_frontier_dedup` (passes) and the full `kreuzcrawl` test suite (192 unit + all integration tests pass with `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true`).
+
+### Changed
+
+- **Regenerate against alef 0.25.15** (pin unchanged from rc.68). Picks up the dedup fix in Rust source via standard binding regen; no alef-side changes were needed for rc.69.
+- **Remove hand-written `e2e/python/tests/test_ssrf.py`.** The file's own TODO comment marked it for deletion once `validation/validation_ssrf_loopback_denied.json` existed; that fixture now exists (skip-all-languages per rc.67) and the hand-written tests could not coexist with the suite-wide `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true` setup. SSRF deny behavior remains covered by 35 unit tests in `crates/kreuzcrawl/src/net/ssrf.rs`.
+
 ## [0.3.0-rc.68] - 2026-06-15
 
 ### Changed

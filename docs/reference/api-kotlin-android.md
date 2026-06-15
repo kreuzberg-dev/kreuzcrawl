@@ -2,7 +2,7 @@
 title: "Kotlin (Android) API Reference"
 ---
 
-## Kotlin (Android) API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## Kotlin (Android) API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -63,6 +63,7 @@ val result = createEngine(CrawlConfig())
 | `config` | `CrawlConfig?` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -92,6 +93,7 @@ val result = scrape(CrawlEngineHandle(), "value")
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -121,6 +123,7 @@ val result = crawl(CrawlEngineHandle(), "value")
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -150,6 +153,7 @@ val result = mapUrls(CrawlEngineHandle(), "value")
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -180,6 +184,7 @@ val result = interact(CrawlEngineHandle(), "value", [])
 | `actions` | `List<PageAction>` | Yes | The actions |
 
 **Returns:** `InteractionResult`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -209,6 +214,7 @@ val result = batchScrape(CrawlEngineHandle(), [])
 | `urls` | `List<String>` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -238,6 +244,7 @@ val result = batchCrawl(CrawlEngineHandle(), [])
 | `urls` | `List<String>` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
+
 **Errors:** Throws `CrawlError`.
 
 ---
@@ -362,9 +369,9 @@ Browser fallback configuration.
 | `captureNetworkEvents` | `Boolean` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `sessionAffinity` | `Boolean` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -378,6 +385,8 @@ fun default(): BrowserConfig
 ```kotlin
 val result = BrowserConfig.default()
 ```
+
+**Returns:** `BrowserConfig`
 
 ---
 
@@ -442,9 +451,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrapWidth` | `Long` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `includeDocumentStructure` | `Boolean` | `true` | Include document structure tree in output. Default: `true`. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -458,6 +467,8 @@ fun default(): ContentConfig
 ```kotlin
 val result = ContentConfig.default()
 ```
+
+**Returns:** `ContentConfig`
 
 ---
 
@@ -521,9 +532,9 @@ Configuration for crawl, scrape, and map operations.
 | `ssrf` | `String` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `dispatch` | `String?` | `null` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `null`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Methods
+##### Methods
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -538,7 +549,9 @@ fun default(): CrawlConfig
 val result = CrawlConfig.default()
 ```
 
-#### validate()
+**Returns:** `CrawlConfig`
+
+###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -555,6 +568,10 @@ fun validate()
 instance.validate()
 ```
 
+**Returns:** No return value.
+
+**Errors:** Throws `CrawlError`.
+
 ---
 
 #### CrawlEngineHandle
@@ -564,9 +581,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Methods
+##### Methods
 
-#### crawlStream()
+###### crawlStream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -588,7 +605,17 @@ fun crawlStream(req: CrawlStreamRequest): String
 val result = instance.crawlStream(CrawlStreamRequest())
 ```
 
-#### batchCrawlStream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `CrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `String`
+
+**Errors:** Throws `CrawlError`.
+
+###### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -609,6 +636,16 @@ fun batchCrawlStream(req: BatchCrawlStreamRequest): String
 ```kotlin
 val result = instance.batchCrawlStream(BatchCrawlStreamRequest())
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `String`
+
+**Errors:** Throws `CrawlError`.
 
 ---
 
@@ -658,9 +695,9 @@ The result of a multi-page crawl operation.
 | `browserUsed` | `Boolean` | — | Whether the browser fallback was used for any page in this crawl. |
 | `normalizedUrls` | `List<String>` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Methods
+##### Methods
 
-#### uniqueNormalizedUrls()
+###### uniqueNormalizedUrls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -675,6 +712,8 @@ fun uniqueNormalizedUrls(): Long
 ```kotlin
 val result = instance.uniqueNormalizedUrls()
 ```
+
+**Returns:** `Long`
 
 ---
 

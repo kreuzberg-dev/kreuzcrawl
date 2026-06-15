@@ -2,7 +2,7 @@
 title: "Elixir API Reference"
 ---
 
-## Elixir API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## Elixir API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -64,6 +64,7 @@ def create_engine(config)
 | `config` | `CrawlConfig \| nil` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
+
 **Errors:** Returns `{:error, reason}`
 
 ---
@@ -93,6 +94,7 @@ def scrape(engine, url)
 | `url` | `String.t()` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
+
 **Errors:** Returns `{:error, reason}`
 
 ---
@@ -122,6 +124,7 @@ def crawl(engine, url)
 | `url` | `String.t()` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
+
 **Errors:** Returns `{:error, reason}`
 
 ---
@@ -151,6 +154,7 @@ def map_urls(engine, url)
 | `url` | `String.t()` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
+
 **Errors:** Returns `{:error, reason}`
 
 ---
@@ -181,6 +185,7 @@ def interact(engine, url, actions)
 | `actions` | `list(PageAction)` | Yes | The actions |
 
 **Returns:** `InteractionResult`
+
 **Errors:** Returns `{:error, reason}`
 
 ---
@@ -210,6 +215,7 @@ def batch_scrape(engine, urls)
 | `urls` | `list(String.t())` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
+
 **Errors:** Returns `{:error, reason}`
 
 ---
@@ -239,6 +245,7 @@ def batch_crawl(engine, urls)
 | `urls` | `list(String.t())` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
+
 **Errors:** Returns `{:error, reason}`
 
 ---
@@ -363,9 +370,9 @@ Browser fallback configuration.
 | `capture_network_events` | `boolean()` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `session_affinity` | `boolean()` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Functions
+##### Functions
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -378,6 +385,8 @@ def default()
 ```elixir
 {:ok, result} = BrowserConfig.default()
 ```
+
+**Returns:** `BrowserConfig`
 
 ---
 
@@ -442,9 +451,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrap_width` | `integer()` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `include_document_structure` | `boolean()` | `true` | Include document structure tree in output. Default: `true`. |
 
-### Functions
+##### Functions
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -457,6 +466,8 @@ def default()
 ```elixir
 {:ok, result} = ContentConfig.default()
 ```
+
+**Returns:** `ContentConfig`
 
 ---
 
@@ -520,9 +531,9 @@ Configuration for crawl, scrape, and map operations.
 | `ssrf` | `String.t()` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `dispatch` | `String.t() \| nil` | `nil` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `nil`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Functions
+##### Functions
 
-#### default()
+###### default()
 
 **Signature:**
 
@@ -536,7 +547,9 @@ def default()
 {:ok, result} = CrawlConfig.default()
 ```
 
-#### validate()
+**Returns:** `CrawlConfig`
+
+###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -552,6 +565,10 @@ def validate()
 :ok = instance.validate()
 ```
 
+**Returns:** No return value.
+
+**Errors:** Returns `{:error, reason}`
+
 ---
 
 #### CrawlEngineHandle
@@ -561,9 +578,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Functions
+##### Functions
 
-#### crawl_stream()
+###### crawl_stream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -584,7 +601,17 @@ def crawl_stream(req)
 {:ok, result} = instance.crawl_stream(%{{}})
 ```
 
-#### batch_crawl_stream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `CrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `String.t()`
+
+**Errors:** Returns `{:error, reason}`
+
+###### batch_crawl_stream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -604,6 +631,16 @@ def batch_crawl_stream(req)
 ```elixir
 {:ok, result} = instance.batch_crawl_stream(%{{}})
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `String.t()`
+
+**Errors:** Returns `{:error, reason}`
 
 ---
 
@@ -653,9 +690,9 @@ The result of a multi-page crawl operation.
 | `browser_used` | `boolean()` | — | Whether the browser fallback was used for any page in this crawl. |
 | `normalized_urls` | `list(String.t())` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Functions
+##### Functions
 
-#### unique_normalized_urls()
+###### unique_normalized_urls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -670,6 +707,8 @@ def unique_normalized_urls()
 ```elixir
 {:ok, result} = instance.unique_normalized_urls()
 ```
+
+**Returns:** `integer()`
 
 ---
 

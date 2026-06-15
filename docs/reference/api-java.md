@@ -2,7 +2,7 @@
 title: "Java API Reference"
 ---
 
-## Java API Reference <span class="version-badge">v0.3.0-rc.68</span>
+## Java API Reference <span class="version-badge">v0.3.0-rc.69</span>
 
 ### Functions
 
@@ -62,6 +62,7 @@ var result = createEngine(new CrawlConfig());
 | `config` | `Optional<CrawlConfig>` | No | The configuration options |
 
 **Returns:** `CrawlEngineHandle`
+
 **Errors:** Throws `CrawlErrorException`.
 
 ---
@@ -90,6 +91,7 @@ var result = scrape(new CrawlEngineHandle(), "value");
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `ScrapeResult`
+
 **Errors:** Throws `CrawlErrorException`.
 
 ---
@@ -118,6 +120,7 @@ var result = crawl(new CrawlEngineHandle(), "value");
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `CrawlResult`
+
 **Errors:** Throws `CrawlErrorException`.
 
 ---
@@ -146,6 +149,7 @@ var result = mapUrls(new CrawlEngineHandle(), "value");
 | `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `MapResult`
+
 **Errors:** Throws `CrawlErrorException`.
 
 ---
@@ -175,6 +179,7 @@ var result = interact(new CrawlEngineHandle(), "value", List.of());
 | `actions` | `List<PageAction>` | Yes | The actions |
 
 **Returns:** `InteractionResult`
+
 **Errors:** Throws `CrawlErrorException`.
 
 ---
@@ -203,6 +208,7 @@ var result = batchScrape(new CrawlEngineHandle(), List.of());
 | `urls` | `List<String>` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
+
 **Errors:** Throws `CrawlErrorException`.
 
 ---
@@ -231,6 +237,7 @@ var result = batchCrawl(new CrawlEngineHandle(), List.of());
 | `urls` | `List<String>` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
+
 **Errors:** Throws `CrawlErrorException`.
 
 ---
@@ -355,9 +362,9 @@ Browser fallback configuration.
 | `captureNetworkEvents` | `boolean` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
 | `sessionAffinity` | `boolean` | `true` | Enable session affinity: reuse chromiumoxide Pages for same-domain requests so cookies + fingerprint + solved challenges persist. Default: true. When false, each request gets a fresh Page. |
 
-### Methods
+##### Methods
 
-#### defaultOptions()
+###### defaultOptions()
 
 **Signature:**
 
@@ -370,6 +377,8 @@ public static BrowserConfig defaultOptions()
 ```java
 var result = BrowserConfig.defaultOptions();
 ```
+
+**Returns:** `BrowserConfig`
 
 ---
 
@@ -434,9 +443,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `wrapWidth` | `long` | `80` | Wrap width when `wrap` is enabled. Default: `80`. |
 | `includeDocumentStructure` | `boolean` | `true` | Include document structure tree in output. Default: `true`. |
 
-### Methods
+##### Methods
 
-#### defaultOptions()
+###### defaultOptions()
 
 **Signature:**
 
@@ -449,6 +458,8 @@ public static ContentConfig defaultOptions()
 ```java
 var result = ContentConfig.defaultOptions();
 ```
+
+**Returns:** `ContentConfig`
 
 ---
 
@@ -512,9 +523,9 @@ Configuration for crawl, scrape, and map operations.
 | `ssrf` | `String` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
 | `dispatch` | `Optional<String>` | `null` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `null`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
-### Methods
+##### Methods
 
-#### defaultOptions()
+###### defaultOptions()
 
 **Signature:**
 
@@ -528,7 +539,9 @@ public static CrawlConfig defaultOptions()
 var result = CrawlConfig.defaultOptions();
 ```
 
-#### validate()
+**Returns:** `CrawlConfig`
+
+###### validate()
 
 Validate the configuration, returning an error if any values are invalid.
 
@@ -544,6 +557,10 @@ public void validate() throws CrawlError
 instance.validate();
 ```
 
+**Returns:** No return value.
+
+**Errors:** Throws `CrawlErrorException`.
+
 ---
 
 #### CrawlEngineHandle
@@ -553,9 +570,9 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-### Methods
+##### Methods
 
-#### crawlStream()
+###### crawlStream()
 
 Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
 
@@ -576,7 +593,17 @@ public String crawlStream(CrawlStreamRequest req) throws CrawlError
 var result = instance.crawlStream(new CrawlStreamRequest());
 ```
 
-#### batchCrawlStream()
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `CrawlStreamRequest` | Yes | The crawl stream request |
+
+**Returns:** `String`
+
+**Errors:** Throws `CrawlErrorException`.
+
+###### batchCrawlStream()
 
 Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
 
@@ -596,6 +623,16 @@ public String batchCrawlStream(BatchCrawlStreamRequest req) throws CrawlError
 ```java
 var result = instance.batchCrawlStream(new BatchCrawlStreamRequest());
 ```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
+
+**Returns:** `String`
+
+**Errors:** Throws `CrawlErrorException`.
 
 ---
 
@@ -645,9 +682,9 @@ The result of a multi-page crawl operation.
 | `browserUsed` | `boolean` | — | Whether the browser fallback was used for any page in this crawl. |
 | `normalizedUrls` | `List<String>` | `Collections.emptyList()` | Normalized URLs encountered during crawling (for deduplication counting). |
 
-### Methods
+##### Methods
 
-#### uniqueNormalizedUrls()
+###### uniqueNormalizedUrls()
 
 Returns the count of unique normalized URLs encountered during crawling.
 
@@ -662,6 +699,8 @@ public long uniqueNormalizedUrls()
 ```java
 var result = instance.uniqueNormalizedUrls();
 ```
+
+**Returns:** `long`
 
 ---
 

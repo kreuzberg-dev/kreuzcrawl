@@ -999,7 +999,12 @@ impl CrawlEngine {
             }
 
             let dedup_key = normalize_url_for_dedup(&link_url);
+            // Mark seen at candidate push time, not after SSRF validation, so the next
+            // iteration of this loop (and later discover_links calls running concurrently)
+            // skip URLs that dedup to the same key. Without this, fragment/query variants
+            // of the same target all pass !is_seen() in one batch and get enqueued.
             if !self.frontier.is_seen(&dedup_key).await? {
+                self.frontier.mark_seen(&dedup_key).await?;
                 candidates.push((link_url, is_doc_link, depth));
             }
         }
@@ -1032,10 +1037,8 @@ impl CrawlEngine {
         // Consume results and enqueue valid URLs
         while let Some(result) = join_set.join_next().await {
             match result {
-                Ok(Ok((link_url, dedup_key, is_doc_link, child_depth))) => {
-                    // Mark as seen and enqueue
-                    self.frontier.mark_seen(&dedup_key).await?;
-
+                Ok(Ok((link_url, _dedup_key, is_doc_link, child_depth))) => {
+                    // dedup_key already marked seen at candidate push time; nothing to do here.
                     let child_doc_depth: u32 = if is_doc_link { parent_doc_depth + 1 } else { 0 };
                     let priority = self.strategy.score_url(&link_url, child_depth);
 
