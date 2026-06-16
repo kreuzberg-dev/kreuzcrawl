@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 use crate::defaults;
 use crate::error::CrawlError;
+#[cfg(not(target_arch = "wasm32"))]
 use crate::sink::EventSink;
 use crate::traits::*;
 use crate::types::*;
@@ -41,6 +42,7 @@ pub struct CrawlEngineBuilder {
     strategy: Option<Arc<dyn CrawlStrategy>>,
     content_filter: Option<Arc<dyn ContentFilter>>,
     cache: Option<Arc<dyn CrawlCache>>,
+    #[cfg(not(target_arch = "wasm32"))]
     event_sink: Option<Arc<dyn EventSink>>,
     page_budget: Option<Arc<dyn crate::budget::PageBudget>>,
     #[cfg(feature = "browser")]
@@ -61,6 +63,7 @@ impl CrawlEngineBuilder {
             strategy: None,
             content_filter: None,
             cache: None,
+            #[cfg(not(target_arch = "wasm32"))]
             event_sink: None,
             page_budget: None,
             #[cfg(feature = "browser")]
@@ -139,6 +142,7 @@ impl CrawlEngineBuilder {
     /// without kreuzcrawl depending on those backends.
     ///
     /// [`CrawlEvent`]: crate::CrawlEvent
+    #[cfg(not(target_arch = "wasm32"))]
     #[allow(dead_code)]
     #[cfg_attr(alef, alef(skip))]
     pub fn event_sink(mut self, event_sink: impl EventSink + 'static) -> Self {
