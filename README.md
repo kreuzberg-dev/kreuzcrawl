@@ -108,7 +108,7 @@ High-performance Rust web crawling engine for structured data extraction. Scrape
 | **[C#](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/csharp)**             | [NuGet](https://www.nuget.org/packages/Kreuzcrawl/)                                        | `dotnet add package Kreuzcrawl`                                                   |
 | **[Ruby](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/ruby)**             | [kreuzcrawl](https://rubygems.org/gems/kreuzcrawl)                                         | `gem install kreuzcrawl`                                                          |
 | **[PHP](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/php)**               | [kreuzberg-dev/kreuzcrawl](https://packagist.org/packages/kreuzberg-dev/kreuzcrawl)        | `composer require kreuzberg-dev/kreuzcrawl`                                       |
-| **[Elixir](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/elixir)**         | [kreuzcrawl](https://hex.pm/packages/kreuzcrawl)                                           | `{:kreuzcrawl, "~> 0.2"}`                                                         |
+| **[Elixir](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/packages/elixir)**         | [kreuzcrawl](https://hex.pm/packages/kreuzcrawl)                                           | `{:kreuzcrawl, "~> 0.3"}`                                                         |
 | **[WASM](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-wasm)**    | [@kreuzberg/kreuzcrawl-wasm](https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-wasm)     | `npm install @kreuzberg/kreuzcrawl-wasm`                                          |
 | **[C FFI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-ffi)**    | [GitHub Releases](https://github.com/kreuzberg-dev/kreuzcrawl/releases)                    | C header + shared library                                                         |
 | **[CLI](https://github.com/kreuzberg-dev/kreuzcrawl/tree/main/crates/kreuzcrawl-cli)**      | [crates.io](https://crates.io/crates/kreuzcrawl-cli)                                       | `cargo install kreuzcrawl-cli`                                                    |
@@ -294,12 +294,13 @@ Contributions are welcome! See our [Contributing Guide](https://github.com/kreuz
 
 ## Part of Kreuzberg.dev
 
-- [Kreuzberg](https://github.com/kreuzberg-dev/kreuzberg) — document intelligence: text, tables, metadata from 90+ formats with optional OCR.
+- [Kreuzberg](https://github.com/kreuzberg-dev/kreuzberg) — document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 - [Kreuzberg Cloud](https://github.com/kreuzberg-dev/kreuzberg-cloud) — managed extraction API with SDKs, dashboards, and observability.
+- [kreuzcrawl](https://github.com/kreuzberg-dev/kreuzcrawl) — web crawling and scraping with HTML→Markdown and headless-Chrome fallback.
 - [html-to-markdown](https://github.com/kreuzberg-dev/html-to-markdown) — fast, lossless HTML→Markdown engine.
 - [liter-llm](https://github.com/kreuzberg-dev/liter-llm) — universal LLM API client with native bindings for 14 languages and 143 providers.
 - [tree-sitter-language-pack](https://github.com/kreuzberg-dev/tree-sitter-language-pack) — tree-sitter grammars and code-intelligence primitives.
-- [alef](https://github.com/kreuzberg-dev/alef) — the polyglot binding generator that produces all per-language bindings.
+- [alef](https://github.com/kreuzberg-dev/alef) — the polyglot binding generator that produces every per-language binding across the 5 polyglot repos.
 - [Discord](https://discord.gg/xt9WY3GnKR) — community, roadmap, announcements.
 
 ## License

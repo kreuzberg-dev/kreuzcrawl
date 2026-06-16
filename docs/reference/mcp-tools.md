@@ -149,7 +149,7 @@ Get the current kreuzcrawl library version.
 
 ```json
 {
-  "version": "0.3.0-rc.66"
+  "version": "0.3.0-rc.71"
 }
 ```
 

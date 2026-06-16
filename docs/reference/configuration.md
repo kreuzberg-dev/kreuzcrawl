@@ -123,8 +123,6 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `str \| None` | `None` | Path to write WARC output. If `None`, WARC output is disabled. |
 | `browser_profile` | `str \| None` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `False` | Whether to save changes back to the browser profile on exit. |
-| `ssrf` | `str` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
-| `dispatch` | `str \| None` | `None` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `None`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
 ---
 
@@ -154,7 +152,6 @@ skipping the resource.
 |-------|------|---------|-------------|
 | `url` | `str` | — | The URL the document was fetched from. |
 | `mime_type` | `str` | — | The MIME type from the Content-Type header. |
-| `content` | `bytes` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `int` | — | Size of the document in bytes. |
 | `filename` | `str \| None` | `None` | Filename extracted from Content-Disposition or URL path. |
 | `content_hash` | `str` | — | SHA-256 hex digest of the content. |
@@ -171,7 +168,6 @@ Result of executing a sequence of page interaction actions.
 | `action_results` | `list[ActionResult]` | `[]` | Results from each executed action. |
 | `final_html` | `str` | — | Final page HTML after all actions completed. |
 | `final_url` | `str` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `bytes \| None` | `None` | Screenshot taken after all actions, if requested. |
 
 ---
 
@@ -221,7 +217,6 @@ The result of a single-page scrape operation.
 | `markdown` | `MarkdownResult \| None` | `None` | Markdown conversion of the page content. |
 | `extracted_data` | `dict[str, Any] \| None` | `None` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `ExtractionMeta \| None` | `None` | Metadata about the LLM extraction pass (cost, tokens, model). |
-| `screenshot` | `bytes \| None` | `None` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `DownloadedDocument \| None` | `None` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 | `browser` | `BrowserExtras \| None` | `None` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
@@ -271,7 +266,6 @@ The result of a multi-page crawl operation.
 | `cookies` | `list[CookieInfo]` | `[]` | Cookies collected during the crawl. |
 | `stayed_on_domain` | `bool` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
-| `normalized_urls` | `list[str]` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ---
 
@@ -671,7 +665,7 @@ When to use the headless browser fallback.
 | `Auto` | `auto` | Automatically detect when JS rendering is needed and fall back to browser. |
 | `Always` | `always` | Always use the browser for every request. |
 | `Never` | `never` | Never use the browser fallback. |
-| `Stealth` | `stealth` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - chromiumoxide JS patches (`crate.stealth.apply_stealth_patches`) - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
+| `Stealth` | `stealth` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - browser JavaScript stealth patches - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
 
 ---
 

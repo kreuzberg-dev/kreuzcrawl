@@ -8,11 +8,9 @@
 //!
 //! # Unconditional propagation helpers
 //!
-//! `with_traceparent` and `current_traceparent` are **always** compiled.
-//! They let every language binding propagate a W3C `traceparent` header from
-//! the host-language OTel SDK (Python's `opentelemetry-sdk`, Node's
-//! `@opentelemetry/api`, etc.) into kreuzcrawl Rust calls so spans appear as
-//! children of host-language spans in the same collector trace.
+//! `with_traceparent` and `current_traceparent` are **always** compiled for
+//! Rust callers. They are not exposed by the current generated language
+//! bindings because `with_traceparent` requires a Rust callback.
 
 use std::collections::HashMap;
 
@@ -43,10 +41,9 @@ impl Injector for SingleHeaderMap {
 /// Extract a W3C TraceContext from a `traceparent` header string and execute
 /// `f` with that context as the active OpenTelemetry context.
 ///
-/// This is the binding-layer bridge that lets host-language OTel SDKs (Python,
-/// Node, Ruby, Go, …) pass a parent span context into kreuzcrawl Rust calls.
-/// The Rust span created inside `f` will be a child of the host span in the
-/// collector.
+/// This lets Rust applications pass a parent span context into kreuzcrawl
+/// calls. The Rust span created inside `f` will be a child of the supplied
+/// parent span in the collector.
 ///
 /// If `traceparent` is invalid or empty, or if no propagator has been
 /// registered, the call behaves identically to calling `f()` directly —
@@ -75,9 +72,8 @@ where
 /// is in-flight or the span is not sampled), or when no propagator has been
 /// registered.
 ///
-/// Use this in language bindings to hand the current kreuzcrawl trace context
-/// back to the host-language OTel SDK, so host-side code can continue the
-/// same trace after a kreuzcrawl call returns.
+/// Use this in Rust code to hand the current kreuzcrawl trace context to
+/// downstream services.
 pub fn current_traceparent() -> Option<String> {
     let cx = opentelemetry::Context::current();
     let mut carrier = SingleHeaderMap(HashMap::new());

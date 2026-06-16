@@ -41,7 +41,7 @@ pub enum BrowserMode {
     /// (every request is routed through the browser tier), but additionally
     /// enables:
     ///
-    /// - chromiumoxide JS patches (`crate::stealth::apply_stealth_patches`)
+    /// - browser JavaScript stealth patches
     /// - native-backend TLS fingerprint spoofing
     /// - stealth-aware default user-agent when no explicit UA is set
     /// - 1920×1080 viewport override
@@ -399,9 +399,9 @@ pub struct CrawlConfig {
     /// SSRF policy for outbound network requests. Default: deny private networks,
     /// allow http/https only, max 5 redirects.
     ///
-    /// Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`).
-    /// Per-request override from language clients is unsupported in v1 — the
-    /// policy is set at config-load (env + builder) from the Rust side.
+    /// Rust-only advanced field. Generated language bindings do not expose
+    /// per-request SSRF policy overrides; they use the policy assembled from
+    /// environment defaults and server-side Rust configuration.
     #[serde(default = "SsrfPolicy::from_env")]
     #[cfg_attr(alef, alef(skip))]
     pub ssrf: SsrfPolicy,
@@ -413,7 +413,12 @@ pub struct CrawlConfig {
     /// strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state,
     /// unlimited budget, 10 total attempt cap).
     ///
-    /// Not serializable — callers construct this at runtime and skip in TOML/JSON configs.
+    /// Rust-only advanced field. Generated language bindings do not expose
+    /// pluggable dispatch components; language clients use the built-in
+    /// dispatch defaults configured by the Rust engine.
+    ///
+    /// Not serializable — Rust callers construct this at runtime and skip it
+    /// in TOML/JSON configs.
     #[serde(skip)]
     #[cfg_attr(alef, alef(skip))]
     pub dispatch: Option<DispatchProfile>,

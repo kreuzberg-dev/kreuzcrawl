@@ -12,6 +12,7 @@ Enable the `telemetry-init` feature and call the one-line helper to attach both 
 
 ```rust
 use kreuzcrawl::telemetry::{TelemetryConfig, init_otlp};
+use kreuzcrawl::{batch_crawl, create_engine};
 
 let _guard = init_otlp(TelemetryConfig {
     service_name: "my-crawler".into(),
@@ -24,8 +25,8 @@ let _guard = init_otlp(TelemetryConfig {
 })?;
 
 // Now run your crawl — spans and metrics will export to the collector
-let engine = CrawlEngine::builder().build();
-let results = batch_crawl(engine, seeds).await?;
+let engine = create_engine(None)?;
+let results = batch_crawl(&engine, seeds).await?;
 // Guard flushes on drop
 drop(_guard);
 ```
@@ -47,33 +48,22 @@ If your application already initializes OpenTelemetry (as in kreuzberg-cloud's `
 
 Mixing major versions will break propagator injection and cause spans to drop. Verify your `Cargo.lock` matches the table above.
 
-## W3C TraceContext propagation across language bindings
+## W3C TraceContext propagation
 
-Kreuzcrawl preserves W3C TraceContext headers across HTTP requests, making it easy to correlate crawl activity with upstream services. Language bindings expose:
+Kreuzcrawl preserves W3C TraceContext headers across HTTP requests, making it easy to correlate crawl activity with upstream services. Rust callers can use:
 
 - `with_traceparent(traceparent: &str, callback: impl Fn() -> R) -> R` — execute a callback with the given trace context active, so child spans become descendants.
 - `current_traceparent() -> Option<String>` — extract the current trace context as a W3C `traceparent` header value (format: `00-<trace_id>-<span_id>-<flags>`).
 
-**Python example:** a web service calls kreuzcrawl and wants crawl spans nested under the incoming request span:
+Generated language bindings do not expose these helpers today because `with_traceparent` requires a Rust callback. Propagate trace context at the host-service layer with that language's OpenTelemetry SDK, and pass request headers normally into services that wrap kreuzcrawl.
 
-```python
-from kreuzcrawl import CrawlEngine, batch_crawl, current_traceparent
-from opentelemetry import trace
-import httpx
+```rust
+use kreuzcrawl::telemetry::{current_traceparent, with_traceparent};
 
-# Inside a request handler, tracingfrom incoming headers
-incoming_traceparent = request.headers.get("traceparent")
-
-# Propagate into kreuzcrawl
-if incoming_traceparent:
-    with_traceparent(incoming_traceparent, lambda: batch_crawl(engine, seeds))
-else:
-    batch_crawl(engine, seeds)
-
-# Extract kreuzcrawl's current trace context
-crawl_traceparent = current_traceparent()
-# Return it in a response header so downstream services can continue the trace
-response.headers["x-crawl-trace"] = crawl_traceparent
+let incoming = "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01";
+let _traceparent = with_traceparent(incoming, || {
+    current_traceparent()
+});
 ```
 
 ## Span catalogue

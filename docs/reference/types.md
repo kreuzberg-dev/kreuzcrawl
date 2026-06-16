@@ -17,7 +17,6 @@ Result of executing a sequence of page interaction actions.
 | `action_results` | `Vec<ActionResult>` | `vec![]` | Results from each executed action. |
 | `final_html` | `String` | — | Final page HTML after all actions completed. |
 | `final_url` | `String` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `Option<Vec<u8>>` | `Default::default()` | Screenshot taken after all actions, if requested. |
 
 ---
 
@@ -67,9 +66,8 @@ The result of a single-page scrape operation.
 | `markdown` | `Option<MarkdownResult>` | `Default::default()` | Markdown conversion of the page content. |
 | `extracted_data` | `Option<serde_json::Value>` | `Default::default()` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `Option<ExtractionMeta>` | `Default::default()` | Metadata about the LLM extraction pass (cost, tokens, model). |
-| `screenshot` | `Option<Vec<u8>>` | `Default::default()` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `Option<DownloadedDocument>` | `Default::default()` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
-| `browser` | `Option<BrowserExtras>` | `Default::default()` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
+| `browser` | `Option<BrowserExtras>` | `Default::default()` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend::Native` was used for this request. |
 
 ---
 
@@ -117,7 +115,6 @@ The result of a multi-page crawl operation.
 | `cookies` | `Vec<CookieInfo>` | `vec![]` | Cookies collected during the crawl. |
 | `stayed_on_domain` | `bool` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
-| `normalized_urls` | `Vec<String>` | `vec![]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ---
 
@@ -268,7 +265,7 @@ Browser fallback configuration.
 | `wait_selector` | `Option<String>` | `None` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `Option<Duration>` | `None` | Extra time to wait after the wait condition is met. |
 | `proxy` | `Option<ProxyConfig>` | `None` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
-| `block_url_patterns` | `Vec<String>` | `vec![]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `block_url_patterns` | `Vec<String>` | `vec![]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend::Native`; chromiumoxide ignores this field today. |
 | `eval_script` | `Option<String>` | `None` | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
 | `robots_user_agent` | `Option<String>` | `None` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
 | `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
@@ -312,7 +309,7 @@ Configuration for crawl, scrape, and map operations.
 | `proxy` | `Option<ProxyConfig>` | `None` | Proxy configuration for HTTP requests. |
 | `user_agents` | `Vec<String>` | `vec![]` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `capture_screenshot` | `bool` | `false` | Whether to capture a screenshot when using the browser. |
-| `follow_document_urls` | `bool` | `false` | Re-enqueue discovered `LinkType.Document` URLs into the crawl frontier so the crawl follows links *from* document pages (PDFs, etc.) as it would from HTML pages. Default: `false` (documents terminate at materialisation). |
+| `follow_document_urls` | `bool` | `false` | Re-enqueue discovered `LinkType::Document` URLs into the crawl frontier so the crawl follows links *from* document pages (PDFs, etc.) as it would from HTML pages. Default: `false` (documents terminate at materialisation). |
 | `document_url_depth` | `Option<u32>` | `None` | Maximum document-depth (from the seed URL through document links only) when `follow_document_urls` is true. `None` means inherit `max_depth`. Independent of `max_depth`: a document URL is enqueued only if BOTH the outer `max_depth` and (if set) `document_url_depth` permit it. |
 | `download_documents` | `bool` | `true` | Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them. |
 | `document_max_size` | `Option<usize>` | `Default::default()` | Maximum size in bytes for document downloads. Defaults to 50 MB. |
@@ -320,8 +317,6 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `Option<PathBuf>` | `None` | Path to write WARC output. If `None`, WARC output is disabled. |
 | `browser_profile` | `Option<String>` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
-| `ssrf` | `String` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
-| `dispatch` | `Option<String>` | `None` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `None`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
 ---
 
@@ -351,7 +346,6 @@ skipping the resource.
 |-------|------|---------|-------------|
 | `url` | `String` | — | The URL the document was fetched from. |
 | `mime_type` | `String` | — | The MIME type from the Content-Type header. |
-| `content` | `Vec<u8>` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `usize` | — | Size of the document in bytes. |
 | `filename` | `Option<String>` | `Default::default()` | Filename extracted from Content-Disposition or URL path. |
 | `content_hash` | `String` | — | SHA-256 hex digest of the content. |
@@ -692,7 +686,7 @@ When to use the headless browser fallback.
 | `Auto` | `auto` | Automatically detect when JS rendering is needed and fall back to browser. |
 | `Always` | `always` | Always use the browser for every request. |
 | `Never` | `never` | Never use the browser fallback. |
-| `Stealth` | `stealth` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - chromiumoxide JS patches (`crate.stealth.apply_stealth_patches`) - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
+| `Stealth` | `stealth` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - browser JavaScript stealth patches - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
 
 ---
 
@@ -715,10 +709,7 @@ An event emitted during a streaming crawl operation.
 Not available on `wasm32` targets — streaming requires native concurrency
 primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
 
-Delivered to bindings via alef's streaming-adapter pattern. The
-`crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
-expose this as the per-language streaming idiom (Python `AsyncIterator`,
-Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+Delivered to bindings through each target's native streaming idiom.
 
 | Variant | Wire value | Description |
 |---------|------------|-------------|

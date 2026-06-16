@@ -186,15 +186,16 @@ create_toml_config() {
   local file_path="$1"
   local port="${2:-8000}"
 
-  # Config must be valid ExtractionConfig (deny_unknown_fields).
+  # Config must be valid CrawlConfig (deny_unknown_fields).
   # Server settings use defaults; ports are mapped via docker -p flag.
   cat >"$file_path" <<EOF
-use_cache = true
-enable_quality_processing = true
+max_depth = 1
+max_pages = 5
+respect_robots_txt = true
+user_agent = "kreuzcrawl-config-test"
 
-[ocr]
-backend = "tesseract"
-language = "eng"
+[content]
+output_format = "markdown"
 EOF
 
   log_debug "Created TOML config: $file_path"
@@ -204,15 +205,16 @@ create_yaml_config() {
   local file_path="$1"
   local port="${2:-8000}"
 
-  # Config must be valid ExtractionConfig (deny_unknown_fields).
+  # Config must be valid CrawlConfig (deny_unknown_fields).
   # Server settings use defaults; ports are mapped via docker -p flag.
   cat >"$file_path" <<EOF
-use_cache: true
-enable_quality_processing: true
+max_depth: 1
+max_pages: 5
+respect_robots_txt: true
+user_agent: "kreuzcrawl-config-test"
 
-ocr:
-  backend: "tesseract"
-  language: "eng"
+content:
+  output_format: "markdown"
 EOF
 
   log_debug "Created YAML config: $file_path"
@@ -222,15 +224,16 @@ create_json_config() {
   local file_path="$1"
   local port="${2:-8000}"
 
-  # Config must be valid ExtractionConfig (deny_unknown_fields).
+  # Config must be valid CrawlConfig (deny_unknown_fields).
   # Server settings use defaults; ports are mapped via docker -p flag.
   cat >"$file_path" <<EOF
 {
-  "use_cache": true,
-  "enable_quality_processing": true,
-  "ocr": {
-    "backend": "tesseract",
-    "language": "eng"
+  "max_depth": 1,
+  "max_pages": 5,
+  "respect_robots_txt": true,
+  "user_agent": "kreuzcrawl-config-test",
+  "content": {
+    "output_format": "markdown"
   }
 }
 EOF

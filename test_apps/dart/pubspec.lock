@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+  ffi:
+    dependency: "direct main"
+    description:
+      name: ffi
+      sha256: "6d7fd89431262d8f3125e81b50d3847a091d846eafcd4fdb88dd06f36d705a45"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   file:
     dependency: transitive
     description:
@@ -173,10 +181,10 @@ packages:
     dependency: "direct main"
     description:
       name: kreuzcrawl
-      sha256: "5b6e5d5081f0c3e944b62570ed69468f60ff8656808b384731c79030f13ef233"
+      sha256: a95d58dd1f1fe7652b0f8f9d4a72fb880987beed9eaa04922a2e76314073fa43
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0-rc.60"
+    version: "0.3.0-rc.71"
   logging:
     dependency: transitive
     description:

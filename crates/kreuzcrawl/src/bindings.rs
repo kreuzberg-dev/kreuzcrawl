@@ -7,10 +7,11 @@
 //!
 //! # Telemetry propagation
 //!
-//! [`with_traceparent`] and [`current_traceparent`] are re-exported here so
-//! alef picks them up in the binding surface.  Every language binding can
-//! therefore propagate W3C TraceContext across the FFI boundary without
-//! requiring the `telemetry-init` feature.
+//! [`with_traceparent`] and [`current_traceparent`] are Rust-only helpers.
+//! They are not part of the alef binding surface because `with_traceparent`
+//! requires a Rust callback. Language clients should propagate trace context
+//! through their host OpenTelemetry SDK until a dedicated binding-safe
+//! trace-context API exists.
 
 #[allow(unused_imports)]
 pub use crate::telemetry::{current_traceparent, with_traceparent};
@@ -61,6 +62,9 @@ impl CrawlEngineHandle {
     /// terminal `Complete` event. On per-URL failure during the crawl, emits an
     /// `Error` event followed by `Complete`. The stream item type is wrapped in
     /// a `Result` to surface transport-level errors; today every emit is `Ok`.
+    ///
+    /// Language bindings expose this as the native streaming shape for each
+    /// target. WASM does not expose native streaming wrappers.
     pub fn crawl_stream(
         &self,
         req: CrawlStreamRequest,
@@ -78,6 +82,9 @@ impl CrawlEngineHandle {
     /// seeds, plus terminal `Complete` and `Error` events as appropriate. The
     /// stream item type is wrapped in a `Result` to surface transport-level
     /// errors; today every emit is `Ok`.
+    ///
+    /// Language bindings expose this as the native streaming shape for each
+    /// target. WASM does not expose native streaming wrappers.
     pub fn batch_crawl_stream(
         &self,
         req: BatchCrawlStreamRequest,

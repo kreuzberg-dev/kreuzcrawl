@@ -1466,9 +1466,9 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0-rc.60"
+version = "0.3.0-rc.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c50a5c9858712e45be5a4de6624b5b514b103f5194751a3e344404b3e9aa326"
+checksum = "e8c85e79454c048ec41289dfb0168e87ff1c5a0a28997de8cc0dbd3ab331c8e2"
 dependencies = [
  "ahash",
  "aho-corasick",
@@ -1486,6 +1486,7 @@ dependencies = [
  "getrandom 0.3.4",
  "getrandom 0.4.2",
  "html-to-markdown-rs",
+ "ipnet",
  "memchr",
  "notify",
  "opentelemetry",
@@ -1507,7 +1508,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzcrawl-e2e-rust"
-version = "0.3.0-rc.60"
+version = "0.3.0-rc.71"
 dependencies = [
  "axum",
  "kreuzcrawl",

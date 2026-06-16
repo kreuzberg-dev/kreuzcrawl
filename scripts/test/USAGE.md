@@ -143,14 +143,13 @@ docker run \
 **Config file**:
 
 ```toml
-[server]
-host = "0.0.0.0"
-port = 8000
-max_upload_mb = 100
+max_depth = 1
+max_pages = 5
+respect_robots_txt = true
+user_agent = "kreuzcrawl-config-test"
 
-[ocr]
-backend = "tesseract"
-language = "eng"
+[content]
+output_format = "markdown"
 ```
 
 **Expected**: Container parses TOML correctly
@@ -164,14 +163,13 @@ language = "eng"
 **Config file**:
 
 ```yaml
-server:
-  host: "0.0.0.0"
-  port: 8000
-  max_upload_mb: 100
+max_depth: 1
+max_pages: 5
+respect_robots_txt: true
+user_agent: "kreuzcrawl-config-test"
 
-ocr:
-  backend: "tesseract"
-  language: "eng"
+content:
+  output_format: "markdown"
 ```
 
 **Expected**: Container parses YAML correctly
@@ -186,14 +184,12 @@ ocr:
 
 ```json
 {
-  "server": {
-    "host": "0.0.0.0",
-    "port": 8000,
-    "max_upload_mb": 100
-  },
-  "ocr": {
-    "backend": "tesseract",
-    "language": "eng"
+  "max_depth": 1,
+  "max_pages": 5,
+  "respect_robots_txt": true,
+  "user_agent": "kreuzcrawl-config-test",
+  "content": {
+    "output_format": "markdown"
   }
 }
 ```

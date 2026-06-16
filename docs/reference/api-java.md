@@ -2,7 +2,7 @@
 title: "Java API Reference"
 ---
 
-## Java API Reference <span class="version-badge">v0.3.0-rc.71</span>
+## Java API Reference <span class="version-badge">v0.3.0-rc.72</span>
 
 ### Functions
 
@@ -520,8 +520,6 @@ Configuration for crawl, scrape, and map operations.
 | `warcOutput` | `Optional<String>` | `null` | Path to write WARC output. If `null`, WARC output is disabled. |
 | `browserProfile` | `Optional<String>` | `null` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `saveBrowserProfile` | `boolean` | `false` | Whether to save changes back to the browser profile on exit. |
-| `ssrf` | `String` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
-| `dispatch` | `Optional<String>` | `null` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `null`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
 ##### Methods
 
@@ -570,70 +568,6 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-##### Methods
-
-###### crawlStream()
-
-Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
-
-Returns an async stream that emits one event per crawled page, plus a
-terminal `Complete` event. On per-URL failure during the crawl, emits an
-`Error` event followed by `Complete`. The stream item type is wrapped in
-a `Result` to surface transport-level errors; today every emit is `Ok`.
-
-**Signature:**
-
-```java
-public String crawlStream(CrawlStreamRequest req) throws CrawlError
-```
-
-**Example:**
-
-```java
-var result = instance.crawlStream(new CrawlStreamRequest());
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `req` | `CrawlStreamRequest` | Yes | The crawl stream request |
-
-**Returns:** `String`
-
-**Errors:** Throws `CrawlErrorException`.
-
-###### batchCrawlStream()
-
-Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
-
-Returns an async stream that emits one event per crawled page across all
-seeds, plus terminal `Complete` and `Error` events as appropriate. The
-stream item type is wrapped in a `Result` to surface transport-level
-errors; today every emit is `Ok`.
-
-**Signature:**
-
-```java
-public String batchCrawlStream(BatchCrawlStreamRequest req) throws CrawlError
-```
-
-**Example:**
-
-```java
-var result = instance.batchCrawlStream(new BatchCrawlStreamRequest());
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
-
-**Returns:** `String`
-
-**Errors:** Throws `CrawlErrorException`.
-
 ---
 
 #### CrawlPageResult
@@ -680,7 +614,6 @@ The result of a multi-page crawl operation.
 | `cookies` | `List<CookieInfo>` | `Collections.emptyList()` | Cookies collected during the crawl. |
 | `stayedOnDomain` | `boolean` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `browserUsed` | `boolean` | — | Whether the browser fallback was used for any page in this crawl. |
-| `normalizedUrls` | `List<String>` | `Collections.emptyList()` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ##### Methods
 
@@ -745,7 +678,6 @@ skipping the resource.
 |-------|------|---------|-------------|
 | `url` | `String` | — | The URL the document was fetched from. |
 | `mimeType` | `String` | — | The MIME type from the Content-Type header. |
-| `content` | `byte[]` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `long` | — | Size of the document in bytes. |
 | `filename` | `Optional<String>` | `null` | Filename extracted from Content-Disposition or URL path. |
 | `contentHash` | `String` | — | SHA-256 hex digest of the content. |
@@ -837,7 +769,6 @@ Result of executing a sequence of page interaction actions.
 | `actionResults` | `List<ActionResult>` | `Collections.emptyList()` | Results from each executed action. |
 | `finalHtml` | `String` | — | Final page HTML after all actions completed. |
 | `finalUrl` | `String` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `Optional<byte[]>` | `null` | Screenshot taken after all actions, if requested. |
 
 ---
 
@@ -1004,7 +935,6 @@ The result of a single-page scrape operation.
 | `markdown` | `Optional<MarkdownResult>` | `null` | Markdown conversion of the page content. |
 | `extractedData` | `Optional<Object>` | `null` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extractionMeta` | `Optional<ExtractionMeta>` | `null` | Metadata about the LLM extraction pass (cost, tokens, model). |
-| `screenshot` | `Optional<byte[]>` | `null` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloadedDocument` | `Optional<DownloadedDocument>` | `null` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 | `browser` | `Optional<BrowserExtras>` | `null` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
@@ -1034,7 +964,7 @@ When to use the headless browser fallback.
 | `AUTO` | Automatically detect when JS rendering is needed and fall back to browser. |
 | `ALWAYS` | Always use the browser for every request. |
 | `NEVER` | Never use the browser fallback. |
-| `STEALTH` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - chromiumoxide JS patches (`crate.stealth.apply_stealth_patches`) - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
+| `STEALTH` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - browser JavaScript stealth patches - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
 
 ---
 
@@ -1137,10 +1067,7 @@ An event emitted during a streaming crawl operation.
 Not available on `wasm32` targets — streaming requires native concurrency
 primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
 
-Delivered to bindings via alef's streaming-adapter pattern. The
-`crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
-expose this as the per-language streaming idiom (Python `AsyncIterator`,
-Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+Delivered to bindings through each target's native streaming idiom.
 
 | Value | Description |
 |-------|-------------|

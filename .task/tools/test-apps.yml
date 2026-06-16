@@ -88,6 +88,22 @@ tasks:
             GOWORK: "off"
         cmds:
             - go mod download
+            # Trigger the published module's `//go:generate go run ./cmd/download_ffi`
+            # directive so the prebuilt libkreuzcrawl_ffi.{dylib,so,dll} is materialized
+            # under the module cache's .lib/<rid>/ directory. cgo's `-L` directive in
+            # ffi.go points at that path, so the link step fails without this step.
+            - silent: true
+              cmd: |-
+                set -e
+                MOD_DIR=$(go list -m -f '{{`{{.Dir}}`}}' github.com/kreuzberg-dev/kreuzcrawl/packages/go)
+                echo "FFI mod dir: $MOD_DIR"
+                if [ -z "$MOD_DIR" ]; then echo "could not resolve go module dir" >&2; exit 1; fi
+                chmod -R u+w "$MOD_DIR" 2>/dev/null || true
+                cd "$MOD_DIR"
+                # cmd/download_ffi/main.go is tagged `//go:build ignore` (so the
+                # package is never compiled into a binary). Invoke it directly by
+                # file path to bypass the build constraint.
+                go run -mod=mod ./cmd/download_ffi/main.go
             - go test -v -run "Test_Scrape"
 
     smoke:java:
@@ -128,6 +144,21 @@ tasks:
     smoke:dart:
         desc: Run Dart test_app smoke test
         dir: test_apps/dart
+        # The published Dart pub.dev tarball does not bundle the native dylib —
+        # consumers either build from source under packages/dart/ or set
+        # FRB_DART_LOAD_EXTERNAL_LIBRARY_NATIVE_LIB_DIR to an absolute path
+        # containing libkreuzcrawl_dart.{dylib,so,dll}. For test_apps we point
+        # at the in-tree build under packages/dart/lib/src/native/<rid>/.
+        env:
+            FRB_DART_LOAD_EXTERNAL_LIBRARY_NATIVE_LIB_DIR:
+                sh: |-
+                    case "$(uname -s)-$(uname -m)" in
+                      Darwin-arm64) printf '%s' "{{.TASKFILE_DIR}}/packages/dart/lib/src/native/macos-arm64" ;;
+                      Darwin-x86_64) printf '%s' "{{.TASKFILE_DIR}}/packages/dart/lib/src/native/macos-x86_64" ;;
+                      Linux-x86_64|Linux-amd64) printf '%s' "{{.TASKFILE_DIR}}/packages/dart/lib/src/native/linux-x86_64" ;;
+                      Linux-aarch64|Linux-arm64) printf '%s' "{{.TASKFILE_DIR}}/packages/dart/lib/src/native/linux-arm64" ;;
+                      *) printf '' ;;
+                    esac
         cmds:
             - dart pub get
             - dart test test/scrape_test.dart

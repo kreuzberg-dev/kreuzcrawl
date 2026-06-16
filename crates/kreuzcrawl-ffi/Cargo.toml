@@ -1,6 +1,6 @@
 [package]
 name = "kreuzcrawl-ffi"
-version = "0.3.0-rc.71"
+version = "0.3.0-rc.72"
 edition = "2021"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"
@@ -24,12 +24,14 @@ ignored = ["ahash", "serde_json", "tokio", "futures-util"]
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [features]
-default = []
+default = ["interact", "browser-chromiumoxide"]
+interact = ["kreuzcrawl/interact"]
+browser-chromiumoxide = ["kreuzcrawl/browser-chromiumoxide"]
 
 [dependencies]
 ahash = "0.8"
 futures-util = "0.3"
-kreuzcrawl = { path = "../kreuzcrawl", version = "0.3.0-rc.71", features = ["interact", "browser-chromiumoxide"] }
+kreuzcrawl = { path = "../kreuzcrawl", version = "0.3.0-rc.72", features = ["interact", "browser-chromiumoxide"] }
 serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 

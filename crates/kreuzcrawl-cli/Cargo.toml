@@ -22,7 +22,7 @@ ai = ["kreuzcrawl/ai"]
 
 [dependencies]
 clap = { workspace = true }
-kreuzcrawl = { path = "../kreuzcrawl", version = "0.3.0-rc.71", features = [
+kreuzcrawl = { path = "../kreuzcrawl", version = "0.3.0-rc.72", features = [
     "native-runtime",
     "browser",
 ] }

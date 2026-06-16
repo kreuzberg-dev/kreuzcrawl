@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.25.18"
+alef_version = "0.25.22"
 languages = [
   "python",
   "node",
@@ -279,17 +279,16 @@ functions = [
   "batch_scrape",
   "batch_crawl",
   "generate_citations",
-  "with_traceparent",
-  "current_traceparent",
 ]
 
 # Streaming adapters — delivered to bindings via alef's per-language streaming
-# idiom (Python AsyncIterator, Ruby Enumerator, PHP Generator, Elixir
-# Stream.unfold, FFI callbacks for C consumers).
+# idiom (Python AsyncIterator, Node AsyncGenerator, Ruby Enumerator, PHP
+# Generator, Elixir Stream, Go channel, Java Stream, C# IAsyncEnumerable,
+# Dart Stream, Swift AsyncThrowingStream, Zig CrawlEventStream, and C FFI
+# polling/callback APIs).
 # WASM is excluded via skip_languages: the kreuzcrawl core engine relies on
 # tokio's multi-thread runtime which is incompatible with wasm32-unknown-unknown
-# (no working fetch/async shim). Go/Java/C# emit `compile_error!` per
-# alef-adapters/src/streaming.rs and are explicitly excluded below.
+# (no working fetch/async shim).
 [[crates.adapters]]
 name = "crawl_stream"
 pattern = "streaming"
@@ -514,6 +513,7 @@ languages = [
   "dart",
   "swift",
   "zig",
+  "kotlin_android",
 ]
 # Fixture categories that exercise internal middleware which the binding
 # surface does not expose. Skipped by every per-language e2e generator —
@@ -779,9 +779,10 @@ async = true
 returns_result = true
 options_type = "CrawlConfig"
 select_when = { category = "batch", input_has = "batch_urls" }
-# Elixir, zig, swift bindings and brew CLI do not expose batch functions.
-# For elixir/zig/swift: unsafe NIF tuple marshalling with mixed-type arrays.
-# For brew: CLI only supports scrape, crawl, map subcommands.
+# E2E generation skips Elixir, Zig, and Swift for this fixture family because
+# their harnesses need dedicated mixed-result collection assertions. The
+# bindings expose batch functions. Brew is skipped because the CLI has no batch
+# subcommand.
 skip_languages = ["elixir", "zig", "swift", "brew"]
 # BatchScrapeResults wraps Vec<BatchScrapeResult> with precomputed counts.
 # Top-level fields: results (Vec), total_count, completed_count, failed_count.
@@ -1143,8 +1144,9 @@ async = true
 returns_result = true
 options_type = "CrawlConfig"
 select_when = { category = "batch", id_prefix = "batch_crawl" }
-# Same constraints as batch_scrape: NIF tuple marshalling for mixed-type arrays
-# is unsafe in elixir/zig/swift, and brew CLI lacks a batch subcommand.
+# Same E2E-only constraints as batch_scrape: Elixir, Zig, and Swift expose the
+# binding functions, but their generated fixture harnesses need dedicated
+# mixed-result collection assertions. Brew CLI lacks a batch subcommand.
 skip_languages = ["elixir", "zig", "swift", "brew"]
 # BatchCrawlResults wraps Vec<BatchCrawlResult> with precomputed counts.
 # Top-level fields: results (Vec), total_count, completed_count, failed_count.
@@ -1510,60 +1512,64 @@ categories = ["scrape", "markdown", "metadata"]
 
 [crates.e2e.registry.packages.python]
 name = "kreuzcrawl"
-version = ">=0.3.0rc71"
+version = ">=0.3.0rc72"
 
 [crates.e2e.registry.packages.node]
 name = "@kreuzberg/kreuzcrawl"
-version = "^0.3.0-rc.71"
+version = "^0.3.0-rc.72"
 
 [crates.e2e.registry.packages.rust]
 name = "kreuzcrawl"
-version = "0.3.0-rc.71"
+version = "0.3.0-rc.72"
 
 [crates.e2e.registry.packages.go]
 module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
-version = "v0.3.0-rc.71"
+version = "v0.3.0-rc.72"
 
 [crates.e2e.registry.packages.java]
 name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
-version = "0.3.0-rc.71"
+version = "0.3.0-rc.72"
 
 [crates.e2e.registry.packages.csharp]
 name = "Kreuzcrawl"
-version = "0.3.0-rc.71"
+version = "0.3.0-rc.72"
 
 [crates.e2e.registry.packages.php]
 name = "kreuzberg-dev/kreuzcrawl"
-version = ">=0.3.0-rc.71"
+version = ">=0.3.0-rc.72"
 
 [crates.e2e.registry.packages.ruby]
 name = "kreuzcrawl"
-version = ">= 0.3.0.pre.rc.71"
+version = ">= 0.3.0.pre.rc.72"
 
 [crates.e2e.registry.packages.elixir]
 name = "kreuzcrawl"
-version = "~> 0.3.0-rc.71"
+version = "~> 0.3.0-rc.72"
 
 [crates.e2e.registry.packages.wasm]
 name = "@kreuzberg/kreuzcrawl-wasm"
-version = "^0.3.0-rc.71"
+version = "^0.3.0-rc.72"
 
 [crates.e2e.registry.packages.brew]
 name = "kreuzcrawl"
-version = "0.3.0-rc.71"
+version = "0.3.0-rc.72"
 
 [crates.e2e.registry.packages.c]
 name = "kreuzcrawl-ffi"
-version = "0.3.0-rc.71"
+version = "0.3.0-rc.72"
 
 [crates.e2e.registry.packages.zig]
 name = "kreuzcrawl"
-version = "0.3.0-rc.71"
+version = "0.3.0-rc.72"
 # Placeholder hash with embedded version triggers alef's STALE detection (added
 # in v0.22.1) — the generator emits a STALE comment in build.zig.zon and the
 # zig fetch flow auto-recomputes the real multihash at consume time. Update
 # after publishing the first zig tarball: `zig fetch --save <release-url>`.
-hash = "kreuzcrawl-0.3.0-rc.71-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH"
+hash = "kreuzcrawl-0.3.0-rc.72-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH"
+
+[crates.e2e.registry.packages.kotlin_android]
+name = "dev.kreuzberg.kreuzcrawl.android:kreuzcrawl-android"
+version = "0.3.0-rc.72"
 
 [crates.scaffold]
 description = "High-performance web crawling engine"
@@ -1773,7 +1779,7 @@ implementation("dev.kreuzberg.kreuzcrawl:kreuzcrawl-android:{{ version }}")
 description = """
 Android (AAR) bindings for **kreuzcrawl** — a high-performance Rust web crawling engine.
 JNI-based with bundled per-ABI native libraries and a coroutine-friendly Kotlin facade.
-JVM consumers should use the canonical `dev.kreuzberg.kreuzcrawl:kreuzcrawl-java` artifact directly.
+JVM consumers should use the canonical `dev.kreuzberg.kreuzcrawl:kreuzcrawl` artifact directly.
 """
 
 [crates.readme.languages.kotlin_android.snippets]
@@ -1785,7 +1791,7 @@ template = "language_package.md"
 output_path = "packages/swift/README.md"
 package_manager = ["spm"]
 package_name = "Kreuzcrawl"
-install_command = '.package(url: "https://github.com/kreuzberg-dev/kreuzcrawl-swift", from: "{{ version }}")'
+install_command = '.package(url: "https://github.com/kreuzberg-dev/kreuzcrawl", exact: "{{ version }}")'
 description = """
 Swift bindings for **kreuzcrawl** — a high-performance Rust web crawling engine.
 Via swift-bridge for macOS, iOS, and Linux with native Swift types and async/await.

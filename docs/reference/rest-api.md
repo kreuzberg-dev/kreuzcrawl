@@ -283,7 +283,7 @@ Health check endpoint.
 ```json
 {
   "status": "ok",
-  "version": "0.3.0-rc.66"
+  "version": "0.3.0-rc.71"
 }
 ```
 
@@ -297,7 +297,7 @@ Version information.
 
 ```json
 {
-  "version": "0.3.0-rc.66"
+  "version": "0.3.0-rc.71"
 }
 ```
 

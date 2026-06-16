@@ -2,7 +2,7 @@
 title: "Ruby API Reference"
 ---
 
-## Ruby API Reference <span class="version-badge">v0.3.0-rc.71</span>
+## Ruby API Reference <span class="version-badge">v0.3.0-rc.72</span>
 
 ### Functions
 
@@ -520,8 +520,6 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `String?` | `nil` | Path to write WARC output. If `nil`, WARC output is disabled. |
 | `browser_profile` | `String?` | `nil` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `Boolean` | `false` | Whether to save changes back to the browser profile on exit. |
-| `ssrf` | `String` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`). Per-request override from language clients is unsupported in v1 — the policy is set at config-load (env + builder) from the Rust side. |
-| `dispatch` | `String?` | `nil` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `nil`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Not serializable — callers construct this at runtime and skip in TOML/JSON configs. |
 
 ##### Methods
 
@@ -570,70 +568,6 @@ Opaque handle to a configured crawl engine.
 Constructed via `create_engine` with an optional `CrawlConfig`.
 Default implementations for all pluggable components are used internally.
 
-##### Methods
-
-###### crawl_stream()
-
-Stream a single-URL crawl, yielding `CrawlEvent`s as pages are processed.
-
-Returns an async stream that emits one event per crawled page, plus a
-terminal `Complete` event. On per-URL failure during the crawl, emits an
-`Error` event followed by `Complete`. The stream item type is wrapped in
-a `Result` to surface transport-level errors; today every emit is `Ok`.
-
-**Signature:**
-
-```ruby
-def crawl_stream(req)
-```
-
-**Example:**
-
-```ruby
-result = instance.crawl_stream(CrawlStreamRequest.new)
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `req` | `CrawlStreamRequest` | Yes | The crawl stream request |
-
-**Returns:** `String`
-
-**Errors:** Raises `CrawlError`.
-
-###### batch_crawl_stream()
-
-Stream a multi-URL crawl, yielding `CrawlEvent`s across all seeds.
-
-Returns an async stream that emits one event per crawled page across all
-seeds, plus terminal `Complete` and `Error` events as appropriate. The
-stream item type is wrapped in a `Result` to surface transport-level
-errors; today every emit is `Ok`.
-
-**Signature:**
-
-```ruby
-def batch_crawl_stream(req)
-```
-
-**Example:**
-
-```ruby
-result = instance.batch_crawl_stream(BatchCrawlStreamRequest.new)
-```
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `req` | `BatchCrawlStreamRequest` | Yes | The batch crawl stream request |
-
-**Returns:** `String`
-
-**Errors:** Raises `CrawlError`.
-
 ---
 
 #### CrawlPageResult
@@ -680,7 +614,6 @@ The result of a multi-page crawl operation.
 | `cookies` | `Array<CookieInfo>` | `[]` | Cookies collected during the crawl. |
 | `stayed_on_domain` | `Boolean` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `browser_used` | `Boolean` | — | Whether the browser fallback was used for any page in this crawl. |
-| `normalized_urls` | `Array<String>` | `[]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ##### Methods
 
@@ -745,7 +678,6 @@ skipping the resource.
 |-------|------|---------|-------------|
 | `url` | `String` | — | The URL the document was fetched from. |
 | `mime_type` | `String` | — | The MIME type from the Content-Type header. |
-| `content` | `String` | — | Raw document bytes. Skipped during JSON serialization. |
 | `size` | `Integer` | — | Size of the document in bytes. |
 | `filename` | `String?` | `nil` | Filename extracted from Content-Disposition or URL path. |
 | `content_hash` | `String` | — | SHA-256 hex digest of the content. |
@@ -837,7 +769,6 @@ Result of executing a sequence of page interaction actions.
 | `action_results` | `Array<ActionResult>` | `[]` | Results from each executed action. |
 | `final_html` | `String` | — | Final page HTML after all actions completed. |
 | `final_url` | `String` | — | Final page URL (may have changed due to navigation). |
-| `screenshot` | `String?` | `nil` | Screenshot taken after all actions, if requested. |
 
 ---
 
@@ -1004,7 +935,6 @@ The result of a single-page scrape operation.
 | `markdown` | `MarkdownResult?` | `nil` | Markdown conversion of the page content. |
 | `extracted_data` | `Object?` | `nil` | Structured data extracted by LLM. Populated when extraction is configured. |
 | `extraction_meta` | `ExtractionMeta?` | `nil` | Metadata about the LLM extraction pass (cost, tokens, model). |
-| `screenshot` | `String?` | `nil` | Screenshot of the page as PNG bytes. Populated when browser is used and capture_screenshot is enabled. |
 | `downloaded_document` | `DownloadedDocument?` | `nil` | Downloaded non-HTML document (PDF, DOCX, image, code, etc.). |
 | `browser` | `BrowserExtras?` | `nil` | Browser-specific extras (eval result, network events, cookies). Only populated when `BrowserBackend.Native` was used for this request. |
 
@@ -1034,7 +964,7 @@ When to use the headless browser fallback.
 | `auto` | Automatically detect when JS rendering is needed and fall back to browser. |
 | `always` | Always use the browser for every request. |
 | `never` | Never use the browser fallback. |
-| `stealth` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - chromiumoxide JS patches (`crate.stealth.apply_stealth_patches`) - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
+| `stealth` | Always use the browser with all stealth surfaces enabled. Behaves like `Always` for escalation purposes (every request is routed through the browser tier), but additionally enables: - browser JavaScript stealth patches - native-backend TLS fingerprint spoofing - stealth-aware default user-agent when no explicit UA is set - 1920×1080 viewport override Use this instead of setting the now-removed `BrowserConfig.stealth` boolean field. |
 
 ---
 
@@ -1137,10 +1067,7 @@ An event emitted during a streaming crawl operation.
 Not available on `wasm32` targets — streaming requires native concurrency
 primitives (tokio channels, `JoinSet`) that are not supported on wasm32.
 
-Delivered to bindings via alef's streaming-adapter pattern. The
-`crawl_stream` / `batch_crawl_stream` binding wrappers in `bindings.rs`
-expose this as the per-language streaming idiom (Python `AsyncIterator`,
-Ruby `Enumerator`, PHP `Generator`, Elixir `Stream.unfold`, etc.).
+Delivered to bindings through each target's native streaming idiom.
 
 | Value | Description |
 |-------|-------------|

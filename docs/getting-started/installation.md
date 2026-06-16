@@ -150,7 +150,7 @@ kreuzcrawl --version
     <dependency>
         <groupId>dev.kreuzberg.kreuzcrawl</groupId>
         <artifactId>kreuzcrawl</artifactId>
-        <version>0.3.0-rc.66</version>
+        <version>0.3.0-rc.71</version>
     </dependency>
     ```
 
@@ -162,7 +162,7 @@ kreuzcrawl --version
 
     ```kotlin title="build.gradle.kts"
     dependencies {
-        implementation("dev.kreuzberg.kreuzcrawl:kreuzcrawl-android:0.3.0-rc.66")
+        implementation("dev.kreuzberg.kreuzcrawl:kreuzcrawl-android:0.3.0-rc.71")
     }
     ```
 
@@ -179,7 +179,7 @@ kreuzcrawl --version
     Or in your `.csproj`:
 
     ```xml title="Kreuzcrawl.csproj"
-    <PackageReference Include="Kreuzcrawl" Version="0.3.0-rc.66" />
+    <PackageReference Include="Kreuzcrawl" Version="0.3.0-rc.71" />
     ```
 
     The C# bindings use P/Invoke to call the C FFI layer.
@@ -249,7 +249,7 @@ kreuzcrawl --version
     Add the Swift package from GitHub:
 
     ```swift
-    .package(url: "https://github.com/kreuzberg-dev/kreuzcrawl", exact: "0.3.0-rc.66")
+    .package(url: "https://github.com/kreuzberg-dev/kreuzcrawl", exact: "0.3.0-rc.71")
     ```
 
 === "Zig"
@@ -257,7 +257,7 @@ kreuzcrawl --version
     Use the generated Zig package over the C FFI layer:
 
     ```bash
-    zig fetch --save https://github.com/kreuzberg-dev/kreuzcrawl/archive/refs/tags/v0.3.0-rc.66.tar.gz
+    zig fetch --save https://github.com/kreuzberg-dev/kreuzcrawl/archive/refs/tags/v0.3.0-rc.71.tar.gz
     ```
 
 === "C FFI"

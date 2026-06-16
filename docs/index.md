@@ -66,7 +66,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 | **C#**                | `dotnet add package Kreuzcrawl`                             | [API Reference](reference/api-csharp.md)         |
 | **Ruby**              | `gem install kreuzcrawl`                                    | [API Reference](reference/api-ruby.md)           |
 | **PHP**               | `composer require kreuzberg-dev/kreuzcrawl`                 | [API Reference](reference/api-php.md)            |
-| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0-rc.66"}`                           | [API Reference](reference/api-elixir.md)         |
+| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0-rc.71"}`                           | [API Reference](reference/api-elixir.md)         |
 | **Dart / Flutter**    | `dart pub add kreuzcrawl`                                   | [API Reference](reference/api-dart.md)           |
 | **Swift**             | Swift Package Manager                                       | [API Reference](reference/api-swift.md)          |
 | **Zig**               | `zig fetch --save` from GitHub                              | [API Reference](reference/api-zig.md)            |
@@ -142,29 +142,33 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 <div class="grid cards" markdown>
 
-- :material-file-document-multiple:{ .lg .middle } **[Kreuzberg](https://docs.kreuzberg.dev)**
+- :material-file-document-multiple:{ .lg .middle } **[Kreuzberg](https://github.com/kreuzberg-dev/kreuzberg)**
 
-  Document intelligence — text, tables, and metadata from 91+ file formats with optional OCR.
+  Document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 
-- :material-cloud:{ .lg .middle } **[Kreuzberg Cloud](https://docs.kreuzberg.cloud)**
+- :material-cloud:{ .lg .middle } **[Kreuzberg Cloud](https://github.com/kreuzberg-dev/kreuzberg-cloud)**
 
-  Managed document-extraction API with SDKs, dashboards, and observability built in.
+  Managed extraction API with SDKs, dashboards, and observability.
 
-- :material-language-html5:{ .lg .middle } **[html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev)**
+- :material-spider-web:{ .lg .middle } **[kreuzcrawl](https://github.com/kreuzberg-dev/kreuzcrawl)**
 
-  The HTML→Markdown engine powering Kreuzcrawl's always-on conversion. Use it stand-alone for static HTML.
+  Web crawling and scraping with HTML→Markdown and headless-Chrome fallback.
 
-- :material-robot-outline:{ .lg .middle } **[liter-llm](https://docs.liter-llm.kreuzberg.dev)**
+- :material-language-html5:{ .lg .middle } **[html-to-markdown](https://github.com/kreuzberg-dev/html-to-markdown)**
 
-  Multi-provider LLM orchestration with cost and token accounting.
+  Fast, lossless HTML→Markdown engine.
 
-- :material-code-tags:{ .lg .middle } **[tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev)**
+- :material-robot-outline:{ .lg .middle } **[liter-llm](https://github.com/kreuzberg-dev/liter-llm)**
 
-  306 tree-sitter grammars and code-intelligence primitives. Used downstream when crawled pages contain code.
+  Universal LLM API client with native bindings for 14 languages and 143 providers.
 
-- :fontawesome-brands-discord:{ .lg .middle } **[Discord](https://discord.gg/xt9WY3GnKR)**
+- :material-code-tags:{ .lg .middle } **[tree-sitter-language-pack](https://github.com/kreuzberg-dev/tree-sitter-language-pack)**
 
-  Join the Kreuzberg community for help, roadmap discussion, and announcements.
+  Tree-sitter grammars and code-intelligence primitives.
+
+- :material-alpha-a-circle:{ .lg .middle } **[alef](https://github.com/kreuzberg-dev/alef)**
+
+  The polyglot binding generator that produces every per-language binding across the 5 polyglot repos.
 
 </div>
 

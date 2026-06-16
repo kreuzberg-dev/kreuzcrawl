@@ -664,7 +664,7 @@ enum BrowserMode {
   /// (every request is routed through the browser tier), but additionally
   /// enables:
   ///
-  /// - chromiumoxide JS patches (`crate::stealth::apply_stealth_patches`)
+  /// - browser JavaScript stealth patches
   /// - native-backend TLS fingerprint spoofing
   /// - stealth-aware default user-agent when no explicit UA is set
   /// - 1920×1080 viewport override
