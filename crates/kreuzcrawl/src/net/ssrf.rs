@@ -107,8 +107,18 @@ pub struct SsrfPolicy {
     pub max_redirects: u8,
 
     /// Allowed URI schemes. Default: `["http", "https"]`. Not serialized (set at runtime).
-    #[serde(skip)]
+    #[serde(skip, default = "default_scheme_allowlist")]
     pub scheme_allowlist: HashSet<&'static str>,
+}
+
+/// Default scheme allowlist used when `SsrfPolicy::scheme_allowlist` is omitted from JSON.
+/// Without this, `#[serde(skip)]` would populate the field with `HashSet::default()` (empty)
+/// on round-trip deserialize, causing every URL to fail with `disallowed scheme`.
+fn default_scheme_allowlist() -> HashSet<&'static str> {
+    let mut set = HashSet::new();
+    set.insert("http");
+    set.insert("https");
+    set
 }
 
 impl Default for SsrfPolicy {
@@ -723,6 +733,30 @@ mod tests {
         assert!(
             cfg_default_env.ssrf.deny_private,
             "JSON `{{}}` without env var must produce deny_private=true (got deny_private=false)",
+        );
+    }
+
+    /// Regression test for the rolling rc.71 fix: `SsrfPolicy` JSON round-trip
+    /// (serialize → deserialize) must preserve a populated `scheme_allowlist`.
+    /// `#[serde(skip)]` alone would call `HashSet::default()` (empty) on
+    /// deserialize, producing a policy that rejects EVERY URL with
+    /// `DisallowedScheme(http)`. Reproduces the brew CLI failure mode where
+    /// `merge_json_config` round-trips the live CrawlConfig and silently
+    /// drops the scheme allowlist.
+    #[test]
+    fn ssrf_policy_json_round_trip_preserves_scheme_allowlist() {
+        let policy = SsrfPolicy::default();
+        let json = serde_json::to_string(&policy).expect("serialize");
+        let restored: SsrfPolicy = serde_json::from_str(&json).expect("deserialize");
+        assert!(
+            restored.scheme_allowlist.contains("http"),
+            "http scheme must survive JSON round-trip; got {:?}",
+            restored.scheme_allowlist
+        );
+        assert!(
+            restored.scheme_allowlist.contains("https"),
+            "https scheme must survive JSON round-trip; got {:?}",
+            restored.scheme_allowlist
         );
     }
 }

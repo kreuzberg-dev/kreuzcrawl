@@ -4,6 +4,10 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`SsrfPolicy` JSON round-trip dropped the scheme allowlist** — surfaced as the brew CLI failure mode in rc.71 CI E2E run 27598534040: every URL rejected with `disallowed scheme: http`. `crates/kreuzcrawl/src/net/ssrf.rs` declared `scheme_allowlist: HashSet<&'static str>` with `#[serde(skip)]`. Deserialization uses the field type's `Default` for skipped fields, which for `HashSet` is an empty set. `crates/kreuzcrawl-cli/src/main.rs::merge_json_config` serializes the live `CrawlConfig`, merges, and deserializes back — that round-trip clobbered `scheme_allowlist` to empty and SSRF validation rejected every URL regardless of host. Fix: add a named-fn deserialization default `#[serde(skip, default = "default_scheme_allowlist")]` that populates `http`/`https`. Regression test `ssrf_policy_json_round_trip_preserves_scheme_allowlist` covers the failure mode directly.
+
 ## [0.3.0-rc.71] - 2026-06-16
 
 ### Fixed
