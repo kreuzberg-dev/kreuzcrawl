@@ -545,18 +545,6 @@ void* __swift_bridge__$Vec_CitationReference$get_mut(void* vec_ptr, uintptr_t in
 uintptr_t __swift_bridge__$Vec_CitationReference$len(void* vec_ptr);
 void* __swift_bridge__$Vec_CitationReference$as_ptr(void* vec_ptr);
 
-typedef struct CrawlEngineHandle CrawlEngineHandle;
-void __swift_bridge__$CrawlEngineHandle$_free(void* self);
-
-void* __swift_bridge__$Vec_CrawlEngineHandle$new(void);
-void __swift_bridge__$Vec_CrawlEngineHandle$drop(void* vec_ptr);
-void __swift_bridge__$Vec_CrawlEngineHandle$push(void* vec_ptr, void* item_ptr);
-void* __swift_bridge__$Vec_CrawlEngineHandle$pop(void* vec_ptr);
-void* __swift_bridge__$Vec_CrawlEngineHandle$get(void* vec_ptr, uintptr_t index);
-void* __swift_bridge__$Vec_CrawlEngineHandle$get_mut(void* vec_ptr, uintptr_t index);
-uintptr_t __swift_bridge__$Vec_CrawlEngineHandle$len(void* vec_ptr);
-void* __swift_bridge__$Vec_CrawlEngineHandle$as_ptr(void* vec_ptr);
-
 typedef struct BatchScrapeResult BatchScrapeResult;
 void __swift_bridge__$BatchScrapeResult$_free(void* self);
 
@@ -1158,8 +1146,6 @@ void* __swift_bridge__$__alef_phantom_vec_favicon_info(void);
 void* __swift_bridge__$__alef_phantom_vec_heading_info(void);
 void* __swift_bridge__$__alef_phantom_vec_response_meta(void);
 void* __swift_bridge__$__alef_phantom_vec_page_metadata(void);
-void* __swift_bridge__$__alef_phantom_vec_crawl_stream_request(void);
-void* __swift_bridge__$__alef_phantom_vec_batch_crawl_stream_request(void);
 void* __swift_bridge__$__alef_phantom_vec_citation_result(void);
 void* __swift_bridge__$__alef_phantom_vec_citation_reference(void);
 void* __swift_bridge__$__alef_phantom_vec_crawl_engine_handle(void);
@@ -1175,9 +1161,11 @@ void* __swift_bridge__$__alef_phantom_vec_link_type(void);
 void* __swift_bridge__$__alef_phantom_vec_image_source(void);
 void* __swift_bridge__$__alef_phantom_vec_feed_type(void);
 void* __swift_bridge__$__alef_phantom_vec_asset_category(void);
-void* __swift_bridge__$__alef_phantom_vec_crawl_event(void);
 void* __swift_bridge__$__alef_phantom_vec_page_action(void);
 void* __swift_bridge__$__alef_phantom_vec_scroll_direction(void);
+void* __swift_bridge__$__alef_phantom_vec_crawl_stream_request(void);
+void* __swift_bridge__$__alef_phantom_vec_batch_crawl_stream_request(void);
+void* __swift_bridge__$__alef_phantom_vec_crawl_event(void);
 
 
 #endif /* RUST_BRIDGE_C_H */

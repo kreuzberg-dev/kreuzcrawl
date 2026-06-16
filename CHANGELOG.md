@@ -4,6 +4,17 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.71] - 2026-06-16
+
+### Fixed
+
+- **`CrawlConfig` JSON deserialization ignored `KREUZCRAWL_ALLOW_PRIVATE_NETWORK`** — fourth regression in the rc.62 SSRF-defense cluster (commit 277ef16f6). `crates/kreuzcrawl/src/types/config.rs:405` declared `#[serde(default)] pub ssrf: SsrfPolicy,`. `#[serde(default)]` calls `<SsrfPolicy as Default>::default()`, which hardcodes `deny_private: true` at `crates/kreuzcrawl/src/net/ssrf.rs:121`. It does *not* call `SsrfPolicy::from_env()`. Every binding that round-trips a CrawlConfig through `kcrawl_crawl_config_from_json` (FFI: Go, Java, C#, PHP, Ruby, Elixir, Dart, Swift, Zig, WASM, C, brew, rust) omits the alef-skipped `ssrf` field, so serde applied the field-level default and the env-var override never took effect. Python and Node escape this path because their PyO3 / NAPI `From<CrawlConfig> for kreuzcrawl::CrawlConfig` impls start with `kreuzcrawl::CrawlConfig::default()` (which *does* call `SsrfPolicy::from_env()` per `types/config.rs:476`) and overwrite individual fields. Fix: change the attribute to `#[serde(default = "SsrfPolicy::from_env")]`. CI E2E rc.70 push run 27580653877 surfaced this as the same 13 ssrf-policy-violation failures Python/Node never hit; the diagnosis was masked through rc.62 → rc.70 by the env-var rollout signal noise and by overlap with the other three 277ef16f6 regressions. Regression test added in `crates/kreuzcrawl/src/net/ssrf.rs::crawl_config_json_deserialize_honors_env_var` covering both the env-set and env-unset paths for `serde_json::from_str::<CrawlConfig>("{}")`.
+- **WASM build: gate `sink` module on non-wasm targets.** `crates/kreuzcrawl/src/sink.rs` (added in rc.66, commit 4282603d7) unconditionally does `use crate::types::CrawlEvent;` at line 9. `CrawlEvent` is `#[cfg(not(target_arch = "wasm32"))]` because `CrawlPageResult` and the streaming machinery aren't wasm-compatible. `crates/kreuzcrawl/src/lib.rs` exposed `pub mod sink;` (line 43) and `pub use sink::{EventSink, MultiEventSink, TracingEventSink};` (line 85) without cfg gates, so `wasm-pack build` tripped `error[E0432]: unresolved import 'crate::types::CrawlEvent'`. Observed on rc.70 Publish Release Build WASM job 81540455790. The engine consumer at `engine/mod.rs:51-52` was already correctly gated, so the fix is just to wrap both `pub mod sink;` and the public re-export in `#[cfg(not(target_arch = "wasm32"))]`.
+
+### Changed
+
+- **Regenerate against alef 0.25.17** (pin unchanged from rc.70). Pure binding regen for the two Rust source fixes above.
+
 ## [0.3.0-rc.70] - 2026-06-16
 
 ### Fixed

@@ -696,4 +696,33 @@ mod tests {
             "default from_env policy must deny private IPs; got {err:?}"
         );
     }
+
+    /// Regression test for rc.71: `CrawlConfig` JSON deserialization must honor
+    /// `KREUZCRAWL_ALLOW_PRIVATE_NETWORK`. Bindings that round-trip CrawlConfig
+    /// through `kcrawl_crawl_config_from_json` (Go/Java/C#/PHP/Ruby/Elixir/Dart/
+    /// Swift/Zig/WASM/C/brew) omit the alef-skipped `ssrf` field, so serde
+    /// applies the field-level default. Prior to this fix the attribute was
+    /// `#[serde(default)]` which called `<SsrfPolicy as Default>::default()`
+    /// (deny_private: true) and silently ignored the env var.
+    #[allow(unsafe_code)]
+    #[test]
+    #[serial_test::serial]
+    fn crawl_config_json_deserialize_honors_env_var() {
+        use crate::types::CrawlConfig;
+
+        // SAFETY: #[serial] serialises all tests carrying this attribute.
+        unsafe { std::env::set_var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true") };
+        let cfg: CrawlConfig = serde_json::from_str("{}").expect("empty object must deserialize");
+        unsafe { std::env::remove_var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK") };
+        assert!(
+            !cfg.ssrf.deny_private,
+            "JSON `{{}}` with KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true must produce deny_private=false (got deny_private=true)",
+        );
+
+        let cfg_default_env: CrawlConfig = serde_json::from_str("{}").expect("empty object must deserialize");
+        assert!(
+            cfg_default_env.ssrf.deny_private,
+            "JSON `{{}}` without env var must produce deny_private=true (got deny_private=false)",
+        );
+    }
 }

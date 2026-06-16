@@ -402,7 +402,7 @@ pub struct CrawlConfig {
     /// Skipped from polyglot binding generation (`#[cfg_attr(alef, alef(skip))]`).
     /// Per-request override from language clients is unsupported in v1 — the
     /// policy is set at config-load (env + builder) from the Rust side.
-    #[serde(default)]
+    #[serde(default = "SsrfPolicy::from_env")]
     #[cfg_attr(alef, alef(skip))]
     pub ssrf: SsrfPolicy,
     /// Pluggable dispatch components: bypass provider, escalation strategy,

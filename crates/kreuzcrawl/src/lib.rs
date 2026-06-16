@@ -40,6 +40,7 @@ mod pruning;
 pub(crate) mod research;
 mod robots;
 mod scrape;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod sink;
 mod sitemap;
 pub mod telemetry;
@@ -82,6 +83,7 @@ pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecut
 #[cfg(feature = "mcp")]
 pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use net::ssrf::{HostMatcher, SsrfError, SsrfPolicy, validate_url};
+#[cfg(not(target_arch = "wasm32"))]
 pub use sink::{EventSink, MultiEventSink, TracingEventSink};
 #[cfg(feature = "telemetry-init")]
 pub use telemetry::{InitError as TelemetryInitError, TelemetryConfig, TelemetryGuard, init_otlp};

@@ -3,15 +3,15 @@
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Kreuzcrawl</RootNamespace>
     <PackageId>Kreuzcrawl</PackageId>
-    <Version>0.3.0-rc.70</Version>
+    <Version>0.3.0-rc.71</Version>
     <AssemblyVersion>0.3.0.0</AssemblyVersion>
     <FileVersion>0.3.0.0</FileVersion>
-    <InformationalVersion>0.3.0-rc.70</InformationalVersion>
+    <InformationalVersion>0.3.0-rc.71</InformationalVersion>
     <Description>High-performance web crawling engine</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/kreuzberg-dev/kreuzcrawl</RepositoryUrl>
     <Authors>Kreuzberg Team</Authors>
-    <Company>Kreuzberg Team</Company>
+    <Company>Alef Team</Company>
     <Product>Kreuzcrawl</Product>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>

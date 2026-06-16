@@ -136,7 +136,7 @@ pub fn build(b: *std.Build) void {
             browser_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    browser_run.step.dependOn(&auth_run_run.step);
+    browser_run.step.dependOn(&auth_run.step);
     test_step.dependOn(&browser_run.step);
 
     const cache_module = b.createModule(.{
@@ -166,7 +166,7 @@ pub fn build(b: *std.Build) void {
             cache_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    cache_run.step.dependOn(&browser_run_run.step);
+    cache_run.step.dependOn(&browser_run.step);
     test_step.dependOn(&cache_run.step);
 
     const concurrent_module = b.createModule(.{
@@ -196,7 +196,7 @@ pub fn build(b: *std.Build) void {
             concurrent_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    concurrent_run.step.dependOn(&cache_run_run.step);
+    concurrent_run.step.dependOn(&cache_run.step);
     test_step.dependOn(&concurrent_run.step);
 
     const content_module = b.createModule(.{
@@ -226,7 +226,7 @@ pub fn build(b: *std.Build) void {
             content_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    content_run.step.dependOn(&concurrent_run_run.step);
+    content_run.step.dependOn(&concurrent_run.step);
     test_step.dependOn(&content_run.step);
 
     const cookies_module = b.createModule(.{
@@ -256,7 +256,7 @@ pub fn build(b: *std.Build) void {
             cookies_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    cookies_run.step.dependOn(&content_run_run.step);
+    cookies_run.step.dependOn(&content_run.step);
     test_step.dependOn(&cookies_run.step);
 
     const crawl_module = b.createModule(.{
@@ -286,7 +286,7 @@ pub fn build(b: *std.Build) void {
             crawl_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    crawl_run.step.dependOn(&cookies_run_run.step);
+    crawl_run.step.dependOn(&cookies_run.step);
     test_step.dependOn(&crawl_run.step);
 
     const download_module = b.createModule(.{
@@ -316,7 +316,7 @@ pub fn build(b: *std.Build) void {
             download_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    download_run.step.dependOn(&crawl_run_run.step);
+    download_run.step.dependOn(&crawl_run.step);
     test_step.dependOn(&download_run.step);
 
     const encoding_module = b.createModule(.{
@@ -346,7 +346,7 @@ pub fn build(b: *std.Build) void {
             encoding_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    encoding_run.step.dependOn(&download_run_run.step);
+    encoding_run.step.dependOn(&download_run.step);
     test_step.dependOn(&encoding_run.step);
 
     const engine_module = b.createModule(.{
@@ -376,7 +376,7 @@ pub fn build(b: *std.Build) void {
             engine_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    engine_run.step.dependOn(&encoding_run_run.step);
+    engine_run.step.dependOn(&encoding_run.step);
     test_step.dependOn(&engine_run.step);
 
     const error_module = b.createModule(.{
@@ -406,7 +406,7 @@ pub fn build(b: *std.Build) void {
             error_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    error_run.step.dependOn(&engine_run_run.step);
+    error_run.step.dependOn(&engine_run.step);
     test_step.dependOn(&error_run.step);
 
     const filter_module = b.createModule(.{
@@ -436,7 +436,7 @@ pub fn build(b: *std.Build) void {
             filter_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    filter_run.step.dependOn(&error_run_run.step);
+    filter_run.step.dependOn(&error_run.step);
     test_step.dependOn(&filter_run.step);
 
     const interaction_module = b.createModule(.{
@@ -466,7 +466,7 @@ pub fn build(b: *std.Build) void {
             interaction_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    interaction_run.step.dependOn(&filter_run_run.step);
+    interaction_run.step.dependOn(&filter_run.step);
     test_step.dependOn(&interaction_run.step);
 
     const links_module = b.createModule(.{
@@ -496,7 +496,7 @@ pub fn build(b: *std.Build) void {
             links_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    links_run.step.dependOn(&interaction_run_run.step);
+    links_run.step.dependOn(&interaction_run.step);
     test_step.dependOn(&links_run.step);
 
     const map_module = b.createModule(.{
@@ -526,7 +526,7 @@ pub fn build(b: *std.Build) void {
             map_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    map_run.step.dependOn(&links_run_run.step);
+    map_run.step.dependOn(&links_run.step);
     test_step.dependOn(&map_run.step);
 
     const markdown_module = b.createModule(.{
@@ -556,7 +556,7 @@ pub fn build(b: *std.Build) void {
             markdown_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    markdown_run.step.dependOn(&map_run_run.step);
+    markdown_run.step.dependOn(&map_run.step);
     test_step.dependOn(&markdown_run.step);
 
     const metadata_module = b.createModule(.{
@@ -586,7 +586,7 @@ pub fn build(b: *std.Build) void {
             metadata_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    metadata_run.step.dependOn(&markdown_run_run.step);
+    metadata_run.step.dependOn(&markdown_run.step);
     test_step.dependOn(&metadata_run.step);
 
     const proxy_module = b.createModule(.{
@@ -616,7 +616,7 @@ pub fn build(b: *std.Build) void {
             proxy_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    proxy_run.step.dependOn(&metadata_run_run.step);
+    proxy_run.step.dependOn(&metadata_run.step);
     test_step.dependOn(&proxy_run.step);
 
     const rate_limit_module = b.createModule(.{
@@ -646,7 +646,7 @@ pub fn build(b: *std.Build) void {
             rate_limit_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    rate_limit_run.step.dependOn(&proxy_run_run.step);
+    rate_limit_run.step.dependOn(&proxy_run.step);
     test_step.dependOn(&rate_limit_run.step);
 
     const redirect_module = b.createModule(.{
@@ -676,7 +676,7 @@ pub fn build(b: *std.Build) void {
             redirect_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    redirect_run.step.dependOn(&rate_limit_run_run.step);
+    redirect_run.step.dependOn(&rate_limit_run.step);
     test_step.dependOn(&redirect_run.step);
 
     const robots_module = b.createModule(.{
@@ -706,7 +706,7 @@ pub fn build(b: *std.Build) void {
             robots_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    robots_run.step.dependOn(&redirect_run_run.step);
+    robots_run.step.dependOn(&redirect_run.step);
     test_step.dependOn(&robots_run.step);
 
     const scrape_module = b.createModule(.{
@@ -736,7 +736,7 @@ pub fn build(b: *std.Build) void {
             scrape_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    scrape_run.step.dependOn(&robots_run_run.step);
+    scrape_run.step.dependOn(&robots_run.step);
     test_step.dependOn(&scrape_run.step);
 
     const sitemap_module = b.createModule(.{
@@ -766,7 +766,7 @@ pub fn build(b: *std.Build) void {
             sitemap_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    sitemap_run.step.dependOn(&scrape_run_run.step);
+    sitemap_run.step.dependOn(&scrape_run.step);
     test_step.dependOn(&sitemap_run.step);
 
     const stealth_module = b.createModule(.{
@@ -796,7 +796,7 @@ pub fn build(b: *std.Build) void {
             stealth_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    stealth_run.step.dependOn(&sitemap_run_run.step);
+    stealth_run.step.dependOn(&sitemap_run.step);
     test_step.dependOn(&stealth_run.step);
 
     const strategy_module = b.createModule(.{
@@ -826,7 +826,7 @@ pub fn build(b: *std.Build) void {
             strategy_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    strategy_run.step.dependOn(&stealth_run_run.step);
+    strategy_run.step.dependOn(&stealth_run.step);
     test_step.dependOn(&strategy_run.step);
 
     const validation_module = b.createModule(.{
@@ -856,7 +856,7 @@ pub fn build(b: *std.Build) void {
             validation_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    validation_run.step.dependOn(&strategy_run_run.step);
+    validation_run.step.dependOn(&strategy_run.step);
     test_step.dependOn(&validation_run.step);
 
     const warc_module = b.createModule(.{
@@ -886,7 +886,7 @@ pub fn build(b: *std.Build) void {
             warc_run.setEnvironmentVariable(_entry.key_ptr.*, _entry.value_ptr.*);
         }
     }
-    warc_run.step.dependOn(&validation_run_run.step);
+    warc_run.step.dependOn(&validation_run.step);
     test_step.dependOn(&warc_run.step);
 
 }
