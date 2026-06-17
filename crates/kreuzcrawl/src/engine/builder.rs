@@ -235,6 +235,22 @@ impl CrawlEngineBuilder {
             config.proxy_provider = Some(provider);
         }
 
+        // KREUZCRAWL_ALLOW_PRIVATE_NETWORK is an operator-side override that must
+        // win regardless of how the caller built `config.ssrf`. Several
+        // alef-generated bindings (Elixir NIF, PHP, WASM, Ruby) fall back to
+        // `SsrfPolicy::default()` when their host-side `ssrf` field is absent,
+        // hardcoding `deny_private: true` and silently overriding the env var
+        // set by e2e harnesses / docker-compose. Applying the override at
+        // engine-construction time keeps `SsrfPolicy::default()` clean and
+        // makes the env var the single source of truth.
+        if std::env::var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK")
+            .map(|v| v.to_lowercase())
+            .ok()
+            .is_some_and(|v| v == "1" || v == "true")
+        {
+            config.ssrf.deny_private = false;
+        }
+
         let rate_limit_ms = config.rate_limit_ms.unwrap_or(200);
         #[cfg(not(target_arch = "wasm32"))]
         let ua_rotation = crate::tower::UaRotationLayer::new(config.user_agents.clone());

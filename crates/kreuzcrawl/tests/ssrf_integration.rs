@@ -202,6 +202,51 @@ async fn crawl_succeeds_when_env_bypass_set() {
     );
 }
 
+/// Regression test for rc.77: KREUZCRAWL_ALLOW_PRIVATE_NETWORK must override a
+/// hardcoded `deny_private: true` carried on `CrawlConfig.ssrf`. Several
+/// alef-generated bindings (Elixir NIF, PHP, WASM, Ruby) build their config
+/// with `SsrfPolicy::default()` (deny=true) when the host-side `ssrf` field
+/// is absent, silently overriding the env var their e2e harnesses set.
+/// `CrawlEngineBuilder::build` must apply the env override so the operator
+/// flag wins regardless of how the policy reached the engine.
+#[allow(unsafe_code)]
+#[tokio::test]
+#[serial_test::serial]
+async fn engine_env_bypass_overrides_explicit_deny_private() {
+    let mock = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string("<html><body>ok</body></html>")
+                .append_header("content-type", "text/html"),
+        )
+        .mount(&mock)
+        .await;
+
+    // SAFETY: #[serial] serialises env-mutating tests in this binary.
+    unsafe { std::env::set_var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK", "true") };
+
+    let config = CrawlConfig {
+        ssrf: SsrfPolicy::default(),
+        ..CrawlConfig::default()
+    };
+    assert!(
+        config.ssrf.deny_private,
+        "precondition: SsrfPolicy::default() must hardcode deny_private=true"
+    );
+
+    let result = scrape(&engine(config), &mock.uri()).await;
+
+    unsafe { std::env::remove_var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK") };
+
+    assert!(
+        result.is_ok(),
+        "engine builder must apply env override over explicit deny_private=true: {:?}",
+        result.err()
+    );
+}
+
 // ---------------------------------------------------------------------------
 // Test 7: redirect target outside CIDR allowlist is refused
 // ---------------------------------------------------------------------------

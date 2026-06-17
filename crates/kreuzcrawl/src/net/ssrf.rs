@@ -102,6 +102,7 @@ pub enum SsrfError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SsrfPolicy {
     /// If true, reject URLs that resolve to private/metadata IP ranges.
+    #[serde(default = "default_deny_private")]
     pub deny_private: bool,
 
     /// Allowed hostnames and IP ranges. Empty means deny all unless `deny_private` is false.
@@ -109,10 +110,12 @@ pub struct SsrfPolicy {
     /// Phase 1: skipped from language bindings — `HostMatcher`'s untagged-enum
     /// FFI form is not yet decided. Expose in a follow-up once the tagged-enum
     /// representation is finalized.
+    #[serde(default)]
     #[cfg_attr(alef, alef(skip))]
     pub allowlist: Vec<HostMatcher>,
 
     /// Maximum number of HTTP redirects to follow during validation.
+    #[serde(default = "default_max_redirects")]
     pub max_redirects: u8,
 
     /// Allowed URI schemes. Default: `["http", "https"]`. Not serialized (set at runtime).
@@ -120,6 +123,18 @@ pub struct SsrfPolicy {
     #[serde(skip, default = "default_scheme_allowlist")]
     #[cfg_attr(alef, alef(skip))]
     pub scheme_allowlist: HashSet<&'static str>,
+}
+
+fn default_deny_private() -> bool {
+    // Deny-by-default. `CrawlEngineBuilder::build` applies
+    // `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` as a top-level override so callers
+    // who construct a policy through any of the JSON deserialize paths still
+    // honour the env var without baking it into the per-field default.
+    true
+}
+
+fn default_max_redirects() -> u8 {
+    5
 }
 
 /// Default scheme allowlist used when `SsrfPolicy::scheme_allowlist` is omitted from JSON.
@@ -745,6 +760,41 @@ mod tests {
             cfg_default_env.ssrf.deny_private,
             "JSON `{{}}` without env var must produce deny_private=true (got deny_private=false)",
         );
+    }
+
+    /// Regression test for rc.77: `SsrfPolicy` JSON deserialization must
+    /// tolerate partial input. Bindings whose CrawlConfig DTO emits
+    /// `"ssrf": {}` (e.g. Go's `Ssrf SsrfPolicy `json:"ssrf"`` with all
+    /// fields `*pointer + omitempty`) previously failed with
+    /// `missing field deny_private`. Field-level `#[serde(default)]` lets the
+    /// policy fall back to safe defaults when fields are omitted.
+    #[test]
+    fn ssrf_policy_deserializes_from_empty_object() {
+        let policy: SsrfPolicy = serde_json::from_str("{}").expect("empty object must deserialize");
+        assert!(policy.deny_private, "deny_private must default to true");
+        assert_eq!(policy.max_redirects, 5, "max_redirects must default to 5");
+        assert!(policy.allowlist.is_empty(), "allowlist must default to empty");
+        assert!(
+            policy.scheme_allowlist.contains("http") && policy.scheme_allowlist.contains("https"),
+            "scheme_allowlist must default to http/https"
+        );
+    }
+
+    /// Companion to `ssrf_policy_deserializes_from_empty_object`: partial input
+    /// where some fields are present and others omitted must keep provided
+    /// values and default the rest.
+    #[test]
+    #[serial_test::serial]
+    fn ssrf_policy_deserializes_from_partial_object() {
+        let policy: SsrfPolicy =
+            serde_json::from_str(r#"{"max_redirects": 3}"#).expect("partial object must deserialize");
+        assert!(policy.deny_private, "deny_private must default to true");
+        assert_eq!(policy.max_redirects, 3, "explicit max_redirects must be honored");
+
+        let policy: SsrfPolicy =
+            serde_json::from_str(r#"{"deny_private": false}"#).expect("partial object must deserialize");
+        assert!(!policy.deny_private, "explicit deny_private must be honored");
+        assert_eq!(policy.max_redirects, 5, "max_redirects must default to 5");
     }
 
     /// Regression test for the rolling rc.71 fix: `SsrfPolicy` JSON round-trip
