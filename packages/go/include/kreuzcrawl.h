@@ -234,6 +234,10 @@ typedef struct KCRAWLScrollDirection KCRAWLScrollDirection;
  * A URL entry from a sitemap.
  */
 typedef struct KCRAWLSitemapUrl KCRAWLSitemapUrl;
+/**
+ * SSRF policy configuration.
+ */
+typedef struct KCRAWLSsrfPolicy KCRAWLSsrfPolicy;
 
 
 /**
@@ -1009,6 +1013,13 @@ char *kcrawl_crawl_config_browser_profile(const KCRAWLCrawlConfig *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 int32_t kcrawl_crawl_config_save_browser_profile(const KCRAWLCrawlConfig *ptr);
+
+/**
+ * Get the `ssrf` field from a `CrawlConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KCRAWLSsrfPolicy *kcrawl_crawl_config_ssrf(const KCRAWLCrawlConfig *ptr);
 
 /**
  * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
@@ -3158,6 +3169,66 @@ uintptr_t kcrawl_batch_crawl_results_completed_count(const KCRAWLBatchCrawlResul
  * Pointer must be a valid handle returned by this library.
  */
 uintptr_t kcrawl_batch_crawl_results_failed_count(const KCRAWLBatchCrawlResults *ptr);
+
+/**
+ * Create a `SsrfPolicy` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kcrawl_ssrf_policy_free`.
+ */
+KCRAWLSsrfPolicy *kcrawl_ssrf_policy_from_json(const char *json);
+
+/**
+ * Serialize a `SsrfPolicy` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kcrawl` function.
+ * The returned string must be freed with `kcrawl_free_string`.
+ */
+char *kcrawl_ssrf_policy_to_json(const KCRAWLSsrfPolicy *ptr);
+
+/**
+ * Free a `SsrfPolicy` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kcrawl_ssrf_policy_free(KCRAWLSsrfPolicy *ptr);
+
+/**
+ * Get the `deny_private` field from a `SsrfPolicy`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kcrawl_ssrf_policy_deny_private(const KCRAWLSsrfPolicy *ptr);
+
+/**
+ * Get the `max_redirects` field from a `SsrfPolicy`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t kcrawl_ssrf_policy_max_redirects(const KCRAWLSsrfPolicy *ptr);
+
+/**
+ * Get the `scheme_allowlist` field from a `SsrfPolicy`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kcrawl_ssrf_policy_scheme_allowlist(const KCRAWLSsrfPolicy *ptr);
+
+/**
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
+ */
+KCRAWLSsrfPolicy *kcrawl_ssrf_policy_default(void);
+
+/**
+ * Create a policy from environment variables.
+ *
+ * Reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` â if set to "1" or "true" (case-insensitive),
+ * sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
+ * \note SAFETY: Caller must ensure all pointer arguments are valid or null. Returned pointers must be
+ * freed with the appropriate free function.
+ */
+KCRAWLSsrfPolicy *kcrawl_ssrf_policy_from_env(void);
 
 /**
  * Convert an integer to a `BrowserMode` variant. Returns -1 on invalid input.

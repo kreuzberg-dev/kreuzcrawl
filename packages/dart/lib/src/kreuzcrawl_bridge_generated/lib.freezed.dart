@@ -2987,4 +2987,516 @@ String toString() {
 
 
 
+/// @nodoc
+mixin _$SsrfError {
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SsrfError);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SsrfError()';
+}
+
+
+}
+
+/// @nodoc
+class $SsrfErrorCopyWith<$Res>  {
+$SsrfErrorCopyWith(SsrfError _, $Res Function(SsrfError) __);
+}
+
+
+/// Adds pattern-matching-related methods to [SsrfError].
+extension SsrfErrorPatterns on SsrfError {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SsrfError_DeniedByPolicy value)?  deniedByPolicy,TResult Function( SsrfError_NotOnAllowlist value)?  notOnAllowlist,TResult Function( SsrfError_DnsResolutionFailed value)?  dnsResolutionFailed,TResult Function( SsrfError_InvalidUrl value)?  invalidUrl,TResult Function( SsrfError_DisallowedScheme value)?  disallowedScheme,TResult Function( SsrfError_TooManyRedirects value)?  tooManyRedirects,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case SsrfError_DeniedByPolicy() when deniedByPolicy != null:
+return deniedByPolicy(_that);case SsrfError_NotOnAllowlist() when notOnAllowlist != null:
+return notOnAllowlist(_that);case SsrfError_DnsResolutionFailed() when dnsResolutionFailed != null:
+return dnsResolutionFailed(_that);case SsrfError_InvalidUrl() when invalidUrl != null:
+return invalidUrl(_that);case SsrfError_DisallowedScheme() when disallowedScheme != null:
+return disallowedScheme(_that);case SsrfError_TooManyRedirects() when tooManyRedirects != null:
+return tooManyRedirects(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SsrfError_DeniedByPolicy value)  deniedByPolicy,required TResult Function( SsrfError_NotOnAllowlist value)  notOnAllowlist,required TResult Function( SsrfError_DnsResolutionFailed value)  dnsResolutionFailed,required TResult Function( SsrfError_InvalidUrl value)  invalidUrl,required TResult Function( SsrfError_DisallowedScheme value)  disallowedScheme,required TResult Function( SsrfError_TooManyRedirects value)  tooManyRedirects,}){
+final _that = this;
+switch (_that) {
+case SsrfError_DeniedByPolicy():
+return deniedByPolicy(_that);case SsrfError_NotOnAllowlist():
+return notOnAllowlist(_that);case SsrfError_DnsResolutionFailed():
+return dnsResolutionFailed(_that);case SsrfError_InvalidUrl():
+return invalidUrl(_that);case SsrfError_DisallowedScheme():
+return disallowedScheme(_that);case SsrfError_TooManyRedirects():
+return tooManyRedirects(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SsrfError_DeniedByPolicy value)?  deniedByPolicy,TResult? Function( SsrfError_NotOnAllowlist value)?  notOnAllowlist,TResult? Function( SsrfError_DnsResolutionFailed value)?  dnsResolutionFailed,TResult? Function( SsrfError_InvalidUrl value)?  invalidUrl,TResult? Function( SsrfError_DisallowedScheme value)?  disallowedScheme,TResult? Function( SsrfError_TooManyRedirects value)?  tooManyRedirects,}){
+final _that = this;
+switch (_that) {
+case SsrfError_DeniedByPolicy() when deniedByPolicy != null:
+return deniedByPolicy(_that);case SsrfError_NotOnAllowlist() when notOnAllowlist != null:
+return notOnAllowlist(_that);case SsrfError_DnsResolutionFailed() when dnsResolutionFailed != null:
+return dnsResolutionFailed(_that);case SsrfError_InvalidUrl() when invalidUrl != null:
+return invalidUrl(_that);case SsrfError_DisallowedScheme() when disallowedScheme != null:
+return disallowedScheme(_that);case SsrfError_TooManyRedirects() when tooManyRedirects != null:
+return tooManyRedirects(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String reason)?  deniedByPolicy,TResult Function()?  notOnAllowlist,TResult Function( String field0)?  dnsResolutionFailed,TResult Function( String field0)?  invalidUrl,TResult Function( String field0)?  disallowedScheme,TResult Function()?  tooManyRedirects,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case SsrfError_DeniedByPolicy() when deniedByPolicy != null:
+return deniedByPolicy(_that.reason);case SsrfError_NotOnAllowlist() when notOnAllowlist != null:
+return notOnAllowlist();case SsrfError_DnsResolutionFailed() when dnsResolutionFailed != null:
+return dnsResolutionFailed(_that.field0);case SsrfError_InvalidUrl() when invalidUrl != null:
+return invalidUrl(_that.field0);case SsrfError_DisallowedScheme() when disallowedScheme != null:
+return disallowedScheme(_that.field0);case SsrfError_TooManyRedirects() when tooManyRedirects != null:
+return tooManyRedirects();case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String reason)  deniedByPolicy,required TResult Function()  notOnAllowlist,required TResult Function( String field0)  dnsResolutionFailed,required TResult Function( String field0)  invalidUrl,required TResult Function( String field0)  disallowedScheme,required TResult Function()  tooManyRedirects,}) {final _that = this;
+switch (_that) {
+case SsrfError_DeniedByPolicy():
+return deniedByPolicy(_that.reason);case SsrfError_NotOnAllowlist():
+return notOnAllowlist();case SsrfError_DnsResolutionFailed():
+return dnsResolutionFailed(_that.field0);case SsrfError_InvalidUrl():
+return invalidUrl(_that.field0);case SsrfError_DisallowedScheme():
+return disallowedScheme(_that.field0);case SsrfError_TooManyRedirects():
+return tooManyRedirects();}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String reason)?  deniedByPolicy,TResult? Function()?  notOnAllowlist,TResult? Function( String field0)?  dnsResolutionFailed,TResult? Function( String field0)?  invalidUrl,TResult? Function( String field0)?  disallowedScheme,TResult? Function()?  tooManyRedirects,}) {final _that = this;
+switch (_that) {
+case SsrfError_DeniedByPolicy() when deniedByPolicy != null:
+return deniedByPolicy(_that.reason);case SsrfError_NotOnAllowlist() when notOnAllowlist != null:
+return notOnAllowlist();case SsrfError_DnsResolutionFailed() when dnsResolutionFailed != null:
+return dnsResolutionFailed(_that.field0);case SsrfError_InvalidUrl() when invalidUrl != null:
+return invalidUrl(_that.field0);case SsrfError_DisallowedScheme() when disallowedScheme != null:
+return disallowedScheme(_that.field0);case SsrfError_TooManyRedirects() when tooManyRedirects != null:
+return tooManyRedirects();case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class SsrfError_DeniedByPolicy extends SsrfError {
+  const SsrfError_DeniedByPolicy({required this.reason}): super._();
+
+
+ final  String reason;
+
+/// Create a copy of SsrfError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SsrfError_DeniedByPolicyCopyWith<SsrfError_DeniedByPolicy> get copyWith => _$SsrfError_DeniedByPolicyCopyWithImpl<SsrfError_DeniedByPolicy>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SsrfError_DeniedByPolicy&&(identical(other.reason, reason) || other.reason == reason));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,reason);
+
+@override
+String toString() {
+  return 'SsrfError.deniedByPolicy(reason: $reason)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SsrfError_DeniedByPolicyCopyWith<$Res> implements $SsrfErrorCopyWith<$Res> {
+  factory $SsrfError_DeniedByPolicyCopyWith(SsrfError_DeniedByPolicy value, $Res Function(SsrfError_DeniedByPolicy) _then) = _$SsrfError_DeniedByPolicyCopyWithImpl;
+@useResult
+$Res call({
+ String reason
+});
+
+
+
+
+}
+/// @nodoc
+class _$SsrfError_DeniedByPolicyCopyWithImpl<$Res>
+    implements $SsrfError_DeniedByPolicyCopyWith<$Res> {
+  _$SsrfError_DeniedByPolicyCopyWithImpl(this._self, this._then);
+
+  final SsrfError_DeniedByPolicy _self;
+  final $Res Function(SsrfError_DeniedByPolicy) _then;
+
+/// Create a copy of SsrfError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? reason = null,}) {
+  return _then(SsrfError_DeniedByPolicy(
+reason: null == reason ? _self.reason : reason // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class SsrfError_NotOnAllowlist extends SsrfError {
+  const SsrfError_NotOnAllowlist(): super._();
+
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SsrfError_NotOnAllowlist);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SsrfError.notOnAllowlist()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class SsrfError_DnsResolutionFailed extends SsrfError {
+  const SsrfError_DnsResolutionFailed({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of SsrfError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SsrfError_DnsResolutionFailedCopyWith<SsrfError_DnsResolutionFailed> get copyWith => _$SsrfError_DnsResolutionFailedCopyWithImpl<SsrfError_DnsResolutionFailed>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SsrfError_DnsResolutionFailed&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'SsrfError.dnsResolutionFailed(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SsrfError_DnsResolutionFailedCopyWith<$Res> implements $SsrfErrorCopyWith<$Res> {
+  factory $SsrfError_DnsResolutionFailedCopyWith(SsrfError_DnsResolutionFailed value, $Res Function(SsrfError_DnsResolutionFailed) _then) = _$SsrfError_DnsResolutionFailedCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$SsrfError_DnsResolutionFailedCopyWithImpl<$Res>
+    implements $SsrfError_DnsResolutionFailedCopyWith<$Res> {
+  _$SsrfError_DnsResolutionFailedCopyWithImpl(this._self, this._then);
+
+  final SsrfError_DnsResolutionFailed _self;
+  final $Res Function(SsrfError_DnsResolutionFailed) _then;
+
+/// Create a copy of SsrfError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(SsrfError_DnsResolutionFailed(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class SsrfError_InvalidUrl extends SsrfError {
+  const SsrfError_InvalidUrl({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of SsrfError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SsrfError_InvalidUrlCopyWith<SsrfError_InvalidUrl> get copyWith => _$SsrfError_InvalidUrlCopyWithImpl<SsrfError_InvalidUrl>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SsrfError_InvalidUrl&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'SsrfError.invalidUrl(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SsrfError_InvalidUrlCopyWith<$Res> implements $SsrfErrorCopyWith<$Res> {
+  factory $SsrfError_InvalidUrlCopyWith(SsrfError_InvalidUrl value, $Res Function(SsrfError_InvalidUrl) _then) = _$SsrfError_InvalidUrlCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$SsrfError_InvalidUrlCopyWithImpl<$Res>
+    implements $SsrfError_InvalidUrlCopyWith<$Res> {
+  _$SsrfError_InvalidUrlCopyWithImpl(this._self, this._then);
+
+  final SsrfError_InvalidUrl _self;
+  final $Res Function(SsrfError_InvalidUrl) _then;
+
+/// Create a copy of SsrfError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(SsrfError_InvalidUrl(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class SsrfError_DisallowedScheme extends SsrfError {
+  const SsrfError_DisallowedScheme({required this.field0}): super._();
+
+
+ final  String field0;
+
+/// Create a copy of SsrfError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SsrfError_DisallowedSchemeCopyWith<SsrfError_DisallowedScheme> get copyWith => _$SsrfError_DisallowedSchemeCopyWithImpl<SsrfError_DisallowedScheme>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SsrfError_DisallowedScheme&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'SsrfError.disallowedScheme(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SsrfError_DisallowedSchemeCopyWith<$Res> implements $SsrfErrorCopyWith<$Res> {
+  factory $SsrfError_DisallowedSchemeCopyWith(SsrfError_DisallowedScheme value, $Res Function(SsrfError_DisallowedScheme) _then) = _$SsrfError_DisallowedSchemeCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$SsrfError_DisallowedSchemeCopyWithImpl<$Res>
+    implements $SsrfError_DisallowedSchemeCopyWith<$Res> {
+  _$SsrfError_DisallowedSchemeCopyWithImpl(this._self, this._then);
+
+  final SsrfError_DisallowedScheme _self;
+  final $Res Function(SsrfError_DisallowedScheme) _then;
+
+/// Create a copy of SsrfError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(SsrfError_DisallowedScheme(
+field0: null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class SsrfError_TooManyRedirects extends SsrfError {
+  const SsrfError_TooManyRedirects(): super._();
+
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SsrfError_TooManyRedirects);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SsrfError.tooManyRedirects()';
+}
+
+
+}
+
+
+
+
 // dart format on

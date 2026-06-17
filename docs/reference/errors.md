@@ -33,3 +33,18 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `Other` | other: {0} | An unclassified error occurred. |
 
 ---
+
+### SsrfError
+
+SSRF validation error.
+
+| Variant | Message | Description |
+|---------|---------|-------------|
+| `DeniedByPolicy` | denied by SSRF policy: {reason} | URL denied by SSRF policy: private IP, metadata IP, etc. |
+| `NotOnAllowlist` | host not on allowlist | Host not on allowlist when an allowlist is configured. |
+| `DnsResolutionFailed` | dns resolution failed: {0} | DNS resolution failed for hostname. |
+| `InvalidUrl` | invalid URL: {0} | Invalid URL format. |
+| `DisallowedScheme` | disallowed scheme: {0} | URL scheme not in allowlist (e.g., `ftp://` when only `http`/`https` allowed). |
+| `TooManyRedirects` | too many redirects | Too many HTTP redirects encountered during validation. |
+
+---

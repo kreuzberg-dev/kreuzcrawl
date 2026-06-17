@@ -383,6 +383,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SitemapUrl dco_decode_sitemap_url(dynamic raw);
 
   @protected
+  SsrfError dco_decode_ssrf_error(dynamic raw);
+
+  @protected
+  SsrfPolicy dco_decode_ssrf_policy(dynamic raw);
+
+  @protected
   int dco_decode_u_8(dynamic raw);
 
   @protected
@@ -830,6 +836,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SitemapUrl sse_decode_sitemap_url(SseDeserializer deserializer);
+
+  @protected
+  SsrfError sse_decode_ssrf_error(SseDeserializer deserializer);
+
+  @protected
+  SsrfPolicy sse_decode_ssrf_policy(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -1406,6 +1418,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_sitemap_url(SitemapUrl self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_ssrf_error(SsrfError self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_ssrf_policy(SsrfPolicy self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);

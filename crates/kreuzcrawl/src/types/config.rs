@@ -399,11 +399,10 @@ pub struct CrawlConfig {
     /// SSRF policy for outbound network requests. Default: deny private networks,
     /// allow http/https only, max 5 redirects.
     ///
-    /// Rust-only advanced field. Generated language bindings do not expose
-    /// per-request SSRF policy overrides; they use the policy assembled from
-    /// environment defaults and server-side Rust configuration.
+    /// Phase 1: `deny_private` and `max_redirects` are exposed to all language
+    /// bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be
+    /// added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided.
     #[serde(default = "SsrfPolicy::from_env")]
-    #[cfg_attr(alef, alef(skip))]
     pub ssrf: SsrfPolicy,
     /// Pluggable dispatch components: bypass provider, escalation strategy,
     /// retry policy, WAF classifier, domain state, escalation budget, and

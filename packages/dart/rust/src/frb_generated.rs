@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 735317409;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 59002788;
 
 // Section: executor
 
@@ -1247,6 +1247,34 @@ fn wire__crate__create_sitemap_url_from_json_impl(
         },
     )
 }
+fn wire__crate__create_ssrf_policy_from_json_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_ssrf_policy_from_json",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_)
+            };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::create_ssrf_policy_from_json(api_json)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__generate_citations_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -1531,6 +1559,7 @@ const _: fn() = || {
         let _: Option<String> = CrawlConfig.warc_output;
         let _: Option<String> = CrawlConfig.browser_profile;
         let _: bool = CrawlConfig.save_browser_profile;
+        let _: crate::SsrfPolicy = CrawlConfig.ssrf;
     }
     match None::<crate::CrawlError>.unwrap() {
         crate::CrawlError::NotFound { field0 } => {
@@ -1865,6 +1894,27 @@ const _: fn() = || {
         let _: Option<String> = SitemapUrl.lastmod;
         let _: Option<String> = SitemapUrl.changefreq;
         let _: Option<String> = SitemapUrl.priority;
+    }
+    match None::<crate::SsrfError>.unwrap() {
+        crate::SsrfError::DeniedByPolicy { reason } => {
+            let _: String = reason;
+        }
+        crate::SsrfError::NotOnAllowlist => {}
+        crate::SsrfError::DnsResolutionFailed { field0 } => {
+            let _: String = field0;
+        }
+        crate::SsrfError::InvalidUrl { field0 } => {
+            let _: String = field0;
+        }
+        crate::SsrfError::DisallowedScheme { field0 } => {
+            let _: String = field0;
+        }
+        crate::SsrfError::TooManyRedirects => {}
+    }
+    {
+        let SsrfPolicy = None::<crate::SsrfPolicy>.unwrap();
+        let _: bool = SsrfPolicy.deny_private;
+        let _: i64 = SsrfPolicy.max_redirects;
     }
 };
 
@@ -2292,6 +2342,7 @@ impl SseDecode for crate::CrawlConfig {
         let mut var_warcOutput = <Option<String>>::sse_decode(deserializer);
         let mut var_browserProfile = <Option<String>>::sse_decode(deserializer);
         let mut var_saveBrowserProfile = <bool>::sse_decode(deserializer);
+        let mut var_ssrf = <crate::SsrfPolicy>::sse_decode(deserializer);
         return crate::CrawlConfig {
             max_depth: var_maxDepth,
             max_pages: var_maxPages,
@@ -2331,6 +2382,7 @@ impl SseDecode for crate::CrawlConfig {
             warc_output: var_warcOutput,
             browser_profile: var_browserProfile,
             save_browser_profile: var_saveBrowserProfile,
+            ssrf: var_ssrf,
         };
     }
 }
@@ -3561,6 +3613,52 @@ impl SseDecode for crate::SitemapUrl {
     }
 }
 
+impl SseDecode for crate::SsrfError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_reason = <String>::sse_decode(deserializer);
+                return crate::SsrfError::DeniedByPolicy { reason: var_reason };
+            }
+            1 => {
+                return crate::SsrfError::NotOnAllowlist;
+            }
+            2 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::SsrfError::DnsResolutionFailed { field0: var_field0 };
+            }
+            3 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::SsrfError::InvalidUrl { field0: var_field0 };
+            }
+            4 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::SsrfError::DisallowedScheme { field0: var_field0 };
+            }
+            5 => {
+                return crate::SsrfError::TooManyRedirects;
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::SsrfPolicy {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_denyPrivate = <bool>::sse_decode(deserializer);
+        let mut var_maxRedirects = <i64>::sse_decode(deserializer);
+        return crate::SsrfPolicy {
+            deny_private: var_denyPrivate,
+            max_redirects: var_maxRedirects,
+        };
+    }
+}
+
 impl SseDecode for u8 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3630,10 +3728,11 @@ fn pde_ffi_dispatcher_primary_impl(
         39 => wire__crate__create_response_meta_from_json_impl(port, ptr, rust_vec_len, data_len),
         40 => wire__crate__create_scrape_result_from_json_impl(port, ptr, rust_vec_len, data_len),
         41 => wire__crate__create_sitemap_url_from_json_impl(port, ptr, rust_vec_len, data_len),
-        42 => wire__crate__generate_citations_impl(port, ptr, rust_vec_len, data_len),
-        43 => wire__crate__interact_impl(port, ptr, rust_vec_len, data_len),
-        44 => wire__crate__map_urls_impl(port, ptr, rust_vec_len, data_len),
-        45 => wire__crate__scrape_impl(port, ptr, rust_vec_len, data_len),
+        42 => wire__crate__create_ssrf_policy_from_json_impl(port, ptr, rust_vec_len, data_len),
+        43 => wire__crate__generate_citations_impl(port, ptr, rust_vec_len, data_len),
+        44 => wire__crate__interact_impl(port, ptr, rust_vec_len, data_len),
+        45 => wire__crate__map_urls_impl(port, ptr, rust_vec_len, data_len),
+        46 => wire__crate__scrape_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -4053,6 +4152,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::CrawlConfig> {
             self.0.warc_output.into_into_dart().into_dart(),
             self.0.browser_profile.into_into_dart().into_dart(),
             self.0.save_browser_profile.into_into_dart().into_dart(),
+            self.0.ssrf.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4721,6 +4821,50 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::SitemapUrl>> for crate:
         self.into()
     }
 }
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::SsrfError> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self.0 {
+            crate::SsrfError::DeniedByPolicy { reason } => {
+                [0.into_dart(), reason.into_into_dart().into_dart()].into_dart()
+            }
+            crate::SsrfError::NotOnAllowlist => [1.into_dart()].into_dart(),
+            crate::SsrfError::DnsResolutionFailed { field0 } => {
+                [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::SsrfError::InvalidUrl { field0 } => [3.into_dart(), field0.into_into_dart().into_dart()].into_dart(),
+            crate::SsrfError::DisallowedScheme { field0 } => {
+                [4.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::SsrfError::TooManyRedirects => [5.into_dart()].into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::SsrfError> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::SsrfError>> for crate::SsrfError {
+    fn into_into_dart(self) -> FrbWrapper<crate::SsrfError> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::SsrfPolicy> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.0.deny_private.into_into_dart().into_dart(),
+            self.0.max_redirects.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<crate::SsrfPolicy> {}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::SsrfPolicy>> for crate::SsrfPolicy {
+    fn into_into_dart(self) -> FrbWrapper<crate::SsrfPolicy> {
+        self.into()
+    }
+}
 
 impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -5057,6 +5201,7 @@ impl SseEncode for crate::CrawlConfig {
         <Option<String>>::sse_encode(self.warc_output, serializer);
         <Option<String>>::sse_encode(self.browser_profile, serializer);
         <bool>::sse_encode(self.save_browser_profile, serializer);
+        <crate::SsrfPolicy>::sse_encode(self.ssrf, serializer);
     }
 }
 
@@ -6010,6 +6155,47 @@ impl SseEncode for crate::SitemapUrl {
         <Option<String>>::sse_encode(self.lastmod, serializer);
         <Option<String>>::sse_encode(self.changefreq, serializer);
         <Option<String>>::sse_encode(self.priority, serializer);
+    }
+}
+
+impl SseEncode for crate::SsrfError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::SsrfError::DeniedByPolicy { reason } => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(reason, serializer);
+            }
+            crate::SsrfError::NotOnAllowlist => {
+                <i32>::sse_encode(1, serializer);
+            }
+            crate::SsrfError::DnsResolutionFailed { field0 } => {
+                <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::SsrfError::InvalidUrl { field0 } => {
+                <i32>::sse_encode(3, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::SsrfError::DisallowedScheme { field0 } => {
+                <i32>::sse_encode(4, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::SsrfError::TooManyRedirects => {
+                <i32>::sse_encode(5, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::SsrfPolicy {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.deny_private, serializer);
+        <i64>::sse_encode(self.max_redirects, serializer);
     }
 }
 

@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.25.26"
+alef_version = "0.25.27"
 languages = [
   "python",
   "node",
@@ -118,6 +118,7 @@ sources = [
   "crates/kreuzcrawl/src/error.rs",
   "crates/kreuzcrawl/src/citations.rs",
   "crates/kreuzcrawl/src/bindings.rs",
+  "crates/kreuzcrawl/src/net/ssrf.rs",
 ]
 version_from = "Cargo.toml"
 workspace_root = "."
@@ -270,6 +271,7 @@ types = [
   "CrawlEvent",
   "CrawlStreamRequest",
   "BatchCrawlStreamRequest",
+  "SsrfPolicy",
 ]
 functions = [
   "create_engine",

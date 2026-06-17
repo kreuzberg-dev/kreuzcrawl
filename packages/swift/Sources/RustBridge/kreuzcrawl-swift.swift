@@ -136,6 +136,9 @@ public func batchScrapeResultsFromJson<GenericIntoRustString: IntoRustString>(_ 
 public func batchCrawlResultsFromJson<GenericIntoRustString: IntoRustString>(_ json: GenericIntoRustString) throws -> BatchCrawlResults {
     try { let val = __swift_bridge__$batch_crawl_results_from_json({ let rustString = json.intoRustString(); rustString.isOwned = false; return rustString.ptr }()); if val.is_ok { return BatchCrawlResults(ptr: val.ok_or_err!) } else { throw RustString(ptr: val.ok_or_err!) } }()
 }
+public func ssrfPolicyFromJson<GenericIntoRustString: IntoRustString>(_ json: GenericIntoRustString) throws -> SsrfPolicy {
+    try { let val = __swift_bridge__$ssrf_policy_from_json({ let rustString = json.intoRustString(); rustString.isOwned = false; return rustString.ptr }()); if val.is_ok { return SsrfPolicy(ptr: val.ok_or_err!) } else { throw RustString(ptr: val.ok_or_err!) } }()
+}
 public func browserModeFromJson<GenericIntoRustString: IntoRustString>(_ json: GenericIntoRustString) throws -> BrowserMode {
     try { let val = __swift_bridge__$browser_mode_from_json({ let rustString = json.intoRustString(); rustString.isOwned = false; return rustString.ptr }()); if val.is_ok { return BrowserMode(ptr: val.ok_or_err!) } else { throw RustString(ptr: val.ok_or_err!) } }()
 }
@@ -267,6 +270,9 @@ public func __alef_phantom_vec_batch_scrape_results() -> RustVec<BatchScrapeResu
 }
 public func __alef_phantom_vec_batch_crawl_results() -> RustVec<BatchCrawlResults> {
     RustVec(ptr: __swift_bridge__$__alef_phantom_vec_batch_crawl_results())
+}
+public func __alef_phantom_vec_ssrf_policy() -> RustVec<SsrfPolicy> {
+    RustVec(ptr: __swift_bridge__$__alef_phantom_vec_ssrf_policy())
 }
 public func __alef_phantom_vec_browser_mode() -> RustVec<BrowserMode> {
     RustVec(ptr: __swift_bridge__$__alef_phantom_vec_browser_mode())
@@ -778,8 +784,8 @@ public class CrawlConfig: CrawlConfigRefMut {
     }
 }
 extension CrawlConfig {
-    public convenience init<GenericIntoRustString: IntoRustString>(_ max_depth: Optional<UInt>, _ max_pages: Optional<UInt>, _ max_concurrent: Optional<UInt>, _ respect_robots_txt: Bool, _ soft_http_errors: Bool, _ user_agent: Optional<GenericIntoRustString>, _ stay_on_domain: Bool, _ allow_subdomains: Bool, _ include_paths: RustVec<GenericIntoRustString>, _ exclude_paths: RustVec<GenericIntoRustString>, _ custom_headers: GenericIntoRustString, _ request_timeout: UInt64, _ rate_limit_ms: Optional<UInt64>, _ max_redirects: UInt, _ retry_count: UInt, _ retry_codes: RustVec<UInt16>, _ cookies_enabled: Bool, _ auth: Optional<AuthConfig>, _ max_body_size: Optional<UInt>, _ remove_tags: RustVec<GenericIntoRustString>, _ content: ContentConfig, _ map_limit: Optional<UInt>, _ map_search: Optional<GenericIntoRustString>, _ download_assets: Bool, _ asset_types: RustVec<AssetCategory>, _ max_asset_size: Optional<UInt>, _ browser: BrowserConfig, _ proxy: Optional<ProxyConfig>, _ user_agents: RustVec<GenericIntoRustString>, _ capture_screenshot: Bool, _ follow_document_urls: Bool, _ document_url_depth: Optional<UInt32>, _ download_documents: Bool, _ document_max_size: Optional<UInt>, _ document_mime_types: RustVec<GenericIntoRustString>, _ warc_output: Optional<GenericIntoRustString>, _ browser_profile: Optional<GenericIntoRustString>, _ save_browser_profile: Bool) {
-        self.init(ptr: __swift_bridge__$CrawlConfig$new(max_depth.intoFfiRepr(), max_pages.intoFfiRepr(), max_concurrent.intoFfiRepr(), respect_robots_txt, soft_http_errors, { if let rustString = optionalStringIntoRustString(user_agent) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), stay_on_domain, allow_subdomains, { let val = include_paths; val.isOwned = false; return val.ptr }(), { let val = exclude_paths; val.isOwned = false; return val.ptr }(), { let rustString = custom_headers.intoRustString(); rustString.isOwned = false; return rustString.ptr }(), request_timeout, rate_limit_ms.intoFfiRepr(), max_redirects, retry_count, { let val = retry_codes; val.isOwned = false; return val.ptr }(), cookies_enabled, { if let val = auth { val.isOwned = false; return val.ptr } else { return nil } }(), max_body_size.intoFfiRepr(), { let val = remove_tags; val.isOwned = false; return val.ptr }(), {content.isOwned = false; return content.ptr;}(), map_limit.intoFfiRepr(), { if let rustString = optionalStringIntoRustString(map_search) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), download_assets, { let val = asset_types; val.isOwned = false; return val.ptr }(), max_asset_size.intoFfiRepr(), {browser.isOwned = false; return browser.ptr;}(), { if let val = proxy { val.isOwned = false; return val.ptr } else { return nil } }(), { let val = user_agents; val.isOwned = false; return val.ptr }(), capture_screenshot, follow_document_urls, document_url_depth.intoFfiRepr(), download_documents, document_max_size.intoFfiRepr(), { let val = document_mime_types; val.isOwned = false; return val.ptr }(), { if let rustString = optionalStringIntoRustString(warc_output) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), { if let rustString = optionalStringIntoRustString(browser_profile) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), save_browser_profile))
+    public convenience init<GenericIntoRustString: IntoRustString>(_ max_depth: Optional<UInt>, _ max_pages: Optional<UInt>, _ max_concurrent: Optional<UInt>, _ respect_robots_txt: Bool, _ soft_http_errors: Bool, _ user_agent: Optional<GenericIntoRustString>, _ stay_on_domain: Bool, _ allow_subdomains: Bool, _ include_paths: RustVec<GenericIntoRustString>, _ exclude_paths: RustVec<GenericIntoRustString>, _ custom_headers: GenericIntoRustString, _ request_timeout: UInt64, _ rate_limit_ms: Optional<UInt64>, _ max_redirects: UInt, _ retry_count: UInt, _ retry_codes: RustVec<UInt16>, _ cookies_enabled: Bool, _ auth: Optional<AuthConfig>, _ max_body_size: Optional<UInt>, _ remove_tags: RustVec<GenericIntoRustString>, _ content: ContentConfig, _ map_limit: Optional<UInt>, _ map_search: Optional<GenericIntoRustString>, _ download_assets: Bool, _ asset_types: RustVec<AssetCategory>, _ max_asset_size: Optional<UInt>, _ browser: BrowserConfig, _ proxy: Optional<ProxyConfig>, _ user_agents: RustVec<GenericIntoRustString>, _ capture_screenshot: Bool, _ follow_document_urls: Bool, _ document_url_depth: Optional<UInt32>, _ download_documents: Bool, _ document_max_size: Optional<UInt>, _ document_mime_types: RustVec<GenericIntoRustString>, _ warc_output: Optional<GenericIntoRustString>, _ browser_profile: Optional<GenericIntoRustString>, _ save_browser_profile: Bool, _ ssrf: SsrfPolicy) {
+        self.init(ptr: __swift_bridge__$CrawlConfig$new(max_depth.intoFfiRepr(), max_pages.intoFfiRepr(), max_concurrent.intoFfiRepr(), respect_robots_txt, soft_http_errors, { if let rustString = optionalStringIntoRustString(user_agent) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), stay_on_domain, allow_subdomains, { let val = include_paths; val.isOwned = false; return val.ptr }(), { let val = exclude_paths; val.isOwned = false; return val.ptr }(), { let rustString = custom_headers.intoRustString(); rustString.isOwned = false; return rustString.ptr }(), request_timeout, rate_limit_ms.intoFfiRepr(), max_redirects, retry_count, { let val = retry_codes; val.isOwned = false; return val.ptr }(), cookies_enabled, { if let val = auth { val.isOwned = false; return val.ptr } else { return nil } }(), max_body_size.intoFfiRepr(), { let val = remove_tags; val.isOwned = false; return val.ptr }(), {content.isOwned = false; return content.ptr;}(), map_limit.intoFfiRepr(), { if let rustString = optionalStringIntoRustString(map_search) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), download_assets, { let val = asset_types; val.isOwned = false; return val.ptr }(), max_asset_size.intoFfiRepr(), {browser.isOwned = false; return browser.ptr;}(), { if let val = proxy { val.isOwned = false; return val.ptr } else { return nil } }(), { let val = user_agents; val.isOwned = false; return val.ptr }(), capture_screenshot, follow_document_urls, document_url_depth.intoFfiRepr(), download_documents, document_max_size.intoFfiRepr(), { let val = document_mime_types; val.isOwned = false; return val.ptr }(), { if let rustString = optionalStringIntoRustString(warc_output) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), { if let rustString = optionalStringIntoRustString(browser_profile) { rustString.isOwned = false; return rustString.ptr } else { return nil } }(), save_browser_profile, {ssrf.isOwned = false; return ssrf.ptr;}()))
     }
 }
 public class CrawlConfigRefMut: CrawlConfigRef {
@@ -945,6 +951,10 @@ extension CrawlConfigRef {
 
     public func saveBrowserProfile() -> Bool {
         __swift_bridge__$CrawlConfig$save_browser_profile(ptr)
+    }
+
+    public func ssrf() -> SsrfPolicy {
+        SsrfPolicy(ptr: __swift_bridge__$CrawlConfig$ssrf(ptr))
     }
 }
 extension CrawlConfig: Vectorizable {
@@ -4203,6 +4213,95 @@ extension BatchCrawlResults: Vectorizable {
 
     public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
         __swift_bridge__$Vec_BatchCrawlResults$len(vecPtr)
+    }
+}
+
+
+public class SsrfPolicy: SsrfPolicyRefMut {
+    public var isOwned: Bool = true
+
+    public override init(ptr: UnsafeMutableRawPointer) {
+        super.init(ptr: ptr)
+    }
+
+    deinit {
+        if isOwned {
+            __swift_bridge__$SsrfPolicy$_free(ptr)
+        }
+    }
+}
+extension SsrfPolicy {
+    public convenience init(_ deny_private: Bool, _ max_redirects: UInt8) {
+        self.init(ptr: __swift_bridge__$SsrfPolicy$new(deny_private, max_redirects))
+    }
+}
+public class SsrfPolicyRefMut: SsrfPolicyRef {
+    public override init(ptr: UnsafeMutableRawPointer) {
+        super.init(ptr: ptr)
+    }
+}
+public class SsrfPolicyRef {
+    public var ptr: UnsafeMutableRawPointer
+
+    public init(ptr: UnsafeMutableRawPointer) {
+        self.ptr = ptr
+    }
+}
+extension SsrfPolicyRef {
+    public func denyPrivate() -> Bool {
+        __swift_bridge__$SsrfPolicy$deny_private(ptr)
+    }
+
+    public func maxRedirects() -> UInt8 {
+        __swift_bridge__$SsrfPolicy$max_redirects(ptr)
+    }
+}
+extension SsrfPolicy: Vectorizable {
+    public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
+        __swift_bridge__$Vec_SsrfPolicy$new()
+    }
+
+    public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
+        __swift_bridge__$Vec_SsrfPolicy$drop(vecPtr)
+    }
+
+    public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: SsrfPolicy) {
+        __swift_bridge__$Vec_SsrfPolicy$push(vecPtr, {value.isOwned = false; return value.ptr;}())
+    }
+
+    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Optional<Self> {
+        let pointer = __swift_bridge__$Vec_SsrfPolicy$pop(vecPtr)
+        if pointer == nil {
+            return nil
+        } else {
+            return (SsrfPolicy(ptr: pointer!) as! Self)
+        }
+    }
+
+    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<SsrfPolicyRef> {
+        let pointer = __swift_bridge__$Vec_SsrfPolicy$get(vecPtr, index)
+        if pointer == nil {
+            return nil
+        } else {
+            return SsrfPolicyRef(ptr: pointer!)
+        }
+    }
+
+    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<SsrfPolicyRefMut> {
+        let pointer = __swift_bridge__$Vec_SsrfPolicy$get_mut(vecPtr, index)
+        if pointer == nil {
+            return nil
+        } else {
+            return SsrfPolicyRefMut(ptr: pointer!)
+        }
+    }
+
+    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<SsrfPolicyRef> {
+        UnsafePointer<SsrfPolicyRef>(OpaquePointer(__swift_bridge__$Vec_SsrfPolicy$as_ptr(vecPtr)))
+    }
+
+    public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
+        __swift_bridge__$Vec_SsrfPolicy$len(vecPtr)
     }
 }
 

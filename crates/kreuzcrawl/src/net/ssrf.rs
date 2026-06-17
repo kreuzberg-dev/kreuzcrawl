@@ -27,8 +27,12 @@ static DEFAULT_DENY_NETS: LazyLock<Vec<IpNet>> = LazyLock::new(|| {
 });
 
 /// Hostname/IP allowlist matcher for SSRF policy.
+///
+/// Phase 1: skipped from language bindings — untagged-enum FFI representation
+/// is not yet finalized. Expose in a follow-up alongside the `allowlist` field.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
+#[cfg_attr(alef, alef(skip))]
 pub enum HostMatcher {
     /// Exact hostname match (case-insensitive).
     Exact(String),
@@ -101,13 +105,20 @@ pub struct SsrfPolicy {
     pub deny_private: bool,
 
     /// Allowed hostnames and IP ranges. Empty means deny all unless `deny_private` is false.
+    ///
+    /// Phase 1: skipped from language bindings — `HostMatcher`'s untagged-enum
+    /// FFI form is not yet decided. Expose in a follow-up once the tagged-enum
+    /// representation is finalized.
+    #[cfg_attr(alef, alef(skip))]
     pub allowlist: Vec<HostMatcher>,
 
     /// Maximum number of HTTP redirects to follow during validation.
     pub max_redirects: u8,
 
     /// Allowed URI schemes. Default: `["http", "https"]`. Not serialized (set at runtime).
+    /// Skipped from language bindings — `HashSet<&'static str>` is FFI-hostile.
     #[serde(skip, default = "default_scheme_allowlist")]
+    #[cfg_attr(alef, alef(skip))]
     pub scheme_allowlist: HashSet<&'static str>,
 }
 

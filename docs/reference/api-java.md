@@ -520,6 +520,7 @@ Configuration for crawl, scrape, and map operations.
 | `warcOutput` | `Optional<String>` | `null` | Path to write WARC output. If `null`, WARC output is disabled. |
 | `browserProfile` | `Optional<String>` | `null` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `saveBrowserProfile` | `boolean` | `false` | Whether to save changes back to the browser profile on exit. |
+| `ssrf` | `SsrfPolicy` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Phase 1: `deny_private` and `max_redirects` are exposed to all language bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided. |
 
 ##### Methods
 
@@ -953,6 +954,56 @@ A URL entry from a sitemap.
 
 ---
 
+#### SsrfPolicy
+
+SSRF policy configuration.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `denyPrivate` | `boolean` | `true` | If true, reject URLs that resolve to private/metadata IP ranges. |
+| `maxRedirects` | `byte` | `5` | Maximum number of HTTP redirects to follow during validation. |
+
+##### Methods
+
+###### defaultOptions()
+
+**Signature:**
+
+```java
+public static SsrfPolicy defaultOptions()
+```
+
+**Example:**
+
+```java
+var result = SsrfPolicy.defaultOptions();
+```
+
+**Returns:** `SsrfPolicy`
+
+###### fromEnv()
+
+Create a policy from environment variables.
+
+Reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true" (case-insensitive),
+sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
+
+**Signature:**
+
+```java
+public static SsrfPolicy fromEnv()
+```
+
+**Example:**
+
+```java
+var result = SsrfPolicy.fromEnv();
+```
+
+**Returns:** `SsrfPolicy`
+
+---
+
 ### Enums
 
 #### BrowserMode
@@ -1135,5 +1186,20 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `UNSUPPORTED` | The requested capability is not supported by the active backend or build. |
 | `SSRF_POLICY_VIOLATION` | A URL was rejected by SSRF policy (private IP, metadata, disallowed scheme, etc). |
 | `OTHER` | An unclassified error occurred. |
+
+---
+
+#### SsrfError
+
+SSRF validation error.
+
+| Variant | Description |
+|---------|-------------|
+| `DENIED_BY_POLICY` | URL denied by SSRF policy: private IP, metadata IP, etc. |
+| `NOT_ON_ALLOWLIST` | Host not on allowlist when an allowlist is configured. |
+| `DNS_RESOLUTION_FAILED` | DNS resolution failed for hostname. |
+| `INVALID_URL` | Invalid URL format. |
+| `DISALLOWED_SCHEME` | URL scheme not in allowlist (e.g., `ftp://` when only `http`/`https` allowed). |
+| `TOO_MANY_REDIRECTS` | Too many HTTP redirects encountered during validation. |
 
 ---

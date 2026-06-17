@@ -317,6 +317,7 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `Option<PathBuf>` | `None` | Path to write WARC output. If `None`, WARC output is disabled. |
 | `browser_profile` | `Option<String>` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
+| `ssrf` | `SsrfPolicy` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Phase 1: `deny_private` and `max_redirects` are exposed to all language bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided. |
 
 ---
 
@@ -519,6 +520,17 @@ extractor when content uses inline `[N]`-style markers.
 | `index` | `usize` | — | 1-based reference number as it appears in the source text. |
 | `url` | `String` | — | Resolved absolute URL for this reference. |
 | `text` | `String` | — | Human-readable anchor text or title for the reference. |
+
+---
+
+#### SsrfPolicy
+
+SSRF policy configuration.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `deny_private` | `bool` | `true` | If true, reject URLs that resolve to private/metadata IP ranges. |
+| `max_redirects` | `u8` | `5` | Maximum number of HTTP redirects to follow during validation. |
 
 ---
 

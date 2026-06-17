@@ -127,7 +127,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => 735317409;
+  int get rustContentHash => 59002788;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -273,6 +273,8 @@ abstract class RustLibApi extends BaseApi {
   Future<ScrapeResult> crateCreateScrapeResultFromJson({required String json});
 
   Future<SitemapUrl> crateCreateSitemapUrlFromJson({required String json});
+
+  Future<SsrfPolicy> crateCreateSsrfPolicyFromJson({required String json});
 
   Future<CitationResult> crateGenerateCitations({required String markdown});
 
@@ -1658,6 +1660,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<SsrfPolicy> crateCreateSsrfPolicyFromJson({required String json}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(json, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 42,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_ssrf_policy,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateCreateSsrfPolicyFromJsonConstMeta,
+        argValues: [json],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateCreateSsrfPolicyFromJsonConstMeta =>
+      const TaskConstMeta(
+        debugName: "create_ssrf_policy_from_json",
+        argNames: ["json"],
+      );
+
+  @override
   Future<CitationResult> crateGenerateCitations({required String markdown}) {
     return handler.executeNormal(
       NormalTask(
@@ -1667,7 +1700,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 42,
+            funcId: 43,
             port: port_,
           );
         },
@@ -1706,7 +1739,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 43,
+            funcId: 44,
             port: port_,
           );
         },
@@ -1743,7 +1776,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 44,
+            funcId: 45,
             port: port_,
           );
         },
@@ -1778,7 +1811,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 45,
+            funcId: 46,
             port: port_,
           );
         },
@@ -2204,8 +2237,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   CrawlConfig dco_decode_crawl_config(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 38)
-      throw Exception('unexpected arr length: expect 38 but see ${arr.length}');
+    if (arr.length != 39)
+      throw Exception('unexpected arr length: expect 39 but see ${arr.length}');
     return CrawlConfig(
       maxDepth: dco_decode_opt_box_autoadd_i_64(arr[0]),
       maxPages: dco_decode_opt_box_autoadd_i_64(arr[1]),
@@ -2245,6 +2278,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       warcOutput: dco_decode_opt_String(arr[35]),
       browserProfile: dco_decode_opt_String(arr[36]),
       saveBrowserProfile: dco_decode_bool(arr[37]),
+      ssrf: dco_decode_ssrf_policy(arr[38]),
     );
   }
 
@@ -3027,6 +3061,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SsrfError dco_decode_ssrf_error(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return SsrfError_DeniedByPolicy(reason: dco_decode_String(raw[1]));
+      case 1:
+        return SsrfError_NotOnAllowlist();
+      case 2:
+        return SsrfError_DnsResolutionFailed(field0: dco_decode_String(raw[1]));
+      case 3:
+        return SsrfError_InvalidUrl(field0: dco_decode_String(raw[1]));
+      case 4:
+        return SsrfError_DisallowedScheme(field0: dco_decode_String(raw[1]));
+      case 5:
+        return SsrfError_TooManyRedirects();
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  SsrfPolicy dco_decode_ssrf_policy(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return SsrfPolicy(
+      denyPrivate: dco_decode_bool(arr[0]),
+      maxRedirects: dco_decode_i_64(arr[1]),
+    );
+  }
+
+  @protected
   int dco_decode_u_8(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -3542,6 +3609,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_warcOutput = sse_decode_opt_String(deserializer);
     var var_browserProfile = sse_decode_opt_String(deserializer);
     var var_saveBrowserProfile = sse_decode_bool(deserializer);
+    var var_ssrf = sse_decode_ssrf_policy(deserializer);
     return CrawlConfig(
       maxDepth: var_maxDepth,
       maxPages: var_maxPages,
@@ -3581,6 +3649,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       warcOutput: var_warcOutput,
       browserProfile: var_browserProfile,
       saveBrowserProfile: var_saveBrowserProfile,
+      ssrf: var_ssrf,
     );
   }
 
@@ -4760,6 +4829,44 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SsrfError sse_decode_ssrf_error(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_reason = sse_decode_String(deserializer);
+        return SsrfError_DeniedByPolicy(reason: var_reason);
+      case 1:
+        return SsrfError_NotOnAllowlist();
+      case 2:
+        var var_field0 = sse_decode_String(deserializer);
+        return SsrfError_DnsResolutionFailed(field0: var_field0);
+      case 3:
+        var var_field0 = sse_decode_String(deserializer);
+        return SsrfError_InvalidUrl(field0: var_field0);
+      case 4:
+        var var_field0 = sse_decode_String(deserializer);
+        return SsrfError_DisallowedScheme(field0: var_field0);
+      case 5:
+        return SsrfError_TooManyRedirects();
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  SsrfPolicy sse_decode_ssrf_policy(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_denyPrivate = sse_decode_bool(deserializer);
+    var var_maxRedirects = sse_decode_i_64(deserializer);
+    return SsrfPolicy(
+      denyPrivate: var_denyPrivate,
+      maxRedirects: var_maxRedirects,
+    );
+  }
+
+  @protected
   int sse_decode_u_8(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8();
@@ -5243,6 +5350,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.warcOutput, serializer);
     sse_encode_opt_String(self.browserProfile, serializer);
     sse_encode_bool(self.saveBrowserProfile, serializer);
+    sse_encode_ssrf_policy(self.ssrf, serializer);
   }
 
   @protected
@@ -6205,6 +6313,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.lastmod, serializer);
     sse_encode_opt_String(self.changefreq, serializer);
     sse_encode_opt_String(self.priority, serializer);
+  }
+
+  @protected
+  void sse_encode_ssrf_error(SsrfError self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case SsrfError_DeniedByPolicy(reason: final reason):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(reason, serializer);
+      case SsrfError_NotOnAllowlist():
+        sse_encode_i_32(1, serializer);
+      case SsrfError_DnsResolutionFailed(field0: final field0):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(field0, serializer);
+      case SsrfError_InvalidUrl(field0: final field0):
+        sse_encode_i_32(3, serializer);
+        sse_encode_String(field0, serializer);
+      case SsrfError_DisallowedScheme(field0: final field0):
+        sse_encode_i_32(4, serializer);
+        sse_encode_String(field0, serializer);
+      case SsrfError_TooManyRedirects():
+        sse_encode_i_32(5, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_ssrf_policy(SsrfPolicy self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self.denyPrivate, serializer);
+    sse_encode_i_64(self.maxRedirects, serializer);
   }
 
   @protected

@@ -593,6 +593,18 @@ void* __swift_bridge__$Vec_BatchCrawlResults$get_mut(void* vec_ptr, uintptr_t in
 uintptr_t __swift_bridge__$Vec_BatchCrawlResults$len(void* vec_ptr);
 void* __swift_bridge__$Vec_BatchCrawlResults$as_ptr(void* vec_ptr);
 
+typedef struct SsrfPolicy SsrfPolicy;
+void __swift_bridge__$SsrfPolicy$_free(void* self);
+
+void* __swift_bridge__$Vec_SsrfPolicy$new(void);
+void __swift_bridge__$Vec_SsrfPolicy$drop(void* vec_ptr);
+void __swift_bridge__$Vec_SsrfPolicy$push(void* vec_ptr, void* item_ptr);
+void* __swift_bridge__$Vec_SsrfPolicy$pop(void* vec_ptr);
+void* __swift_bridge__$Vec_SsrfPolicy$get(void* vec_ptr, uintptr_t index);
+void* __swift_bridge__$Vec_SsrfPolicy$get_mut(void* vec_ptr, uintptr_t index);
+uintptr_t __swift_bridge__$Vec_SsrfPolicy$len(void* vec_ptr);
+void* __swift_bridge__$Vec_SsrfPolicy$as_ptr(void* vec_ptr);
+
 typedef struct BrowserMode BrowserMode;
 void __swift_bridge__$BrowserMode$_free(void* self);
 
@@ -786,7 +798,7 @@ void* __swift_bridge__$BrowserConfig$eval_script(void* self);
 void* __swift_bridge__$BrowserConfig$robots_user_agent(void* self);
 bool __swift_bridge__$BrowserConfig$capture_network_events(void* self);
 bool __swift_bridge__$BrowserConfig$session_affinity(void* self);
-void* __swift_bridge__$CrawlConfig$new(struct __private__OptionUsize max_depth, struct __private__OptionUsize max_pages, struct __private__OptionUsize max_concurrent, bool respect_robots_txt, bool soft_http_errors, void* user_agent, bool stay_on_domain, bool allow_subdomains, void* include_paths, void* exclude_paths, void* custom_headers, uint64_t request_timeout, struct __private__OptionU64 rate_limit_ms, uintptr_t max_redirects, uintptr_t retry_count, void* retry_codes, bool cookies_enabled, void* auth, struct __private__OptionUsize max_body_size, void* remove_tags, void* content, struct __private__OptionUsize map_limit, void* map_search, bool download_assets, void* asset_types, struct __private__OptionUsize max_asset_size, void* browser, void* proxy, void* user_agents, bool capture_screenshot, bool follow_document_urls, struct __private__OptionU32 document_url_depth, bool download_documents, struct __private__OptionUsize document_max_size, void* document_mime_types, void* warc_output, void* browser_profile, bool save_browser_profile);
+void* __swift_bridge__$CrawlConfig$new(struct __private__OptionUsize max_depth, struct __private__OptionUsize max_pages, struct __private__OptionUsize max_concurrent, bool respect_robots_txt, bool soft_http_errors, void* user_agent, bool stay_on_domain, bool allow_subdomains, void* include_paths, void* exclude_paths, void* custom_headers, uint64_t request_timeout, struct __private__OptionU64 rate_limit_ms, uintptr_t max_redirects, uintptr_t retry_count, void* retry_codes, bool cookies_enabled, void* auth, struct __private__OptionUsize max_body_size, void* remove_tags, void* content, struct __private__OptionUsize map_limit, void* map_search, bool download_assets, void* asset_types, struct __private__OptionUsize max_asset_size, void* browser, void* proxy, void* user_agents, bool capture_screenshot, bool follow_document_urls, struct __private__OptionU32 document_url_depth, bool download_documents, struct __private__OptionUsize document_max_size, void* document_mime_types, void* warc_output, void* browser_profile, bool save_browser_profile, void* ssrf);
 struct __private__OptionUsize __swift_bridge__$CrawlConfig$max_depth(void* self);
 struct __private__OptionUsize __swift_bridge__$CrawlConfig$max_pages(void* self);
 struct __private__OptionUsize __swift_bridge__$CrawlConfig$max_concurrent(void* self);
@@ -825,6 +837,7 @@ void* __swift_bridge__$CrawlConfig$document_mime_types(void* self);
 void* __swift_bridge__$CrawlConfig$warc_output(void* self);
 void* __swift_bridge__$CrawlConfig$browser_profile(void* self);
 bool __swift_bridge__$CrawlConfig$save_browser_profile(void* self);
+void* __swift_bridge__$CrawlConfig$ssrf(void* self);
 void* __swift_bridge__$BrowserExtras$new(void* eval_result, void* network_events, void* cookies);
 void* __swift_bridge__$BrowserExtras$eval_result(void* self);
 void* __swift_bridge__$BrowserExtras$network_events(void* self);
@@ -1050,6 +1063,9 @@ void* __swift_bridge__$BatchCrawlResults$results(void* self);
 uintptr_t __swift_bridge__$BatchCrawlResults$total_count(void* self);
 uintptr_t __swift_bridge__$BatchCrawlResults$completed_count(void* self);
 uintptr_t __swift_bridge__$BatchCrawlResults$failed_count(void* self);
+void* __swift_bridge__$SsrfPolicy$new(bool deny_private, uint8_t max_redirects);
+bool __swift_bridge__$SsrfPolicy$deny_private(void* self);
+uint8_t __swift_bridge__$SsrfPolicy$max_redirects(void* self);
 void* __swift_bridge__$BrowserMode$to_string(void* self);
 void* __swift_bridge__$BrowserWait$to_string(void* self);
 void* __swift_bridge__$BrowserBackend$to_string(void* self);
@@ -1108,6 +1124,7 @@ struct __private__ResultPtrAndPtr __swift_bridge__$batch_scrape_result_from_json
 struct __private__ResultPtrAndPtr __swift_bridge__$batch_crawl_result_from_json(void* json);
 struct __private__ResultPtrAndPtr __swift_bridge__$batch_scrape_results_from_json(void* json);
 struct __private__ResultPtrAndPtr __swift_bridge__$batch_crawl_results_from_json(void* json);
+struct __private__ResultPtrAndPtr __swift_bridge__$ssrf_policy_from_json(void* json);
 struct __private__ResultPtrAndPtr __swift_bridge__$browser_mode_from_json(void* json);
 struct __private__ResultPtrAndPtr __swift_bridge__$browser_wait_from_json(void* json);
 struct __private__ResultPtrAndPtr __swift_bridge__$browser_backend_from_json(void* json);
@@ -1152,6 +1169,7 @@ void* __swift_bridge__$__alef_phantom_vec_batch_scrape_result(void);
 void* __swift_bridge__$__alef_phantom_vec_batch_crawl_result(void);
 void* __swift_bridge__$__alef_phantom_vec_batch_scrape_results(void);
 void* __swift_bridge__$__alef_phantom_vec_batch_crawl_results(void);
+void* __swift_bridge__$__alef_phantom_vec_ssrf_policy(void);
 void* __swift_bridge__$__alef_phantom_vec_browser_mode(void);
 void* __swift_bridge__$__alef_phantom_vec_browser_wait(void);
 void* __swift_bridge__$__alef_phantom_vec_browser_backend(void);

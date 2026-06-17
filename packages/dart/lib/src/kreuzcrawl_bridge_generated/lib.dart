@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'lib.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
 
 /// Convert markdown links to numbered citations.
 ///
@@ -180,6 +180,9 @@ Future<BatchScrapeResults> createBatchScrapeResultsFromJson({
 Future<BatchCrawlResults> createBatchCrawlResultsFromJson({
   required String json,
 }) => RustLib.instance.api.crateCreateBatchCrawlResultsFromJson(json: json);
+
+Future<SsrfPolicy> createSsrfPolicyFromJson({required String json}) =>
+    RustLib.instance.api.crateCreateSsrfPolicyFromJson(json: json);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CrawlEngineHandle>>
 abstract class CrawlEngineHandle implements RustOpaqueInterface {
@@ -1005,6 +1008,14 @@ class CrawlConfig {
   /// Whether to save changes back to the browser profile on exit.
   final bool saveBrowserProfile;
 
+  /// SSRF policy for outbound network requests. Default: deny private networks,
+  /// allow http/https only, max 5 redirects.
+  ///
+  /// Phase 1: `deny_private` and `max_redirects` are exposed to all language
+  /// bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be
+  /// added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided.
+  final SsrfPolicy ssrf;
+
   const CrawlConfig({
     this.maxDepth,
     this.maxPages,
@@ -1044,6 +1055,7 @@ class CrawlConfig {
     this.warcOutput,
     this.browserProfile,
     required this.saveBrowserProfile,
+    required this.ssrf,
   });
 
   @override
@@ -1085,7 +1097,8 @@ class CrawlConfig {
       documentMimeTypes.hashCode ^
       warcOutput.hashCode ^
       browserProfile.hashCode ^
-      saveBrowserProfile.hashCode;
+      saveBrowserProfile.hashCode ^
+      ssrf.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -1129,7 +1142,8 @@ class CrawlConfig {
           documentMimeTypes == other.documentMimeTypes &&
           warcOutput == other.warcOutput &&
           browserProfile == other.browserProfile &&
-          saveBrowserProfile == other.saveBrowserProfile;
+          saveBrowserProfile == other.saveBrowserProfile &&
+          ssrf == other.ssrf;
 }
 
 @freezed
@@ -2647,4 +2661,53 @@ class SitemapUrl {
           lastmod == other.lastmod &&
           changefreq == other.changefreq &&
           priority == other.priority;
+}
+
+@freezed
+sealed class SsrfError with _$SsrfError {
+  const SsrfError._();
+
+  /// URL denied by SSRF policy: private IP, metadata IP, etc.
+  const factory SsrfError.deniedByPolicy({required String reason}) =
+      SsrfError_DeniedByPolicy;
+
+  /// Host not on allowlist when an allowlist is configured.
+  const factory SsrfError.notOnAllowlist() = SsrfError_NotOnAllowlist;
+
+  /// DNS resolution failed for hostname.
+  const factory SsrfError.dnsResolutionFailed({required String field0}) =
+      SsrfError_DnsResolutionFailed;
+
+  /// Invalid URL format.
+  const factory SsrfError.invalidUrl({required String field0}) =
+      SsrfError_InvalidUrl;
+
+  /// URL scheme not in allowlist (e.g., `ftp://` when only `http`/`https` allowed).
+  const factory SsrfError.disallowedScheme({required String field0}) =
+      SsrfError_DisallowedScheme;
+
+  /// Too many HTTP redirects encountered during validation.
+  const factory SsrfError.tooManyRedirects() = SsrfError_TooManyRedirects;
+}
+
+/// SSRF policy configuration.
+class SsrfPolicy {
+  /// If true, reject URLs that resolve to private/metadata IP ranges.
+  final bool denyPrivate;
+
+  /// Maximum number of HTTP redirects to follow during validation.
+  final PlatformInt64 maxRedirects;
+
+  const SsrfPolicy({required this.denyPrivate, required this.maxRedirects});
+
+  @override
+  int get hashCode => denyPrivate.hashCode ^ maxRedirects.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SsrfPolicy &&
+          runtimeType == other.runtimeType &&
+          denyPrivate == other.denyPrivate &&
+          maxRedirects == other.maxRedirects;
 }

@@ -57,4 +57,5 @@ export type {
 	ResponseMeta,
 	ScrapeResult,
 	SitemapUrl,
+	SsrfPolicy,
 } from "@kreuzberg/kreuzcrawl";

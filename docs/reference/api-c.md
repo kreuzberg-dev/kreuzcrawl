@@ -520,6 +520,7 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `const char**` | `NULL` | Path to write WARC output. If `NULL`, WARC output is disabled. |
 | `browser_profile` | `const char**` | `NULL` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
+| `ssrf` | `KcrawlSsrfPolicy` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Phase 1: `deny_private` and `max_redirects` are exposed to all language bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided. |
 
 ##### Methods
 
@@ -953,6 +954,56 @@ A URL entry from a sitemap.
 
 ---
 
+#### KcrawlSsrfPolicy
+
+SSRF policy configuration.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `deny_private` | `bool` | `true` | If true, reject URLs that resolve to private/metadata IP ranges. |
+| `max_redirects` | `uint8_t` | `5` | Maximum number of HTTP redirects to follow during validation. |
+
+##### Methods
+
+###### kcrawl_default()
+
+**Signature:**
+
+```c
+KcrawlSsrfPolicy kcrawl_default();
+```
+
+**Example:**
+
+```c
+KcrawlSsrfPolicy *result = kcrawl_default();
+```
+
+**Returns:** `KcrawlSsrfPolicy`
+
+###### kcrawl_from_env()
+
+Create a policy from environment variables.
+
+Reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true" (case-insensitive),
+sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
+
+**Signature:**
+
+```c
+KcrawlSsrfPolicy kcrawl_from_env();
+```
+
+**Example:**
+
+```c
+KcrawlSsrfPolicy *result = kcrawl_from_env();
+```
+
+**Returns:** `KcrawlSsrfPolicy`
+
+---
+
 ### Enums
 
 #### KcrawlBrowserMode
@@ -1135,5 +1186,20 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `KCRAWL_UNSUPPORTED` | The requested capability is not supported by the active backend or build. |
 | `KCRAWL_SSRF_POLICY_VIOLATION` | A URL was rejected by SSRF policy (private IP, metadata, disallowed scheme, etc). |
 | `KCRAWL_OTHER` | An unclassified error occurred. |
+
+---
+
+#### KcrawlSsrfError
+
+SSRF validation error.
+
+| Variant | Description |
+|---------|-------------|
+| `KCRAWL_DENIED_BY_POLICY` | URL denied by SSRF policy: private IP, metadata IP, etc. |
+| `KCRAWL_NOT_ON_ALLOWLIST` | Host not on allowlist when an allowlist is configured. |
+| `KCRAWL_DNS_RESOLUTION_FAILED` | DNS resolution failed for hostname. |
+| `KCRAWL_INVALID_URL` | Invalid URL format. |
+| `KCRAWL_DISALLOWED_SCHEME` | URL scheme not in allowlist (e.g., `ftp://` when only `http`/`https` allowed). |
+| `KCRAWL_TOO_MANY_REDIRECTS` | Too many HTTP redirects encountered during validation. |
 
 ---

@@ -4,6 +4,10 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **`SsrfPolicy` exposed as a DTO in every binding (Phase 1).** `deny_private` and `max_redirects` are now settable from all 14 language bindings. `allowlist` (requires `HostMatcher` FFI form decision) and `scheme_allowlist` (`HashSet<&'static str>` is FFI-hostile) remain `alef(skip)` for a follow-up pass. WASM e2e suite unblocked: WASM lacks `std::env::var`, so `SsrfPolicy::from_env()` always returned `deny_private=true`; generated WASM e2e tests now set `ssrf.denyPrivate = false` on every engine config directly.
+
 ### Changed
 
 - **Bump alef pin to 0.25.26 + unreleased.** Local regen against alef HEAD picks up cross-binding fixes that the previous rc.73 pin (0.25.24) lacked:

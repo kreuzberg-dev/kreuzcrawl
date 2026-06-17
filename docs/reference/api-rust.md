@@ -520,7 +520,7 @@ Configuration for crawl, scrape, and map operations.
 | `warc_output` | `Option<PathBuf>` | `None` | Path to write WARC output. If `None`, WARC output is disabled. |
 | `browser_profile` | `Option<String>` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
-| `ssrf` | `String` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Rust-only advanced field. Generated language bindings do not expose per-request SSRF policy overrides; they use the policy assembled from environment defaults and server-side Rust configuration. |
+| `ssrf` | `SsrfPolicy` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Phase 1: `deny_private` and `max_redirects` are exposed to all language bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided. |
 | `dispatch` | `Option<String>` | `None` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `None`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Rust-only advanced field. Generated language bindings do not expose pluggable dispatch components; language clients use the built-in dispatch defaults configured by the Rust engine. Not serializable — Rust callers construct this at runtime and skip it in TOML/JSON configs. |
 
 ##### Methods
@@ -1037,6 +1037,58 @@ A URL entry from a sitemap.
 
 ---
 
+#### SsrfPolicy
+
+SSRF policy configuration.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `deny_private` | `bool` | `true` | If true, reject URLs that resolve to private/metadata IP ranges. |
+| `allowlist` | `Vec<String>` | `vec!\[\]` | Allowed hostnames and IP ranges. Empty means deny all unless `deny_private` is false. Phase 1: skipped from language bindings — `HostMatcher`'s untagged-enum FFI form is not yet decided. Expose in a follow-up once the tagged-enum representation is finalized. |
+| `max_redirects` | `u8` | `5` | Maximum number of HTTP redirects to follow during validation. |
+| `scheme_allowlist` | `Vec<String>` | `vec!\[\]` | Allowed URI schemes. Default: `\["http", "https"\]`. Not serialized (set at runtime). Skipped from language bindings — `HashSet<&'static str>` is FFI-hostile. |
+
+##### Methods
+
+###### default()
+
+**Signature:**
+
+```rust
+pub fn default() -> SsrfPolicy
+```
+
+**Example:**
+
+```rust
+let result = SsrfPolicy::default();
+```
+
+**Returns:** `SsrfPolicy`
+
+###### from_env()
+
+Create a policy from environment variables.
+
+Reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true" (case-insensitive),
+sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
+
+**Signature:**
+
+```rust
+pub fn from_env() -> SsrfPolicy
+```
+
+**Example:**
+
+```rust
+let result = SsrfPolicy::from_env();
+```
+
+**Returns:** `SsrfPolicy`
+
+---
+
 ### Enums
 
 #### BrowserMode
@@ -1219,5 +1271,20 @@ Errors that can occur during crawling, scraping, or mapping operations.
 | `Unsupported` | The requested capability is not supported by the active backend or build. |
 | `SsrfPolicyViolation` | A URL was rejected by SSRF policy (private IP, metadata, disallowed scheme, etc). |
 | `Other` | An unclassified error occurred. |
+
+---
+
+#### SsrfError
+
+SSRF validation error.
+
+| Variant | Description |
+|---------|-------------|
+| `DeniedByPolicy` | URL denied by SSRF policy: private IP, metadata IP, etc. |
+| `NotOnAllowlist` | Host not on allowlist when an allowlist is configured. |
+| `DnsResolutionFailed` | DNS resolution failed for hostname. |
+| `InvalidUrl` | Invalid URL format. |
+| `DisallowedScheme` | URL scheme not in allowlist (e.g., `ftp://` when only `http`/`https` allowed). |
+| `TooManyRedirects` | Too many HTTP redirects encountered during validation. |
 
 ---
