@@ -4,6 +4,14 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.75] - 2026-06-17
+
+### Fixed
+
+- **Restore `crates/kreuzcrawl-ffi/{src/lib.rs,build.rs,cbindgen.toml}` dropped from rc.74.** rc.74's release commit deleted 9937 lines from the FFI crate, leaving the published `kreuzcrawl-ffi` v0.3.0-rc.74 with an empty `src/` and a `[lib] name = "kreuzcrawl_ffi"` declaration that pointed at nothing — every `Build FFI` matrix cell failed with `can't find library `kreuzcrawl_ffi`, rename file to `src/lib.rs``. Root cause: a partial `alef generate --lang X --clean` invocation in the rc.74 prep session wiped all alef-managed files first and only restored a subset; the FFI files were missed during manual recovery and committed in their deleted state. Full `task alef:generate` (which runs `alef all --clean --format=false`) regenerates them correctly.
+- **kotlin-android type regen.** `AuthConfig`, `BrowserConfig`, `BatchCrawlStreamRequest`, and others picked up shape changes from the same regen pass; rc.74 shipped stale generated code.
+- **packages/elixir/mix.exs:** include `lib` directory in Hex package `files` list. Previously the published gem omitted the Elixir wrapper module.
+
 ## [0.3.0-rc.74] - 2026-06-17
 
 ### Added
