@@ -2,7 +2,7 @@
 title: "Rust API Reference"
 ---
 
-## Rust API Reference <span class="version-badge">v0.3.0-rc.72</span>
+## Rust API Reference <span class="version-badge">v0.3.0-rc.73</span>
 
 ### Functions
 
@@ -268,7 +268,7 @@ Article metadata extracted from `article:*` Open Graph tags.
 | `modified_time` | `Option<String>` | `Default::default()` | The article modification time. |
 | `author` | `Option<String>` | `Default::default()` | The article author. |
 | `section` | `Option<String>` | `Default::default()` | The article section. |
-| `tags` | `Vec<String>` | `vec![]` | The article tags. |
+| `tags` | `Vec<String>` | `vec!\[\]` | The article tags. |
 
 ---
 
@@ -293,7 +293,7 @@ as plain integer fields without re-iterating the `results` vector.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `results` | `Vec<BatchCrawlResult>` | `vec![]` | Per-URL crawl results, in the order seed URLs were submitted. |
+| `results` | `Vec<BatchCrawlResult>` | `vec!\[\]` | Per-URL crawl results, in the order seed URLs were submitted. |
 | `total_count` | `usize` | — | Total number of seed URLs in the batch (equal to `results.len()`). |
 | `completed_count` | `usize` | — | Number of seed URLs whose crawl succeeded (`error` is `None`). |
 | `failed_count` | `usize` | — | Number of seed URLs whose crawl failed (`error` is `Some`). |
@@ -310,7 +310,7 @@ named request type — primitives are not supported.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `urls` | `Vec<String>` | `vec![]` | The seed URLs to crawl. Each URL is followed independently up to the engine's configured depth. |
+| `urls` | `Vec<String>` | `vec!\[\]` | The seed URLs to crawl. Each URL is followed independently up to the engine's configured depth. |
 
 ---
 
@@ -335,7 +335,7 @@ as plain integer fields without re-iterating the `results` vector.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `results` | `Vec<BatchScrapeResult>` | `vec![]` | Per-URL scrape results, in the order URLs were submitted. |
+| `results` | `Vec<BatchScrapeResult>` | `vec!\[\]` | Per-URL scrape results, in the order URLs were submitted. |
 | `total_count` | `usize` | — | Total number of URLs in the batch (equal to `results.len()`). |
 | `completed_count` | `usize` | — | Number of URLs whose scrape succeeded (`error` is `None`). |
 | `failed_count` | `usize` | — | Number of URLs whose scrape failed (`error` is `Some`). |
@@ -356,7 +356,7 @@ Browser fallback configuration.
 | `wait_selector` | `Option<String>` | `None` | CSS selector to wait for when `wait` is `Selector`. |
 | `extra_wait` | `Option<std::time::Duration>` | `None` | Extra time to wait after the wait condition is met. |
 | `proxy` | `Option<ProxyConfig>` | `None` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
-| `block_url_patterns` | `Vec<String>` | `vec![]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend::Native`; chromiumoxide ignores this field today. |
+| `block_url_patterns` | `Vec<String>` | `vec!\[\]` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend::Native`; chromiumoxide ignores this field today. |
 | `eval_script` | `Option<String>` | `None` | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
 | `robots_user_agent` | `Option<String>` | `None` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
 | `capture_network_events` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
@@ -391,8 +391,8 @@ Available on `ScrapeResult.browser` when `BrowserBackend::Native` handled the re
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `eval_result` | `Option<serde_json::Value>` | `Default::default()` | Return value of `BrowserConfig.eval_script`, if provided. |
-| `network_events` | `Vec<ResponseMeta>` | `vec![]` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
-| `cookies` | `Vec<CookieInfo>` | `vec![]` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+| `network_events` | `Vec<ResponseMeta>` | `vec!\[\]` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `cookies` | `Vec<CookieInfo>` | `vec!\[\]` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
 
 ---
 
@@ -416,7 +416,7 @@ Result of citation conversion.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `content` | `String` | — | Markdown with links replaced by numbered citations. |
-| `references` | `Vec<CitationReference>` | `vec![]` | Numbered reference list: (index, url, text). |
+| `references` | `Vec<CitationReference>` | `vec!\[\]` | Numbered reference list: (index, url, text). |
 
 ---
 
@@ -434,9 +434,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `preprocessing_preset` | `String` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
 | `remove_navigation` | `bool` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
 | `remove_forms` | `bool` | `true` | Remove form elements. Default: `true`. |
-| `strip_tags` | `Vec<String>` | `vec![]` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
-| `preserve_tags` | `Vec<String>` | `vec![]` | HTML tag names to preserve as raw HTML in output. |
-| `exclude_selectors` | `Vec<String>` | `vec![]` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `strip_tags` | `Vec<String>` | `vec!\[\]` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `\["noscript"\]`. |
+| `preserve_tags` | `Vec<String>` | `vec!\[\]` | HTML tag names to preserve as raw HTML in output. |
+| `exclude_selectors` | `Vec<String>` | `vec!\[\]` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `\[attribute\]`, compound selectors. Example: `\[".cookie-banner", "#ad-container", "\[role='complementary'\]"\]` |
 | `skip_images` | `bool` | `false` | Skip image elements in output. Default: `false`. |
 | `max_depth` | `Option<usize>` | `None` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
 | `wrap` | `bool` | `false` | Enable line wrapping. Default: `false`. |
@@ -490,33 +490,33 @@ Configuration for crawl, scrape, and map operations.
 | `user_agent` | `Option<String>` | `None` | Custom user-agent string. |
 | `stay_on_domain` | `bool` | `false` | Whether to restrict crawling to the same domain. |
 | `allow_subdomains` | `bool` | `false` | Whether to allow subdomains when `stay_on_domain` is true. |
-| `include_paths` | `Vec<String>` | `vec![]` | Regex patterns for paths to include during crawling. |
-| `exclude_paths` | `Vec<String>` | `vec![]` | Regex patterns for paths to exclude during crawling. |
+| `include_paths` | `Vec<String>` | `vec!\[\]` | Regex patterns for paths to include during crawling. |
+| `exclude_paths` | `Vec<String>` | `vec!\[\]` | Regex patterns for paths to exclude during crawling. |
 | `custom_headers` | `HashMap<String, String>` | `HashMap::new()` | Custom HTTP headers to send with each request. |
 | `request_timeout` | `std::time::Duration` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `rate_limit_ms` | `Option<u64>` | `None` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `None`. |
 | `max_redirects` | `usize` | `10` | Maximum number of redirects to follow. |
 | `retry_count` | `usize` | `0` | Number of retry attempts for failed requests. |
-| `retry_codes` | `Vec<u16>` | `vec![]` | HTTP status codes that should trigger a retry. |
+| `retry_codes` | `Vec<u16>` | `vec!\[\]` | HTTP status codes that should trigger a retry. |
 | `cookies_enabled` | `bool` | `false` | Whether to enable cookie handling. |
 | `auth` | `Option<AuthConfig>` | `None` | Authentication configuration. |
 | `max_body_size` | `Option<usize>` | `None` | Maximum response body size in bytes. |
-| `remove_tags` | `Vec<String>` | `vec![]` | CSS selectors for tags to remove from HTML before processing. |
+| `remove_tags` | `Vec<String>` | `vec!\[\]` | CSS selectors for tags to remove from HTML before processing. |
 | `content` | `ContentConfig` | — | Content extraction and conversion configuration. |
 | `map_limit` | `Option<usize>` | `None` | Maximum number of URLs to return from a map operation. |
 | `map_search` | `Option<String>` | `None` | Search filter for map results (case-insensitive substring match on URLs). |
 | `download_assets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
-| `asset_types` | `Vec<AssetCategory>` | `vec![]` | Filter for asset categories to download. |
+| `asset_types` | `Vec<AssetCategory>` | `vec!\[\]` | Filter for asset categories to download. |
 | `max_asset_size` | `Option<usize>` | `None` | Maximum size in bytes for individual asset downloads. |
 | `browser` | `BrowserConfig` | — | Browser configuration. |
 | `proxy` | `Option<ProxyConfig>` | `None` | Proxy configuration for HTTP requests. |
-| `user_agents` | `Vec<String>` | `vec![]` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
+| `user_agents` | `Vec<String>` | `vec!\[\]` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `capture_screenshot` | `bool` | `false` | Whether to capture a screenshot when using the browser. |
 | `follow_document_urls` | `bool` | `false` | Re-enqueue discovered `LinkType::Document` URLs into the crawl frontier so the crawl follows links *from* document pages (PDFs, etc.) as it would from HTML pages. Default: `false` (documents terminate at materialisation). |
 | `document_url_depth` | `Option<u32>` | `None` | Maximum document-depth (from the seed URL through document links only) when `follow_document_urls` is true. `None` means inherit `max_depth`. Independent of `max_depth`: a document URL is enqueued only if BOTH the outer `max_depth` and (if set) `document_url_depth` permit it. |
 | `download_documents` | `bool` | `true` | Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them. |
 | `document_max_size` | `Option<usize>` | `Default::default()` | Maximum size in bytes for document downloads. Defaults to 50 MB. |
-| `document_mime_types` | `Vec<String>` | `vec![]` | Allowlist of MIME types to download. If empty, uses built-in defaults. |
+| `document_mime_types` | `Vec<String>` | `vec!\[\]` | Allowlist of MIME types to download. If empty, uses built-in defaults. |
 | `warc_output` | `Option<PathBuf>` | `None` | Path to write WARC output. If `None`, WARC output is disabled. |
 | `browser_profile` | `Option<String>` | `None` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
@@ -663,10 +663,10 @@ The result of crawling a single page during a crawl operation.
 | `html` | `String` | — | The HTML body of the response. |
 | `body_size` | `usize` | — | The size of the response body in bytes. |
 | `metadata` | `PageMetadata` | — | Extracted metadata from the page. |
-| `links` | `Vec<LinkInfo>` | `vec![]` | Links found on the page. |
-| `images` | `Vec<ImageInfo>` | `vec![]` | Images found on the page. |
-| `feeds` | `Vec<FeedInfo>` | `vec![]` | Feed links found on the page. |
-| `json_ld` | `Vec<JsonLdEntry>` | `vec![]` | JSON-LD entries found on the page. |
+| `links` | `Vec<LinkInfo>` | `vec!\[\]` | Links found on the page. |
+| `images` | `Vec<ImageInfo>` | `vec!\[\]` | Images found on the page. |
+| `feeds` | `Vec<FeedInfo>` | `vec!\[\]` | Feed links found on the page. |
+| `json_ld` | `Vec<JsonLdEntry>` | `vec!\[\]` | JSON-LD entries found on the page. |
 | `depth` | `usize` | — | The depth of this page from the start URL. |
 | `stayed_on_domain` | `bool` | — | Whether this page is on the same domain as the start URL. |
 | `was_skipped` | `bool` | — | Whether this page was skipped (binary or PDF content). |
@@ -686,15 +686,15 @@ The result of a multi-page crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pages` | `Vec<CrawlPageResult>` | `vec![]` | The list of crawled pages. |
+| `pages` | `Vec<CrawlPageResult>` | `vec!\[\]` | The list of crawled pages. |
 | `final_url` | `String` | — | The final URL after following redirects. |
 | `redirect_count` | `usize` | — | The number of redirects followed. |
 | `was_skipped` | `bool` | — | Whether any page was skipped during crawling. |
 | `error` | `Option<String>` | `Default::default()` | An error message, if the crawl encountered an issue. |
-| `cookies` | `Vec<CookieInfo>` | `vec![]` | Cookies collected during the crawl. |
+| `cookies` | `Vec<CookieInfo>` | `vec!\[\]` | Cookies collected during the crawl. |
 | `stayed_on_domain` | `bool` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
-| `normalized_urls` | `Vec<String>` | `vec![]` | Normalized URLs encountered during crawling (for deduplication counting). |
+| `normalized_urls` | `Vec<String>` | `vec!\[\]` | Normalized URLs encountered during crawling (for deduplication counting). |
 
 ##### Methods
 
@@ -848,7 +848,7 @@ Result of executing a sequence of page interaction actions.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `action_results` | `Vec<ActionResult>` | `vec![]` | Results from each executed action. |
+| `action_results` | `Vec<ActionResult>` | `vec!\[\]` | Results from each executed action. |
 | `final_html` | `String` | — | Final page HTML after all actions completed. |
 | `final_url` | `String` | — | Final page URL (may have changed due to navigation). |
 | `screenshot` | `Option<Vec<u8>>` | `Default::default()` | Screenshot taken after all actions, if requested. |
@@ -887,7 +887,7 @@ The result of a map operation, containing discovered URLs.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `urls` | `Vec<SitemapUrl>` | `vec![]` | The list of discovered URLs. |
+| `urls` | `Vec<SitemapUrl>` | `vec!\[\]` | The list of discovered URLs. |
 
 ---
 
@@ -899,9 +899,9 @@ Rich markdown conversion result from HTML processing.
 |-------|------|---------|-------------|
 | `content` | `String` | — | Converted markdown text. |
 | `document_structure` | `Option<serde_json::Value>` | `Default::default()` | Structured document tree with semantic nodes. |
-| `tables` | `Vec<serde_json::Value>` | `vec![]` | Extracted tables with structured cell data. |
-| `warnings` | `Vec<String>` | `vec![]` | Non-fatal processing warnings. |
-| `citations` | `bool` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `tables` | `Vec<serde_json::Value>` | `vec!\[\]` | Extracted tables with structured cell data. |
+| `warnings` | `Vec<String>` | `vec!\[\]` | Non-fatal processing warnings. |
+| `citations` | `bool` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `\[N\]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
 | `fit_content` | `Option<String>` | `Default::default()` | Content-filtered markdown optimized for LLM consumption. |
 
 ---
@@ -932,7 +932,7 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 | `og_locale` | `Option<String>` | `Default::default()` | Open Graph locale. |
 | `og_video` | `Option<String>` | `Default::default()` | Open Graph video URL. |
 | `og_audio` | `Option<String>` | `Default::default()` | Open Graph audio URL. |
-| `og_locale_alternates` | `Option<Vec<String>>` | `vec![]` | Open Graph locale alternates. |
+| `og_locale_alternates` | `Option<Vec<String>>` | `vec!\[\]` | Open Graph locale alternates. |
 | `twitter_card` | `Option<String>` | `Default::default()` | Twitter card type. |
 | `twitter_title` | `Option<String>` | `Default::default()` | Twitter title. |
 | `twitter_description` | `Option<String>` | `Default::default()` | Twitter description. |
@@ -951,9 +951,9 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 | `dc_language` | `Option<String>` | `Default::default()` | Dublin Core language. |
 | `dc_rights` | `Option<String>` | `Default::default()` | Dublin Core rights. |
 | `article` | `Option<ArticleMetadata>` | `Default::default()` | Article metadata from `article:*` Open Graph tags. |
-| `hreflangs` | `Option<Vec<HreflangEntry>>` | `vec![]` | Hreflang alternate links. |
-| `favicons` | `Option<Vec<FaviconInfo>>` | `vec![]` | Favicon and icon links. |
-| `headings` | `Option<Vec<HeadingInfo>>` | `vec![]` | Heading elements (h1-h6). |
+| `hreflangs` | `Option<Vec<HreflangEntry>>` | `vec!\[\]` | Hreflang alternate links. |
+| `favicons` | `Option<Vec<FaviconInfo>>` | `vec!\[\]` | Favicon and icon links. |
+| `headings` | `Option<Vec<HeadingInfo>>` | `vec!\[\]` | Heading elements (h1-h6). |
 | `word_count` | `Option<usize>` | `Default::default()` | Computed word count of the page body text. |
 
 ---
@@ -998,10 +998,10 @@ The result of a single-page scrape operation.
 | `html` | `String` | — | The HTML body of the response. |
 | `body_size` | `usize` | — | The size of the response body in bytes. |
 | `metadata` | `PageMetadata` | — | Extracted metadata from the page. |
-| `links` | `Vec<LinkInfo>` | `vec![]` | Links found on the page. |
-| `images` | `Vec<ImageInfo>` | `vec![]` | Images found on the page. |
-| `feeds` | `Vec<FeedInfo>` | `vec![]` | Feed links found on the page. |
-| `json_ld` | `Vec<JsonLdEntry>` | `vec![]` | JSON-LD entries found on the page. |
+| `links` | `Vec<LinkInfo>` | `vec!\[\]` | Links found on the page. |
+| `images` | `Vec<ImageInfo>` | `vec!\[\]` | Images found on the page. |
+| `feeds` | `Vec<FeedInfo>` | `vec!\[\]` | Feed links found on the page. |
+| `json_ld` | `Vec<JsonLdEntry>` | `vec!\[\]` | JSON-LD entries found on the page. |
 | `is_allowed` | `bool` | — | Whether the URL is allowed by robots.txt. |
 | `crawl_delay` | `Option<u64>` | `Default::default()` | The crawl delay from robots.txt, in seconds. |
 | `noindex_detected` | `bool` | — | Whether a noindex directive was detected. |
@@ -1012,7 +1012,7 @@ The result of a single-page scrape operation.
 | `detected_charset` | `Option<String>` | `Default::default()` | The detected character set encoding. |
 | `auth_header_sent` | `bool` | — | Whether an authentication header was sent with the request. |
 | `response_meta` | `Option<ResponseMeta>` | `Default::default()` | Response metadata extracted from HTTP headers. |
-| `assets` | `Vec<DownloadedAsset>` | `vec![]` | Downloaded assets from the page. |
+| `assets` | `Vec<DownloadedAsset>` | `vec!\[\]` | Downloaded assets from the page. |
 | `js_render_hint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `browser_used` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `markdown` | `Option<MarkdownResult>` | `Default::default()` | Markdown conversion of the page content. |

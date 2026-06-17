@@ -2,7 +2,7 @@
 title: "C# API Reference"
 ---
 
-## C# API Reference <span class="version-badge">v0.3.0-rc.72</span>
+## C# API Reference <span class="version-badge">v0.3.0-rc.73</span>
 
 ### Functions
 
@@ -434,9 +434,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `PreprocessingPreset` | `string` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
 | `RemoveNavigation` | `bool` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
 | `RemoveForms` | `bool` | `true` | Remove form elements. Default: `true`. |
-| `StripTags` | `List<string>` | `new List<string>()` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `StripTags` | `List<string>` | `new List<string>()` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `\["noscript"\]`. |
 | `PreserveTags` | `List<string>` | `new List<string>()` | HTML tag names to preserve as raw HTML in output. |
-| `ExcludeSelectors` | `List<string>` | `new List<string>()` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `ExcludeSelectors` | `List<string>` | `new List<string>()` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `\[attribute\]`, compound selectors. Example: `\[".cookie-banner", "#ad-container", "\[role='complementary'\]"\]` |
 | `SkipImages` | `bool` | `false` | Skip image elements in output. Default: `false`. |
 | `MaxDepth` | `nuint?` | `null` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
 | `Wrap` | `bool` | `false` | Enable line wrapping. Default: `false`. |
@@ -818,7 +818,7 @@ Rich markdown conversion result from HTML processing.
 | `DocumentStructure` | `object?` | `null` | Structured document tree with semantic nodes. |
 | `Tables` | `List<object>` | `new List<object>()` | Extracted tables with structured cell data. |
 | `Warnings` | `List<string>` | `new List<string>()` | Non-fatal processing warnings. |
-| `Citations` | `bool` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `Citations` | `bool` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `\[N\]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
 | `FitContent` | `string?` | `null` | Content-filtered markdown optimized for LLM consumption. |
 
 ---

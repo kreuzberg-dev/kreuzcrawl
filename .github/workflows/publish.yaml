@@ -2607,6 +2607,9 @@ jobs:
             - upload-cli-release
             - upload-go-release
             - upload-c-ffi-release
+            - upload-elixir-release
+            - upload-php-pie-release
+            - upload-swift-release
         if: |
             always() &&
             !cancelled() &&
@@ -2650,6 +2653,7 @@ jobs:
             - upload-c-ffi-release
             - upload-elixir-release
             - upload-php-pie-release
+            - upload-swift-release
             - release-finalize
         if: |
             always() &&

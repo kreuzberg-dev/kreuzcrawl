@@ -18,8 +18,22 @@ use mock_server::{MockRoute, MockServer};
 /// a listening server.
 const LOOPBACK_URL: &str = "http://127.0.0.1:9/";
 
+/// Clear the SSRF bypass env var that the e2e harness sets in
+/// `e2e/rust/.cargo/config.toml` `[env]`. SSRF rejection assertions must
+/// observe the default policy (`deny_private = true`), not the suite-wide
+/// override that lets other tests reach the loopback mock-server.
+///
+/// SAFETY: tests in this file are `#[tokio::test]` flavoured but the env
+/// mutation runs before any worker thread or engine inspects the variable;
+/// no other test in this binary reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK`.
+fn clear_ssrf_bypass() {
+    // SAFETY: see fn-level doc.
+    unsafe { std::env::remove_var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK") };
+}
+
 #[tokio::test]
 async fn test_ssrf_loopback_denied_by_default() {
+    clear_ssrf_bypass();
     // Default config: deny_private = true. Loopback must be rejected before connect.
     let engine = create_engine(None).expect("engine creation should succeed with default config");
     let result = scrape(&engine, LOOPBACK_URL).await;
@@ -33,6 +47,7 @@ async fn test_ssrf_loopback_denied_by_default() {
 
 #[tokio::test]
 async fn test_ssrf_private_network_class_a_denied() {
+    clear_ssrf_bypass();
     // 10.0.0.1 is RFC-1918 private; must be rejected by default SSRF policy.
     let engine = create_engine(None).expect("engine creation should succeed with default config");
     let result = scrape(&engine, "http://10.0.0.1:9/").await;

@@ -170,7 +170,7 @@ wheels = [
 
 [[package]]
 name = "kreuzcrawl"
-version = "0.3.0rc65"
+version = "0.3.0rc73"
 source = { editable = "packages/python" }
 
 [package.dev-dependencies]

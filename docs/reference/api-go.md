@@ -2,7 +2,7 @@
 title: "Go API Reference"
 ---
 
-## Go API Reference <span class="version-badge">v0.3.0-rc.72</span>
+## Go API Reference <span class="version-badge">v0.3.0-rc.73</span>
 
 ### Functions
 
@@ -191,7 +191,7 @@ if err != nil {
 |------|------|----------|-------------|
 | `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
 | `Url` | `string` | Yes | The URL to fetch |
-| `Actions` | `[]PageAction` | Yes | The actions |
+| `Actions` | `\[\]PageAction` | Yes | The actions |
 
 **Returns:** `InteractionResult`
 
@@ -223,7 +223,7 @@ if err != nil {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
-| `Urls` | `[]string` | Yes | The urls |
+| `Urls` | `\[\]string` | Yes | The urls |
 
 **Returns:** `BatchScrapeResults`
 
@@ -255,7 +255,7 @@ if err != nil {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Engine` | `CrawlEngineHandle` | Yes | The crawl engine handle |
-| `Urls` | `[]string` | Yes | The urls |
+| `Urls` | `\[\]string` | Yes | The urls |
 
 **Returns:** `BatchCrawlResults`
 
@@ -289,7 +289,7 @@ Article metadata extracted from `article:*` Open Graph tags.
 | `ModifiedTime` | `*string` | `nil` | The article modification time. |
 | `Author` | `*string` | `nil` | The article author. |
 | `Section` | `*string` | `nil` | The article section. |
-| `Tags` | `[]string` | `nil` | The article tags. |
+| `Tags` | `\[\]string` | `nil` | The article tags. |
 
 ---
 
@@ -314,7 +314,7 @@ as plain integer fields without re-iterating the `results` vector.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Results` | `[]BatchCrawlResult` | `nil` | Per-URL crawl results, in the order seed URLs were submitted. |
+| `Results` | `\[\]BatchCrawlResult` | `nil` | Per-URL crawl results, in the order seed URLs were submitted. |
 | `TotalCount` | `int` | — | Total number of seed URLs in the batch (equal to `results.len()`). |
 | `CompletedCount` | `int` | — | Number of seed URLs whose crawl succeeded (`error` is `nil`). |
 | `FailedCount` | `int` | — | Number of seed URLs whose crawl failed (`error` is `Some`). |
@@ -331,7 +331,7 @@ named request type — primitives are not supported.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Urls` | `[]string` | `nil` | The seed URLs to crawl. Each URL is followed independently up to the engine's configured depth. |
+| `Urls` | `\[\]string` | `nil` | The seed URLs to crawl. Each URL is followed independently up to the engine's configured depth. |
 
 ---
 
@@ -356,7 +356,7 @@ as plain integer fields without re-iterating the `results` vector.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Results` | `[]BatchScrapeResult` | `nil` | Per-URL scrape results, in the order URLs were submitted. |
+| `Results` | `\[\]BatchScrapeResult` | `nil` | Per-URL scrape results, in the order URLs were submitted. |
 | `TotalCount` | `int` | — | Total number of URLs in the batch (equal to `results.len()`). |
 | `CompletedCount` | `int` | — | Number of URLs whose scrape succeeded (`error` is `nil`). |
 | `FailedCount` | `int` | — | Number of URLs whose scrape failed (`error` is `Some`). |
@@ -377,7 +377,7 @@ Browser fallback configuration.
 | `WaitSelector` | `*string` | `nil` | CSS selector to wait for when `wait` is `Selector`. |
 | `ExtraWait` | `*time.Duration` | `nil` | Extra time to wait after the wait condition is met. |
 | `Proxy` | `*ProxyConfig` | `nil` | Proxy for browser fetches. Overrides `CrawlConfig.proxy` when set. Native backend supports http/https only (no SOCKS5). |
-| `BlockUrlPatterns` | `[]string` | `nil` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
+| `BlockUrlPatterns` | `\[\]string` | `nil` | URL patterns to block before the network request fires. Supports `*` wildcards. Useful for skipping ads/analytics/large images. Honored by `BrowserBackend.Native`; chromiumoxide ignores this field today. |
 | `EvalScript` | `*string` | `nil` | JavaScript snippet evaluated after navigation completes. Scraping captures the native backend result in `ScrapeResult.browser.eval_result`. Interactions run this script before page actions on both browser backends but do not include the script result in `InteractionResult`. |
 | `RobotsUserAgent` | `*string` | `nil` | User-agent used when fetching robots.txt. Defaults to `BrowserConfig.user_agent` (or kreuzcrawl's default) if unset. Native only. |
 | `CaptureNetworkEvents` | `bool` | `false` | Capture the full network event stream into the result. Default false (only the document event is captured). Native only. |
@@ -412,8 +412,8 @@ Available on `ScrapeResult.browser` when `BrowserBackend.Native` handled the req
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `EvalResult` | `*interface{}` | `nil` | Return value of `BrowserConfig.eval_script`, if provided. |
-| `NetworkEvents` | `[]ResponseMeta` | `nil` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
-| `Cookies` | `[]CookieInfo` | `nil` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
+| `NetworkEvents` | `\[\]ResponseMeta` | `nil` | Network events captured during page navigation (only populated when `BrowserConfig.capture_network_events` is true). |
+| `Cookies` | `\[\]CookieInfo` | `nil` | All non-expired cookies present in the browser's cookie jar after navigation completes (includes both prior cookies and server Set-Cookie). |
 
 ---
 
@@ -437,7 +437,7 @@ Result of citation conversion.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `Content` | `string` | — | Markdown with links replaced by numbered citations. |
-| `References` | `[]CitationReference` | `nil` | Numbered reference list: (index, url, text). |
+| `References` | `\[\]CitationReference` | `nil` | Numbered reference list: (index, url, text). |
 
 ---
 
@@ -455,9 +455,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `PreprocessingPreset` | `string` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
 | `RemoveNavigation` | `bool` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
 | `RemoveForms` | `bool` | `true` | Remove form elements. Default: `true`. |
-| `StripTags` | `[]string` | `nil` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
-| `PreserveTags` | `[]string` | `nil` | HTML tag names to preserve as raw HTML in output. |
-| `ExcludeSelectors` | `[]string` | `nil` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `StripTags` | `\[\]string` | `nil` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `\["noscript"\]`. |
+| `PreserveTags` | `\[\]string` | `nil` | HTML tag names to preserve as raw HTML in output. |
+| `ExcludeSelectors` | `\[\]string` | `nil` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `\[attribute\]`, compound selectors. Example: `\[".cookie-banner", "#ad-container", "\[role='complementary'\]"\]` |
 | `SkipImages` | `bool` | `false` | Skip image elements in output. Default: `false`. |
 | `MaxDepth` | `*int` | `nil` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
 | `Wrap` | `bool` | `false` | Enable line wrapping. Default: `false`. |
@@ -511,33 +511,33 @@ Configuration for crawl, scrape, and map operations.
 | `UserAgent` | `*string` | `nil` | Custom user-agent string. |
 | `StayOnDomain` | `bool` | `false` | Whether to restrict crawling to the same domain. |
 | `AllowSubdomains` | `bool` | `false` | Whether to allow subdomains when `stay_on_domain` is true. |
-| `IncludePaths` | `[]string` | `nil` | Regex patterns for paths to include during crawling. |
-| `ExcludePaths` | `[]string` | `nil` | Regex patterns for paths to exclude during crawling. |
-| `CustomHeaders` | `map[string]string` | `nil` | Custom HTTP headers to send with each request. |
+| `IncludePaths` | `\[\]string` | `nil` | Regex patterns for paths to include during crawling. |
+| `ExcludePaths` | `\[\]string` | `nil` | Regex patterns for paths to exclude during crawling. |
+| `CustomHeaders` | `map\[string\]string` | `nil` | Custom HTTP headers to send with each request. |
 | `RequestTimeout` | `time.Duration` | `30000ms` | Timeout for individual HTTP requests (in milliseconds when serialized). |
 | `RateLimitMs` | `*uint64` | `nil` | Per-domain rate limit in milliseconds. When set, enforces a minimum delay between requests to the same domain. Defaults to 200ms when `nil`. |
 | `MaxRedirects` | `int` | `10` | Maximum number of redirects to follow. |
 | `RetryCount` | `int` | `0` | Number of retry attempts for failed requests. |
-| `RetryCodes` | `[]uint16` | `nil` | HTTP status codes that should trigger a retry. |
+| `RetryCodes` | `\[\]uint16` | `nil` | HTTP status codes that should trigger a retry. |
 | `CookiesEnabled` | `bool` | `false` | Whether to enable cookie handling. |
 | `Auth` | `*AuthConfig` | `nil` | Authentication configuration. |
 | `MaxBodySize` | `*int` | `nil` | Maximum response body size in bytes. |
-| `RemoveTags` | `[]string` | `nil` | CSS selectors for tags to remove from HTML before processing. |
+| `RemoveTags` | `\[\]string` | `nil` | CSS selectors for tags to remove from HTML before processing. |
 | `Content` | `ContentConfig` | — | Content extraction and conversion configuration. |
 | `MapLimit` | `*int` | `nil` | Maximum number of URLs to return from a map operation. |
 | `MapSearch` | `*string` | `nil` | Search filter for map results (case-insensitive substring match on URLs). |
 | `DownloadAssets` | `bool` | `false` | Whether to download assets (CSS, JS, images, etc.) from the page. |
-| `AssetTypes` | `[]AssetCategory` | `nil` | Filter for asset categories to download. |
+| `AssetTypes` | `\[\]AssetCategory` | `nil` | Filter for asset categories to download. |
 | `MaxAssetSize` | `*int` | `nil` | Maximum size in bytes for individual asset downloads. |
 | `Browser` | `BrowserConfig` | — | Browser configuration. |
 | `Proxy` | `*ProxyConfig` | `nil` | Proxy configuration for HTTP requests. |
-| `UserAgents` | `[]string` | `nil` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
+| `UserAgents` | `\[\]string` | `nil` | List of user-agent strings for rotation. If non-empty, overrides `user_agent`. |
 | `CaptureScreenshot` | `bool` | `false` | Whether to capture a screenshot when using the browser. |
 | `FollowDocumentUrls` | `bool` | `false` | Re-enqueue discovered `LinkType.Document` URLs into the crawl frontier so the crawl follows links *from* document pages (PDFs, etc.) as it would from HTML pages. Default: `false` (documents terminate at materialisation). |
 | `DocumentUrlDepth` | `*uint32` | `nil` | Maximum document-depth (from the seed URL through document links only) when `follow_document_urls` is true. `nil` means inherit `max_depth`. Independent of `max_depth`: a document URL is enqueued only if BOTH the outer `max_depth` and (if set) `document_url_depth` permit it. |
 | `DownloadDocuments` | `bool` | `true` | Whether to download non-HTML documents (PDF, DOCX, images, code, etc.) instead of skipping them. |
 | `DocumentMaxSize` | `*int` | `nil` | Maximum size in bytes for document downloads. Defaults to 50 MB. |
-| `DocumentMimeTypes` | `[]string` | `nil` | Allowlist of MIME types to download. If empty, uses built-in defaults. |
+| `DocumentMimeTypes` | `\[\]string` | `nil` | Allowlist of MIME types to download. If empty, uses built-in defaults. |
 | `WarcOutput` | `*string` | `nil` | Path to write WARC output. If `nil`, WARC output is disabled. |
 | `BrowserProfile` | `*string` | `nil` | Named browser profile for persistent sessions (cookies, localStorage). |
 | `SaveBrowserProfile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
@@ -606,10 +606,10 @@ The result of crawling a single page during a crawl operation.
 | `Html` | `string` | — | The HTML body of the response. |
 | `BodySize` | `int` | — | The size of the response body in bytes. |
 | `Metadata` | `PageMetadata` | — | Extracted metadata from the page. |
-| `Links` | `[]LinkInfo` | `nil` | Links found on the page. |
-| `Images` | `[]ImageInfo` | `nil` | Images found on the page. |
-| `Feeds` | `[]FeedInfo` | `nil` | Feed links found on the page. |
-| `JsonLd` | `[]JsonLdEntry` | `nil` | JSON-LD entries found on the page. |
+| `Links` | `\[\]LinkInfo` | `nil` | Links found on the page. |
+| `Images` | `\[\]ImageInfo` | `nil` | Images found on the page. |
+| `Feeds` | `\[\]FeedInfo` | `nil` | Feed links found on the page. |
+| `JsonLd` | `\[\]JsonLdEntry` | `nil` | JSON-LD entries found on the page. |
 | `Depth` | `int` | — | The depth of this page from the start URL. |
 | `StayedOnDomain` | `bool` | — | Whether this page is on the same domain as the start URL. |
 | `WasSkipped` | `bool` | — | Whether this page was skipped (binary or PDF content). |
@@ -629,12 +629,12 @@ The result of a multi-page crawl operation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Pages` | `[]CrawlPageResult` | `nil` | The list of crawled pages. |
+| `Pages` | `\[\]CrawlPageResult` | `nil` | The list of crawled pages. |
 | `FinalUrl` | `string` | — | The final URL after following redirects. |
 | `RedirectCount` | `int` | — | The number of redirects followed. |
 | `WasSkipped` | `bool` | — | Whether any page was skipped during crawling. |
 | `Error` | `*string` | `nil` | An error message, if the crawl encountered an issue. |
-| `Cookies` | `[]CookieInfo` | `nil` | Cookies collected during the crawl. |
+| `Cookies` | `\[\]CookieInfo` | `nil` | Cookies collected during the crawl. |
 | `StayedOnDomain` | `bool` | — | Whether all crawled pages stayed on the same domain as the start URL. |
 | `BrowserUsed` | `bool` | — | Whether the browser fallback was used for any page in this crawl. |
 
@@ -704,7 +704,7 @@ skipping the resource.
 | `Size` | `int` | — | Size of the document in bytes. |
 | `Filename` | `*string` | `nil` | Filename extracted from Content-Disposition or URL path. |
 | `ContentHash` | `string` | — | SHA-256 hex digest of the content. |
-| `Headers` | `map[string]string` | `nil` | Selected response headers. |
+| `Headers` | `map\[string\]string` | `nil` | Selected response headers. |
 
 ---
 
@@ -789,7 +789,7 @@ Result of executing a sequence of page interaction actions.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `ActionResults` | `[]ActionResult` | `nil` | Results from each executed action. |
+| `ActionResults` | `\[\]ActionResult` | `nil` | Results from each executed action. |
 | `FinalHtml` | `string` | — | Final page HTML after all actions completed. |
 | `FinalUrl` | `string` | — | Final page URL (may have changed due to navigation). |
 
@@ -827,7 +827,7 @@ The result of a map operation, containing discovered URLs.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `Urls` | `[]SitemapUrl` | `nil` | The list of discovered URLs. |
+| `Urls` | `\[\]SitemapUrl` | `nil` | The list of discovered URLs. |
 
 ---
 
@@ -839,9 +839,9 @@ Rich markdown conversion result from HTML processing.
 |-------|------|---------|-------------|
 | `Content` | `string` | — | Converted markdown text. |
 | `DocumentStructure` | `*interface{}` | `nil` | Structured document tree with semantic nodes. |
-| `Tables` | `[]interface{}` | `nil` | Extracted tables with structured cell data. |
-| `Warnings` | `[]string` | `nil` | Non-fatal processing warnings. |
-| `Citations` | `bool` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `Tables` | `\[\]interface{}` | `nil` | Extracted tables with structured cell data. |
+| `Warnings` | `\[\]string` | `nil` | Non-fatal processing warnings. |
+| `Citations` | `bool` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `\[N\]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
 | `FitContent` | `*string` | `nil` | Content-filtered markdown optimized for LLM consumption. |
 
 ---
@@ -872,7 +872,7 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 | `OgLocale` | `*string` | `nil` | Open Graph locale. |
 | `OgVideo` | `*string` | `nil` | Open Graph video URL. |
 | `OgAudio` | `*string` | `nil` | Open Graph audio URL. |
-| `OgLocaleAlternates` | `*[]string` | `nil` | Open Graph locale alternates. |
+| `OgLocaleAlternates` | `*\[\]string` | `nil` | Open Graph locale alternates. |
 | `TwitterCard` | `*string` | `nil` | Twitter card type. |
 | `TwitterTitle` | `*string` | `nil` | Twitter title. |
 | `TwitterDescription` | `*string` | `nil` | Twitter description. |
@@ -891,9 +891,9 @@ Metadata extracted from an HTML page's `<meta>` tags and `<title>` element.
 | `DcLanguage` | `*string` | `nil` | Dublin Core language. |
 | `DcRights` | `*string` | `nil` | Dublin Core rights. |
 | `Article` | `*ArticleMetadata` | `nil` | Article metadata from `article:*` Open Graph tags. |
-| `Hreflangs` | `*[]HreflangEntry` | `nil` | Hreflang alternate links. |
-| `Favicons` | `*[]FaviconInfo` | `nil` | Favicon and icon links. |
-| `Headings` | `*[]HeadingInfo` | `nil` | Heading elements (h1-h6). |
+| `Hreflangs` | `*\[\]HreflangEntry` | `nil` | Hreflang alternate links. |
+| `Favicons` | `*\[\]FaviconInfo` | `nil` | Favicon and icon links. |
+| `Headings` | `*\[\]HeadingInfo` | `nil` | Heading elements (h1-h6). |
 | `WordCount` | `*int` | `nil` | Computed word count of the page body text. |
 
 ---
@@ -938,10 +938,10 @@ The result of a single-page scrape operation.
 | `Html` | `string` | — | The HTML body of the response. |
 | `BodySize` | `int` | — | The size of the response body in bytes. |
 | `Metadata` | `PageMetadata` | — | Extracted metadata from the page. |
-| `Links` | `[]LinkInfo` | `nil` | Links found on the page. |
-| `Images` | `[]ImageInfo` | `nil` | Images found on the page. |
-| `Feeds` | `[]FeedInfo` | `nil` | Feed links found on the page. |
-| `JsonLd` | `[]JsonLdEntry` | `nil` | JSON-LD entries found on the page. |
+| `Links` | `\[\]LinkInfo` | `nil` | Links found on the page. |
+| `Images` | `\[\]ImageInfo` | `nil` | Images found on the page. |
+| `Feeds` | `\[\]FeedInfo` | `nil` | Feed links found on the page. |
+| `JsonLd` | `\[\]JsonLdEntry` | `nil` | JSON-LD entries found on the page. |
 | `IsAllowed` | `bool` | — | Whether the URL is allowed by robots.txt. |
 | `CrawlDelay` | `*uint64` | `nil` | The crawl delay from robots.txt, in seconds. |
 | `NoindexDetected` | `bool` | — | Whether a noindex directive was detected. |
@@ -952,7 +952,7 @@ The result of a single-page scrape operation.
 | `DetectedCharset` | `*string` | `nil` | The detected character set encoding. |
 | `AuthHeaderSent` | `bool` | — | Whether an authentication header was sent with the request. |
 | `ResponseMeta` | `*ResponseMeta` | `nil` | Response metadata extracted from HTTP headers. |
-| `Assets` | `[]DownloadedAsset` | `nil` | Downloaded assets from the page. |
+| `Assets` | `\[\]DownloadedAsset` | `nil` | Downloaded assets from the page. |
 | `JsRenderHint` | `bool` | — | Whether the page content suggests JavaScript rendering is needed. |
 | `BrowserUsed` | `bool` | — | Whether the browser fallback was used to fetch this page. |
 | `Markdown` | `*MarkdownResult` | `nil` | Markdown conversion of the page content. |

@@ -191,7 +191,7 @@ jobs:
               run: |
                   mkdir -p target/release e2e/rust/target/release
                   mkdir -p e2e/c/ffi/include e2e/c/ffi/lib
-                  mkdir -p crates/kreuzcrawl-ffi/include packages/go/include
+                  mkdir -p crates/kreuzcrawl-ffi/include packages/go/include packages/go/internal/ffi
                   # actions/upload-artifact@v7 preserves directory structure for multi-path
                   # uploads, so files land under ffi-artifacts/target/release/ etc.
                   # Fall back to flat layout for safety.
@@ -206,12 +206,15 @@ jobs:
                   for src in ffi-artifacts/crates/kreuzcrawl-ffi/include/kreuzcrawl.h ffi-artifacts/kreuzcrawl.h; do
                     [ -e "$src" ] && cp "$src" crates/kreuzcrawl-ffi/include/ || true
                     [ -e "$src" ] && cp "$src" e2e/c/ffi/include/ || true
-                    # packages/go/binding.go declares `#cgo CFLAGS: -I${SRCDIR}/include`
-                    # ($SRCDIR = packages/go/), so the cgo include search path needs the
-                    # header at packages/go/include/kreuzcrawl.h. The Go E2E build fails
-                    # at compile time with "fatal error: internal/ffi/kreuzcrawl.h: No
-                    # such file or directory" without this copy.
+                    # packages/go/binding.go (alef-generated) declares
+                    # `#cgo CFLAGS: -I${SRCDIR}/include` so cgo needs the header at
+                    # packages/go/include/kreuzcrawl.h. packages/go/ffi.go (hand-written
+                    # platform split) additionally declares
+                    # `#cgo CFLAGS: -I${SRCDIR}/internal/ffi` and
+                    # `#include "internal/ffi/kreuzcrawl.h"`, so the header is also needed
+                    # at packages/go/internal/ffi/kreuzcrawl.h. Stage to both paths.
                     [ -e "$src" ] && cp "$src" packages/go/include/ || true
+                    [ -e "$src" ] && cp "$src" packages/go/internal/ffi/ || true
                   done
                   # The Makefile's `$(FFI_DIR)/include/kreuzcrawl.h: download_ffi.sh` rule
                   # re-downloads if the header is older than the script. Touch the staged
@@ -385,11 +388,11 @@ jobs:
                   LD_LIBRARY_PATH: ${{ env.LD_LIBRARY_PATH }}
                   DYLD_LIBRARY_PATH: ${{ env.DYLD_LIBRARY_PATH || '' }}
                   KREUZCRAWL_BUILD: "1"
-                  # Suite-wide SSRF override so fixtures pointed at the mock-server's
-                  # loopback URL are accepted. Per-language harnesses also set this
-                  # (python conftest.py, e2e/rust/.cargo/config.toml [env], etc.) but
-                  # the dotnet, dart, and rust runners don't inherit cargo's [env] /
-                  # the workspace harness layer, so the variable must be exported at
-                  # the workflow step level for them. Mirrors the same setting in the
-                  # test_apps:smoke task chain.
-                  KREUZCRAWL_ALLOW_PRIVATE_NETWORK: "true"
+                  # NOTE: do NOT set KREUZCRAWL_ALLOW_PRIVATE_NETWORK here. Every
+                  # e2e harness applies the setdefault from [crates.e2e.env] in
+                  # alef.toml (python conftest.py, node tests/*.test.ts via ??=,
+                  # rust e2e/rust/.cargo/config.toml [env], go main_test.go,
+                  # zig build.zig, swift/dart/java/kotlin TestMain blocks, etc.).
+                  # Forcing it at the workflow level breaks the hand-written SSRF
+                  # rejection tests (e2e/{node,rust}/tests/ssrf*) that must
+                  # observe deny_private=true.

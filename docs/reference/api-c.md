@@ -2,7 +2,7 @@
 title: "C API Reference"
 ---
 
-## C API Reference <span class="version-badge">v0.3.0-rc.72</span>
+## C API Reference <span class="version-badge">v0.3.0-rc.73</span>
 
 ### Functions
 
@@ -434,9 +434,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `preprocessing_preset` | `const char*` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
 | `remove_navigation` | `bool` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
 | `remove_forms` | `bool` | `true` | Remove form elements. Default: `true`. |
-| `strip_tags` | `const char**` | `NULL` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `strip_tags` | `const char**` | `NULL` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `\["noscript"\]`. |
 | `preserve_tags` | `const char**` | `NULL` | HTML tag names to preserve as raw HTML in output. |
-| `exclude_selectors` | `const char**` | `NULL` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `exclude_selectors` | `const char**` | `NULL` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `\[attribute\]`, compound selectors. Example: `\[".cookie-banner", "#ad-container", "\[role='complementary'\]"\]` |
 | `skip_images` | `bool` | `false` | Skip image elements in output. Default: `false`. |
 | `max_depth` | `uintptr_t*` | `NULL` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
 | `wrap` | `bool` | `false` | Enable line wrapping. Default: `false`. |
@@ -818,7 +818,7 @@ Rich markdown conversion result from HTML processing.
 | `document_structure` | `void**` | `NULL` | Structured document tree with semantic nodes. |
 | `tables` | `void**` | `NULL` | Extracted tables with structured cell data. |
 | `warnings` | `const char**` | `NULL` | Non-fatal processing warnings. |
-| `citations` | `bool` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `citations` | `bool` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `\[N\]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
 | `fit_content` | `const char**` | `NULL` | Content-filtered markdown optimized for LLM consumption. |
 
 ---

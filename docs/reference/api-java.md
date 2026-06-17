@@ -2,7 +2,7 @@
 title: "Java API Reference"
 ---
 
-## Java API Reference <span class="version-badge">v0.3.0-rc.72</span>
+## Java API Reference <span class="version-badge">v0.3.0-rc.73</span>
 
 ### Functions
 
@@ -434,9 +434,9 @@ html-to-markdown-rs as the conversion engine for all formats
 | `preprocessingPreset` | `String` | `"standard"` | Preprocessing aggressiveness: `"minimal"`, `"standard"` (default), `"aggressive"`. - Minimal: only scripts/styles removed. - Standard: also removes nav, nav-hinted headers/footers/asides, forms. - Aggressive: removes all footers/asides unconditionally. |
 | `removeNavigation` | `boolean` | `true` | Remove navigation elements (nav, breadcrumbs, menus). Default: `true`. |
 | `removeForms` | `boolean` | `true` | Remove form elements. Default: `true`. |
-| `stripTags` | `List<String>` | `Collections.emptyList()` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `["noscript"]`. |
+| `stripTags` | `List<String>` | `Collections.emptyList()` | HTML tag names to strip (render children only, remove the tag wrapper). Default: `\["noscript"\]`. |
 | `preserveTags` | `List<String>` | `Collections.emptyList()` | HTML tag names to preserve as raw HTML in output. |
-| `excludeSelectors` | `List<String>` | `Collections.emptyList()` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `[attribute]`, compound selectors. Example: `[".cookie-banner", "#ad-container", "[role='complementary']"]` |
+| `excludeSelectors` | `List<String>` | `Collections.emptyList()` | CSS selectors for elements to exclude entirely (element + all content). Unlike `strip_tags` (which removes the wrapper but keeps children), excluded elements and all descendants are dropped. Supports CSS selectors: `.class`, `#id`, `\[attribute\]`, compound selectors. Example: `\[".cookie-banner", "#ad-container", "\[role='complementary'\]"\]` |
 | `skipImages` | `boolean` | `false` | Skip image elements in output. Default: `false`. |
 | `maxDepth` | `Optional<Long>` | `null` | Max DOM traversal depth. Prevents stack overflow on deeply nested HTML. |
 | `wrap` | `boolean` | `false` | Enable line wrapping. Default: `false`. |
@@ -818,7 +818,7 @@ Rich markdown conversion result from HTML processing.
 | `documentStructure` | `Optional<Object>` | `null` | Structured document tree with semantic nodes. |
 | `tables` | `List<Object>` | `Collections.emptyList()` | Extracted tables with structured cell data. |
 | `warnings` | `List<String>` | `Collections.emptyList()` | Non-fatal processing warnings. |
-| `citations` | `boolean` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `[N]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
+| `citations` | `boolean` | — | Whether citation conversion was applied and produced at least one reference. `true` when the markdown contained inline links that were converted to numbered citation references. The converted content (with `\[N\]` markers) is available in `content`; the full reference list is accessible via `generate_citations` if needed separately. |
 | `fitContent` | `Optional<String>` | `null` | Content-filtered markdown optimized for LLM consumption. |
 
 ---

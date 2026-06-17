@@ -4,14 +4,33 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.73] - 2026-06-17
+
+### Changed
+
+- **Bump alef pin to 0.25.24** to land cross-language consumer fixes batched between rc.72 and rc.73:
+  - `e2e/codegen/dart`: `_setEnv` helper now passes `setenv(key, value, 1)` (force overwrite) and throws on non-zero return. Previously `overwrite=0` silently no-oped when the env var was pre-set, making `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true` invisible to the Rust FFI dylib's `std::env::var()` and failing all 166 dart e2e SSRF tests with `denied by SSRF policy: loopback`.
+  - `e2e/codegen/wasm`: `render_setup` now emits the `[crates.e2e.env]` block in generated `setup.ts` (was omitted when the env feature landed for all other languages in be2426f18), unblocking the 155-test wasm e2e suite that failed identically to dart.
+  - `e2e/codegen/brew`: `run_tests.sh` preflight requires the parameterized binary name only (`command -v kreuzcrawl`) instead of OR'ing with the parent project's sibling CLI (`kreuzberg`), which previously short-circuited to OK when the sibling was installed.
+  - `e2e/codegen/c`: `download_ffi.sh` honors `KREUZCRAWL_FFI_LOCAL_DIR` env override to skip the GH release curl when CI stages a locally-built FFI artifact (race-free on tag-push).
+  - `backends/java`: NativeLib loader RID logic aligned to `go_java_platform()` naming (`macos-arm64`, not `osx-aarch64`) so the published JAR's staged natives load on macOS-arm64 clients.
+  - `scaffold/elixir`: rustler NIF Cargo.toml `[features]` block is now parameterizable via `[crates.elixir] nif_features`; set to `[]` for kreuzcrawl so the NIF no longer forwards nonexistent `config/download/serde` features to the core crate.
+  - `backends/rustler`: emit blank lines between consecutive `defp` clauses so `mix format --check-formatted` passes on the generated `packages/elixir/lib/kreuzcrawl.ex`.
+
+### Fixed
+
+- **(ci-e2e workflow): stage FFI header at `packages/go/internal/ffi/` alongside `packages/go/include/`.** The hand-written `packages/go/ffi.go` (non-windows split) declares `#cgo CFLAGS: -I${SRCDIR}/internal/ffi` and `#include "internal/ffi/kreuzcrawl.h"`, while the alef-generated `packages/go/binding.go` uses `packages/go/include/`. Both compile together so cgo needs the header at both paths; staging only `packages/go/include/` caused `fatal error: internal/ffi/kreuzcrawl.h: No such file or directory` and broke the go E2E job. Stage to both.
+- **(ci-e2e workflow): remove workflow-level `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true`.** The per-language e2e harness already injects this from alef.toml `[crates.e2e.env]`, so the workflow override was redundant — but it forced the env into the hand-written SSRF rejection tests (`e2e/node/tests/ssrf.test.ts`, `e2e/rust/tests/ssrf_test.rs`) which need to observe default `deny_private=true` policy. Drop the workflow line; hand-written rejection tests now explicitly clear the env at start of test so they're correct regardless of harness state.
+- **(publish workflow): add `upload-elixir-release`, `upload-php-pie-release`, `upload-swift-release` to `release-finalize` and `announce-discord` needs.** Previously these jobs weren't in the `needs:` chain, so the `!contains(needs.*.result, 'failure')` gate didn't observe their failures — Finalize could complete or skip incorrectly. Tighten the chain so any upload failure now blocks Finalize.
+
 ## [0.3.0-rc.72] - 2026-06-16
 
 ### Changed
 
 - **Bump alef pin to 0.25.22** to pick up three downstream consumer-blocking fixes surfaced while running `task test-apps:smoke` against published rc.71 bindings:
-    - `backends/go::download_ffi`: self-truncating dylib copy fixed; pre-fix, the published kreuzcrawl-go module wrote a 0-byte `libkreuzcrawl_ffi.dylib` to the module cache and every cgo link failed with `ld: file is empty`.
-    - `bin_cli::all`: `v__ALEF_SWIFT_VERSION__` placeholder is re-applied after scaffold emission so SwiftPM consumers using `.package(url:..., from:"0.3.0-rc.72")` resolve the binaryTarget URL correctly (rc.71's `Package.swift` at the v0.3.0-rc.71 git tag retained the unsubstituted placeholder, breaking the swift_e2e smoke).
-    - `e2e/codegen/brew::run_tests`: emits a CLI preflight check so the absence of a formula install surfaces as one `brew install …` instruction rather than a cascade of `command not found` lines from every category script.
+  - `backends/go::download_ffi`: self-truncating dylib copy fixed; pre-fix, the published kreuzcrawl-go module wrote a 0-byte `libkreuzcrawl_ffi.dylib` to the module cache and every cgo link failed with `ld: file is empty`.
+  - `bin_cli::all`: `v__ALEF_SWIFT_VERSION__` placeholder is re-applied after scaffold emission so SwiftPM consumers using `.package(url:..., from:"0.3.0-rc.72")` resolve the binaryTarget URL correctly (rc.71's `Package.swift` at the v0.3.0-rc.71 git tag retained the unsubstituted placeholder, breaking the swift_e2e smoke).
+  - `e2e/codegen/brew::run_tests`: emits a CLI preflight check so the absence of a formula install surfaces as one `brew install …` instruction rather than a cascade of `command not found` lines from every category script.
 - **Add `kotlin_android` to `[crates.e2e].languages` and `[crates.e2e.registry.packages]`.** rc.60 to rc.71 saw no regeneration of `test_apps/kotlin_android/` because registry mode silently skipped languages not listed under `[crates.e2e].languages`, leaving the directory stale and missing `settings.gradle.kts`. Without that file Gradle defaults to the Plugin Portal alone, where AGP 8.13.0 isn't published — `Plugin [id: 'com.android.library', version: '8.13.0'] was not found`. Fresh registry regen against alef 0.25.22 emits the complete kotlin_android consumer project including settings.gradle.kts with the google() / mavenCentral() / gradlePluginPortal() chain.
 
 ### Fixed
