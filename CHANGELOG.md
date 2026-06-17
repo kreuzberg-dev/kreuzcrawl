@@ -4,6 +4,10 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Regression test: `max_depth=1` returns root + children (rc.62 regression).** Added `test_max_depth_one_returns_root_plus_children` to `crates/kreuzcrawl/tests/test_frontier_dedup.rs`. This locks in the behavior fixed in rc.71 (`#[serde(default = "SsrfPolicy::from_env")]`): a `CrawlConfig` deserialized from JSON with `max_depth=1` and `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=true` must return root + all depth-1 children (3 pages). Prior to rc.71, `#[serde(default)]` on `CrawlConfig.ssrf` called `SsrfPolicy::default()` (deny_private: true), causing `discover_and_enqueue_links` to SSRF-reject every loopback child URL and return only 1 page. The Zig e2e test `cache_miss_fresh_fetch` covers the same invariant end-to-end.
+
 ## [0.3.0-rc.73] - 2026-06-17
 
 ### Changed
