@@ -35,6 +35,7 @@ pub(crate) mod mcp;
 mod native_browser;
 pub mod net;
 mod normalize;
+pub mod proxy;
 mod pruning;
 #[cfg(feature = "ai")]
 pub(crate) mod research;
@@ -83,6 +84,7 @@ pub use kreuzcrawl_browser::adapter::{NativeBrowserExecutor, NativeBrowserExecut
 #[cfg(feature = "mcp")]
 pub use mcp::{start_mcp_server, start_mcp_server_with_config};
 pub use net::ssrf::{HostMatcher, SsrfError, SsrfPolicy, validate_url};
+pub use proxy::{ProxyProvider, StaticProxyProvider};
 #[cfg(not(target_arch = "wasm32"))]
 pub use sink::{EventSink, MultiEventSink, TracingEventSink};
 #[cfg(feature = "telemetry-init")]

@@ -49,6 +49,7 @@ pub struct CrawlEngineBuilder {
     browser_pool: Option<Arc<crate::browser_pool::BrowserPool>>,
     #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
     native_executor: Option<Arc<kreuzcrawl_browser::adapter::NativeBrowserExecutor>>,
+    proxy_provider: Option<Arc<dyn crate::ProxyProvider>>,
 }
 
 impl CrawlEngineBuilder {
@@ -70,6 +71,7 @@ impl CrawlEngineBuilder {
             browser_pool: None,
             #[cfg(all(not(target_arch = "wasm32"), feature = "browser-native"))]
             native_executor: None,
+            proxy_provider: None,
         }
     }
 
@@ -197,6 +199,20 @@ impl CrawlEngineBuilder {
         self
     }
 
+    /// Inject a [`crate::ProxyProvider`] for per-request proxy rotation on the
+    /// reqwest HTTP path. Stored on the resolved [`CrawlConfig`] as
+    /// `proxy_provider`; takes precedence over the static
+    /// `CrawlConfig::proxy` value when both are set.
+    ///
+    /// Browser-backend proxies (`CrawlConfig::browser::proxy`) still read the
+    /// static `ProxyConfig` value — provider rotation only applies to the HTTP
+    /// fetcher.
+    #[cfg_attr(alef, alef(skip))]
+    pub fn with_proxy_provider(mut self, provider: Arc<dyn crate::ProxyProvider>) -> Self {
+        self.proxy_provider = Some(provider);
+        self
+    }
+
     /// Build the [`CrawlEngine`] with the configured options.
     ///
     /// Config validation is deferred to the first operation (scrape, crawl, etc.) so that
@@ -213,6 +229,10 @@ impl CrawlEngineBuilder {
         #[cfg(feature = "browser")]
         if let Some(pool) = self.browser_pool {
             config.browser_pool = Some(pool);
+        }
+
+        if let Some(provider) = self.proxy_provider {
+            config.proxy_provider = Some(provider);
         }
 
         let rate_limit_ms = config.rate_limit_ms.unwrap_or(200);

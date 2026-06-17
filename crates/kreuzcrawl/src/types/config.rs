@@ -426,6 +426,12 @@ pub struct CrawlConfig {
     #[serde(skip)]
     #[cfg_attr(alef, alef(skip))]
     pub browser_pool: Option<std::sync::Arc<crate::browser_pool::BrowserPool>>,
+    /// Optional [`crate::ProxyProvider`] for per-request proxy rotation on the
+    /// reqwest HTTP path. Takes precedence over the static [`ProxyConfig`] in
+    /// `proxy` when set. Not serializable — Rust callers inject at runtime.
+    #[serde(skip)]
+    #[cfg_attr(alef, alef(skip))]
+    pub proxy_provider: Option<std::sync::Arc<dyn crate::ProxyProvider>>,
     /// Shared browser session pool for session affinity (not serializable).
     /// When set alongside `session_affinity: true` in BrowserConfig, the pool
     /// is used to cache Pages by (domain, proxy) so cookies and fingerprint
@@ -483,6 +489,7 @@ impl Default for CrawlConfig {
             browser_pool: None,
             #[cfg(feature = "browser")]
             browser_session_pool: None,
+            proxy_provider: None,
         }
     }
 }

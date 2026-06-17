@@ -360,9 +360,23 @@ pub(crate) fn build_client(config: &CrawlConfig) -> Result<reqwest::Client, Craw
         builder = builder.cookie_store(true);
     }
 
-    // Proxy support (not available on wasm)
+    // Proxy support (not available on wasm). A `proxy_provider` takes precedence
+    // over the static `proxy` value: reqwest calls into the provider per-request
+    // via `Proxy::custom`, enabling per-host rotation.
     #[cfg(not(target_arch = "wasm32"))]
-    if let Some(ref proxy_config) = config.proxy {
+    if let Some(provider) = config.proxy_provider.clone() {
+        let proxy = reqwest::Proxy::custom(move |url| {
+            let host = url.host_str().unwrap_or("");
+            let cfg = provider.next_proxy(host)?;
+            let mut parsed = reqwest::Url::parse(&cfg.url).ok()?;
+            if let (Some(user), Some(pass)) = (&cfg.username, &cfg.password) {
+                let _ = parsed.set_username(user);
+                let _ = parsed.set_password(Some(pass));
+            }
+            Some(parsed)
+        });
+        builder = builder.proxy(proxy);
+    } else if let Some(ref proxy_config) = config.proxy {
         let mut proxy = reqwest::Proxy::all(&proxy_config.url)
             .map_err(|e| CrawlError::InvalidConfig(format!("invalid proxy URL: {e}")))?;
         if let (Some(user), Some(pass)) = (&proxy_config.username, &proxy_config.password) {

@@ -7,6 +7,7 @@ All notable changes to kreuzcrawl are documented here.
 ### Added
 
 - **Public substrate parsers.** `kreuzcrawl::robots` and `kreuzcrawl::sitemap` are now `pub mod`. `parse_robots_txt`, `is_path_allowed`, `RobotsRules` (and its fields), `parse_sitemap_xml`, `parse_sitemap_index`, `is_sitemap_index` are public — usable from out-of-crate code without spinning the engine. Async fetch helpers remain crate-internal (they rely on engine HTTP/config). Substrate-only integration test at `crates/kreuzcrawl/tests/substrate_only_crawl.rs` locks in the acceptance criterion: a developer can crawl a small site with only kreuzcrawl, no `kreuzberg-cloud` or `crawl-traits` deps.
+- **`ProxyProvider` trait + `StaticProxyProvider` baseline.** New extension point for per-request proxy rotation on the reqwest HTTP fetch path. Cloud impls (e.g. `BrightDataProxyProvider`) plug in via `CrawlEngineBuilder::with_proxy_provider(Arc<dyn ProxyProvider>)`. Wired into `http::build_client` as `reqwest::Proxy::custom` — provider is called per request with the target host; returning `None` short-circuits to a direct connection. Takes precedence over the static `CrawlConfig::proxy` value; browser-backend proxies (`config.browser.proxy`) still read the static value (per-request browser-relaunch is out of scope). Provider field on `CrawlConfig` is `#[serde(skip)]` + `#[cfg_attr(alef, alef(skip))]` so language bindings are unaffected.
 
 ### Changed
 
