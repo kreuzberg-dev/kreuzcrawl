@@ -26,24 +26,17 @@
 
 package dev.kreuzberg.kreuzcrawl.android
 
-/** Rich markdown conversion result from HTML processing. */
-data class MarkdownResult(
-    /** Converted markdown text. */
-    val content: String = "",
-    /** Structured document tree with semantic nodes. */
-    val documentStructure: Any? = null,
-    /** Extracted tables with structured cell data. */
-    val tables: List<Any> = emptyList(),
-    /** Non-fatal processing warnings. */
-    val warnings: List<String> = emptyList(),
-    /**
-     * Whether citation conversion was applied and produced at least one reference.
-     *
-     * `true` when the markdown contained inline links that were converted to numbered citation
-     * references. The converted content (with `[N]` markers) is available in `content`; the full
-     * reference list is accessible via `generate_citations` if needed separately.
-     */
-    val citations: Boolean = false,
-    /** Content-filtered markdown optimized for LLM consumption. */
-    val fitContent: String? = null,
-)
+/** SSRF validation error. */
+sealed class SsrfError(message: String) : Exception(message) {
+    data class DeniedByPolicy(val reason: String) : SsrfError("denied by SSRF policy: {reason}")
+
+    object NotOnAllowlist : SsrfError("host not on allowlist")
+
+    data class DnsResolutionFailed(val field0: String) : SsrfError("dns resolution failed: $field0")
+
+    data class InvalidUrl(val field0: String) : SsrfError("invalid URL: $field0")
+
+    data class DisallowedScheme(val field0: String) : SsrfError("disallowed scheme: $field0")
+
+    object TooManyRedirects : SsrfError("too many redirects")
+}

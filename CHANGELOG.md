@@ -4,14 +4,18 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.74] - 2026-06-17
+
 ### Added
 
 - **`SsrfPolicy` exposed as a DTO in every binding (Phase 1).** `deny_private` and `max_redirects` are now settable from all 14 language bindings. `allowlist` (requires `HostMatcher` FFI form decision) and `scheme_allowlist` (`HashSet<&'static str>` is FFI-hostile) remain `alef(skip)` for a follow-up pass. WASM e2e suite unblocked: WASM lacks `std::env::var`, so `SsrfPolicy::from_env()` always returned `deny_private=true`; generated WASM e2e tests now set `ssrf.denyPrivate = false` on every engine config directly.
 
 ### Changed
 
-- **Bump alef pin to 0.25.26 + unreleased.** Local regen against alef HEAD picks up cross-binding fixes that the previous rc.73 pin (0.25.24) lacked:
-  - `codegen/binding_helpers/lossy_fields.rs` + `backends/php/gen_bindings/helpers/enum_defaults.rs`: skip `binding_excluded` fields in the shared method-body lossy helper AND the PHP enum-tainted From generator. Previously emitted `<field>: Default::default()` for every alef(skip) field BEFORE the trailing `..Default::default()` spread, shadowing `kreuzcrawl::CrawlConfig::default()`'s custom `ssrf: SsrfPolicy::from_env()` with `<SsrfPolicy as Default>::default()` (deny_private=true). This broke `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` for every binding's `Kreuzcrawl::validate()` and PHP's `crawl()`/`scrape()`/etc. The 0.25.26 partial fix only covered the lossy struct conversion helper used for the constructor path; the enum-tainted From-impl path remained broken because CrawlConfig is enum-tainted (browser.mode, content, etc.) and routes through `gen_enum_tainted_from_binding_to_core`. With the combined fix, PHP redirect cluster (9 tests) and PHP SSRF cluster (~45 errors) both stop failing.
+- **Bump alef pin to 0.25.29.** Picks up cross-binding fixes that the previous rc.73 pin (0.25.24) lacked:
+  - `codegen/binding_helpers/lossy_fields.rs` + `backends/php/gen_bindings/helpers/enum_defaults.rs`: skip `binding_excluded` fields in the shared method-body lossy helper AND the PHP enum-tainted From generator. Previously emitted `<field>: Default::default()` for every alef(skip) field BEFORE the trailing `..Default::default()` spread, shadowing `kreuzcrawl::CrawlConfig::default()`'s custom `ssrf: SsrfPolicy::from_env()` with `<SsrfPolicy as Default>::default()` (deny_private=true). This broke `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` for every binding's `Kreuzcrawl::validate()` and PHP's `crawl()`/`scrape()`/etc. PHP redirect cluster (9 tests) and PHP SSRF cluster (~45 errors) both stop failing.
+  - `e2e/codegen/typescript/test_file/args.rs`: WASM e2e arg builder now injects `ssrf.denyPrivate = false` on every engine config (including null-config paths that previously skipped engine instantiation). Unblocks 155 WASM e2e tests.
+  - `backends/kotlin_android`: add `ReturnCount` to generated `@file:Suppress` list. Untagged-enum (serde) sealed-class deserializers with 3+ variants (e.g. `HostMatcher` newly exposed by SsrfPolicy) now pass detekt.
 
 ### Fixed
 
