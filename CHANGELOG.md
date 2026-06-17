@@ -4,6 +4,8 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.76] - 2026-06-17
+
 ### Added
 
 - **Public substrate parsers.** `kreuzcrawl::robots` and `kreuzcrawl::sitemap` are now `pub mod`. `parse_robots_txt`, `is_path_allowed`, `RobotsRules` (and its fields), `parse_sitemap_xml`, `parse_sitemap_index`, `is_sitemap_index` are public — usable from out-of-crate code without spinning the engine. Async fetch helpers remain crate-internal (they rely on engine HTTP/config). Substrate-only integration test at `crates/kreuzcrawl/tests/substrate_only_crawl.rs` locks in the acceptance criterion: a developer can crawl a small site with only kreuzcrawl, no `kreuzberg-cloud` or `crawl-traits` deps.
@@ -12,6 +14,11 @@ All notable changes to kreuzcrawl are documented here.
 ### Changed
 
 - **README: substrate-vs-operational section.** Documents the boundary between kreuzcrawl (substrate: parsers, fetchers, classifiers, baseline trait impls) and `kreuzberg-cloud` (productization: paid IP rotation, tuned WAF fingerprints, authenticated sessions, premium scrapers, scheduling). Lists the existing trait extension points (`Frontier`, `RateLimiter`, `CrawlStore`, `EventEmitter`, `ContentFilter`, `CrawlCache`, `WafClassifier`, `BypassProvider`, `AntibotStrategy`) with their kreuzcrawl baselines and cloud reference impls.
+- **Bump alef pin to 0.25.32.** Picks up cross-binding fixes:
+  - `codegen/binding_helpers`: per-field `Default` fallback when the core type lacks a `Default` impl (alef 0.25.31). Previously the lossy generator emitted `field: Default::default()` for `binding_excluded` fields even when the core struct had no `Default` impl, generating uncompilable bindings for affected types.
+  - `java-backend`: targeted javadoc + suppressions reducing PMD violations from 389 to 22 (alef 0.25.31).
+  - `scaffold/java`: exclude `FinalFieldCouldBeStatic` from the PMD ruleset (alef 0.25.32) — was flagging generated record-style data classes that PMD wanted as static finals.
+  - `backends/pyo3/gen_stubs`: widen visitor kwarg type to accept duck-typed classes (alef 0.25.31).
 
 ## [0.3.0-rc.75] - 2026-06-17
 
