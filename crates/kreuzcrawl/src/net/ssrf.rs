@@ -78,7 +78,7 @@ pub enum SsrfError {
     NotOnAllowlist,
 
     /// DNS resolution failed for hostname.
-    #[error("DNS resolution failed: {0}")]
+    #[error("dns resolution failed: {0}")]
     DnsResolutionFailed(String),
 
     /// Invalid URL format.
