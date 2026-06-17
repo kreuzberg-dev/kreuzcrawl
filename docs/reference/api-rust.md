@@ -522,6 +522,7 @@ Configuration for crawl, scrape, and map operations.
 | `save_browser_profile` | `bool` | `false` | Whether to save changes back to the browser profile on exit. |
 | `ssrf` | `SsrfPolicy` | — | SSRF policy for outbound network requests. Default: deny private networks, allow http/https only, max 5 redirects. Phase 1: `deny_private` and `max_redirects` are exposed to all language bindings. `allowlist` is skipped (see `SsrfPolicy` fields) and will be added in a follow-up when `HostMatcher`'s tagged-enum FFI form is decided. |
 | `dispatch` | `Option<String>` | `None` | Pluggable dispatch components: bypass provider, escalation strategy, retry policy, WAF classifier, domain state, escalation budget, and max_total_attempts. When `None`, the engine uses its built-in defaults (no bypass, `BrowserOnly` strategy, `SimpleRetryPolicy`, built-in WAF classifier, no domain state, unlimited budget, 10 total attempt cap). Rust-only advanced field. Generated language bindings do not expose pluggable dispatch components; language clients use the built-in dispatch defaults configured by the Rust engine. Not serializable — Rust callers construct this at runtime and skip it in TOML/JSON configs. |
+| `proxy_provider` | `Option<String>` | `None` | Optional `ProxyProvider` for per-request proxy rotation on the reqwest HTTP path. Takes precedence over the static `ProxyConfig` in `proxy` when set. Not serializable — Rust callers inject at runtime. |
 
 ##### Methods
 
