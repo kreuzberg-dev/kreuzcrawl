@@ -1,4 +1,25 @@
 //! Sitemap XML parsing and recursive fetching.
+//!
+//! Substrate-level surface for sitemap.xml — usable without the full crawl
+//! engine. The synchronous parsers ([`parse_sitemap_xml`],
+//! [`parse_sitemap_index`], [`is_sitemap_index`]) are public so OSS users
+//! can build their own fetcher on top. The async recursive fetch helpers
+//! (`fetch_sitemap_tree`, `process_sitemap_response`) remain engine-internal
+//! because they depend on the engine's HTTP layer and config; substrate users
+//! supply their own HTTP and call the parsers directly.
+//!
+//! ```
+//! use kreuzcrawl::sitemap::{parse_sitemap_xml, is_sitemap_index};
+//!
+//! let body = r#"<?xml version="1.0"?>
+//! <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+//!   <url><loc>https://example.com/a</loc></url>
+//!   <url><loc>https://example.com/b</loc></url>
+//! </urlset>"#;
+//! assert!(!is_sitemap_index(body));
+//! let urls = parse_sitemap_xml(body);
+//! assert_eq!(urls.len(), 2);
+//! ```
 
 use quick_xml::Reader;
 use quick_xml::XmlVersion;
@@ -10,7 +31,7 @@ use crate::normalize::{resolve_redirect, rewrite_url_host};
 use crate::types::{CrawlConfig, SitemapUrl};
 
 /// Parse a sitemap XML document and extract URL entries.
-pub(crate) fn parse_sitemap_xml(body: &str) -> Vec<SitemapUrl> {
+pub fn parse_sitemap_xml(body: &str) -> Vec<SitemapUrl> {
     let mut urls = Vec::new();
 
     let mut reader = Reader::from_str(body);
@@ -84,7 +105,7 @@ pub(crate) fn parse_sitemap_xml(body: &str) -> Vec<SitemapUrl> {
 }
 
 /// Parse a sitemap index XML document and return the child sitemap URLs.
-pub(crate) fn parse_sitemap_index(body: &str) -> Vec<String> {
+pub fn parse_sitemap_index(body: &str) -> Vec<String> {
     let mut child_urls = Vec::new();
     let mut reader = Reader::from_str(body);
     let mut buf = Vec::new();
@@ -128,7 +149,7 @@ pub(crate) fn parse_sitemap_index(body: &str) -> Vec<String> {
 }
 
 /// Check whether the body looks like a sitemap index (contains `<sitemapindex`).
-pub(crate) fn is_sitemap_index(body: &str) -> bool {
+pub fn is_sitemap_index(body: &str) -> bool {
     body.contains("<sitemapindex") || body.contains("<sitemapindex>")
 }
 

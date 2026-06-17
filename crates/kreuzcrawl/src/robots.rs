@@ -1,12 +1,33 @@
 //! Robots.txt parsing and path-matching logic.
+//!
+//! Substrate-level surface for robots.txt — usable without the full crawl
+//! engine. Parse a body with [`parse_robots_txt`], inspect [`RobotsRules`],
+//! and test paths with [`is_path_allowed`]. The engine integrates these
+//! automatically; this module is exposed so OSS users can build their own
+//! fetcher on top of the same logic the engine uses.
+//!
+//! ```
+//! use kreuzcrawl::robots::{parse_robots_txt, is_path_allowed};
+//!
+//! let body = "User-agent: *\nDisallow: /private\nCrawl-delay: 2";
+//! let rules = parse_robots_txt(body, "kreuzcrawl");
+//! assert!(!is_path_allowed("/private/secret", &rules));
+//! assert!(is_path_allowed("/public", &rules));
+//! assert_eq!(rules.crawl_delay, Some(2));
+//! ```
 
 /// Parsed robots.txt rules for a specific user-agent.
-pub(crate) struct RobotsRules {
-    pub(crate) allow: Vec<String>,
-    pub(crate) disallow: Vec<String>,
-    pub(crate) crawl_delay: Option<u64>,
-    pub(crate) sitemaps: Vec<String>,
-    pub(crate) is_wildcard_block: bool,
+pub struct RobotsRules {
+    /// Explicit allow patterns (prefix match).
+    pub allow: Vec<String>,
+    /// Explicit disallow patterns (prefix match).
+    pub disallow: Vec<String>,
+    /// `Crawl-delay` directive in seconds, if present.
+    pub crawl_delay: Option<u64>,
+    /// Sitemap URLs declared in the file.
+    pub sitemaps: Vec<String>,
+    /// `true` when the matched block is `User-agent: *` with `Disallow: /`.
+    pub is_wildcard_block: bool,
 }
 
 /// A block of rules (allow/disallow/crawl-delay) within a robots.txt file.
@@ -20,7 +41,7 @@ struct RulesBlock {
 /// Parse the body of a robots.txt file and extract rules for the given user-agent.
 ///
 /// Returns the most specific matching rules block, falling back to the wildcard (`*`) block.
-pub(crate) fn parse_robots_txt(body: &str, user_agent: &str) -> RobotsRules {
+pub fn parse_robots_txt(body: &str, user_agent: &str) -> RobotsRules {
     let ua_lower = user_agent.to_lowercase();
 
     // First pass: collect all blocks with their user-agents and rules
@@ -183,7 +204,7 @@ fn robots_path_matches(path: &str, rule: &str) -> bool {
 /// Determine whether the given path is allowed by the robots.txt rules.
 ///
 /// Uses longest-match semantics: the longest matching allow or disallow rule wins.
-pub(crate) fn is_path_allowed(path: &str, rules: &RobotsRules) -> bool {
+pub fn is_path_allowed(path: &str, rules: &RobotsRules) -> bool {
     let has_disallow_rules = !rules.disallow.is_empty();
 
     // Special case: in wildcard blocks, if "Allow: /" coexists with Disallow

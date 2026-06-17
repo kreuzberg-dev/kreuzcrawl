@@ -38,11 +38,11 @@ mod normalize;
 mod pruning;
 #[cfg(feature = "ai")]
 pub(crate) mod research;
-mod robots;
+pub mod robots;
 mod scrape;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod sink;
-mod sitemap;
+pub mod sitemap;
 pub mod telemetry;
 pub(crate) mod tower;
 pub mod traits;
