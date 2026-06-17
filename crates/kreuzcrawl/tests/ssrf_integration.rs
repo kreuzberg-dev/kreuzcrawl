@@ -342,7 +342,64 @@ async fn disallowed_scheme_gopher_refused() {
 }
 
 // ---------------------------------------------------------------------------
-// Test 10: too-many-redirects check in http_fetch via scrape()
+// Test 10 (regression): empty scheme_allowlist normalized to {http, https} by builder
+// ---------------------------------------------------------------------------
+
+/// Regression test: when a binding constructs `SsrfPolicy` via `Default::default()`
+/// in generated FFI glue and does not set `scheme_allowlist` (because the field is
+/// `#[alef(skip)]`), the field arrives as an empty `HashSet`.  Without the
+/// normalization in `CrawlEngineBuilder::build`, every request then fails with
+/// `DisallowedScheme("http")`.
+///
+/// This test builds a `CrawlConfig` with an explicitly empty scheme_allowlist,
+/// runs it through `create_engine` (which uses `CrawlEngineBuilder::build`
+/// internally), and asserts the built engine can successfully scrape an HTTP
+/// URL — proving the allowlist was normalized to {http, https} rather than
+/// left empty.
+#[tokio::test]
+async fn engine_normalizes_empty_scheme_allowlist() {
+    let mock = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string("<html><body>ok</body></html>")
+                .append_header("content-type", "text/html"),
+        )
+        .mount(&mock)
+        .await;
+
+    // Simulate the binding construction path: ssrf policy with empty scheme_allowlist.
+    let mut ssrf = SsrfPolicy {
+        deny_private: false, // allow loopback so only scheme checking is exercised
+        ..SsrfPolicy::default()
+    };
+    ssrf.scheme_allowlist.clear(); // explicitly empty — mirrors Default::default() in FFI glue
+    assert!(
+        ssrf.scheme_allowlist.is_empty(),
+        "precondition: scheme_allowlist must be empty before build"
+    );
+
+    let config = CrawlConfig {
+        ssrf,
+        ..CrawlConfig::default()
+    };
+
+    // create_engine calls CrawlEngineBuilder::build, which must normalize the
+    // empty allowlist to {http, https}.
+    let eng = create_engine(Some(config)).expect("engine build must not fail");
+    let result = scrape(&eng, &mock.uri()).await;
+
+    assert!(
+        result.is_ok(),
+        "empty scheme_allowlist must be normalized to {{http, https}} by builder; got: {:?}",
+        result.err()
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Test 11: too-many-redirects check in http_fetch via scrape()
 // ---------------------------------------------------------------------------
 
 /// When a redirect chain cycles and the ssrf.max_redirects counter is

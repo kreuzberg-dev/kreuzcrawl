@@ -251,6 +251,17 @@ impl CrawlEngineBuilder {
             config.ssrf.deny_private = false;
         }
 
+        // An empty scheme_allowlist is never meaningful caller intent through any
+        // binding: `scheme_allowlist` is `#[serde(skip)]` / `#[alef(skip)]`, so no
+        // binding can populate it deliberately. Empty universally means the
+        // construction path (e.g. `Default::default()` in generated FFI glue) did
+        // not fill it. Treat empty as "use the default allowlist" — symmetric with
+        // the deny_private env override above. Without this, every HTTP/HTTPS
+        // request fails with `disallowed scheme: http`.
+        if config.ssrf.scheme_allowlist.is_empty() {
+            config.ssrf.scheme_allowlist = crate::net::ssrf::default_scheme_allowlist();
+        }
+
         let rate_limit_ms = config.rate_limit_ms.unwrap_or(200);
         #[cfg(not(target_arch = "wasm32"))]
         let ua_rotation = crate::tower::UaRotationLayer::new(config.user_agents.clone());

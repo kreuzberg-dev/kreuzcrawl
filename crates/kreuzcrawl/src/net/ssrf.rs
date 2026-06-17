@@ -140,7 +140,10 @@ fn default_max_redirects() -> u8 {
 /// Default scheme allowlist used when `SsrfPolicy::scheme_allowlist` is omitted from JSON.
 /// Without this, `#[serde(skip)]` would populate the field with `HashSet::default()` (empty)
 /// on round-trip deserialize, causing every URL to fail with `disallowed scheme`.
-fn default_scheme_allowlist() -> HashSet<&'static str> {
+///
+/// Also called by `CrawlEngineBuilder::build` to normalize an empty allowlist that arrived
+/// through a binding construction path (e.g. `Default::default()` in generated FFI glue).
+pub(crate) fn default_scheme_allowlist() -> HashSet<&'static str> {
     let mut set = HashSet::new();
     set.insert("http");
     set.insert("https");
