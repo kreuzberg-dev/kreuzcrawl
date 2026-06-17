@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Information about a link found on a page.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = LinkInfo.Builder.class)
 public record LinkInfo(
@@ -33,12 +34,17 @@ public record LinkInfo(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
-private String text;
+        /** url. */
+        private final String url;
+        /** text. */
+        private final String text;
+        /** linkType. */
         @JsonProperty("link_type")
-private LinkType linkType;
-private String rel;
-private boolean nofollow;
+        private final LinkType linkType;
+        /** rel. */
+        private final String rel;
+        /** nofollow. */
+        private final boolean nofollow;
 
         /** Sets the url field. */
         @JsonProperty("url")

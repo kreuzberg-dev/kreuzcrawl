@@ -18,6 +18,7 @@ import org.jspecify.annotations.Nullable;
  * enabled, it downloads the raw bytes and populates this struct instead of
  * skipping the resource.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = DownloadedDocument.Builder.class)
@@ -40,14 +41,20 @@ public record DownloadedDocument(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
+        /** url. */
+        private final String url;
+        /** mimeType. */
         @JsonProperty("mime_type")
-private String mimeType;
-private long size;
-private String filename;
+        private final String mimeType;
+        /** size. */
+        private final long size;
+        /** filename. */
+        private final String filename;
+        /** contentHash. */
         @JsonProperty("content_hash")
-private String contentHash;
-private Map<String, String> headers;
+        private final String contentHash;
+        /** headers. */
+        private final Map<String, String> headers;
 
         /** Sets the url field. */
         @JsonProperty("url")

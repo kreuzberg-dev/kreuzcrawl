@@ -32,10 +32,14 @@ public record CookieInfo(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String name;
-private String value;
-private String domain;
-private String path;
+        /** name. */
+        private final String name;
+        /** value. */
+        private final String value;
+        /** domain. */
+        private final String domain;
+        /** path. */
+        private final String path;
 
         /** Sets the name field. */
         @JsonProperty("name")

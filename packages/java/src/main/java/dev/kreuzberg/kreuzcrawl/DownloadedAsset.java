@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * A downloaded asset from a page.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = DownloadedAsset.Builder.class)
 public record DownloadedAsset(
@@ -34,16 +35,22 @@ public record DownloadedAsset(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
+        /** url. */
+        private final String url;
+        /** contentHash. */
         @JsonProperty("content_hash")
-private String contentHash;
+        private final String contentHash;
+        /** mimeType. */
         @JsonProperty("mime_type")
-private String mimeType;
-private long size;
+        private final String mimeType;
+        /** size. */
+        private final long size;
+        /** assetCategory. */
         @JsonProperty("asset_category")
-private AssetCategory assetCategory;
+        private final AssetCategory assetCategory;
+        /** htmlTag. */
         @JsonProperty("html_tag")
-private String htmlTag;
+        private final String htmlTag;
 
         /** Sets the url field. */
         @JsonProperty("url")

@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Information about an image found on a page.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ImageInfo.Builder.class)
 public record ImageInfo(
@@ -33,11 +34,16 @@ public record ImageInfo(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
-private String alt;
-private Integer width;
-private Integer height;
-private ImageSource source;
+        /** url. */
+        private final String url;
+        /** alt. */
+        private final String alt;
+        /** width. */
+        private final Integer width;
+        /** height. */
+        private final Integer height;
+        /** source. */
+        private final ImageSource source;
 
         /** Sets the url field. */
         @JsonProperty("url")

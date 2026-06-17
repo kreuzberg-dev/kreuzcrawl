@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * A JSON-LD structured data entry found on a page.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = JsonLdEntry.Builder.class)
 public record JsonLdEntry(
@@ -31,10 +32,13 @@ public record JsonLdEntry(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** schemaType. */
         @JsonProperty("schema_type")
-private String schemaType;
-private String name;
-private String raw;
+        private final String schemaType;
+        /** name. */
+        private final String name;
+        /** raw. */
+        private final String raw;
 
         /** Sets the schemaType field. */
         @JsonProperty("schema_type")

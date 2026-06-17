@@ -14,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * The result of a single-page scrape operation.
  */
+@SuppressWarnings({"PMD.LongVariable"})
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ScrapeResult.Builder.class)
@@ -58,54 +59,82 @@ public record ScrapeResult(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** statusCode. */
         @JsonProperty("status_code")
-private short statusCode;
+        private final short statusCode;
+        /** finalUrl. */
         @JsonProperty("final_url")
-private String finalUrl;
+        private final String finalUrl;
+        /** contentType. */
         @JsonProperty("content_type")
-private String contentType;
-private String html;
+        private final String contentType;
+        /** html. */
+        private final String html;
+        /** bodySize. */
         @JsonProperty("body_size")
-private long bodySize;
-private PageMetadata metadata;
-private List<LinkInfo> links = List.of();
-private List<ImageInfo> images = List.of();
-private List<FeedInfo> feeds = List.of();
+        private final long bodySize;
+        /** metadata. */
+        private final PageMetadata metadata;
+        /** links. */
+        private final List<LinkInfo> links = List.of();
+        /** images. */
+        private final List<ImageInfo> images = List.of();
+        /** feeds. */
+        private final List<FeedInfo> feeds = List.of();
+        /** jsonLd. */
         @JsonProperty("json_ld")
-private List<JsonLdEntry> jsonLd = List.of();
+        private final List<JsonLdEntry> jsonLd = List.of();
+        /** isAllowed. */
         @JsonProperty("is_allowed")
-private boolean isAllowed;
+        private final boolean isAllowed;
+        /** crawlDelay. */
         @JsonProperty("crawl_delay")
-private Long crawlDelay;
+        private final Long crawlDelay;
+        /** noindexDetected. */
         @JsonProperty("noindex_detected")
-private boolean noindexDetected;
+        private final boolean noindexDetected;
+        /** nofollowDetected. */
         @JsonProperty("nofollow_detected")
-private boolean nofollowDetected;
+        private final boolean nofollowDetected;
+        /** xRobotsTag. */
         @JsonProperty("x_robots_tag")
-private String xRobotsTag;
+        private final String xRobotsTag;
+        /** isPdf. */
         @JsonProperty("is_pdf")
-private boolean isPdf;
+        private final boolean isPdf;
+        /** wasSkipped. */
         @JsonProperty("was_skipped")
-private boolean wasSkipped;
+        private final boolean wasSkipped;
+        /** detectedCharset. */
         @JsonProperty("detected_charset")
-private String detectedCharset;
+        private final String detectedCharset;
+        /** authHeaderSent. */
         @JsonProperty("auth_header_sent")
-private boolean authHeaderSent;
+        private final boolean authHeaderSent;
+        /** responseMeta. */
         @JsonProperty("response_meta")
-private ResponseMeta responseMeta;
-private List<DownloadedAsset> assets = List.of();
+        private final ResponseMeta responseMeta;
+        /** assets. */
+        private final List<DownloadedAsset> assets = List.of();
+        /** jsRenderHint. */
         @JsonProperty("js_render_hint")
-private boolean jsRenderHint;
+        private final boolean jsRenderHint;
+        /** browserUsed. */
         @JsonProperty("browser_used")
-private boolean browserUsed;
-private MarkdownResult markdown;
+        private final boolean browserUsed;
+        /** markdown. */
+        private final MarkdownResult markdown;
+        /** extractedData. */
         @JsonProperty("extracted_data")
-private Object extractedData;
+        private final Object extractedData;
+        /** extractionMeta. */
         @JsonProperty("extraction_meta")
-private ExtractionMeta extractionMeta;
+        private final ExtractionMeta extractionMeta;
+        /** downloadedDocument. */
         @JsonProperty("downloaded_document")
-private DownloadedDocument downloadedDocument;
-private BrowserExtras browser;
+        private final DownloadedDocument downloadedDocument;
+        /** browser. */
+        private final BrowserExtras browser;
 
         /** Sets the statusCode field. */
         @JsonProperty("status_code")

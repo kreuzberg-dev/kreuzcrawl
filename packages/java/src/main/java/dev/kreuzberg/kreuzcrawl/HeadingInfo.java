@@ -26,8 +26,10 @@ public record HeadingInfo(@JsonProperty("level") byte level, @JsonProperty("text
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private byte level;
-private String text;
+        /** level. */
+        private final byte level;
+        /** text. */
+        private final String text;
 
         /** Sets the level field. */
         @JsonProperty("level")

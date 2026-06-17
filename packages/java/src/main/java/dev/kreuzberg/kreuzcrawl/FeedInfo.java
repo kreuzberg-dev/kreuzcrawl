@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Information about a feed link found on a page.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = FeedInfo.Builder.class)
 public record FeedInfo(
@@ -31,10 +32,13 @@ public record FeedInfo(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
-private String title;
+        /** url. */
+        private final String url;
+        /** title. */
+        private final String title;
+        /** feedType. */
         @JsonProperty("feed_type")
-private FeedType feedType;
+        private final FeedType feedType;
 
         /** Sets the url field. */
         @JsonProperty("url")

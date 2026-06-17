@@ -35,14 +35,20 @@ public record MarkdownResult(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String content;
+        /** content. */
+        private final String content;
+        /** documentStructure. */
         @JsonProperty("document_structure")
-private Object documentStructure;
-private List<Object> tables = List.of();
-private List<String> warnings = List.of();
-private boolean citations;
+        private final Object documentStructure;
+        /** tables. */
+        private final List<Object> tables = List.of();
+        /** warnings. */
+        private final List<String> warnings = List.of();
+        /** citations. */
+        private final boolean citations;
+        /** fitContent. */
         @JsonProperty("fit_content")
-private String fitContent;
+        private final String fitContent;
 
         /** Sets the content field. */
         @JsonProperty("content")

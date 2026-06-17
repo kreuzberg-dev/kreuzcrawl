@@ -33,14 +33,19 @@ public record ExtractionMeta(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private Double cost;
+        /** cost. */
+        private final Double cost;
+        /** promptTokens. */
         @JsonProperty("prompt_tokens")
-private Long promptTokens;
+        private final Long promptTokens;
+        /** completionTokens. */
         @JsonProperty("completion_tokens")
-private Long completionTokens;
-private String model;
+        private final Long completionTokens;
+        /** model. */
+        private final String model;
+        /** chunksProcessed. */
         @JsonProperty("chunks_processed")
-private long chunksProcessed;
+        private final long chunksProcessed;
 
         /** Sets the cost field. */
         @JsonProperty("cost")

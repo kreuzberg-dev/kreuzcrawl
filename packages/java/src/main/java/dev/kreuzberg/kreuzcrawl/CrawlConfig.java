@@ -15,6 +15,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Configuration for crawl, scrape, and map operations.
  */
+@SuppressWarnings({"PMD.LongVariable"})
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = CrawlConfig.Builder.class)
@@ -74,79 +75,118 @@ public record CrawlConfig(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** maxDepth. */
         @JsonProperty("max_depth")
-private Long maxDepth;
+        private final Long maxDepth;
+        /** maxPages. */
         @JsonProperty("max_pages")
-private Long maxPages;
+        private final Long maxPages;
+        /** maxConcurrent. */
         @JsonProperty("max_concurrent")
-private Long maxConcurrent;
+        private final Long maxConcurrent;
+        /** respectRobotsTxt. */
         @JsonProperty("respect_robots_txt")
-private boolean respectRobotsTxt;
+        private final boolean respectRobotsTxt;
+        /** softHttpErrors. */
         @JsonProperty("soft_http_errors")
-private Boolean softHttpErrors;
+        private final Boolean softHttpErrors;
+        /** userAgent. */
         @JsonProperty("user_agent")
-private String userAgent;
+        private final String userAgent;
+        /** stayOnDomain. */
         @JsonProperty("stay_on_domain")
-private boolean stayOnDomain;
+        private final boolean stayOnDomain;
+        /** allowSubdomains. */
         @JsonProperty("allow_subdomains")
-private boolean allowSubdomains;
+        private final boolean allowSubdomains;
+        /** includePaths. */
         @JsonProperty("include_paths")
-private List<String> includePaths;
+        private final List<String> includePaths;
+        /** excludePaths. */
         @JsonProperty("exclude_paths")
-private List<String> excludePaths;
+        private final List<String> excludePaths;
+        /** customHeaders. */
         @JsonProperty("custom_headers")
-private Map<String, String> customHeaders;
+        private final Map<String, String> customHeaders;
+        /** requestTimeout. */
         @JsonProperty("request_timeout")
-        @Nullable private Long requestTimeout;
+        @Nullable         private final Long requestTimeout;
+        /** rateLimitMs. */
         @JsonProperty("rate_limit_ms")
-private Long rateLimitMs;
+        private final Long rateLimitMs;
+        /** maxRedirects. */
         @JsonProperty("max_redirects")
-private long maxRedirects;
+        private final long maxRedirects;
+        /** retryCount. */
         @JsonProperty("retry_count")
-private long retryCount;
+        private final long retryCount;
+        /** retryCodes. */
         @JsonProperty("retry_codes")
-private List<Short> retryCodes;
+        private final List<Short> retryCodes;
+        /** cookiesEnabled. */
         @JsonProperty("cookies_enabled")
-private boolean cookiesEnabled;
-private AuthConfig auth;
+        private final boolean cookiesEnabled;
+        /** auth. */
+        private final AuthConfig auth;
+        /** maxBodySize. */
         @JsonProperty("max_body_size")
-private Long maxBodySize;
+        private final Long maxBodySize;
+        /** removeTags. */
         @JsonProperty("remove_tags")
-private List<String> removeTags;
-        @Nullable private ContentConfig content;
+        private final List<String> removeTags;
+        /** content. */
+        @Nullable         private final ContentConfig content;
+        /** mapLimit. */
         @JsonProperty("map_limit")
-private Long mapLimit;
+        private final Long mapLimit;
+        /** mapSearch. */
         @JsonProperty("map_search")
-private String mapSearch;
+        private final String mapSearch;
+        /** downloadAssets. */
         @JsonProperty("download_assets")
-private boolean downloadAssets;
+        private final boolean downloadAssets;
+        /** assetTypes. */
         @JsonProperty("asset_types")
-private List<AssetCategory> assetTypes;
+        private final List<AssetCategory> assetTypes;
+        /** maxAssetSize. */
         @JsonProperty("max_asset_size")
-private Long maxAssetSize;
-        @Nullable private BrowserConfig browser;
-private ProxyConfig proxy;
+        private final Long maxAssetSize;
+        /** browser. */
+        @Nullable         private final BrowserConfig browser;
+        /** proxy. */
+        private final ProxyConfig proxy;
+        /** userAgents. */
         @JsonProperty("user_agents")
-private List<String> userAgents;
+        private final List<String> userAgents;
+        /** captureScreenshot. */
         @JsonProperty("capture_screenshot")
-private boolean captureScreenshot;
+        private final boolean captureScreenshot;
+        /** followDocumentUrls. */
         @JsonProperty("follow_document_urls")
-private Boolean followDocumentUrls;
+        private final Boolean followDocumentUrls;
+        /** documentUrlDepth. */
         @JsonProperty("document_url_depth")
-private Integer documentUrlDepth;
+        private final Integer documentUrlDepth;
+        /** downloadDocuments. */
         @JsonProperty("download_documents")
-private boolean downloadDocuments = true;
+        private final boolean downloadDocuments = true;
+        /** documentMaxSize. */
         @JsonProperty("document_max_size")
-private Long documentMaxSize;
+        private final Long documentMaxSize;
+        /** documentMimeTypes. */
         @JsonProperty("document_mime_types")
-private List<String> documentMimeTypes;
+        private final List<String> documentMimeTypes;
+        /** warcOutput. */
         @JsonProperty("warc_output")
-private java.nio.file.Path warcOutput;
+        private final java.nio.file.Path warcOutput;
+        /** browserProfile. */
         @JsonProperty("browser_profile")
-private String browserProfile;
+        private final String browserProfile;
+        /** saveBrowserProfile. */
         @JsonProperty("save_browser_profile")
-private boolean saveBrowserProfile;
-        @Nullable private SsrfPolicy ssrf;
+        private final boolean saveBrowserProfile;
+        /** ssrf. */
+        @Nullable         private final SsrfPolicy ssrf;
 
         /** Sets the maxDepth field. */
         @JsonProperty("max_depth")
@@ -467,6 +507,9 @@ private boolean saveBrowserProfile;
         }
     }
     // CPD-ON
+    /**
+     * Factory method for defaultInstance.
+     */
     public static CrawlConfig defaultInstance() {
         throw new UnsupportedOperationException("defaultInstance is not yet bridged via JNI; use the Builder instead.");
     }

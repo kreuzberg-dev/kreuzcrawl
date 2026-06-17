@@ -32,12 +32,15 @@ public record InteractionResult(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** actionResults. */
         @JsonProperty("action_results")
-private List<ActionResult> actionResults = List.of();
+        private final List<ActionResult> actionResults = List.of();
+        /** finalHtml. */
         @JsonProperty("final_html")
-private String finalHtml;
+        private final String finalHtml;
+        /** finalUrl. */
         @JsonProperty("final_url")
-private String finalUrl;
+        private final String finalUrl;
 
         /** Sets the actionResults field. */
         @JsonProperty("action_results")

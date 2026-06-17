@@ -38,19 +38,27 @@ public record CrawlResult(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private List<CrawlPageResult> pages = List.of();
+        /** pages. */
+        private final List<CrawlPageResult> pages = List.of();
+        /** finalUrl. */
         @JsonProperty("final_url")
-private String finalUrl;
+        private final String finalUrl;
+        /** redirectCount. */
         @JsonProperty("redirect_count")
-private long redirectCount;
+        private final long redirectCount;
+        /** wasSkipped. */
         @JsonProperty("was_skipped")
-private boolean wasSkipped;
-private String error;
-private List<CookieInfo> cookies = List.of();
+        private final boolean wasSkipped;
+        /** error. */
+        private final String error;
+        /** cookies. */
+        private final List<CookieInfo> cookies = List.of();
+        /** stayedOnDomain. */
         @JsonProperty("stayed_on_domain")
-private boolean stayedOnDomain;
+        private final boolean stayedOnDomain;
+        /** browserUsed. */
         @JsonProperty("browser_used")
-private boolean browserUsed;
+        private final boolean browserUsed;
 
         /** Sets the pages field. */
         @JsonProperty("pages")

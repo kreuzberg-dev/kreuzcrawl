@@ -33,13 +33,18 @@ public record ActionResult(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** actionIndex. */
         @JsonProperty("action_index")
-private long actionIndex;
+        private final long actionIndex;
+        /** actionType. */
         @JsonProperty("action_type")
-private String actionType;
-private boolean success;
-private Object data;
-private String error;
+        private final String actionType;
+        /** success. */
+        private final boolean success;
+        /** data. */
+        private final Object data;
+        /** error. */
+        private final String error;
 
         /** Sets the actionIndex field. */
         @JsonProperty("action_index")

@@ -14,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * The result of crawling a single page during a crawl operation.
  */
+@SuppressWarnings({"PMD.ShortVariable", "PMD.LongVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = CrawlPageResult.Builder.class)
 public record CrawlPageResult(
@@ -50,40 +51,61 @@ public record CrawlPageResult(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
+        /** url. */
+        private final String url;
+        /** normalizedUrl. */
         @JsonProperty("normalized_url")
-private String normalizedUrl;
+        private final String normalizedUrl;
+        /** statusCode. */
         @JsonProperty("status_code")
-private short statusCode;
+        private final short statusCode;
+        /** contentType. */
         @JsonProperty("content_type")
-private String contentType;
-private String html;
+        private final String contentType;
+        /** html. */
+        private final String html;
+        /** bodySize. */
         @JsonProperty("body_size")
-private long bodySize;
-private PageMetadata metadata;
-private List<LinkInfo> links = List.of();
-private List<ImageInfo> images = List.of();
-private List<FeedInfo> feeds = List.of();
+        private final long bodySize;
+        /** metadata. */
+        private final PageMetadata metadata;
+        /** links. */
+        private final List<LinkInfo> links = List.of();
+        /** images. */
+        private final List<ImageInfo> images = List.of();
+        /** feeds. */
+        private final List<FeedInfo> feeds = List.of();
+        /** jsonLd. */
         @JsonProperty("json_ld")
-private List<JsonLdEntry> jsonLd = List.of();
-private long depth;
+        private final List<JsonLdEntry> jsonLd = List.of();
+        /** depth. */
+        private final long depth;
+        /** stayedOnDomain. */
         @JsonProperty("stayed_on_domain")
-private boolean stayedOnDomain;
+        private final boolean stayedOnDomain;
+        /** wasSkipped. */
         @JsonProperty("was_skipped")
-private boolean wasSkipped;
+        private final boolean wasSkipped;
+        /** isPdf. */
         @JsonProperty("is_pdf")
-private boolean isPdf;
+        private final boolean isPdf;
+        /** detectedCharset. */
         @JsonProperty("detected_charset")
-private String detectedCharset;
-private MarkdownResult markdown;
+        private final String detectedCharset;
+        /** markdown. */
+        private final MarkdownResult markdown;
+        /** extractedData. */
         @JsonProperty("extracted_data")
-private Object extractedData;
+        private final Object extractedData;
+        /** extractionMeta. */
         @JsonProperty("extraction_meta")
-private ExtractionMeta extractionMeta;
+        private final ExtractionMeta extractionMeta;
+        /** downloadedDocument. */
         @JsonProperty("downloaded_document")
-private DownloadedDocument downloadedDocument;
+        private final DownloadedDocument downloadedDocument;
+        /** browserUsed. */
         @JsonProperty("browser_used")
-private boolean browserUsed;
+        private final boolean browserUsed;
 
         /** Sets the url field. */
         @JsonProperty("url")

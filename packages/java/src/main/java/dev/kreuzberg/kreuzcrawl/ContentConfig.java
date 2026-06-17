@@ -18,6 +18,7 @@ import org.jspecify.annotations.Nullable;
  * html-to-markdown-rs as the conversion engine for all formats
  * (markdown, plain text, djot).
  */
+@SuppressWarnings({"PMD.LongVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ContentConfig.Builder.class)
 public record ContentConfig(
@@ -48,29 +49,41 @@ public record ContentConfig(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** outputFormat. */
         @JsonProperty("output_format")
-private String outputFormat = "markdown";
+        private final String outputFormat = "markdown";
+        /** preprocessingPreset. */
         @JsonProperty("preprocessing_preset")
-private String preprocessingPreset = "standard";
+        private final String preprocessingPreset = "standard";
+        /** removeNavigation. */
         @JsonProperty("remove_navigation")
-private boolean removeNavigation = true;
+        private final boolean removeNavigation = true;
+        /** removeForms. */
         @JsonProperty("remove_forms")
-private boolean removeForms = true;
+        private final boolean removeForms = true;
+        /** stripTags. */
         @JsonProperty("strip_tags")
-private List<String> stripTags;
+        private final List<String> stripTags;
+        /** preserveTags. */
         @JsonProperty("preserve_tags")
-private List<String> preserveTags;
+        private final List<String> preserveTags;
+        /** excludeSelectors. */
         @JsonProperty("exclude_selectors")
-private List<String> excludeSelectors;
+        private final List<String> excludeSelectors;
+        /** skipImages. */
         @JsonProperty("skip_images")
-private boolean skipImages;
+        private final boolean skipImages;
+        /** maxDepth. */
         @JsonProperty("max_depth")
-private Long maxDepth;
-private boolean wrap;
+        private final Long maxDepth;
+        /** wrap. */
+        private final boolean wrap;
+        /** wrapWidth. */
         @JsonProperty("wrap_width")
-private long wrapWidth;
+        private final long wrapWidth;
+        /** includeDocumentStructure. */
         @JsonProperty("include_document_structure")
-private boolean includeDocumentStructure = true;
+        private final boolean includeDocumentStructure = true;
 
         /** Sets the outputFormat field. */
         @JsonProperty("output_format")
@@ -175,6 +188,9 @@ private boolean includeDocumentStructure = true;
         }
     }
     // CPD-ON
+    /**
+     * Factory method for defaultInstance.
+     */
     public static ContentConfig defaultInstance() {
         throw new UnsupportedOperationException("defaultInstance is not yet bridged via JNI; use the Builder instead.");
     }

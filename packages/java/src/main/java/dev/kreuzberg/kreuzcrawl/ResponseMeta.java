@@ -35,18 +35,25 @@ public record ResponseMeta(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String etag;
+        /** etag. */
+        private final String etag;
+        /** lastModified. */
         @JsonProperty("last_modified")
-private String lastModified;
+        private final String lastModified;
+        /** cacheControl. */
         @JsonProperty("cache_control")
-private String cacheControl;
-private String server;
+        private final String cacheControl;
+        /** server. */
+        private final String server;
+        /** xPoweredBy. */
         @JsonProperty("x_powered_by")
-private String xPoweredBy;
+        private final String xPoweredBy;
+        /** contentLanguage. */
         @JsonProperty("content_language")
-private String contentLanguage;
+        private final String contentLanguage;
+        /** contentEncoding. */
         @JsonProperty("content_encoding")
-private String contentEncoding;
+        private final String contentEncoding;
 
         /** Sets the etag field. */
         @JsonProperty("etag")

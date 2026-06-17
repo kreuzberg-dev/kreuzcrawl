@@ -34,11 +34,14 @@ public record BrowserExtras(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** evalResult. */
         @JsonProperty("eval_result")
-private Object evalResult;
+        private final Object evalResult;
+        /** networkEvents. */
         @JsonProperty("network_events")
-private List<ResponseMeta> networkEvents;
-private List<CookieInfo> cookies;
+        private final List<ResponseMeta> networkEvents;
+        /** cookies. */
+        private final List<CookieInfo> cookies;
 
         /** Sets the evalResult field. */
         @JsonProperty("eval_result")

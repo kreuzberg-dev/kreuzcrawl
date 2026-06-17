@@ -27,7 +27,8 @@ public record MapResult(@JsonProperty("urls") List<SitemapUrl> urls) {
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private List<SitemapUrl> urls = List.of();
+        /** urls. */
+        private final List<SitemapUrl> urls = List.of();
 
         /** Sets the urls field. */
         @JsonProperty("urls")

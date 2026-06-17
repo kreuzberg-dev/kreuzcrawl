@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * A URL entry from a sitemap.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = SitemapUrl.Builder.class)
 public record SitemapUrl(
@@ -32,10 +33,14 @@ public record SitemapUrl(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
-private String lastmod;
-private String changefreq;
-private String priority;
+        /** url. */
+        private final String url;
+        /** lastmod. */
+        private final String lastmod;
+        /** changefreq. */
+        private final String changefreq;
+        /** priority. */
+        private final String priority;
 
         /** Sets the url field. */
         @JsonProperty("url")

@@ -34,13 +34,18 @@ public record ArticleMetadata(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** publishedTime. */
         @JsonProperty("published_time")
-private String publishedTime;
+        private final String publishedTime;
+        /** modifiedTime. */
         @JsonProperty("modified_time")
-private String modifiedTime;
-private String author;
-private String section;
-private List<String> tags = List.of();
+        private final String modifiedTime;
+        /** author. */
+        private final String author;
+        /** section. */
+        private final String section;
+        /** tags. */
+        private final List<String> tags = List.of();
 
         /** Sets the publishedTime field. */
         @JsonProperty("published_time")

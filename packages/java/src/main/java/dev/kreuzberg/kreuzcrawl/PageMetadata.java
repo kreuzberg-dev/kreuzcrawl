@@ -14,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Metadata extracted from an HTML page's {@code &lt;meta&gt;} tags and {@code &lt;title&gt;} element.
  */
+@SuppressWarnings({"PMD.LongVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = PageMetadata.Builder.class)
 public record PageMetadata(
@@ -72,81 +73,124 @@ public record PageMetadata(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String title;
-private String description;
+        /** title. */
+        private final String title;
+        /** description. */
+        private final String description;
+        /** canonicalUrl. */
         @JsonProperty("canonical_url")
-private String canonicalUrl;
-private String keywords;
-private String author;
-private String viewport;
+        private final String canonicalUrl;
+        /** keywords. */
+        private final String keywords;
+        /** author. */
+        private final String author;
+        /** viewport. */
+        private final String viewport;
+        /** themeColor. */
         @JsonProperty("theme_color")
-private String themeColor;
-private String generator;
-private String robots;
+        private final String themeColor;
+        /** generator. */
+        private final String generator;
+        /** robots. */
+        private final String robots;
+        /** htmlLang. */
         @JsonProperty("html_lang")
-private String htmlLang;
+        private final String htmlLang;
+        /** htmlDir. */
         @JsonProperty("html_dir")
-private String htmlDir;
+        private final String htmlDir;
+        /** ogTitle. */
         @JsonProperty("og_title")
-private String ogTitle;
+        private final String ogTitle;
+        /** ogType. */
         @JsonProperty("og_type")
-private String ogType;
+        private final String ogType;
+        /** ogImage. */
         @JsonProperty("og_image")
-private String ogImage;
+        private final String ogImage;
+        /** ogDescription. */
         @JsonProperty("og_description")
-private String ogDescription;
+        private final String ogDescription;
+        /** ogUrl. */
         @JsonProperty("og_url")
-private String ogUrl;
+        private final String ogUrl;
+        /** ogSiteName. */
         @JsonProperty("og_site_name")
-private String ogSiteName;
+        private final String ogSiteName;
+        /** ogLocale. */
         @JsonProperty("og_locale")
-private String ogLocale;
+        private final String ogLocale;
+        /** ogVideo. */
         @JsonProperty("og_video")
-private String ogVideo;
+        private final String ogVideo;
+        /** ogAudio. */
         @JsonProperty("og_audio")
-private String ogAudio;
+        private final String ogAudio;
+        /** ogLocaleAlternates. */
         @JsonProperty("og_locale_alternates")
-private List<String> ogLocaleAlternates;
+        private final List<String> ogLocaleAlternates;
+        /** twitterCard. */
         @JsonProperty("twitter_card")
-private String twitterCard;
+        private final String twitterCard;
+        /** twitterTitle. */
         @JsonProperty("twitter_title")
-private String twitterTitle;
+        private final String twitterTitle;
+        /** twitterDescription. */
         @JsonProperty("twitter_description")
-private String twitterDescription;
+        private final String twitterDescription;
+        /** twitterImage. */
         @JsonProperty("twitter_image")
-private String twitterImage;
+        private final String twitterImage;
+        /** twitterSite. */
         @JsonProperty("twitter_site")
-private String twitterSite;
+        private final String twitterSite;
+        /** twitterCreator. */
         @JsonProperty("twitter_creator")
-private String twitterCreator;
+        private final String twitterCreator;
+        /** dcTitle. */
         @JsonProperty("dc_title")
-private String dcTitle;
+        private final String dcTitle;
+        /** dcCreator. */
         @JsonProperty("dc_creator")
-private String dcCreator;
+        private final String dcCreator;
+        /** dcSubject. */
         @JsonProperty("dc_subject")
-private String dcSubject;
+        private final String dcSubject;
+        /** dcDescription. */
         @JsonProperty("dc_description")
-private String dcDescription;
+        private final String dcDescription;
+        /** dcPublisher. */
         @JsonProperty("dc_publisher")
-private String dcPublisher;
+        private final String dcPublisher;
+        /** dcDate. */
         @JsonProperty("dc_date")
-private String dcDate;
+        private final String dcDate;
+        /** dcType. */
         @JsonProperty("dc_type")
-private String dcType;
+        private final String dcType;
+        /** dcFormat. */
         @JsonProperty("dc_format")
-private String dcFormat;
+        private final String dcFormat;
+        /** dcIdentifier. */
         @JsonProperty("dc_identifier")
-private String dcIdentifier;
+        private final String dcIdentifier;
+        /** dcLanguage. */
         @JsonProperty("dc_language")
-private String dcLanguage;
+        private final String dcLanguage;
+        /** dcRights. */
         @JsonProperty("dc_rights")
-private String dcRights;
-private ArticleMetadata article;
-private List<HreflangEntry> hreflangs;
-private List<FaviconInfo> favicons;
-private List<HeadingInfo> headings;
+        private final String dcRights;
+        /** article. */
+        private final ArticleMetadata article;
+        /** hreflangs. */
+        private final List<HreflangEntry> hreflangs;
+        /** favicons. */
+        private final List<FaviconInfo> favicons;
+        /** headings. */
+        private final List<HeadingInfo> headings;
+        /** wordCount. */
         @JsonProperty("word_count")
-private Long wordCount;
+        private final Long wordCount;
 
         /** Sets the title field. */
         @JsonProperty("title")

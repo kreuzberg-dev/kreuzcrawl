@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Proxy configuration for HTTP requests.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ProxyConfig.Builder.class)
 public record ProxyConfig(
@@ -31,9 +32,12 @@ public record ProxyConfig(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
-private String username;
-private String password;
+        /** url. */
+        private final String url;
+        /** username. */
+        private final String username;
+        /** password. */
+        private final String password;
 
         /** Sets the url field. */
         @JsonProperty("url")

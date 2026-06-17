@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 /**
  * An hreflang alternate link entry.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = HreflangEntry.Builder.class)
 public record HreflangEntry(@JsonProperty("lang") String lang, @JsonProperty("url") String url) {
@@ -26,8 +27,10 @@ public record HreflangEntry(@JsonProperty("lang") String lang, @JsonProperty("ur
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String lang;
-private String url;
+        /** lang. */
+        private final String lang;
+        /** url. */
+        private final String url;
 
         /** Sets the lang field. */
         @JsonProperty("lang")

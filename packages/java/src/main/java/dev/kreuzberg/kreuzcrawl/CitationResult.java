@@ -30,8 +30,10 @@ public record CitationResult(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String content;
-private List<CitationReference> references = List.of();
+        /** content. */
+        private final String content;
+        /** references. */
+        private final List<CitationReference> references = List.of();
 
         /** Sets the content field. */
         @JsonProperty("content")

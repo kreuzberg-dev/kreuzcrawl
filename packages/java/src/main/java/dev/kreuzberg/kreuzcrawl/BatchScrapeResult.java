@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Result from a single URL in a batch scrape operation.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = BatchScrapeResult.Builder.class)
 public record BatchScrapeResult(
@@ -31,9 +32,12 @@ public record BatchScrapeResult(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
-private ScrapeResult result;
-private String error;
+        /** url. */
+        private final String url;
+        /** result. */
+        private final ScrapeResult result;
+        /** error. */
+        private final String error;
 
         /** Sets the url field. */
         @JsonProperty("url")

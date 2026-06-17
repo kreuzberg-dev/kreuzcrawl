@@ -31,7 +31,8 @@ public record BatchCrawlStreamRequest(@JsonProperty("urls") List<String> urls) {
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private List<String> urls = List.of();
+        /** urls. */
+        private final List<String> urls = List.of();
 
         /** Sets the urls field. */
         @JsonProperty("urls")

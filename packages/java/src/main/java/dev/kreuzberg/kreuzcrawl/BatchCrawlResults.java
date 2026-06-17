@@ -35,13 +35,17 @@ public record BatchCrawlResults(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private List<BatchCrawlResult> results = List.of();
+        /** results. */
+        private final List<BatchCrawlResult> results = List.of();
+        /** totalCount. */
         @JsonProperty("total_count")
-private long totalCount;
+        private final long totalCount;
+        /** completedCount. */
         @JsonProperty("completed_count")
-private long completedCount;
+        private final long completedCount;
+        /** failedCount. */
         @JsonProperty("failed_count")
-private long failedCount;
+        private final long failedCount;
 
         /** Sets the results field. */
         @JsonProperty("results")

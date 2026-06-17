@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
  * surface. Required as a struct because alef's streaming adapter requires a
  * named request type — primitives are not supported.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = CrawlStreamRequest.Builder.class)
 public record CrawlStreamRequest(@JsonProperty("url") String url) {
@@ -30,7 +31,8 @@ public record CrawlStreamRequest(@JsonProperty("url") String url) {
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
+        /** url. */
+        private final String url;
 
         /** Sets the url field. */
         @JsonProperty("url")

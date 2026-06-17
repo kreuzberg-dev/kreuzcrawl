@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
  * A single numbered reference in a citation list — produced by the citation
  * extractor when content uses inline {@code [N]}-style markers.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = CitationReference.Builder.class)
 public record CitationReference(
@@ -31,9 +32,12 @@ public record CitationReference(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private long index;
-private String url;
-private String text;
+        /** index. */
+        private final long index;
+        /** url. */
+        private final String url;
+        /** text. */
+        private final String text;
 
         /** Sets the index field. */
         @JsonProperty("index")

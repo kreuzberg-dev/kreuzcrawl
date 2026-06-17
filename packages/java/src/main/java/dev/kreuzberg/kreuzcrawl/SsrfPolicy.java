@@ -33,10 +33,12 @@ public record SsrfPolicy(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
+        /** denyPrivate. */
         @JsonProperty("deny_private")
-private boolean denyPrivate = true;
+        private final boolean denyPrivate = true;
+        /** maxRedirects. */
         @JsonProperty("max_redirects")
-private byte maxRedirects;
+        private final byte maxRedirects;
 
         /** Sets the denyPrivate field. */
         @JsonProperty("deny_private")
@@ -61,6 +63,9 @@ private byte maxRedirects;
         }
     }
     // CPD-ON
+    /**
+     * Factory method for defaultInstance.
+     */
     public static SsrfPolicy defaultInstance() {
         throw new UnsupportedOperationException("defaultInstance is not yet bridged via JNI; use the Builder instead.");
     }

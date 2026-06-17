@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Information about a favicon or icon link.
  */
+@SuppressWarnings({"PMD.ShortVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = FaviconInfo.Builder.class)
 public record FaviconInfo(
@@ -32,11 +33,15 @@ public record FaviconInfo(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private String url;
-private String rel;
-private String sizes;
+        /** url. */
+        private final String url;
+        /** rel. */
+        private final String rel;
+        /** sizes. */
+        private final String sizes;
+        /** mimeType. */
         @JsonProperty("mime_type")
-private String mimeType;
+        private final String mimeType;
 
         /** Sets the url field. */
         @JsonProperty("url")

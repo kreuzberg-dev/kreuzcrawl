@@ -14,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Browser fallback configuration.
  */
+@SuppressWarnings({"PMD.LongVariable"})
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = BrowserConfig.Builder.class)
 public record BrowserConfig(
@@ -45,27 +46,40 @@ public record BrowserConfig(
     @JsonPOJOBuilder(withPrefix = "with", buildMethodName = "build")
     public static final class Builder {
 
-private BrowserMode mode;
-private BrowserBackend backend;
-private String endpoint;
-        @Nullable private Long timeout;
+        /** mode. */
+        private final BrowserMode mode;
+        /** backend. */
+        private final BrowserBackend backend;
+        /** endpoint. */
+        private final String endpoint;
+        /** timeout. */
+        @Nullable         private final Long timeout;
+        /** waitValue. */
         @JsonProperty("wait")
-private BrowserWait waitValue;
+        private final BrowserWait waitValue;
+        /** waitSelector. */
         @JsonProperty("wait_selector")
-private String waitSelector;
+        private final String waitSelector;
+        /** extraWait. */
         @JsonProperty("extra_wait")
-        @Nullable private Long extraWait;
-        @Nullable private ProxyConfig proxy;
+        @Nullable         private final Long extraWait;
+        /** proxy. */
+        @Nullable         private final ProxyConfig proxy;
+        /** blockUrlPatterns. */
         @JsonProperty("block_url_patterns")
-private List<String> blockUrlPatterns;
+        private final List<String> blockUrlPatterns;
+        /** evalScript. */
         @JsonProperty("eval_script")
-private String evalScript;
+        private final String evalScript;
+        /** robotsUserAgent. */
         @JsonProperty("robots_user_agent")
-private String robotsUserAgent;
+        private final String robotsUserAgent;
+        /** captureNetworkEvents. */
         @JsonProperty("capture_network_events")
-private Boolean captureNetworkEvents;
+        private final Boolean captureNetworkEvents;
+        /** sessionAffinity. */
         @JsonProperty("session_affinity")
-private Boolean sessionAffinity;
+        private final Boolean sessionAffinity;
 
         /** Sets the mode field. */
         @JsonProperty("mode")
@@ -178,6 +192,9 @@ private Boolean sessionAffinity;
         }
     }
     // CPD-ON
+    /**
+     * Factory method for defaultInstance.
+     */
     public static BrowserConfig defaultInstance() {
         throw new UnsupportedOperationException("defaultInstance is not yet bridged via JNI; use the Builder instead.");
     }
