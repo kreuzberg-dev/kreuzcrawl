@@ -737,6 +737,18 @@ void* __swift_bridge__$Vec_ScrollDirection$get_mut(void* vec_ptr, uintptr_t inde
 uintptr_t __swift_bridge__$Vec_ScrollDirection$len(void* vec_ptr);
 void* __swift_bridge__$Vec_ScrollDirection$as_ptr(void* vec_ptr);
 
+typedef struct CrawlEngineHandle CrawlEngineHandle;
+void __swift_bridge__$CrawlEngineHandle$_free(void* self);
+
+void* __swift_bridge__$Vec_CrawlEngineHandle$new(void);
+void __swift_bridge__$Vec_CrawlEngineHandle$drop(void* vec_ptr);
+void __swift_bridge__$Vec_CrawlEngineHandle$push(void* vec_ptr, void* item_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandle$pop(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandle$get(void* vec_ptr, uintptr_t index);
+void* __swift_bridge__$Vec_CrawlEngineHandle$get_mut(void* vec_ptr, uintptr_t index);
+uintptr_t __swift_bridge__$Vec_CrawlEngineHandle$len(void* vec_ptr);
+void* __swift_bridge__$Vec_CrawlEngineHandle$as_ptr(void* vec_ptr);
+
 typedef struct CrawlEngineHandleBatchCrawlStreamStreamHandle CrawlEngineHandleBatchCrawlStreamStreamHandle;
 void __swift_bridge__$CrawlEngineHandleBatchCrawlStreamStreamHandle$_free(void* self);
 
@@ -1077,6 +1089,7 @@ void* __swift_bridge__$AssetCategory$to_string(void* self);
 void* __swift_bridge__$CrawlEvent$to_string(void* self);
 void* __swift_bridge__$PageAction$to_string(void* self);
 void* __swift_bridge__$ScrollDirection$to_string(void* self);
+void __swift_bridge__$crawl_engine_handle_noop(void* client);
 void* __swift_bridge__$generate_citations(void* markdown);
 struct __private__ResultPtrAndPtr __swift_bridge__$create_engine(void* config);
 struct __private__ResultPtrAndPtr __swift_bridge__$scrape(void* engine, void* url);
