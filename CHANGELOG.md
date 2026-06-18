@@ -4,6 +4,17 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.79] - 2026-06-18
+
+### Changed
+
+- **Bump alef pin 0.25.41 → 0.25.43** and regenerate all bindings.
+- **Align `task alef:format` output with the prek formatter hooks** so committing generated code leaves `ci-lint` clean:
+  - node/ts/json: format git-tracked sources with `oxfmt` (matches the `oxfmt` hook; a raw `.` walk had choked on `target/`).
+  - kotlin: format with `ktfmt --kotlinlang-style` directly (was gradle ktlint, which prek then reformatted).
+  - zig: include the package-root `build.zig` (was `src/` only).
+  - java: removed the outlier `palantir-java-format` prek hook; alef's eclipse/spotless scaffold (`spotless:check` via `java-verify`) is the single canonical java formatter.
+
 ## [0.3.0-rc.78] - 2026-06-18
 
 Supersedes rc.77, whose CI failed on a `clippy::unused_unit` error in generated Swift glue (fixed upstream in alef 0.25.41).

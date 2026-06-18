@@ -205,7 +205,10 @@ repos:
           - id: oxfmt
           - id: go-fmt
             exclude: ^(e2e/|test_apps/)
-          - id: palantir-java-format
+          # Java formatting is owned by alef's eclipse/spotless scaffold
+          # (packages/java/pom.xml + spotless:check via the java-verify hook).
+          # No palantir-java-format hook — it would fight the scaffold's 4-space
+          # eclipse style across the whole binding surface.
           - id: ktfmt
             files: ^packages/kotlin-android/.*\.kts?$
             args:

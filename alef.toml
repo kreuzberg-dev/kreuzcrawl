@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.25.41"
+alef_version = "0.25.43"
 languages = [
   "python",
   "node",
@@ -325,6 +325,15 @@ precondition = "command -v ruff >/dev/null 2>&1"
 before = "cd packages/python && uv sync --no-install-project --no-install-workspace"
 typecheck = "cd packages/python && uv run --no-sync mypy ."
 
+# Node/TS/JSON: match prek's `oxfmt` hook, which formats tracked files by type.
+# Scope to git-tracked sources (a raw `.` walk chokes on target/ and build dirs);
+# oxfmt still honours .oxfmtrc.json ignorePatterns. Covers the node crate, wasm,
+# packages/typescript, and the e2e/* TS suites in one pass.
+[crates.lint.node]
+precondition = "command -v oxfmt >/dev/null 2>&1"
+format = "git ls-files -z '*.ts' '*.mts' '*.cts' '*.js' '*.mjs' '*.cjs' '*.json' '*.jsonc' '*.css' | xargs -0 oxfmt --config .oxfmtrc.json --write"
+check = "git ls-files -z '*.ts' '*.mts' '*.cts' '*.js' '*.mjs' '*.cjs' '*.json' '*.jsonc' '*.css' | xargs -0 oxfmt --config .oxfmtrc.json --check"
+
 [crates.lint.ruby]
 precondition = "command -v bundle >/dev/null 2>&1"
 before = "cd packages/ruby && bundle install"
@@ -364,10 +373,13 @@ precondition = "command -v dart >/dev/null 2>&1"
 format = "cd packages/dart && dart format ."
 check = "cd packages/dart && dart analyze"
 
+# Match prek's `ktfmt --kotlinlang-style` hook directly (ktlint produced different
+# output that prek then reformatted). Scope to tracked .kt/.kts under the package,
+# skipping build/.gradle caches.
 [crates.lint.kotlin_android]
-precondition = "command -v gradle >/dev/null 2>&1"
-format = "cd packages/kotlin-android && gradle ktlintFormat --no-daemon"
-check = "cd packages/kotlin-android && gradle ktlintCheck --no-daemon"
+precondition = "command -v ktfmt >/dev/null 2>&1"
+format = "find packages/kotlin-android \\( -name build -o -name .gradle \\) -prune -o \\( -name '*.kt' -o -name '*.kts' \\) -type f -print0 | xargs -0 ktfmt --kotlinlang-style"
+check = "find packages/kotlin-android \\( -name build -o -name .gradle \\) -prune -o \\( -name '*.kt' -o -name '*.kts' \\) -type f -print0 | xargs -0 ktfmt --kotlinlang-style --dry-run --set-exit-if-changed"
 
 [crates.lint.swift]
 precondition = "command -v swift >/dev/null 2>&1"
@@ -376,8 +388,9 @@ check = "swift format lint --recursive packages/swift/Sources"
 
 [crates.lint.zig]
 precondition = "command -v zig >/dev/null 2>&1"
-format = "cd packages/zig && zig fmt src"
-check = "cd packages/zig && zig fmt --check src"
+# Include the package-root build.zig, which prek's zig-fmt hook also formats.
+format = "cd packages/zig && zig fmt src build.zig"
+check = "cd packages/zig && zig fmt --check src build.zig"
 
 # Update overrides target the consumer package dirs (`packages/<lang>/`) rather
 # than the alef binding-source output dirs (`crates/kreuzcrawl-{lang}/src/`,
@@ -1515,64 +1528,64 @@ categories = ["scrape", "markdown", "metadata"]
 
 [crates.e2e.registry.packages.python]
 name = "kreuzcrawl"
-version = ">=0.3.0rc78"
+version = ">=0.3.0rc79"
 
 [crates.e2e.registry.packages.node]
 name = "@kreuzberg/kreuzcrawl"
-version = "^0.3.0-rc.78"
+version = "^0.3.0-rc.79"
 
 [crates.e2e.registry.packages.rust]
 name = "kreuzcrawl"
-version = "0.3.0-rc.78"
+version = "0.3.0-rc.79"
 
 [crates.e2e.registry.packages.go]
 module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
-version = "v0.3.0-rc.78"
+version = "v0.3.0-rc.79"
 
 [crates.e2e.registry.packages.java]
 name = "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
-version = "0.3.0-rc.78"
+version = "0.3.0-rc.79"
 
 [crates.e2e.registry.packages.csharp]
 name = "Kreuzcrawl"
-version = "0.3.0-rc.78"
+version = "0.3.0-rc.79"
 
 [crates.e2e.registry.packages.php]
 name = "kreuzberg-dev/kreuzcrawl"
-version = ">=0.3.0-rc.78"
+version = ">=0.3.0-rc.79"
 
 [crates.e2e.registry.packages.ruby]
 name = "kreuzcrawl"
-version = ">= 0.3.0.pre.rc.78"
+version = ">= 0.3.0.pre.rc.79"
 
 [crates.e2e.registry.packages.elixir]
 name = "kreuzcrawl"
-version = "~> 0.3.0-rc.78"
+version = "~> 0.3.0-rc.79"
 
 [crates.e2e.registry.packages.wasm]
 name = "@kreuzberg/kreuzcrawl-wasm"
-version = "^0.3.0-rc.78"
+version = "^0.3.0-rc.79"
 
 [crates.e2e.registry.packages.brew]
 name = "kreuzcrawl"
-version = "0.3.0-rc.78"
+version = "0.3.0-rc.79"
 
 [crates.e2e.registry.packages.c]
 name = "kreuzcrawl-ffi"
-version = "0.3.0-rc.78"
+version = "0.3.0-rc.79"
 
 [crates.e2e.registry.packages.zig]
 name = "kreuzcrawl"
-version = "0.3.0-rc.78"
+version = "0.3.0-rc.79"
 # Placeholder hash with embedded version triggers alef's STALE detection (added
 # in v0.22.1) — the generator emits a STALE comment in build.zig.zon and the
 # zig fetch flow auto-recomputes the real multihash at consume time. Update
 # after publishing the first zig tarball: `zig fetch --save <release-url>`.
-hash = "kreuzcrawl-0.3.0-rc.78-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH"
+hash = "kreuzcrawl-0.3.0-rc.79-STALE_PLACEHOLDER_TO_BE_RESOLVED_BY_ZIG_FETCH"
 
 [crates.e2e.registry.packages.kotlin_android]
 name = "dev.kreuzberg.kreuzcrawl.android:kreuzcrawl-android"
-version = "0.3.0-rc.78"
+version = "0.3.0-rc.79"
 
 [crates.scaffold]
 description = "High-performance web crawling engine"
