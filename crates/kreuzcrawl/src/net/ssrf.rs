@@ -168,9 +168,19 @@ impl Default for SsrfPolicy {
 impl SsrfPolicy {
     /// Create a policy from environment variables.
     ///
-    /// Reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true" (case-insensitive),
-    /// sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
+    /// On native platforms, reads `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` — if set to "1" or "true"
+    /// (case-insensitive), sets `deny_private = false`. Otherwise, defaults to `deny_private = true`.
+    ///
+    /// On wasm32 targets (browser/Node.js), environment variables are not accessible to the
+    /// compiled module. Defaults to `deny_private = false` because:
+    /// - Outbound requests in a browser go through the fetch API, which enforces its own network policies.
+    /// - Rust-side SSRF checking is unenforceable and redundant in a wasm32 context.
+    /// - For testing and localhost access, the host's network sandbox is the enforcing boundary.
     pub fn from_env() -> Self {
+        #[cfg(target_arch = "wasm32")]
+        let allow_private = true; // Wasm has no env var access; allow private networks by default.
+
+        #[cfg(not(target_arch = "wasm32"))]
         let allow_private = std::env::var("KREUZCRAWL_ALLOW_PRIVATE_NETWORK")
             .map(|v| v.to_lowercase())
             .ok()
