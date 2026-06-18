@@ -4,6 +4,25 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.78] - 2026-06-18
+
+Supersedes rc.77, whose CI failed on a `clippy::unused_unit` error in generated Swift glue (fixed upstream in alef 0.25.41).
+
+### Fixed
+
+- **SSRF config robustness.** Tolerate partial JSON SSRF config and apply the env override at the engine layer; normalize an empty `scheme_allowlist` at engine build.
+- **Docker Alpine build.** Rewrite workspace members correctly so the Alpine image builds.
+- **Generated Swift compiles under `clippy -D warnings`.** The swift-bridge destructor-synthesis noop shims no longer emit an explicit `-> ()` (`clippy::unused_unit`). (alef 0.25.41)
+
+### Changed
+
+- **Bump alef pin 0.25.32 → 0.25.41.** Notable codegen fixes pulled in:
+  - java: boxed `@Nullable Boolean` serde-default fields restore their `true` default in the record compact constructor.
+  - napi: `Map`-returning functions wrap their return value and compile.
+  - pyo3: None-guard optional `Vec<enum>` coercion; drop a redundant `# type: ignore`.
+  - php: dedup cfg-variant free functions; `@return array<T>` PHPDoc on array-returning DTO methods.
+  - core: enum associated (static factory) methods are now emitted across bindings.
+
 ## [0.3.0-rc.76] - 2026-06-17
 
 ### Added
