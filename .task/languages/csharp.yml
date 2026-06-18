@@ -152,6 +152,7 @@ tasks:
         desc: Run C# E2E tests
         env:
             MOCK_SERVER_URL: "{{.MOCK_SERVER_URL}}"
+            KREUZCRAWL_ALLOW_PRIVATE_NETWORK: "true"
         cmds:
             - cmd: bash scripts/e2e/csharp/test.sh
               platforms: [linux, darwin]
