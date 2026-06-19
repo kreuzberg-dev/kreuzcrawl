@@ -2125,7 +2125,14 @@ jobs:
     publish-hex:
         name: Publish Elixir Hex package
         needs: [prepare, upload-elixir-release, check-hex, publish-crates]
-        if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.prepare.outputs.release_elixir == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-hex.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+        # The Hex package bundles the generated checksum file, which is built from
+        # the NIF assets on the GitHub release. Require upload-elixir-release to have
+        # SUCCEEDED (it needs both elixir-natives + elixir-natives-musl) so the
+        # checksum file always covers the full platform matrix. Without this, a
+        # single flaky NIF leg skips the upload while !cancelled() still lets this
+        # job run, publishing an immutable Hex package with an incomplete checksum
+        # file (the rc.79 failure mode).
+        if: ${{ !cancelled() && needs.publish-crates.result != 'failure' && needs.upload-elixir-release.result == 'success' && needs.prepare.outputs.release_elixir == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-hex.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         environment: hex
         permissions:
