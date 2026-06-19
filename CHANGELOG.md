@@ -4,6 +4,10 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- **chore(precommit): drop the conflicting kotlin-android ktlint hook; ktfmt is the sole formatter.** ktlint's always-format mode fought ktfmt (blank-line-after-brace) and rewrote alef's `///` doc comments to `// /`, breaking `alef verify`. detekt remains for static analysis. Also excluded the vendored Gradle wrapper from shellcheck. (`.pre-commit-config.yaml`)
+
 ## [0.3.0-rc.80] - 2026-06-19
 
 ### Changed
