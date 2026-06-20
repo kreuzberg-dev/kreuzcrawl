@@ -318,16 +318,76 @@ Rust Core Engine (async, concurrent, SIMD-optimized)
 
 ## AI Coding Assistants
 
-Install the Kreuzcrawl plugin from the [`kreuzberg-dev/plugins`](https://github.com/kreuzberg-dev/plugins) marketplace:
+Install the Kreuzcrawl plugin from the [`kreuzberg-dev/plugins`](https://github.com/kreuzberg-dev/plugins) marketplace. It ships the Kreuzcrawl agent skills (site crawling, HTML→Markdown scraping, headless-Chrome fallback) plus the `kreuzcrawl` MCP server, and works with every major coding agent — expand your harness below.
+
+<details open>
+<summary><strong>Claude Code</strong></summary>
 
 ```text
 /plugin marketplace add kreuzberg-dev/plugins
 /plugin install kreuzcrawl@kreuzberg
 ```
 
-Works with Claude Code, Codex, Cursor, Gemini CLI, Factory Droid, GitHub Copilot CLI, and opencode. See [the marketplace README](https://github.com/kreuzberg-dev/plugins) for harness-specific install instructions.
+</details>
 
-The plugin ships the Kreuzcrawl agent skills — site crawling, HTML→Markdown scraping, and headless-Chrome fallback — and wires up the `kreuzcrawl` MCP server (`kreuzcrawl mcp`) so assistants can drive the crawler directly. It shells out to the `kreuzcrawl` CLI; install it from the [Installation](#installation) table (for example, `brew install kreuzberg-dev/tap/kreuzcrawl`).
+<details>
+<summary><strong>Codex CLI</strong></summary>
+
+```text
+/plugins add https://github.com/kreuzberg-dev/plugins
+```
+
+Then search for `kreuzcrawl` and select **Install Plugin**.
+</details>
+
+<details>
+<summary><strong>Cursor</strong></summary>
+
+Settings → Plugins → Add from URL → `https://github.com/kreuzberg-dev/plugins`, then select **kreuzcrawl**.
+</details>
+
+<details>
+<summary><strong>Gemini CLI</strong></summary>
+
+```text
+gemini extensions install https://github.com/kreuzberg-dev/plugins
+```
+
+</details>
+
+<details>
+<summary><strong>Factory Droid</strong></summary>
+
+```text
+droid plugin marketplace add https://github.com/kreuzberg-dev/plugins
+droid plugin install kreuzcrawl@kreuzberg
+```
+
+</details>
+
+<details>
+<summary><strong>GitHub Copilot CLI</strong></summary>
+
+```text
+copilot plugin marketplace add https://github.com/kreuzberg-dev/plugins
+copilot plugin install kreuzcrawl@kreuzberg
+```
+
+</details>
+
+<details>
+<summary><strong>opencode</strong></summary>
+
+Add the package to `opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["@kreuzberg/opencode-kreuzcrawl"]
+}
+```
+
+</details>
 
 ## Contributing
 

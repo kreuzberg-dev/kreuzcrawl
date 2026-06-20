@@ -37,6 +37,7 @@ nav = [
       { "MCP Server" = "guides/mcp-server.md" },
       { "Observability" = "observability.md" },
     ] },
+    { "AI Coding Assistants" = "guides/ai-coding-assistants.md" },
     { "CLI" = "cli/usage.md" },
   ] },
 
