@@ -870,78 +870,42 @@ jobs:
                       dist/php-package/php_*.zip.sha256
                   retention-days: 14
 
-    cli-binaries:
-        name: Build CLI binary (${{ matrix.target }})
-        needs: [prepare, check-cli]
+    cli-release:
+        name: Build & release CLI binaries
+        needs: [prepare, check-cli, cli-musl-binaries]
         if: ${{ needs.prepare.outputs.release_cli == 'true' && (needs.check-cli.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
-        runs-on: ${{ matrix.os }}
-        timeout-minutes: 180
-        strategy:
-            fail-fast: false
-            matrix:
-                include:
-                    - { os: ubuntu-latest, target: x86_64-unknown-linux-gnu }
-                    - { os: ubuntu-24.04-arm, target: aarch64-unknown-linux-gnu }
-                    - { os: macos-latest, target: aarch64-apple-darwin }
-                    - { os: macos-15-intel, target: x86_64-apple-darwin }
-                    - { os: windows-latest, target: x86_64-pc-windows-msvc }
-        steps:
-            - uses: actions/checkout@v6
-              with:
-                  ref: ${{ needs.prepare.outputs.checkout_ref }}
-                  fetch-depth: 0
-                  submodules: recursive
-
-            - name: Free disk space
-              if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
-
-            - uses: kreuzberg-dev/actions/setup-rust@v1
-              with:
-                  target: ${{ matrix.target }}
-                  cache-key-prefix: publish-cli-${{ matrix.target }}
-
-            - uses: kreuzberg-dev/actions/build-rust-cli@v1
-              id: build
-              with:
-                  package-name: kreuzcrawl-cli
-                  binary-name: kreuzcrawl
-                  target: ${{ matrix.target }}
-                  extra-cargo-args: --features all
-
-            - name: Package CLI artifact
-              # Inline: archive layout (.tar.gz on Unix, .zip on Windows) varies per
-              # OS in a way no shared action covers; tiny and self-contained.
-              env:
-                  BINARY_PATH: ${{ steps.build.outputs.binary-path }}
-                  TARGET: ${{ matrix.target }}
-              shell: bash
-              run: |
-                  STAGE="kreuzcrawl-cli-${TARGET}"
-                  mkdir -p "$STAGE"
-                  cp LICENSE "$STAGE/" 2>/dev/null || true
-                  cp README.md "$STAGE/" 2>/dev/null || true
-                  if [[ "$RUNNER_OS" == "Windows" ]]; then
-                    cp "$BINARY_PATH" "$STAGE/kreuzcrawl.exe"
-                    7z a "${STAGE}.zip" "$STAGE" >/dev/null
-                  else
-                    cp "$BINARY_PATH" "$STAGE/kreuzcrawl"
-                    tar -czf "${STAGE}.tar.gz" "$STAGE"
-                  fi
-
-            - uses: actions/upload-artifact@v7
-              with:
-                  name: cli-${{ matrix.target }}
-                  path: |
-                      kreuzcrawl-cli-${{ matrix.target }}.tar.gz
-                      kreuzcrawl-cli-${{ matrix.target }}.zip
-                  if-no-files-found: ignore
-                  retention-days: 14
+        permissions:
+            contents: write
+        # Centralized CLI build + release via the shared reusable workflow (mirrors h2m).
+        # Reliable matrix (x64+arm64 linux-gnu, arm64 macOS, x64 Windows) built with
+        # `--features all`; Intel macOS is a best-effort `extra-targets` leg so a queue-starved
+        # x64-macOS runner ships when it can but never blocks the release. `build-musl: false` —
+        # the custom Docker musl job (cli-musl-binaries) supplies the musl archives, picked up
+        # from the shared run artifact namespace (this job `needs:` it). The reusable upload
+        # un-drafts the release (`publish-github-release@v1 draft:false`) so CLI binaries are
+        # never stranded in a draft, and emits a `kreuzcrawl-cli-SHA256SUMS` checksums file.
+        uses: kreuzberg-dev/actions/.github/workflows/reusable-cli-release.yml@v1
+        with:
+            package-name: kreuzcrawl-cli
+            binary-name: kreuzcrawl
+            tag: ${{ needs.prepare.outputs.tag }}
+            asset-prefix: kreuzcrawl-cli-
+            checkout-ref: ${{ needs.prepare.outputs.checkout_ref }}
+            dry-run: ${{ needs.prepare.outputs.dry_run }}
+            build-musl: false
+            checksums: true
+            extra-cargo-args: --features all
+            extra-targets: '[{"os": "macos-15-intel", "target": "x86_64-apple-darwin"}]'
 
     cli-musl-binaries:
         name: Build CLI musl binary (${{ matrix.arch }})
         needs: [prepare, check-cli]
         if: ${{ needs.prepare.outputs.release_cli == 'true' && (needs.check-cli.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
+        # Best-effort: musl is a custom Docker build (bundles libonnxruntime + tesseract); a
+        # failure here must never block the CLI release. continue-on-error reports success to
+        # the `cli-release` reusable call (which `needs:` this job), so the reusable upload
+        # still ships the core matrix and merges whatever musl archives this job produced.
+        continue-on-error: true
         runs-on: ${{ matrix.runner }}
         timeout-minutes: 180
         strategy:
@@ -985,7 +949,9 @@ jobs:
 
             - uses: actions/upload-artifact@v7
               with:
-                  name: cli-${{ matrix.target }}
+                  # Name matches the reusable-cli-release `asset-prefix: kreuzcrawl-cli-` so the
+                  # reusable upload's `download-artifact pattern: kreuzcrawl-cli-*` picks it up.
+                  name: kreuzcrawl-cli-${{ matrix.target }}
                   path: kreuzcrawl-cli-${{ matrix.target }}.tar.gz
                   retention-days: 14
 
@@ -1487,48 +1453,6 @@ jobs:
 
     # ─── GitHub Release asset uploads ─────────────────────────────────────
 
-    upload-cli-release:
-        name: Upload CLI binaries to GitHub Release
-        needs: [prepare, cli-binaries, cli-musl-binaries]
-        # Publish (un-draft) the release as soon as the CLI binaries are ready, mirroring the
-        # sibling repos (liter-llm/kreuzberg). Previously the binaries were uploaded to a draft
-        # that only `release-finalize` promoted, and finalize is gated on
-        # `!contains(needs.*.result, 'failure')` over the entire publish matrix — so any unrelated
-        # leg failing (macOS wheels, maven, homebrew bottles, …) skips finalize and strands the
-        # whole release, CLI binaries included, as an invisible draft. Publishing here via
-        # `publish-github-release@v1` with `draft: false` un-drafts the release (ensure_release.py
-        # PATCHes the existing draft) independently of finalize. Run whenever at least one CLI build
-        # job ran (success or partial failure) so a single-target failure never drops the rest.
-        if: |
-            always() &&
-            needs.prepare.outputs.is_tag == 'true' &&
-            (needs.cli-binaries.result == 'success' || needs.cli-binaries.result == 'failure' ||
-             needs.cli-musl-binaries.result == 'success' || needs.cli-musl-binaries.result == 'failure')
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/create-github-app-token@v2
-              id: app-token
-              with:
-                  app-id: ${{ secrets.BOT_APP_ID }}
-                  private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-                  owner: kreuzberg-dev
-
-            - uses: actions/download-artifact@v8
-              with:
-                  pattern: cli-*
-                  path: dist/cli
-                  merge-multiple: true
-
-            - uses: kreuzberg-dev/actions/publish-github-release@v1
-              with:
-                  tag: ${{ needs.prepare.outputs.tag }}
-                  draft: "false"
-                  dry-run: ${{ needs.prepare.outputs.dry_run }}
-                  artifacts: |
-                      dist/cli/kreuzcrawl-cli-*.tar.gz
-                      dist/cli/kreuzcrawl-cli-*.zip
-                  token: ${{ steps.app-token.outputs.token }}
-
     upload-go-release:
         name: Upload Go FFI archives to GitHub Release
         needs: [prepare, go-ffi-libraries]
@@ -1762,7 +1686,7 @@ jobs:
         name: Verify release assets
         needs:
             - prepare
-            - upload-cli-release
+            - cli-release
             - upload-go-release
             - upload-c-ffi-release
             - upload-elixir-release
@@ -2483,13 +2407,13 @@ jobs:
         # source sha256 must be computed against the FINAL tag, so this job depends on
         # swift-checksums for ordering only (its result is not required — `always()`
         # lets a skipped/failed Swift job through; the tag is settled either way).
-        needs: [prepare, check-homebrew, upload-cli-release, publish-swift-checksums]
+        needs: [prepare, check-homebrew, cli-release, publish-swift-checksums]
         if: |
             always() &&
             needs.prepare.outputs.release_homebrew == 'true' &&
             needs.prepare.outputs.is_tag == 'true' &&
             needs.prepare.outputs.dry_run != 'true' &&
-            needs.upload-cli-release.result == 'success' &&
+            needs.cli-release.result == 'success' &&
             (needs.check-homebrew.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true')
         runs-on: ubuntu-latest
         timeout-minutes: 15
@@ -2689,7 +2613,7 @@ jobs:
             - publish-zig
             - publish-homebrew-formula
             - publish-homebrew-bottles
-            - upload-cli-release
+            - cli-release
             - upload-go-release
             - upload-c-ffi-release
             - upload-elixir-release
@@ -2734,7 +2658,7 @@ jobs:
             - publish-zig
             - publish-homebrew-formula
             - publish-homebrew-bottles
-            - upload-cli-release
+            - cli-release
             - upload-go-release
             - upload-c-ffi-release
             - upload-elixir-release
