@@ -82,7 +82,10 @@ fn merge_json_config(config: &mut CrawlConfig, config_str: &str) -> Result<(), B
     Ok(())
 }
 
-/// Print the results of a batch scrape as markdown or a JSON array of `{url, result}`.
+/// Print a batch scrape as markdown, or the full `BatchScrapeResults` object as JSON.
+///
+/// The JSON form serializes the aggregate result (`results`, `total_count`,
+/// `completed_count`, `failed_count`) so callers match the binding/MCP shape.
 fn print_batch_scrape(results: &BatchScrapeResults, format: &str) {
     if format == "markdown" {
         for entry in &results.results {
@@ -98,26 +101,15 @@ fn print_batch_scrape(results: &BatchScrapeResults, format: &str) {
     } else {
         println!(
             "{}",
-            serde_json::to_string_pretty(
-                &results
-                    .results
-                    .iter()
-                    .map(|entry| serde_json::json!({
-                        "url": entry.url,
-                        "result": match (&entry.result, &entry.error) {
-                            (Some(r), _) => serde_json::to_value(r).unwrap_or_default(),
-                            (_, Some(e)) => serde_json::json!({ "error": e }),
-                            _ => serde_json::json!(null),
-                        }
-                    }))
-                    .collect::<Vec<_>>()
-            )
-            .expect("results are serializable")
+            serde_json::to_string_pretty(results).expect("results are serializable")
         );
     }
 }
 
-/// Print the results of a batch crawl as markdown or a JSON array of `{seed_url, result}`.
+/// Print a batch crawl as markdown, or the full `BatchCrawlResults` object as JSON.
+///
+/// The JSON form serializes the aggregate result (`results`, `total_count`,
+/// `completed_count`, `failed_count`) so callers match the binding/MCP shape.
 fn print_batch_crawl(results: &BatchCrawlResults, format: &str) {
     if format == "markdown" {
         for entry in &results.results {
@@ -135,21 +127,7 @@ fn print_batch_crawl(results: &BatchCrawlResults, format: &str) {
     } else {
         println!(
             "{}",
-            serde_json::to_string_pretty(
-                &results
-                    .results
-                    .iter()
-                    .map(|entry| serde_json::json!({
-                        "seed_url": entry.url,
-                        "result": match (&entry.result, &entry.error) {
-                            (Some(r), _) => serde_json::to_value(r).unwrap_or_default(),
-                            (_, Some(e)) => serde_json::json!({ "error": e }),
-                            _ => serde_json::json!(null),
-                        }
-                    }))
-                    .collect::<Vec<_>>()
-            )
-            .expect("results are serializable")
+            serde_json::to_string_pretty(results).expect("results are serializable")
         );
     }
 }
