@@ -4,9 +4,22 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **CLI: `batch-scrape`, `batch-crawl`, `download`, `citations`, and `version` subcommands.** Wire the existing core entry points into the CLI so the CLI, MCP server, and core surfaces are 1:1. `download` mirrors the MCP download tool (scrape with document download enabled, emitting the downloaded document's metadata); `citations` converts markdown links to numbered citations; `version` prints the crate version as JSON. (`crates/kreuzcrawl-cli`)
+- **MCP: `batch_crawl` and `generate_citations` tools.** `batch_crawl` crawls multiple seed URLs concurrently (mirroring `batch_scrape`); `generate_citations` converts markdown links into numbered citations. (`crates/kreuzcrawl/src/mcp`)
+
 ### Changed
 
 - **chore(precommit): drop the conflicting kotlin-android ktlint hook; ktfmt is the sole formatter.** ktlint's always-format mode fought ktfmt (blank-line-after-brace) and rewrote alef's `///` doc comments to `// /`, breaking `alef verify`. detekt remains for static analysis. Also excluded the vendored Gradle wrapper from shellcheck. (`.pre-commit-config.yaml`)
+
+### Removed
+
+- **MCP: dropped the unimplemented `screenshot`, `research`, and `crawl_status` tools.** They had no backing core capability and only ever returned "not yet implemented", advertising tools that always failed. Every remaining MCP tool is now 1:1 with a CLI subcommand and a real core function. (`crates/kreuzcrawl/src/mcp`)
+
+### Fixed
+
+- **Release: CLI binaries are now reliably attached to a published release.** The GitHub release is created as a draft and was only un-drafted by `release-finalize`, which is skipped whenever any unrelated publish leg fails — stranding the whole release (CLI binaries included) as an invisible draft. `upload-cli-release` now publishes the release directly via `publish-github-release@v1` with `draft: false` (un-drafting the existing draft) and runs even on partial CLI-build failures, mirroring the sibling repos. (`.github/workflows/publish.yaml`)
 
 ## [0.3.0-rc.80] - 2026-06-19
 
