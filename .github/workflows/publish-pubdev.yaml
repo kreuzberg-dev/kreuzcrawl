@@ -53,10 +53,40 @@ jobs:
                   package: kreuzcrawl
                   version: ${{ needs.prepare.outputs.version }}
 
-    dart-package:
-        name: Build Dart package
+    dart-natives:
+        name: Build Dart native (${{ matrix.target }})
         needs: prepare
-        runs-on: ubuntu-latest
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 180
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - {
+                          os: macos-latest,
+                          target: aarch64-apple-darwin,
+                          rid: macos-arm64,
+                      }
+                    - {
+                          os: macos-15-intel,
+                          target: x86_64-apple-darwin,
+                          rid: macos-x64,
+                      }
+                    - {
+                          os: ubuntu-latest,
+                          target: x86_64-unknown-linux-gnu,
+                          rid: linux-x64,
+                      }
+                    - {
+                          os: ubuntu-24.04-arm,
+                          target: aarch64-unknown-linux-gnu,
+                          rid: linux-arm64,
+                      }
+                    - {
+                          os: windows-latest,
+                          target: x86_64-pc-windows-msvc,
+                          rid: windows-x64,
+                      }
         steps:
             - uses: actions/checkout@v6
               with:
@@ -66,10 +96,70 @@ jobs:
             - uses: kreuzberg-dev/actions/setup-rust@v1
 
             - uses: kreuzberg-dev/actions/build-dart-package@v1
+              id: build
               with:
                   # flutter_rust_bridge.yaml lives in packages/dart/rust/, where rust_root: .
                   package-dir: packages/dart/rust
                   crate-name: kreuzcrawl-dart
+
+            - name: Extract native library for this platform
+              shell: bash
+              run: |
+                set -euo pipefail
+                library_path="${{ steps.build.outputs.library-path }}"
+                rid="${{ matrix.rid }}"
+                native_dir="native_build/$rid"
+                mkdir -p "$native_dir"
+                cp "$library_path" "$native_dir/"
+                echo "Extracted native for $rid: $native_dir/$(basename "$library_path")"
+
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: dart-native-${{ matrix.rid }}
+                  path: native_build
+                  retention-days: 14
+
+    dart-package:
+        name: Assemble Dart package
+        needs: [prepare, dart-natives]
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ needs.prepare.outputs.checkout_ref }}
+                  fetch-depth: 0
+
+            - uses: kreuzberg-dev/actions/setup-rust@v1
+
+            - name: Rebuild Dart bindings and codegen on primary platform
+              uses: kreuzberg-dev/actions/build-dart-package@v1
+              id: build
+              with:
+                  package-dir: packages/dart/rust
+                  crate-name: kreuzcrawl-dart
+
+            - name: Download all native artifacts
+              uses: actions/download-artifact@v8
+              with:
+                  path: native_artifacts
+
+            - name: Assemble natives from all platforms into package
+              shell: bash
+              run: |
+                set -euo pipefail
+                rids=(macos-arm64 macos-x64 linux-x64 linux-arm64 windows-x64)
+                for rid in "${rids[@]}"; do
+                  src_path="native_artifacts/dart-native-$rid/$rid"
+                  if [[ ! -d "$src_path" ]]; then
+                    echo "ERROR: Missing native for $rid at $src_path" >&2
+                    exit 1
+                  fi
+                  native_dir="packages/dart/lib/src/native/$rid"
+                  mkdir -p "$native_dir"
+                  cp "$src_path"/* "$native_dir/"
+                  echo "Staged native library for $rid: $native_dir/"
+                done
+                echo "All 5 platform natives staged successfully."
 
             - uses: actions/upload-artifact@v7
               with:
