@@ -1,5 +1,5 @@
 [workspace]
-alef_version = "0.25.50"
+alef_version = "0.25.51"
 languages = [
   "python",
   "node",
@@ -797,9 +797,8 @@ options_type = "CrawlConfig"
 select_when = { category = "batch", input_has = "batch_urls" }
 # E2E generation skips Elixir, Zig, and Swift for this fixture family because
 # their harnesses need dedicated mixed-result collection assertions. The
-# bindings expose batch functions. Brew is skipped because the CLI has no batch
-# subcommand.
-skip_languages = ["elixir", "zig", "swift", "brew"]
+# bindings expose batch functions.
+skip_languages = ["elixir", "zig", "swift"]
 # BatchScrapeResults wraps Vec<BatchScrapeResult> with precomputed counts.
 # Top-level fields: results (Vec), total_count, completed_count, failed_count.
 # Per-element fields (url, result, error) are kept here so fixtures asserting on
@@ -863,6 +862,10 @@ function = "batch_scrape"
 result_type = "BatchScrapeResults"
 raw_c_result_type = "BatchScrapeResults"
 c_engine_factory = "CrawlConfig"
+
+[crates.e2e.calls.batch_scrape.overrides.brew]
+function = "batch-scrape"
+cli_args = ["--format", "json", "--browser-mode", "never"]
 
 # Named call config for crawl — auto-selected for fixtures tagged "crawl".
 # All 27 fixtures in fixtures/crawl/ carry this tag, plus selected fixtures in
@@ -1162,8 +1165,8 @@ options_type = "CrawlConfig"
 select_when = { category = "batch", id_prefix = "batch_crawl" }
 # Same E2E-only constraints as batch_scrape: Elixir, Zig, and Swift expose the
 # binding functions, but their generated fixture harnesses need dedicated
-# mixed-result collection assertions. Brew CLI lacks a batch subcommand.
-skip_languages = ["elixir", "zig", "swift", "brew"]
+# mixed-result collection assertions.
+skip_languages = ["elixir", "zig", "swift"]
 # BatchCrawlResults wraps Vec<BatchCrawlResult> with precomputed counts.
 # Top-level fields: results (Vec), total_count, completed_count, failed_count.
 # Per-element fields (url, result, error) are kept here so fixtures asserting on
@@ -1233,6 +1236,10 @@ function = "batch_crawl"
 result_type = "BatchCrawlResults"
 raw_c_result_type = "BatchCrawlResults"
 c_engine_factory = "CrawlConfig"
+
+[crates.e2e.calls.batch_crawl.overrides.brew]
+function = "batch-crawl"
+cli_args = ["--format", "json", "--browser-mode", "never"]
 
 # Named call config for crawl_stream — auto-selected for fixtures in the
 # `stream` category whose id does NOT start with `batch_crawl_stream`.
