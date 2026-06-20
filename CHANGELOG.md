@@ -4,6 +4,8 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.84] - 2026-06-20
+
 ### Added
 
 - **CLI: `batch-scrape`, `batch-crawl`, `download`, `citations`, and `version` subcommands.** Wire the existing core entry points into the CLI so the CLI, MCP server, and core surfaces are 1:1. `download` mirrors the MCP download tool (scrape with document download enabled, emitting the downloaded document's metadata); `citations` converts markdown links to numbered citations; `version` prints the crate version as JSON. (`crates/kreuzcrawl-cli`)
@@ -20,6 +22,13 @@ All notable changes to kreuzcrawl are documented here.
 ### Fixed
 
 - **Release: CLI binaries are now reliably attached to a published release.** The GitHub release is created as a draft and was only un-drafted by `release-finalize`, which is skipped whenever any unrelated publish leg fails — stranding the whole release (CLI binaries included) as an invisible draft. `upload-cli-release` now publishes the release directly via `publish-github-release@v1` with `draft: false` (un-drafting the existing draft) and runs even on partial CLI-build failures, mirroring the sibling repos. (`.github/workflows/publish.yaml`)
+- **Memory-bounded streaming crawl.** `crawl_stream` / `batch_crawl_stream` now move each page into its `CrawlEvent::Page` and drop it instead of accumulating every page, bounding peak memory on large crawls (≈2.5 GB → ≈20 MB working set). `crawl()`'s batch result is unchanged; `Complete.pages_crawled` reports the exact post-filter count, and a terminal `Complete` is emitted on the seed-error path. (`crates/kreuzcrawl/src/engine`)
+- **Dart package ships native libraries.** The pub.dev package previously bundled no native libs, so the flutter_rust_bridge loader fell back to a relative framework path that macOS hardened-runtime rejects. The publish pipeline now builds the native on a 5-platform matrix and stages each into `lib/src/native/<rid>/` before publishing. (`.github/workflows/publish-pubdev.yaml`)
+- **Swift package links Apple system frameworks.** The published root `Package.swift` now links `Security`, `CoreFoundation`, and `SystemConfiguration` on the `RustBridge` target so the pre-built static library's `SC*` symbols (reqwest proxy detection) resolve for remote SwiftPM consumers. (regenerated via alef 0.25.55)
+
+### Build
+
+- Regenerated all bindings against **alef 0.25.55** — generic Go FFI provisioning (test-app runner delegates to the binding's own `download_ffi`; no project-specific download in the generic generator), swift framework linking, zig stale-hash strip, and test-app `[crates.e2e.env]` export.
 
 ## [0.3.0-rc.80] - 2026-06-19
 

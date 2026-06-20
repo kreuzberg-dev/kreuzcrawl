@@ -1,7 +1,8 @@
 // Tool to download platform-specific FFI libraries from GitHub releases.
-// Invoked via `go generate` before compilation.
-//go:build ignore
-// +build ignore
+// Runnable standalone: `go run ./cmd/download_ffi`. It lives in its own
+// `package main` subdirectory, so it is never linked into the binding library
+// and needs no build-constraint guard — keeping it guard-free lets consumers
+// (and the test-app runner) execute it directly.
 
 package main
 
@@ -18,7 +19,7 @@ import (
 )
 
 const (
-	moduleVersion = "0.3.0-rc.83"
+	moduleVersion = "0.3.0-rc.84"
 	repoURL       = "https://github.com/kreuzberg-dev/kreuzcrawl"
 	assetPrefix   = "kreuzcrawl"
 )

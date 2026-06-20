@@ -3245,7 +3245,7 @@ KCRAWLSsrfPolicy *kcrawl_ssrf_policy_from_env(void);
 int32_t kcrawl_browser_mode_from_i32(int32_t value);
 
 /**
- * Convert a `BrowserMode` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `BrowserMode` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3260,7 +3260,7 @@ int32_t kcrawl_browser_mode_from_str(const char *name);
 int32_t kcrawl_browser_wait_from_i32(int32_t value);
 
 /**
- * Convert a `BrowserWait` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `BrowserWait` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3275,7 +3275,7 @@ int32_t kcrawl_browser_wait_from_str(const char *name);
 int32_t kcrawl_browser_backend_from_i32(int32_t value);
 
 /**
- * Convert a `BrowserBackend` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `BrowserBackend` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3290,7 +3290,7 @@ int32_t kcrawl_browser_backend_from_str(const char *name);
 int32_t kcrawl_auth_config_from_i32(int32_t value);
 
 /**
- * Convert a `AuthConfig` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `AuthConfig` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3305,7 +3305,7 @@ int32_t kcrawl_auth_config_from_str(const char *name);
 int32_t kcrawl_link_type_from_i32(int32_t value);
 
 /**
- * Convert a `LinkType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `LinkType` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3320,7 +3320,7 @@ int32_t kcrawl_link_type_from_str(const char *name);
 int32_t kcrawl_image_source_from_i32(int32_t value);
 
 /**
- * Convert a `ImageSource` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `ImageSource` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3335,7 +3335,7 @@ int32_t kcrawl_image_source_from_str(const char *name);
 int32_t kcrawl_feed_type_from_i32(int32_t value);
 
 /**
- * Convert a `FeedType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `FeedType` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3350,7 +3350,7 @@ int32_t kcrawl_feed_type_from_str(const char *name);
 int32_t kcrawl_asset_category_from_i32(int32_t value);
 
 /**
- * Convert a `AssetCategory` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `AssetCategory` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3365,7 +3365,7 @@ int32_t kcrawl_asset_category_from_str(const char *name);
 int32_t kcrawl_crawl_event_from_i32(int32_t value);
 
 /**
- * Convert a `CrawlEvent` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `CrawlEvent` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3380,7 +3380,7 @@ int32_t kcrawl_crawl_event_from_str(const char *name);
 int32_t kcrawl_page_action_from_i32(int32_t value);
 
 /**
- * Convert a `PageAction` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `PageAction` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
@@ -3395,7 +3395,7 @@ int32_t kcrawl_page_action_from_str(const char *name);
 int32_t kcrawl_scroll_direction_from_i32(int32_t value);
 
 /**
- * Convert a `ScrollDirection` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * Convert a `ScrollDirection` serde wire value (C string) to its integer discriminant. Returns -1 on invalid input.
  * # Safety
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
