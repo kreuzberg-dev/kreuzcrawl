@@ -480,6 +480,24 @@ impl CrawlEngine {
             })
             .await;
 
+        // Emit CrawlEvent::Complete with the exact post-filter page count.
+        // In streaming mode, this happens via tx and event_sink.
+        // In non-streaming mode, this is only emitted via event_sink if present.
+        if let Some(sender) = tx {
+            let complete_event = CrawlEvent::Complete {
+                pages_crawled: pages_processed,
+            };
+            let _ = sender.send(complete_event.clone()).await;
+            if let Some(ref sink) = self.event_sink {
+                sink.emit(complete_event).await;
+            }
+        } else if let Some(ref sink) = self.event_sink {
+            sink.emit(CrawlEvent::Complete {
+                pages_crawled: pages_processed,
+            })
+            .await;
+        }
+
         // Deduplicate cookies by (name, domain, path)
         let mut seen_cookies: HashSet<(String, Option<String>, Option<String>)> = HashSet::new();
         state

@@ -42,21 +42,9 @@ impl CrawlEngine {
 
         tokio::spawn(async move {
             match engine.crawl_with_sender(&url, Some(tx.clone())).await {
-                Ok(result) => {
-                    // In streaming mode, pages are not accumulated in the result.
-                    // Use normalized_urls.len() as the count (one per page processed).
-                    let pages_count = if result.pages.is_empty() {
-                        result.normalized_urls.len()
-                    } else {
-                        result.pages.len()
-                    };
-                    let complete_event = CrawlEvent::Complete {
-                        pages_crawled: pages_count,
-                    };
-                    let _ = tx.send(complete_event.clone()).await;
-                    if let Some(ref sink) = engine.event_sink {
-                        sink.emit(complete_event).await;
-                    }
+                Ok(_result) => {
+                    // Complete event is emitted by crawl_with_sender with the exact post-filter count.
+                    // Nothing more to do here.
                 }
                 Err(e) => {
                     let error_event = CrawlEvent::Error {
@@ -180,14 +168,9 @@ impl CrawlEngine {
                 join_set.spawn(async move {
                     let _permit = permit;
                     match engine.crawl_with_sender(&url, Some(tx.clone())).await {
-                        Ok(result) => {
-                            let complete_event = CrawlEvent::Complete {
-                                pages_crawled: result.pages.len(),
-                            };
-                            let _ = tx.send(complete_event.clone()).await;
-                            if let Some(ref sink) = engine.event_sink {
-                                sink.emit(complete_event).await;
-                            }
+                        Ok(_result) => {
+                            // Complete event is emitted by crawl_with_sender with the exact post-filter count.
+                            // Nothing more to do here.
                         }
                         Err(e) => {
                             let error_event = CrawlEvent::Error {

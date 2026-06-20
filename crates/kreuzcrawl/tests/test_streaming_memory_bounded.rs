@@ -184,3 +184,43 @@ async fn streaming_crawl_with_depth_limit() {
     assert_eq!(page_count, 2, "should emit 2 Page events (depth 0 + 1)");
     assert_eq!(complete_event, Some(2), "Complete event should report 2 pages_crawled");
 }
+
+/// Verify that streaming correctly reports exactly one Complete event.
+/// This is a regression test for the bug where Complete was being emitted twice
+/// (once in crawl_with_sender and once in batch.rs).
+#[tokio::test]
+async fn streaming_crawl_emits_exactly_one_complete_event() {
+    let (_mock, url) = setup_mock_chain(3).await;
+
+    let engine = default_engine();
+    let stream_result = crawl_stream(&engine, &url).await;
+    assert!(stream_result.is_ok(), "crawl_stream must not fail");
+
+    let mut stream = stream_result.unwrap();
+
+    let mut page_count = 0;
+    let mut complete_count = 0;
+
+    while let Some(event_result) = stream.next().await {
+        let event = event_result.expect("stream event must not have transport error");
+        match event {
+            CrawlEvent::Page { result: _ } => {
+                page_count += 1;
+            }
+            CrawlEvent::Complete { pages_crawled } => {
+                complete_count += 1;
+                // Verify the count matches the number of Page events
+                assert_eq!(
+                    pages_crawled, page_count,
+                    "Complete event pages_crawled must equal number of Page events emitted"
+                );
+            }
+            CrawlEvent::Error { url: _, error } => {
+                panic!("unexpected error event: {}", error);
+            }
+        }
+    }
+
+    assert_eq!(page_count, 3, "should emit 3 Page events");
+    assert_eq!(complete_count, 1, "should emit exactly 1 Complete event");
+}
