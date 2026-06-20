@@ -2,8 +2,8 @@ use std::time::Duration;
 
 use clap::{Parser, Subcommand, ValueEnum};
 use kreuzcrawl::{
-    BrowserConfig, BrowserMode, CrawlConfig, PageAction, ProxyConfig, batch_crawl, crawl, create_engine, interact,
-    map_urls, scrape,
+    BatchCrawlResults, BatchScrapeResults, BrowserConfig, BrowserMode, CrawlConfig, PageAction, ProxyConfig,
+    batch_crawl, batch_scrape, crawl, create_engine, generate_citations, interact, map_urls, scrape,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
@@ -80,6 +80,78 @@ fn merge_json_config(config: &mut CrawlConfig, config_str: &str) -> Result<(), B
 
     *config = serde_json::from_value(config_json)?;
     Ok(())
+}
+
+/// Print the results of a batch scrape as markdown or a JSON array of `{url, result}`.
+fn print_batch_scrape(results: &BatchScrapeResults, format: &str) {
+    if format == "markdown" {
+        for entry in &results.results {
+            if let Some(ref r) = entry.result
+                && let Some(ref md) = r.markdown
+            {
+                println!("---\nURL: {}\n---\n{}\n", entry.url, md.content);
+            }
+            if let Some(ref e) = entry.error {
+                eprintln!("Error scraping {}: {e}", entry.url);
+            }
+        }
+    } else {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(
+                &results
+                    .results
+                    .iter()
+                    .map(|entry| serde_json::json!({
+                        "url": entry.url,
+                        "result": match (&entry.result, &entry.error) {
+                            (Some(r), _) => serde_json::to_value(r).unwrap_or_default(),
+                            (_, Some(e)) => serde_json::json!({ "error": e }),
+                            _ => serde_json::json!(null),
+                        }
+                    }))
+                    .collect::<Vec<_>>()
+            )
+            .expect("results are serializable")
+        );
+    }
+}
+
+/// Print the results of a batch crawl as markdown or a JSON array of `{seed_url, result}`.
+fn print_batch_crawl(results: &BatchCrawlResults, format: &str) {
+    if format == "markdown" {
+        for entry in &results.results {
+            if let Some(ref r) = entry.result {
+                for page in &r.pages {
+                    if let Some(ref md) = page.markdown {
+                        println!("---\nSeed: {}\nURL: {}\n---\n{}\n", entry.url, page.url, md.content);
+                    }
+                }
+            }
+            if let Some(ref e) = entry.error {
+                eprintln!("Error crawling {}: {e}", entry.url);
+            }
+        }
+    } else {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(
+                &results
+                    .results
+                    .iter()
+                    .map(|entry| serde_json::json!({
+                        "seed_url": entry.url,
+                        "result": match (&entry.result, &entry.error) {
+                            (Some(r), _) => serde_json::to_value(r).unwrap_or_default(),
+                            (_, Some(e)) => serde_json::json!({ "error": e }),
+                            _ => serde_json::json!(null),
+                        }
+                    }))
+                    .collect::<Vec<_>>()
+            )
+            .expect("results are serializable")
+        );
+    }
 }
 
 #[derive(Parser)]
@@ -217,6 +289,111 @@ enum Commands {
         #[arg(long, value_name = "JSON")]
         config: Option<String>,
     },
+    /// Scrape multiple URLs concurrently
+    BatchScrape {
+        /// URLs to scrape
+        #[arg(required = true)]
+        urls: Vec<String>,
+        /// Maximum concurrent requests
+        #[arg(long, short = 'c', default_value = "10")]
+        concurrent: usize,
+        /// Output format: json or markdown
+        #[arg(long, default_value = "json")]
+        format: String,
+        /// Proxy URL
+        #[arg(long)]
+        proxy: Option<String>,
+        /// Custom user agent
+        #[arg(long)]
+        user_agent: Option<String>,
+        /// Request timeout in milliseconds
+        #[arg(long, default_value = "30000")]
+        timeout: u64,
+        /// Respect robots.txt
+        #[arg(long)]
+        respect_robots_txt: bool,
+        /// When to use the browser: auto, always, or never
+        #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
+        browser_mode: CliBrowserMode,
+        /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
+        #[arg(long, value_parser = parse_browser_endpoint)]
+        browser_endpoint: Option<String>,
+        /// Configuration as JSON string or @file.json
+        #[arg(long, value_name = "JSON")]
+        config: Option<String>,
+    },
+    /// Crawl multiple websites concurrently
+    BatchCrawl {
+        /// Seed URLs to crawl
+        #[arg(required = true)]
+        urls: Vec<String>,
+        /// Maximum crawl depth
+        #[arg(long, short = 'd', default_value = "2")]
+        depth: usize,
+        /// Maximum pages to crawl per seed
+        #[arg(long, short = 'n')]
+        max_pages: Option<usize>,
+        /// Maximum concurrent requests
+        #[arg(long, short = 'c', default_value = "10")]
+        concurrent: usize,
+        /// Rate limit delay in milliseconds
+        #[arg(long, default_value = "200")]
+        rate_limit: u64,
+        /// Output format: json or markdown
+        #[arg(long, default_value = "json")]
+        format: String,
+        /// Proxy URL
+        #[arg(long)]
+        proxy: Option<String>,
+        /// Custom user agent
+        #[arg(long)]
+        user_agent: Option<String>,
+        /// Request timeout in milliseconds
+        #[arg(long, default_value = "30000")]
+        timeout: u64,
+        /// Respect robots.txt
+        #[arg(long)]
+        respect_robots_txt: bool,
+        /// Stay on the same domain
+        #[arg(long)]
+        stay_on_domain: bool,
+        /// When to use the browser: auto, always, or never
+        #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
+        browser_mode: CliBrowserMode,
+        /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
+        #[arg(long, value_parser = parse_browser_endpoint)]
+        browser_endpoint: Option<String>,
+        /// Configuration as JSON string or @file.json
+        #[arg(long, value_name = "JSON")]
+        config: Option<String>,
+    },
+    /// Download a document from a URL and report its metadata
+    Download {
+        /// URL to download
+        url: String,
+        /// Maximum document size in bytes
+        #[arg(long)]
+        max_size: Option<usize>,
+        /// Request timeout in milliseconds
+        #[arg(long, default_value = "30000")]
+        timeout: u64,
+        /// When to use the browser: auto, always, or never
+        #[arg(long, value_enum, default_value_t = CliBrowserMode::Auto)]
+        browser_mode: CliBrowserMode,
+        /// CDP WebSocket endpoint for an external browser (must start with ws:// or wss://)
+        #[arg(long, value_parser = parse_browser_endpoint)]
+        browser_endpoint: Option<String>,
+        /// Configuration as JSON string or @file.json
+        #[arg(long, value_name = "JSON")]
+        config: Option<String>,
+    },
+    /// Convert markdown links into numbered citations
+    Citations {
+        /// Markdown text, or @file.md to read from a file
+        input: String,
+    },
+    /// Print the kreuzcrawl version as JSON
+    Version {},
     /// Start the REST API server
     #[cfg(feature = "api")]
     Serve {
@@ -359,47 +536,12 @@ async fn main() {
                     }
                 }
             } else {
-                let results = match batch_crawl(&handle, urls).await {
-                    Ok(r) => r,
+                match batch_crawl(&handle, urls).await {
+                    Ok(results) => print_batch_crawl(&results, &format),
                     Err(e) => {
                         eprintln!("Error: {e}");
                         std::process::exit(1);
                     }
-                };
-                if format == "markdown" {
-                    for entry in &results.results {
-                        if let Some(ref r) = entry.result {
-                            for page in &r.pages {
-                                if let Some(ref md) = page.markdown {
-                                    println!("---\nSeed: {}\nURL: {}\n---\n{}\n", entry.url, page.url, md.content);
-                                }
-                            }
-                        }
-                        if let Some(ref e) = entry.error {
-                            eprintln!("Error crawling {}: {e}", entry.url);
-                        }
-                    }
-                } else {
-                    println!(
-                        "{}",
-                        serde_json::to_string_pretty(
-                            &results
-                                .results
-                                .iter()
-                                .map(|entry| {
-                                    serde_json::json!({
-                                        "seed_url": entry.url,
-                                        "result": match (&entry.result, &entry.error) {
-                                            (Some(r), _) => serde_json::to_value(r).unwrap_or_default(),
-                                            (_, Some(e)) => serde_json::json!({"error": e}),
-                                            _ => serde_json::json!(null),
-                                        }
-                                    })
-                                })
-                                .collect::<Vec<_>>()
-                        )
-                        .expect("results are serializable")
-                    );
                 }
             }
         }
@@ -505,6 +647,182 @@ async fn main() {
                 }
             }
         }
+        Commands::BatchScrape {
+            urls,
+            concurrent,
+            format,
+            proxy,
+            user_agent,
+            timeout,
+            respect_robots_txt,
+            browser_mode,
+            browser_endpoint,
+            config: config_str,
+        } => {
+            let timeout_duration = Duration::from_millis(timeout);
+            let mut config = CrawlConfig {
+                max_concurrent: Some(concurrent),
+                user_agent,
+                request_timeout: timeout_duration,
+                respect_robots_txt,
+                proxy: proxy.map(|url| ProxyConfig {
+                    url,
+                    username: None,
+                    password: None,
+                }),
+                browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
+                ..Default::default()
+            };
+
+            if let Some(config_json) = config_str
+                && let Err(e) = merge_json_config(&mut config, &config_json)
+            {
+                eprintln!("Error: invalid config: {e}");
+                std::process::exit(1);
+            }
+
+            let handle = create_engine(Some(config)).expect("failed to create crawl engine");
+            match batch_scrape(&handle, urls).await {
+                Ok(results) => print_batch_scrape(&results, &format),
+                Err(e) => {
+                    eprintln!("Error: {e}");
+                    std::process::exit(1);
+                }
+            }
+        }
+        Commands::BatchCrawl {
+            urls,
+            depth,
+            max_pages,
+            concurrent,
+            rate_limit,
+            format,
+            proxy,
+            user_agent,
+            timeout,
+            respect_robots_txt,
+            stay_on_domain,
+            browser_mode,
+            browser_endpoint,
+            config: config_str,
+        } => {
+            let timeout_duration = Duration::from_millis(timeout);
+            let mut config = CrawlConfig {
+                max_depth: Some(depth),
+                max_pages,
+                max_concurrent: Some(concurrent),
+                rate_limit_ms: Some(rate_limit),
+                user_agent,
+                request_timeout: timeout_duration,
+                respect_robots_txt,
+                stay_on_domain,
+                proxy: proxy.map(|url| ProxyConfig {
+                    url,
+                    username: None,
+                    password: None,
+                }),
+                browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
+                ..Default::default()
+            };
+
+            if let Some(config_json) = config_str
+                && let Err(e) = merge_json_config(&mut config, &config_json)
+            {
+                eprintln!("Error: invalid config: {e}");
+                std::process::exit(1);
+            }
+
+            let handle = create_engine(Some(config)).expect("failed to create crawl engine");
+            match batch_crawl(&handle, urls).await {
+                Ok(results) => print_batch_crawl(&results, &format),
+                Err(e) => {
+                    eprintln!("Error: {e}");
+                    std::process::exit(1);
+                }
+            }
+        }
+        Commands::Download {
+            url,
+            max_size,
+            timeout,
+            browser_mode,
+            browser_endpoint,
+            config: config_str,
+        } => {
+            let timeout_duration = Duration::from_millis(timeout);
+            let mut config = CrawlConfig {
+                request_timeout: timeout_duration,
+                download_documents: true,
+                document_max_size: max_size,
+                browser: build_browser_config(browser_mode, browser_endpoint, timeout_duration),
+                ..Default::default()
+            };
+
+            if let Some(config_json) = config_str
+                && let Err(e) = merge_json_config(&mut config, &config_json)
+            {
+                eprintln!("Error: invalid config: {e}");
+                std::process::exit(1);
+            }
+
+            let handle = create_engine(Some(config)).expect("failed to create crawl engine");
+            match scrape(&handle, &url).await {
+                Ok(result) => {
+                    // Mirror the MCP `download` tool output: prefer the downloaded
+                    // document metadata, falling back to page metadata for HTML.
+                    let output = if let Some(ref doc) = result.downloaded_document {
+                        serde_json::json!({
+                            "url": doc.url,
+                            "mime_type": doc.mime_type,
+                            "size": doc.size,
+                            "filename": doc.filename,
+                            "content_hash": doc.content_hash,
+                        })
+                    } else {
+                        serde_json::json!({
+                            "url": url,
+                            "content_type": result.content_type,
+                            "status_code": result.status_code,
+                            "body_size": result.body_size,
+                            "note": "URL returned HTML content, not a downloadable document",
+                        })
+                    };
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&output).expect("output is serializable")
+                    );
+                }
+                Err(e) => {
+                    eprintln!("Error: {e}");
+                    std::process::exit(1);
+                }
+            }
+        }
+        Commands::Citations { input } => {
+            let markdown = if let Some(path) = input.strip_prefix('@') {
+                match std::fs::read_to_string(path) {
+                    Ok(text) => text,
+                    Err(e) => {
+                        eprintln!("Error: cannot read {path}: {e}");
+                        std::process::exit(1);
+                    }
+                }
+            } else {
+                input
+            };
+            let result = generate_citations(&markdown);
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&result).expect("result is serializable")
+            );
+        }
+        Commands::Version {} => {
+            let response = serde_json::json!({ "version": env!("CARGO_PKG_VERSION") });
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&response).expect("version is serializable")
+            );
+        }
         #[cfg(feature = "api")]
         Commands::Serve { host, port } => {
             eprintln!("Starting REST API server on {host}:{port}");
@@ -574,5 +892,74 @@ mod tests {
         assert!(parse_browser_endpoint("http://127.0.0.1:9222").is_err());
         assert!(parse_browser_endpoint("https://remote.host").is_err());
         assert!(parse_browser_endpoint("127.0.0.1:9222").is_err());
+    }
+
+    use clap::Parser;
+
+    use super::{Cli, Commands};
+
+    #[test]
+    fn parses_batch_scrape_subcommand() {
+        let cli = Cli::try_parse_from(["kreuzcrawl", "batch-scrape", "https://a.com", "https://b.com"]).unwrap();
+        match cli.command {
+            Commands::BatchScrape { urls, concurrent, .. } => {
+                assert_eq!(urls, vec!["https://a.com".to_string(), "https://b.com".to_string()]);
+                assert_eq!(concurrent, 10);
+            }
+            _ => panic!("expected BatchScrape"),
+        }
+    }
+
+    #[test]
+    fn parses_batch_crawl_subcommand_with_depth() {
+        let cli = Cli::try_parse_from([
+            "kreuzcrawl",
+            "batch-crawl",
+            "https://a.com",
+            "https://b.com",
+            "--depth",
+            "3",
+        ])
+        .unwrap();
+        match cli.command {
+            Commands::BatchCrawl { urls, depth, .. } => {
+                assert_eq!(urls.len(), 2);
+                assert_eq!(depth, 3);
+            }
+            _ => panic!("expected BatchCrawl"),
+        }
+    }
+
+    #[test]
+    fn parses_download_subcommand() {
+        let cli =
+            Cli::try_parse_from(["kreuzcrawl", "download", "https://a.com/doc.pdf", "--max-size", "1024"]).unwrap();
+        match cli.command {
+            Commands::Download { url, max_size, .. } => {
+                assert_eq!(url, "https://a.com/doc.pdf");
+                assert_eq!(max_size, Some(1024));
+            }
+            _ => panic!("expected Download"),
+        }
+    }
+
+    #[test]
+    fn parses_citations_subcommand() {
+        let cli = Cli::try_parse_from(["kreuzcrawl", "citations", "@notes.md"]).unwrap();
+        match cli.command {
+            Commands::Citations { input } => assert_eq!(input, "@notes.md"),
+            _ => panic!("expected Citations"),
+        }
+    }
+
+    #[test]
+    fn parses_version_subcommand() {
+        let cli = Cli::try_parse_from(["kreuzcrawl", "version"]).unwrap();
+        assert!(matches!(cli.command, Commands::Version {}));
+    }
+
+    #[test]
+    fn batch_scrape_requires_at_least_one_url() {
+        assert!(Cli::try_parse_from(["kreuzcrawl", "batch-scrape"]).is_err());
     }
 }
