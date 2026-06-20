@@ -224,3 +224,39 @@ async fn streaming_crawl_emits_exactly_one_complete_event() {
     assert_eq!(page_count, 3, "should emit 3 Page events");
     assert_eq!(complete_count, 1, "should emit exactly 1 Complete event");
 }
+
+/// Regression: a seed that cannot be fetched (connection refused) must still emit
+/// a terminal Complete after the Error. `batch.rs` used to emit Complete on every
+/// Ok return; now that the authoritative Complete lives in the crawl loop, the
+/// early-error return path must emit it too — otherwise streaming consumers lose
+/// the canonical end-of-stream marker on seed/redirect failure.
+#[tokio::test]
+async fn streaming_crawl_seed_error_still_emits_complete() {
+    // Bind then drop a listener to obtain a port that is (almost certainly) closed.
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind probe socket");
+    let port = listener.local_addr().expect("probe addr").port();
+    drop(listener);
+    let url = format!("http://127.0.0.1:{}/page0", port);
+
+    let engine = default_engine();
+    let stream_result = crawl_stream(&engine, &url).await;
+    assert!(stream_result.is_ok(), "crawl_stream must not fail to start");
+    let mut stream = stream_result.unwrap();
+
+    let mut error_count = 0;
+    let mut complete_count = 0;
+    while let Some(event_result) = stream.next().await {
+        let event = event_result.expect("stream event must not have transport error");
+        match event {
+            CrawlEvent::Error { .. } => error_count += 1,
+            CrawlEvent::Complete { pages_crawled } => {
+                complete_count += 1;
+                assert_eq!(pages_crawled, 0, "seed-error crawl should report 0 pages_crawled");
+            }
+            CrawlEvent::Page { .. } => panic!("no Page event should be emitted for an unreachable seed"),
+        }
+    }
+
+    assert!(error_count >= 1, "should emit an Error for the unreachable seed");
+    assert_eq!(complete_count, 1, "should emit exactly one Complete even on seed error");
+}

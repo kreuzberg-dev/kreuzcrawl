@@ -399,6 +399,18 @@ impl CrawlEngine {
             if let Some(ref sink) = self.event_sink {
                 sink.emit(error_event).await;
             }
+            // Emit a terminal Complete after the Error so streaming consumers still
+            // observe the canonical end-of-stream marker on seed/redirect failure.
+            // `batch.rs` previously emitted this on every Ok return; now that the
+            // authoritative Complete lives in the crawl loop, this early-return path
+            // must emit it too (no pages were crawled, so the count is 0).
+            let complete_event = CrawlEvent::Complete { pages_crawled: 0 };
+            if let Some(sender) = &tx {
+                let _ = sender.send(complete_event.clone()).await;
+            }
+            if let Some(ref sink) = self.event_sink {
+                sink.emit(complete_event).await;
+            }
             return Ok(state.into_result(final_url));
         }
 
