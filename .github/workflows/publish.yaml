@@ -1490,7 +1490,20 @@ jobs:
     upload-cli-release:
         name: Upload CLI binaries to GitHub Release
         needs: [prepare, cli-binaries, cli-musl-binaries]
-        if: ${{ needs.prepare.outputs.is_tag == 'true' && (needs.cli-binaries.result == 'success' || needs.cli-musl-binaries.result == 'success') }}
+        # Publish (un-draft) the release as soon as the CLI binaries are ready, mirroring the
+        # sibling repos (liter-llm/kreuzberg). Previously the binaries were uploaded to a draft
+        # that only `release-finalize` promoted, and finalize is gated on
+        # `!contains(needs.*.result, 'failure')` over the entire publish matrix — so any unrelated
+        # leg failing (macOS wheels, maven, homebrew bottles, …) skips finalize and strands the
+        # whole release, CLI binaries included, as an invisible draft. Publishing here via
+        # `publish-github-release@v1` with `draft: false` un-drafts the release (ensure_release.py
+        # PATCHes the existing draft) independently of finalize. Run whenever at least one CLI build
+        # job ran (success or partial failure) so a single-target failure never drops the rest.
+        if: |
+            always() &&
+            needs.prepare.outputs.is_tag == 'true' &&
+            (needs.cli-binaries.result == 'success' || needs.cli-binaries.result == 'failure' ||
+             needs.cli-musl-binaries.result == 'success' || needs.cli-musl-binaries.result == 'failure')
         runs-on: ubuntu-latest
         steps:
             - uses: actions/create-github-app-token@v2
@@ -1506,14 +1519,14 @@ jobs:
                   path: dist/cli
                   merge-multiple: true
 
-            - uses: kreuzberg-dev/actions/upload-release-assets@v1
+            - uses: kreuzberg-dev/actions/publish-github-release@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
-                  working-directory: dist/cli
+                  draft: "false"
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
-                  assets: |
-                      kreuzcrawl-cli-*.tar.gz
-                      kreuzcrawl-cli-*.zip
+                  artifacts: |
+                      dist/cli/kreuzcrawl-cli-*.tar.gz
+                      dist/cli/kreuzcrawl-cli-*.zip
                   token: ${{ steps.app-token.outputs.token }}
 
     upload-go-release:
