@@ -94,13 +94,28 @@ jobs:
                   fetch-depth: 0
 
             - uses: kreuzberg-dev/actions/setup-rust@v1
-
-            - uses: kreuzberg-dev/actions/build-dart-package@v1
-              id: build
               with:
-                  # flutter_rust_bridge.yaml lives in packages/dart/rust/, where rust_root: .
-                  package-dir: packages/dart/rust
-                  crate-name: kreuzcrawl-dart
+                  cache-key-prefix: dart-native-${{ matrix.rid }}
+
+            - name: Build Dart native
+              id: build
+              shell: bash
+              env:
+                  TARGET: ${{ matrix.target }}
+              run: |
+                set -euo pipefail
+                # The native dylib needs only Rust. Flutter is not used (it ships no
+                # Linux ARM64 stable SDK, which broke the linux-arm64 leg) and FRB
+                # codegen is not run here (packages/dart/rust/src/frb_generated.rs is
+                # committed). Each runner is native to its target, so no --target/cross
+                # toolchain is required. Mirrors liter-llm / kreuzberg dart natives.
+                cargo build --locked -p kreuzcrawl-dart --release
+                case "$TARGET" in
+                  *windows*) lib="kreuzcrawl_dart.dll" ;;
+                  *apple*)   lib="libkreuzcrawl_dart.dylib" ;;
+                  *)         lib="libkreuzcrawl_dart.so" ;;
+                esac
+                echo "library-path=$PWD/target/release/$lib" >> "$GITHUB_OUTPUT"
 
             - name: Extract native library for this platform
               shell: bash
