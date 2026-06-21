@@ -4,6 +4,17 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.85] - 2026-06-21
+
+### Fixed
+
+- **Dart pub.dev publish no longer requires Flutter to build natives.** The per-platform native dylib build used `build-dart-package`, which installs Flutter via `subosito/flutter-action`; Flutter ships no Linux ARM64 stable SDK, so the `linux-arm64` leg failed ("Unable to determine Flutter version … architecture: arm64") and blocked the entire pub.dev publish. The native build needs only Rust (`frb_generated.rs` is committed), so the matrix now builds each native with `cargo build --locked -p kreuzcrawl-dart --release` directly — matching the canonical liter-llm / kreuzberg pattern. (`.github/workflows/publish-pubdev.yaml`)
+
+### Build
+
+- Regenerated all bindings against **alef 0.25.58** (pin bumped from 0.25.55).
+- Supersedes rc.84, whose Homebrew bottle-merge and release-finalize steps were stranded by a transient crates.io fetch flake in the `x86_64_linux` bottle build (leaving the tap formula's `bottle do` block pinned to the rc.83 root URL).
+
 ## [0.3.0-rc.84] - 2026-06-20
 
 ### Added
