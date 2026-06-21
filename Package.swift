@@ -34,7 +34,7 @@ let package = Package(
     .binaryTarget(
       name: "RustBridgeBinary",
       url: "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.85/Kreuzcrawl-rs.artifactbundle.zip",
-      checksum: "__ALEF_SWIFT_CHECKSUM__"
+      checksum: "c518e05b4e8c6d94010bc6945136e42a3b2b00ee07b14fa6da669c6f7dfea70a"
     ),
     // RustBridge: Swift wrapper module owning the swift-bridge generated
     // sources. Depends on RustBridgeC for C type declarations and on
