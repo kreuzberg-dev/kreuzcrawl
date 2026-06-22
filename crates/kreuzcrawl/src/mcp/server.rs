@@ -94,7 +94,12 @@ impl KreuzcrawlMcp {
     /// for human-readable content.
     #[tool(
         description = "Scrape a single URL and extract content as markdown or JSON. Returns page content, metadata, links, and images.",
-        annotations(title = "Scrape URL", read_only_hint = true, idempotent_hint = true, open_world_hint = true)
+        annotations(
+            title = "Scrape URL",
+            read_only_hint = true,
+            idempotent_hint = true,
+            open_world_hint = true
+        )
     )]
     async fn scrape(
         &self,
@@ -185,7 +190,12 @@ impl KreuzcrawlMcp {
     /// change frequency, priority). Use `search` to filter URLs by substring.
     #[tool(
         description = "Discover all pages on a website via links and sitemaps. Returns a list of discovered URLs.",
-        annotations(title = "Map Website", read_only_hint = true, idempotent_hint = true, open_world_hint = true)
+        annotations(
+            title = "Map Website",
+            read_only_hint = true,
+            idempotent_hint = true,
+            open_world_hint = true
+        )
     )]
     async fn map(
         &self,
@@ -390,7 +400,12 @@ impl KreuzcrawlMcp {
     /// Execute browser actions on a page.
     #[tool(
         description = "Execute browser actions on a page. Actions may mutate page or application state.",
-        annotations(title = "Interact", read_only_hint = false, destructive_hint = true, open_world_hint = true)
+        annotations(
+            title = "Interact",
+            read_only_hint = false,
+            destructive_hint = true,
+            open_world_hint = true
+        )
     )]
     async fn interact(
         &self,
@@ -422,7 +437,12 @@ impl KreuzcrawlMcp {
     /// scraped markdown.
     #[tool(
         description = "Convert markdown links into numbered citations with an appended reference list.",
-        annotations(title = "Generate Citations", read_only_hint = true, idempotent_hint = true, open_world_hint = false)
+        annotations(
+            title = "Generate Citations",
+            read_only_hint = true,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
     )]
     fn generate_citations(
         &self,
@@ -437,7 +457,12 @@ impl KreuzcrawlMcp {
     /// Get the current kreuzcrawl version.
     #[tool(
         description = "Get the current kreuzcrawl library version.",
-        annotations(title = "Get Version", read_only_hint = true, idempotent_hint = true, open_world_hint = false)
+        annotations(
+            title = "Get Version",
+            read_only_hint = true,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
     )]
     fn get_version(
         &self,
@@ -571,17 +596,29 @@ mod tests {
             ("get_version", Some(true), None, Some(false)),
         ];
 
-        assert_eq!(tools.len(), expected.len(), "tool count drifted from annotation expectations");
+        assert_eq!(
+            tools.len(),
+            expected.len(),
+            "tool count drifted from annotation expectations"
+        );
 
         for (name, read_only, destructive, open_world) in expected {
-            let tool = by_name.get(name).unwrap_or_else(|| panic!("tool `{name}` missing from router"));
+            let tool = by_name
+                .get(name)
+                .unwrap_or_else(|| panic!("tool `{name}` missing from router"));
             let ann = tool
                 .annotations
                 .as_ref()
                 .unwrap_or_else(|| panic!("tool `{name}` has no annotations"));
             assert_eq!(ann.read_only_hint, *read_only, "read_only_hint mismatch for `{name}`");
-            assert_eq!(ann.destructive_hint, *destructive, "destructive_hint mismatch for `{name}`");
-            assert_eq!(ann.open_world_hint, *open_world, "open_world_hint mismatch for `{name}`");
+            assert_eq!(
+                ann.destructive_hint, *destructive,
+                "destructive_hint mismatch for `{name}`"
+            );
+            assert_eq!(
+                ann.open_world_hint, *open_world,
+                "open_world_hint mismatch for `{name}`"
+            );
             assert!(ann.title.is_some(), "tool `{name}` is missing a title annotation");
         }
     }

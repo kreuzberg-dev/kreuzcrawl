@@ -4,6 +4,21 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.87] - 2026-06-22
+
+### Added
+
+- **MCP: Streamable HTTP transport at `/mcp`.** When the binary is built with both the `api` and `mcp` features (the CLI is), the REST API server now also exposes the MCP server over rmcp's Streamable HTTP transport, mounted outside the REST middleware stack so request-timeout/compression layers don't break MCP SSE. Each tool also declares its safety annotations (`read_only`/`destructive`/`open_world` hints). (`crates/kreuzcrawl/src/mcp`, `crates/kreuzcrawl/src/api/router.rs`)
+
+### Fixed
+
+- **MCP: the server exposed zero tools.** The `impl ServerHandler` was missing rmcp's `#[tool_handler]`, so `tools/list`/`tools/call` silently returned an empty list over both stdio and HTTP — every MCP client through rc.86 saw a tool-less server. The handler now delegates to the generated tool router. (`crates/kreuzcrawl/src/mcp/server.rs`)
+- **Swift: `RustBridgeC.h` no longer regresses to the placeholder.** rc.86 shipped the typedef-only placeholder header (reverting the populated header from rc.85), so every SwiftPM consumer of the source package failed to compile with thousands of `cannot find '__swift_bridge__$…' in scope` errors. The alef 0.26.3 bump below preserves an already-populated header across `alef all --clean`, and the umbrella header (994 swift-bridge C declarations) is repopulated here.
+
+### Build
+
+- Regenerated all bindings against **alef 0.26.3** (pin bumped from 0.25.60). Beyond the Swift header preservation fix above, this folds in the accumulated 0.25.60→0.26.3 codegen changes.
+
 ## [0.3.0-rc.86] - 2026-06-22
 
 ### Build

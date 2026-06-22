@@ -32,6 +32,4 @@ pub mod format;
 mod params;
 mod server;
 
-pub use server::{
-    KreuzcrawlHttpMcpService, start_mcp_server, start_mcp_server_with_config, streamable_http_service,
-};
+pub use server::{KreuzcrawlHttpMcpService, start_mcp_server, start_mcp_server_with_config, streamable_http_service};

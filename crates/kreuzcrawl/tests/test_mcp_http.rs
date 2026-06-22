@@ -66,7 +66,12 @@ async fn initialize(app: &Router) -> String {
         .to_str()
         .expect("session id is valid ascii")
         .to_string();
-    let _ = post(app, Some(&sid), r#"{"jsonrpc":"2.0","method":"notifications/initialized"}"#).await;
+    let _ = post(
+        app,
+        Some(&sid),
+        r#"{"jsonrpc":"2.0","method":"notifications/initialized"}"#,
+    )
+    .await;
     sid
 }
 
@@ -75,8 +80,12 @@ async fn http_mcp_lists_all_nine_tools() {
     let app = app();
     let sid = initialize(&app).await;
 
-    let (status, _headers, body) =
-        post(&app, Some(&sid), r#"{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}"#).await;
+    let (status, _headers, body) = post(
+        &app,
+        Some(&sid),
+        r#"{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}"#,
+    )
+    .await;
     assert_eq!(status, StatusCode::OK);
 
     let value = sse_result(&body);
@@ -95,8 +104,12 @@ async fn http_mcp_serves_safety_annotations() {
     let app = app();
     let sid = initialize(&app).await;
 
-    let (_status, _headers, body) =
-        post(&app, Some(&sid), r#"{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}"#).await;
+    let (_status, _headers, body) = post(
+        &app,
+        Some(&sid),
+        r#"{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}"#,
+    )
+    .await;
     let value = sse_result(&body);
     let tools = value["result"]["tools"].as_array().expect("tools array");
 
