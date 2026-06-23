@@ -4,6 +4,16 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+## [0.3.0-rc.88] - 2026-06-23
+
+### Fixed
+
+- **Docker: multi-arch publish no longer times out on the arm64 leg.** `Publish Docker Images` built `linux/amd64,linux/arm64` in a single job with the arm64 image compiled under QEMU emulation, which routinely ran the full Rust build right up against the 120-minute job timeout (rc.86 squeaked through at 103 min; rc.87 tipped over and was cancelled, leaving no `0.3.0-rc.87` image on GHCR). The job now builds each architecture natively in a matrix (`amd64` on `ubuntu-latest`, `arm64` on `ubuntu-24.04-arm`), pushes each by digest, and merges them into a single manifest list with `docker buildx imagetools create` — matching the canonical infra pattern and removing QEMU entirely. Per-arch GHA cache scopes also fix a `cache-from`/`cache-to` scope mismatch that previously defeated cache reuse. (`.github/workflows/publish-docker.yaml`)
+
+### Build
+
+- Regenerated all bindings against **alef 0.26.6** (pin bumped from 0.26.3). Folds in the accumulated 0.26.4→0.26.6 codegen changes (including the pyo3 Python trait-callback reliability fix and the Dart mirror/opaque/from_json declaration fix).
+
 ## [0.3.0-rc.87] - 2026-06-22
 
 ### Added
