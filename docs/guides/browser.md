@@ -56,6 +56,53 @@ let config = CrawlConfig {
 
 The Chromiumoxide backend keeps a Chrome instance alive across requests; tabs are handed out lazily, the pool auto-recovers if Chrome crashes, and concurrent tabs are bounded by `CrawlConfig::max_concurrent`. No additional configuration is required.
 
+## Browser pool and native executor (Rust)
+
+**This section covers Rust-only injection APIs. Language bindings (Python, Node, Ruby, etc.) rely on built-in pooling configured through static `CrawlConfig` fields only.**
+
+For long-lived Rust processes (e.g. a worker service handling many crawl jobs), amortise Chrome startup cost by constructing and warming a shared `BrowserPool` once, then injecting it into each `CrawlEngine`:
+
+```rust
+use kreuzcrawl::{BrowserPool, BrowserPoolConfig, CrawlEngineBuilder};
+
+// Build and warm the pool at startup. `BrowserPool::new` returns an `Arc<BrowserPool>`.
+let pool = BrowserPool::new(BrowserPoolConfig {
+    max_pages: 8,
+    ..Default::default()
+});
+pool.warm().await?;
+
+// Inject into engines; they reuse the same Chrome instance.
+let engine = CrawlEngineBuilder::new()
+    .with_browser_pool(pool)
+    .build()?;
+```
+
+Requires the `browser` Cargo feature.
+
+For the native browser backend (`BrowserBackend::Native`), inject a pre-built `NativeBrowserExecutor` to avoid spawning worker threads per engine:
+
+```rust
+use kreuzcrawl::{BrowserBackend, BrowserConfig, NativeBrowserExecutor, NativeBrowserExecutorConfig, CrawlEngineBuilder};
+
+let executor = NativeBrowserExecutor::new(NativeBrowserExecutorConfig::default())?;
+
+let engine = CrawlEngineBuilder::new()
+    .with_native_executor(std::sync::Arc::new(executor))
+    .build()?;
+```
+
+Requires the `browser-native` Cargo feature.
+
+**Session affinity** keeps same-domain browser sessions alive across requests, preserving cookies and fingerprints. Enable via `BrowserConfig::session_affinity` (defaults to `true`). For custom session routing, use `BrowserSessionPool` (Rust-only):
+
+```rust
+use kreuzcrawl::BrowserSessionPool;
+
+let session_pool = BrowserSessionPool::new();
+// Sessions are keyed by domain; reuse is automatic across crawl operations.
+```
+
 ## Connecting to an external browser
 
 Point the Chromiumoxide backend at an already-running Chrome via its CDP WebSocket endpoint instead of launching one locally:

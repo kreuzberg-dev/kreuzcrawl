@@ -149,7 +149,7 @@ AuthConfig::Header { name: "X-API-Key".into(), value: "key-value".into() }
 
 | Field   | Type                  | Default | Description          |
 | ------- | --------------------- | ------- | -------------------- |
-| `proxy` | `Option<ProxyConfig>` | `None`  | Proxy configuration. |
+| `proxy` | `Option<ProxyConfig>` | `None`  | Static proxy configuration. |
 
 ```rust
 ProxyConfig {
@@ -158,6 +158,37 @@ ProxyConfig {
     password: Some("pass".to_string()),
 }
 ```
+
+#### Dynamic proxy rotation (Rust)
+
+**This feature is Rust-only. Language bindings configure the static `proxy` field only.**
+
+For per-request proxy selection or custom rotation logic, implement or compose a `ProxyProvider` and inject it via `CrawlEngineBuilder::with_proxy_provider`. The provider's `next_proxy(&self, host: &str)` method is called per HTTP request with the target host. Returning `None` routes the request directly:
+
+```rust
+use std::sync::Arc;
+use kreuzcrawl::{ProxyConfig, StaticProxyProvider, CrawlEngineBuilder};
+
+// Baseline: round-robin pool of proxies.
+let pool = StaticProxyProvider::new(vec![
+    ProxyConfig {
+        url: "http://proxy1:8080".into(),
+        username: None,
+        password: None,
+    },
+    ProxyConfig {
+        url: "http://proxy2:8080".into(),
+        username: None,
+        password: None,
+    },
+]);
+
+let engine = CrawlEngineBuilder::new()
+    .with_proxy_provider(Arc::new(pool))
+    .build()?;
+```
+
+When both static `proxy` and an injected provider are set, the provider takes precedence for HTTP fetches. Browser-level proxies (`CrawlConfig::browser::proxy`) still read the static value; provider rotation applies only to the reqwest HTTP path.
 
 ### Robots and compliance
 

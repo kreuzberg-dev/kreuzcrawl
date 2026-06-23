@@ -43,12 +43,50 @@ let config = CrawlConfig {
 start_mcp_server_with_config(config).await?;
 ```
 
+### Streamable HTTP transport
+
+Run the REST API server with the MCP server mounted over Streamable HTTP:
+
+```bash
+kreuzcrawl serve --host 127.0.0.1 --port 3000
+```
+
+The MCP server is available at `http://127.0.0.1:3000/mcp`. Connect an MCP client to this endpoint.
+
+!!! info
+    The binary must be built with both `api` and `mcp` features. The distributed CLI binary includes both.
+
+The HTTP transport is mounted outside the REST API middleware stack, so request-timeout and compression layers do not interfere with MCP Server-Sent Events.
+
+#### Example: connect an HTTP-capable MCP client
+
+MCP clients that support the Streamable HTTP transport take the endpoint URL directly. A typical client config entry:
+
+```json
+{
+  "mcpServers": {
+    "kreuzcrawl-http": {
+      "url": "http://127.0.0.1:3000/mcp"
+    }
+  }
+}
+```
+
+#### Programmatic Rust usage
+
+Use `streamable_http_service()` to create a Streamable HTTP server type:
+
+```rust
+use kreuzcrawl::{streamable_http_service, CrawlConfig};
+
+let config = CrawlConfig::default();
+let service = streamable_http_service(config);
+// Mount the service to your HTTP server at `/mcp`
+```
+
 ## Available tools
 
-The server registers 10 tools. Seven are fully implemented; three are registered as stubs
-for future feature-gated functionality.
-
-### Implemented tools
+The server exposes nine tools for web scraping, crawling, and site mapping.
 
 #### `scrape`
 
@@ -102,6 +140,7 @@ Discover all pages on a website via links and sitemaps.
 | `limit`              | integer | no       | Maximum URLs to return.                   |
 | `search`             | string  | no       | Case-insensitive substring filter.        |
 | `respect_robots_txt` | boolean | no       | Whether to respect robots.txt directives. |
+| `format`             | string  | no       | `"markdown"` (default) or `"json"`.       |
 
 Example:
 
@@ -133,6 +172,19 @@ Example:
 }
 ```
 
+#### `batch_crawl`
+
+Crawl multiple seed URLs concurrently.
+
+| Parameter        | Type             | Required | Description                           |
+| ---------------- | ---------------- | -------- | ------------------------------------- |
+| `urls`           | array of strings | yes      | Seed URLs to crawl (must not be empty). |
+| `max_depth`      | integer          | no       | Maximum link depth (max 100).         |
+| `max_pages`      | integer          | no       | Maximum pages to crawl (1--100,000).  |
+| `format`         | string           | no       | `"markdown"` (default) or `"json"`.   |
+| `stay_on_domain` | boolean          | no       | Restrict crawling to the same domain. |
+| `concurrency`    | integer          | no       | Maximum concurrent seed crawls.      |
+
 #### `download`
 
 Download a document from a URL and return metadata.
@@ -154,20 +206,28 @@ Execute browser actions on a page and return per-action results plus the final D
 | `url`     | string           | yes      | URL to navigate to before executing actions  |
 | `actions` | array of objects | yes      | Page actions such as click, wait, and scrape |
 
+#### `generate_citations`
+
+Convert markdown links to numbered citations.
+
+| Parameter  | Type   | Required | Description                       |
+| ---------- | ------ | -------- | --------------------------------- |
+| `markdown` | string | yes      | Markdown text with inline links. |
+
+Returns markdown with inline `[link](url)` syntax converted to `[1]` with
+`[1]: url` references at the end.
+
 #### `get_version`
 
 Return the kreuzcrawl library version. Takes no parameters.
 
-### Stub tools (not yet implemented)
+Example response:
 
-These tools are registered so that clients can discover them, but return placeholder
-messages until their backing features are implemented:
-
-| Tool           | Required feature | Description                               |
-| -------------- | ---------------- | ----------------------------------------- |
-| `screenshot`   | `browser`        | Capture a screenshot of a URL.            |
-| `research`     | `ai`             | AI-driven research across multiple pages. |
-| `crawl_status` | (job registry)   | Check the status of a crawl job.          |
+```json
+{
+  "version": "0.3.0"
+}
+```
 
 ## Integration with AI assistants
 

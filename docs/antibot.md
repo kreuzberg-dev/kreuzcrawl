@@ -157,6 +157,99 @@ Fingerprints match response headers, body substrings, or status code/header comb
 
 The default retry and dispatch layer can combine WAF signals, transient errors, and `EwmaDomainState` observations. EWMA state lets callers track per-domain outcomes and feed a `LearningRetryPolicy` without requiring a database.
 
+## Tuning dispatch and escalation (Rust)
+
+`DispatchProfile` exposes fields for fine-grained control over the retry and escalation loop. This section is Rust-only — language bindings use the built-in defaults.
+
+Build a profile using the fluent builder, which accepts optional trait-object implementations:
+
+```rust
+use std::sync::Arc;
+use kreuzcrawl::{
+    CrawlConfig, DispatchProfile, EscalationStrategy,
+    FixedBudget, EwmaDomainState, LearningRetryPolicy,
+    TomlClassifier,
+};
+
+let profile = DispatchProfile::builder()
+    // Start with a custom escalation strategy: HTTP → Bypass → Browser
+    .strategy(EscalationStrategy::BypassThenBrowser)
+    
+    // Use a learning retry policy backed by per-domain EWMA state
+    .domain_state(Arc::new(EwmaDomainState::new()))
+    .retry_policy(Arc::new(LearningRetryPolicy::new(
+        Arc::new(EwmaDomainState::new())
+    )))
+    
+    // Cap escalations at $2.50 per job
+    .escalation_budget(Arc::new(FixedBudget::new(250)))
+    
+    // Limit total attempts across all tiers
+    .max_total_attempts(15)
+    
+    // Use a custom WAF classifier (or omit to use the built-in corpus)
+    .waf_classifier(Arc::new(TomlClassifier::builtin()))
+    
+    .build();
+
+// Attach to the crawl config
+let config = CrawlConfig::builder()
+    .dispatch(profile)
+    .build();
+```
+
+Key tuning parameters:
+
+- **`strategy`**: Select the escalation chain (`None`, `BrowserOnly`, `BypassFirst`, `BypassOnly`, `BypassThenBrowser`). See the strategy table above.
+- **`retry_policy`**: Implement [`RetryPolicy`](https://docs.rs/kreuzcrawl/latest/kreuzcrawl/trait.RetryPolicy.html) for custom per-attempt decisions. The default `SimpleRetryPolicy` uses static error-to-directive mappings; `LearningRetryPolicy` consults a `DomainStatePort` for priors. Both live in `crate::defaults::dispatch`.
+- **`domain_state`**: Track per-domain block rates via `DomainStatePort`. The in-process `EwmaDomainState` is provided; kreuzberg-cloud supplies a Postgres-backed impl for multi-process deployments.
+- **`escalation_budget`**: Enforce per-job spend caps via `EscalationBudget`. `FixedBudget` tracks atomic counters; `UnlimitedBudget` is the default.
+- **`max_total_attempts`**: Hard limit on fetch attempts across all tiers. Guards against buggy retry policies. Default: 10.
+
+## Custom WAF rules and hot-reload
+
+The canonical WAF fingerprint corpus lives in `crates/kreuzcrawl/rules/waf_fingerprints.toml`. Load the builtin rules at compile time, or supply custom TOML files for testing or rule updates without restarting.
+
+### Loading rules
+
+Use `TomlClassifier` for TOML-backed fingerprinting (Rust-only):
+
+```rust
+use kreuzcrawl::waf::TomlClassifier;
+use kreuzcrawl::waf_rules_from_path;
+use std::sync::Arc;
+
+// Built-in canonical corpus
+let classifier = Arc::new(TomlClassifier::builtin());
+
+// Custom rules from a file
+let custom_rules = waf_rules_from_path("custom_waf_rules.toml")?;
+let classifier = Arc::new(TomlClassifier::from_rules(custom_rules));
+```
+
+### Hot-reload rules on file change
+
+Watch a TOML file for changes and atomically swap rules without restarting:
+
+```rust
+use std::sync::Arc;
+use kreuzcrawl::waf::TomlClassifier;
+use kreuzcrawl::waf_rules_from_path;
+
+let classifier = Arc::new(TomlClassifier::builtin());
+
+// Start watching for file changes, debounced 500 ms
+let _watcher = classifier.watch("/etc/kreuzcrawl/waf_rules.toml")?;
+
+// Swap rules atomically; concurrent classifiers see new rules on next call
+let new_rules = waf_rules_from_path("/etc/kreuzcrawl/waf_rules.toml")?;
+classifier.swap(new_rules);
+```
+
+The `WatchHandle` returned by `watch` manages the background file watcher. Dropping it stops watching. Keep it alive for as long as you want to receive updates.
+
+This pattern is Kubernetes-friendly: mount a `ConfigMap` as a file, watch it, and reload rules when the cluster operator updates the ConfigMap. The atomic-swap semantics mean in-flight classifications continue with the old rules; new requests use the new rules.
+
 ## Bypass providers
 
 Kreuzcrawl exposes the `BypassProvider` trait and `BypassResponse` type for caller-owned integrations. Providers are responsible for authentication, request shaping, response decoding, cost metadata, and error mapping.

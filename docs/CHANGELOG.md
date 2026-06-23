@@ -2,315 +2,112 @@
 
 ## Unreleased
 
-### Features
-
-- **Core**: Published `interact()` with `PageAction`, `ActionResult`, and `InteractionResult` for backend-neutral page interaction. Exposed across every language binding (Python, Node, Ruby, PHP, Go, Java, C#, Elixir, WASM, Dart, Kotlin/Android, Swift, Zig, C).
-- **Core**: Streaming crawl APIs — `CrawlEngineHandle::crawl_stream` and `batch_crawl_stream` yield `CrawlEvent::Page`/`Error`/`Complete` as pages are processed. Per-language adapters: Python `AsyncIterator`, Node async iterators, Ruby `Enumerator`, Java `Stream`, Go channels, C# `IAsyncEnumerable`, Elixir `Stream.unfold`, PHP `Generator`, plus C FFI handle-based polling. WASM is excluded (no Tokio multi-thread runtime).
-- **Browser (native)**: Added native `interact()` execution for click, type, press, scroll, wait, JavaScript, scrape, and screenshot actions. Native screenshots are deterministic PNG snapshots derived from the post-action HTML rather than Chrome compositor captures.
-- **Browser (native)**: Worker-pool isolation for the in-process native backend — concurrent crawls no longer contend on a single browser instance.
-
-### Fixes
-
-- **Core**: `interact()` now runs `BrowserConfig.eval_script` after navigation and before page actions.
-- **Core**: Page-action validation now rejects invalid wait and scroll selectors before navigation.
-- **MCP**: The MCP `interact` tool now delegates to the public engine API instead of returning a placeholder message.
-
-### Breaking Changes
-
-- **JSON wire format**: `CrawlEvent` now serializes as an internally-tagged enum (`{"type":"page","result":{...}}`) instead of externally-tagged (`{"Page":{...}}`). Clients parsing the streaming wire format directly must update their decoders. The Rust enum API is unchanged.
-
-### Tooling
-
-- Pinned `alef_version = "0.17.0"`. Upstream fixes that flowed in: streaming FFI emits `_to_json`/`_free` for enum item types, NAPI Box-deref in tagged-enum conversions, Java CPD threshold lift, ktlint multiline-expression-wrapping disabled for ktfmt parity, PHP dedup of binding→core From impls across tagged-enum variant payloads.
-
-## 0.3.0 - 2026-05-18
-
-### Highlights
-
-- **Native browser backend** — a Servo/Deno-derived in-process browser (`browser.backend = "native"`) joins the existing chromiumoxide backend. Stealth TLS fingerprinting via BoringSSL, proxy with credentials, URL-pattern request blocking, JavaScript evaluation, selector-wait, robots-txt awareness, cookie forwarding, and full network-event capture.
-- **Five new language bindings** — Kotlin Android (AAR), Dart (Flutter Rust Bridge), Swift (XCFramework), Zig (native module), and C (cdylib + header) bring total binding coverage from 11 to 16 languages.
-- **Generator migration to alef** — the entire bindings/docs/READMEs/e2e surface is now produced by [alef](https://github.com/kreuzberg-dev/alef) (pinned via `alef.toml`). Replaces the prior hand-rolled codegen scripts and dramatically tightens cross-language consistency.
-
-### Breaking Changes
-
-- **Rust API**: `kreuzcrawl::CrawlEngineBuilder`, strategy types, and default trait implementations are once again exported at the crate root (reverting the 0.1.2 lockdown) — downstream code that worked around the prior restriction can drop its wrappers.
-- **Browser config**: `BrowserConfig.backend` is now an enum (`"chromium"` | `"native"`) instead of a free-form string. Existing configs that omitted the field continue to default to chromium.
-- **Bindings**: `DownloadedDocument.content` and `ScrapeResult.screenshot` (binary fields) are hidden from non-Rust bindings — call the dedicated download/screenshot helpers instead of reading the field.
-- **Bindings**: `CrawlConfig.browser_pool` is no longer exposed across the FFI boundary (was unusable from non-Rust callers anyway).
-- **WASM**: Generated class names use the configured `wasm_type_prefix` (default `Wasm`) consistently across builders and tagged-enum constructors. Calls into `WasmAuthConfig` are now field-based instead of enum-based.
-- **Errors**: Network errors are tagged with a stable `[network:<kind>]` prefix in their message — assertions that grepped on raw reqwest text need updating.
-- **C# / Java / Go**: Tagged unions emit as sealed interfaces / records / discriminated structs (was nested classes / raw maps). Per-binding migration notes are in each package README.
-
-### Features
-
-- **Browser (native)**: `BrowserExtras` on `ScrapeResult.browser` carries `eval_result`, `network_events`, and `cookies` populated by the native backend.
-- **Browser (native)**: `browser-native` Cargo feature added to the `full` feature set.
-- **Core**: New `full` feature aggregates every optional capability (api, browser, mcp, native browser, etc.) for one-flag installs.
-- **Core**: `CrawlConfig.soft_http_errors` unifies 404 handling — opt in to treat soft-404 HTML as success instead of error.
-- **Core**: `scrape()` follows redirects with cycle detection and a soft stop on `max_redirects`.
-- **Core**: `batch_scrape` / `batch_crawl` now return `Result` and reject empty input rather than silently succeeding.
-- **Core**: Network errors carry a stable `[network:<kind>]` tag for programmatic dispatch.
-- **Core**: `CrawlConfig::validate()` enforces `max_depth`, `max_body_size`, proxy URL, and auth-config shape at build time; browser endpoint URL scheme is validated.
-- **Core**: `CrawlConfig.max_depth` defaults to unbounded when unset (was 1).
-- **Core**: Browser fallback is now restricted to `WafBlocked` and `Forbidden` errors (was overly broad).
-- **CLI**: `--config` flag accepts a JSON `CrawlConfig` for both `scrape` and `crawl`.
-- **Bindings**: WASM `getter`s / `setter`s on enum-typed fields use strings for JS interop; `asset_types` accepts string arrays.
-- **Bindings**: C language binding added (cdylib + cbindgen header, full e2e parity).
-- **Bindings**: Dart bridge via flutter_rust_bridge with full e2e parity.
-- **Bindings**: Swift package with XCFramework distribution + full e2e parity.
-- **Bindings**: Zig native module + full e2e parity.
-- **Bindings**: Kotlin replaced JVM facade with Kotlin-Android (AAR + Android Gradle Plugin) — drops desktop-JVM target; mobile-only.
-- **Bindings (JNI)**: Migrated from `jni = "0.21"` to `jni = "0.22"` for the FFI-safe `EnvUnowned<'frame>` API.
-- **API**: `CachedPage` re-exported from crate root.
-- **Tooling**: All bindings, docs, READMEs, and e2e suites are generated by [alef](https://github.com/kreuzberg-dev/alef) — version pinned in `alef.toml`. The `task alef:bump` / `task alef:regen` / `task rebuild` cycle replaces the prior hand-maintained scripts.
-- **Tooling**: New publish targets: Kotlin Android (Maven Central), Dart (pub.dev), Swift (Swift Package Index), Zig (build registry).
-- **Tooling**: Per-language `task update` / `task upgrade` split (within-major vs latest).
-- **Tooling**: Adopted `gh-actions-updater` (Goldziher) for GHA pin maintenance.
-- **CI**: Split monolithic `ci.yaml` into kreuzberg-topology workflows (`ci-rust`, `ci-e2e`, `ci-docs`, `ci-mobile`, `publish`).
-- **CI**: New `ci-mobile` workflow runs Android (AAR) and iOS (XCFramework) cargo checks.
-- **CI**: Discord release announcements wired into `publish.yaml`.
-- **Docs**: Canonical Material/Zensical docs site at `docs.kreuzcrawl.kreuzberg.dev` aligned with sibling Kreuzberg.dev properties (shared CSS, base template, GA, ecosystem grid, llms.txt).
-- **Docs**: All concepts, guides, getting-started, features, and reference pages rewritten against the public binding surface only.
-- **Repo**: `CITATION.cff` generated from `[workspace.citation]` in `alef.toml`.
-
-### Fixes
-
-- **Elixir**: `:force_build` now respects `config :rustler_precompiled, :force_build, kreuzcrawl: true` in addition to the `KREUZCRAWL_BUILD` env var, fixing the documented workaround that was previously ignored when users hit precompiled checksum errors (#7).
-- **Browser (chromium)**: Filter snap-incompatible flags + drop `enable-blink-features` default arg — fixes startup under snap-packaged Chromium on Ubuntu noble.
-- **Browser (chromium)**: Re-wired `browser_fetch` into the engine scrape pipeline (lost during the Tower refactor).
-- **Core**: `quick-xml` 0.40 `xml_content` API migration — sitemap parsing keeps working with the upgraded dep.
-- **Core**: WAF detection tests are deterministic on macOS.
-- **WASM**: Capture response headers in `HttpResponse` for wasm builds (was empty).
-- **WASM**: Crate compiles for `wasm32-unknown-unknown` without `mio` (gated out under wasm32).
-- **WASM**: Structured error objects `{code, message}` (was plain string).
-- **Bindings (PHP)**: PSR-4 namespace escaping in `composer.json`.
-- **Bindings (Java)**: Added `jspecify` dep for `@Nullable` annotations; `Optional` wrapping for nullable returns.
-- **Bindings (Ruby)**: `sorbet-runtime` declared as gemspec dep; `html-to-markdown-rs` 3.4 sig change handled.
-- **Bindings (C#)**: Sealed-union and exception deserialization corrected.
-- **Bindings (Go)**: Enum values use serde rename (`og:image`), batch functions return error instead of panic.
-- **Docs**: Stale install snippets, version strings, and binding sample code reconciled with the actual public APIs.
-
-See `Cargo.toml` for the full dependency graph; `alef.toml` for the generator pin.
-
-## 0.2.0
-
-### Breaking Changes
-
-- **Config**: `MarkdownConfig` and `PlainTextConfig` replaced by unified `ContentConfig` on `CrawlConfig.content`
-- **Config**: `main_content_only` removed from `CrawlConfig` — use `content.preprocessing_preset: "aggressive"` instead
-- **Config**: `CrawlConfig.remove_tags` now forwarded to h2m's `exclude_selectors` instead of kreuzcrawl's DOM manipulation
-- **Results**: `plain_text` field removed from `ScrapeResult` — set `content.output_format: "plain"` to get plain text in the `markdown` result field
-
-### Features
-
-- **Config**: `ContentConfig` with `output_format` supporting `"markdown"` (default), `"plain"`, `"djot"` — all powered by html-to-markdown-rs
-- **Config**: `ContentConfig.exclude_selectors` for CSS selector-based element exclusion (`.class`, `#id`, `[attr]`) — replaces the buggy `apply_remove_tags` DOM manipulation
-- **Config**: `ContentConfig.preprocessing_preset` (`"minimal"`, `"standard"`, `"aggressive"`) for controlling noise removal aggressiveness
-- **Config**: Full h2m configuration exposed: `strip_tags`, `preserve_tags`, `skip_images`, `max_depth`, `wrap`, `wrap_width`
-- **Encoding**: Non-UTF-8 charset detection and re-decoding via `encoding_rs` (fixes Shift_JIS, EUC-JP, etc.)
-- **WAF**: Expanded WAF detection — AWS CloudFront, `awswaf.com` challenge scripts, "Verifying your connection" interstitials, "Just a moment" Cloudflare pages
-- **WAF**: WAF detection on HTTP 200 responses with challenge content (catches false-positive 200s from AWS WAF, Cloudflare)
-- **Browser**: Browser fallback on `Forbidden`, `Connection`, and generic errors (was `WafBlocked` only) — catches TLS fingerprint blocks and bot-detection responses
-- **Browser**: Unique user data directories per Chrome launch — prevents `SingletonLock` conflicts when multiple instances run concurrently or after crashes
-- **Benchmark**: Full benchmark harness at `tools/benchmark-harness/` with:
-  - Scrape-evals dataset (1000 fixtures from HuggingFace) with TF1 multiset F1 scoring
-  - Reachability benchmark (16 domains across e-commerce, social, professional, review) with content verification and false-positive detection
-  - CPU flamegraphs via pprof, real-time memory/CPU monitoring
-  - Per-fixture output saving, baseline comparison reports
-  - CLI with download, run, profile, report, validate commands
-- **CI**: Pinned alef to v0.5.3 in CI workflow
-
-### Fixes
-
-- **Content**: Removed buggy `apply_remove_tags` that corrupted DOM on pages with repeated structural patterns — CSS selector exclusion now handled correctly by h2m during its DOM walk
-- **Content**: Removed duplicate plain text extraction — h2m's `OutputFormat::Plain` handles this natively with proper preprocessing
-- **Browser**: Clean up temporary user data directories after browser teardown and on launch failure
-
-## 0.1.2
-
-### Breaking Changes
-
-- **Rust API**: Public surface restricted to binding API only. `CrawlEngine`, `CrawlEngineBuilder`, all traits (`Frontier`, `RateLimiter`, `CrawlStore`, `EventEmitter`, `CrawlStrategy`, `ContentFilter`, `CrawlCache`), and all default implementations are now `pub(crate)`. Use `create_engine`, `scrape`, `crawl`, `map_urls`, `batch_scrape`, `batch_crawl` instead.
-- **Rust API**: `BrowserPool`, `BrowserPoolConfig`, `PooledPage` no longer re-exported
-- **Rust API**: `CachedPage`, `InteractionResult`, `ActionResult`, `CrawlEvent` removed from bindings
-
-### Features
-
-- **Config**: Added `rate_limit_ms: Option<u64>` to `CrawlConfig` for per-domain rate limiting across all languages
-- **CLI**: Added `--browser-mode` and `--browser-endpoint` flags to `scrape` and `crawl` subcommands
-- **CLI**: Browser fallback now works in the crawl path (was scrape-only)
-- **CLI**: `--timeout` propagated to browser page-load timeout
-- **CLI**: `--browser-endpoint` validated as `ws://` or `wss://` URL
-- **CLI**: Refactored to use only the public binding API (`create_engine`, `scrape`, `crawl`, `map_urls`, `batch_crawl`)
-- **Rust API**: `serve_api` and `start_mcp_server` re-exported at crate root for server deployments
-- **Bindings**: TypeScript discriminated unions for `AuthConfig` and `CrawlEvent`
-- **Bindings**: TypeScript non-optional fields are now required (no `?`) in `.d.ts`
-- **Bindings**: JSDoc on all TypeScript types, functions, enums, and fields
-- **Bindings**: Javadoc on all Java records, enums, and builders (with HTML escaping)
-- **Bindings**: Go uses `json.RawMessage` for JSON value fields (was `interface{}`)
-- **Bindings**: Elixir enum modules generated for all 9 enums
-- **Bindings**: WASM rustdoc on all generated types and functions
-- **Bindings**: WASM structured error objects `{code, message}` (was plain strings)
-- **Infra**: Workspace-level Cargo lints (`clippy::all`, `unsafe_code`) inherited by all crates
-- **Docs**: Lychee link checker added to CI docs workflow
-- **E2E**: 48 new test fixtures covering batch_crawl, downloads, interaction, WARC, proxy, browser crawl, and more
-
-### Fixes
-
-- **Bindings**: Python mypy passes without `ignore-errors` (enum lookups, return type imports)
-- **Bindings**: Go enum values use serde rename (e.g., `og:image` not `og_image`)
-- **Bindings**: Go batch functions return error instead of panic
-- **Bindings**: TypeScript string enum values use correct casing (snake_case)
-- **Bindings**: TypeScript `format!("{:?}")` replaced with `.to_string()` for string fields
-- **Bindings**: Elixir NIF crate name `kreuzcrawl_nif` (was `kreuzcrawl_rustler`)
-- **Docs**: Removed internal type references (`LlmExtractor`, strategy names) from generated API reference
-- **Docs**: Fixed broken links to deleted repos in comparisons page
-- **Docs**: Added `CONTRIBUTING.md` at project root
-- **Docs**: Snippet validator skips bare Ruby method signatures
-- **Docs**: Snippet validator skips bare TypeScript method signatures
-- **CI**: Homebrew formula sha256 handles single-quoted values
-- **CI**: Docs workflow setup-go@v6 for Go 1.26 toolchain
-- **CI**: Ruby `Gemfile.lock` synced for v0.1.1
-- **Alef**: `alef docs` now uses filtered IR matching binding surface
-- **Alef**: Deterministic C# NativeMethods.cs ordering (sorted DllImport entries)
-- **Alef**: `alef.toml` uses exclude blacklist instead of include whitelist
-
-## 0.1.1
-
-### Fixes
-
-- **WASM**: Added `getrandom` with `wasm_js` feature for wasm32 target compatibility
-- **Java**: Downgraded Maven compiler and source plugins from beta to stable (4.0.0-beta → 3.x)
-- **Elixir**: NIF scaffold lib.path + `MIX_ENV=prod` for Hex publish (from v0.1.0)
-- **CI**: Fixed PEP 440 version conversion for stable releases (0.1.0 no longer becomes 0.10)
-
-## 0.1.0
-
-First stable release. High-performance web crawling engine with bindings for 11 languages.
-
-### Highlights
-
-- Rust core with async Tokio runtime, configurable crawl depth/concurrency/rate limiting
-- REST API server (Firecrawl v1-compatible) with OpenAPI 3.1 spec
-- MCP (Model Context Protocol) server for AI agent integration
-- Docker image (Alpine, multi-arch amd64/arm64)
-- CLI with Homebrew tap (`brew install kreuzberg-dev/tap/kreuzcrawl`)
-
-### Language Bindings
-
-Python (PyPI), Node.js (npm), Ruby (RubyGems), Go (pkg.go.dev), Java (Maven Central), C# (NuGet), PHP (Packagist), Elixir (Hex.pm), WebAssembly (npm), C FFI (GitHub Releases), Rust (crates.io)
-
-### Changes Since rc.10
-
-- Fixed Elixir Hex publish (NIF lib.path + MIX_ENV=prod)
-- Fixed version.rb sync regex (pre-release suffix matching)
-- Fixed Ruby native scaffold missing lib.path
-- Clean prek run (all hooks pass)
-- Idempotent `alef verify` via blake3 output content hashing
-
-## 0.1.0-rc.10
-
-### Features
-
-- **Go**: Added FFI download pattern — `go generate` downloads prebuilt libraries from GitHub releases, enabling standalone `go get` without local C build
-- **API**: Added schemathesis property-based contract tests (12 tests covering all endpoints)
-- **CLI**: Added Homebrew installation instructions (`brew install kreuzberg-dev/tap/kreuzcrawl`)
-
-### Fixes
-
-- **Go**: Fixed non-opaque struct methods using `r.ptr` — now marshals to JSON via `_from_json` FFI
-- **Go e2e**: Pass `nil` to `CreateEngine` when no config specified
-- **Python stubs**: Removed docstrings from `.pyi` files (ruff PYI021 compliance)
-- **WASM e2e**: Quote hyphenated keys in object literals, use `WasmCrawlConfig` class construction
-- **Brew e2e**: Fixed jq `| length` pipe syntax (was `.length`), skip output capture for all-skipped assertions
-- **Python e2e**: Wrap long `CrawlConfig` lines for E501 compliance
-- **Rust e2e**: Removed `[workspace]` from generated Cargo.toml (conflicts with parent workspace)
-- **Elixir**: Fixed long line formatting in `native.ex` scaffold
-- **PHP**: Unified Packagist package name to `kreuzberg-dev/kreuzcrawl`
-- **CI**: Removed prepare job gate that skipped release events
-- **Docs**: Fixed stale version references in Java/Elixir READMEs and installation guide
-- **Pre-commit**: Replaced local sync-versions hook with `alef-verify` + `alef-sync-versions`
-
-## 0.1.0-rc.9
-
-### Fixes
-
-- **WASM**: Remove wasm-pack-generated `.gitignore` from `pkg/` subdirectories after build — npm respects nested `.gitignore` and was excluding compiled WASM artifacts even with `files` field set
-
-## 0.1.0-rc.8
-
-### Fixes
-
-- **WASM**: Removed `pkg/` from `.gitignore` so npm publish includes compiled WASM artifacts
-- **Ruby**: Fixed gem version format in test_apps (`0.1.0.pre.rc.3` instead of `0.1.0.rc3`)
-
-## 0.1.0-rc.6
-
-### Fixes
-
-- **WASM**: Fixed npm package publishing — added `files`, `main`, `module`, `types` fields to package.json so compiled artifacts are included instead of raw Rust source
-- **WASM e2e**: Added `tsconfig.json` to generated test_app (prevents Vite from walking to root tsconfig)
-- **Elixir**: Removed non-existent `Cargo.lock` from mix.exs files list (NIF crate uses workspace lockfile)
-- **Rust toolchain**: Switched from pinned 1.91 to `stable` (transitive dep `constant_time_eq` 0.4.3 requires 1.95)
-
-### Features
-
-- **Docker**: Added `publish-docker.yaml` workflow with Alpine CLI image, multi-arch builds (amd64/arm64)
-
-## 0.1.0-rc.5
-
-### Fixes
-
-- **Version sync**: All workspace member Cargo.toml files now synced (binding crates were stuck at rc.2)
-- **Ruby**: Fixed Duration conversion in validate method (`.map()` on `u64`)
-- **Browser**: Re-wired `browser_fetch` into engine scrape pipeline (lost during Tower refactor)
-- **Brew e2e**: Implemented 5 missing assertion types (greater_than_or_equal, contains_all, is_empty, less_than, not_contains)
-
-## 0.1.0-rc.4
-
-### Fixes
-
-- **Node**: Added missing `serde` dependency to Node binding crate — fixes compilation failure
-- **Elixir**: Added missing `serde` dependency to NIF crate + serde derives on enums — fixes compilation failure
-- **Ruby**: Fixed conflicting `Default` implementations — derive vs manual impl no longer collide
-- **Ruby**: Fixed enum conversion codegen — enum fields now use pattern matching instead of dot access
-- **Ruby**: Fixed `Box<T>` deref in enum tuple variant conversion (CrawlEvent::Page)
-- **Version sync**: Added root `package.json` and `kreuzcrawl-node/package.json` to sync-versions extra_paths
-
-## 0.1.0-rc.3
-
-### Fixes
-
-- **Go**: Fixed module path to `github.com/kreuzberg-dev/kreuzcrawl/packages/go` for proper Go module resolution
-- **Java**: Added extract-from-JAR native library loading — published Maven artifact now works standalone without manual `java.library.path` configuration
-- **Elixir**: Switched to `RustlerPrecompiled` with GitHub release URLs for precompiled NIF binaries
-- **PHP**: Fixed `createEngineFromJson()` — now uses `CrawlConfig` object construction matching the binding API
-- **PHP**: Fixed risky test warning for fixtures with all skipped assertions
-- **NuGet**: Use `PackageLicenseFile` instead of `PackageLicenseExpression` (Elastic-2.0 not OSI-approved)
-- **Docker (musl)**: Source cargo env before build (PATH not inherited on ARM)
-- **Ruby (macOS)**: Removed `setup-openssl` action that caused OpenSSL conflicts
-
-### Features
-
-- **Test apps**: Added test_apps for all 11 languages (Rust, Python, Node, Go, Java, C#, PHP, Ruby, Elixir, WASM, Homebrew CLI)
-- **Brew generator**: New shell-script e2e test generator for Homebrew CLI testing
-- **WASM**: Full e2e test support — removed incorrect language skips from all fixtures
-- **WASM codegen**: Fixed `mock_url` and `handle` argument handling in generated tests
-- **Go**: Updated to Go 1.26
-- **Idempotency**: All 14 registry publish jobs check for existing packages before publishing
-
-### Infrastructure
-
-- **Publish workflow**: 66/76 jobs succeeded (0 failures, 10 skipped) on rc.2
-- **Shared actions**: Upstreamed `setup-openssl` fix, leveraged shared build/publish actions from `kreuzberg-dev/actions`
-- **Fixtures**: Removed all language skip blocks — all bindings are full crawlers
-
-## 0.1.0-rc.2
-
-- Initial multi-registry publish (crates.io, PyPI, npm, RubyGems, Maven Central, NuGet, Packagist, Hex.pm, Go, WASM, CLI binaries, Docker, Homebrew)
-- Published kreuzcrawl and kreuzcrawl-cli to crates.io
-- Created Homebrew formula in homebrew-tap repo
-
-## 0.1.0-rc.1
-
-- Initial release candidate
+## 0.3.0 - 2026-06-23
+
+First stable release. kreuzcrawl ships a Rust core with active bindings for
+Python, TypeScript/Node, Ruby, PHP, Go, Java/JNI, C#, Elixir, WebAssembly,
+Dart, Kotlin/Android, Swift, Zig, and C FFI, plus a CLI, an HTTP API, and an
+MCP server.
+
+### Added
+
+- **Tiered dispatch engine.** The crawl engine chains HTTP → Bypass → Browser
+  tiers driven by per-attempt signals rather than a single bypass
+  short-circuit. Public `kreuzcrawl::types::dispatch` surface: `Tier`,
+  `EscalationStrategy`, `EscalationReason`, `AttemptOutcome`, `RetryDirective`,
+  `RetryPolicy`, `WafSignal`, `WafClassifier`, `DomainStatePort`,
+  `DomainRecommendation`, `EscalationBudget`, and `DispatchProfile` (dispatch
+  enums are `#[non_exhaustive]`). `CrawlConfig::builder()` and
+  `DispatchProfile::builder()` provide fluent construction.
+- **WAF detection.** A TOML fingerprint corpus (`rules/waf_fingerprints.toml`,
+  34 fingerprints) with an Aho-Corasick matcher, `TomlClassifier::watch()`
+  hot-reload (debounced, atomic `ArcSwap`, Kubernetes ConfigMap-safe), and
+  `EwmaDomainState` for per-domain block-rate tracking that promotes/demotes
+  the starting tier.
+- **SSRF defense.** New `kreuzcrawl::net::ssrf` module — `SsrfPolicy`,
+  `HostMatcher` (`Exact`/`Suffix`/`Cidr`), `SsrfError`, and async
+  `validate_url`. `CrawlConfig::ssrf` plus builder methods
+  `allow_private_networks(bool)` and `ssrf_allowlist_host(HostMatcher)`;
+  `CrawlError::SsrfPolicyViolation`. Exposed as a settable DTO (`deny_private`,
+  `max_redirects`) across every binding.
+- **Browser pool injection.** `BrowserPool`/`BrowserPoolConfig` and
+  `NativeBrowserExecutor`/`NativeBrowserExecutorConfig` are public;
+  `CrawlEngineBuilder::with_browser_pool` / `with_native_executor` and
+  `CrawlEngineHandle::from_engine` let consumers construct and `warm()` a pool
+  once and reuse it across all crawl jobs.
+- **Public substrate parsers.** `kreuzcrawl::robots` and `kreuzcrawl::sitemap`
+  are public (`parse_robots_txt`, `is_path_allowed`, `RobotsRules`,
+  `parse_sitemap_xml`, `parse_sitemap_index`, `is_sitemap_index`) — usable
+  without spinning up the engine.
+- **Pluggable proxy rotation.** `ProxyProvider` trait + `StaticProxyProvider`
+  baseline, wired into the reqwest fetch path via
+  `CrawlEngineBuilder::with_proxy_provider`; called per request and taking
+  precedence over the static `CrawlConfig::proxy` value.
+- **CLI.** `batch-scrape`, `batch-crawl`, `download`, `citations`, and
+  `version` subcommands, bringing the CLI to 1:1 with the core and MCP
+  surfaces.
+- **MCP server.** Tools are 1:1 with the CLI (`batch_crawl`,
+  `generate_citations`, …), each declaring `read_only`/`destructive`/
+  `open_world` safety annotations, and are served over both stdio and rmcp
+  Streamable HTTP at `/mcp` when the binary is built with the `api` + `mcp`
+  features.
+- **Observability.** OpenTelemetry counters
+  `kreuzcrawl_waf_fingerprint_matches_total` and
+  `kreuzcrawl_escalations_total`, plus property tests, cargo-fuzz targets, and
+  Criterion benchmarks covering the WAF subsystem.
+
+### Changed
+
+- **Memory-bounded streaming crawl.** `crawl_stream` / `batch_crawl_stream`
+  move each page into its `CrawlEvent::Page` and drop it instead of
+  accumulating every page, bounding peak memory on large crawls (≈2.5 GB →
+  ≈20 MB working set). `crawl()`'s batch result is unchanged.
+- **Dispatch model.** `CrawlError::WafBlocked` is now a struct variant
+  (`{ vendor, message }`); `DomainStatePort` moved to an observation model
+  (`recommend`/`observe`); `SimpleRetryPolicy`'s off-by-one is fixed
+  (`max_retries=3` yields 3 retries); `#[non_exhaustive]` added to
+  `CrawlError`, `NetworkErrorKind`, and the dispatch enums so future variants
+  are non-breaking.
+- **Asset downloads** route through `http_fetch`, so every file fetch is
+  subject to the SSRF policy.
+
+### Fixed
+
+- **Crawl loop materializes downloaded documents.** The `download_documents`
+  flag was previously honored only by single-page `scrape()`; the crawl loop
+  now builds `CrawlPageResult.downloaded_document` for linked PDFs/DOCX via a
+  shared helper instead of fetching, flagging, and discarding the bytes.
+- **SSRF rollout hardening.** Follow-up fixes to the SSRF refactor: redirect
+  `final_url` is tracked again (per-hop re-validation moved into
+  `follow_redirects`), within-batch URL dedup no longer races, crawl
+  child-depth is incremented (restoring `max_depth` and `include_paths`
+  semantics), and `CrawlConfig` JSON deserialization honors
+  `KREUZCRAWL_ALLOW_PRIVATE_NETWORK` through a `SsrfPolicy::from_env` serde
+  default. Each is covered by a regression test.
+- **MCP server exposed zero tools.** The handler was missing rmcp's
+  `#[tool_handler]`, so `tools/list`/`tools/call` returned an empty list over
+  both stdio and HTTP; it now delegates to the generated tool router.
+
+### Security
+
+- **SSRF defense, enabled by default.** `scrape()`, `crawl()`,
+  `batch_crawl()`, sitemap fetch, robots.txt fetch, and asset download refuse
+  URLs resolving to loopback (127.0.0.0/8), RFC1918 private networks,
+  link-local (169.254.0.0/16), cloud metadata (0.0.0.0/8), multicast
+  (224.0.0.0/4), IPv6 ULA (fc00::/7), IPv6 link-local (fe80::/10), IPv6
+  multicast (ff00::/8), or any non-http(s) scheme. Includes DNS-rebinding
+  mitigation (every resolved IP must pass the policy), redirect-chain
+  re-validation (bounded by `ssrf.max_redirects`, default 5), and
+  link-enqueue validation with bounded concurrency. Opt out via
+  `KREUZCRAWL_ALLOW_PRIVATE_NETWORK=1` or
+  `CrawlConfig::allow_private_networks(true)`.
+
+### Build
+
+- Bindings, facades, READMEs, docs, stubs, and e2e suites are generated by
+  alef (pinned at 0.26.6) across all 14 language targets.
+- Publish-pipeline hardening: a native per-arch Docker matrix that drops QEMU
+  emulation, Flutter-free Dart native builds for pub.dev, Swift artifactbundle
+  checksum injection and Apple system-framework linking, and
+  lockfile-preserving source publishes for the Elixir NIF, PHP extension, and
+  Ruby gem.

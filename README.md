@@ -360,3 +360,11 @@ Contributions are welcome! See our [Contributing Guide](https://github.com/kreuz
 ## License
 
 [Elastic License 2.0](https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/LICENSE)
+
+## Links
+
+- [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
+- [GitHub Repository](https://github.com/kreuzberg-dev/kreuzcrawl)
+- [Issue Tracker](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
+- [Changelog](CHANGELOG.md)
+- [Discord](https://discord.gg/xt9WY3GnKR) — community, roadmap, announcements.

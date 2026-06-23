@@ -1,6 +1,6 @@
 # MCP Tools Reference
 
-Kreuzcrawl implements a [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that exposes web scraping, crawling, and mapping capabilities as tools for LLM agents. The server uses stdio transport and is started via `kreuzcrawl mcp` or programmatically with `kreuzcrawl::mcp::start_mcp_server()`.
+Kreuzcrawl implements a [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that exposes web scraping, crawling, and mapping capabilities as tools for LLM agents. The server is available over stdio transport (via `kreuzcrawl mcp`) or Streamable HTTP at `/mcp` when the REST API server runs (`kreuzcrawl serve`). Both transports expose the same nine tools; connect your MCP client to either endpoint.
 
 ## Server Info
 
@@ -8,7 +8,7 @@ Kreuzcrawl implements a [Model Context Protocol](https://modelcontextprotocol.io
 | ------------ | ---------------------------------- |
 | Name         | `kreuzcrawl-mcp`                   |
 | Title        | Kreuzcrawl Web Crawling MCP Server |
-| Transport    | stdio                              |
+| Transport    | stdio or Streamable HTTP at `/mcp` |
 | Capabilities | Tools                              |
 
 ## Tools
@@ -93,6 +93,27 @@ Scrape multiple URLs concurrently.
 
 ---
 
+### batch_crawl
+
+Crawl multiple seed URLs concurrently.
+
+**Annotations:** `read_only_hint = true`
+
+**Parameters:**
+
+| Parameter        | Type       | Required | Default        | Description                                  |
+| ---------------- | ---------- | -------- | -------------- | -------------------------------------------- |
+| `urls`           | `string[]` | Yes      | --             | Seed URLs to crawl (must not be empty)       |
+| `max_depth`      | `integer`  | No       | Engine default | Maximum link depth from each seed (max: 100) |
+| `max_pages`      | `integer`  | No       | Engine default | Maximum pages to crawl per seed (1--100,000) |
+| `format`         | `string`   | No       | `"markdown"`   | Output format: `"markdown"` or `"json"`      |
+| `stay_on_domain` | `boolean`  | No       | Engine default | Restrict crawling to same domain per seed    |
+| `concurrency`    | `integer`  | No       | Engine default | Maximum number of concurrent seed crawls     |
+
+**Returns:** Text content with results for all discovered pages across all seeds.
+
+---
+
 ### download
 
 Download a document from a URL.
@@ -137,6 +158,22 @@ Execute browser actions on a page.
 
 ---
 
+### generate_citations
+
+Convert markdown links to numbered citations.
+
+**Annotations:** `read_only_hint = true`, `idempotent_hint = true`
+
+**Parameters:**
+
+| Parameter  | Type     | Required | Description                       |
+| ---------- | -------- | -------- | --------------------------------- |
+| `markdown` | `string` | Yes      | Markdown text with inline links.  |
+
+**Returns:** Markdown text with inline `[link](url)` syntax converted to `[1]` with `[1]: url` references appended.
+
+---
+
 ### get_version
 
 Get the current kreuzcrawl library version.
@@ -149,47 +186,9 @@ Get the current kreuzcrawl library version.
 
 ```json
 {
-  "version": "0.3.0-rc.71"
+  "version": "0.3.0"
 }
 ```
-
----
-
-## Planned Tools (Not Yet Implemented)
-
-The following tools are defined but return placeholder messages. They require specific feature flags to be enabled at compile time.
-
-### screenshot
-
-Capture a screenshot of a URL.
-
-**Requires:** `browser` feature
-
-| Parameter   | Type      | Required | Description                        |
-| ----------- | --------- | -------- | ---------------------------------- |
-| `url`       | `string`  | Yes      | URL to capture                     |
-| `full_page` | `boolean` | No       | Capture full page vs viewport only |
-
-### research
-
-AI-driven research across multiple pages.
-
-**Requires:** `ai` feature
-
-| Parameter   | Type       | Required | Description                      |
-| ----------- | ---------- | -------- | -------------------------------- |
-| `query`     | `string`   | Yes      | Research query or question       |
-| `max_depth` | `integer`  | No       | Maximum crawl depth per seed URL |
-| `max_pages` | `integer`  | No       | Maximum total pages to visit     |
-| `seed_urls` | `string[]` | No       | Optional seed URLs to start from |
-
-### crawl_status
-
-Check the status of a crawl job.
-
-| Parameter | Type     | Required | Description                |
-| --------- | -------- | -------- | -------------------------- |
-| `job_id`  | `string` | No       | Job ID to check status for |
 
 ---
 

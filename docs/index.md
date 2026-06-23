@@ -66,7 +66,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 | **C#**                | `dotnet add package Kreuzcrawl`                             | [API Reference](reference/api-csharp.md)         |
 | **Ruby**              | `gem install kreuzcrawl`                                    | [API Reference](reference/api-ruby.md)           |
 | **PHP**               | `composer require kreuzberg-dev/kreuzcrawl`                 | [API Reference](reference/api-php.md)            |
-| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0-rc.71"}`                           | [API Reference](reference/api-elixir.md)         |
+| **Elixir**            | `{:kreuzcrawl, "~> 0.3.0"}`                                 | [API Reference](reference/api-elixir.md)         |
 | **Dart / Flutter**    | `dart pub add kreuzcrawl`                                   | [API Reference](reference/api-dart.md)           |
 | **Swift**             | Swift Package Manager                                       | [API Reference](reference/api-swift.md)          |
 | **Zig**               | `zig fetch --save` from GitHub                              | [API Reference](reference/api-zig.md)            |

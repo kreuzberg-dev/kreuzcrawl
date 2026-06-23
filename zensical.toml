@@ -30,6 +30,7 @@ nav = [
       { "Browser Automation" = "guides/browser.md" },
       { "WARC Output" = "guides/warc.md" },
       { "Antibot Strategy" = "antibot.md" },
+      { "Streaming Crawls" = "guides/streaming-crawl.md" },
     ] },
     { "Deployment" = [
       { "Docker" = "guides/docker.md" },
@@ -69,6 +70,7 @@ nav = [
     { "MCP Tools" = "reference/mcp-tools.md" },
     { "Configuration" = "reference/configuration.md" },
     { "Types" = "reference/types.md" },
+    { "Parsers" = "reference/parsers.md" },
     { "Errors" = "reference/errors.md" },
   ] },
 
