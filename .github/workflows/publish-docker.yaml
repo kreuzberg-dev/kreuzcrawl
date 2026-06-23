@@ -120,17 +120,28 @@ jobs:
                   SUMMARY_LABEL: cli
               run: scripts/publish/check-docker-tag.sh
 
-    publish-docker:
-        name: Publish Docker image
+    build-docker-arch:
+        name: Build Docker image (${{ matrix.arch }})
         needs:
             - prepare
             - check-docker
-        runs-on: ubuntu-latest
-        timeout-minutes: 120
+        # Build natively per architecture — arm64 on a native ARM runner instead of QEMU
+        # emulation, which previously overran the job timeout. Each leg builds, tests, and
+        # pushes its image by digest; the publish-docker job merges them into a manifest list.
+        if: ${{ needs.prepare.outputs.release_docker == 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
+        runs-on: ${{ matrix.runner }}
+        timeout-minutes: 90
         permissions:
             contents: read
             packages: write
-        if: ${{ needs.prepare.outputs.release_docker == 'true' }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - arch: amd64
+                      runner: ubuntu-latest
+                    - arch: arm64
+                      runner: ubuntu-24.04-arm
         steps:
             - uses: actions/checkout@v6
               with:
@@ -144,22 +155,21 @@ jobs:
               if: ${{ needs.prepare.outputs.target_sha != '' }}
               run: git checkout --progress --force ${{ needs.prepare.outputs.target_sha }}
 
-            - name: Set up QEMU
-              uses: docker/setup-qemu-action@v4
-
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v4
 
-            - name: Skip because tag already exists
-              if: ${{ needs.prepare.outputs.force_republish != 'true' && needs.check-docker.outputs.image_exists == 'true' }}
-              run: echo "Docker tag already exists; skipping publish." >> "$GITHUB_STEP_SUMMARY"
-
-            - name: Build test image (amd64)
-              if: ${{ needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true' }}
-              run: docker build -f docker/Dockerfile.alpine -t kreuzcrawl-test:latest .
+            - name: Build test image (${{ matrix.arch }})
+              uses: docker/build-push-action@v7
+              with:
+                  context: .
+                  file: docker/Dockerfile.alpine
+                  load: true
+                  tags: kreuzcrawl-test:latest
+                  platforms: linux/${{ matrix.arch }}
+                  cache-from: type=gha,scope=publish-docker-${{ matrix.arch }}
+                  cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.arch }}
 
             - name: Check Docker image size
-              if: ${{ needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true' }}
               uses: kreuzberg-dev/actions/check-docker-image-size@v1
               with:
                   image: kreuzcrawl-test:latest
@@ -167,43 +177,47 @@ jobs:
                   label: kreuzcrawl-cli
 
             - name: Run Docker tests
-              if: ${{ needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true' }}
               run: python3 scripts/ci/docker/test_docker.py --image kreuzcrawl-test:latest --variant cli --verbose
 
             - name: Log in to GitHub Container Registry
-              if: ${{ needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
+              if: ${{ needs.prepare.outputs.dry_run != 'true' }}
               uses: docker/login-action@v4
               with:
                   registry: ${{ env.REGISTRY }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Extract Docker metadata
-              if: ${{ needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
-              id: docker_meta
-              uses: docker/metadata-action@v6
-              with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-                  tags: |
-                      type=raw,value=${{ needs.prepare.outputs.version }}
-                      type=raw,value=latest
-
-            - name: Build and push image
-              if: ${{ needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
+            - name: Build and push image by digest (${{ matrix.arch }})
+              if: ${{ needs.prepare.outputs.dry_run != 'true' }}
+              id: build
               uses: docker/build-push-action@v7
               with:
                   context: .
                   file: docker/Dockerfile.alpine
-                  push: true
-                  tags: ${{ steps.docker_meta.outputs.tags }}
+                  platforms: linux/${{ matrix.arch }}
+                  provenance: false
                   labels: |
-                      ${{ steps.docker_meta.outputs.labels }}
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.description=Kreuzcrawl web crawling engine — Alpine CLI
                       org.opencontainers.image.licenses=Elastic-2.0
-                  platforms: linux/amd64,linux/arm64
-                  cache-from: type=gha
-                  cache-to: type=gha,mode=max,scope=publish-docker
+                  outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+                  cache-from: type=gha,scope=publish-docker-${{ matrix.arch }}
+                  cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.arch }}
+
+            - name: Export digest
+              if: ${{ needs.prepare.outputs.dry_run != 'true' }}
+              run: |
+                  mkdir -p /tmp/digests
+                  echo "${{ steps.build.outputs.digest }}" > "/tmp/digests/${{ matrix.arch }}"
+
+            - name: Upload digest
+              if: ${{ needs.prepare.outputs.dry_run != 'true' }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: digest-${{ matrix.arch }}
+                  path: /tmp/digests/${{ matrix.arch }}
+                  if-no-files-found: error
+                  retention-days: 1
 
             - name: Docker dry-run summary
               if: ${{ needs.prepare.outputs.dry_run == 'true' }}
@@ -215,6 +229,78 @@ jobs:
             - name: Clean up test images
               if: ${{ always() }}
               run: docker rmi kreuzcrawl-test:latest || true
+
+    publish-docker:
+        name: Publish Docker image
+        needs:
+            - prepare
+            - check-docker
+            - build-docker-arch
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        permissions:
+            contents: read
+            packages: write
+        # Merge the per-arch images into a single multi-arch manifest list. Gated identically
+        # to build-docker-arch, and skipped for dry runs (no images were pushed).
+        if: ${{ needs.prepare.outputs.release_docker == 'true' && needs.prepare.outputs.dry_run != 'true' && (needs.prepare.outputs.force_republish == 'true' || needs.check-docker.outputs.image_exists != 'true') }}
+        steps:
+            - name: Log in to GitHub Container Registry
+              uses: docker/login-action@v4
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v4
+
+            - name: Download digests
+              uses: actions/download-artifact@v8
+              with:
+                  path: /tmp/digests
+                  pattern: digest-*
+                  merge-multiple: true
+
+            - name: Extract Docker metadata
+              id: docker_meta
+              uses: docker/metadata-action@v6
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+                  tags: |
+                      type=raw,value=${{ needs.prepare.outputs.version }}
+                      type=raw,value=latest
+
+            - name: Create multi-arch manifest list
+              env:
+                  IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+              run: |
+                  set -euo pipefail
+                  amd64_digest=$(cat /tmp/digests/amd64)
+                  arm64_digest=$(cat /tmp/digests/arm64)
+                  echo "amd64 digest: ${amd64_digest}"
+                  echo "arm64 digest: ${arm64_digest}"
+                  tag_args=()
+                  while IFS= read -r tag; do
+                    [ -n "$tag" ] && tag_args+=("--tag" "$tag")
+                  done <<< '${{ steps.docker_meta.outputs.tags }}'
+                  docker buildx imagetools create \
+                    "${tag_args[@]}" \
+                    "${IMAGE}@${amd64_digest}" \
+                    "${IMAGE}@${arm64_digest}"
+
+            - name: Inspect published manifest
+              env:
+                  IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+                  VERSION: ${{ needs.prepare.outputs.version }}
+              run: |
+                  set -euo pipefail
+                  docker buildx imagetools inspect "${IMAGE}:${VERSION}"
+                  arches=$(docker buildx imagetools inspect --raw "${IMAGE}:${VERSION}" \
+                    | jq -r '[.manifests[].platform.architecture] | unique | join(",")')
+                  echo "Published architectures: ${arches}"
+                  echo "$arches" | grep -q amd64
+                  echo "$arches" | grep -q arm64
 
     publish-mcp-registry:
         name: Publish MCP registry metadata
