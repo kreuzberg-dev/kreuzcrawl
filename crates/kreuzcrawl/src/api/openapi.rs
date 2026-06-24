@@ -17,7 +17,7 @@ use utoipa::OpenApi;
         description = "High-performance web crawling and scraping API. Firecrawl v1-compatible endpoints for scraping, crawling, URL discovery, batch operations, and document downloads.",
         contact(
             name = "Kreuzberg",
-            url = "https://kreuzberg.dev"
+            url = "https://xberg.io"
         ),
         license(
             name = "Elastic-2.0"

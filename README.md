@@ -58,7 +58,7 @@
   <a href="https://github.com/xberg-io/kreuzcrawl/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-Elastic--2.0-007ec6" alt="License">
   </a>
-  <a href="https://docs.kreuzcrawl.kreuzberg.dev">
+  <a href="https://docs.kreuzcrawl.xberg.io">
     <img src="https://img.shields.io/badge/Docs-kreuzcrawl-007ec6" alt="Documentation">
   </a>
 </div>
@@ -94,7 +94,7 @@ Productization concerns (managed proxy pools, tuned WAF fingerprints, authentica
 
 ### Supported Platforms
 
-Precompiled binaries for Linux (x86_64/aarch64), macOS (ARM64), and Windows (x64) across every binding. See the [platform support reference](https://docs.kreuzcrawl.kreuzberg.dev) for the full matrix.
+Precompiled binaries for Linux (x86_64/aarch64), macOS (ARM64), and Windows (x64) across every binding. See the [platform support reference](https://docs.kreuzcrawl.xberg.io) for the full matrix.
 
 <div align="center">
   <a href="https://github.com/xberg-io/kreuzcrawl/stargazers">
@@ -341,7 +341,7 @@ Add the package to `opencode.json`:
 
 ## Documentation
 
-Full guides, per-language API references, the substrate/operational model, antibot strategy, and observability live at **[docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev)**.
+Full guides, per-language API references, the substrate/operational model, antibot strategy, and observability live at **[docs.kreuzcrawl.xberg.io](https://docs.kreuzcrawl.xberg.io)**.
 
 ## Contributing
 
@@ -363,7 +363,7 @@ Contributions are welcome! See our [Contributing Guide](https://github.com/xberg
 
 ## Links
 
-- [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
+- [Documentation](https://docs.kreuzcrawl.xberg.io)
 - [GitHub Repository](https://github.com/xberg-io/kreuzcrawl)
 - [Issue Tracker](https://github.com/xberg-io/kreuzcrawl/issues)
 - [Changelog](CHANGELOG.md)

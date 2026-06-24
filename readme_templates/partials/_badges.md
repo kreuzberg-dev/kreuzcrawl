@@ -56,7 +56,7 @@
   <a href="https://github.com/xberg-io/kreuzcrawl/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-Elastic--2.0-007ec6" alt="License">
   </a>
-  <a href="https://docs.kreuzcrawl.kreuzberg.dev">
+  <a href="https://docs.kreuzcrawl.xberg.io">
     <img src="https://img.shields.io/badge/Docs-kreuzcrawl-007ec6" alt="Documentation">
   </a>
 </div>

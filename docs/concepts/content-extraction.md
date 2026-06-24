@@ -75,7 +75,7 @@ For malformed HTML where DOM parsing misses meta tags, a regex-based fallback ex
 
 ## Markdown Conversion
 
-Markdown conversion is always active and delegates to [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev) inside a blocking task. The `MarkdownResult` struct attached to every HTML page contains:
+Markdown conversion is always active and delegates to [html-to-markdown](https://docs.html-to-markdown.xberg.io) inside a blocking task. The `MarkdownResult` struct attached to every HTML page contains:
 
 | Field                | Type                     | Description                                        |
 | -------------------- | ------------------------ | -------------------------------------------------- |

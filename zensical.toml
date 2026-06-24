@@ -1,8 +1,8 @@
 [project]
 site_name = "Kreuzcrawl"
 site_description = "Kreuzcrawl – High-performance Rust web crawling engine with always-on HTML→Markdown, LLM extraction, browser automation, and bindings for 14 languages."
-site_url = "https://docs.kreuzcrawl.kreuzberg.dev"
-site_author = "kreuzberg.dev"
+site_url = "https://docs.kreuzcrawl.xberg.io"
+site_author = "xberg.io"
 repo_name = "xberg-io/kreuzcrawl"
 repo_url = "https://github.com/xberg-io/kreuzcrawl"
 edit_uri = "edit/main/docs/"

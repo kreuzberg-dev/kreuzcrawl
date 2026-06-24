@@ -61,7 +61,7 @@ Every scraped page yields a `PageMetadata` struct alongside separate collections
 
 ### Markdown Conversion
 
-HTML→Markdown conversion runs automatically on every page via [html-to-markdown](https://docs.html-to-markdown.kreuzberg.dev). Results land in the `MarkdownResult` struct attached to every page.
+HTML→Markdown conversion runs automatically on every page via [html-to-markdown](https://docs.html-to-markdown.xberg.io). Results land in the `MarkdownResult` struct attached to every page.
 
 | Feature                  | Description                                                                                          |
 | ------------------------ | ---------------------------------------------------------------------------------------------------- |

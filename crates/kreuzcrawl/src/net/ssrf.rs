@@ -36,7 +36,7 @@ static DEFAULT_DENY_NETS: LazyLock<Vec<IpNet>> = LazyLock::new(|| {
 pub enum HostMatcher {
     /// Exact hostname match (case-insensitive).
     Exact(String),
-    /// Suffix match: ".kreuzberg.dev" matches "api.kreuzberg.dev" and "kreuzberg.dev".
+    /// Suffix match: ".xberg.io" matches "api.xberg.io" and "xberg.io".
     Suffix(String),
     /// CIDR match: "10.0.0.0/8" matches IP addresses in that range. Stored as string, parsed on use.
     Cidr(String),

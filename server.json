@@ -4,7 +4,7 @@
 	"title": "Kreuzcrawl",
 	"description": "Scrape, crawl, and map websites to Markdown or JSON via local CLI.",
 	"version": "0.3.0-rc.54",
-	"websiteUrl": "https://kreuzberg.dev",
+	"websiteUrl": "https://xberg.io",
 	"repository": {
 		"url": "https://github.com/xberg-io/kreuzcrawl",
 		"source": "github",

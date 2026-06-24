@@ -1,4 +1,4 @@
-Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).
+Full API documentation is available at [docs.kreuzcrawl.xberg.io](https://docs.kreuzcrawl.xberg.io).
 
 Key functions:
 

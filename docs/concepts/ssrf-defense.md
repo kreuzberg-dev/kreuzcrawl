@@ -56,7 +56,7 @@ Allowlist specific hosts while keeping the rest of the policy strict:
 use kreuzcrawl::{CrawlConfigBuilder, HostMatcher};
 
 let config = CrawlConfigBuilder::default()
-    .ssrf_allowlist_host(HostMatcher::Suffix(".internal.kreuzberg.dev".into()))
+    .ssrf_allowlist_host(HostMatcher::Suffix(".internal.xberg.io".into()))
     .ssrf_allowlist_host(HostMatcher::Cidr("10.42.0.0/16".into()))
     .build();
 ```

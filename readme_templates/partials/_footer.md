@@ -19,6 +19,6 @@ This project is licensed under [Elastic License 2.0](https://github.com/xberg-io
 
 ## Links
 
-- [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
+- [Documentation](https://docs.kreuzcrawl.xberg.io)
 - [GitHub Repository](https://github.com/xberg-io/kreuzcrawl)
 - [Issue Tracker](https://github.com/xberg-io/kreuzcrawl/issues)

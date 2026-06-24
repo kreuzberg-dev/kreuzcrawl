@@ -58,7 +58,7 @@
   <a href="https://github.com/xberg-io/kreuzcrawl/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-Elastic--2.0-007ec6" alt="License">
   </a>
-  <a href="https://docs.kreuzcrawl.kreuzberg.dev">
+  <a href="https://docs.kreuzcrawl.xberg.io">
     <img src="https://img.shields.io/badge/Docs-kreuzcrawl-007ec6" alt="Documentation">
   </a>
 </div>
@@ -118,7 +118,7 @@ puts "Pages crawled: #{crawl_result.pages.length}"
 
 ## API Reference
 
-Full API documentation is available at [docs.kreuzcrawl.kreuzberg.dev](https://docs.kreuzcrawl.kreuzberg.dev).
+Full API documentation is available at [docs.kreuzcrawl.xberg.io](https://docs.kreuzcrawl.xberg.io).
 
 Key functions:
 
@@ -150,6 +150,6 @@ This project is licensed under [Elastic License 2.0](https://github.com/xberg-io
 
 ## Links
 
-- [Documentation](https://docs.kreuzcrawl.kreuzberg.dev)
+- [Documentation](https://docs.kreuzcrawl.xberg.io)
 - [GitHub Repository](https://github.com/xberg-io/kreuzcrawl)
 - [Issue Tracker](https://github.com/xberg-io/kreuzcrawl/issues)

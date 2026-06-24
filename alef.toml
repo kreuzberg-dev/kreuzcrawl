@@ -84,7 +84,7 @@ extra_paths = [
 title = "kreuzcrawl"
 abstract = "Web crawling and scraping with HTML→Markdown and headless-Chrome fallback."
 repository-code = "https://github.com/xberg-io/kreuzcrawl"
-url = "https://kreuzberg.dev"
+url = "https://xberg.io"
 license = "Elastic-2.0"
 date-released = "2026-05-17"
 
