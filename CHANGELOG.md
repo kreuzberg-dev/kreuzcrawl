@@ -4,6 +4,15 @@ All notable changes to kreuzcrawl are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Swift publish now creates the `release/swift/<version>` branch carrying the substituted
+  XCFramework checksum.** The alef-generated Swift e2e/test-app pins
+  `.package(url: …, branch: "release/swift/<version>")`, but the publish workflow only force-moved
+  the `v<version>` tag and never created that branch, so SwiftPM could not resolve the package. The
+  checksummed commit is now also pushed to `refs/heads/release/swift/<version>`.
+  (`.github/workflows/publish.yaml`)
+
 ## [0.3.0] - 2026-06-23
 
 First stable release. kreuzcrawl ships a Rust core with active bindings for

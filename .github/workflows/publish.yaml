@@ -1621,6 +1621,12 @@ jobs:
                   # is regenerated with the placeholder on the next release anyway).
                   git tag -f -a "$TAG" -m "$TAG" HEAD
                   git push origin "refs/tags/${TAG}" --force
+                  # Also publish the checksummed commit to a release/swift/<version> branch. The
+                  # alef-generated Swift e2e/test-app pins `branch: "release/swift/<version>"`
+                  # (bare version, no leading "v"), so this ref must exist for SwiftPM to resolve
+                  # the package with the real checksum.
+                  VERSION="${TAG#v}"
+                  git push origin "HEAD:refs/heads/release/swift/${VERSION}" --force
 
     upload-elixir-release:
         name: Upload Elixir NIF archives to GitHub Release
