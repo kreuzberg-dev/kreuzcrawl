@@ -5,7 +5,7 @@
 # To verify freshness: alef verify --exit-code
 set -euo pipefail
 
-REPO_URL="https://github.com/kreuzberg-dev/kreuzcrawl"
+REPO_URL="https://github.com/xberg-io/kreuzcrawl"
 VERSION="0.3.0"
 FFI_PKG_NAME="kreuzcrawl-ffi"
 FFI_DIR="ffi"

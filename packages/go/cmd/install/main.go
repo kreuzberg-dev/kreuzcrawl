@@ -3,11 +3,11 @@
 //
 // Usage:
 //
-//	go run github.com/kreuzberg-dev/kreuzcrawl/packages/go/cmd/install@latest
+//	go run github.com/xberg-io/kreuzcrawl/packages/go/cmd/install@latest
 //
 // Or via go generate (recommended):
 //
-//	go generate github.com/kreuzberg-dev/kreuzcrawl/packages/go
+//	go generate github.com/xberg-io/kreuzcrawl/packages/go
 //
 // The command downloads the FFI library and generates a cgo_flags.go file with
 // the correct CGO directives, eliminating the need to set environment variables.
@@ -33,7 +33,7 @@ const (
 	// DefaultVersion is the default version to download if not specified
 	DefaultVersion = "0.1.1"
 	// BaseURL is the base URL for GitHub releases
-	BaseURL = "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download"
+	BaseURL = "https://github.com/xberg-io/kreuzcrawl/releases/download"
 	// DefaultInstallDir is the default installation directory
 	DefaultInstallDir = ".kreuzcrawl"
 	// dirPermissions is the directory permission mode (user rwx, group rx, other rx)
@@ -232,7 +232,7 @@ func downloadAndInstall(version, releaseName, targetDir, goDir, libDir, headerDi
 
 	if resp.StatusCode != http.StatusOK {
 		if resp.StatusCode == http.StatusNotFound {
-			return fmt.Errorf("download failed with status %d - release v%s may not exist or doesn't have artifacts for %s. Check available releases at: https://github.com/kreuzberg-dev/kreuzcrawl/releases", resp.StatusCode, version, releaseName)
+			return fmt.Errorf("download failed with status %d - release v%s may not exist or doesn't have artifacts for %s. Check available releases at: https://github.com/xberg-io/kreuzcrawl/releases", resp.StatusCode, version, releaseName)
 		}
 		return fmt.Errorf("download failed with status %d", resp.StatusCode)
 	}

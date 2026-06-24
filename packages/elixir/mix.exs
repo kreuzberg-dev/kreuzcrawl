@@ -30,7 +30,7 @@ defmodule Kreuzcrawl.MixProject do
   defp package do
     [
       licenses: ["Elastic-2.0"],
-      links: %{"GitHub" => "https://github.com/kreuzberg-dev/kreuzcrawl"},
+      links: %{"GitHub" => "https://github.com/xberg-io/kreuzcrawl"},
       files:
         ~w(lib .formatter.exs mix.exs README* checksum-*.exs native/kreuzcrawl_nif/Cargo.toml native/kreuzcrawl_nif/Cargo.lock native/kreuzcrawl_nif/src)
     ]

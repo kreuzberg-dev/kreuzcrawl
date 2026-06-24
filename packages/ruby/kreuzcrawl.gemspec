@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Kreuzberg Team"]
   spec.summary       = "High-performance web crawling engine"
   spec.description   = "High-performance web crawling engine"
-  spec.homepage      = "https://github.com/kreuzberg-dev/kreuzcrawl"
+  spec.homepage      = "https://github.com/xberg-io/kreuzcrawl"
 
   spec.license       = "Elastic-2.0"
 

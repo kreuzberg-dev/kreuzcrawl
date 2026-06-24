@@ -5,7 +5,7 @@
 Rust 1.95 is pinned in `rust-toolchain.toml`. Clone and build:
 
 ```bash
-git clone https://github.com/kreuzberg-dev/kreuzcrawl
+git clone https://github.com/xberg-io/kreuzcrawl
 cd kreuzcrawl
 cargo build
 ```

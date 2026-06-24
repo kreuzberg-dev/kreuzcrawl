@@ -9,7 +9,7 @@ version = "0.3.0"
 edition = "2024"
 license = "Elastic-2.0"
 description = "High-performance web crawling engine"
-repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
+repository = "https://github.com/xberg-io/kreuzcrawl"
 keywords = ["crawl", "scrape", "web", "spider"]
 
 [package.metadata.cargo-machete]

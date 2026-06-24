@@ -52,7 +52,7 @@ jobs:
             # Until the shared action accepts an install-command override, we set up the
             # docs environment inline and invoke zensical directly.
             - name: Setup Python
-              uses: kreuzberg-dev/actions/setup-python-env@v1
+              uses: xberg-io/actions/setup-python-env@v1
               with:
                   python-version: "3.13"
                   cache-prefix: docs-build
@@ -70,14 +70,14 @@ jobs:
 
     lint:
         name: Lint
-        if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-latest
         timeout-minutes: 20
         steps:
             - uses: actions/checkout@v6
 
             - name: Lint documentation (links + prose + snippets)
-              uses: kreuzberg-dev/actions/lint-docs@v1
+              uses: xberg-io/actions/lint-docs@v1
               with:
                   strict: "false"
                   validate-snippets: "true"

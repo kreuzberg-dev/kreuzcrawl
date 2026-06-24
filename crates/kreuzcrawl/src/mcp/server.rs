@@ -491,7 +491,7 @@ impl ServerHandler for KreuzcrawlMcp {
                 "Web crawling and scraping library for extracting content from websites. \
                  Supports single-page scraping, multi-page crawling, site mapping, and batch operations.",
             )
-            .with_website_url("https://github.com/kreuzberg-dev/kreuzcrawl");
+            .with_website_url("https://github.com/xberg-io/kreuzcrawl");
 
         InitializeResult::new(capabilities)
             .with_server_info(server_info)

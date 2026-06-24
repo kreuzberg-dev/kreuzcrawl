@@ -12,7 +12,7 @@ package kreuzcrawl
 //   go test -tags kreuzcrawl_dev ./...
 //
 // For production/external usage, run:
-//   go generate github.com/kreuzberg-dev/kreuzcrawl/packages/go
+//   go generate github.com/xberg-io/kreuzcrawl/packages/go
 //
 // This will download the FFI library and generate cgo_flags.go with
 // the correct CGO directives for your platform.

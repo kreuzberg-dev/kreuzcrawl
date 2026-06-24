@@ -14,8 +14,8 @@ The fastest way to get started. No Rust toolchain needed if you use Homebrew.
 === "Homebrew (macOS / Linux)"
 
     ```bash
-    brew trust kreuzberg-dev/tap
-    brew install kreuzberg-dev/tap/kreuzcrawl
+    brew trust xberg-io/tap
+    brew install xberg-io/tap/kreuzcrawl
     ```
 
 === "Cargo"
@@ -136,7 +136,7 @@ kreuzcrawl --version
     Requires Go 1.21+. The Go bindings use cgo with the C FFI layer:
 
     ```bash
-    go get github.com/kreuzberg-dev/kreuzcrawl/packages/go
+    go get github.com/xberg-io/kreuzcrawl/packages/go
     ```
 
     !!! warning "Build requirement"
@@ -189,7 +189,7 @@ kreuzcrawl --version
     Requires PHP 8.2+. Install the extension via Composer:
 
     ```bash
-    composer require kreuzberg-dev/kreuzcrawl
+    composer require xberg-io/kreuzcrawl
     ```
 
     The PHP bindings are built with [ext-php-rs](https://github.com/davidcole1340/ext-php-rs) and load as a native PHP extension.
@@ -249,7 +249,7 @@ kreuzcrawl --version
     Add the Swift package from GitHub:
 
     ```swift
-    .package(url: "https://github.com/kreuzberg-dev/kreuzcrawl", exact: "0.3.0")
+    .package(url: "https://github.com/xberg-io/kreuzcrawl", exact: "0.3.0")
     ```
 
 === "Zig"
@@ -257,7 +257,7 @@ kreuzcrawl --version
     Use the generated Zig package over the C FFI layer:
 
     ```bash
-    zig fetch --save https://github.com/kreuzberg-dev/kreuzcrawl/archive/refs/tags/v0.3.0.tar.gz
+    zig fetch --save https://github.com/xberg-io/kreuzcrawl/archive/refs/tags/v0.3.0.tar.gz
     ```
 
 === "C FFI"
@@ -277,20 +277,20 @@ kreuzcrawl --version
 Pull the official image:
 
 ```bash
-docker pull ghcr.io/kreuzberg-dev/kreuzcrawl:latest
+docker pull ghcr.io/xberg-io/kreuzcrawl:latest
 ```
 
 Run the CLI:
 
 ```bash
-docker run --rm ghcr.io/kreuzberg-dev/kreuzcrawl:latest scrape https://example.com
+docker run --rm ghcr.io/xberg-io/kreuzcrawl:latest scrape https://example.com
 ```
 
 Run with a volume for WARC output:
 
 ```bash
 docker run --rm -v $(pwd)/output:/output \
-  ghcr.io/kreuzberg-dev/kreuzcrawl:latest \
+  ghcr.io/xberg-io/kreuzcrawl:latest \
   crawl https://example.com --depth 2 --warc-output /output/archive.warc
 ```
 

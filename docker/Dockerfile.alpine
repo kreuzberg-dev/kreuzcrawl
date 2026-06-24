@@ -53,10 +53,10 @@ RUN file /build/kreuzcrawl && \
 # =============================================================================
 FROM alpine:3.21
 
-LABEL org.opencontainers.image.source="https://github.com/kreuzberg-dev/kreuzcrawl"
+LABEL org.opencontainers.image.source="https://github.com/xberg-io/kreuzcrawl"
 LABEL org.opencontainers.image.description="Kreuzcrawl — high-performance web crawler CLI"
 LABEL org.opencontainers.image.licenses="Elastic-2.0"
-LABEL io.modelcontextprotocol.server.name="io.github.kreuzberg-dev/kreuzcrawl"
+LABEL io.modelcontextprotocol.server.name="io.github.xberg-io/kreuzcrawl"
 
 # Minimal runtime dependencies
 RUN apk add --no-cache \

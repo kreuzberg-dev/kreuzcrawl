@@ -23,7 +23,7 @@ from urllib.error import URLError
 from urllib.parse import quote, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-REPO = "kreuzberg-dev/kreuzcrawl"
+REPO = "xberg-io/kreuzcrawl"
 BIN_NAME = "kreuzcrawl"
 PKG_NAME = "kreuzcrawl-cli"
 VERSION_ENV = "KREUZCRAWL_CLI_VERSION"

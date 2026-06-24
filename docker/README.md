@@ -48,8 +48,8 @@ docker run --rm kreuzcrawl:latest mcp
 ### Pull from Registry
 
 ```bash
-docker pull ghcr.io/kreuzberg-dev/kreuzcrawl:latest
-docker pull ghcr.io/kreuzberg-dev/kreuzcrawl:v0.1.0
+docker pull ghcr.io/xberg-io/kreuzcrawl:latest
+docker pull ghcr.io/xberg-io/kreuzcrawl:v0.1.0
 ```
 
 ## Legacy Images
@@ -93,7 +93,7 @@ Specialized builders for language bindings (FFI, Ruby NIF).
 - **Trigger**: `workflow_dispatch`, `release` (published), `repository_dispatch`
 - **Variant**: Alpine CLI (single image)
 - **Architecture**: Builds amd64 + arm64 with Buildx
-- **Registry**: `ghcr.io/kreuzberg-dev/kreuzcrawl`
+- **Registry**: `ghcr.io/xberg-io/kreuzcrawl`
 - **Tags**: `{version}`, `latest`
 - **Testing**: Runs full test suite before push
 
@@ -236,7 +236,7 @@ gh workflow run publish-docker.yaml \
   -f force_republish=false
 
 # Option 3: Via repository_dispatch event
-gh api repos/kreuzberg-dev/kreuzcrawl/dispatches \
+gh api repos/xberg-io/kreuzcrawl/dispatches \
   -f event_type=publish-docker \
   -f client_payload='{"tag":"v0.1.0"}'
 ```

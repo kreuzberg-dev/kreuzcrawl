@@ -7,7 +7,7 @@ description = "High-performance web crawling engine"
 readme = false
 keywords = ["crawl", "scrape", "spider", "web"]
 categories = []
-repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
+repository = "https://github.com/xberg-io/kreuzcrawl"
 
 # `serde_json`, `ahash`, and `tokio` are emitted unconditionally above so the
 # manifest is stable across regens (and so the C FFI codegen can pull them in

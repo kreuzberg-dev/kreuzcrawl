@@ -60,19 +60,19 @@ High-performance web crawling and scraping with a Rust core and generated langua
 | **Python**            | `pip install kreuzcrawl`                                    | [API Reference](reference/api-python.md)         |
 | **TypeScript / Node** | `npm install @kreuzberg/kreuzcrawl`                         | [API Reference](reference/api-typescript.md)     |
 | **WebAssembly**       | `npm install @kreuzberg/kreuzcrawl-wasm`                    | [API Reference](reference/api-wasm.md)           |
-| **Go**                | `go get github.com/kreuzberg-dev/kreuzcrawl/packages/go`    | [API Reference](reference/api-go.md)             |
+| **Go**                | `go get github.com/xberg-io/kreuzcrawl/packages/go`    | [API Reference](reference/api-go.md)             |
 | **Java**              | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl`         | [API Reference](reference/api-java.md)           |
 | **Kotlin (Android)**  | Maven Central `dev.kreuzberg.kreuzcrawl:kreuzcrawl-android` | [API Reference](reference/api-kotlin-android.md) |
 | **C#**                | `dotnet add package Kreuzcrawl`                             | [API Reference](reference/api-csharp.md)         |
 | **Ruby**              | `gem install kreuzcrawl`                                    | [API Reference](reference/api-ruby.md)           |
-| **PHP**               | `composer require kreuzberg-dev/kreuzcrawl`                 | [API Reference](reference/api-php.md)            |
+| **PHP**               | `composer require xberg-io/kreuzcrawl`                 | [API Reference](reference/api-php.md)            |
 | **Elixir**            | `{:kreuzcrawl, "~> 0.3.0"}`                                 | [API Reference](reference/api-elixir.md)         |
 | **Dart / Flutter**    | `dart pub add kreuzcrawl`                                   | [API Reference](reference/api-dart.md)           |
 | **Swift**             | Swift Package Manager                                       | [API Reference](reference/api-swift.md)          |
 | **Zig**               | `zig fetch --save` from GitHub                              | [API Reference](reference/api-zig.md)            |
 | **C (FFI)**           | Shared library + header                                     | [API Reference](reference/api-c.md)              |
 | **CLI**               | `cargo install kreuzcrawl-cli`                              | [CLI Guide](cli/usage.md)                        |
-| **Docker**            | `ghcr.io/kreuzberg-dev/kreuzcrawl`                          | [Docker Guide](guides/docker.md)                 |
+| **Docker**            | `ghcr.io/xberg-io/kreuzcrawl`                          | [Docker Guide](guides/docker.md)                 |
 
 !!! tip "Choosing between TypeScript packages"
 
@@ -142,31 +142,31 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 <div class="grid cards" markdown>
 
-- :material-file-document-multiple:{ .lg .middle } **[Kreuzberg](https://github.com/kreuzberg-dev/kreuzberg)**
+- :material-file-document-multiple:{ .lg .middle } **[Kreuzberg](https://github.com/xberg-io/kreuzberg)**
 
   Document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 
-- :material-cloud:{ .lg .middle } **[Kreuzberg Cloud](https://github.com/kreuzberg-dev/kreuzberg-cloud)**
+- :material-cloud:{ .lg .middle } **[Kreuzberg Cloud](https://github.com/xberg-io/kreuzberg-cloud)**
 
   Managed extraction API with SDKs, dashboards, and observability.
 
-- :material-spider-web:{ .lg .middle } **[kreuzcrawl](https://github.com/kreuzberg-dev/kreuzcrawl)**
+- :material-spider-web:{ .lg .middle } **[kreuzcrawl](https://github.com/xberg-io/kreuzcrawl)**
 
   Web crawling and scraping with HTML→Markdown and headless-Chrome fallback.
 
-- :material-language-html5:{ .lg .middle } **[html-to-markdown](https://github.com/kreuzberg-dev/html-to-markdown)**
+- :material-language-html5:{ .lg .middle } **[html-to-markdown](https://github.com/xberg-io/html-to-markdown)**
 
   Fast, lossless HTML→Markdown engine.
 
-- :material-robot-outline:{ .lg .middle } **[liter-llm](https://github.com/kreuzberg-dev/liter-llm)**
+- :material-robot-outline:{ .lg .middle } **[liter-llm](https://github.com/xberg-io/liter-llm)**
 
   Universal LLM API client with native bindings for 14 languages and 143 providers.
 
-- :material-code-tags:{ .lg .middle } **[tree-sitter-language-pack](https://github.com/kreuzberg-dev/tree-sitter-language-pack)**
+- :material-code-tags:{ .lg .middle } **[tree-sitter-language-pack](https://github.com/xberg-io/tree-sitter-language-pack)**
 
   Tree-sitter grammars and code-intelligence primitives.
 
-- :material-alpha-a-circle:{ .lg .middle } **[alef](https://github.com/kreuzberg-dev/alef)**
+- :material-alpha-a-circle:{ .lg .middle } **[alef](https://github.com/xberg-io/alef)**
 
   The polyglot binding generator that produces every per-language binding across the 5 polyglot repos.
 
@@ -220,6 +220,6 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
 ### Getting Help
 
-- **Bugs & feature requests** — [Open an issue on GitHub](https://github.com/kreuzberg-dev/kreuzcrawl/issues)
+- **Bugs & feature requests** — [Open an issue on GitHub](https://github.com/xberg-io/kreuzcrawl/issues)
 - **Community chat** — [Join the Discord](https://discord.gg/xt9WY3GnKR)
 - **Contributing** — [Read the contributor guide](contributing.md)

@@ -1,6 +1,6 @@
 # kreuzcrawl-bypass
 
-Configurable HTTP-based `BypassProvider` implementations for [kreuzcrawl](https://github.com/kreuzberg-dev/kreuzcrawl), driven by per-vendor YAML configs.
+Configurable HTTP-based `BypassProvider` implementations for [kreuzcrawl](https://github.com/xberg-io/kreuzcrawl), driven by per-vendor YAML configs.
 
 Drop a YAML file in `configs/`, set the env vars it references, and wire up a `SimpleHttpProvider` — no Rust code required per vendor.
 

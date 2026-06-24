@@ -5,7 +5,7 @@ import (
     "fmt"
     "log"
 
-    kreuzcrawl "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+    kreuzcrawl "github.com/xberg-io/kreuzcrawl/packages/go"
 )
 
 func main() {

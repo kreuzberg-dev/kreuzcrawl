@@ -60,7 +60,7 @@ jobs:
 
             - name: Resolve release metadata
               id: meta
-              uses: kreuzberg-dev/actions/prepare-release-metadata@v1
+              uses: xberg-io/actions/prepare-release-metadata@v1
               with:
                   tag: ${{ inputs.tag }}
                   ref: ${{ inputs.ref }}
@@ -170,7 +170,7 @@ jobs:
                   cache-to: type=gha,mode=max,scope=publish-docker-${{ matrix.arch }}
 
             - name: Check Docker image size
-              uses: kreuzberg-dev/actions/check-docker-image-size@v1
+              uses: xberg-io/actions/check-docker-image-size@v1
               with:
                   image: kreuzcrawl-test:latest
                   warn-mb: "200"
@@ -336,7 +336,7 @@ jobs:
                   # the image identifier, and delete any package-level version.
                   jq \
                     --arg version "$VERSION" \
-                    --arg image "ghcr.io/kreuzberg-dev/kreuzcrawl:$VERSION" \
+                    --arg image "ghcr.io/xberg-io/kreuzcrawl:$VERSION" \
                     '.version = $version | .packages[0].identifier = $image | del(.packages[0].version)' \
                     server.json > server.release.json
 

@@ -97,8 +97,8 @@ tasks:
                 set -e
                 # `go list -m -f {{.Dir}} <mod>` returns an empty Dir for a published
                 # module unless the version is pinned explicitly; resolve it from go.mod.
-                FFI_VERSION=$(grep -E '^[[:space:]]*github.com/kreuzberg-dev/kreuzcrawl/packages/go[[:space:]]' go.mod | awk '{print $NF}')
-                MOD_DIR=$(go list -m -f '{{`{{.Dir}}`}}' "github.com/kreuzberg-dev/kreuzcrawl/packages/go@$FFI_VERSION")
+                FFI_VERSION=$(grep -E '^[[:space:]]*github.com/xberg-io/kreuzcrawl/packages/go[[:space:]]' go.mod | awk '{print $NF}')
+                MOD_DIR=$(go list -m -f '{{`{{.Dir}}`}}' "github.com/xberg-io/kreuzcrawl/packages/go@$FFI_VERSION")
                 echo "FFI mod dir: $MOD_DIR"
                 if [ -z "$MOD_DIR" ]; then echo "could not resolve go module dir" >&2; exit 1; fi
                 chmod -R u+w "$MOD_DIR" 2>/dev/null || true

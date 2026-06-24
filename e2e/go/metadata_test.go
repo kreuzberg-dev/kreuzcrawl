@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	pkg "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+	pkg "github.com/xberg-io/kreuzcrawl/packages/go"
 )
 
 func Test_MetadataArticleTimes(t *testing.T) {

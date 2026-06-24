@@ -9,7 +9,7 @@
     <InformationalVersion>0.3.0</InformationalVersion>
     <Description>High-performance web crawling engine</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/kreuzberg-dev/kreuzcrawl</RepositoryUrl>
+    <RepositoryUrl>https://github.com/xberg-io/kreuzcrawl</RepositoryUrl>
     <Authors>Kreuzberg Team</Authors>
     <Company>Alef Team</Company>
     <Product>Kreuzcrawl</Product>

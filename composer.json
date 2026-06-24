@@ -1,5 +1,5 @@
 {
-	"name": "kreuzberg-dev/kreuzcrawl",
+	"name": "xberg-io/kreuzcrawl",
 	"description": "High-performance web crawling engine",
 	"license": "Elastic-2.0",
 	"type": "php-ext",
@@ -39,7 +39,7 @@
 	"extra": {
 		"pie": {
 			"binary": {
-				"url-template": "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/{Version}/php_kreuzcrawl-{Version}_php{PhpVersion}-{Arch}-{OSLower}-{Libc}-{TSMode}.tgz"
+				"url-template": "https://github.com/xberg-io/kreuzcrawl/releases/download/{Version}/php_kreuzcrawl-{Version}_php{PhpVersion}-{Arch}-{OSLower}-{Libc}-{TSMode}.tgz"
 			}
 		}
 	}

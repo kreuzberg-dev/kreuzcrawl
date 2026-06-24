@@ -14,15 +14,15 @@ See the build instructions in the main repository.
 #include "kreuzcrawl.h"
 
 int main(void) {
-    // See https://github.com/kreuzberg-dev/kreuzcrawl for usage examples.
+    // See https://github.com/xberg-io/kreuzcrawl for usage examples.
     return 0;
 }
 ```
 
 ## Documentation
 
-For full documentation, see the [kreuzcrawl repository](https://github.com/kreuzberg-dev/kreuzcrawl).
+For full documentation, see the [kreuzcrawl repository](https://github.com/xberg-io/kreuzcrawl).
 
 ## License
 
-See the [LICENSE](https://github.com/kreuzberg-dev/kreuzcrawl/blob/main/LICENSE) file in the root repository.
+See the [LICENSE](https://github.com/xberg-io/kreuzcrawl/blob/main/LICENSE) file in the root repository.

@@ -11,7 +11,7 @@ The Node platform sub-package `@kreuzberg/kreuzcrawl-linux-x64-musl` requires ma
 **Fix**: Go to <https://www.npmjs.com/package/@kreuzberg/kreuzcrawl-linux-x64-musl/access> → Settings → Trusted Publishers → **Add a new trusted publisher**:
 
 - Provider: GitHub
-- Repository: kreuzberg-dev/kreuzcrawl
+- Repository: xberg-io/kreuzcrawl
 - Workflow: .github/workflows/publish.yaml
 - Job: Publish Node packages
 
@@ -50,7 +50,7 @@ When Alef regenerates composer.json (e.g., kreuzcrawl/packages/php/composer.json
 Final resolved URL:
 
 ```text
-https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v0.3.0-rc.45/php_kreuzcrawl-0.3.0-rc.45_php8.4-arm64-darwin-bsdlibc-nts.tgz
+https://github.com/xberg-io/kreuzcrawl/releases/download/v0.3.0-rc.45/php_kreuzcrawl-0.3.0-rc.45_php8.4-arm64-darwin-bsdlibc-nts.tgz
 ```
 
 This matches Alef's published asset.

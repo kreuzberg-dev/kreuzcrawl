@@ -41,7 +41,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # =============================================================================
 FROM debian:bookworm-slim
 
-LABEL org.opencontainers.image.source="https://github.com/kreuzberg-dev/kreuzcrawl"
+LABEL org.opencontainers.image.source="https://github.com/xberg-io/kreuzcrawl"
 LABEL org.opencontainers.image.description="Kreuzcrawl — high-performance web crawler with browser automation, API server, and MCP"
 LABEL org.opencontainers.image.licenses="Elastic-2.0"
 

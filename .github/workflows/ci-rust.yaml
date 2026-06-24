@@ -38,7 +38,7 @@ permissions:
 jobs:
     rust:
         name: Rust (${{ matrix.os }})
-        if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
         runs-on: ${{ matrix.os }}
         timeout-minutes: 120
         strategy:
@@ -54,22 +54,22 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
               with:
                   show-initial: "false"
                   show-final: "true"
 
             - name: Setup Rust
-              uses: kreuzberg-dev/actions/setup-rust@v1
+              uses: xberg-io/actions/setup-rust@v1
               with:
                   cache-key-prefix: rust-${{ matrix.os }}
                   use-sccache: "true"
 
             - name: Setup OpenSSL
-              uses: kreuzberg-dev/actions/setup-openssl@v1
+              uses: xberg-io/actions/setup-openssl@v1
 
             - name: Install Task
-              uses: kreuzberg-dev/actions/install-task@v1
+              uses: xberg-io/actions/install-task@v1
 
             - name: Run clippy
               run: cargo clippy --workspace --exclude kreuzcrawl-ffi --exclude kreuzcrawl-py --exclude kreuzcrawl-php --exclude kreuzcrawl-node --exclude kreuzcrawl-wasm -- -D warnings
@@ -89,29 +89,29 @@ jobs:
 
     validate-rust:
         name: Validate Rust
-        if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-24.04-arm
         timeout-minutes: 60
         steps:
             - uses: actions/checkout@v6
 
             - name: Free disk space
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
               with:
                   show-initial: "false"
                   show-final: "true"
 
             - name: Setup Rust
-              uses: kreuzberg-dev/actions/setup-rust@v1
+              uses: xberg-io/actions/setup-rust@v1
               with:
                   cache-key-prefix: validate-rust
                   use-sccache: "true"
 
             - name: Setup OpenSSL
-              uses: kreuzberg-dev/actions/setup-openssl@v1
+              uses: xberg-io/actions/setup-openssl@v1
 
             - name: Install Task
-              uses: kreuzberg-dev/actions/install-task@v1
+              uses: xberg-io/actions/install-task@v1
 
             - name: Run Rust lint checks
               run: task rust:lint:check
@@ -120,7 +120,7 @@ jobs:
               run: task c:lint:check
 
             - name: Install alef
-              uses: kreuzberg-dev/actions/install-alef@v1
+              uses: xberg-io/actions/install-alef@v1
 
             - name: Verify binding API parity
               run: alef verify

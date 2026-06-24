@@ -10,7 +10,7 @@ authors:
     email: "naaman@kreuzberg.dev"
     orcid: "https://orcid.org/0009-0000-2247-5072"
   - name: "Kreuzberg, Inc."
-repository-code: "https://github.com/kreuzberg-dev/kreuzcrawl"
+repository-code: "https://github.com/xberg-io/kreuzcrawl"
 url: "https://kreuzberg.dev"
 license: Elastic-2.0
 version: 0.3.0

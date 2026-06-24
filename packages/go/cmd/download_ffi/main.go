@@ -22,7 +22,7 @@ import (
 
 const (
 	moduleVersion = "0.3.0"
-	repoURL       = "https://github.com/kreuzberg-dev/kreuzcrawl"
+	repoURL       = "https://github.com/xberg-io/kreuzcrawl"
 	assetPrefix   = "kreuzcrawl"
 )
 

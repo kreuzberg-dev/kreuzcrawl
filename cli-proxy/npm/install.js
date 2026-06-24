@@ -8,7 +8,7 @@ import crypto from "node:crypto";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { spawnSync, execFileSync } from "node:child_process";
 
-const REPO = "kreuzberg-dev/kreuzcrawl";
+const REPO = "xberg-io/kreuzcrawl";
 const BIN_NAME = "kreuzcrawl";
 const PKG_NAME = "kreuzcrawl-cli";
 const VERSION_ENV = "KREUZCRAWL_CLI_VERSION";

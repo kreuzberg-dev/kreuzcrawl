@@ -196,7 +196,7 @@ mavenPublishing {
     pom {
         name.set("kreuzcrawl-android")
         description.set("High-performance web crawling engine")
-        url.set("https://github.com/kreuzberg-dev/kreuzcrawl")
+        url.set("https://github.com/xberg-io/kreuzcrawl")
         licenses {
             license {
                 name.set("Elastic-2.0")
@@ -211,9 +211,9 @@ mavenPublishing {
         }
 
         scm {
-            url.set("https://github.com/kreuzberg-dev/kreuzcrawl")
-            connection.set("scm:git:git://github.com/kreuzberg-dev/kreuzcrawl.git")
-            developerConnection.set("scm:git:ssh://git@github.com:kreuzberg-dev/kreuzcrawl.git")
+            url.set("https://github.com/xberg-io/kreuzcrawl")
+            connection.set("scm:git:git://github.com/xberg-io/kreuzcrawl.git")
+            developerConnection.set("scm:git:ssh://git@github.com:xberg-io/kreuzcrawl.git")
         }
     }
 }

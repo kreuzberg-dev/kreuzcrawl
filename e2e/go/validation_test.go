@@ -13,7 +13,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	pkg "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+	pkg "github.com/xberg-io/kreuzcrawl/packages/go"
 )
 
 func Test_ValidationBrowserEndpointInvalid(t *testing.T) {

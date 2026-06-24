@@ -46,7 +46,7 @@ permissions:
 jobs:
     build-ffi:
         name: Build FFI (${{ matrix.target }})
-        if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
         runs-on: ${{ matrix.os }}
         timeout-minutes: ${{ matrix.os == 'windows-latest' && 120 || 60 }}
         strategy:
@@ -67,21 +67,21 @@ jobs:
                   submodules: recursive
 
             - name: Setup Rust
-              uses: kreuzberg-dev/actions/setup-rust@v1
+              uses: xberg-io/actions/setup-rust@v1
               with:
                   cache-key-prefix: build-ffi-${{ matrix.target }}
                   target: ${{ matrix.target }}
 
             - name: Setup OpenSSL
-              uses: kreuzberg-dev/actions/setup-openssl@v1
+              uses: xberg-io/actions/setup-openssl@v1
 
             - name: Build FFI library
-              uses: kreuzberg-dev/actions/build-rust-ffi@v1
+              uses: xberg-io/actions/build-rust-ffi@v1
               with:
                   crate-name: kreuzcrawl-ffi
 
             - name: Build CLI
-              uses: kreuzberg-dev/actions/build-rust-cli@v1
+              uses: xberg-io/actions/build-rust-cli@v1
               with:
                   package-name: kreuzcrawl-cli
                   binary-name: kreuzcrawl
@@ -115,7 +115,7 @@ jobs:
 
     e2e-tests:
         name: E2E (${{ matrix.lang }})
-        if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
         needs: [build-ffi]
         runs-on: ubuntu-24.04-arm
         timeout-minutes: 90
@@ -176,7 +176,7 @@ jobs:
                   submodules: recursive
 
             - name: Setup Rust
-              uses: kreuzberg-dev/actions/setup-rust@v1
+              uses: xberg-io/actions/setup-rust@v1
               with:
                   cache-key-prefix: e2e-${{ matrix.lang }}
 
@@ -244,18 +244,18 @@ jobs:
                   chmod +x e2e/rust/target/release/mock-server 2>/dev/null || true
 
             - name: Setup OpenSSL
-              uses: kreuzberg-dev/actions/setup-openssl@v1
+              uses: xberg-io/actions/setup-openssl@v1
 
             - name: Setup Python
               if: matrix.python-version
-              uses: kreuzberg-dev/actions/setup-python-env@v1
+              uses: xberg-io/actions/setup-python-env@v1
               with:
                   python-version: ${{ matrix.python-version }}
                   cache-prefix: e2e-py-${{ matrix.python-version }}
 
             - name: Setup Node
               if: matrix.node-version
-              uses: kreuzberg-dev/actions/setup-node-workspace@v1
+              uses: xberg-io/actions/setup-node-workspace@v1
 
             - name: Setup Go
               if: matrix.go-version
@@ -286,7 +286,7 @@ jobs:
 
             - name: Setup PHP
               if: matrix.php-version
-              uses: kreuzberg-dev/actions/setup-php@v1
+              uses: xberg-io/actions/setup-php@v1
               with:
                   php-version: ${{ matrix.php-version }}
                   tools: composer
@@ -294,7 +294,7 @@ jobs:
 
             - name: Setup Elixir
               if: matrix.elixir-version
-              uses: kreuzberg-dev/actions/setup-elixir@v1
+              uses: xberg-io/actions/setup-elixir@v1
               with:
                   elixir-version: ${{ matrix.elixir-version }}
                   otp-version: ${{ matrix.otp-version }}
@@ -310,26 +310,26 @@ jobs:
               # kreuzberg-dev wrapper around SwiftyLab/setup-swift — supports
               # ubuntu-24.04-arm; swift-actions/setup-swift@v2 returns a corrupt
               # binary on that runner.
-              uses: kreuzberg-dev/actions/setup-swift@v1
+              uses: xberg-io/actions/setup-swift@v1
               with:
                   swift-version: ${{ matrix.swift-version }}
 
             - name: Setup Zig
               if: matrix.zig-version
               # Resolves the official ziglang.org download index directly.
-              uses: kreuzberg-dev/actions/setup-zig@v1
+              uses: xberg-io/actions/setup-zig@v1
               with:
                   version: ${{ matrix.zig-version }}
 
             - name: Setup wasm-pack
               if: matrix.lang == 'wasm'
-              uses: kreuzberg-dev/actions/setup-wasm-pack@v1
+              uses: xberg-io/actions/setup-wasm-pack@v1
 
             - name: Setup Chrome
               # Every binding has browser-using fixtures (chromiumoxide fallback,
               # interact, etc.), so chromium has to be on PATH for the whole matrix
               # — not only the brew formula test.
-              uses: kreuzberg-dev/actions/setup-chrome@v1
+              uses: xberg-io/actions/setup-chrome@v1
 
             - name: Setup library paths for FFI bindings
               if: |
@@ -348,7 +348,7 @@ jobs:
                   echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}" >> "$GITHUB_ENV"
 
             - name: Install Task
-              uses: kreuzberg-dev/actions/install-task@v1
+              uses: xberg-io/actions/install-task@v1
 
             - name: Compile Ruby native extension
               if: matrix.lang == 'ruby'

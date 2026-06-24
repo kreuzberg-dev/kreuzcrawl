@@ -8,7 +8,7 @@ defmodule Kreuzcrawl.Native do
   use RustlerPrecompiled,
     otp_app: :kreuzcrawl,
     crate: "kreuzcrawl_nif",
-    base_url: "https://github.com/kreuzberg-dev/kreuzcrawl/releases/download/v#{Mix.Project.config()[:version]}",
+    base_url: "https://github.com/xberg-io/kreuzcrawl/releases/download/v#{Mix.Project.config()[:version]}",
     version: Mix.Project.config()[:version],
     targets: [
       "x86_64-unknown-linux-gnu",

@@ -3,8 +3,8 @@ site_name = "Kreuzcrawl"
 site_description = "Kreuzcrawl – High-performance Rust web crawling engine with always-on HTML→Markdown, LLM extraction, browser automation, and bindings for 14 languages."
 site_url = "https://docs.kreuzcrawl.kreuzberg.dev"
 site_author = "kreuzberg.dev"
-repo_name = "kreuzberg-dev/kreuzcrawl"
-repo_url = "https://github.com/kreuzberg-dev/kreuzcrawl"
+repo_name = "xberg-io/kreuzcrawl"
+repo_url = "https://github.com/xberg-io/kreuzcrawl"
 edit_uri = "edit/main/docs/"
 copyright = "Copyright &copy; 2023-2026 Kreuzberg, inc."
 extra_css = ["css/extra.css"]
@@ -205,7 +205,7 @@ forks = true
 
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
-link = "https://github.com/kreuzberg-dev/kreuzcrawl"
+link = "https://github.com/xberg-io/kreuzcrawl"
 name = "View on GitHub"
 
 [[project.extra.social]]
@@ -215,7 +215,7 @@ name = "View on PyPI"
 
 [[project.extra.social]]
 icon = "fontawesome/brands/docker"
-link = "https://github.com/kreuzberg-dev/kreuzcrawl/pkgs/container/kreuzcrawl"
+link = "https://github.com/xberg-io/kreuzcrawl/pkgs/container/kreuzcrawl"
 name = "View on GitHub Container Registry"
 
 [[project.extra.social]]

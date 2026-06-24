@@ -1,8 +1,8 @@
 # AI Coding Assistants
 
-The Kreuzcrawl plugin lives in the [`kreuzberg-dev/plugins`](https://github.com/kreuzberg-dev/plugins) marketplace. It ships the Kreuzcrawl agent skills (site crawling, HTML→Markdown scraping, headless-Chrome fallback) plus the `kreuzcrawl` MCP server, and works with every major coding agent.
+The Kreuzcrawl plugin lives in the [`xberg-io/plugins`](https://github.com/xberg-io/plugins) marketplace. It ships the Kreuzcrawl agent skills (site crawling, HTML→Markdown scraping, headless-Chrome fallback) plus the `kreuzcrawl` MCP server, and works with every major coding agent.
 
-The plugin shells out to the `kreuzcrawl` CLI. Install it from the [Installation](../getting-started/installation.md) guide (for example, `brew install kreuzberg-dev/tap/kreuzcrawl`) before driving the crawler from an assistant.
+The plugin shells out to the `kreuzcrawl` CLI. Install it from the [Installation](../getting-started/installation.md) guide (for example, `brew install xberg-io/tap/kreuzcrawl`) before driving the crawler from an assistant.
 
 ## Installing
 
@@ -12,7 +12,7 @@ Pick your harness below.
 <summary><strong>Claude Code</strong></summary>
 
 ```text
-/plugin marketplace add kreuzberg-dev/plugins
+/plugin marketplace add xberg-io/plugins
 /plugin install kreuzcrawl@kreuzberg
 ```
 
@@ -22,7 +22,7 @@ Pick your harness below.
 <summary><strong>Codex CLI</strong></summary>
 
 ```text
-/plugins add https://github.com/kreuzberg-dev/plugins
+/plugins add https://github.com/xberg-io/plugins
 ```
 
 Then search for `kreuzcrawl` and select **Install Plugin**.
@@ -31,14 +31,14 @@ Then search for `kreuzcrawl` and select **Install Plugin**.
 <details>
 <summary><strong>Cursor</strong></summary>
 
-Settings → Plugins → Add from URL → `https://github.com/kreuzberg-dev/plugins`, then select **kreuzcrawl**.
+Settings → Plugins → Add from URL → `https://github.com/xberg-io/plugins`, then select **kreuzcrawl**.
 </details>
 
 <details>
 <summary><strong>Gemini CLI</strong></summary>
 
 ```text
-gemini extensions install https://github.com/kreuzberg-dev/plugins
+gemini extensions install https://github.com/xberg-io/plugins
 ```
 
 </details>
@@ -47,7 +47,7 @@ gemini extensions install https://github.com/kreuzberg-dev/plugins
 <summary><strong>Factory Droid</strong></summary>
 
 ```text
-droid plugin marketplace add https://github.com/kreuzberg-dev/plugins
+droid plugin marketplace add https://github.com/xberg-io/plugins
 droid plugin install kreuzcrawl@kreuzberg
 ```
 
@@ -57,7 +57,7 @@ droid plugin install kreuzcrawl@kreuzberg
 <summary><strong>GitHub Copilot CLI</strong></summary>
 
 ```text
-copilot plugin marketplace add https://github.com/kreuzberg-dev/plugins
+copilot plugin marketplace add https://github.com/xberg-io/plugins
 copilot plugin install kreuzcrawl@kreuzberg
 ```
 

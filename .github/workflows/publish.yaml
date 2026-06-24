@@ -8,7 +8,7 @@ name: Publish Release
 #
 # Mirrors kreuzberg's publish.yaml composition: every registry interaction,
 # every multi-platform build, and every release-asset upload routes through
-# a shared kreuzberg-dev/actions composite. Inline bash is reserved for
+# a shared xberg-io/actions composite. Inline bash is reserved for
 # repo-quirky orchestration only (homebrew bottle assembly, Node platform
 # package staging, Maven resource bundling).
 
@@ -110,7 +110,7 @@ jobs:
 
             - name: Retag for republish
               if: ${{ inputs.republish == true || github.event.client_payload.republish == true }}
-              uses: kreuzberg-dev/actions/retag-for-republish@v1
+              uses: xberg-io/actions/retag-for-republish@v1
               with:
                   tag: ${{ inputs.tag || github.event.client_payload.tag }}
                   token: ${{ steps.app-token.outputs.token }}
@@ -119,11 +119,11 @@ jobs:
 
             - name: Resolve release metadata
               id: meta
-              uses: kreuzberg-dev/actions/prepare-release-metadata@v1
+              uses: xberg-io/actions/prepare-release-metadata@v1
 
             - name: Ensure GitHub Release exists for tag
               if: ${{ steps.meta.outputs.is_tag == 'true' && steps.meta.outputs.dry_run != 'true' }}
-              uses: kreuzberg-dev/actions/publish-github-release@v1
+              uses: xberg-io/actions/publish-github-release@v1
               with:
                   tag: ${{ steps.meta.outputs.tag }}
                   target: ${{ steps.meta.outputs.target_sha }}
@@ -146,7 +146,7 @@ jobs:
                   submodules: recursive
 
             - name: Validate versions
-              uses: kreuzberg-dev/actions/validate-versions@v1
+              uses: xberg-io/actions/validate-versions@v1
               with:
                   version: ${{ needs.prepare.outputs.version }}
 
@@ -161,7 +161,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: pypi
                   package: kreuzcrawl
@@ -176,7 +176,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: npm
                   package: "@kreuzberg/kreuzcrawl"
@@ -191,7 +191,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: npm
                   package: "@kreuzberg/kreuzcrawl-wasm"
@@ -206,7 +206,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: rubygems
                   package: kreuzcrawl
@@ -221,7 +221,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: maven
                   package: "dev.kreuzberg.kreuzcrawl:kreuzcrawl"
@@ -236,7 +236,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: nuget
                   package: Kreuzcrawl
@@ -251,10 +251,10 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: packagist
-                  package: kreuzberg-dev/kreuzcrawl
+                  package: xberg-io/kreuzcrawl
                   version: ${{ needs.prepare.outputs.version }}
 
     check-cratesio:
@@ -270,7 +270,7 @@ jobs:
             all_exist: ${{ steps.derive.outputs.all_exist }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: cratesio
                   package: kreuzcrawl-bindings-common
@@ -302,7 +302,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: hex
                   package: kreuzcrawl
@@ -321,7 +321,7 @@ jobs:
               # zig path only verifies the release tag exists. On a real release that's
               # always true, so it short-circuits `publish-zig` to skipped. Verify the
               # actual asset is present instead.
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
                   package: kreuzcrawl-zig-v${{ needs.prepare.outputs.version }}.tar.gz
@@ -338,7 +338,7 @@ jobs:
             kotlin_android_exists: ${{ steps.check.outputs.kotlin_android_exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: maven
                   package: dev.kreuzberg:kreuzcrawl
@@ -355,12 +355,12 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: homebrew
                   package: kreuzcrawl
                   version: ${{ needs.prepare.outputs.version }}
-                  tap-repo: kreuzberg-dev/homebrew-tap
+                  tap-repo: xberg-io/homebrew-tap
 
     check-cli:
         name: Check GitHub Release for CLI assets
@@ -371,7 +371,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
                   package: kreuzcrawl
@@ -391,7 +391,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
                   package: kreuzcrawl
@@ -409,7 +409,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
                   package: kreuzcrawl
@@ -427,7 +427,7 @@ jobs:
             exists: ${{ steps.check.outputs.exists }}
         steps:
             - id: check
-              uses: kreuzberg-dev/actions/check-registry@v1
+              uses: xberg-io/actions/check-registry@v1
               with:
                   registry: github-release
                   package: kreuzcrawl
@@ -457,10 +457,10 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Build wheels
-              uses: kreuzberg-dev/actions/build-python-wheels@v1
+              uses: xberg-io/actions/build-python-wheels@v1
               with:
                   python-version: "3.13"
                   package-dir: packages/python
@@ -486,12 +486,12 @@ jobs:
                   fetch-depth: 0
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
             - uses: actions/setup-python@v6
               with:
                   python-version: "3.13"
 
-            - uses: kreuzberg-dev/actions/build-python-sdist@v1
+            - uses: xberg-io/actions/build-python-sdist@v1
               with:
                   package-dir: packages/python
                   output-dir: dist
@@ -558,19 +558,19 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.rust_target || matrix.target }}
                   cache-key-prefix: publish-node-${{ matrix.target }}
 
-            - uses: kreuzberg-dev/actions/setup-node-workspace@v1
+            - uses: xberg-io/actions/setup-node-workspace@v1
               with:
                   node-version: "22"
 
             - name: Build native module
-              uses: kreuzberg-dev/actions/build-node-napi@v1
+              uses: xberg-io/actions/build-node-napi@v1
               with:
                   crate-dir: crates/kreuzcrawl-node
                   target: ${{ matrix.target }}
@@ -596,7 +596,7 @@ jobs:
                   fetch-depth: 0
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/install-wasi-sdk@v1
+            - uses: xberg-io/actions/install-wasi-sdk@v1
 
             - name: Configure WASM C compiler
               shell: bash
@@ -604,16 +604,16 @@ jobs:
                   echo "CC_wasm32_unknown_unknown=${WASI_SDK_PATH}/bin/clang" >> "$GITHUB_ENV"
                   echo "AR_wasm32_unknown_unknown=${WASI_SDK_PATH}/bin/ar" >> "$GITHUB_ENV"
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: wasm32-unknown-unknown
                   cache-key-prefix: publish-wasm
 
-            - uses: kreuzberg-dev/actions/setup-node-workspace@v1
+            - uses: xberg-io/actions/setup-node-workspace@v1
               with:
                   node-version: "22"
 
-            - uses: kreuzberg-dev/actions/build-wasm-package@v1
+            - uses: xberg-io/actions/build-wasm-package@v1
               with:
                   crate-dir: crates/kreuzcrawl-wasm
                   pack-tarball: "true"
@@ -661,7 +661,7 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Drop cached CLI binaries
               # Inline: stale CLI artifacts under packages/ruby/exe/ confuse rake
@@ -702,7 +702,7 @@ jobs:
                   echo "BINDGEN_EXTRA_CLANG_ARGS=--sysroot=${UCRT} -I${UCRT}/include" >>"$GITHUB_ENV"
                   echo "LIBCLANG_PATH=${UCRT}/bin" >>"$GITHUB_ENV"
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               if: runner.os != 'Windows'
               with:
                   cache-key-prefix: publish-ruby-${{ matrix.label }}
@@ -723,7 +723,7 @@ jobs:
                   bundle config set --local path 'vendor/bundle'
                   bundle install --jobs 4 --retry 3
 
-            - uses: kreuzberg-dev/actions/build-ruby-gem@v1
+            - uses: xberg-io/actions/build-ruby-gem@v1
               if: matrix.dock_platform == ''
               with:
                   package-dir: packages/ruby
@@ -822,16 +822,16 @@ jobs:
                   fetch-depth: 0
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/setup-php@v1
+            - uses: xberg-io/actions/setup-php@v1
               with:
                   php-version: ${{ matrix.php }}
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.platform.target }}
                   cache-key-prefix: publish-php-${{ matrix.platform.label }}-php${{ matrix.php }}
 
-            - uses: kreuzberg-dev/actions/build-php-extension@v1
+            - uses: xberg-io/actions/build-php-extension@v1
               with:
                   crate-name: kreuzcrawl-php
                   lib-name: kreuzcrawl_php
@@ -851,7 +851,7 @@ jobs:
                   }
                   "compiler=$compiler" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
-            - uses: kreuzberg-dev/actions/package-php-pie@v1
+            - uses: xberg-io/actions/package-php-pie@v1
               with:
                   php-version: ${{ matrix.php }}
                   php-ts: nts
@@ -884,7 +884,7 @@ jobs:
         # from the shared run artifact namespace (this job `needs:` it). The reusable upload
         # un-drafts the release (`publish-github-release@v1 draft:false`) so CLI binaries are
         # never stranded in a draft, and emits a `kreuzcrawl-cli-SHA256SUMS` checksums file.
-        uses: kreuzberg-dev/actions/.github/workflows/reusable-cli-release.yml@v1
+        uses: xberg-io/actions/.github/workflows/reusable-cli-release.yml@v1
         with:
             package-name: kreuzcrawl-cli
             binary-name: kreuzcrawl
@@ -921,7 +921,7 @@ jobs:
                   fetch-depth: 0
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+            - uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Build musl CLI via Docker
               # Inline: kreuzcrawl ships a musl CLI built via a custom Dockerfile that
@@ -979,14 +979,14 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: publish-go-${{ matrix.platform }}
 
-            - uses: kreuzberg-dev/actions/build-go-ffi@v1
+            - uses: xberg-io/actions/build-go-ffi@v1
               with:
                   target: ${{ matrix.target }}
                   crate-name: kreuzcrawl-ffi
@@ -1026,14 +1026,14 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: publish-c-ffi-${{ matrix.platform }}
 
-            - uses: kreuzberg-dev/actions/build-rust-ffi@v1
+            - uses: xberg-io/actions/build-rust-ffi@v1
               with:
                   crate-name: kreuzcrawl-ffi
                   target: ${{ matrix.target }}
@@ -1092,14 +1092,14 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: publish-java-${{ matrix.classifier }}
 
-            - uses: kreuzberg-dev/actions/build-java-natives@v1
+            - uses: xberg-io/actions/build-java-natives@v1
               with:
                   target: ${{ matrix.target }}
                   crate-name: kreuzcrawl-ffi
@@ -1142,7 +1142,7 @@ jobs:
                   fetch-depth: 0
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+            - uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Build musl FFI via Docker
               # Inline: building cdylib for musl on the host runner fails to link
@@ -1194,14 +1194,14 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: publish-csharp-${{ matrix.rid }}
 
-            - uses: kreuzberg-dev/actions/build-csharp-natives@v1
+            - uses: xberg-io/actions/build-csharp-natives@v1
               with:
                   target: ${{ matrix.target }}
                   crate-name: kreuzcrawl-ffi
@@ -1234,14 +1234,14 @@ jobs:
                   fetch-depth: 0
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+            - uses: xberg-io/actions/free-disk-space-linux@v1
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: publish-csharp-${{ matrix.rid }}
 
-            - uses: kreuzberg-dev/actions/build-csharp-natives@v1
+            - uses: xberg-io/actions/build-csharp-natives@v1
               with:
                   target: ${{ matrix.target }}
                   crate-name: kreuzcrawl-ffi
@@ -1284,7 +1284,7 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Override ImageOS on ARM Linux runners
               # erlef/setup-beam@v1 maps ImageOS env to its package index. On
@@ -1309,12 +1309,12 @@ jobs:
                   elixir-version: "1.17"
                   otp-version: "27"
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: publish-elixir-${{ matrix.label }}
 
-            - uses: kreuzberg-dev/actions/build-elixir-natives@v1
+            - uses: xberg-io/actions/build-elixir-natives@v1
               with:
                   target: ${{ matrix.target }}
                   nif-crate-name: kreuzcrawl_nif
@@ -1351,7 +1351,7 @@ jobs:
                   fetch-depth: 0
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+            - uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Override ImageOS on ARM Linux runners
               if: matrix.os == 'ubuntu-24.04-arm'
@@ -1363,12 +1363,12 @@ jobs:
                   elixir-version: "1.17"
                   otp-version: "27"
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: publish-elixir-musl-${{ matrix.arch }}
 
-            - uses: kreuzberg-dev/actions/build-elixir-natives@v1
+            - uses: xberg-io/actions/build-elixir-natives@v1
               with:
                   target: ${{ matrix.target }}
                   nif-crate-name: kreuzcrawl_nif
@@ -1394,8 +1394,8 @@ jobs:
               with:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
-            - uses: kreuzberg-dev/actions/setup-rust@v1
-            - uses: kreuzberg-dev/actions/build-swift-artifactbundle@v1
+            - uses: xberg-io/actions/setup-rust@v1
+            - uses: xberg-io/actions/build-swift-artifactbundle@v1
               id: bundle
               with:
                   crate-name: kreuzcrawl-swift
@@ -1420,9 +1420,9 @@ jobs:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
 
-            - uses: kreuzberg-dev/actions/build-swift-package@v1
+            - uses: xberg-io/actions/build-swift-package@v1
               with:
                   package-dir: packages/swift
                   crate-name: kreuzcrawl-swift
@@ -1444,9 +1444,9 @@ jobs:
                   ref: ${{ needs.prepare.outputs.checkout_ref }}
                   fetch-depth: 0
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
 
-            - uses: kreuzberg-dev/actions/build-zig-package@v1
+            - uses: xberg-io/actions/build-zig-package@v1
               with:
                   ffi-crate: kreuzcrawl-ffi
                   package-dir: packages/zig
@@ -1472,7 +1472,7 @@ jobs:
                   path: dist/go-ffi
                   merge-multiple: true
 
-            - uses: kreuzberg-dev/actions/upload-release-assets@v1
+            - uses: xberg-io/actions/upload-release-assets@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   working-directory: dist/go-ffi
@@ -1528,7 +1528,7 @@ jobs:
                   path: dist/c-ffi
                   merge-multiple: true
 
-            - uses: kreuzberg-dev/actions/upload-release-assets@v1
+            - uses: xberg-io/actions/upload-release-assets@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   working-directory: dist/c-ffi
@@ -1554,7 +1554,7 @@ jobs:
                   name: swift-artifactbundle
                   path: dist/swift
 
-            - uses: kreuzberg-dev/actions/upload-release-assets@v1
+            - uses: xberg-io/actions/upload-release-assets@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   working-directory: dist/swift
@@ -1647,7 +1647,7 @@ jobs:
                   path: dist/elixir
                   merge-multiple: true
 
-            - uses: kreuzberg-dev/actions/upload-release-assets@v1
+            - uses: xberg-io/actions/upload-release-assets@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   working-directory: dist/elixir
@@ -1674,7 +1674,7 @@ jobs:
                   path: dist/php-package
                   merge-multiple: true
 
-            - uses: kreuzberg-dev/actions/upload-release-assets@v1
+            - uses: xberg-io/actions/upload-release-assets@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   working-directory: dist/php-package
@@ -1714,7 +1714,7 @@ jobs:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
                   owner: kreuzberg-dev
-            - uses: kreuzberg-dev/actions/verify-release-assets@v1
+            - uses: xberg-io/actions/verify-release-assets@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   # App token guarantees draft visibility regardless of the
@@ -1747,11 +1747,11 @@ jobs:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   cache-key-prefix: publish-crates
 
-            - uses: kreuzberg-dev/actions/publish-crates@v1
+            - uses: xberg-io/actions/publish-crates@v1
               with:
                   # Order matters: kreuzcrawl-browser is a hard dep of kreuzcrawl
                   # (path-only deps are rejected by cargo publish), kreuzcrawl is
@@ -1782,7 +1782,7 @@ jobs:
                   name: python-sdist
                   path: dist
 
-            - uses: kreuzberg-dev/actions/publish-pypi@v1
+            - uses: xberg-io/actions/publish-pypi@v1
               with:
                   packages-dir: dist
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -1820,7 +1820,7 @@ jobs:
 
             - uses: rubygems/configure-rubygems-credentials@v2.0.0
 
-            - uses: kreuzberg-dev/actions/publish-rubygems@v1
+            - uses: xberg-io/actions/publish-rubygems@v1
               with:
                   gems-dir: dist
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -1845,7 +1845,7 @@ jobs:
                   path: node-artifacts
                   merge-multiple: true
 
-            - uses: kreuzberg-dev/actions/setup-node-workspace@v1
+            - uses: xberg-io/actions/setup-node-workspace@v1
               with:
                   node-version: "22"
                   registry-url: "https://registry.npmjs.org/"
@@ -1895,7 +1895,7 @@ jobs:
               # blocked the main `@kreuzberg/kreuzcrawl` publish too, leaving
               # consumers unable to install on any platform.
               continue-on-error: true
-              uses: kreuzberg-dev/actions/publish-npm@v1
+              uses: xberg-io/actions/publish-npm@v1
               with:
                   packages-dir: crates/kreuzcrawl-node/npm
                   npm-tag: ${{ needs.prepare.outputs.npm_tag }}
@@ -1903,7 +1903,7 @@ jobs:
 
             - name: Wait for npm indexing (linux-x64-gnu)
               if: ${{ needs.prepare.outputs.dry_run != 'true' }}
-              uses: kreuzberg-dev/actions/wait-for-package@v1
+              uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
                   package: "@kreuzberg/kreuzcrawl-linux-x64-gnu"
@@ -1912,7 +1912,7 @@ jobs:
 
             - name: Wait for npm indexing (linux-arm64-gnu)
               if: ${{ needs.prepare.outputs.dry_run != 'true' }}
-              uses: kreuzberg-dev/actions/wait-for-package@v1
+              uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
                   package: "@kreuzberg/kreuzcrawl-linux-arm64-gnu"
@@ -1920,7 +1920,7 @@ jobs:
                   max-attempts: "60"
 
             - name: Publish main @kreuzberg/kreuzcrawl package
-              uses: kreuzberg-dev/actions/publish-npm@v1
+              uses: xberg-io/actions/publish-npm@v1
               with:
                   package-dir: crates/kreuzcrawl-node
                   npm-tag: ${{ needs.prepare.outputs.npm_tag }}
@@ -1928,7 +1928,7 @@ jobs:
 
             - name: Wait for main Node package indexing
               if: ${{ needs.prepare.outputs.dry_run != 'true' }}
-              uses: kreuzberg-dev/actions/wait-for-package@v1
+              uses: xberg-io/actions/wait-for-package@v1
               with:
                   registry: npm
                   package: "@kreuzberg/kreuzcrawl"
@@ -1962,7 +1962,7 @@ jobs:
 
             - name: Publish TypeScript wrapper package
               if: ${{ hashFiles('packages/typescript/package.json') != '' }}
-              uses: kreuzberg-dev/actions/publish-npm@v1
+              uses: xberg-io/actions/publish-npm@v1
               with:
                   package-dir: packages/typescript
                   npm-tag: ${{ needs.prepare.outputs.npm_tag }}
@@ -1987,12 +1987,12 @@ jobs:
                   name: wasm-bundle
                   path: crates/kreuzcrawl-wasm
 
-            - uses: kreuzberg-dev/actions/setup-node-workspace@v1
+            - uses: xberg-io/actions/setup-node-workspace@v1
               with:
                   node-version: "22"
                   registry-url: "https://registry.npmjs.org/"
 
-            - uses: kreuzberg-dev/actions/publish-npm@v1
+            - uses: xberg-io/actions/publish-npm@v1
               with:
                   package-dir: crates/kreuzcrawl-wasm
                   npm-tag: ${{ needs.prepare.outputs.npm_tag }}
@@ -2005,12 +2005,12 @@ jobs:
         if: ${{ needs.prepare.outputs.release_php == 'true' && needs.prepare.outputs.is_tag == 'true' && (needs.check-packagist.outputs.exists != 'true' || needs.prepare.outputs.force_republish == 'true') }}
         runs-on: ubuntu-latest
         steps:
-            - uses: kreuzberg-dev/actions/publish-packagist@v1
+            - uses: xberg-io/actions/publish-packagist@v1
               with:
                   packagist-username: kreuzberg-dev
-                  package-name: kreuzberg-dev/kreuzcrawl
+                  package-name: xberg-io/kreuzcrawl
                   version: ${{ needs.prepare.outputs.version }}
-                  repository-url: https://github.com/kreuzberg-dev/kreuzcrawl
+                  repository-url: https://github.com/xberg-io/kreuzcrawl
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
               env:
                   PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
@@ -2056,13 +2056,13 @@ jobs:
                   gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
                   gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-            - uses: kreuzberg-dev/actions/setup-maven@v1
+            - uses: xberg-io/actions/setup-maven@v1
 
-            - uses: kreuzberg-dev/actions/configure-maven-gpg@v1
+            - uses: xberg-io/actions/configure-maven-gpg@v1
               with:
                   pom-file: packages/java/pom.xml
 
-            - uses: kreuzberg-dev/actions/publish-maven@v1
+            - uses: xberg-io/actions/publish-maven@v1
               with:
                   pom-file: packages/java/pom.xml
                   maven-profile: publish
@@ -2118,7 +2118,7 @@ jobs:
                     -p:Version=${{ needs.prepare.outputs.version }} \
                     -o dist/nuget
 
-            - uses: kreuzberg-dev/actions/publish-nuget@v1
+            - uses: xberg-io/actions/publish-nuget@v1
               with:
                   packages-dir: dist/nuget
                   dry-run: ${{ needs.prepare.outputs.dry_run }}
@@ -2163,7 +2163,7 @@ jobs:
               # Pass the App token so the action can see the draft release that
               # publish-finalize will promote at the end of the workflow.
               if: needs.prepare.outputs.dry_run != 'true'
-              uses: kreuzberg-dev/actions/generate-elixir-checksums@v1
+              uses: xberg-io/actions/generate-elixir-checksums@v1
               with:
                   github-repo: ${{ github.repository }}
                   tag: ${{ needs.prepare.outputs.tag }}
@@ -2220,7 +2220,7 @@ jobs:
               working-directory: packages/elixir
               shell: bash
 
-            - uses: kreuzberg-dev/actions/publish-hex@v1
+            - uses: xberg-io/actions/publish-hex@v1
               with:
                   package-dir: packages/elixir
                   skip-docs: "true"
@@ -2251,14 +2251,14 @@ jobs:
                   ref: ${{ needs.prepare.outputs.ref }}
                   submodules: recursive
 
-            - uses: kreuzberg-dev/actions/setup-rust@v1
+            - uses: xberg-io/actions/setup-rust@v1
               with:
                   target: ${{ matrix.target }}
                   cache-key-prefix: kotlin-android-${{ matrix.abi }}
 
-            - uses: kreuzberg-dev/actions/setup-android-ndk@v1
+            - uses: xberg-io/actions/setup-android-ndk@v1
 
-            - uses: kreuzberg-dev/actions/build-android-natives@v1
+            - uses: xberg-io/actions/build-android-natives@v1
               with:
                   crate-name: kreuzcrawl-ffi
                   lib-name: kreuzcrawl_ffi
@@ -2297,7 +2297,7 @@ jobs:
                   done
               shell: bash
 
-            - uses: kreuzberg-dev/actions/publish-maven-gradle@v1
+            - uses: xberg-io/actions/publish-maven-gradle@v1
               with:
                   working-directory: packages/kotlin-android
                   gradle-task: publishAndReleaseToMavenCentral
@@ -2374,7 +2374,7 @@ jobs:
                   ls -la "$out"
                   for d in "$out"/*/; do echo "--- $d ---"; ls -la "$d"; done
 
-            - uses: kreuzberg-dev/actions/publish-zig@v1
+            - uses: xberg-io/actions/publish-zig@v1
               with:
                   working-directory: packages/zig
                   tag: ${{ needs.prepare.outputs.tag }}
@@ -2440,7 +2440,7 @@ jobs:
             - name: Checkout homebrew-tap
               uses: actions/checkout@v6
               with:
-                  repository: kreuzberg-dev/homebrew-tap
+                  repository: xberg-io/homebrew-tap
                   token: ${{ steps.tap-token.outputs.token }}
                   path: homebrew-tap
                   persist-credentials: true
@@ -2503,18 +2503,18 @@ jobs:
 
             - name: Free disk space
               if: runner.os == 'Linux'
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Install Homebrew (Linux)
               if: ${{ matrix.install_brew }}
-              uses: kreuzberg-dev/actions/install-homebrew-linux@v1
+              uses: xberg-io/actions/install-homebrew-linux@v1
 
             - name: Build bottles
-              uses: kreuzberg-dev/actions/homebrew-build-bottles@v1
+              uses: xberg-io/actions/homebrew-build-bottles@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   version: ${{ needs.prepare.outputs.version }}
-                  tap: kreuzberg-dev/homebrew-tap
+                  tap: xberg-io/homebrew-tap
                   formulas: |
                       kreuzcrawl
                   out-dir: ${{ github.workspace }}/bottle-json
@@ -2556,7 +2556,7 @@ jobs:
             - name: Checkout homebrew-tap
               uses: actions/checkout@v6
               with:
-                  repository: kreuzberg-dev/homebrew-tap
+                  repository: xberg-io/homebrew-tap
                   token: ${{ steps.tap-token.outputs.token }}
                   path: homebrew-tap
                   persist-credentials: true
@@ -2569,7 +2569,7 @@ jobs:
                   merge-multiple: true
 
             - name: Merge bottle DSL into formula
-              uses: kreuzberg-dev/actions/homebrew-merge-bottles@v1
+              uses: xberg-io/actions/homebrew-merge-bottles@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   version: ${{ needs.prepare.outputs.version }}
@@ -2640,7 +2640,7 @@ jobs:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
                   owner: kreuzberg-dev
-            - uses: kreuzberg-dev/actions/finalize-release@v1
+            - uses: xberg-io/actions/finalize-release@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   is-prerelease: ${{ needs.prepare.outputs.is_prerelease == 'true' && 'true' || 'false' }}
@@ -2686,7 +2686,7 @@ jobs:
                   app-id: ${{ secrets.BOT_APP_ID }}
                   private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
                   owner: kreuzberg-dev
-            - uses: kreuzberg-dev/actions/announce-release-discord@v1
+            - uses: xberg-io/actions/announce-release-discord@v1
               with:
                   tag: ${{ needs.prepare.outputs.tag }}
                   webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -2707,7 +2707,7 @@ jobs:
             contents: read
         steps:
             - uses: actions/checkout@v6
-            - uses: kreuzberg-dev/actions/publish-npm@v1
+            - uses: xberg-io/actions/publish-npm@v1
               with:
                   package-dir: cli-proxy/npm
                   access: public

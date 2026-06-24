@@ -11,7 +11,7 @@ import (
 	"os"
 	"testing"
 
-	pkg "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+	pkg "github.com/xberg-io/kreuzcrawl/packages/go"
 )
 
 func Test_BrowserConfigAutoNoFeature(t *testing.T) {

@@ -83,7 +83,7 @@ extra_paths = [
 [workspace.citation]
 title = "kreuzcrawl"
 abstract = "Web crawling and scraping with HTML→Markdown and headless-Chrome fallback."
-repository-code = "https://github.com/kreuzberg-dev/kreuzcrawl"
+repository-code = "https://github.com/xberg-io/kreuzcrawl"
 url = "https://kreuzberg.dev"
 license = "Elastic-2.0"
 date-released = "2026-05-17"
@@ -162,7 +162,7 @@ lib_name = "kreuzcrawl_ffi"
 visitor_callbacks = false
 
 [crates.go]
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 package_name = "kreuzcrawl"
 
 [crates.java]
@@ -474,7 +474,7 @@ e2e = "cd e2e/c && make clean && make && DYLD_LIBRARY_PATH=../../target/release 
 [crates.test.kotlin_android]
 # Android-only AAR — no JVM JAR to run `gradle test` against. E2E excluded
 # because Android tests require an emulator runner (out of scope until a
-# kreuzberg-dev/actions/setup-android-emulator action exists).
+# xberg-io/actions/setup-android-emulator action exists).
 precondition = "command -v gradle >/dev/null 2>&1"
 before = "cargo build --release -p kreuzcrawl-ffi"
 
@@ -737,7 +737,7 @@ module = "@kreuzberg/kreuzcrawl"
 function = "scrape"
 
 [crates.e2e.call.overrides.go]
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 function = "Scrape"
 
 [crates.e2e.call.overrides.java]
@@ -845,7 +845,7 @@ proxy = "WasmProxyConfig"
 
 [crates.e2e.calls.batch_scrape.overrides.go]
 function = "BatchScrape"
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 
 [crates.e2e.calls.batch_scrape.overrides.php]
 function = "batchScrape"
@@ -921,7 +921,7 @@ module = "@kreuzberg/kreuzcrawl"
 
 [crates.e2e.calls.crawl.overrides.go]
 function = "Crawl"
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 
 [crates.e2e.calls.crawl.overrides.java]
 class = "dev.kreuzberg.kreuzcrawl.Kreuzcrawl"
@@ -1007,7 +1007,7 @@ module = "@kreuzberg/kreuzcrawl"
 
 [crates.e2e.calls.map_urls.overrides.go]
 function = "MapUrls"
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 
 [crates.e2e.calls.map_urls.overrides.java]
 class = "dev.kreuzberg.kreuzcrawl.Kreuzcrawl"
@@ -1106,7 +1106,7 @@ module = "@kreuzberg/kreuzcrawl"
 
 [crates.e2e.calls.interact.overrides.go]
 function = "Interact"
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 
 [crates.e2e.calls.interact.overrides.java]
 class = "dev.kreuzberg.kreuzcrawl.Kreuzcrawl"
@@ -1205,7 +1205,7 @@ module = "@kreuzberg/kreuzcrawl"
 
 [crates.e2e.calls.batch_crawl.overrides.go]
 function = "BatchCrawl"
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 
 [crates.e2e.calls.batch_crawl.overrides.java]
 class = "dev.kreuzberg.kreuzcrawl.Kreuzcrawl"
@@ -1288,7 +1288,7 @@ module = "@kreuzberg/kreuzcrawl"
 
 [crates.e2e.calls.crawl_stream.overrides.go]
 function = "CrawlStream"
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 
 [crates.e2e.calls.crawl_stream.overrides.java]
 class = "dev.kreuzberg.kreuzcrawl.Kreuzcrawl"
@@ -1369,7 +1369,7 @@ module = "@kreuzberg/kreuzcrawl"
 
 [crates.e2e.calls.batch_crawl_stream.overrides.go]
 function = "BatchCrawlStream"
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 
 [crates.e2e.calls.batch_crawl_stream.overrides.java]
 class = "dev.kreuzberg.kreuzcrawl.Kreuzcrawl"
@@ -1515,7 +1515,7 @@ name = "@kreuzberg/kreuzcrawl"
 path = "../../crates/kreuzcrawl-node"
 
 [crates.e2e.packages.go]
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 path = "../../packages/go"
 
 [crates.e2e.packages.dart]
@@ -1529,7 +1529,7 @@ path = "../../packages/zig"
 path = "../../packages/swift"
 
 [crates.e2e.registry]
-github_repo = "https://github.com/kreuzberg-dev/kreuzcrawl"
+github_repo = "https://github.com/xberg-io/kreuzcrawl"
 output = "test_apps"
 categories = ["scrape", "markdown", "metadata"]
 
@@ -1546,7 +1546,7 @@ name = "kreuzcrawl"
 version = "0.3.0"
 
 [crates.e2e.registry.packages.go]
-module = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+module = "github.com/xberg-io/kreuzcrawl/packages/go"
 version = "v0.3.0"
 
 [crates.e2e.registry.packages.java]
@@ -1558,7 +1558,7 @@ name = "Kreuzcrawl"
 version = "0.3.0"
 
 [crates.e2e.registry.packages.php]
-name = "kreuzberg-dev/kreuzcrawl"
+name = "xberg-io/kreuzcrawl"
 version = ">=0.3.0"
 
 [crates.e2e.registry.packages.ruby]
@@ -1597,7 +1597,7 @@ version = "0.3.0"
 [crates.scaffold]
 description = "High-performance web crawling engine"
 license = "Elastic-2.0"
-repository = "https://github.com/kreuzberg-dev/kreuzcrawl"
+repository = "https://github.com/xberg-io/kreuzcrawl"
 authors = ["Kreuzberg Team"]
 keywords = ["crawl", "scrape", "web", "spider"]
 
@@ -1679,8 +1679,8 @@ name = "Go"
 template = "language_package.md"
 output_path = "packages/go/README.md"
 package_manager = ["go"]
-package_name = "github.com/kreuzberg-dev/kreuzcrawl/packages/go"
-install_command = "go get github.com/kreuzberg-dev/kreuzcrawl/packages/go"
+package_name = "github.com/xberg-io/kreuzcrawl/packages/go"
+install_command = "go get github.com/xberg-io/kreuzcrawl/packages/go"
 description = """
 Go bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Uses cgo with
 the C FFI layer for native performance with idiomatic Go error handling.
@@ -1730,8 +1730,8 @@ name = "PHP"
 template = "language_package.md"
 output_path = "packages/php/README.md"
 package_manager = ["composer"]
-package_name = "kreuzberg-dev/kreuzcrawl"
-install_command = "composer require kreuzberg-dev/kreuzcrawl"
+package_name = "xberg-io/kreuzcrawl"
+install_command = "composer require xberg-io/kreuzcrawl"
 description = """
 PHP bindings for **kreuzcrawl** — a high-performance Rust web crawling engine. Native PHP
 extension via ext-php-rs with typed properties, PHP 8.2+ support, and PHPStan type stubs.
@@ -1814,7 +1814,7 @@ template = "language_package.md"
 output_path = "packages/swift/README.md"
 package_manager = ["spm"]
 package_name = "Kreuzcrawl"
-install_command = '.package(url: "https://github.com/kreuzberg-dev/kreuzcrawl", exact: "{{ version }}")'
+install_command = '.package(url: "https://github.com/xberg-io/kreuzcrawl", exact: "{{ version }}")'
 description = """
 Swift bindings for **kreuzcrawl** — a high-performance Rust web crawling engine.
 Via swift-bridge for macOS, iOS, and Linux with native Swift types and async/await.

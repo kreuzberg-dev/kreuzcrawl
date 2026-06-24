@@ -8,7 +8,7 @@ set -euo pipefail
 # Required env:
 #   TAG     — git tag, e.g. v0.3.0-rc.25
 #   VERSION — semver without v prefix, e.g. 0.3.0-rc.25
-#   TAP_DIR — path to a checked-out kreuzberg-dev/homebrew-tap
+#   TAP_DIR — path to a checked-out xberg-io/homebrew-tap
 
 tag="${TAG:?TAG is required (e.g. v0.3.0-rc.25)}"
 version="${VERSION:?VERSION is required (e.g. 0.3.0-rc.25)}"
@@ -24,7 +24,7 @@ formula="${tap_dir}/Formula/kreuzcrawl.rb"
 work_dir="$(mktemp -d)"
 trap 'rm -rf "$work_dir"' EXIT
 
-source_url="https://github.com/kreuzberg-dev/kreuzcrawl/archive/${tag}.tar.gz"
+source_url="https://github.com/xberg-io/kreuzcrawl/archive/${tag}.tar.gz"
 echo "Downloading source archive from $source_url..." >&2
 curl -fsSL "$source_url" -o "$work_dir/source.tar.gz"
 source_sha="$(shasum -a 256 "$work_dir/source.tar.gz" | awk '{print $1}')"

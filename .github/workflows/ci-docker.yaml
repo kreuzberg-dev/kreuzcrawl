@@ -16,7 +16,7 @@ permissions:
 jobs:
     docker:
         name: Docker (${{ matrix.variant }})
-        if: github.repository == 'kreuzberg-dev/kreuzcrawl' && github.actor != 'dependabot[bot]'
+        if: github.repository == 'xberg-io/kreuzcrawl' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-latest
         timeout-minutes: 120
         strategy:
@@ -27,7 +27,7 @@ jobs:
             - uses: actions/checkout@v6
 
             - name: Free disk space
-              uses: kreuzberg-dev/actions/free-disk-space-linux@v1
+              uses: xberg-io/actions/free-disk-space-linux@v1
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v4
@@ -51,7 +51,7 @@ jobs:
                   ls -lh /tmp/kreuzcrawl-${{ matrix.variant }}.tar.gz
 
             - name: Check image size
-              uses: kreuzberg-dev/actions/check-docker-image-size@v1
+              uses: xberg-io/actions/check-docker-image-size@v1
               with:
                   image: kreuzcrawl:${{ matrix.variant }}
                   warn-mb: ${{ matrix.variant == 'cli' && '200' || '' }}

@@ -22,9 +22,9 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-urls.Homepage = "https://github.com/kreuzberg-dev/kreuzcrawl"
-urls.Issues = "https://github.com/kreuzberg-dev/kreuzcrawl/issues"
-urls.Repository = "https://github.com/kreuzberg-dev/kreuzcrawl.git"
+urls.Homepage = "https://github.com/xberg-io/kreuzcrawl"
+urls.Issues = "https://github.com/xberg-io/kreuzcrawl/issues"
+urls.Repository = "https://github.com/xberg-io/kreuzcrawl.git"
 scripts.kreuzcrawl = "kreuzcrawl_cli.cli:main"
 
 [tool.hatch]
