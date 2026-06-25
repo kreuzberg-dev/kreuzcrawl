@@ -202,7 +202,7 @@ Key tuning parameters:
 
 - **`strategy`**: Select the escalation chain (`None`, `BrowserOnly`, `BypassFirst`, `BypassOnly`, `BypassThenBrowser`). See the strategy table above.
 - **`retry_policy`**: Implement [`RetryPolicy`](https://docs.rs/kreuzcrawl/latest/kreuzcrawl/trait.RetryPolicy.html) for custom per-attempt decisions. The default `SimpleRetryPolicy` uses static error-to-directive mappings; `LearningRetryPolicy` consults a `DomainStatePort` for priors. Both live in `crate::defaults::dispatch`.
-- **`domain_state`**: Track per-domain block rates via `DomainStatePort`. The in-process `EwmaDomainState` is provided; kreuzberg-cloud supplies a Postgres-backed impl for multi-process deployments.
+- **`domain_state`**: Track per-domain block rates via `DomainStatePort`. The in-process `EwmaDomainState` is provided; xberg-enterprise supplies a Postgres-backed impl for multi-process deployments.
 - **`escalation_budget`**: Enforce per-job spend caps via `EscalationBudget`. `FixedBudget` tracks atomic counters; `UnlimitedBudget` is the default.
 - **`max_total_attempts`**: Hard limit on fetch attempts across all tiers. Guards against buggy retry policies. Default: 10.
 

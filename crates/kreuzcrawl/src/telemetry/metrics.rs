@@ -2,7 +2,7 @@
 //!
 //! [`MetricRegistry`] is a `'static` singleton obtained via [`registry()`].
 //! All `crawl_*` OTel instrument handles live here; names mirror what
-//! kreuzberg-cloud already emits so cloud can delete its bridging code.
+//! xberg-enterprise already emits so cloud can delete its bridging code.
 //!
 //! # Handles
 //!

@@ -137,7 +137,7 @@ pub enum EscalationReason {
 /// Inspired by spider-rs `AttemptOutcome`
 /// (<https://github.com/spider-rs/spider> — `spider/src/retry_strategy.rs`).
 /// Field set is intentionally a subset — we omit UA / fingerprint /
-/// chrome_connection because those are caller (kreuzberg-cloud) concerns.
+/// chrome_connection because those are caller (xberg-enterprise) concerns.
 ///
 /// All fields are owned so async impls can clone or move into spawned tasks
 /// without borrow-checker issues. The previous `<'a>` lifetime was incompatible
@@ -471,7 +471,7 @@ pub enum ObservedOutcome {
 /// Persistent per-domain dispatch state.
 ///
 /// Default impl in `crate::defaults::domain_state::EwmaDomainState`
-/// (Commit 1.5) is a process-local `DashMap`. kreuzberg-cloud provides a
+/// (Commit 1.5) is a process-local `DashMap`. xberg-enterprise provides a
 /// Postgres-backed impl in its `dispatch-postgres` crate.
 ///
 /// The trait is generic over the observation model — self-hosters with

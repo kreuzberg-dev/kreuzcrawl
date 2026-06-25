@@ -2,7 +2,7 @@
 //!
 //! Locks in the substrate-vs-operational acceptance criterion: a developer
 //! must be able to crawl a small site using **only kreuzcrawl** — no
-//! `kreuzberg-cloud`, no `crawl-traits`, no external trait impls. The engine
+//! `xberg-enterprise`, no `crawl-traits`, no external trait impls. The engine
 //! ships with usable baselines for every trait extension point
 //! (`defaults::{InMemoryFrontier, PerDomainThrottle, NoopCache, NoopStore,
 //! NoopEmitter, NoopFilter}`, `TomlClassifier` for WAF) so a stock

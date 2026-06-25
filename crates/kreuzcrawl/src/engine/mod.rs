@@ -698,7 +698,7 @@ impl CrawlEngine {
     ///
     /// `Http` costs nothing (it's the baseline). `Bypass` and `Browser` cost 1 each
     /// so that `FixedBudget(n)` limits the total number of non-HTTP escalations per job.
-    /// kreuzberg-cloud overrides this via a proper cost model at the cloud layer.
+    /// xberg-enterprise overrides this via a proper cost model at the cloud layer.
     #[cfg(not(target_arch = "wasm32"))]
     const fn tier_cost_cents(tier: crate::types::Tier) -> u32 {
         match tier {

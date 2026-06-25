@@ -92,7 +92,7 @@ struct DomainSnapshot {
 
 /// Process-local domain state backed by an EWMA block-rate model.
 /// `DashMap`-backed, ephemeral — no persistence across restarts.
-/// For multi-process / multi-tenant learning, use kreuzberg-cloud's
+/// For multi-process / multi-tenant learning, use xberg-enterprise's
 /// PostgresDomainState.
 #[derive(Debug, Default)]
 #[cfg_attr(alef, alef(skip))]

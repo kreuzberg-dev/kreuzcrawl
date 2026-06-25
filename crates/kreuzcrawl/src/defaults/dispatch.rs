@@ -1,6 +1,6 @@
 //! Default impls of [`crate::types::RetryPolicy`] and
 //! [`crate::types::EscalationBudget`]. These work standalone — no state
-//! backend, no persistence. kreuzberg-cloud's `dispatch-postgres` crate
+//! backend, no persistence. xberg-enterprise's `dispatch-postgres` crate
 //! provides learning impls on top of these traits.
 
 use std::sync::Arc;

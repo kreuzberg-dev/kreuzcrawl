@@ -1,6 +1,6 @@
 # OpenTelemetry Observability
 
-Kreuzcrawl emits W3C-standard traces and metrics via OpenTelemetry, aligned with semantic conventions and kreuzberg-cloud's existing naming. Integrate your observability backend (Jaeger, Prometheus, Grafana, Datadog) to track crawl performance, identify bottlenecks, and diagnose WAF issues.
+Kreuzcrawl emits W3C-standard traces and metrics via OpenTelemetry, aligned with semantic conventions and xberg-enterprise's existing naming. Integrate your observability backend (Jaeger, Prometheus, Grafana, Datadog) to track crawl performance, identify bottlenecks, and diagnose WAF issues.
 
 ## Why OpenTelemetry
 
@@ -35,7 +35,7 @@ The `TelemetryGuard` flushes all pending spans and metrics on drop, ensuring cle
 
 ## Bring-your-own SDK
 
-If your application already initializes OpenTelemetry (as in kreuzberg-cloud's `crates/observability/src/telemetry.rs:135-152`), kreuzcrawl automatically emits spans and metrics to the global tracer and meter without any init call. Dependency versions must align:
+If your application already initializes OpenTelemetry (as in xberg-enterprise's `crates/observability/src/telemetry.rs:135-152`), kreuzcrawl automatically emits spans and metrics to the global tracer and meter without any init call. Dependency versions must align:
 
 | Crate | Version |
 |-------|---------|
@@ -83,7 +83,7 @@ Every span is emitted via `tracing::info_span!` and automatically bridged to Ope
 
 ## Metric catalogue
 
-Kreuzcrawl emits 10 OTel instruments via `kreuzcrawl::telemetry::metrics::registry()`. Names align with kreuzberg-cloud's existing emission points, so cloud can consolidate duplicate metrics in a follow-up.
+Kreuzcrawl emits 10 OTel instruments via `kreuzcrawl::telemetry::metrics::registry()`. Names align with xberg-enterprise's existing emission points, so cloud can consolidate duplicate metrics in a follow-up.
 
 | Metric Name | Instrument | Labels | Description |
 |-------------|-----------|--------|-------------|

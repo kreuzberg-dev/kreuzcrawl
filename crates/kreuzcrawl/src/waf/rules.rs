@@ -3,7 +3,7 @@
 //! # Observability
 //!
 //! OTel counters (`opentelemetry::global`) emit unconditionally — consumers
-//! (kreuzberg-cloud) expect these always. Tracing spans/events are always compiled
+//! (xberg-enterprise) expect these always. Tracing spans/events are always compiled
 //! as `tracing` is now an unconditional dependency.
 
 use std::collections::HashMap;

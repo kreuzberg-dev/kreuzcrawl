@@ -146,7 +146,7 @@ High-performance web crawling and scraping with a Rust core and generated langua
 
   Document intelligence: text, tables, metadata from 91+ formats with optional OCR.
 
-- :material-cloud:{ .lg .middle } **[Kreuzberg Cloud](https://github.com/xberg-io/kreuzberg-cloud)**
+- :material-cloud:{ .lg .middle } **[Xberg Enterprise](https://github.com/xberg-io/xberg-enterprise)**
 
   Managed extraction API with SDKs, dashboards, and observability.
 

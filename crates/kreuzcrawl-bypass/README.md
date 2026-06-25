@@ -19,7 +19,7 @@ let config = load_with_process_env(Path::new("configs/my_vendor.yaml"))?;
 let provider = SimpleHttpProvider::new(config)?;
 ```
 
-This crate is the OSS extension point for bypass vendors: you can ship your own configs without licensing kreuzberg-cloud.
+This crate is the OSS extension point for bypass vendors: you can ship your own configs without licensing xberg-enterprise.
 
 ---
 
