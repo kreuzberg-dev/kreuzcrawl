@@ -54,7 +54,7 @@
 
   <!-- Project Info -->
   <a href="https://github.com/xberg-io/crawlberg/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-Elastic--2.0-007ec6" alt="License">
+    <img src="https://img.shields.io/badge/License-MIT-007ec6" alt="License">
   </a>
   <a href="https://docs.crawlberg.xberg.io">
     <img src="https://img.shields.io/badge/Docs-crawlberg-007ec6" alt="Documentation">
